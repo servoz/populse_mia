@@ -1,7 +1,7 @@
 import os
 import pathlib
 import json
-from models.projectModels import Project,Scan,Tag
+from models.projectModels import Project,ProjectLight,Scan,Tag
 from models.pipelineModels import *
 from utils.enums import TagType
 
@@ -31,11 +31,21 @@ def serializer(obj):
 
     if isinstance(obj, Tag):
         return {'__class__': 'Tag',
-                'uid': obj.uid,
+                #'uid': obj.uid,
                 'name': obj.name,
                 'replace':obj.replace,
                 'value': str(obj.value),
                 'origin': obj.origin.value}
+    
+    if isinstance(obj, ProjectLight):
+        return {'__class__': 'ProjectLight',
+                'uid': obj.uid,
+                'name': obj.name,
+                'bdd_file': obj.bdd_file,
+                'folder': obj.folder,
+                'raw_data': obj.raw_data,
+                'processed_data': obj.processed_data,
+                'date': obj.date}
 
     raise TypeError(repr(obj) + " is not serializable !")
 
@@ -59,8 +69,17 @@ def deserializer(obj_dict):
             obj._delete_tags = obj_dict["delete_tags"]
             return obj
         if obj_dict["__class__"] == "Tag":
-            obj = Tag(obj_dict["name"],obj_dict["replace"],obj_dict["value"],TagType[obj_dict["origin"]])
+            obj = Tag(obj_dict["name"],obj_dict["replace"],obj_dict["value"],TagType[obj_dict["origin"].upper()])
+            #obj.uid = obj_dict["uid"]
+            return obj
+        if obj_dict["__class__"] == "ProjectLight":
+            obj = ProjectLight(obj_dict["name"])
             obj.uid = obj_dict["uid"]
+            obj.folder = obj_dict["folder"]
+            obj.raw_data = obj_dict["raw_data"]
+            obj.processed_data = obj_dict["processed_data"]
+            obj.bdd_file = obj_dict["bdd_file"]
+            obj.date = obj_dict["date"]
             return obj
     return obj_dict
 

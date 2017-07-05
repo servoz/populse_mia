@@ -21,7 +21,7 @@ class Config():
     def getPathToProjectsFolder(self):
         return self.config["paths"]["projects"]
     
-    def getPathToProjectsFile(self):
+    def getPathToProjectsDBFile(self):
         folder = self.getPathToProjectsFolder()
         return path.join(folder,'projects.json')
     

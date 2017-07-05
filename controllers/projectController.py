@@ -3,7 +3,7 @@ import json
 import glob
 import os.path
 import shutil
-from models.projectModels import ProjectLight,Project,Scan,Tag
+from models.projectModels import * 
 from utils.enums import TagType
 from utils import utils
 from utils import jsonTools
@@ -18,7 +18,7 @@ class ProjectController():
         #self.parent = parent
         #self.projectModel = ProjectModel(self) # initializes the model containing all data
         #self.view = MyView(self)  #initializes the view
-        self.projects = self.loadExistingProjectsList(self.config)
+        self.projects = self.loadExistingProjectsList()
         self.activeProject = None
  
         #initialize properties in view, if any
@@ -26,24 +26,24 @@ class ProjectController():
  
         #initalize properties in model, if any
         pass
+     
 
     #Class used to load the lst of existing project in the app
 
-    def loadExistingProjectsList(self,config):
-        Projects = namedtuple('ProjectLight', 'uid, name, folder, bdd_file, date')
-        #get folder and file name in config and load dict from json file
-        projectsPath = config.getPathToProjectsFile();
-        with open(projectsPath, 'r') as stream:
-            projectsDict = json.load(stream)
-        #Then load the list into project controller
-        result = [Projects(**k) for k in projectsDict["projects"]]                    
+    def loadExistingProjectsList(self):
+        result = []
+        projectsPath = self.config.getPathToProjectsDBFile();
+        if os.path.exists(projectsPath) and os.stat(projectsPath).st_size != 0:
+            with open(projectsPath, "r", encoding="utf-8") as projects:
+                result = json.load(projects, object_hook=jsonTools.deserializer)
         return result
         
-    def saveExistingProjectsList(self,config):
+    def saveExistingProjectsList(self):
         #get folder and file name in config and load list from json file
-        projectsPath = config.getProjectsFile();
-        with open(projectsPath, 'w') as stream:
-            stream.write(json.dumps(self.projects))
+        projectsPath = self.config.getPathToProjectsDBFile();
+        with open(projectsPath, 'w') as f:
+            f.write(json.dumps(self.projects, default=jsonTools.serializer))
+        
 
     def loadProject(self,uid):
         #Get the project from existing project list
@@ -56,19 +56,30 @@ class ProjectController():
                     
     def createProject(self, name, project_data_destination):
         #Check if project with this name alreayd exists
-        project = None
+        projectLight = None
         if self.checkProjectNameAlreadyExists(name):
             #then set the view message that project already exist
+            print('A project with that name already exists')
             self.view.setLabelError('A project with that name already exists')
         else:
-            project = Project(name)
+            projectLight = ProjectLight(name)
             #Set project db file and project structure
-            self.createProjectDatabase(project)
+            self.createProjectDatabase(projectLight)
             #If no project data destination, then project data is in the same folder as MIA program
-            if project_data_destination is None or project_data_destination == "": project_data_destination = os.path.join(self.config.getPathToProjectsFolder(),utils.cleanStringForSysName(project.name))
-            self.createProjectDataStructure(project,project_data_destination)
-        #Set create project as current project
-        self.activeProject = project
+            if project_data_destination is None or project_data_destination == "": project_data_destination = os.path.join(self.config.getPathToProjectsFolder(),utils.cleanStringForSysName(projectLight.name))
+            self.createProjectDataStructure(projectLight,project_data_destination)
+            #Add Project to existing ProjectList
+            self.projects.append(projectLight)            
+            #Save new project into dedictated db file
+            try:
+                self.saveExistingProjectsList()
+            except:
+                print("Error while saving project into "+str(self.config.getPathToProjectsDBFile())+" "+str(sys.exc_info()[0]))
+            #Cast the projectlight to project
+            project = Project(projectLight.name)
+            project = castFromProjectLight(project,projectLight)
+            #Set create project as current project
+            self.activeProject = project
     
     def checkProjectNameAlreadyExists(self,name):
         for project in self.projects:
@@ -196,65 +207,6 @@ class ProjectController():
         utils.saveProjectAsJsonFile(self.activeProject)
     
     
-    
-    def showResults(self,project):
-        print(project.name)
-        print(project.bdd_file)
-        print(project.folder)
-        print(project.date)
-        for p_scan in project._get_scans():
-            print("UID:"+p_scan.uid)
-            print("file_path:" + p_scan.file_path)
-            print("TAGS:")
-            for n_tag in p_scan._get_tags():
-                print("name:" + n_tag.name, "replace:" + n_tag.replace, "value:" + str(n_tag.value), "origin:" + n_tag.origin)
-    
-    
-    
-    
-    """def createProject(name, path):
-        #instanciate project with name
-        project = listdirectory(name, 'D :\data_nifti_json')
-        project.name = name
-        # formate le name pour virer espaces et caractère bizarres -> folder name
-        name = utils.remove_accents((name.lower()).replace(" ", "_"))
-        recorded_path = utils.findPath("controller")
-        new_path = os.path.join(recorded_path, name)
-        project_parent_folder = os.makedirs(new_path)
-        data_folder = os.makedirs(os.path.join(new_path, 'data'))
-        project_folder = os.makedirs(os.path.join(new_path, name))
-        project_path = os.path.join(new_path, name)
-        raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
-        treat_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'treat_data'))
-        # si le repertoire a bien été créé, set l'attribut folder du projet avec ton folder name (j'ai ajouté le folder name à la classe projet)
-        # setattr(Project, project.folder, name)  #pas sur du tout....
-        project.folder = name
-        project.bdd_file = path
-        # créé un fichier json avec le même nom que le repertoire -> folder_name.json
-        json_file_name = utils.createJsonFile("", name)
-        json_file_name = utils.saveProjectAsJsonFile(name, project)
-        shutil.move(name + '.json', project_path)
-        # set l'attribut bdd_file de ton projet avec le nom de ce json
-        # setattr(Project, project.bdd_file, json_file_name)
-        # project.bdd_file = json_file_name
-        # retourne l'objet Projet que tu viens de crééer'
-    
-        return project"""
-    
-    
-    
-    def open_project(self,name, path):
-        path = os.path.abspath(path)
-        if os.path.exists(path):
-            project_path = os.path.join(path, name)
-            file_path = os.path.join(project_path, name)
-            with open(file_path+".json", "r", encoding="utf-8")as fichier:
-                project = json.load(fichier, object_hook=jsonTools.deserializer)
-            return project
-        #else:
-            #print("This name of project does not exist, try a new one")
-    
-    
     def getAllTagsFile(self,path_file, project):
         list_tag = []
         for p_scan in project._get_scans():
@@ -266,31 +218,20 @@ class ProjectController():
                         pass
         return list_tag
     
-    def addTag(self,scan,tag):
-        if(tag.origin is not None or tag.origin != ''):
-            scan.addTag(tag.origin,tag)
-        else:
-            scan.addTag(TagType.CUSTOM.value,tag)
+    def addTag(self,item,tagtype,tag):
+        if(isinstance(item, Project) or isinstance(item, Scan)):
+            item.addTag(tagtype,tag)
+        
+    def updateTagName(self,item,tag_name,new_name):
+        if(isinstance(item, Project) or isinstance(item, Scan)):
+            item.updateTagName(tag_name,new_name)
+        
+    def updateTagValue(self,item,tag_name,new_value):
+        if(isinstance(item, Project) or isinstance(item, Scan)):
+            item.updateTagValue(tag_name,new_value)
+        
+    def deleteTag(self,item,tag):
+        if(isinstance(item, Project) or isinstance(item, Scan)):
+            item.deleteTag(tag)
     
-    #def add_tag_with_value(tagName, value):
-    #    Scan._tags.append(Tag(tagName, '_', value, TagType.CUSTOM))
     
-    def modified_tag_value (self,project, tagName, newValue):
-        for scan in project._get_scans():
-            for n_tag in scan._get_tags():
-                if n_tag.name == tagName:
-                    scan._tags.append(Tag(n_tag.name, '', newValue, TagType.CUSTOM))
-                    break
-                else:
-                    pass
-        return project
-    
-    def modified_tag_name(self,project, tagName, newName):
-        for scan in project._get_scans():
-            for n_tag in scan._get_tags():
-                if n_tag.name == tagName:
-                    scan._tags.append(Tag(newName, tagName, n_tag.value, TagType.CUSTOM))
-                    break
-                else:
-                    pass
-        return project

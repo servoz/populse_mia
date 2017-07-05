@@ -1,10 +1,10 @@
 from models.generics import GenericItem
 from utils.enums import TagType
 
-class Tag(GenericItem):
+class Tag():
 
     def __init__(self, name, replace, value, origin):
-        GenericItem.__init__(self)
+        #GenericItem.__init__(self)
         self.name = name
         self.replace = replace
         self.value = value
@@ -119,6 +119,24 @@ class Scan(GenericItem):
 
     def delete_tag(self, tag):
         self._get_delete_tags().append(tag)
+        
+    def updateTagValue(self, tag_name, new_value):
+        for n_tag in self._get_tags():
+            if n_tag.name == tag_name:
+                self._get_tags().append(Tag(n_tag.name, '', new_value, TagType.CUSTOM))
+                break
+            else:
+                pass
+        return self
+    
+    def updateTagName(self, tag_name, new_name):
+        for n_tag in self._get_tags():
+            if n_tag.name == tag_name:
+                self._get_tags().append(Tag(new_name, tag_name, n_tag.value, TagType.CUSTOM))
+                break
+            else:
+                pass
+        return self
 
 class ProjectLight(GenericItem):
 
@@ -179,8 +197,35 @@ class Project(ProjectLight):
                         result.append(tagname)
         return result
 
+    def addTag(self, tagtype, tag):
+        for scan in self._get_scans():
+            scan.addTag(tagtype, tag)
+        return self
+
+    def deleteTag(self,tag):
+        for scan in self._get_scans():
+            scan.deleteTag(tag)
+        return self
+
+    def updateTagValue(self, tag_name, new_value):
+        for scan in self._get_scans():
+            scan.updateTagValue(tag_name, new_value)
+        return self
+    
+    def updateTagName(self, tag_name, new_name):
+        for scan in self._get_scans():
+            scan.updateTagName(tag_name, new_name)
+        return self
 
     
-
+def castFromProjectLight(project,projectLight):
+    project.uid = projectLight.uid
+    project.name = projectLight.name
+    project.folder = projectLight.folder
+    project.raw_data = projectLight.raw_data
+    project.processed_data = projectLight.processed_data
+    project.bdd_file = projectLight.bdd_file
+    project.date = projectLight.date
+    return project
         
         
