@@ -5,6 +5,7 @@ from utils import utils
 from utils.enums import OpStatus
 from utils.enums import FilterOperator
 from utils.enums import FilterOn
+from multiprocessing import Process
 
 
 class Filter(GenericItem):
@@ -32,54 +33,91 @@ class Filter(GenericItem):
         return True
         
     def matches(self,toBeMatched):
-        if(self.filterOn == FilterOn.TAG):
-            #First check if tag  exists for scan to be matched
-            if(self.name in toBeMatched.getAllTagsNames()):
-                #Then check value if has value
-                if(self.value is not None):
-                    for tag in toBeMatched.getAllTags():
-                        if(tag.name == self.name):
-                            if(self.isExactly):
-                                if(self.isCaseSensitive):
-                                    if(utils.normalize_casewith(utils.cleanTagValue(tag.value)) == utils.normalize_casewith(self.value)):
-                                        return True
+        if isinstance(toBeMatched, Scan):
+            if(self.filterOn == FilterOn.TAG):
+                #First check if tag  exists for scan to be matched
+                if(self.name in toBeMatched.getAllTagsNames()):
+                    #Then check value if has value
+                    if(self.value is not None):
+                        for tag in toBeMatched.getAllTags():
+                            if(tag.name == self.name):
+                                if(self.isExactly):
+                                    if(self.isCaseSensitive):
+                                        if(utils.normalize_casewith(utils.cleanTagValue(tag.value)) == utils.normalize_casewith(self.value)):
+                                            return True
+                                    else:
+                                        if(utils.normalize_caseless(utils.cleanTagValue(tag.value)) == utils.normalize_caseless(self.value)):
+                                            return True                                        
                                 else:
-                                    if(utils.normalize_caseless(utils.cleanTagValue(tag.value)) == utils.normalize_caseless(self.value)):
-                                        return True                                        
-                            else:
-                                if(self.isCaseSensitive):
-                                    if(utils.normalize_casewith(utils.cleanTagValue(tag.value)) in utils.normalize_casewith(tag.value)):
-                                        return True
-                                else:
-                                    if(utils.normalize_caseless(utils.cleanTagValue(tag.value)) in utils.normalize_caseless(tag.value)):
-                                        return True
+                                    if(self.isCaseSensitive):
+                                        if(utils.normalize_casewith(utils.cleanTagValue(tag.value)) in utils.normalize_casewith(tag.value)):
+                                            return True
+                                    else:
+                                        if(utils.normalize_caseless(utils.cleanTagValue(tag.value)) in utils.normalize_caseless(tag.value)):
+                                            return True
+        if isinstance(toBeMatched, Argument):
+            '''TODO implements filter on argument'''
+            return True
         return False
             
     def execute(self):
         print("Loading filter on "+self.filterOn+" value "+self.value)
 
 
+
+        
+    
 class TreeOperator(GenericItem):
     
-    def __init__(self):
+    def __init__(self, pipeline = None):
         GenericItem.__init__(self)
         self.status = OpStatus.PENDING #Enum(hold,completed,running,waiting,failed)
         self._inputFilters = [] #list of filterWithOperator in input of the operator
         self._outputFilters = [] #list of filterWithOperator in output of the operator
-        self._previousTreeOperators = [] #List of uids of previous operators in the tree
-        self._nextTreeOperators = [] #List of uids of previous operators in the tree
+        self._links = [] #List of links ids
+        self.pipeline = pipeline
 
-    def _get_inputFilters(self):
+    def getInputFilters(self):
         return self._inputFilters
     
-    def _get_outputFilters(self):
+    def getOutputFilters(self):
         return self._outputFilters
     
-    def _get_previousTreeOperators(self):
-        return self._previousTreeOperators
+    def getLinks(self):
+        return self._links
+    
+    def getPreviousTreeOperatorsIds(self):
+        previousOps = []
+        #get the links from operator
+        for link_uid in self.getLinks():
+            #find the link object into pipeline parent
+            link = self.pipeline.tree[link_uid]
+            #Only where current is destination
+            if link.destination == self.uid: previousOps.append(link.source)
+        return previousOps
 
-    def _get_nextTreeOperators(self):
-        return self._nextTreeOperators
+    def getNextTreeOperatorsIds(self):
+        nextOps = []
+        #get the links from operator
+        for link_uid in self.getLinks():
+            #find the link object into pipeline parent
+            link = self.pipeline.tree[link_uid]
+            #Only where current is source
+            if link.source == self.uid: nextOps.append(link.destination)
+        return nextOps
+    
+    #on update status, we should call check if pipeline completed
+    def updateStatus(self,status):
+        self.status = status
+        #Tell the pipeline that status has changed
+        self.pipeline.onUpdateStatus(self)
+        #If the status is failed then all next operators will be unexecutables
+        if status == OpStatus.FAILED:
+            for op_uid in self.getNextTreeOperators():
+                self.pipeline.tree[op_uid].status = OpStatus.UNEXECUTABLE
+        elif status == OpStatus.COMPLETED:
+            #call pipeline to launch next operators
+            self.pipeline.executeNext()
     
     #Gives a list of inputs, return a filtered list
     def filterInputs(self,inputs):
@@ -87,7 +125,7 @@ class TreeOperator(GenericItem):
         #iterate on inputs and add them to list if it matches the filters
         for current in inputs:
             letThrough = []
-            for opfilter in self._get_inputFilters():
+            for opfilter in self.getInputFilters():
                 if(opfilter.matches(current)):
                     letThrough.append(True)
                 else:
@@ -100,7 +138,7 @@ class TreeOperator(GenericItem):
         filteredOutputs = []
         for current in outputs:
             letThrough = []
-            for opfilterWO in self._get_inputFilters():
+            for opfilterWO in self.getOutputFilters():
                 if(opfilterWO.filter.matches(current)):
                     letThrough.append(True)
                 else:
@@ -108,56 +146,73 @@ class TreeOperator(GenericItem):
             if False not in letThrough: filteredOutputs.append(current)
         return filteredOutputs
       
-    def getInputsScans(self):
-        print('getInputsScans...')
+    def getInputs(self):
+        print('getInputs...')
         inputs = []
         if(isinstance(self, TreeIterator)):
-            inputs.extend(self.treeOperator.getInputsScans())
+            for top in self.getTreeOperators():
+                inputs.extend(top.getInputs())
         if(isinstance(self, TreeFilter)):
-            for pc in self._get_pcListToFilter():
-                inputs.extend(pc._get_inputScans())
+            for pc in self.getPcListToFilter():
+                inputs.extend(pc.getInputs())
         if(isinstance(self, TreePipeline)):
-            inputs.extend(self.pipeline._get_inputScans())
+            inputs.extend(self.pipeline.getInputs())
         if(isinstance(self, TreeExecutor)):
-            inputs.extend(self.module._get_inputScans())
-        return inputs
+            inputs.extend(self.module.getInputs())
+        return self.filterInputs(inputs)
+    
+    def getOutputs(self):
+        print('getOutputsScans...')
+        outputs = []
+        #TreeIterator, get outputs from operator inside iterator
+        if(isinstance(self, TreeIterator)):
+            outputs.extend(self.treeOperator.getOutputs())
+        #TreeFilter, get Filtered outputs
+        if(isinstance(self, TreeFilter)):
+            for pc in self.getPcListToFilter():
+                outputs.extend(pc.getOutputs())
+        #TreePipeline getOutputs from pipeline inside it
+        if(isinstance(self, TreePipeline)):
+            outputs.extend(self.pipeline.getOutputs())
+        #TreeExecutor getOutputs from module
+        if(isinstance(self, TreeExecutor)):
+            outputs.extend(self.module.getOutputs())
+        return self.filterOutputs(outputs)
          
-    def getOutputsScansFromPreviousTreeOperator(self):
-        print('getOutputsScansFromPreviousTreeOperator...')
+    def getOutputsFromPreviousTreeOperators(self):
+        print('getOutputsFromPreviousTreeOperator...')
         print('ids of previous operators :')
-        for pv in self._get_previousTreeOperators():
-            print('id : '+str(pv.uid))
+        for pv in self.getPreviousTreeOperatorsIds():
+            print('id : '+str(pv))
         
         outputs = []
-        for previous in self._get_previousTreeOperators():
-            print('previous operator is '+str(previous.uid)+ ' is '+type(previous).__name__)
-            if(isinstance(previous, TreeIterator)):
-                outputs.extend(previous.getOutputsScansFromPreviousTreeOperator())
-            if(isinstance(previous, TreeFilter)):
-                for pc in previous._get_pcListToFilter():
-                    outputs.extend(pc._get_outputScans())
-            if(isinstance(previous, TreePipeline)):
-                outputs.extend(previous.pipeline._get_outputScans())
-                print('Is TreePipeline with '+str(len(outputs))+ 'scans')
-            if(isinstance(previous, TreeExecutor)):
-                outputs.extend(previous.module._get_outputScans())
+        #If there is no previous operator, then get the inputs of parent Pipeline
+        previousOpIds = self.getPreviousTreeOperatorsIds()
+        if not previousOpIds:
+            outputs = self.pipeline.getInputs()
+        else:
+            for pid in self.getPreviousTreeOperatorsIds():
+                previous = self.pipeline[pid]
+                outputs.extend(previous.getOutputs())
         return outputs
     
     def filterAndPassInputsToProducerConsumer(self,inputs):
         filteredInputs = self.filterInputs(inputs)
         if(isinstance(self, TreeIterator)):
-            self.treeOperator.filterAndPassInputsToProducerConsumer(set(filteredInputs))
+            for top in self.getTreeOperators():
+                top.filterAndPassInputsToProducerConsumer(set(filteredInputs))
         if(isinstance(self, TreeFilter)):
-            for pc in self._get_pcListToFilter():
-                pc._inputScans.extend(set(filteredInputs))
+            for pc in self.getPcListToFilter():
+                pc._inputs.extend(set(filteredInputs))
         if(isinstance(self, TreePipeline)):
-            self.pipeline._inputScans.extend(set(filteredInputs))
+            self.pipeline._inputs.extend(set(filteredInputs))
         if(isinstance(self, TreeExecutor)):
             #self.module._inputScans.extend(set(filteredInputs))
-            self.module._inputScans = set(filteredInputs)
+            self.module._inputs.extend(set(filteredInputs))
+            print("Module in executor has "+str(len(self.module._inputs))+" scans")
     
     def isReadyToExecute(self):
-        previousOps = self._get_previousTreeOperators()
+        previousOps = self.getPreviousTreeOperatorsIds()
         #For each check the status
         previousStatuses = []
         for previous in previousOps:
@@ -167,73 +222,97 @@ class TreeOperator(GenericItem):
         else:
             return False
                 
-    def execute(self):
-        print("Executing operator on "+self.uid+" type "+self.otype)
+    #the tree operator will be executed on given inputs
+    def execute(self,inputs):
+        #Set status to RUNNING
+        self.updateStatus(OpStatus.RUNNING)
+        #Get inputs from previous operators
+        #inputs = self.getOutputsFromPreviousTreeOperators()
+        self.filterAndPassInputsToProducerConsumer(inputs)
+        print("Executing operator on "+self.uid)
+        self.doJob()
+                
+        
 
+    def doJob(self):
+        #Nothin to do, it is a parent class
+        pass
+
+class TreeLink(TreeOperator):
+        
+    def __init__(self, source,destination, pipeline = None):
+        TreeOperator.__init__(self,pipeline)
+        self.status = OpStatus.COMPLETED
+        self.source = source #id of tree operator source of link
+        self.destination = destination #id of operator destination of link
 
 class TreeIterator(TreeOperator):
     
-    def __init__(self, iterateOn, treeOperators):
-        TreeOperator.__init__(self)
+    def __init__(self, iterateOn, treeOperators, pipeline = None):
+        TreeOperator.__init__(self,pipeline)
         self.iterateOn = iterateOn #Can iterate on Filter which is set on Tag/Scan/filename setted in filter
         self._treeOperators = treeOperators #treeOperator to execute on each iteration
     
-    def _get_treeOperators(self):
+    def getTreeOperators(self):
         return self._treeOperators  
     
-    def execute(self):
-        #Get the outputs of previous operators
-        inputs = self.getOutputsScansFromPreviousTreeOperator()
-        print('Executing tree iterator with '+str(len(inputs))+' scans')
+    def doJob(self):
         #Meaning that we will pass the sub group inputs to the tree operator inside the tree iterator
         #Need to group scans according to iterateOn
-        groupScansDict = groupScansBy(inputs, self.iterateOn)
+        groupScansDict = groupScansBy(self.getInputs(), self.iterateOn)
         #So we have a dictionnary with grouped scans according to iterator
         #Then we can iterate on dict keys and execute the treeiteraor operator attribute on grouped scans
         for cuFilter in groupScansDict.keys():
-            for treeOperator in self._get_treeOperators():
+            for treeOperator in self.getTreeOperators():
                 print('Filter on iterator is '+cuFilter.name+' on '+cuFilter.value)
-                treeOperator.filterAndPassInputsToProducerConsumer(groupScansDict[cuFilter])
-                treeOperator.execute()
+                treeOperator.execute(groupScansDict[cuFilter])
         
             
 
 class TreeExecutor(TreeOperator):
     
-    def __init__(self,module):
-        TreeOperator.__init__(self)
+    def __init__(self,module, pipeline = None):
+        TreeOperator.__init__(self,pipeline)
         self.module = module
     
-    def _get_inputFilters(self):
-        for consume in self.module._get_consumes():
+    def getInputFilters(self):
+        for consume in self.module.getConsumes():
             self._inputFilters.append(consume)
         return list(self._inputFilters)
     
-    def execute(self):
+    def doJob(self):
         print("Executing module in executor "+str(self.uid))
-        self.module.execute()
+        #In the tree executor, we use multithreading for execution
+        #process = Process(target = self.module.execute(self.getInputs()))
+        #process.start()
+        self.updateStatus(OpStatus.COMPLETED)
+        
 
 
 class TreePipeline(TreeOperator):
     
-    def __init__(self, pipeline):
-        TreeOperator.__init__(self)
+    def __init__(self, pipeline, pipelineOwner = None):
+        TreeOperator.__init__(self,pipelineOwner)
         self.pipeline = pipeline #Is designed to execute the pipeline inside it
         
-    def execute(self):
+    def doJob(self):
         print("Executing pipeline in tree pipeline "+str(self.uid))
-        self.pipeline.execute()
+        self.pipeline.execute(self.getInputs())
         
 class TreeFilter(TreeOperator):
     
-    def __init__(self,filters):
-        TreeOperator.__init__(self)
+    def __init__(self,filters, pipeline= None):
+        TreeOperator.__init__(self, pipeline)
         self.filters = filters #Is designed to execute the pipeline inside it
         self._pcListToFilter = [] #List of ProducerCOnsumers objects on which to use filter
         
-    def _get_pcListToFilter(self):
+    def getPcListToFilter(self):
         return self._pcListToFilter
 
+    def doJob(self):
+        #Nothing to do, filter should be automatic
+        pass
+        
 
 #################""PIPELINE RUN MODELS #################"
 
@@ -260,57 +339,50 @@ class ArgumentParam(Argument):
                
 class ProducerConsumer(GenericItem):
         
-    def __init__(self, name):
+    def __init__(self, name, owner=None):
         GenericItem.__init__(self)
         self.name = name
-        self._inputScans = [] #List of scans to be used as inputs
-        self._outputScans = [] #List of scans created as outputs
-        self._inputArgs = [] #List of args to be used as inputs
-        self._outputArgs = [] #List of args created as outputs
+        self.owner = owner
+        self._inputs = [] #List of inputs (scans,arguments,file...)
+        self._outputs = [] #List of outputs (scans,arguments,file...)
         self._consumes = []  #Definition of what is consommed by the Object 
         self._produces = [] #Definition of what is produced by the Object 
     
-    def _get_inputScans(self):
-        return self._inputScans
+    def getInputs(self):
+        return self._inputs
     
-    def _get_outputScans(self):
-        return self._outputScans    
-    
-    def _get_inputArgs(self):
-        return self._inputArgs
-    
-    def _get_outputArgs(self):
-        return self._outputArgs
-    
-    def _get_consumes(self):
+    def getOutputs(self):
+        return self._outputs    
+        
+    def getConsumes(self):
         return self._consumes
     
-    def _get_produces(self):
+    def getProduces(self):
         return self._produces
     
     def addConsumesConstraint(self, pcConstraint):
         self._consumes.append(pcConstraint)
-        return self._get_consumes()
+        return self.getConsumes()
     
     def removeConsumesConstraint(self, pcConstraint):
         self._consumes.remove(pcConstraint)
-        return self._get_consumes()
+        return self.getConsumes()
     
     def addProducesConstraint(self, pcConstraint):
         self._produces.append(pcConstraint)
-        return self._get_produces()
+        return self.getProduces()
     
     def removeProducesConstraint(self, pcConstraint):
         self._produces.remove(pcConstraint)
-        return self._get_produces()
+        return self.getProduces()
         
     def execute(self):
         #GetInputs
         print("Loading "+self.uid+" "+self.name)
         #SetOutputs
         #For now inputs = outputs
-        self._get_outputScans().extend(self._get_inputScans())
-        
+        self.getOutputs().extend(self.getInputs())
+        self.owner.updateStatus(status)
 
 class LauncherTemplate(ProducerConsumer):
         
@@ -328,8 +400,8 @@ class ModuleLauncher(ProducerConsumer):
         ProducerConsumer.__init__(self, name)
         self.template = template #Is a LauncherTemplate
         
-    def _get_consumes(self):
-        self._consumes.extend(self.template._get_consumes())
+    def getConsumes(self):
+        self._consumes.extend(self.template.getConsumes())
         return list(self._consumes)
         
     def execute(self):
@@ -342,113 +414,115 @@ class Module(ProducerConsumer):
         self.launcher = launcher #Is a ModuleLauncher
         self.successful = False
         
-    def _get_consumes(self):
-        self._consumes.extend(self.launcher._get_consumes())
+    def getConsumes(self):
+        self._consumes.extend(self.launcher.getConsumes())
         return list(self._consumes)
        
-    def execute(self):
+    def execute(self,inputs):
         print("Executing "+self.name+" "+self.launcher.name)
         print("List of inputs ")
-        for scan in self._get_inputScans():
+        for scan in inputs:
             print(scan.file_path)
             
 class Pipeline(ProducerConsumer):
         
     def __init__(self, name):
         ProducerConsumer.__init__(self, name)
-        self.tree = dict() # Map<level, List<TreeOperator>>
-        #Automatically set levl 1 with empty list
-        self.tree[1] = []
+        self.tree = dict() # Map<operator id, TreeOperator
+        
     
     def getLastLevel(self):
         #if not self.tree: return 1
         return max(self.tree, key=self.tree.get)
     
-    #This will add level in the pipeline if it does not exists
-    #Move existing operators in sublevels
-    def addLevel(self,levelRow):
-        #save operators beyond levelRow in temp dictionnary
-        tempDict = dict()
-        lastLevel = 1
-        if self.tree:
-            #lastLevel = self.getLastLevel()
-            lastLevel = max(self.tree, key=self.tree.get)
-        index = levelRow
-        while index <= lastLevel :
-            #Put temp List(TreeOperator) in tmp dict if there is something to put
-            if not self.tree.get(index):
-                tempDict[index+1] = self.tree.get(index)
-                index += 1
-        #Then insert the new Level
-        self.tree[levelRow] = []
-        #Then update values in tree after the inserted level
-        index2 = levelRow+1
-        while index2 <= max(tempDict, key=tempDict.get):
-            #First add the new level in the tree
-            self.tree[index2] = tempDict[index2]
-            index2 +=1
-            
-    def deleteLevel(self,levelRow):
-        #save operators beyond levelRow in temp dictionnary
-        tempDict = dict()
-        #lastLevel = self.getLastLevel()
-        lastLevel = max(self.tree, key=self.tree.get)
-        #only keeps the ones after the deleted level
-        index = levelRow+1
-        while index <= lastLevel :
-            #Put temp List(TreeOperator) in tmp dict
-            tempDict[index] = self.tree.get(index)
-            index += 1
-        #Then set the new values over previous ones
-        index2 = levelRow
-        while index2 <= max(tempDict, key=tempDict.get):
-            #First add the new level in the tree
-            self.tree[index2] = tempDict[index2-1]
-            index2 += 1
-    
-    
-    def addOperatorOnLevel(self,levelRow, treeOperator):
-        self.tree[levelRow].append(treeOperator)
+    def addOperator(self,operator):
+        self.tree[operator.uid]= operator
         
-    def removeOperatorOnLevel(self,levelRow, treeOperator):
-        self.tree[levelRow].remove(treeOperator)
+    def removeOperator(self,operator):
+        del self.tree[operator.uid]
+        
+    def addLink(self,source,destination):
+        link = TreeLink(source,destination,self)
+        #Add the link to source and destination operators
+        self.tree[source.uid].getLinks().append(link.uid)
+        self.tree[destination.uid].getLinks().append(link.uid)
+        #Add the link into the pipeline tree
+        self.addOperator(link)
+        
+    def removeLink(self,link):
+        #Get the source and destination of link into the tree
+        for link_uid in self.tree[link.source].getLinks():
+            if link.uid == link_uid: self.tree[link.source].getLinks().remove(link_uid)
+        for link_uid in self.tree[link.destination].getLinks():
+            if link.uid == link_uid: self.tree[link.destination].getLinks().remove(link_uid)
+        #Remove the link from the tree
+        self.removeOperator(link)
     
-    def getLevelForOperator(self, treeOperator):
-        for key in self.tree.keys():
-            for op in self.tree.get(key):
-                if op is treeOperator: return key
-                
-    def getOperatorsFromLevel(self, level):
-        return self.tree.get(level)        
     
-    def execute(self):
+    def findOperatorsWithoutNext(self):
+        result = []
+        for op_uid in self.tree.keys():
+            if not self.tree[op_uid].getNextTreeOperators(): result.append(self.tree[op_uid])
+        return result                
+    
+    def getTreeStatuses(self):
+        treeStatuses = []
+        #get all status from tree at this time (links are always completed)
+        for op_uid in self.tree.keys():
+            treeStatuses.append(self.tree[op_uid].status)
+        return treeStatuses
+    
+    def onUpdateStatus(self,operator):
+        print("Status updated for operator "+operator.uid+" "+operator.status.value)
+            
+    def isPipelineDone(self):
+        treeStatuses = self.getTreeStatuses()            
+        if (treeStatuses.count(OpStatus.COMPLETED)+treeStatuses.count(OpStatus.FAILED)) == len(self.tree.keys()):
+            return True
+        return False
+            
+    def getPipelineStatus(self):
+        treeStatuses = self.getTreeStatuses()
+        if treeStatuses.__contains__(OpStatus.FAILED):return OpStatus.FAILED
+        return OpStatus.COMPLETED   
+        
+    
+    def findOperatorsReady(self):
+        result = []
+        for op_uid in self.tree.keys():
+            #If do not have precedence
+            if not self.tree[op_uid].getPreviousTreeOperatorsIds() and self.tree[op_uid].status == OpStatus.PENDING: 
+                result.append(self.tree[op_uid])
+            else:
+                if self.tree[op_uid].status == OpStatus.PENDING:
+                    previousOpsStatuses = []
+                    for previousOpUid in self.tree[op_uid].getPreviousTreeOperatorsIds():
+                        previousOpsStatuses.append(self.tree[previousOpUid].status)
+                    if previousOpsStatuses.count(OpStatus.COMPLETED) == len(self.tree[op_uid].getPreviousTreeOperatorsIds()):
+                        result.append(self.tree[op_uid])
+        return result
+    
+    
+    def execute(self,inputs):
+        self.getInputs().extend(inputs)
         #When executing pipeline
         #we will call execute on each tree operator, when it's its turn
-        #So we start by the tree level, get previous operator status
-        #If the status is completed or successful or whatever
-        #Then we can execute the current operator
-        #else we go check the status of previous operator, until we reach the first or the last completed
-        #1 get last level
-        lastLevel = self.getLastLevel()
-        #2 get operator on this level
-        self.tryToExecuteOperatorsOnLevel(lastLevel)
-                        
-        print("Executing pipeline "+self.name)
+        #So iterate on operators ready
+        while not self.isPipelineDone():
+            self.executeNext()
+        
+        self.status = self.getPipelineStatus()  
+        
+        print("Pipeline status is  "+self.status.value)
+        return self.status
     
-    def tryToExecuteOperatorsOnLevel(self,level):
-        levelOperators = self.tree.get(level)
-        if(level > 1):
-            #For each operator which is not completed, check if previous ones have been completed
-            for op in levelOperators:
-                if(op.status != 'completed'):
-                    if op.isReadyToExecute():
-                        op.execute();
-                    else:
-                        self.tryToExecuteOperatorsOnLevel(level-1)
-        else:
-            #As we are on level 1, directly execute all operators on this level
-            for op in levelOperators:
-                op.execute()
+    def executeNext(self):
+        readyOps = self.findOperatorsReady()
+        print("OPERATORS READY FOR EXECUTION")
+        for op in readyOps:
+            print("OP ID "+op.uid)
+            #manage inputs/outputs of operators
+            op.execute(op.getOutputsFromPreviousTreeOperators())
     
 
 def getFilteredScans(scans, filter):

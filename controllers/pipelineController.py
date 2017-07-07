@@ -1,13 +1,14 @@
 from utils.enums import FilterOn
 from utils.enums import FilterOperator
 from utils import utils
-from models.pipBuildModels import Filter
+from models.pipelineModels import Filter
 
 class PipelineController():
-    def __init__(self,parent):
-        self.parent = parent
-        self.pipelineModel = pipelineModel(self) # initializes the model containing all data
-        self.view = MyView(self)  #initializes the view
+    def __init__(self,config):
+        #set the config
+        self.config = config
+        self.pipeline = None # initializes the model containing all data
+        #self.view = MyView(self)  #initializes the view
  
         #initialize properties in view, if any
         pass
@@ -15,7 +16,18 @@ class PipelineController():
         #initalize properties in model, if any
         pass
     
+    def setPipeline(self,pipeline):
+        self.pipeline = pipeline
+    
     def loadPipeline(self, uid):
+        pass
+    
+    def addLink(self,source,destination):
+        self.pipeline.addLink(source,destination)
+        
+    def launchPipeline(self,inputs):#Get the selected inputs on which to launch pipeline
+        print("Launching pipeline on "+str(len(inputs)))
+        self.pipeline.execute(inputs)
         
 
 def getFilteredScans(scans, filter):

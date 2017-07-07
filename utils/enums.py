@@ -6,6 +6,7 @@ class OpStatus(Enum):
     FAILED = "failed"
     PENDING = "pending"
     RUNNING = "running"
+    UNEXECUTABLE = "unexecutable"
     
 class FilterOperator(Enum):
     AND = "and"
