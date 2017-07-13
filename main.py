@@ -12,10 +12,11 @@ print('IS MY CONFIG NULL ? '+str(config))
 projectController = ProjectController(config)
 #display the list of existing projects
 for project in projectController.projects:
+    print('UID '+project.uid)
     print('NAME '+project.name)
     print('FOLDER '+project.folder)
    
-isCreateTest = True
+isCreateTest = False
 if(isCreateTest):
     #Create a new Project
     projectController.createProject("SimonTest3",None)
@@ -36,10 +37,11 @@ if(isCreateTest):
     projectController.saveProjectToFile()
     print("Save project to db....Done") 
 else:
-    projectController.loadProject('d6c86a45-0d5f-4bc7-b75e-804e38825ede')
+    projectController.loadProject('8f02013b-7453-43cf-be1a-9509d118abac')
     print("Active project "+projectController.activeProject.name)
     for scan in projectController.activeProject._get_scans():
         print("Scan file :"+scan.file_path)
+        print("COUNT TAGS "+str(len(scan.getAllTags())))
 
    
 

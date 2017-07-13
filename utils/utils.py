@@ -4,6 +4,8 @@ import shutil
 import fnmatch
 
 
+
+
 def getFilePathWithoutExtension(filename, folder):
     filepath = path.join(folder,filename)
     return filepath[:filepath.rfind('.')]

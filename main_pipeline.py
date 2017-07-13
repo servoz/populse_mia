@@ -59,16 +59,21 @@ filterSeriesDescription = Filter(FilterOn.TAG,'SeriesDescription', '02_MTI-T1' ,
 
 #TreeOperators
 executorT1_SPM = TreeExecutor(moduleT1_SPM, mainPipeline)
+executorT1_SPM.uid = "MY EXECUTOR T1"
 treeIterator = TreeIterator(Filter(FilterOn.TAG,'SeriesDescription', None, False, False, FilterOperator.OR), [executorT1_SPM],mainPipeline) 
+treeIterator.uid = "MY ITERATOR "
 executorT2_SPM = TreeExecutor(moduleT2_SPM, mainPipeline)
+executorT2_SPM.uid = "MY EXECUTOR T2 "
 executorGrubASL = TreeExecutor(moduleGrub_ASL, mainPipeline)
 executorAverage = TreeExecutor(moduleAverage, mainPipeline)
 executorMatrice = TreeExecutor(moduleMatrice, mainPipeline)
 
 #Build the pipeline
 mainPipeline.addOperator(executorT2_SPM)
-#mainPipeline.addOperator(treeIterator)
-#pipelineController.addLink(executorT2_SPM,treeIterator)
+mainPipeline.addOperator(treeIterator)
+pipelineController.addLink(executorT2_SPM,treeIterator)
+treeIterator.addOperator(executorT1_SPM)
+print(mainPipeline.tree)
 
 #Execute pipeline
 pipelineController.launchPipeline(inputs)

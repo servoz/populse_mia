@@ -37,7 +37,7 @@ class Scan(GenericItem):
     def getAllTags(self):
         result = []
         for origin in TagType:
-            result.extend(self.getAllTagsByOrigin(origin.value))
+            result.extend(self.getAllTagsByOrigin(origin))
         return result    
    
     def getAllTagsByOrigin(self,origin):
@@ -79,10 +79,10 @@ class Scan(GenericItem):
         deleteTag = []
         replaceTag = []
         for tag in self._get_delete_tags():
-            if tag.name not in deleteTag and tag.origin == origin.value:
+            if tag.name not in deleteTag and tag.origin == origin:
                 deleteTag.append(tag.name)
         for tag in self._get_tags():
-            if tag.name not in deleteTag and tag.name not in result and tag.origin == origin.value:
+            if tag.name not in deleteTag and tag.name not in result and tag.origin == origin:
                 if tag.replace != "":
                     result.append(tag.name)
                     replaceTag.append(tag.replace)
@@ -138,6 +138,9 @@ class Scan(GenericItem):
                 pass
         return self
 
+#ProjectLight is same as a Project but without all data Scan/Tags
+#So it can be stored in the db file projects.json to store all existing projects
+#Project data are stored in the dedicated Project file (among with the rest)
 class ProjectLight(GenericItem):
 
     def __init__(self, name):
@@ -217,7 +220,7 @@ class Project(ProjectLight):
             scan.updateTagName(tag_name, new_name)
         return self
 
-    
+#The point is get a Project instance from a loaded project 
 def castFromProjectLight(project,projectLight):
     project.uid = projectLight.uid
     project.name = projectLight.name

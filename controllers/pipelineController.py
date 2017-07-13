@@ -7,8 +7,12 @@ class PipelineController():
     def __init__(self,config):
         #set the config
         self.config = config
-        self.pipeline = None # initializes the model containing all data
+        self.pipeline = None 
         #self.view = MyView(self)  #initializes the view
+        #The view should only communicates with the controller, not with the models
+        #So methods may seem duplicates but it's the way to do it
+        #So when a model like tree operator updateSTatus, it tells the controller that will update the view accordingly for example
+        #In models, the is no view, the controller does all the communication job
  
         #initialize properties in view, if any
         pass

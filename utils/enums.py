@@ -11,11 +11,13 @@ class OpStatus(Enum):
 class FilterOperator(Enum):
     AND = "and"
     OR = "or"
+    NONE = "none"
     
 class FilterOn(Enum):
     TAG = "Tag"
     FILENAME = "Filename"
     ATTRIBUTE = "Attribute"
+    BLANK = "Blank"
     
 class TagType(Enum):
     JSON = "Json"
