@@ -415,6 +415,8 @@ class TreeIterator(TreeOperator):
                 print('Setting up statuses with key '+cuFilter.name+' on '+cuFilter.value)
                 treeOperator.updateStatus(executionKey,OpStatus.PENDING)
             
+        for cuFilter in groupInputsDict.keys():
+            executionKey = self.getExecutionKey(cuFilter)            
             #For each iterator, execute the operator
             #it will call the execute method in TreeOperator parent, so filter inputs and manage status
             #The doJob method of each operator iterated will be called also
