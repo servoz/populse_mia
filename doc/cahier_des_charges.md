@@ -26,3 +26,17 @@
 ### Programming language
 
 ## Existing features and libraries
+
+### Third party libraries
+
+#### nipype
+
+#### CAPSUL
+
+### Features implemented locally
+
+#### Data conversion
+
+#### Tagging Data
+
+#### Class layout
