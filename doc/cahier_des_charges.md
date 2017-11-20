@@ -3,6 +3,20 @@
 
 ## What is MIA2?
 
+## Definition of Terminology
+
+### Data analysis project
+
+### Data
+
+### Metadata
+
+### Pipeline
+
+### Processing modules
+
+### Data tags
+
 ## Required Features
 
 ## Desirable Features
