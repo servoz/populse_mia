@@ -3,6 +3,8 @@
 
 ## What is MIA2?
 
+![Architecture of the MIA2 software](images/Architecture.svg)
+
 ## Definition of Terminology
 
 ### Data analysis project
