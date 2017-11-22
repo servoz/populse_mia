@@ -4,6 +4,7 @@
 ## What is MIA2?
 
 ![Architecture of the MIA2 software](images/Architecture.svg)
+![Architecture of the MIA2 software](images/Architecture.png)
 
 ## Definition of Terminology
 
