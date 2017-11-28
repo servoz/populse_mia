@@ -102,10 +102,13 @@ The software will be divided into separate blocks. Some of these modules corresp
  * Definition of a processing pipeline
     * Useage via input filters on the data tags
     * 'Live' useage on input files
+    
     Construction of a processing pipeline constituted of a succession or juxtaposition of processing modules. Possibility of loops. Possibility of filters based on data tags at the inputs of processing modules. Exceptions in loops?
+    
     Possibility to save / export the processing pipeline (JSON) for use on a different machine / different project / later work on this project
     Graphical visualization of the processing pipeline
-Protocols), scilab (scicos). Possibilité d'afficher des images avec leur étiquette pour rendre la programmation plus graphique encore
+    
+    Possibility to visualize (thumbnails of) images with their tags to make user interaction more visual
     
 ### Underlying libraries
 
