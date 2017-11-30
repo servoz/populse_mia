@@ -1,5 +1,8 @@
 # TODO list of things to improve in the GitLab project
 
+ * Move all items on this TODO list to the issue tracker, once we have a
+   strategy on how to organize and handle issues.
+
 ## Repository
 
  * Import code by Roxanne (no modification history available)
