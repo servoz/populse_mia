@@ -181,6 +181,10 @@ python dictionary).
 
 #### Class layout
 
+Simon Loury has proposed an implementation of a class structure for this project,
+following discussion of our needs. The code is under src/old/MIA2_simon.
+
+![Overview of class layout by S. Loury](../src/old/MIA2_simon/docs/MIA_Diagram.png)
 
 # Cahier des charges par EB, PG, OM - parties non-encore intégrées dans le document en anglais
 
