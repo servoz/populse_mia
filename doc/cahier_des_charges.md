@@ -172,10 +172,10 @@ These filters are required at several levels:
    such a selection may be facilitated by filters. Filters are required to implement
    automatic tagging of data.
 
-The implementation of the filtering needs to be very well abstracted in the implementation
+The implementation of the filtering needs to be very well abstracted from the implementation
 of the rest of the pipeline, such that it is easy to replace the implementation by
-a different one, if necessary to make more complex requests necessary. Similarly,
-abstracting the filter implementation may allow to modify the underlying representation
+a different one, if more complex requests become necessary. Similarly, abstracting 
+the filter implementation may allow to modify the underlying representation
 of the queried meta-data, should that become necessary (e.g. database instead of 
 python dictionary).
 
