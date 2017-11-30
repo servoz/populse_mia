@@ -72,7 +72,6 @@ Python3
 
 ## Software architecture
 
-![Architecture of the MIA2 software](images/Architecture.svg)
 ![Architecture of the MIA2 software](images/Architecture2.png)
 
 The software will be divided into separate blocks. Some of these modules correspond to blocks that are visible to the user as separate tabs in the user interface. Some of the  provide the underlying functionality and are separated from the rest of the software via well defined APIs for ease of development and maintenance.
