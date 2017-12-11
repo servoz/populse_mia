@@ -101,11 +101,11 @@ The software will be divided into separate blocks. Some of these modules corresp
        Selection can be either by selecting in the data browser using a mouse pointer or keyboard (following a single or multi-column sorting), or by defining filters (i.e. queries) on the tags.     
        
  * `Rapid data processing / prototyping`:
-    Defines a simple processing step for 'live' useage (use during acquisitions next to the MRI console). The user selects a dataset accessible to the software and defines and executes a processing module: choice of the file (or tag), choice of the processing module (easy to browse list of available modules), choice of the processing parameters, choice of output options (visualization, file, database) and definition of tags for the generated images.
+    Defines a simple processing step for 'live' usage (use during acquisitions next to the MRI console). The user selects a dataset accessible to the software and defines and executes a processing module: choice of the file (or tag), choice of the processing module (easy to browse list of available modules), choice of the processing parameters, choice of output options (visualization, file, database) and definition of tags for the generated images.
 
  * `Definition of a processing pipeline`:
-    * Useage via input filters on the data tags
-    * 'Live' useage on input files
+    * Usage via input filters on the data tags
+    * 'Live' usage on input files
     * Access to the list of available bricks, with a mean to access the details of each brick (input / output parameters and related documentation, possibly with examples)
     * Pipeline definition in a script mode
     * Graphical visualization of the main characteristics of the pipeline:
@@ -133,6 +133,7 @@ The software will be divided into separate blocks. Some of these modules corresp
     * List all available brick
     * Edit the documentation about each brick
     * Add/Delete brick
+    > EC: it looks like a component / part of the more general "Definition of a processing pipeline" module above.
 
 ### Underlying libraries
 
