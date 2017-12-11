@@ -45,3 +45,13 @@
     - Brick (or pipeline component): smallest data processing unit (ex. register) - Pipeline: is constituted of one or more bricks or pipelines -> in this case we can use "module" for each box in the synoptic representation of MIA2 ?
 ---
 ```
+
+
+
+```no-highlight
+- [x] Completed task
+- [ ] Incomplete task
+    - [ ] Sub-task 1
+    - [x] Sub-task 2
+    - [ ] Sub-task 3
+```
