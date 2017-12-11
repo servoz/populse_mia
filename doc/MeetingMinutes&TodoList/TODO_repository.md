@@ -9,7 +9,7 @@
 
  * Import code by Roxanne (no modification history available)
 
-> -> David is currently working on the Roxane data, with the aims to firstly pick up what is only corresponding to the usable scripts for MAI2 (actually we have crude directory where MIA2 project and other data are mixed !). Then, David will take in hand the scripts that can be use for the MIA2 project. At this time I propose to push these scripts in GItLab.  
+> -> David is currently working on the Roxane data, with the aims to firstly pick up what is only corresponding to the usable scripts for MAI2 (actually we have crude directory where MIA2 project and other data are mixed !). Then, David will take in hand the scripts that can be used for the MIA2 project. At this time I propose to push these scripts in GItLab.  
 
  * Move scope statement to a sub(sub-)directory in the documentation folder
 
