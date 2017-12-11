@@ -79,7 +79,7 @@ The software will be divided into separate blocks. Some of these modules corresp
 
 ### User accessible tabs
 
- * Data converter / import:
+ * `Data converter / import`:
     This tab is essentially a link to "MRI file manager". The MRI file manager allows rapid visualization and conversion of MRI data. The user selects the data to be converted / imported, defines (or uses the default) destination folder, defines (or uses the default) file naming convention, and the converter places the converted files at the specified location.
 
  * Data viewer:
