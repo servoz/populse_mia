@@ -88,7 +88,8 @@ The software will be divided into separate blocks. Some of these modules corresp
     > EB: we will also need a mean to show spectra, plots linked to image and non-image data (e.g. one pixel of an image over time, values of several ROIs across parameter maps, correlations between pixel intensities of two maps, physiological parameter over time)
 
  * `Data browser / Tag manager`:
-    Provides an overview of the data available in the current analysis project (raw data and derived data). Data browser. [QUESTION FROM EB: Only image data? Non-image data should be visible somewhere as well]
+    Provides an overview of the data available in the current analysis project (raw data and derived data). Data browser.
+    > EB: Only image data? Non-image data should be visible somewhere as well !
     * Configure overview of the meta-data (from acquisition or added by the user)
     * Visualize the corresponding images in a simple and fast way (different from the data viewer above)
     * Define, edit, load and store user-defined tags
