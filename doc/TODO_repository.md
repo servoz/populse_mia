@@ -3,7 +3,7 @@
  * Move all items on this TODO list to the issue tracker, once we have a
    strategy on how to organize and handle issues.
 
-> ->  A meeting with Marjolaine is expected the week before christmans to discuss the best way for manage our project (including handle issue, strategy, gitLab uses, ...)  we can plan the move just after.
+> ->  A meeting with Marjolaine is expected the week before christmans to discuss the best way for manage our project (including handle issue, strategy, gitLab uses, ...). We can plan the move just after.
 
 ## Repository
 
