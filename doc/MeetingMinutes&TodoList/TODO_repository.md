@@ -38,5 +38,7 @@
 
  * Questions to settle:
  
-    Brick (or pipeline component): smallest data processing unit (ex. register) - Module: a brick or a pipeline - Pipeline: is constituted of one or more modules -> in this case what is the name of each box in the synoptic representation of MIA2 ?
-    Brick (or pipeline component): smallest data processing unit (ex. register) - Pipeline: is constituted of one or more bricks or pipelines -> in this case we can use "module" for each box in the synoptic representation of MIA2 ?
+---
+    - Brick (or pipeline component): smallest data processing unit (ex. register) - Module: a brick or a pipeline - Pipeline: is constituted of one or more modules -> in this case what is the name of each box in the synoptic representation of MIA2 ?
+    - Brick (or pipeline component): smallest data processing unit (ex. register) - Pipeline: is constituted of one or more bricks or pipelines -> in this case we can use "module" for each box in the synoptic representation of MIA2 ?
+---
