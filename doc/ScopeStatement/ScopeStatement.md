@@ -49,7 +49,7 @@ Data tags allow to approach processing pipelines in a conceptual fashion: Define
 ### Use cases
 
  * The user is acquiring MRI data. He or she needs to rapidly process recently acquired data to obtain informations necessary to continue the acquisitions. The software needs to allow to rapidly point to a file or dataset, to launch a processing module, to repeat the processing step on a different input dataset.
- * The user tests processing protocols: Back and forth between results and the definition of the processing pipeline. This process requires easy editing of the processing pipeline, user-friendly debugging (where did the process stop? why?), potentially sanity checks performed to detect errors in the pipeline even befoure launching it.
+ * The user tests processing protocols: Back and forth between results and the definition of the processing pipeline. This process requires easy editing of the processing pipeline, user-friendly debugging (where did the process stop? why?), potentially sanity checks performed to detect errors in the pipeline even before launching it.
  * The user needs to apply a processing pipeline defined in advance: preparation of the pipeline, execution of a saved pipeline. This process requires logging of all of the actions performed by the pipeline (processing modules, software versions, parameters...).
 
 ### Feature list
