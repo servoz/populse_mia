@@ -85,7 +85,7 @@ The software will be divided into separate blocks. Some of these modules corresp
  * `Data viewer`:
     An advanced viewer of up to 5-dimensional data, mostly but not exclusively MRI data, with the possibility to show in parallel or overlay several data sets, draw ROIs...
     Maybe this should be independent?
-    EB: we will also need a mean to show spectra, plots linked to image and non-image data (e.g. one pixel of an image over time, values of several ROIs across parameter maps, correlations between pixel intensities of two maps, physiological parameter over time)
+    > EB: we will also need a mean to show spectra, plots linked to image and non-image data (e.g. one pixel of an image over time, values of several ROIs across parameter maps, correlations between pixel intensities of two maps, physiological parameter over time)
 
  * `Data browser / Tag manager`:
     Provides an overview of the data available in the current analysis project (raw data and derived data). Data browser. [QUESTION FROM EB: Only image data? Non-image data should be visible somewhere as well]
