@@ -13,10 +13,12 @@
 
  * Move scope statement to a sub(sub-)directory in the documentation folder
 
-> -> Done !
+> -> Done!
 
  * Create folders for documentation of the work progress:
     * Meeting minutes
+
+> -> Done!
     
 ## Project management in Gitlab
 
