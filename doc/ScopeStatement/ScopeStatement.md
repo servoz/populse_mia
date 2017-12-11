@@ -79,15 +79,15 @@ The software will be divided into separate blocks. Some of these modules corresp
 
 ### User accessible tabs
 
- * Data converter / import
+ * Data converter / import:
     This tab is essentially a link to "MRI file manager". The MRI file manager allows rapid visualization and conversion of MRI data. The user selects the data to be converted / imported, defines (or uses the default) destination folder, defines (or uses the default) file naming convention, and the converter places the converted files at the specified location.
 
- * Data viewer
+ * Data viewer:
     An advanced viewer of up to 5-dimensional data, mostly but not exclusively MRI data, with the possibility to show in parallel or overlay several data sets, draw ROIs...
     Maybe this should be independent?
     EB: we will also need a mean to show spectra, plots linked to image and non-image data (e.g. one pixel of an image over time, values of several ROIs across parameter maps, correlations between pixel intensities of two maps, physiological parameter over time)
 
- * Data browser / Tag manager
+ * Data browser / Tag manager:
     Provides an overview of the data available in the current analysis project (raw data and derived data). Data browser. [QUESTION FROM EB: Only image data? Non-image data should be visible somewhere as well]
     * Configure overview of the meta-data (from acquisition or added by the user)
     * Visualize the corresponding images in a simple and fast way (different from the data viewer above)
@@ -99,7 +99,7 @@ The software will be divided into separate blocks. Some of these modules corresp
        * Derive (or assist in deriving) a filter from the selection for use in a processing pipeline
        Selection can be either by selecting in the data browser using a mouse pointer or keyboard (following a single or multi-column sorting), or by defining filters (i.e. queries) on the tags.     
        
- * Rapid data processing / prototyping
+ * Rapid data processing / prototyping:
     Defines a simple processing step for 'live' useage (use during acquisitions next to the MRI console). The user selects a dataset accessible to the software and defines and executes a processing module: choice of the file (or tag), choice of the processing module (easy to browse list of available modules), choice of the processing parameters, choice of output options (visualization, file, database) and definition of tags for the generated images.
 
  * Definition of a processing pipeline
