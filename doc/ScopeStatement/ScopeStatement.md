@@ -202,7 +202,7 @@ following discussion of our needs. The code is under src/old/MIA2_simon.
 
 	- données stockées dans une base de données type Shanoir
 
-> EC:to lighten and add ASAP to the english text above
+> EC: to lighten and add ASAP to the english text above
 
 
 
