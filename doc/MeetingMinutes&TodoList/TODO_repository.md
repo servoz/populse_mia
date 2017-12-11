@@ -32,4 +32,4 @@
  * Establish rules for pushing modifications (maintainer? pull requests?)
  * Establish development model / branching model
 
-> -> Can be defined just after the talk on GitLab of David and the meeting with Marjolaine. I propose also to establish rules for maintain the Todo list!
+> -> Can be defined just after the talk on GitLab of David and the meeting with Marjolaine. I propose also to establish rules for maintain this todo list!
