@@ -23,9 +23,13 @@
 ## Project management in Gitlab
 
  * Understand how to configure and use mailing lists, issue trackers etc.
+
+> -> This is the goal of the talk of David in the next group meeting, 9:30 September 12th 2017. A second chance will exist, the week before christmas, with Marjolaine :-)!
  
 ## General
 
  * Assign roles to developers
  * Establish rules for pushing modifications (maintainer? pull requests?)
  * Establish development model / branching model
+
+> -> Can be defined just after the talk on GitLab of David and the meeting with Marjolaine. I propose also to establish rules for maintain the Todo list!
