@@ -87,8 +87,8 @@ The software will be divided into separate blocks. Some of these modules corresp
     > JW: Maybe this should be independent?
 
  * `Data browser / Tag manager`:
-    Provides an overview of the data available in the current analysis project (raw data and derived data). Data browser.
-    > EB: Only image data? Non-image data should be visible somewhere as well !
+    Provides an overview of the data (image or non-image) available in the current analysis project (raw data and derived data). Data browser.
+    
     * Configure overview of the meta-data (from acquisition or added by the user)
     * Visualize the corresponding images in a simple and fast way (different from the data viewer above)
     * Define, edit, load and store user-defined tags
