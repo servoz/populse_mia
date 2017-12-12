@@ -133,7 +133,6 @@ The software will be divided into separate blocks. Some of these modules corresp
     * Edit the documentation about each brick
     * Add/Delete brick
 
-    > EC: it sounds like a component / part of the more general "Definition of a processing pipeline" module above.
 
 ### Underlying libraries
 
