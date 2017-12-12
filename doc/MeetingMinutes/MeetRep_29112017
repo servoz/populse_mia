@@ -1,0 +1,37 @@
+Reunion MIA2 29.11.2017 10:30 BL, JW, PG, OM, EB, EC
+
+- David Harbine : Arrivee le 1 dec 2017 9:30 → Bureau entree droite eq5.
+	#Prise en charge gene : EC (Tour des popotes, badges-Georges, MCZ, etc.)
+	#Install station : PG
+	#approx EdT:  
+	Ven 01/12	: 9:30 Install physique + info
+	Lun 04		: 9:30 Formation nouveaux entrants (amphi) | 13:00 GitLab Marjorie | libre
+	Mar 05		: 9:15 Benj presentation manips (spectros Bruker)| libre
+	Mer 06		: libre
+	Jeu 07		: Col de Porte
+	ven 08		: Col de Porte
+ 
+-Lucile ?: arrivee 15 fev 2018 → bureaau idem David
+
+- Lun prochain 4 dec reunion labo eq5 13:00 Presentation GitLab Majorie
+Marjorie pourrait egalement nous apporter ses competences pour la gestion du projet (cahier des charges, Git, etc.). Pas de decision de comment entamer la demarche pour l’instant. Evocation de premieres discussions avec elle a ce sujet lors du col de porte.
+
+- Mer prochain 06 dec pas de reunion
+
+- Reunion du mer suivant 13 dec remplacee par mar 12 dec 9:30
+
+- Discussion d’un shema resumant MIA2 (integration de celui-ci dans le GitLAb du projet: EC)
+/ tentative de definition de nomenclature communement acceptee et comprise (Brique – module – pipeline)
+
+- La priroite est donnee a l’elaboration d’un cahier des charges autant que possible precis pour le projet MIA2. Chacun enrichi la description de MIA2 dans cette perspective sur le GitLAb* du projet . A ce sujet, comme brique est déjà pris, chaque  machin ( convertisseur, etc.) constituant MIA2 on l’appelle comment :-) ?
+
+	*Il est possible d'editer le cahier des charges en se rendant directement a l'URL suivant:
+	https://gricad-gitlab.univ-grenoble-alpes.fr/irmdataprocess/MIA2/edit/master/doc/cahier_des_charges.md
+
+	Pas besoin de Git, on peut editer directement dans l'interface Web, apres s'etre connecte avec le login Agalan. Pour visualiser le rendu de la version actuelle:
+	https://gricad-gitlab.univ-grenoble-alpes.fr/irmdataprocess/MIA2/blob/master/doc/cahier_des_charges.md
+
+	La syntaxe c'est du MarkDown:
+	https://fr.wikipedia.org/wiki/Markdown
+
+	La langue retenue pour tout ce qui sera officiel est l’anglais. Cependant entre nous il faudra privilegier l’efficacite et ne pas perdre de temps sur la forme. Oon pourra ecrire en francais, anglais voir franglais. Un effort sur la forme sera realise ulterieurement et ne representera pas l’effort principal !(desole je n ‘ai pas les competences suffisantes pour l’Allemand ;-).
