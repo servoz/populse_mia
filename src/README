@@ -1,0 +1,14 @@
+The files at the root of this directory come from Roxane's files. The code has n
+ot been modified yet, but a lot of commentaries have been added and variable nam
+es have been changed to make it clearer. Since there are not many files yet, the
+y are placed at the root of src/. Creating subdirectories, packages, will be dis
+cuss later.
+
+Some other apps have been made by Roxane but they need Json AND Nifti files to be exploited, they may be added in the few days.
+
+For the moment, the added files are:
+
+- mia2_app.py (formerly essai_app.py): the script that handles the MIA2 application. For the moment, it permitts to load or create a project, choose the tags for the study and display them for each scan.
+- models.py: the script that describe the several classes used in the project (Tag, Scan, Project) and two functions (serializer and deserializer).
+- utils.py: script that contains some tool functions
+- controller.py: script that contains tool functions            
