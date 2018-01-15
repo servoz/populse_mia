@@ -1,10 +1,5 @@
-The files at the root of this directory come from Roxane's files. The code has n
-ot been modified yet, but a lot of commentaries have been added and variable nam
-es have been changed to make it clearer. Since there are not many files yet, the
-y are placed at the root of src/. Creating subdirectories, packages, will be dis
-cuss later.
-
-Some other apps have been made by Roxane but they need Json AND Nifti files to be exploited, they may be added in the few days.
+The files at the root of this directory come from Roxane's files. The code has been modified for the
+meeting of 18/01/16. Since there are not many files yet, they are placed at the root of src/. Creating subdirectories, packages, will be discuss later.
 
 For the moment, the added files are:
 

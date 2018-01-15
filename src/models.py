@@ -154,7 +154,7 @@ def serializer(obj):
                 'bdd_file': obj.bdd_file,
                 'folder': obj.folder,
                 'date': obj.date,
-                'scans': obj._get_scans()}
+                'scans': obj._get_scans()}                                                                                                                                                                                                                                                                                                                                                                          
 
     if isinstance(obj, Scan):
         """'_json_tags': obj._get_json_tags(),
