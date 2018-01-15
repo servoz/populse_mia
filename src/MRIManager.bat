@@ -1,0 +1,1 @@
+java -Xmx4096M -jar MRIManagerJ8.jar
