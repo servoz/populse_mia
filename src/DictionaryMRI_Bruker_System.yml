@@ -43,24 +43,24 @@ dictionaryMRI:
           category: Equipment
      json:   
           tagJson: AcquisitionDate
-          type: float
+          type: string
           format: dd/MM/yyyy hh:mn:ss
           units: ~
 
   Acquisition Time:
-    where:
+     where:
           file: visu_pars
           keyName: $VisuAcqScanTime=
           type:  string
           format: hh:mn:ss.ms
           units: s
-    viewer: 
-         category: Equipment 
-    json: 
-         tag_Json: AcquisitionTime
-         type: float
-         format: s
-         units: ~
+     viewer: 
+          category: Equipment 
+     json: 
+          tagJson: AcquisitionTime
+          type: string
+          format: s
+          units: ~
 
   BandWidth:
      where: 
@@ -117,8 +117,8 @@ dictionaryMRI:
      viewer:
           category: Equipment
      json:
-          tagJson: ~   
-          type: ~
+          tagJson: CreationDate   
+          type: string
           format: ~
           units: ~         
  
@@ -372,8 +372,8 @@ dictionaryMRI:
      viewer:
           category: ~
      json:
-          tagJson: ~
-          type: ~
+          tagJson: PatientBirthDate
+          type: string
           format: ~
           units: ~
 
@@ -537,8 +537,8 @@ dictionaryMRI:
      viewer:
           category: Dimensions
      json:
-          tagJson: ~
-          type: ~
+          tagJson: ScanMode
+          type: string
           format: ~
           units: ~
           
@@ -598,8 +598,8 @@ dictionaryMRI:
      viewer:
           category: MRI parameters
      json:
-          tagJson: ~
-          type: ~
+          tagJson: SliceOrientation
+          type: string
           format: ~
           units: ~
 
@@ -703,7 +703,7 @@ dictionaryMRI:
      viewer:
           category: ~
      json:
-          tagJson: ~
-          type: ~
+          tagJson: StudyName
+          type: string
           format: ~
           units: ~

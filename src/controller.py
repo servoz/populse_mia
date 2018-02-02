@@ -19,6 +19,7 @@ def loadList(list, path):
         resultList.append(utils.getFilePathWithoutExtension(current, path))
     return resultList
 
+
 def checkListContains(listA, listB):
     """
 
@@ -27,6 +28,7 @@ def checkListContains(listA, listB):
     :return: a list of the elements that are in listA and not in listB
     """
     return list(set(listA) - set(listB))
+
 
 def getNiftiTagsFromFile(file_path, path):
     """
@@ -37,9 +39,10 @@ def getNiftiTagsFromFile(file_path, path):
     """
     nifti_tags = []
     for name, value in nib.load(path + file_path + ".nii").header.items():
-        tag = Tag(name, '_', value, origin='Nifti')
+        tag = Tag(name, '_', value, origin='Nifti', original_value=value)
         nifti_tags.append(tag)
     return nifti_tags
+
 
 def getJsonTagsFromFile(file_path, path):
     """
@@ -53,7 +56,7 @@ def getJsonTagsFromFile(file_path, path):
         for name,value in json.load(f).items():
             if value is None:
                 value = ""
-            tag = Tag(name, '_', value, origin='Json')
+            tag = Tag(name, '_', value, origin='Json', original_value=value)
             json_tags.append(tag)
     return json_tags
 
@@ -67,11 +70,12 @@ def loadScan(uid,file_path, path):
     :return: a scan object with the Nifti and Json tags of the file
     """
     scan = Scan(uid, file_path)
-    for nii_tag in getNiftiTagsFromFile(file_path, path):
-        scan.addNiftiTag(nii_tag)
+    #for nii_tag in getNiftiTagsFromFile(file_path, path):
+    #    scan.addNiftiTag(nii_tag)
     for json_tag in getJsonTagsFromFile(file_path, path):
         scan.addJsonTag(json_tag)
     return scan
+
 
 def listdirectory(name, path):
     """
@@ -151,52 +155,22 @@ def createProject(name, path, parent_folder):
         treat_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'treat_data'))
         # si le repertoire a bien été créé, set l'attribut folder du projet avec ton folder name (j'ai ajouté le folder name à la classe projet)
         #setattr(Project, project.folder, name)  #pas sur du tout....
-        project.folder = name
+
+        #project.folder = name
+        project.folder = new_path
         project.bdd_file = path
         # créé un fichier json avec le même nom que le repertoire -> folder_name.json
         json_file_name = utils.createJsonFile("", name)
         json_file_name = utils.saveProjectAsJsonFile(name, project)
         shutil.move(name+'.json', project_path)
+
+        #project.folder = os.path.abspath(new_path)
         # set l'attribut bdd_file de ton projet avec le nom de ce json
         # setattr(Project, project.bdd_file, json_file_name)
         #project.bdd_file = json_file_name
         # retourne l'objet Projet que tu viens de crééer'
 
         return project
-    """else:
-        print('This name of project already exists')
-        name = input('Give a new name for this project : ')
-        createProject(name, path)"""
-
-"""def createProject(name, path):
-    #instanciate project with name
-    project = listdirectory(name, 'D :\data_nifti_json')
-    project.name = name
-    # formate le name pour virer espaces et caractère bizarres -> folder name
-    name = utils.remove_accents((name.lower()).replace(" ", "_"))
-    recorded_path = utils.findPath("controller")
-    new_path = os.path.join(recorded_path, name)
-    project_parent_folder = os.makedirs(new_path)
-    data_folder = os.makedirs(os.path.join(new_path, 'data'))
-    project_folder = os.makedirs(os.path.join(new_path, name))
-    project_path = os.path.join(new_path, name)
-    raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
-    treat_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'treat_data'))
-    # si le repertoire a bien été créé, set l'attribut folder du projet avec ton folder name (j'ai ajouté le folder name à la classe projet)
-    # setattr(Project, project.folder, name)  #pas sur du tout....
-    project.folder = name
-    project.bdd_file = path
-    # créé un fichier json avec le même nom que le repertoire -> folder_name.json
-    json_file_name = utils.createJsonFile("", name)
-    json_file_name = utils.saveProjectAsJsonFile(name, project)
-    shutil.move(name + '.json', project_path)
-    # set l'attribut bdd_file de ton projet avec le nom de ce json
-    # setattr(Project, project.bdd_file, json_file_name)
-    # project.bdd_file = json_file_name
-    # retourne l'objet Projet que tu viens de crééer'
-
-    return project"""
-
 
 
 def open_project(name, path):
@@ -212,9 +186,8 @@ def open_project(name, path):
         file_path = os.path.join(project_path, name)
         with open(file_path+".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
+
         return project
-    #else:
-        #print("This name of project does not exist, try a new one")
 
 
 def getAllTagsFile(path_file, project):
@@ -260,6 +233,7 @@ def add_tag_with_value(tagName, value):
     """
     Scan._tags.append(Tag(tagName, '_', value, 'custom'))
 
+
 def modified_tag_value (project, tagName, newValue):
     """
 
@@ -277,6 +251,7 @@ def modified_tag_value (project, tagName, newValue):
                 pass
     return project
 
+
 def modified_tag_name(project, tagName, newName):
     """
 
@@ -293,33 +268,3 @@ def modified_tag_name(project, tagName, newName):
             else:
                 pass
     return project
-
-"""test = listdirectory('test', 'D:\data_nifti_json')
-print(showResults(test))"""
-"""test = modified_tag_name(test, 'InversionTime', 'AAAAA')
-print(showResults(test))
-print(Project.getAllTagsNames(test))
-print(type(test))"""
-#print(listdirectory('D:\data_nifti_json'))
-#print("le resultat est: ", getAllTagsFile("D:\\data_nifti_json\\1_Rat_M10_J15\\393217_03_pCASL\\1", listdirectory('D:\data_nifti_json')))
-#print(len(getAllTagsFile("D:\\data_nifti_json\\1_Rat_M10_J15\\393217_03_pCASL\\1", listdirectory('D:\data_nifti_json'))))
-#print("le resultat est: ", getAllTags(listdirectory('D:\data_nifti_json')))
-#print(len(getAllTags(listdirectory('D:\data_nifti_json'))))
-#print(len(listdirectory('D:\data_nifti_json')._get_scans()))
-
-"""utils.saveJsonFile("Json1", listdirectory('D:\data_nifti_json'))
-utils.findPath("json1.json")"""
-#print(showResults(listdirectory('D:\data_nifti_json')))
-#print(json.dumps(listdirectory('D:\data_nifti_json'), default=serializer))
-
-#print(len((listdirectory('D:\data_nifti_json')).getAllTagsNames()))
-#
-#print(showResults(createProject('test4', 'D:\data_nifti_json', 'C:\\Users\Roxane\Desktop')))
-#print(showResults(open_project('test4', 'C:\\Users\Roxane\Desktop\\test4')))
-
-
-#createProject('ca_marche', 'D:\data_nifti_json')
-
-
-
-#print(showResults(open_project('ca_marche', 'C:\\Users\Roxane\PycharmProjects\BDD\\test')))

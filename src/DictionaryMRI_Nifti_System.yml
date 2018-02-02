@@ -30,7 +30,7 @@ dictionaryMRI:
   Acquisition Date:
      where:  
           file: json
-          keyName: SeriesDate
+          keyName: AcquisitionDate
           type: string
           format: hh:mn:ss dd/MM/yyyy
           units: ~
@@ -80,7 +80,7 @@ dictionaryMRI:
   Creation Date:
      where: 
           file: json
-          keyName: StudyDate
+          keyName: CreationDate
           type: string
           format: ~
           units: ~
@@ -150,7 +150,7 @@ dictionaryMRI:
   
   Image Position Patient:
      where: 
-          file: visu_pars
+          file: json
           keyName: ImagePositionPatient
           type: float
           format: ~
@@ -222,6 +222,16 @@ dictionaryMRI:
 #          type: ~
 #          format: ~
 #          units: ~
+
+  Patient BirthDate:
+     where:
+          file: json
+          keyName: PatientBirthDate
+          type: string
+          format: ~
+          units: ~
+     viewer:
+          category: ~
 
   Patient ID:
      where:
@@ -312,7 +322,17 @@ dictionaryMRI:
           units: ms
      viewer:
           category: MRI parameters
-          
+  
+  Scan Mode:
+     where:
+          file: json
+          keyName: ScanMode
+          type: string
+          format: ~
+          units: ~
+     viewer:
+          category: Dimensions
+  
   Scan Resolution:
      where:
           file: niftiheader
@@ -333,25 +353,20 @@ dictionaryMRI:
      viewer:
           category: Equipment
 
-#  Slice Orientation:
-#     where:
-#          file: method
-#          keyName: $PVM_SPackArrSliceOrient=
-#          type: string
-#          format: ~
-#          units: ~
-#     viewer:
-#          category: MRI parameters
-#     json:
-#          tagJson: ~
-#          type: ~
-#          format: ~
-#          units: ~
+  Slice Orientation:
+     where:
+          file: json
+          keyName: SliceOrientation
+          type: string
+          format: ~
+          units: ~
+     viewer:
+          category: MRI parameters
 
 #  Slice Position:
 #     where:
-#          file: visu_pars
-#          keyName: $VisuCorePosition=
+#          file: ~
+#          keyName: ~
 #          type: string
 #          format: ~
 #          units: ~
@@ -412,3 +427,13 @@ dictionaryMRI:
           units: ~
      viewer:
           category: Equipment
+          
+  Study Name:
+     where:
+          file: json
+          keyName: StudyName
+          type: string
+          format: ~
+          units: ~
+     viewer:
+          category: ~

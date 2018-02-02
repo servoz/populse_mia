@@ -42,8 +42,8 @@ dictionaryMRI:
     viewer: 
          category: Equipment 
     json: 
-         tag_Json: AcquisitionTime
-         type: float
+         tagJson: AcquisitionTime
+         type: string
          format: s
          units: ~
 
@@ -58,7 +58,7 @@ dictionaryMRI:
           category: Equipment
      json:   
           tagJson: AcquisitionDate
-          type: float
+          type: string
           format: ~
           units: ~
   
@@ -102,8 +102,8 @@ dictionaryMRI:
      viewer:
           category: Equipment
      json:
-          tagJson: ~   
-          type: ~
+          tagJson: CreationDate   
+          type: string
           format: ~
           units: ~         
  
@@ -378,7 +378,7 @@ dictionaryMRI:
     viewer: 
          category: MRI parameters 
     json: 
-         tag_Json: RepetitionTime
+         tagJson: RepetitionTime
          type: float
          format: ~
          units: ~
@@ -393,8 +393,8 @@ dictionaryMRI:
      viewer:
           category: Dimensions
      json:
-          tagJson: ~
-          type: ~
+          tagJson: ScanMode
+          type: string
           format: ~
           units: ~
 
@@ -468,8 +468,8 @@ dictionaryMRI:
      viewer:
           category: MRI parameters
      json:
-          tagJson: ~
-          type: ~
+          tagJson: SliceOrientation
+          type: string
           format: ~
           units: ~
 
@@ -513,7 +513,7 @@ dictionaryMRI:
      viewer:
           category: ~
      json:
-          tagJson: ~
-          type: ~
+          tagJson: StudyName
+          type: string
           format: ~
           units: ~

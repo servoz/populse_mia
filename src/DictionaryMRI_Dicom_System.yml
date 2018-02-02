@@ -751,6 +751,7 @@ dictionaryMRI:
 
   Spatial Resolution:
      where:
+          file: ~
           keyName: Pixel Spacing
           type: float
           format: ~
