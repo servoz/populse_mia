@@ -1,9 +1,13 @@
-The files at the root of this directory come from Roxane's files. The code has been modified for the
-meeting of 18/01/16. Since there are not many files yet, they are placed at the root of src/. Creating subdirectories, packages, will be discuss later.
+The files in the root of this directory handles the data browser tab. They will
+later be integrated in OM's work on GUI.
 
-For the moment, the added files are:
+The files are:
 
-- mia2_app.py (formerly essai_app.py): the script that handles the MIA2 application. For the moment, it permitts to load or create a project, choose the tags for the study and display them for each scan.
-- models.py: the script that describe the several classes used in the project (Tag, Scan, Project) and two functions (serializer and deserializer).
-- utils.py: script that contains some tool functions
-- controller.py: script that contains tool functions            
+- mia2_app.py (formerly essai_app.py): the script that handles the MIA2 
+application. 
+- models.py: the script that describe the several classes used in the project 
+(Tag, Scan, Project) and two functions (serializer and deserializer) : how to
+handle the data base.
+- utils.py: script that contains some tool functions.
+- controller.py: script that contains functions that interacts between the data
+base and the project.
