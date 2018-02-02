@@ -268,3 +268,28 @@ def modified_tag_name(project, tagName, newName):
             else:
                 pass
     return project
+
+
+def read_log(project):
+
+    raw_data_folder = os.path.abspath(project.folder) + '/data/raw_data/'
+
+    # Checking all the export logs from MRIManager and taking the most recent
+    list_logs = glob.glob(raw_data_folder + "logExport*.json")
+    log_to_read = max(list_logs, key=os.path.getctime)
+
+    with open(log_to_read, "r", encoding="utf-8") as file:
+        list_dict_log = json.load(file, object_hook=deserializer)
+
+    for dict_log in list_dict_log:
+        if dict_log['StatusExport'] == "Export ok":
+            file_name = dict_log['NameFile']
+            path_name = raw_data_folder
+            project.addScan(loadScan(str(1), file_name, path_name))
+            for tag in project.user_tags:
+                user_tag_name = tag['name']
+                for scan in project._get_scans():
+                    if scan.file_path == file_name:
+                        if user_tag_name not in scan.getAllTagsNames():
+                            tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
+                            scan.addCustomTag(tag)
