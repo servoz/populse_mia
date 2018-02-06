@@ -7,10 +7,12 @@ Created on 11 janv. 2018
 import subprocess
 import sys
 import os
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, \
     QMenuBar, QAction, qApp, QLineEdit, QMainWindow, QDialog
-
+import PyQt5.QtCore
 from Config import Config
 from DataBrowser.DataBrowser import DataBrowser   
 from ImageViewer.ImageViewer import ImageViewer
@@ -31,7 +33,6 @@ class Project_Irmage(QMainWindow):
         ############### initial setting ############################################################
         config = Config()
         self.currentRep = config.getPathData()
-        self.showMaximized()
 
         ################ Create Menus ##############################################################
 
@@ -66,7 +67,6 @@ class Project_Irmage(QMainWindow):
 
         self.action_preferences = QAction('MIA2 preferences', self)
         menu_file.addAction(self.action_preferences)
-        self.action_preferences.setDisabled(True)
 
         action_exit = QAction(QIcon('sources_images/exit.png'), 'Exit', self)
         action_exit.setShortcut('Ctrl+W')
@@ -89,10 +89,18 @@ class Project_Irmage(QMainWindow):
         #self.show()
         #return self
 
-        #self.project = {}
+        self.project = Project("")
+        self.project.folder = "./"
+        self.first_save = True
+        # BELOW : WAS AT THE END OF MODIFY_UI
+        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
+        ################ Create Tabs ###############################################################
+        self.create_tabs()
+        self.setCentralWidget(self.centralWindow)
+        self.showMaximized()
 
+    @pyqtSlot()
     def modify_ui(self):
-        self.action_preferences.setDisabled(False)
 
         # This list will later contain all the tags in the project
         self.list_selected_tags = []
@@ -102,15 +110,18 @@ class Project_Irmage(QMainWindow):
         path = self.exPopup.path + '/' + name
         self.project = controller.open_project(name, path)
 
+        #QtCore.QMetaObject.connectSlotsByName(self)
+
         for file in self.project._get_scans():
             for n_tag in file._get_tags():
                 if n_tag.origin == 'custom' and n_tag.name not in self.project.tags_to_visualize:
                     self.project.tags_to_visualize.append(n_tag.name)
 
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
-        ################ Create Tabs ###############################################################
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
+        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
+        self.statusBar().showMessage('')
+        #self.data_browser.table_data.update_table(self.project)
 
 
     def create_tabs(self):
@@ -146,6 +157,7 @@ class Project_Irmage(QMainWindow):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_New_Project()
         file_name = self.exPopup.return_value()
+        self.first_save = False
 
         # Once the user has selected his project, the 'signal_create_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
@@ -155,6 +167,7 @@ class Project_Irmage(QMainWindow):
     def open_project_pop_up(self):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_Open_Project()
+        self.first_save = False
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
             self.exPopup.retranslateUi(self.exPopup.selectedFiles())
@@ -165,8 +178,7 @@ class Project_Irmage(QMainWindow):
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.project.tags_to_visualize = self.pop_up_preferences.get_values()
-            self.data_browser.table_data.update_table()
+            self.data_browser.table_data.update_table(self.project)
 
     def import_data(self):
         # Opens the conversion software to convert the MRI files in Nifti/Json
@@ -175,11 +187,16 @@ class Project_Irmage(QMainWindow):
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime'])
 
         controller.read_log(self.project)
-        self.data_browser.table_data.update_table()
+        self.data_browser.table_data.update_table(self.project)
 
     def save_project(self):
-        project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
-        utils.saveProjectAsJsonFile(project_path, self.project)
+
+        if self.project.name == "":
+            self.save_project_as()
+        else:
+            project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
+            utils.saveProjectAsJsonFile(project_path, self.project)
+            self.first_save = False
 
     def save_project_as(self):
         from datetime import datetime
@@ -202,35 +219,16 @@ class Project_Irmage(QMainWindow):
         project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
         utils.saveProjectAsJsonFile(project_path, self.project)
 
+        if self.first_save:
+            command = "rm -r " + os.path.abspath(old_folder + "data/raw_data")
+            os.system(command)
+            if not os.listdir(os.path.abspath(old_folder + "data/")):
+                command = "rmdir " + os.path.abspath(old_folder + "data/")
+                os.system(command)
+
         # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
         self.exPopup.signal_saved_project.connect(self.modify_ui)
-
-   
-"""class createTabs(QWidget):
-    def __init__(self):
-        super(createTabs, self).__init__()
-
-        self.config = Config()
-        self.currentRep = self.config.getPathData()
-               
-        self.tabs = QTabWidget()
-        self.tabs.setAutoFillBackground(False)
-        self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Times;text-align: center;color:blue;}')
-        self.tabs.setMovable(True)
-        
-        self.textInfo = QLineEdit(self)
-        self.textInfo.resize(500,40)
-        #self.textInfo.setEnabled(False)
-        self.textInfo.setText('Welcome to Irmage')
-                        
-        self.tabs.addTab(DataBrowser(self.textInfo), "Data Browser")
-        self.tabs.addTab(ProjectEditor(self.textInfo), "Pipeline Manager")
-               
-        self.verticalLayout = QVBoxLayout(self)
-        self.verticalLayout.addWidget(self.tabs)
-        self.verticalLayout.addWidget(self.textInfo)"""
-   
           
 if __name__ == '__main__':
     import sys

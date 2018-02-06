@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QCoreApplication
 from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
+from functools import partial
 import controller
 
 class Ui_Dialog_New_Project(QFileDialog):
@@ -188,6 +189,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.new_tag_name = self.text_edit_tag_name.text()
         self.new_default_value = self.text_edit_default_value.text()
         return self.new_tag_name, self.new_default_value, self.type
+
 
 class Ui_Dialog_clone_tag(QDialog):
     """
@@ -388,9 +390,9 @@ class Ui_Dialog_remove_tag(QDialog):
         return self.tag_names_to_remove
 
 
-class Ui_Dialog_Preferences(QDialog):
+class Ui_Visualized_Tags(QWidget):
     """
-    Is called when the user wants to create a new project
+    Is called when the user wants to update the tags that are visualized in the data browser
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -398,58 +400,17 @@ class Ui_Dialog_Preferences(QDialog):
 
     def __init__(self, project):
         super().__init__()
-        self.project = project
-        self.tags_to_visualize = project.tags_to_visualize
-        self.pop_up()
+        self.retranslate_Ui(project)
 
-    def pop_up(self):
+    def retranslate_Ui(self, project):
         _translate = QtCore.QCoreApplication.translate
 
-        self.setObjectName("Dialog")
-        self.setWindowTitle('MIA2 preferences')
-
-        self.tab_widget = QtWidgets.QTabWidget(self)
-        self.tab_widget.setEnabled(True)
-
-        # The 'Appearance" tab
-        self.tab_appearance = QtWidgets.QWidget()
-        self.tab_appearance.setObjectName("tab_appearance")
-        self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
-
-        # The 'Visualized tags" tab
-        self.tab_tags = QtWidgets.QWidget()
-        self.tab_tags.setObjectName("tab_tags")
-        self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
-
-        # The 'OK' push button
-        self.push_button_ok = QtWidgets.QPushButton("OK")
-        self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(self.ok_clicked)
-
-        # The 'Cancel' push button
-        self.push_button_cancel = QtWidgets.QPushButton("Cancel")
-        self.push_button_cancel.setObjectName("pushButton_cancel")
-        self.push_button_cancel.clicked.connect(self.close)
-
-        hbox_buttons = QHBoxLayout()
-        hbox_buttons.addStretch(1)
-        hbox_buttons.addWidget(self.push_button_ok)
-        hbox_buttons.addWidget(self.push_button_cancel)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.tab_widget)
-        vbox.addLayout(hbox_buttons)
-
-        self.setLayout(vbox)
-
-        # The "Visualized tags" tab
-
         # Two buttons to select or unselect tags
-        self.push_button_select_tag = QtWidgets.QPushButton(self.tab_tags)
+        self.push_button_select_tag = QtWidgets.QPushButton(self)
         self.push_button_select_tag.setObjectName("pushButton_select_tag")
         self.push_button_select_tag.clicked.connect(self.click_select_tag)
 
-        self.push_button_unselect_tag = QtWidgets.QPushButton(self.tab_tags)
+        self.push_button_unselect_tag = QtWidgets.QPushButton(self)
         self.push_button_unselect_tag.setObjectName("pushButton_unselect_tag")
         self.push_button_unselect_tag.clicked.connect(self.click_unselect_tag)
 
@@ -470,10 +431,10 @@ class Ui_Dialog_Preferences(QDialog):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(self.search_str)
+        self.search_bar.textChanged.connect(partial(self.search_str, project))
 
         # The list of tags
-        self.list_widget_tags = QtWidgets.QListWidget(self.tab_tags)
+        self.list_widget_tags = QtWidgets.QListWidget(self)
         self.list_widget_tags.setObjectName("listWidget_tags")
         self.list_widget_tags.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
 
@@ -486,7 +447,7 @@ class Ui_Dialog_Preferences(QDialog):
         vbox_top_left.addWidget(self.list_widget_tags)
 
         # List of the tags selected by the user
-        self.list_widget_selected_tags = QtWidgets.QListWidget(self.tab_tags)
+        self.list_widget_selected_tags = QtWidgets.QListWidget(self)
         self.list_widget_selected_tags.setObjectName("listWidget_visualized_tags")
         self.list_widget_selected_tags.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
 
@@ -495,35 +456,32 @@ class Ui_Dialog_Preferences(QDialog):
         hbox_tags.addLayout(vbox_tag_buttons)
         hbox_tags.addWidget(self.list_widget_selected_tags)
 
-        self.tab_tags.setLayout(hbox_tags)
+        self.setLayout(hbox_tags)
 
-        for tag_name in self.tags_to_visualize:
+        for tag_name in project.tags_to_visualize:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_selected_tags.addItem(item)
-            item.setText(_translate("Dialog", tag_name))
+            item.setText(tag_name)
 
-        for tag_name in self.project.getAllTagsNames():
+        for tag_name in project.getAllTagsNames():
             item = QtWidgets.QListWidgetItem()
-            if tag_name not in self.tags_to_visualize:
+            if tag_name not in project.tags_to_visualize:
                 self.list_widget_tags.addItem(item)
-                item.setText(_translate("Dialog", tag_name))
+                item.setText(tag_name)
 
-
-    def search_str(self, str_search):
-        _translate = QtCore.QCoreApplication.translate
-
+    def search_str(self, project, str_search):
         if str_search != "":
             return_list = []
-            for tag_name in self.project.getAllTagsNames():
+            for tag_name in project.getAllTagsNames():
                 if str_search.upper() in tag_name.upper():
                     return_list.append(tag_name)
         else:
-            return_list = self.project.getAllTagsNames()
+            return_list = project.getAllTagsNames()
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
-            item.setText(_translate("Dialog", tag_name))
+            item.setText(tag_name)
 
     def click_select_tag(self):
         # Put the selected tags in the "selected tag" table
@@ -540,16 +498,66 @@ class Ui_Dialog_Preferences(QDialog):
         for row in rows:
             self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
 
-    def ok_clicked(self):
+
+class Ui_Dialog_Preferences(QDialog):
+    """
+    Is called when the user wants to change the software preferences
+    """
+
+    # Signal that will be emitted at the end to tell that the project has been created
+    signal_preferences_change = pyqtSignal()
+
+    def __init__(self, project):
+        super().__init__()
+        self.pop_up(project)
+
+    def pop_up(self, project):
+        _translate = QtCore.QCoreApplication.translate
+
+        self.setObjectName("Dialog")
+        self.setWindowTitle('MIA2 preferences')
+
+        self.tab_widget = QtWidgets.QTabWidget(self)
+        self.tab_widget.setEnabled(True)
+
+        # The 'Appearance" tab
+        self.tab_appearance = QtWidgets.QWidget()
+        self.tab_appearance.setObjectName("tab_appearance")
+        self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
+
+        # The 'Visualized tags" tab
+        self.tab_tags = Ui_Visualized_Tags(project)
+        self.tab_tags.setObjectName("tab_tags")
+        self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
+
+        # The 'OK' push button
+        self.push_button_ok = QtWidgets.QPushButton("OK")
+        self.push_button_ok.setObjectName("pushButton_ok")
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project))
+
+        # The 'Cancel' push button
+        self.push_button_cancel = QtWidgets.QPushButton("Cancel")
+        self.push_button_cancel.setObjectName("pushButton_cancel")
+        self.push_button_cancel.clicked.connect(self.close)
+
+        hbox_buttons = QHBoxLayout()
+        hbox_buttons.addStretch(1)
+        hbox_buttons.addWidget(self.push_button_ok)
+        hbox_buttons.addWidget(self.push_button_cancel)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.tab_widget)
+        vbox.addLayout(hbox_buttons)
+
+        self.setLayout(vbox)
+
+    def ok_clicked(self, project):
+        project.tags_to_visualize = []
+        for x in range(self.tab_tags.list_widget_selected_tags.count()):
+            project.tags_to_visualize.append(self.tab_tags.list_widget_selected_tags.item(x).text())
         self.accept()
         self.close()
 
-    def get_values(self):
-        tag_list_to_visualize = []
-        for x in range(self.list_widget_selected_tags.count()):
-            tag_list_to_visualize.append(self.list_widget_selected_tags.item(x).text())
-
-        return tag_list_to_visualize
 
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
