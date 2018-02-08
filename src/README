@@ -1,15 +1,15 @@
-The files in the root of this directory handles the data browser tab. They will
+The files in the root of this directory handle the data browser tab. They will
 later be integrated in OM's work on GUI.
 
 The files are:
 
 - main.py: the script that handles the MIA2 
 application. 
-- models.py: the script that describe the several classes used in the project 
+- models.py: the script that describes the several classes used in the project 
 (Tag, Scan, Project) and two functions (serializer and deserializer) : how to
 handle the data base.
 - utils.py: script that contains some tool functions.
-- controller.py: script that contains functions that interacts between the data
+- controller.py: script that contains functions that interact between the data
 base and the project.
 - DataBrowser/DataBrowser.py: contains the class that handles the "Data Browser"
 tab.
