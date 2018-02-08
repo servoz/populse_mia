@@ -152,7 +152,7 @@ def createProject(name, path, parent_folder):
         project_folder = os.makedirs(os.path.join(new_path, name))
         project_path = os.path.join(new_path, name)
         raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
-        treat_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'treat_data'))
+        derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))
         # si le repertoire a bien été créé, set l'attribut folder du projet avec ton folder name (j'ai ajouté le folder name à la classe projet)
         #setattr(Project, project.folder, name)  #pas sur du tout....
 

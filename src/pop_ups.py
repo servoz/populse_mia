@@ -269,14 +269,14 @@ class Ui_Dialog_clone_tag(QDialog):
 
     def search_str(self, str_search):
         _translate = QtCore.QCoreApplication.translate
-
+        return_list = []
         if str_search != "":
-            return_list = []
             for tag_name in self.project.getAllTagsNames():
                 if str_search.upper() in tag_name.upper():
                     return_list.append(tag_name)
         else:
             return_list = self.project.getAllTagsNames()
+
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()
@@ -470,13 +470,16 @@ class Ui_Visualized_Tags(QWidget):
                 item.setText(tag_name)
 
     def search_str(self, project, str_search):
+        return_list = []
         if str_search != "":
-            return_list = []
             for tag_name in project.getAllTagsNames():
                 if str_search.upper() in tag_name.upper():
-                    return_list.append(tag_name)
+                    if tag_name not in project.tags_to_visualize:
+                        return_list.append(tag_name)
         else:
-            return_list = project.getAllTagsNames()
+            for tag_name in project.getAllTagsNames():
+                if tag_name not in project.tags_to_visualize():
+                    return_list.append(tag_name)
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()

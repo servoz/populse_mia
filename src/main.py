@@ -213,8 +213,8 @@ class Project_Irmage(QMainWindow):
 
         for filename in glob.glob(os.path.join(os.path.abspath(old_folder + '/data/raw_data'), '*.*')):
             shutil.copy(filename, data_path + 'raw_data/')
-        for filename in glob.glob(os.path.join(os.path.abspath(old_folder + '/data/treat_data'), '*.*')):
-            shutil.copy(filename, data_path + 'treat_data/')
+        for filename in glob.glob(os.path.join(os.path.abspath(old_folder + '/data/derived_data'), '*.*')):
+            shutil.copy(filename, data_path + 'derived_data/')
 
         project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
         utils.saveProjectAsJsonFile(project_path, self.project)
