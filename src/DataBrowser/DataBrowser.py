@@ -1,13 +1,18 @@
 from PyQt5.QtCore import Qt, QVariant, QPoint
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu
+from PyQt5.QtGui import QColor, QImage, QPixmap
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame
 import controller
+import os
 from models import *
 from pop_ups import Ui_Dialog_add_tag, Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_remove_tag, \
     Ui_Visualized_Tags, Ui_Dialog_Preferences
 from functools import partial
+import nibabel as nib
+from scipy.ndimage import rotate  # to work with NumPy arrays
+import numpy as np  # a N-dimensional array object
+import sip
 
 
 class DataBrowser(QWidget):
@@ -50,6 +55,7 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project)
         self.table_data.setObjectName("table_data")
+        self.table_data.cellClicked.connect(partial(self.connect_viewer, project))
 
         ## LAYOUTS ##
 
@@ -75,20 +81,15 @@ class DataBrowser(QWidget):
         self.frame_visualization.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_visualization.setObjectName("frame_5")
 
-        self.label_visualization = QtWidgets.QLabel(self.frame_visualization)
-        self.label_visualization.setGeometry(QtCore.QRect(10, 10, 81, 16))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(9)
-        font.setUnderline(True)
-        self.label_visualization.setFont(font)
-        self.label_visualization.setObjectName("label_10")
-        self.label_visualization.setText(_translate("MainWindow", "Vizualisation:"))
+        self.viewer = MiniViewer(project)
+        #self.viewer.setMaximumWidth(self.width())
+        self.viewer.setObjectName("viewer")
+        self.viewer.adjustSize()
 
-        self.visualisation_path = QtWidgets.QTextEdit(self.frame_visualization)
-        self.visualisation_path.setGeometry(QtCore.QRect(90, 0, 650, 31))
-        self.visualisation_path.setStyleSheet("")
-        self.visualisation_path.setObjectName("visualisation_path")
+        hbox_viewer = QHBoxLayout()
+        hbox_viewer.addWidget(self.viewer)
+
+        self.frame_visualization.setLayout(hbox_viewer)
 
         ## SPLITTER AND LAYOUT ##
 
@@ -99,6 +100,12 @@ class DataBrowser(QWidget):
         hbox_splitter = QHBoxLayout(self)
         hbox_splitter.addWidget(splitter_vertical)
         self.setLayout(hbox_splitter)
+
+    def connect_viewer(self, project, row, col):
+        path_name = os.path.abspath(project.folder)
+        file_name = self.table_data.item(row, 0).text() + ".nii"
+        full_name = path_name + '/data/raw_data/' + file_name
+        self.viewer.show_slices(full_name)
 
     def add_tag_pop_up(self, project):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
@@ -474,3 +481,131 @@ class TableDataBrowser(QTableWidget):
                             scan.replaceTag(new_tag, tag_name, str(tag_origin))
 
         self.itemChanged.connect(partial(self.change_cell_color, project))
+
+
+class MiniViewer(QScrollArea):
+
+    def __init__(self, project):
+        super().__init__()
+
+        self.setHidden(True)
+        self.nb_labels = 6
+
+        #self.setWidgetResizable(True)
+        #self.setAlignment(Qt.AlignCenter)
+
+        """self.label_1 = QLabel(self)
+        self.label_2 = QLabel(self)
+        self.label_3 = QLabel(self)
+        self.label_4 = QLabel(self)
+        self.label_5 = QLabel(self)
+        self.label_6 = QLabel(self)"""
+        self.labels = QWidget()
+        self.frame = QFrame()
+        self.h_box_images = QHBoxLayout()
+        self.h_box_images.setSpacing(10)
+        self.v_box = QVBoxLayout()
+
+        #self.h_box_scroll = QHBoxLayout()
+        """self.h_box.addLayout(self.label_1)
+        self.h_box.addLayout(self.label_2)
+        self.h_box.addLayout(self.label_3)
+        self.h_box.addLayout(self.label_4)
+        self.h_box.addLayout(self.label_5)
+        self.h_box.addLayout(self.label_6)"""
+        #self.h_box.setSpacing(10)
+
+        """self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(False)
+        self.scroll_area.setAlignment(Qt.AlignCenter)"""
+
+        """self.h_box_scroll.addWidget(self)
+
+        self.setLayout(self.h_box_scroll)"""
+
+    def show_slices(self, file_path):
+        self.setMinimumHeight(180)
+
+        if self.isHidden():
+            self.setHidden(False)
+
+        self.clear_layout(self.h_box_images)
+        self.clear_layout(self.v_box)
+        self.frame = QFrame()
+        im = nib.load(file_path)
+
+        if len(im.shape) == 3:
+            nb_slices = im.shape[2]
+            txt = "Slice n°"
+        elif len(im.shape) == 4:
+            nb_slices = im.shape[3]
+            txt = "Time n°"
+        elif len(im.shape) == 5:
+            nb_slices = im.shape[4]
+            txt = "Study n°"
+            print("TODO !!!!!!!!")
+        else:
+            nb_slices = 0
+
+        for i in range(nb_slices):
+            pixm = self.image_to_pixmap(im, i)
+
+            self.v_box = QVBoxLayout()
+
+            label = QLabel(self)
+            label.setPixmap(pixm)
+
+            label_info = QLabel()
+            label_info.setText(txt + str(i))
+            label_info.setAlignment(QtCore.Qt.AlignCenter)
+
+            self.v_box.addWidget(label)
+            self.v_box.addWidget(label_info)
+
+            self.h_box_images.addLayout(self.v_box)
+        self.frame.setLayout(self.h_box_images)
+        self.setWidget(self.frame)
+
+    def clear_layout(self, layout):
+        while layout.count() > 0:
+            item = layout.takeAt(0)
+            if not item:
+                continue
+
+            w = item.widget()
+            if w:
+                w.deleteLater()
+
+    def image_to_pixmap(self, im, i):
+        # The image to show depends on the dimension of the image
+        if len(im.shape) == 3:
+            im_2D = im.get_data()[:, :, i].copy()
+
+        elif len(im.shape) == 4:
+            im_3D = im.get_data()[:, :, :, i].copy()
+            middle_slice = int(im_3D.shape[2] / 2)
+            im_2D = im_3D[:, :, middle_slice]
+
+        else:
+            im_2D = [0]
+
+        im_2D = rotate(im_2D, -90, reshape=False)
+        im_2D = np.uint8((im_2D - im_2D.min()) / im_2D.ptp() * 255.0)
+        w, h = im_2D.shape
+        im_Qt = QImage(im_2D.data, w, h, QImage.Format_Indexed8)
+        im_Qt = im_Qt.scaled(128, 128)
+        pixm = QPixmap.fromImage(im_Qt)
+        return pixm
+
+
+
+    """def clear_layout_2(self, layout):
+        if layout is not None:
+            while layout.count() > 0:
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    self.clear_layout_2(item.layout())
+            sip.delete(layout)"""
