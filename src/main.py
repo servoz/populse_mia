@@ -18,7 +18,8 @@ from DataBrowser.DataBrowser import DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
 from models import *
-from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Save_Project_As
+from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Save_Project_As, \
+    Ui_Dialog_Quit
 import controller
 import shutil
 
@@ -93,11 +94,29 @@ class Project_Irmage(QMainWindow):
         self.project.folder = "./"
         self.first_save = True
         # BELOW : WAS AT THE END OF MODIFY_UI
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
+        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         ################ Create Tabs ###############################################################
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
         self.showMaximized()
+
+    def closeEvent(self, event):
+        if self.project.name == "":
+            self.pop_up_close = Ui_Dialog_Quit(self.project.name)
+            self.pop_up_close.save_as_signal.connect(self.save_project)
+            self.pop_up_close.exec()
+            can_exit = self.pop_up_close.can_exit()
+
+        #TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
+        #TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM CRASHES
+        else:
+            can_exit = True
+
+        if can_exit:
+            event.accept()
+        else:
+            event.ignore()
+
 
     @pyqtSlot()
     def modify_ui(self):
@@ -119,7 +138,10 @@ class Project_Irmage(QMainWindow):
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
+        if self.project.name == "":
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+        else:
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
         self.statusBar().showMessage('')
         #self.data_browser.table_data.update_table(self.project)
 

@@ -215,7 +215,7 @@ class TableDataBrowser(QTableWidget):
 
         # Filling the header of the columns
         item = self.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", 'Path'))
+        item.setText(_translate("MainWindow", 'File Name'))
 
         nb = 1
         for element in project.tags_to_visualize:

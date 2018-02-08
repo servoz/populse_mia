@@ -12,7 +12,7 @@ class Tag:
         self.value = self.original_value
 
     def cloneTag(self, new_name):
-        return Tag(new_name, self.replace, self.value, self.origin, self.original_value)
+        return Tag(new_name, self.replace, self.value, "custom", self.original_value)
 
 class Scan:
 
