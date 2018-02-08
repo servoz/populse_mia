@@ -528,6 +528,54 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_appearance.setObjectName("tab_appearance")
         self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
 
+        # The 'OK' push button
+        self.push_button_ok = QtWidgets.QPushButton("OK")
+        self.push_button_ok.setObjectName("pushButton_ok")
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project))
+
+        # The 'Cancel' push button
+        self.push_button_cancel = QtWidgets.QPushButton("Cancel")
+        self.push_button_cancel.setObjectName("pushButton_cancel")
+        self.push_button_cancel.clicked.connect(self.close)
+
+        hbox_buttons = QHBoxLayout()
+        hbox_buttons.addStretch(1)
+        hbox_buttons.addWidget(self.push_button_ok)
+        hbox_buttons.addWidget(self.push_button_cancel)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.tab_widget)
+        vbox.addLayout(hbox_buttons)
+
+        self.setLayout(vbox)
+
+    def ok_clicked(self, project):
+        # Action to define
+        self.accept()
+        self.close()
+
+
+class Ui_Dialog_Settings(QDialog):
+    """
+    Is called when the user wants to change the software settings
+    """
+
+    # Signal that will be emitted at the end to tell that the project has been created
+    signal_settings_change = pyqtSignal()
+
+    def __init__(self, project):
+        super().__init__()
+        self.pop_up(project)
+
+    def pop_up(self, project):
+        _translate = QtCore.QCoreApplication.translate
+
+        self.setObjectName("Dialog")
+        self.setWindowTitle('Project properties')
+
+        self.tab_widget = QtWidgets.QTabWidget(self)
+        self.tab_widget.setEnabled(True)
+
         # The 'Visualized tags" tab
         self.tab_tags = Ui_Visualized_Tags(project)
         self.tab_tags.setObjectName("tab_tags")
@@ -560,7 +608,6 @@ class Ui_Dialog_Preferences(QDialog):
             project.tags_to_visualize.append(self.tab_tags.list_widget_selected_tags.item(x).text())
         self.accept()
         self.close()
-
 
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
