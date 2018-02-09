@@ -491,37 +491,11 @@ class MiniViewer(QScrollArea):
         self.setHidden(True)
         self.nb_labels = 6
 
-        #self.setWidgetResizable(True)
-        #self.setAlignment(Qt.AlignCenter)
-
-        """self.label_1 = QLabel(self)
-        self.label_2 = QLabel(self)
-        self.label_3 = QLabel(self)
-        self.label_4 = QLabel(self)
-        self.label_5 = QLabel(self)
-        self.label_6 = QLabel(self)"""
         self.labels = QWidget()
         self.frame = QFrame()
         self.h_box_images = QHBoxLayout()
         self.h_box_images.setSpacing(10)
         self.v_box = QVBoxLayout()
-
-        #self.h_box_scroll = QHBoxLayout()
-        """self.h_box.addLayout(self.label_1)
-        self.h_box.addLayout(self.label_2)
-        self.h_box.addLayout(self.label_3)
-        self.h_box.addLayout(self.label_4)
-        self.h_box.addLayout(self.label_5)
-        self.h_box.addLayout(self.label_6)"""
-        #self.h_box.setSpacing(10)
-
-        """self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(False)
-        self.scroll_area.setAlignment(Qt.AlignCenter)"""
-
-        """self.h_box_scroll.addWidget(self)
-
-        self.setLayout(self.h_box_scroll)"""
 
     def show_slices(self, file_path):
         self.setMinimumHeight(180)
@@ -543,7 +517,6 @@ class MiniViewer(QScrollArea):
         elif len(im.shape) == 5:
             nb_slices = im.shape[4]
             txt = "Study n°"
-            print("TODO !!!!!!!!")
         else:
             nb_slices = 0
 
@@ -556,7 +529,7 @@ class MiniViewer(QScrollArea):
             label.setPixmap(pixm)
 
             label_info = QLabel()
-            label_info.setText(txt + str(i))
+            label_info.setText(txt + str(i + 1))
             label_info.setAlignment(QtCore.Qt.AlignCenter)
 
             self.v_box.addWidget(label)
@@ -586,13 +559,24 @@ class MiniViewer(QScrollArea):
             middle_slice = int(im_3D.shape[2] / 2)
             im_2D = im_3D[:, :, middle_slice]
 
+        elif len(im.shape) == 5:
+            im_4D = im.get_data()[:, :, :, :, i].copy()
+            im_3D = im_4D[:, :, :, 1]
+            middle_slice = int(im_3D.shape[2] / 2)
+            im_2D = im_3D[:, :, middle_slice]
+
         else:
             im_2D = [0]
 
+        import scipy.misc as misc
+
         im_2D = rotate(im_2D, -90, reshape=False)
         im_2D = np.uint8((im_2D - im_2D.min()) / im_2D.ptp() * 255.0)
+        im_2D = misc.imresize(im_2D, (128, 128))
+
         w, h = im_2D.shape
+
         im_Qt = QImage(im_2D.data, w, h, QImage.Format_Indexed8)
-        im_Qt = im_Qt.scaled(128, 128)
         pixm = QPixmap.fromImage(im_Qt)
+
         return pixm
