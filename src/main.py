@@ -206,7 +206,9 @@ class Project_Irmage(QMainWindow):
         # Opens the conversion software to convert the MRI files in Nifti/Json
         subprocess.call(['java', '-Xmx4096M', '-jar', 'MRIManagerJ8.jar',
                          '[ExportNifti] ' + os.path.abspath(self.project.folder) + '/data/raw_data/',
-                         '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime'])
+                         '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
+                         'CloseAfterExport'])
+        # 'NoLogExport'if we don't want log export
 
         controller.read_log(self.project)
         self.data_browser.table_data.update_table(self.project)
