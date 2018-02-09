@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QCoreApplication
-from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel
+from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+    QMessageBox
 import os
 from functools import partial
 import controller
@@ -107,12 +108,12 @@ class Ui_Dialog_add_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_add_tag = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, project):
         super().__init__()
         self.type = str
-        self.pop_up()
+        self.pop_up(project)
 
-    def pop_up(self):
+    def pop_up(self, project):
         self.setObjectName("Add a tag")
         grid = QGridLayout()
         self.setLayout(grid)
@@ -168,7 +169,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.label_type.setText(_translate("Add a tag", "Tag type:"))
 
         # Connecting the OK push button
-        self.push_button_ok.clicked.connect(self.ok_action)
+        self.push_button_ok.clicked.connect(lambda: self.ok_action(project))
 
     def on_activated(self, text):
         if text == "String":
@@ -180,10 +181,23 @@ class Ui_Dialog_add_tag(QDialog):
         else:
             self.type = list
 
-    def ok_action(self):
-        self.accept()
-        self.close()
-        #self.signal_add_tag.emit()
+    def ok_action(self, project):
+        name_already_exists = False
+        for tag_name in project.getAllTagsNames():
+            if tag_name == self.text_edit_tag_name.text():
+                name_already_exists = True
+        if name_already_exists:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("This tag name already exists")
+            msg.setInformativeText("Please select another tag name")
+            msg.setWindowTitle("Error")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+        else:
+            self.accept()
+            self.close()
 
     def get_values(self):
         self.new_tag_name = self.text_edit_tag_name.text()
@@ -201,10 +215,9 @@ class Ui_Dialog_clone_tag(QDialog):
 
     def __init__(self, project):
         super().__init__()
-        self.project = project
-        self.pop_up()
+        self.pop_up(project)
 
-    def pop_up(self):
+    def pop_up(self, project):
         _translate = QtCore.QCoreApplication.translate
         self.setObjectName("Clone a tag")
 
@@ -238,7 +251,7 @@ class Ui_Dialog_clone_tag(QDialog):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(self.search_str)
+        self.search_bar.textChanged.connect(partial(self.search_str, project))
 
         hbox_top = QHBoxLayout()
         hbox_top.addWidget(self.label_tag_list)
@@ -257,7 +270,7 @@ class Ui_Dialog_clone_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag_name in self.project.getAllTagsNames():
+        for tag_name in project.getAllTagsNames():
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
             item.setText(_translate("Dialog", tag_name))
@@ -265,17 +278,17 @@ class Ui_Dialog_clone_tag(QDialog):
         self.setLayout(vbox)
 
         # Connecting the OK push button
-        self.push_button_ok.clicked.connect(self.ok_action)
+        self.push_button_ok.clicked.connect(lambda: self.ok_action(project))
 
-    def search_str(self, str_search):
+    def search_str(self, project, str_search):
         _translate = QtCore.QCoreApplication.translate
         return_list = []
         if str_search != "":
-            for tag_name in self.project.getAllTagsNames():
+            for tag_name in project.getAllTagsNames():
                 if str_search.upper() in tag_name.upper():
                     return_list.append(tag_name)
         else:
-            return_list = self.project.getAllTagsNames()
+            return_list = project.getAllTagsNames()
 
         self.list_widget_tags.clear()
         for tag_name in return_list:
@@ -283,9 +296,23 @@ class Ui_Dialog_clone_tag(QDialog):
             self.list_widget_tags.addItem(item)
             item.setText(_translate("Dialog", tag_name))
 
-    def ok_action(self):
-        self.accept()
-        self.close()
+    def ok_action(self, project):
+        name_already_exists = False
+        for tag_name in project.getAllTagsNames():
+            if tag_name == self.line_edit_new_tag_name.text():
+                name_already_exists = True
+        if name_already_exists:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("This tag name already exists")
+            msg.setInformativeText("Please select another tag name")
+            msg.setWindowTitle("Error")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+        else:
+            self.accept()
+            self.close()
 
     def get_values(self):
         self.tag_to_replace = self.list_widget_tags.selectedItems()[0].text()

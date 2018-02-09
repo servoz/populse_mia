@@ -109,7 +109,7 @@ class DataBrowser(QWidget):
 
     def add_tag_pop_up(self, project):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
-        self.pop_up_add_tag = Ui_Dialog_add_tag()
+        self.pop_up_add_tag = Ui_Dialog_add_tag(project)
         self.pop_up_add_tag.show()
 
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
