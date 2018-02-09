@@ -596,16 +596,3 @@ class MiniViewer(QScrollArea):
         im_Qt = im_Qt.scaled(128, 128)
         pixm = QPixmap.fromImage(im_Qt)
         return pixm
-
-
-
-    """def clear_layout_2(self, layout):
-        if layout is not None:
-            while layout.count() > 0:
-                item = layout.takeAt(0)
-                widget = item.widget()
-                if widget is not None:
-                    widget.deleteLater()
-                else:
-                    self.clear_layout_2(item.layout())
-            sip.delete(layout)"""
