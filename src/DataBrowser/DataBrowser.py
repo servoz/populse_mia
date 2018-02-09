@@ -301,6 +301,7 @@ class TableDataBrowser(QTableWidget):
         action_reset_cell = menu.addAction("Reset cell(s)")
         action_reset_column = menu.addAction("Reset column(s)")
         action_reset_row = menu.addAction("Reset row(s)")
+        action_remove_scan = menu.addAction("Remove scan")
         action_visualized_tags = menu.addAction("Visualized tags")
 
         action = menu.exec_(self.mapToGlobal(position))
@@ -310,6 +311,8 @@ class TableDataBrowser(QTableWidget):
             self.reset_column(project)
         elif action == action_reset_row:
             self.reset_row(project)
+        elif action == action_remove_scan:
+            self.remove_scan(project)
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up(project)
 
@@ -408,6 +411,18 @@ class TableDataBrowser(QTableWidget):
                             item.setData(Qt.BackgroundRole, QVariant(color))
                         item.setText(txt)
                         self.setItem(row, col, item)
+
+    def remove_scan(self, project):
+        points = self.selectedIndexes()
+
+        for point in points:
+            row = point.row()
+            scan_path = self.item(row, 0).text()
+            for scan in project._get_scans():
+                if scan_path == scan.file_path:
+                    project.remove_scan(scan_path)
+
+
 
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)

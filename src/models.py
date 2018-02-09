@@ -216,6 +216,10 @@ class Project:
                     new_tag = tag.cloneTag(new_tag_name)
                     scan.addTag(tag.origin, new_tag)
 
+    def remove_scan(self, scan_path):
+        for scan in self._get_scans():
+            if scan.file_path == scan_path:
+                self._scans.remove(scan)
 
 def serializer(obj):
     import numpy as np
