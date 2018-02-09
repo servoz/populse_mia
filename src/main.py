@@ -18,7 +18,7 @@ from DataBrowser.DataBrowser import DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
 from models import *
-from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Save_Project_As, \
+from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Settings, Ui_Dialog_Save_Project_As, \
     Ui_Dialog_Quit
 import controller
 import shutil
@@ -84,6 +84,7 @@ class Project_Irmage(QMainWindow):
         action_save_as.triggered.connect(self.save_project_as)
         action_import.triggered.connect(self.import_data)
         self.action_preferences.triggered.connect(self.preferences_pop_up)
+        action_settings.triggered.connect(self.settings_pop_up)
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
@@ -200,6 +201,14 @@ class Project_Irmage(QMainWindow):
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
+            self.data_browser.table_data.update_table(self.project)
+
+    def settings_pop_up(self):
+        self.pop_up_settings = Ui_Dialog_Settings(self.project)
+        self.pop_up_settings.setGeometry(300, 200, 800, 600)
+        self.pop_up_settings.show()
+
+        if self.pop_up_settings.exec_() == QDialog.Accepted:
             self.data_browser.table_data.update_table(self.project)
 
     def import_data(self):

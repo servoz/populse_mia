@@ -7,7 +7,7 @@ import controller
 import os
 from models import *
 from pop_ups import Ui_Dialog_add_tag, Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_remove_tag, \
-    Ui_Visualized_Tags, Ui_Dialog_Preferences
+    Ui_Visualized_Tags, Ui_Dialog_Preferences, Ui_Dialog_Settings
 from functools import partial
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
@@ -410,7 +410,7 @@ class TableDataBrowser(QTableWidget):
                         self.setItem(row, col, item)
 
     def visualized_tags_pop_up(self, project):
-        self.pop_up = Ui_Dialog_Preferences(project)
+        self.pop_up = Ui_Dialog_Settings(project)
         self.pop_up.tab_widget.setCurrentIndex(1)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
