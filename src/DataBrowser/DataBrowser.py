@@ -164,6 +164,8 @@ class TableDataBrowser(QTableWidget):
 
         # It allows to move the columns
         self.horizontalHeader().setSectionsMovable(True)
+        #self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+        #self.setSelectionMode(QAbstractItemView.MultiSelection)
 
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -435,65 +437,73 @@ class TableDataBrowser(QTableWidget):
             self.update_table(project)
 
 
-    def change_cell_color(self, project, item):
+    def change_cell_color(self, project, item_origin):
         """
         The background color of the table will change when the user changes an item
         :return:
         """
         self.itemChanged.disconnect()
-        row = item.row()
-        col = item.column()
-        tp = str
-        scan_path = self.item(row, 0).text()
-        tag_name = self.horizontalHeaderItem(col).text()
-        text_value = item.text()
+        text_value = item_origin.text()
+        is_error = False
+        for item in self.selectedItems():
+            if is_error:
+                break
+            row = item.row()
+            col = item.column()
+            tp = str
+            scan_path = self.item(row, 0).text()
+            tag_name = self.horizontalHeaderItem(col).text()
 
-        for scan in project._get_scans():
-            if scan_path == scan.file_path:
-                for tag in scan.getAllTags():
-                    if tag_name == tag.name:
-                        tp = type(tag.original_value[0])
-        try:
-
-            test = tp(text_value)
-
-        except ValueError:
-            # Dialog that says that it is not possible
-            self.pop_up_type = Ui_Dialog_Type_Problem(tp)
-            self.pop_up_type.ok_signal.connect(partial(self.reset_cell_with_item, project, item))
-            self.pop_up_type.exec()
-
-        else:
             for scan in project._get_scans():
                 if scan_path == scan.file_path:
                     for tag in scan.getAllTags():
                         if tag_name == tag.name:
-                            txt = utils.check_tag_value(tag, 'original_value')
-                            color = QColor()
-                            if tag.origin != 'custom':
-                                if str(item.text()) != str(txt):
-                                    if row % 2 == 1:
+                            tp = type(tag.original_value[0])
+            try:
+
+                test = tp(text_value)
+
+            except ValueError:
+                # Dialog that says that it is not possible
+                self.pop_up_type = Ui_Dialog_Type_Problem(tp)
+                self.pop_up_type.ok_signal.connect(partial(self.reset_cell_with_item, project, item))
+                self.pop_up_type.exec()
+                is_error = True
+
+            else:
+                for scan in project._get_scans():
+                    if scan_path == scan.file_path:
+                        for tag in scan.getAllTags():
+                            if tag_name == tag.name:
+                                txt = utils.check_tag_value(tag, 'original_value')
+                                color = QColor()
+                                if tag.origin != 'custom':
+                                    if str(text_value) != str(txt):
+                                        if row % 2 == 1:
                                             color.setRgb(240, 240, 255)
-                                    else:
+                                        else:
                                             color.setRgb(225, 225, 255)
+                                    else:
+                                        if row % 2 == 1:
+                                            color.setRgb(255, 255, 255)
+                                        else:
+                                            color.setRgb(250, 250, 250)
+
                                 else:
                                     if row % 2 == 1:
-                                        color.setRgb(255, 255, 255)
+                                        color.setRgb(255, 240, 240)
                                     else:
-                                        color.setRgb(250, 250, 250)
+                                        color.setRgb(255, 225, 225)
 
-                            else:
-                                if row % 2 == 1:
-                                    color.setRgb(255, 240, 240)
-                                else:
-                                    color.setRgb(255, 225, 225)
+                                item.setData(Qt.BackgroundRole, QVariant(color))
+                                item.setText(text_value)
+                                tag_origin = tag.origin
+                                tag_replace = tag.replace
+                                tag_value_to_add = utils.text_to_tag_value(text_value, tag)
+                                new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
+                                scan.replaceTag(new_tag, tag_name, str(tag_origin))
 
-                            item.setData(Qt.BackgroundRole, QVariant(color))
-                            tag_origin = tag.origin
-                            tag_replace = tag.replace
-                            tag_value_to_add = utils.text_to_tag_value(text_value, tag)
-                            new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
-                            scan.replaceTag(new_tag, tag_name, str(tag_origin))
+
 
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
