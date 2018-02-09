@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBo
 import os
 from functools import partial
 import controller
+import shutil
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
@@ -30,9 +31,11 @@ class Ui_Dialog_New_Project(QFileDialog):
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
             #self.path = entire_path
+            self.relative_path = os.path.relpath(file_name)
+            self.relative_subpath = os.path.relpath(self.path)
 
-            if not os.path.exists(entire_path + '/'):
-                controller.createProject(self.name, '~', self.path)
+            if not os.path.exists(self.relative_path):
+                controller.createProject(self.name, '~', self.relative_subpath)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
@@ -79,10 +82,11 @@ class Ui_Dialog_Open_Project(QFileDialog):
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
             #self.path = entire_path
+            self.relative_path = os.path.relpath(file_name)
 
             # If the file exists
-            if os.path.exists(entire_path + '/' + self.name + '/' + self.name + '.json'):
-                controller.open_project(self.name, entire_path)
+            if os.path.exists(os.path.join(self.relative_path, self.name, self.name + '.json')):
+                controller.open_project(self.name, self.relative_path)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
@@ -662,9 +666,11 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
             self.total_path = entire_path
+            self.relative_path = os.path.relpath(file_name)
+            self.relative_subpath = os.path.relpath(self.path)
 
-            if not os.path.exists(entire_path + '/'):
-                controller.createProject(self.name, '~', self.path)
+            if not os.path.exists(self.relative_path):
+                controller.createProject(self.name, '~', self.relative_subpath)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_saved_project.emit()
@@ -727,13 +733,15 @@ class Ui_Dialog_Quit(QDialog):
     do_not_save_signal = pyqtSignal()
     cancel_signal = pyqtSignal()
 
-    def __init__(self, project_name):
+    def __init__(self, project):
         super().__init__()
+
+        self.project = project
 
         self.setWindowTitle("Confirm exit")
 
         label = QLabel(self)
-        label.setText('Do you want to exit without saving ' + project_name + '?')
+        label.setText('Do you want to exit without saving ' + project.name + '?')
 
         push_button_save_as = QPushButton("Save", self)
         push_button_do_not_save = QPushButton("Do not save", self)
@@ -761,6 +769,8 @@ class Ui_Dialog_Quit(QDialog):
         self.close()
 
     def do_not_save_clicked(self):
+        if (os.path.exists(os.path.join(self.project.folder, 'data'))):
+            shutil.rmtree(os.path.join(self.project.folder, 'data'))
         self.bool_exit = True
         self.close()
 
