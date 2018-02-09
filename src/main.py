@@ -59,7 +59,7 @@ class Project_Irmage(QMainWindow):
         action_save_as.setShortcut('Ctrl+Shift+S')
         menu_file.addAction(action_save_as)
 
-        action_import = QAction(QIcon('sources_images/Blue.png'), 'Import', self)
+        action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
         action_import.setShortcut('Ctrl+I')
         menu_file.addAction(action_import)
 
@@ -69,7 +69,7 @@ class Project_Irmage(QMainWindow):
         self.action_preferences = QAction('MIA2 preferences', self)
         menu_file.addAction(self.action_preferences)
 
-        action_exit = QAction(QIcon('sources_images/exit.png'), 'Exit', self)
+        action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
         action_exit.setShortcut('Ctrl+W')
         menu_file.addAction(action_exit)
 
@@ -92,7 +92,7 @@ class Project_Irmage(QMainWindow):
         #return self
 
         self.project = Project("")
-        self.project.folder = "./"
+        self.project.folder = os.path.relpath(os.path.curdir)
         self.first_save = True
         # BELOW : WAS AT THE END OF MODIFY_UI
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
@@ -103,7 +103,7 @@ class Project_Irmage(QMainWindow):
 
     def closeEvent(self, event):
         if self.project.name == "":
-            self.pop_up_close = Ui_Dialog_Quit(self.project.name)
+            self.pop_up_close = Ui_Dialog_Quit(self.project) # Crash if red cross clicked
             self.pop_up_close.save_as_signal.connect(self.save_project)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
@@ -127,7 +127,7 @@ class Project_Irmage(QMainWindow):
 
         # We get the name and the path of the current project to open it
         name = self.exPopup.name
-        path = self.exPopup.path + '/' + name
+        path = os.path.join(self.exPopup.path, name)
         self.project = controller.open_project(name, path)
 
         #QtCore.QMetaObject.connectSlotsByName(self)
@@ -214,7 +214,7 @@ class Project_Irmage(QMainWindow):
     def import_data(self):
         # Opens the conversion software to convert the MRI files in Nifti/Json
         subprocess.call(['java', '-Xmx4096M', '-jar', 'MRIManagerJ8.jar',
-                         '[ExportNifti] ' + os.path.abspath(self.project.folder) + '/data/raw_data/',
+                         '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data/'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime'])
 
         controller.read_log(self.project)
@@ -225,7 +225,7 @@ class Project_Irmage(QMainWindow):
         if self.project.name == "":
             self.save_project_as()
         else:
-            project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
+            project_path = os.path.join(self.project.folder, self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
             self.first_save = False
 
@@ -237,29 +237,29 @@ class Project_Irmage(QMainWindow):
         self.exPopup.exec()
 
         old_folder = self.project.folder
-        self.project.folder = self.exPopup.total_path
+        self.project.folder = self.exPopup.relative_path
         self.project.name = self.exPopup.name
         self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-        data_path = os.path.abspath(self.project.folder) + '/data/'
+        data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
 
-        for filename in glob.glob(os.path.join(os.path.abspath(old_folder + '/data/raw_data'), '*.*')):
-            shutil.copy(filename, data_path + 'raw_data/')
-        for filename in glob.glob(os.path.join(os.path.abspath(old_folder + '/data/derived_data'), '*.*')):
-            shutil.copy(filename, data_path + 'derived_data/')
+        if(os.path.exists(os.path.join(old_folder, 'data'))):
+            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
+                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
+            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
+                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
-        project_path = os.path.abspath(self.project.folder) + '/' + self.project.name + '/' + self.project.name
+        project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
         utils.saveProjectAsJsonFile(project_path, self.project)
 
         if self.first_save:
-            command = "rm -r " + os.path.abspath(old_folder + "data/raw_data")
-            os.system(command)
-            if not os.listdir(os.path.abspath(old_folder + "data/")):
-                command = "rmdir " + os.path.abspath(old_folder + "data/")
-                os.system(command)
+            if (os.path.exists(os.path.join(old_folder, 'data'))):
+                shutil.rmtree(os.path.join(old_folder, 'data'))
 
         # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
         self.exPopup.signal_saved_project.connect(self.modify_ui)
+
+        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
           
 if __name__ == '__main__':
     import sys
