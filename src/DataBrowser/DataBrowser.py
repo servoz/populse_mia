@@ -390,29 +390,30 @@ class TableDataBrowser(QTableWidget):
                                 self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
                             n_tag.resetTag()
 
-    def reset_cell_with_item(self, project, item_in):
-        row = item_in.row()
-        col = item_in.column()
+    def reset_cells_with_item(self, project, items_in):
+        for item_in in items_in:
+            row = item_in.row()
+            col = item_in.column()
 
-        scan_path = self.item(row, 0).text()
-        tag_name = self.horizontalHeaderItem(col).text()
+            scan_path = self.item(row, 0).text()
+            tag_name = self.horizontalHeaderItem(col).text()
 
-        for scan in project._get_scans():
-            if scan_path == scan.file_path:
-                for tag in scan.getAllTags():
-                    if tag_name == tag.name:
-                        # It is put in the table
-                        item = QTableWidgetItem()
-                        txt = utils.check_tag_value(tag, 'value')
-                        if tag.origin == 'custom':
-                            color = QColor()
-                            if row % 2 == 1:
-                                color.setRgb(255, 240, 240)
-                            else:
-                                color.setRgb(255, 225, 225)
-                            item.setData(Qt.BackgroundRole, QVariant(color))
-                        item.setText(txt)
-                        self.setItem(row, col, item)
+            for scan in project._get_scans():
+                if scan_path == scan.file_path:
+                    for tag in scan.getAllTags():
+                        if tag_name == tag.name:
+                            # It is put in the table
+                            item = QTableWidgetItem()
+                            txt = utils.check_tag_value(tag, 'value')
+                            if tag.origin == 'custom':
+                                color = QColor()
+                                if row % 2 == 1:
+                                    color.setRgb(255, 240, 240)
+                                else:
+                                    color.setRgb(255, 225, 225)
+                                item.setData(Qt.BackgroundRole, QVariant(color))
+                            item.setText(txt)
+                            self.setItem(row, col, item)
 
     def remove_scan(self, project):
         points = self.selectedIndexes()
@@ -424,8 +425,6 @@ class TableDataBrowser(QTableWidget):
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
 
-
-
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)
         self.pop_up.tab_widget.setCurrentIndex(1)
@@ -436,12 +435,13 @@ class TableDataBrowser(QTableWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.update_table(project)
 
-
     def change_cell_color(self, project, item_origin):
         """
         The background color of the table will change when the user changes an item
+        Handles the multi-selection case
         :return:
         """
+
         self.itemChanged.disconnect()
         text_value = item_origin.text()
         is_error = False
@@ -464,13 +464,22 @@ class TableDataBrowser(QTableWidget):
                 test = tp(text_value)
 
             except ValueError:
-                # Dialog that says that it is not possible
-                self.pop_up_type = Ui_Dialog_Type_Problem(tp)
-                self.pop_up_type.ok_signal.connect(partial(self.reset_cell_with_item, project, item))
-                self.pop_up_type.exec()
                 is_error = True
 
-            else:
+        if is_error:
+            items = self.selectedItems()
+
+            # Dialog that says that it is not possible
+            self.pop_up_type = Ui_Dialog_Type_Problem(tp)
+            # Resetting the cells
+            self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, project, items))
+            self.pop_up_type.exec()
+        else:
+            for item in self.selectedItems():
+                row = item.row()
+                col = item.column()
+                scan_path = self.item(row, 0).text()
+                tag_name = self.horizontalHeaderItem(col).text()
                 for scan in project._get_scans():
                     if scan_path == scan.file_path:
                         for tag in scan.getAllTags():
@@ -502,8 +511,6 @@ class TableDataBrowser(QTableWidget):
                                 tag_value_to_add = utils.text_to_tag_value(text_value, tag)
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))
-
-
 
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
