@@ -22,6 +22,9 @@ class Scan:
         self._tags = []
         self._delete_tags = []
 
+    def __lt__(self, other):
+        return self.file_path < other.file_path
+
     def _get_tags(self):
         return self._tags
 
@@ -149,6 +152,7 @@ class Project:
         self.date = time.strftime('%d/%m/%y %H:%M', time.localtime())
         self._scans = []
         self.user_tags = []
+        self.sort_tags = ['FileName']
         self.tags_to_visualize = ['PatientName', 'AcquisitionDate']  # Has to be read from MIA2 preferences later
 
     def add_user_tag(self, name, original_value):
@@ -220,6 +224,25 @@ class Project:
         for scan in self._get_scans():
             if scan.file_path == scan_path:
                 self._scans.remove(scan)
+
+    def reset_sort_tags(self):
+        self.sort_tags = []
+
+    def add_sort_tag(self, tag_name):
+        self.sort_tags.append(tag_name)
+
+    def sort_by_tags(self):
+        # for tag_name in self.sort_tags: #TODO: HAVE TO DEAL WITH THE MULTISORTING CASE
+        tag_name = self.sort_tags[0]
+        list_tags = []
+        for scan in self._get_scans():
+            for tag in scan.getAllTags():
+                if tag.name == tag_name:
+                    list_tags.append(tag.value[0])
+
+        # Sorting according to the tag values
+        self._scans = [x for _, x in sorted(zip(list_tags, self._scans))]
+
 
 def serializer(obj):
     import numpy as np

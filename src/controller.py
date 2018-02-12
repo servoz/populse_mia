@@ -285,7 +285,12 @@ def read_log(project):
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
-            project.addScan(loadScan(str(1), file_name, path_name))
+            scan_to_add = loadScan(str(1), file_name, path_name)
+            list_to_add = []
+            list_to_add.append(file_name)
+            tag_to_add = Tag("FileName", "", list_to_add, "json", list_to_add)
+            scan_to_add.addJsonTag(tag_to_add)
+            project.addScan(scan_to_add)
             for tag in project.user_tags:
                 user_tag_name = tag['name']
                 for scan in project._get_scans():

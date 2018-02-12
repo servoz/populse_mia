@@ -1,8 +1,8 @@
 from PyQt5.QtCore import Qt, QVariant, QPoint
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtGui import QColor, QImage, QPixmap
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame
+from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QTableView
 import controller
 import os
 from models import *
@@ -178,7 +178,8 @@ class TableDataBrowser(QTableWidget):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
-
+        #if project.sort_tags != "File Name":
+        project.sort_by_tags()
         self.flag_first_time += 1
 
         if self.flag_first_time > 1:
@@ -217,12 +218,15 @@ class TableDataBrowser(QTableWidget):
 
         # Filling the header of the columns
         item = self.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", 'File Name'))
+        item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+        item.setText('FileName')
 
         nb = 1
         for element in project.tags_to_visualize:
             element = str(element)
             item = QTableWidgetItem()
+            item = self.horizontalHeaderItem(nb)
+            item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
             item.setText(_translate("MainWindow", element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
@@ -293,6 +297,7 @@ class TableDataBrowser(QTableWidget):
         # When the user changes one item of the table, the background will change
         #self.itemChanged.connect(lambda item: self.change_cell_color(item, project))
         self.itemChanged.connect(partial(self.change_cell_color, project))
+        """self.itemDoubleClicked.connect(self.sort_column)"""
 
     def context_menu_table(self, project, position):
 
@@ -304,6 +309,7 @@ class TableDataBrowser(QTableWidget):
         action_reset_column = menu.addAction("Reset column(s)")
         action_reset_row = menu.addAction("Reset row(s)")
         action_remove_scan = menu.addAction("Remove scan")
+        action_sort_column = menu.addAction("Sort column")
         action_visualized_tags = menu.addAction("Visualized tags")
 
         action = menu.exec_(self.mapToGlobal(position))
@@ -315,6 +321,8 @@ class TableDataBrowser(QTableWidget):
             self.reset_row(project)
         elif action == action_remove_scan:
             self.remove_scan(project)
+        elif action == action_sort_column:
+            self.sort_column(project)
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up(project)
 
@@ -424,6 +432,19 @@ class TableDataBrowser(QTableWidget):
             for scan in project._get_scans():
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
+
+    def sort_column(self, project):
+        points = self.selectedItems()
+
+        self.setSortingEnabled(True)
+        project.reset_sort_tags()
+
+        for point in points:
+            col = point.column()
+            tag_name = self.horizontalHeaderItem(col).text()
+            project.add_sort_tag(tag_name)
+
+
 
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)
