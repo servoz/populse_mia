@@ -737,6 +737,7 @@ class Ui_Dialog_Quit(QDialog):
         super().__init__()
 
         self.project = project
+        self.bool_exit = False
 
         self.setWindowTitle("Confirm exit")
 
@@ -769,8 +770,6 @@ class Ui_Dialog_Quit(QDialog):
         self.close()
 
     def do_not_save_clicked(self):
-        if (os.path.exists(os.path.join(self.project.folder, 'data'))):
-            shutil.rmtree(os.path.join(self.project.folder, 'data'))
         self.bool_exit = True
         self.close()
 

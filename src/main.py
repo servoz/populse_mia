@@ -100,14 +100,17 @@ class Project_Irmage(QMainWindow):
 
             if not os.path.exists(check_path):
                 self.project.folder = check_path
+                self.temp_dir = check_path
                 os.makedirs(check_path)
                 tmp_dir_exists = True
             elif not os.path.exists(check_path_2):
                 self.project.folder = check_path_2
+                self.temp_dir = check_path_2
                 os.makedirs(check_path_2)
                 tmp_dir_exists = True
             elif not os.path.exists(check_path_3):
                 self.project.folder = check_path_3
+                self.temp_dir = check_path_3
                 os.makedirs(check_path_3)
                 tmp_dir_exists = True
             else:
@@ -143,6 +146,10 @@ class Project_Irmage(QMainWindow):
 
         if can_exit:
             event.accept()
+            if os.path.exists(self.temp_dir):
+                if os.path.exists(os.path.join(self.temp_dir, 'data')):
+                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
+                os.rmdir(self.temp_dir)
         else:
             event.ignore()
 
