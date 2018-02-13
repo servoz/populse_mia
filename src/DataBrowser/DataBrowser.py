@@ -171,7 +171,6 @@ class TableDataBrowser(QTableWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
-        self.order = "ascending"
         if project:
             self.update_table(project)
 
@@ -180,7 +179,7 @@ class TableDataBrowser(QTableWidget):
         This method will fill the tables in the 'Table' tab with the project data
         """
 
-        project.sort_by_tags(self.order)
+        project.sort_by_tags()
         self.flag_first_time += 1
 
         if self.flag_first_time > 1:
@@ -440,7 +439,7 @@ class TableDataBrowser(QTableWidget):
     def sort_column(self, project):
         points = self.selectedItems()
 
-        self.order = "ascending"
+        project.sort_order = "ascending"
         self.setSortingEnabled(True)
         project.reset_sort_tags()
 
@@ -452,7 +451,7 @@ class TableDataBrowser(QTableWidget):
     def sort_column_descending(self, project):
         points = self.selectedItems()
 
-        self.order = "descending"
+        project.sort_order = "descending"
         self.setSortingEnabled(True)
         project.reset_sort_tags()
 

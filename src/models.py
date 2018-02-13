@@ -153,6 +153,7 @@ class Project:
         self._scans = []
         self.user_tags = []
         self.sort_tags = ['FileName']
+        self.sort_order = "ascending"
         self.tags_to_visualize = ['PatientName', 'AcquisitionDate']  # Has to be read from MIA2 preferences later
 
     def add_user_tag(self, name, original_value):
@@ -231,7 +232,7 @@ class Project:
     def add_sort_tag(self, tag_name):
         self.sort_tags.append(tag_name)
 
-    def sort_by_tags(self, order):
+    def sort_by_tags(self):
         # for tag_name in self.sort_tags: #TODO: HAVE TO DEAL WITH THE MULTISORTING CASE
         tag_name = self.sort_tags[0]
         list_tags = []
@@ -241,9 +242,9 @@ class Project:
                     list_tags.append(tag.value[0])
 
         # Sorting according to the tag values
-        if order == "ascending":
+        if self.sort_order == "ascending":
             self._scans = [x for _, x in sorted(zip(list_tags, self._scans))]
-        elif order == "descending":
+        elif self.sort_order == "descending":
             self._scans = [x for _, x in sorted(zip(list_tags, self._scans), reverse=True)]
 
 
@@ -257,6 +258,8 @@ def serializer(obj):
                 'date': obj.date,
                 'scans': obj._get_scans(),
                 'user_tags': obj.user_tags,
+                'sort_tags': obj.sort_tags,
+                'sort_order': obj.sort_order,
                 'tags_to_visualize': obj.tags_to_visualize}
 
     if isinstance(obj, Scan):
@@ -304,6 +307,8 @@ def deserializer(obj_dict):
             obj.date = obj_dict["date"]
             obj._scans = obj_dict["scans"]
             obj.user_tags = obj_dict["user_tags"]
+            obj.sort_tags = obj_dict["sort_tags"]
+            obj.sort_order = obj_dict["sort_order"]
             obj.tags_to_visualize = obj_dict["tags_to_visualize"]
             return obj
         if obj_dict["__class__"] == "Scan":
