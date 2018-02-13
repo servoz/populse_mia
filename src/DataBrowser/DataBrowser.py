@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, QVariant, QPoint
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QTableView
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction
 import controller
 import os
 from models import *
@@ -21,6 +21,8 @@ class DataBrowser(QWidget):
         super(DataBrowser, self).__init__()
 
         _translate = QtCore.QCoreApplication.translate
+        self.create_actions(project)
+        self.create_toolbar_menus()
 
         ################################### TABLE ###################################
 
@@ -30,7 +32,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_table_data.setObjectName("frame_table_data")
 
-        # Label
+        """'# Label
         self.label_principal_table = QtWidgets.QLabel(self.frame_table_data)
         self.label_principal_table.setText(_translate("MainWindow", "Principal Table"))
 
@@ -50,7 +52,7 @@ class DataBrowser(QWidget):
         self.push_button_remove_tag = QtWidgets.QPushButton(self.frame_table_data)
         self.push_button_remove_tag.setText(_translate("MainWindow", "Remove tag"))
         self.push_button_remove_tag.setObjectName("pushButton_remove_tag")
-        self.push_button_remove_tag.clicked.connect(lambda: self.remove_tag_pop_up(project))
+        self.push_button_remove_tag.clicked.connect(lambda: self.remove_tag_pop_up(project))"""
 
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project)
@@ -59,16 +61,16 @@ class DataBrowser(QWidget):
 
         ## LAYOUTS ##
 
-        vbox_table = QVBoxLayout()
+        """vbox_table = QVBoxLayout()
         vbox_table.addWidget(self.label_principal_table)
         vbox_table.addWidget(self.push_button_add_tag)
         vbox_table.addWidget(self.push_button_clone_tag)
         vbox_table.addWidget(self.push_button_remove_tag)
         vbox_table.setSpacing(10)
-        vbox_table.addStretch(1)
+        vbox_table.addStretch(1)"""
 
         hbox_table = QHBoxLayout()
-        hbox_table.addLayout(vbox_table)
+        # hbox_table.addLayout(vbox_table)
         hbox_table.addWidget(self.table_data)
 
         self.frame_table_data.setLayout(hbox_table)
@@ -82,7 +84,6 @@ class DataBrowser(QWidget):
         self.frame_visualization.setObjectName("frame_5")
 
         self.viewer = MiniViewer(project)
-        #self.viewer.setMaximumWidth(self.width())
         self.viewer.setObjectName("viewer")
         self.viewer.adjustSize()
 
@@ -97,9 +98,40 @@ class DataBrowser(QWidget):
         splitter_vertical.addWidget(self.frame_table_data)
         splitter_vertical.addWidget(self.frame_visualization)
 
-        hbox_splitter = QHBoxLayout(self)
-        hbox_splitter.addWidget(splitter_vertical)
-        self.setLayout(hbox_splitter)
+        vbox_splitter = QVBoxLayout(self)
+        vbox_splitter.addWidget(self.menu_toolbar)
+        vbox_splitter.addWidget(splitter_vertical)
+
+        self.setLayout(vbox_splitter)
+
+        """vbox = QVBoxLayout()
+        vbox.addWidget(self.menu_toolbar)
+        vbox.addLayout(hbox_splitter)
+        self.setLayout(vbox)"""
+
+    def create_actions(self, project):
+        self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
+        self.add_tag_action.triggered.connect(lambda: self.add_tag_pop_up(project))
+
+        self.clone_tag_action = QAction("Clone tag", self)
+        self.clone_tag_action.triggered.connect(lambda: self.clone_tag_pop_up(project))
+
+        self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
+        self.remove_tag_action.triggered.connect(lambda: self.remove_tag_pop_up(project))
+
+    def create_toolbar_menus(self):
+        self.menu_toolbar = QToolBar()
+
+        tags_tool_button = QToolButton()
+        tags_tool_button.setText('Tags')
+        tags_tool_button.setPopupMode(QToolButton.MenuButtonPopup)
+        tags_menu = QMenu()
+        tags_menu.addAction(self.add_tag_action)
+        tags_menu.addAction(self.clone_tag_action)
+        tags_menu.addAction(self.remove_tag_action)
+        tags_tool_button.setMenu(tags_menu)
+
+        self.menu_toolbar.addWidget(tags_tool_button)
 
     def connect_viewer(self, project, row, col):
         path_name = os.path.abspath(project.folder)
