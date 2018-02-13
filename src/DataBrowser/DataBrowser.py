@@ -185,7 +185,7 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        self.nb_columns = len(project.tags_to_visualize) + 1 # Read from MIA2 preferences
+        self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
         self.nb_rows = len(project._get_scans())
         self.setRowCount(self.nb_rows)
@@ -216,15 +216,15 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
 
-        # Filling the header of the columns
+        """# Filling the header of the columns
         item = self.horizontalHeaderItem(0)
         item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
-        item.setText('FileName')
+        item.setText('FileName')"""
 
-        nb = 1
+        nb = 0
         for element in project.tags_to_visualize:
             element = str(element)
-            item = QTableWidgetItem()
+            #item = QTableWidgetItem()
             item = self.horizontalHeaderItem(nb)
             item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
             item.setText(_translate("MainWindow", element))
@@ -232,14 +232,14 @@ class TableDataBrowser(QTableWidget):
             nb += 1
 
         """ Filling the first column with the path of each scan """
-        nb = 0
+        """nb = 0
         for i in project._get_scans():
             a = str(i.file_path)
             item = QTableWidgetItem()
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             item.setText(a)
             self.setItem(nb, 0, item)
-            nb += 1
+            nb += 1"""
 
         # Filling all the cells
         y = -1
@@ -247,7 +247,7 @@ class TableDataBrowser(QTableWidget):
 
         for file in project._get_scans():
             y += 1
-            i = 0
+            i = -1
 
             # Loop on the selected tags
             for tag_name in project.tags_to_visualize:
@@ -262,6 +262,9 @@ class TableDataBrowser(QTableWidget):
                             item = QTableWidgetItem()
                             txt = utils.check_tag_value(n_tag, 'value')
                             item.setText(txt)
+
+                            if tag_name == "FileName":
+                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
                             # If this tag has been added by the user
                             if n_tag.origin == "custom":

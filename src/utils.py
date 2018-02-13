@@ -55,7 +55,7 @@ def remove_accents(txt):
 def check_tag_value(tag, which_value):
     txt = ""
     if which_value == 'value':
-        if tag.origin == 'Json' or tag.origin == 'custom':
+        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
             if isinstance(tag.value, list):
                 if len(tag.value) == 1:
                     txt = str(tag.value[0])

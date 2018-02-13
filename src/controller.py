@@ -288,7 +288,7 @@ def read_log(project):
             scan_to_add = loadScan(str(1), file_name, path_name)
             list_to_add = []
             list_to_add.append(file_name)
-            tag_to_add = Tag("FileName", "", list_to_add, "json", list_to_add)
+            tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
             for tag in project.user_tags:
