@@ -231,7 +231,7 @@ class Project:
     def add_sort_tag(self, tag_name):
         self.sort_tags.append(tag_name)
 
-    def sort_by_tags(self):
+    def sort_by_tags(self, order):
         # for tag_name in self.sort_tags: #TODO: HAVE TO DEAL WITH THE MULTISORTING CASE
         tag_name = self.sort_tags[0]
         list_tags = []
@@ -241,7 +241,10 @@ class Project:
                     list_tags.append(tag.value[0])
 
         # Sorting according to the tag values
-        self._scans = [x for _, x in sorted(zip(list_tags, self._scans))]
+        if order == "ascending":
+            self._scans = [x for _, x in sorted(zip(list_tags, self._scans))]
+        elif order == "descending":
+            self._scans = [x for _, x in sorted(zip(list_tags, self._scans), reverse=True)]
 
 
 def serializer(obj):

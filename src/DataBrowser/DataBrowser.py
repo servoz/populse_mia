@@ -171,6 +171,7 @@ class TableDataBrowser(QTableWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
+        self.order = "ascending"
         if project:
             self.update_table(project)
 
@@ -178,8 +179,8 @@ class TableDataBrowser(QTableWidget):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
-        #if project.sort_tags != "File Name":
-        project.sort_by_tags()
+
+        project.sort_by_tags(self.order)
         self.flag_first_time += 1
 
         if self.flag_first_time > 1:
@@ -310,6 +311,7 @@ class TableDataBrowser(QTableWidget):
         action_reset_row = menu.addAction("Reset row(s)")
         action_remove_scan = menu.addAction("Remove scan")
         action_sort_column = menu.addAction("Sort column")
+        action_sort_column_descending = menu.addAction("Sort column (descending)")
         action_visualized_tags = menu.addAction("Visualized tags")
 
         action = menu.exec_(self.mapToGlobal(position))
@@ -323,6 +325,8 @@ class TableDataBrowser(QTableWidget):
             self.remove_scan(project)
         elif action == action_sort_column:
             self.sort_column(project)
+        elif action == action_sort_column_descending:
+            self.sort_column_descending(project)
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up(project)
 
@@ -436,6 +440,19 @@ class TableDataBrowser(QTableWidget):
     def sort_column(self, project):
         points = self.selectedItems()
 
+        self.order = "ascending"
+        self.setSortingEnabled(True)
+        project.reset_sort_tags()
+
+        for point in points:
+            col = point.column()
+            tag_name = self.horizontalHeaderItem(col).text()
+            project.add_sort_tag(tag_name)
+
+    def sort_column_descending(self, project):
+        points = self.selectedItems()
+
+        self.order = "descending"
         self.setSortingEnabled(True)
         project.reset_sort_tags()
 
