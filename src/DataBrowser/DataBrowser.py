@@ -147,8 +147,11 @@ class DataBrowser(QWidget):
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
             (new_tag_name, new_default_value, type) = self.pop_up_add_tag.get_values()
 
-            list_to_add = []
-            list_to_add.append(type(new_default_value))
+            if type != list:
+                list_to_add = []
+                list_to_add.append(type(new_default_value))
+            else:
+                list_to_add = utils.text_to_list(new_default_value)
 
             new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
 
@@ -292,7 +295,7 @@ class TableDataBrowser(QTableWidget):
                         if n_tag.name == tag_name:
                             # It is put in the table
                             item = QTableWidgetItem()
-                            txt = utils.check_tag_value(n_tag, 'value')
+                            txt = utils.check_tag_value_2(n_tag, 'value')
                             item.setText(txt)
 
                             if tag_name == "FileName":
@@ -308,7 +311,7 @@ class TableDataBrowser(QTableWidget):
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                             else:
                                 if utils.compare_values(n_tag) == False:
-                                    txt = utils.check_tag_value(n_tag, 'original_value')
+                                    txt = utils.check_tag_value_2(n_tag, 'original_value')
                                     item.setToolTip("Original value: " + txt)
                                     color = QColor()
                                     if y % 2 == 1:
@@ -378,7 +381,7 @@ class TableDataBrowser(QTableWidget):
                 if file.file_path == scan_name:
                     for n_tag in file._get_tags():
                         if n_tag.name == tag_name:
-                            txt = utils.check_tag_value(n_tag, 'original_value')
+                            txt = utils.check_tag_value_2(n_tag, 'original_value')
                             self.item(row, col).setText(txt)
                             if n_tag.origin != "custom":
                                 color = QColor()
@@ -401,7 +404,7 @@ class TableDataBrowser(QTableWidget):
                 scan_id += 1
                 for n_tag in file._get_tags():
                     if n_tag.name == tag_name:
-                        txt = utils.check_tag_value(n_tag, 'original_value')
+                        txt = utils.check_tag_value_2(n_tag, 'original_value')
                         self.item(scan_id, col).setText(txt)
                         if n_tag.origin != "custom":
                             color = QColor()
@@ -425,7 +428,7 @@ class TableDataBrowser(QTableWidget):
                     for n_tag in file.getAllTags():
                         if n_tag.name in project.tags_to_visualize:
                             idx = project.tags_to_visualize.index(n_tag.name) + 1
-                            txt = utils.check_tag_value(n_tag, 'original_value')
+                            txt = utils.check_tag_value_2(n_tag, 'original_value')
                             self.item(row, idx).setText(txt)
                             if n_tag.origin != "custom":
                                 color = QColor()
@@ -450,7 +453,7 @@ class TableDataBrowser(QTableWidget):
                         if tag_name == tag.name:
                             # It is put in the table
                             item = QTableWidgetItem()
-                            txt = utils.check_tag_value(tag, 'value')
+                            txt = utils.check_tag_value_2(tag, 'value')
                             if tag.origin == 'custom':
                                 color = QColor()
                                 if row % 2 == 1:
@@ -532,7 +535,9 @@ class TableDataBrowser(QTableWidget):
                         if tag_name == tag.name:
                             tp = type(tag.original_value[0])
             try:
-
+                """# TODO: THIS HAVE TO BE IMPROVE (CHECK EACH VALUE OF THE WRITTEN LIST)
+                if tp == list and (text_value[0] != '[' or text_value[-1] != ']'):
+                    is_error = True"""
                 test = tp(text_value)
 
             except ValueError:
@@ -556,7 +561,8 @@ class TableDataBrowser(QTableWidget):
                     if scan_path == scan.file_path:
                         for tag in scan.getAllTags():
                             if tag_name == tag.name:
-                                txt = utils.check_tag_value(tag, 'original_value')
+                                tp = type(tag.original_value[0])
+                                txt = utils.check_tag_value_2(tag, 'original_value')
                                 color = QColor()
                                 if tag.origin != 'custom':
                                     if str(text_value) != str(txt):
@@ -580,7 +586,10 @@ class TableDataBrowser(QTableWidget):
                                 item.setText(text_value)
                                 tag_origin = tag.origin
                                 tag_replace = tag.replace
-                                tag_value_to_add = utils.text_to_tag_value(text_value, tag)
+                                if tp == list:
+                                    tag_value_to_add = utils.text_to_list(text_value)
+                                else:
+                                    tag_value_to_add = utils.text_to_tag_value(text_value, tag)
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))
 

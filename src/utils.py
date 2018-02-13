@@ -73,7 +73,7 @@ def check_tag_value(tag, which_value):
             txt = str(tag.value)
 
     elif which_value == 'original_value':
-        if tag.origin == 'Json' or tag.origin == 'custom':
+        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
             if isinstance(tag.original_value, list):
                 if len(tag.original_value) == 1:
                     txt = str(tag.original_value[0])
@@ -89,6 +89,39 @@ def check_tag_value(tag, which_value):
                         txt = str(tag.original_value[1:len(tag.original_value) - 1])
         else:
             txt = str(tag.original_value)
+
+    else:
+        print("which_value has to be 'value' or 'original_value'")
+        txt = 'error'
+
+    return txt
+
+
+def check_tag_value_2(tag, which_value):
+    txt = ""
+    if which_value == 'value':
+        if len(tag.value) == 1:
+            txt = str(tag.value[0])
+        else:
+            for idx, item in enumerate(tag.value):
+                if isinstance(item, list):
+                    txt += str(item[0])
+                else:
+                    txt += str(item)
+                if idx < len(tag.value) - 1:
+                    txt += ", "
+
+    elif which_value == 'original_value':
+        if len(tag.value) == 1:
+            txt = str(tag.value[0])
+        else:
+            for idx, item in enumerate(tag.original_value):
+                if isinstance(item, list):
+                    txt += str(item[0])
+                else:
+                    txt += str(item)
+                if idx < len(tag.value) - 1:
+                    txt += ", "
 
     else:
         print("which_value has to be 'value' or 'original_value'")
@@ -165,5 +198,48 @@ def text_to_tag_value(text_value, tag):
     else:
         tp = type(tag.original_value[0])
         tag_value.append(tp(text_value))
+
+    return tag_value
+
+def text_to_list(text_value):
+    string_values = []
+    value = ""
+    # We check all the characters each list to determine if it is an int, float or a string
+    for idx, char in enumerate(text_value):
+        if char == ',':
+            string_values.append("".join(value))
+            value = ""
+        else:
+            value += str(char)
+        if idx == len(text_value) - 1:
+            string_values.append("".join(value))
+
+    tag_value = []
+    # From string value, we check the type of data
+    for element in string_values:
+        a = 0
+        b = 0
+        for char in element:
+            if char.isdigit() or char == '-' or char == '+':
+                a += 1
+            if char == '.' or char.lower() == 'e':
+                b += 1
+
+        if a == len(element) and a > 0 and b == 0:
+            int_result = int(element)
+            list_int = []
+            list_int.append(int_result)
+            tag_value.append(list_int)
+
+        elif (a == len(element) or a == len(element) - 1) and a > 0 and (b == 1 or b == 2):
+            float_result = float(element)
+            list_float = []
+            list_float.append(float_result)
+            tag_value.append(list_float)
+
+        else:
+            list_string = []
+            list_string.append(element)
+            tag_value.append(list_string)
 
     return tag_value

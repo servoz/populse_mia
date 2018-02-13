@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QCoreApplication
 from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
-    QMessageBox
+    QMessageBox, QStatusBar
 import os
 from functools import partial
 import controller
@@ -119,51 +119,75 @@ class Ui_Dialog_add_tag(QDialog):
 
     def pop_up(self, project):
         self.setObjectName("Add a tag")
-        grid = QGridLayout()
-        self.setLayout(grid)
 
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton(self)
         self.push_button_ok.setObjectName("push_button_ok")
-        grid.addWidget(self.push_button_ok, 3, 1)
 
         # The 'Tag name' label
         self.label_tag_name = QtWidgets.QLabel(self)
-        grid.addWidget(self.label_tag_name, 0, 0)
         self.label_tag_name.setTextFormat(QtCore.Qt.AutoText)
         self.label_tag_name.setObjectName("tag_name")
 
         # The 'Tag name' text edit
         self.text_edit_tag_name = QtWidgets.QLineEdit(self)
-        grid.addWidget(self.text_edit_tag_name, 0, 1)
         self.text_edit_tag_name.setObjectName("textEdit_tag_name")
 
         # The 'Default value' label
         self.label_default_value = QtWidgets.QLabel(self)
-        grid.addWidget(self.label_default_value, 1, 0)
         self.label_default_value.setTextFormat(QtCore.Qt.AutoText)
         self.label_default_value.setObjectName("default_value")
 
         # The 'Default value' text edit
         self.text_edit_default_value = QtWidgets.QLineEdit(self)
-        grid.addWidget(self.text_edit_default_value, 1, 1)
-        self.text_edit_tag_name.setObjectName("textEdit_default_value")
+        self.text_edit_default_value.setObjectName("textEdit_default_value")
 
         # The 'Default value' label
         self.label_type = QtWidgets.QLabel(self)
-        grid.addWidget(self.label_type, 2, 0)
         self.label_type.setTextFormat(QtCore.Qt.AutoText)
         self.label_type.setObjectName("type")
 
         # The 'Default value' text edit
         self.combo_box_type = QtWidgets.QComboBox(self)
-        grid.addWidget(self.combo_box_type, 2, 1)
         self.combo_box_type.setObjectName("combo_box_type")
         self.combo_box_type.addItem("String")
         self.combo_box_type.addItem("Integer")
         self.combo_box_type.addItem("Float")
         self.combo_box_type.addItem("List")
         self.combo_box_type.activated[str].connect(self.on_activated)
+
+        # The status bar
+        self.info_label = QtWidgets.QLabel(self)
+        self.info_label.setStyleSheet('QLabel{font-size:10pt;font:italic;}')
+        """self.hbox = QHBoxLayout(self)
+        self.hbox.addWidget(self.status_bar)"""
+
+        # Layouts
+        v_box_labels = QVBoxLayout()
+        v_box_labels.addWidget(self.label_tag_name)
+        v_box_labels.addWidget(self.label_default_value)
+        v_box_labels.addWidget(self.label_type)
+
+        v_box_edits = QVBoxLayout()
+        v_box_edits.addWidget(self.text_edit_tag_name)
+        v_box_edits.addWidget(self.text_edit_default_value)
+        v_box_edits.addWidget(self.combo_box_type)
+
+        h_box_top = QHBoxLayout()
+        h_box_top.addLayout(v_box_labels)
+        h_box_top.addSpacing(50)
+        h_box_top.addLayout(v_box_edits)
+
+        h_box_ok = QHBoxLayout()
+        h_box_ok.addStretch(1)
+        h_box_ok.addWidget(self.push_button_ok)
+
+        v_box_total = QVBoxLayout()
+        v_box_total.addLayout(h_box_top)
+        v_box_total.addLayout(h_box_ok)
+        v_box_total.addWidget(self.info_label)
+
+        self.setLayout(v_box_total)
 
         # Filling the title of the labels and push buttons
         _translate = QtCore.QCoreApplication.translate
@@ -178,12 +202,16 @@ class Ui_Dialog_add_tag(QDialog):
     def on_activated(self, text):
         if text == "String":
             self.type = str
+            self.info_label.setText('')
         elif text == "Integer":
             self.type = int
+            self.info_label.setText('')
         elif text == "Float":
             self.type = float
+            self.info_label.setText('')
         else:
             self.type = list
+            self.info_label.setText('Please seperate each list item by a comma. No need to use brackets.')
 
     def ok_action(self, project):
         name_already_exists = False
