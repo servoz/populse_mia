@@ -240,6 +240,20 @@ class Project_Irmage(QMainWindow):
                     shutil.rmtree(os.path.join(self.temp_dir, 'data'))
                 os.rmdir(self.temp_dir)
 
+            problem_list = controller.verify_scans(self.project)
+            if problem_list != []:
+                str_msg = ""
+                for element in problem_list:
+                    str_msg += element + "\n\n"
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("These files have been modified since they have been converted for the first time:")
+                msg.setInformativeText(str_msg)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
     def preferences_pop_up(self):
         self.pop_up_preferences = Ui_Dialog_Preferences(self.project)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)

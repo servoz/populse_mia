@@ -1,4 +1,7 @@
 import utils
+import hashlib # To generate the md5 of each scan
+import os
+
 class Tag:
 
     def __init__(self, name, replace, value, origin, original_value):
@@ -16,11 +19,12 @@ class Tag:
 
 class Scan:
 
-    def __init__(self, uid, file_path):
+    def __init__(self, uid, file_path, md5):
         self.uid = uid
         self.file_path = file_path
         self._tags = []
         self._delete_tags = []
+        self.original_md5 = md5
 
     def __lt__(self, other):
         return self.file_path < other.file_path
@@ -248,6 +252,7 @@ class Project:
             self._scans = [x for _, x in sorted(zip(list_tags, self._scans), reverse=True)]
 
 
+
 def serializer(obj):
     import numpy as np
     if isinstance(obj, Project):
@@ -269,6 +274,7 @@ def serializer(obj):
         return {'__class__': 'Scan',
                 'uid': obj.uid,
                 'file_path': obj.file_path,
+                'original_md5': obj.original_md5,
                 'tags': obj._get_tags(),
                 'delete_tags': obj._get_delete_tags()}
 
@@ -312,7 +318,7 @@ def deserializer(obj_dict):
             obj.tags_to_visualize = obj_dict["tags_to_visualize"]
             return obj
         if obj_dict["__class__"] == "Scan":
-            obj = Scan(obj_dict["uid"], obj_dict["file_path"])
+            obj = Scan(obj_dict["uid"], obj_dict["file_path"], obj_dict["original_md5"])
             obj._tags = obj_dict["tags"]
             obj._delete_tags = obj_dict["delete_tags"]
             return obj
