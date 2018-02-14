@@ -84,6 +84,7 @@ def listdirectory(name, path):
     :param path: project path
     :return: the corresponding Project object
     """
+
     absolute_path = os.path.abspath(path)
     # Getting the lists of all Json and Nifti files without extension to compare them
     json_files = loadList(glob.glob(absolute_path+'/**/*.json',  recursive=True), path)

@@ -214,17 +214,19 @@ class Project_Irmage(QMainWindow):
     def create_project_pop_up(self):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_New_Project()
-        file_name = self.exPopup.return_value()
+        #file_name = self.exPopup.return_value()
         self.first_save = False
 
         # Once the user has selected his project, the 'signal_create_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
         self.exPopup.signal_create_project.connect(self.modify_ui)
-        self.exPopup.show()
-        if os.path.exists(self.temp_dir):
-            if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-            os.rmdir(self.temp_dir)
+
+        if self.exPopup.exec_() == QDialog.Accepted:
+            self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+            if os.path.exists(self.temp_dir):
+                if os.path.exists(os.path.join(self.temp_dir, 'data')):
+                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
+                os.rmdir(self.temp_dir)
 
     def open_project_pop_up(self):
         # Ui_Dialog() is defined in pop_ups.py

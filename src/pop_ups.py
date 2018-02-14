@@ -24,10 +24,11 @@ class Ui_Dialog_New_Project(QFileDialog):
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
             os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
         self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects')))
-        self.finished.connect(self.return_value)
+        #self.finished.connect(self.return_value)
 
-    def return_value(self):
-        file_name = self.selectedFiles()
+    #def return_value(self):
+    def retranslateUi(self, file_name):
+        # file_name = self.selectedFiles()
         file_name = file_name[0]
         if file_name:
             entire_path = os.path.abspath(file_name)
@@ -37,7 +38,7 @@ class Ui_Dialog_New_Project(QFileDialog):
             self.relative_subpath = os.path.relpath(self.path)
 
             if not os.path.exists(self.relative_path):
-                controller.createProject(self.name, os.curdir, self.relative_subpath)
+                controller.createProject(self.name, self.relative_subpath, self.relative_subpath)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
