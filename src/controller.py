@@ -142,7 +142,7 @@ def createProject(name, path, parent_folder):
     project.name = name
     # Formating the name to remove spaces et strange characters -> folder name
     name = utils.remove_accents((name.lower()).replace(" ", "_"))
-    recorded_path = os.path.abspath(parent_folder)
+    recorded_path = os.path.relpath(parent_folder)
     new_path = os.path.join(recorded_path, name)
     # Creating the folder with the folder name that has been formatted
     if not os.path.exists(new_path):

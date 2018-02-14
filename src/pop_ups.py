@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QCoreApplication
-from PyQt5.QtWidgets import QFileDialog, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+from PyQt5.QtWidgets import QFileDialog, QWidget, QTableWidget, QTableWidgetItem, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
     QMessageBox, QStatusBar
 import os
 from functools import partial
@@ -21,9 +21,12 @@ class Ui_Dialog_New_Project(QFileDialog):
         self.setLabelText(QFileDialog.Accept, "Create")
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
-        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects'))):
-            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects'))
-        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects')))
+        print(os.curdir)
+        print(os.path.abspath(os.curdir))
+        print(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
+        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
+            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
+        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects')))
         self.finished.connect(self.return_value)
 
     def return_value(self):
@@ -37,7 +40,7 @@ class Ui_Dialog_New_Project(QFileDialog):
             self.relative_subpath = os.path.relpath(self.path)
 
             if not os.path.exists(self.relative_path):
-                controller.createProject(self.name, '~', self.relative_subpath)
+                controller.createProject(self.name, os.curdir, self.relative_subpath)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
@@ -563,6 +566,40 @@ class Ui_Visualized_Tags(QWidget):
             self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
 
 
+class Ui_Informations(QWidget):
+    """
+    Is called when the user wants to update the tags that are visualized in the data browser
+    """
+
+    # Signal that will be emitted at the end to tell that the project has been created
+    signal_preferences_change = pyqtSignal()
+
+    def __init__(self, project):
+        super().__init__()
+        self.retranslate_Ui(project)
+
+    def retranslate_Ui(self, project):
+        _translate = QtCore.QCoreApplication.translate
+
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setRowCount(3)
+        self.tableWidget.setColumnCount(2)
+
+        self.tableWidget.setItem(0, 0, QTableWidgetItem("Name"))
+        self.tableWidget.setItem(0, 1, QTableWidgetItem(project.name))
+
+        self.tableWidget.setItem(1, 0, QTableWidgetItem("Folder"))
+        self.tableWidget.setItem(1, 1, QTableWidgetItem(project.folder))
+
+        self.tableWidget.setItem(2, 0, QTableWidgetItem("Date of creation"))
+        self.tableWidget.setItem(2, 1, QTableWidgetItem(project.date))
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.tableWidget)
+
+        self.setLayout(vbox)
+
+
 class Ui_Dialog_Preferences(QDialog):
     """
     Is called when the user wants to change the software preferences
@@ -641,6 +678,11 @@ class Ui_Dialog_Settings(QDialog):
         self.tab_tags = Ui_Visualized_Tags(project)
         self.tab_tags.setObjectName("tab_tags")
         self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
+
+        # The 'Informations" tab
+        self.tab_infos = Ui_Informations(project)
+        self.tab_infos.setObjectName("tab_infos")
+        self.tab_widget.addTab(self.tab_infos, _translate("Dialog", "Informations"))
 
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
