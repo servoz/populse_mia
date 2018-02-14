@@ -5,6 +5,7 @@ import nibabel as nib
 from models import Tag, Scan, Project, serializer, deserializer
 import utils
 import shutil
+import hashlib # To generate the md5 of each scan
 
 
 def loadList(list, path):
@@ -61,7 +62,7 @@ def getJsonTagsFromFile(file_path, path):
     return json_tags
 
 
-def loadScan(uid,file_path, path):
+def loadScan(uid,file_path, path, original_md5):
     """
 
     :param uid: uid
@@ -69,7 +70,7 @@ def loadScan(uid,file_path, path):
     :param path: path of the file
     :return: a scan object with the Nifti and Json tags of the file
     """
-    scan = Scan(uid, file_path)
+    scan = Scan(uid, file_path, original_md5)
     #for nii_tag in getNiftiTagsFromFile(file_path, path):
     #    scan.addNiftiTag(nii_tag)
     for json_tag in getJsonTagsFromFile(file_path, path):
@@ -287,7 +288,12 @@ def read_log(project):
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
-            scan_to_add = loadScan(str(1), file_name, path_name)
+            print(path_name + file_name + ".nii")
+            with open(path_name + file_name + ".nii", 'rb') as scan_file:
+                #data = scan_file.encode('utf-8').strip()
+                data = scan_file.read()
+                original_md5 = hashlib.md5(data).hexdigest()
+            scan_to_add = loadScan(str(1), file_name, path_name, original_md5)
             list_to_add = []
             list_to_add.append(file_name)
             tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
@@ -300,3 +306,22 @@ def read_log(project):
                         if user_tag_name not in scan.getAllTagsNames():
                             tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
                             scan.addCustomTag(tag)
+
+
+def verify_scans(project):
+    # Returning the files that are problematic
+    return_list = []
+    for scan in project._get_scans():
+
+        file_name = scan.file_path
+        path_name = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
+
+        with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
+            data = scan_file.read()
+            actual_md5 = hashlib.md5(data).hexdigest()
+
+        if actual_md5 != scan.original_md5:
+            return_list.append(file_name)
+
+    return return_list
+
