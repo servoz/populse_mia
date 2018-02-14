@@ -2,7 +2,8 @@ from PyQt5.QtCore import Qt, QVariant, QPoint
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
+    QMessageBox, QHeaderView
 import controller
 import os
 from models import *
@@ -206,6 +207,9 @@ class TableDataBrowser(QTableWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
+        hh = self.horizontalHeader()
+        hh.sectionClicked.connect(partial(self.sort_items, project))
+        #self.horizontalHeader.sectionClicked().connect(lambda: self.sort_items(project))
         if project:
             self.update_table(project)
 
@@ -261,7 +265,11 @@ class TableDataBrowser(QTableWidget):
             element = str(element)
             #item = QTableWidgetItem()
             item = self.horizontalHeaderItem(nb)
-            item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+            if element == project.sort_tags[0]:
+                if project.sort_order == 'ascending':
+                    item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+                else:
+                    item.setIcon(QIcon(os.path.join('sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
@@ -328,8 +336,8 @@ class TableDataBrowser(QTableWidget):
 
         ######
 
-        __sortingEnabled = self.isSortingEnabled()
-        self.setSortingEnabled(__sortingEnabled)
+        #__sortingEnabled = self.isSortingEnabled()
+        #self.setSortingEnabled(__sortingEnabled)
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
@@ -352,11 +360,30 @@ class TableDataBrowser(QTableWidget):
         action_visualized_tags = menu.addAction("Visualized tags")
 
         action = menu.exec_(self.mapToGlobal(position))
+        """nb_cells = len(self.selectedIndexes())
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Warning")
+        msg.setText("You are about to reset cells.")
+        msg.setStandardButtons(QMessageBox.Ok)"""
+
         if action == action_reset_cell:
+
+            """msg.buttonClicked.connect(msg.close)
+            msg.buttonClicked.connect(lambda: self.reset_cell(project))
+            msg.exec()"""
             self.reset_cell(project)
         elif action == action_reset_column:
+            """#msg.setText("You are about to reset " + str(nb_cells * self.rowCount()) + " cells.")
+            msg.buttonClicked.connect(msg.close)
+            msg.buttonClicked.connect(lambda: self.reset_column(project))
+            msg.exec()"""
             self.reset_column(project)
         elif action == action_reset_row:
+            """#msg.setText("You are about to reset " + str(nb_cells * self.columnCount()) + " cells.")
+            msg.buttonClicked.connect(msg.close)
+            msg.buttonClicked.connect(lambda: self.reset_row(project))
+            msg.exec()"""
             self.reset_row(project)
         elif action == action_remove_scan:
             self.remove_scan(project)
@@ -474,11 +501,29 @@ class TableDataBrowser(QTableWidget):
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
 
+    def sort_items(self, project, col):
+        item = self.horizontalHeaderItem(col)
+        tag_name = self.horizontalHeaderItem(col).text()
+        if tag_name == project.sort_tags[0]:
+            if project.sort_order == 'ascending':
+                project.sort_order = 'descending'
+                item.setIcon(QIcon(os.path.join('sources_images', 'up_arrow.png')))
+            else:
+                project.sort_order = 'ascending'
+                item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+        else:
+            project.sort_order = 'ascending'
+            item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+
+        project.reset_sort_tags()
+        project.add_sort_tag(tag_name)
+        self.update_table(project)
+
     def sort_column(self, project):
         points = self.selectedItems()
 
         project.sort_order = "ascending"
-        self.setSortingEnabled(True)
+        #self.setSortingEnabled(True)
         project.reset_sort_tags()
 
         for point in points:
@@ -490,15 +535,13 @@ class TableDataBrowser(QTableWidget):
         points = self.selectedItems()
 
         project.sort_order = "descending"
-        self.setSortingEnabled(True)
+        #self.setSortingEnabled(True)
         project.reset_sort_tags()
 
         for point in points:
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
             project.add_sort_tag(tag_name)
-
-
 
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)
