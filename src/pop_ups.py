@@ -1,11 +1,10 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QCoreApplication
-from PyQt5.QtWidgets import QFileDialog, QWidget, QTableWidget, QTableWidgetItem, QGridLayout, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
-    QMessageBox, QStatusBar
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QFileDialog, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+    QMessageBox
 import os
 from functools import partial
 import controller
-import shutil
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
@@ -585,20 +584,37 @@ class Ui_Informations(QWidget):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(3)
         self.tableWidget.setColumnCount(2)
+        self.tableWidget.setHorizontalHeaderLabels(('Property', 'Value'))
 
-        self.tableWidget.setItem(0, 0, QTableWidgetItem("Name"))
-        self.tableWidget.setItem(0, 1, QTableWidgetItem(project.name))
+        item = QTableWidgetItem("Name")
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(0, 0, item)
+        item = QTableWidgetItem(project.name)
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(0, 1, item)
 
-        self.tableWidget.setItem(1, 0, QTableWidgetItem("Folder"))
-        self.tableWidget.setItem(1, 1, QTableWidgetItem(project.folder))
+        item = QTableWidgetItem("Folder")
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(1, 0, item)
+        item = QTableWidgetItem(project.folder)
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(1, 1, item)
 
-        self.tableWidget.setItem(2, 0, QTableWidgetItem("Date of creation"))
-        self.tableWidget.setItem(2, 1, QTableWidgetItem(project.date))
+        item = QTableWidgetItem("Date of creation")
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(2, 0, item)
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.tableWidget)
+        item = QTableWidgetItem(project.date)
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+        self.tableWidget.setItem(2, 1, item)
 
-        self.setLayout(vbox)
+        self.tableWidget.resizeRowsToContents()
+        self.tableWidget.resizeColumnsToContents()
+
+        box = QVBoxLayout()
+        box.addWidget(self.tableWidget)
+
+        self.setLayout(box)
 
 
 class Ui_Dialog_Preferences(QDialog):
