@@ -207,8 +207,8 @@ class TableDataBrowser(QTableWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
-        hh = self.horizontalHeader()
-        hh.sectionClicked.connect(partial(self.sort_items, project))
+        self.hh = self.horizontalHeader()
+        self.hh.sectionClicked.connect(partial(self.sort_items, project))
         #self.horizontalHeader.sectionClicked().connect(lambda: self.sort_items(project))
         if project:
             self.update_table(project)
@@ -347,6 +347,8 @@ class TableDataBrowser(QTableWidget):
 
     def context_menu_table(self, project, position):
 
+        self.hh.disconnect()
+
         self.flag_first_time += 1
 
         menu = QMenu(self)
@@ -360,31 +362,31 @@ class TableDataBrowser(QTableWidget):
         action_visualized_tags = menu.addAction("Visualized tags")
 
         action = menu.exec_(self.mapToGlobal(position))
-        """nb_cells = len(self.selectedIndexes())
+        nb_cells = len(self.selectedIndexes())
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning")
         msg.setText("You are about to reset cells.")
-        msg.setStandardButtons(QMessageBox.Ok)"""
+        msg.setStandardButtons(QMessageBox.Ok)
 
         if action == action_reset_cell:
 
-            """msg.buttonClicked.connect(msg.close)
+            msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_cell(project))
-            msg.exec()"""
+            msg.exec()
             self.reset_cell(project)
         elif action == action_reset_column:
-            """#msg.setText("You are about to reset " + str(nb_cells * self.rowCount()) + " cells.")
+            #msg.setText("You are about to reset " + str(nb_cells * self.rowCount()) + " cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_column(project))
-            msg.exec()"""
-            self.reset_column(project)
+            msg.exec()
+            #self.reset_column(project)
         elif action == action_reset_row:
-            """#msg.setText("You are about to reset " + str(nb_cells * self.columnCount()) + " cells.")
+            #msg.setText("You are about to reset " + str(nb_cells * self.columnCount()) + " cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_row(project))
-            msg.exec()"""
-            self.reset_row(project)
+            msg.exec()
+            #self.reset_row(project)
         elif action == action_remove_scan:
             self.remove_scan(project)
         elif action == action_sort_column:
@@ -395,6 +397,7 @@ class TableDataBrowser(QTableWidget):
             self.visualized_tags_pop_up(project)
 
         self.update_table(project)
+        self.hh.sectionClicked.connect(partial(self.sort_items, project))
 
     def reset_cell(self, project):
         points = self.selectedIndexes()
@@ -454,7 +457,7 @@ class TableDataBrowser(QTableWidget):
                 if file.file_path == scan_name:
                     for n_tag in file.getAllTags():
                         if n_tag.name in project.tags_to_visualize:
-                            idx = project.tags_to_visualize.index(n_tag.name) + 1
+                            idx = project.tags_to_visualize.index(n_tag.name)
                             txt = utils.check_tag_value_2(n_tag, 'original_value')
                             self.item(row, idx).setText(txt)
                             if n_tag.origin != "custom":
