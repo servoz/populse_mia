@@ -1,7 +1,3 @@
-import utils
-import hashlib # To generate the md5 of each scan
-import os
-
 class Tag:
 
     def __init__(self, name, replace, value, origin, original_value):

@@ -1,9 +1,9 @@
-from PyQt5.QtCore import Qt, QVariant, QPoint
+from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QHeaderView
+    QMessageBox
 import controller
 import os
 from models import *
@@ -13,8 +13,7 @@ from functools import partial
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
-import sip
-
+import utils
 
 class DataBrowser(QWidget):
     def __init__(self, project):
@@ -217,7 +216,6 @@ class TableDataBrowser(QTableWidget):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
-
         project.sort_by_tags()
         self.flag_first_time += 1
 
