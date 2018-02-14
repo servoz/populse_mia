@@ -16,11 +16,11 @@
 #          keyName :        tag Dicom 
 #          type :           string, float, int
 #          format :         "hh:mn:ss dd/MM/yyyy" , "dd/MM/yyyy hh:mn:ss" for date, duree,... (Put the parameter in quote "" !)
-#                           
-#          units :          um , mm , cm , m (for distance)
+#          units : (not yet operational)
+#                           um , mm , cm , m (for distance)
 #                           us , ms , s , mn , h (for time)
 #                           degree (for angle)
-#                           mHz , Hz , KHz , MHz , GHz (for frequency)         
+#                           mHz , Hz , KHz , MHz , GHz (for frequency)        
 #    viewer:
 #          category :       (category of your choice)
 #    json:
@@ -33,19 +33,19 @@
 dictionaryMRI:
 
   Acquisition Date:
-                   where:  {file: ~, keyName: Image Date, type: string, format: "hh:mn:ss dd/MM/yyyy", units: ~}
+                   where:  {file: ~, keyName: Image Date, type: string, format: "yyyyMMdd", units: ~}
                    viewer: {category: Equipment}
-                   json:   {tagJson: AcquisitionDate, type: float, format: "dd/MM/yyyy hh:mn:ss", units: ~}
+                   json:   {tagJson: AcquisitionDate, type: float, format: "yyyy-MM-dd HH:mm:ss", units: ~}
 
   Acquisition Time:
-                   where:  {file: ~, keyName: Series Time, type:  string, format: "hh:mn:ss.ms", units: s}
+                   where:  {file: ~, keyName: Acquisition Time, type:  string, format: "SSS", units: s}
                    viewer: {category: Equipment}
-                   json:   {tagJson: AcquisitionTim, type: floa, format: , units: ~}
+                   json:   {tagJson: AcquisitionTime, type: string, format: "HH:mm:ss.SSS", units: ~}
 
   Creation Date:
-                   where:  {file: ~, keyName: Study Date, type: string, format: ~, units: ~}
+                   where:  {file: ~, keyName: Study Date, type: string, format: "yyyyMMdd", units: ~}
                    viewer: {category: Equipment}
-                   json:   {tagJson: ~, type: ~, format: ~, units: ~}
+                   json:   {tagJson:  CreationDate, type: string, format: "yyyy-MM-dd HH:mm:ss", units: ~}
 
   Columns:
                    where:  {file: ~, keyName: Columns, type: int, format: ~, units: ~}

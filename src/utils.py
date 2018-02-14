@@ -55,51 +55,6 @@ def remove_accents(txt):
 def check_tag_value(tag, which_value):
     txt = ""
     if which_value == 'value':
-        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
-            if isinstance(tag.value, list):
-                if len(tag.value) == 1:
-                    txt = str(tag.value[0])
-                else:
-                    txt = str(tag.value)
-            elif isinstance(tag.value, (np.ndarray, np.generic)):
-                txt = str(tag.value)
-            else:
-                if tag.value[0] == "[":
-                    if tag.value[1] == '"' or tag.value[1] == "'":
-                        txt = str(tag.value[2:len(tag.value) - 2])
-                    else:
-                        txt = str(tag.value[1:len(tag.value) - 1])
-        else:
-            txt = str(tag.value)
-
-    elif which_value == 'original_value':
-        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
-            if isinstance(tag.original_value, list):
-                if len(tag.original_value) == 1:
-                    txt = str(tag.original_value[0])
-                else:
-                    txt = str(tag.original_value)
-            elif isinstance(tag.original_value, (np.ndarray, np.generic)):
-                txt = str(tag.original_value)
-            else:
-                if tag.original_value[0] == "[":
-                    if tag.original_value[1] == '"' or tag.original_value[1] == "'":
-                        txt = str(tag.original_value[2:len(tag.original_value) - 2])
-                    else:
-                        txt = str(tag.original_value[1:len(tag.original_value) - 1])
-        else:
-            txt = str(tag.original_value)
-
-    else:
-        print("which_value has to be 'value' or 'original_value'")
-        txt = 'error'
-
-    return txt
-
-
-def check_tag_value_2(tag, which_value):
-    txt = ""
-    if which_value == 'value':
         if len(tag.value) == 1:
             txt = str(tag.value[0])
         else:
@@ -243,3 +198,51 @@ def text_to_list(text_value):
             tag_value.append(list_string)
 
     return tag_value
+
+
+"""
+# First version of check_tag_value (not behaving the right way for this project)
+def check_tag_value(tag, which_value):
+    txt = ""
+    if which_value == 'value':
+        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
+            if isinstance(tag.value, list):
+                if len(tag.value) == 1:
+                    txt = str(tag.value[0])
+                else:
+                    txt = str(tag.value)
+            elif isinstance(tag.value, (np.ndarray, np.generic)):
+                txt = str(tag.value)
+            else:
+                if tag.value[0] == "[":
+                    if tag.value[1] == '"' or tag.value[1] == "'":
+                        txt = str(tag.value[2:len(tag.value) - 2])
+                    else:
+                        txt = str(tag.value[1:len(tag.value) - 1])
+        else:
+            txt = str(tag.value)
+
+    elif which_value == 'original_value':
+        if tag.origin.upper() == 'JSON' or tag.origin.upper() == 'CUSTOM':
+            if isinstance(tag.original_value, list):
+                if len(tag.original_value) == 1:
+                    txt = str(tag.original_value[0])
+                else:
+                    txt = str(tag.original_value)
+            elif isinstance(tag.original_value, (np.ndarray, np.generic)):
+                txt = str(tag.original_value)
+            else:
+                if tag.original_value[0] == "[":
+                    if tag.original_value[1] == '"' or tag.original_value[1] == "'":
+                        txt = str(tag.original_value[2:len(tag.original_value) - 2])
+                    else:
+                        txt = str(tag.original_value[1:len(tag.original_value) - 1])
+        else:
+            txt = str(tag.original_value)
+
+    else:
+        print("which_value has to be 'value' or 'original_value'")
+        txt = 'error'
+
+    return txt
+"""

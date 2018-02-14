@@ -16,10 +16,11 @@
 #          keyName :        tag nifti or json
 #          type :           string, float, int
 #          format :         "hh:mn:ss dd/MM/yyyy" , "dd/MM/yyyy hh:mn:ss" for date, duree, ... (Put the parameter in quote "" !)
-#          units :          um , mm , cm , m (for distance)
+#          units : (not yet operational)
+#                           um , mm , cm , m (for distance)
 #                           us , ms , s , mn , h (for time)
 #                           degree (for angle)
-#                           mHz , Hz , KHz , MHz , GHz (for frequency)         
+#                           mHz , Hz , KHz , MHz , GHz (for frequency)          
 #    viewer:
 #          category :       category of your choice for viewer
 #
@@ -28,11 +29,11 @@
 dictionaryMRI:
   
   Acquisition Date:
-                  where:   {file: json, keyName: AcquisitionDate, type: string, format: "hh:mn:ss dd/MM/yyyy", units: ~}
+                  where:   {file: json, keyName: AcquisitionDate, type: string, format: "yyyy-MM-dd HH:mm:ss", units: ~}
                   viewer:  {category: Equipment}
 
   Acquisition Time:
-                  where:   {file: json, keyName: AcquisitionTime, type: string, format: "hh:mn:ss dd/MM/yyyy", units: ~}
+                  where:   {file: json, keyName: AcquisitionTime, type: string, format: "HH:mm:ss.SSS", units: ~}
                   viewer:  {category: MRI parameters}
 
   BandWidth:
@@ -48,11 +49,11 @@ dictionaryMRI:
                   viewer:  {category: Equipment}
 
   Creation Date:
-                  where:   {file: json, keyName: CreationDate, type: string, format: ~, units: ~}
+                  where:   {file: json, keyName: CreationDate, type: string, format: "yyyy-MM-dd HH:mm:ss", units: ~}
                   viewer:  {category: Equipment}
  
   Data Type:
-                  where:   {file: niftiheader, keyName: Datatype, type: string, format: _nBIT_sgn_type, units: ~}
+                  where:   {file: niftiheader, keyName: Datatype, type: string, format: ~, units: ~}
                   viewer:  {category: Dimensions}
 
   Echo Time:

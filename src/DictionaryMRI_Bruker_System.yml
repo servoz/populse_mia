@@ -15,9 +15,9 @@
 #          file :           subject , visu_pars , method , acqp , reco (for Bruker Paravasion 5 , Paravision 6)
 #          keyName :        $'nameparameter'= (for Bruker)
 #          type :           string, float, int
-#          format :         "hh:mn:ss dd/MM/yyyy" , "dd/MM/yyyy hh:mn:ss" for date, duree,... (Put the parameter in quote "" !)
-#                           _nBIT_sgn_type (Bruker data type)
-#          units :          um , mm , cm , m (for distance)
+#          format :         "HH:mm:ss dd/MM/yyyy" , "dd/MM/yyyy HH:mm:ss" ,"SSS" (ms) for date, duree,... (Put the parameter in quote "" !)
+#          units : (not yet operational)
+#                           um , mm , cm , m (for distance)
 #                           us , ms , s , mn , h (for time)
 #                           degree (for angle)
 #                           mHz , Hz , KHz , MHz , GHz (for frequency)         
@@ -28,20 +28,20 @@
 #          tagJson :        same tag as Dicom if it exists , a tag of your choice otherwise
 #          type :           (see before)
 #          format :         (see before)
-#          units :          (see before)
+#          units :          (not yet operational)
 #
 #---------------------------------- Bruker Paravision 5, Paravision 6 ------------------------------------------------------
 dictionaryMRI:
 
   Acquisition Date:
-                  where:  {file: visu_pars, keyName: $VisuAcqDate=, type: string, format: "hh:mn:ss dd/MM/yyyy", units: ~}
+                  where:  {file: visu_pars, keyName: $VisuAcqDate=, type: string, format: "yyyy-MM-dd'T'HH:mm:ss','SSSZZZZ or HH:mm:ss dd MMM yyyy", units: ~}
                   viewer: {category: Equipment}
-                  json:   {tagJson: AcquisitionDate, type: string, format: "dd/MM/yyyy hh:mn:ss", units: ~}
+                  json:   {tagJson: AcquisitionDate, type: string, format: "yyyy-MM-dd HH:mm:ss", units: ~}
 
   Acquisition Time:
-                  where:  {file: visu_pars, keyName: $VisuAcqScanTime=, type: string, format: "hh:mn:ss.ms", units: s}
+                  where:  {file: visu_pars, keyName: $VisuAcqScanTime=, type: string, format: "HH:mm:ss.SSS or SSS", units: ~}
                   viewer: {category: Equipment}
-                  json:   {tagJson: AcquisitionTime, type: string, format: s, units: ~}
+                  json:   {tagJson: AcquisitionTime, type: string, format: "HH:mm:ss.SSS", units: ~}
 
   BandWidth:
                   where:  {file: acqp, keyName: $SW_h=, type: float, format: ~, units: MHz}
@@ -59,12 +59,12 @@ dictionaryMRI:
                   json:   {tagJson: ~, type: ~, format: ~, units: ~}
 
   Creation Date:
-                  where:  {file: subject, keyName: $SUBJECT_date=, type: string, format: ~, units: ~}
+                  where:  {file: subject, keyName: $SUBJECT_date=, type: string, format: "yyyy-MM-dd'T'HH:mm:ss','SSSZZZZ or HH:mm:ss dd MMM yyyy", units: ~}
                   viewer: {category: Equipment}
-                  json:   {tagJson: CreationDate, type: string, format: ~, units: ~}         
+                  json:   {tagJson: CreationDate, type: string, format: "yyyy-MM-dd HH:mm:ss", units: ~}         
  
   Data Type:
-                  where:  {file: visu_pars, keyName: $VisuCoreWordType=, type: string, format: _nBIT_sgn_type, units: ~}
+                  where:  {file: visu_pars, keyName: $VisuCoreWordType=, type: string, format: ~, units: ~}
                   viewer: {category: Dimensions}
                   json:   {tagJson: ~, type: ~, format: ~, units: ~}
 

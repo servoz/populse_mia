@@ -1,6 +1,6 @@
 # Dictionary MRI by IRMaGe - Grenoble, 2017 July.
 #
-#
+#  Important :      only developpers and advanced users can modified this database (the others users can used the file DictionaryMRI_Philips_User.yml which is in the same directory)
 #
 #  YAML validator online :    see http://yaml-online-parser.appspot.com/ , copy all this text (Ctrl-A and Ctrl-C) and paste in the left case (Ctrl-V) of the web page.
 #                                           if the Output case don't show red error message, it's ok !
@@ -12,24 +12,25 @@
 #
 #  Label MRI:
 #     where:
-#          file :           par ; xml (for Philips Achieva PAR 4.2 , Xml 5)
+#          file :           par , xml (for Philips Achieva PAR 4.2 , Xml)
 #          keyName :        tag Philips without [],(),<> and its elements which are inside
 #          type :           string, float, int
 #          format :         "hh:mn:ss dd/MM/yyyy" , "dd/MM/yyyy hh:mn:ss" for date, duree, ... (Put the parameter in quote "" !) 
-#          units :          um , mm , cm , m (for distance)
-#                           us , ms , s or (usec, msec, sec), mn , h (for time)
-#                           degree or degrees (for angle)
-#                           mHz , Hz , KHz , MHz , GHz (for frequency)         
+#          units : (not yet operational)
+#                           um , mm , cm , m (for distance)
+#                           us , ms , s , mn , h (for time)
+#                           degree (for angle)
+#                           mHz , Hz , KHz , MHz , GHz (for frequency)        
 #    viewer:
 #          category :       (category of your choice)
 #    json:
 #          tagJson :        same tag as Dicom if it exists , a tag of your choice otherwise
 #          type :           (see before)
 #          format :         (see before)
-#          units :          (see before)
+#          units :          (not yet operational)
 #
 #
-#---------------------------------- Philips Achieva PAR, Xml, ExamCard ----------------------------------
+#---------------------------------- Philips Achieva PAR/Rec, Xml/Rec ------------------------------------------------
 dictionaryMRI:
 
   Diffusion AP_FH_RL:

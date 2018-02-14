@@ -304,13 +304,13 @@ class Project_Irmage(QMainWindow):
             if os.listdir(old_folder) == []:
                 os.rmdir(old_folder)
 
-
         # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
         self.exPopup.signal_saved_project.connect(self.modify_ui)
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
-          
+
+
 if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)

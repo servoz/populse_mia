@@ -1,6 +1,6 @@
 # Dictionary MRI by IRMaGe - Grenoble, 2017 July.
 #
-#
+#  Important :      only developpers and advanced users can modified this database (the others users can used the file DictionaryMRI_Bruker_User.yml which is in the same directory)
 #
 #  YAML validator online :    see http://yaml-online-parser.appspot.com/ , copy all this text (Ctrl-A and Ctrl-C) and paste in the left case (Ctrl-V) of the web page.
 #                                           if the Output case don't show red error message, it's ok !
@@ -15,20 +15,20 @@
 #          file :           subject , visu_pars , method , acqp , reco (for Bruker Paravasion 5 , Paravision 6)
 #          keyName :        $'nameparameter'= (for Bruker)
 #          type :           string, float, int
-#          format :         "hh:mn:ss dd/MM/yyyy" , "dd/MM/yyyy hh:mn:ss" for date, duree, ... (Put the parameter in quote "" !)
-#                           _nBIT_sgn_type (Bruker data type)
-#          units :          um , mm , cm , m (for distance)
+#          format :         "HH:mm:ss dd/MM/yyyy" , "dd/MM/yyyy HH:mm:ss" ,"SSS" (ms) for date, duree,... (Put the parameter in quote "" !)
+#          units : (not yet operational)
+#                           um , mm , cm , m (for distance)
 #                           us , ms , s , mn , h (for time)
 #                           degree (for angle)
 #                           mHz , Hz , KHz , MHz , GHz (for frequency)         
 #    viewer:
 #          category :       (category of your choice)
+#
 #    json:
 #          tagJson :        same tag as Dicom if it exists , a tag of your choice otherwise
 #          type :           (see before)
 #          format :         (see before)
-#          units :          (see before)
-#
+#          units :          (not yet operational)
 #
 #---------------------------------- Bruker Paravision 5, Paravision 6 ------------------------------------------------------
 dictionaryMRI:

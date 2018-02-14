@@ -303,7 +303,7 @@ class TableDataBrowser(QTableWidget):
                         if n_tag.name == tag_name:
                             # It is put in the table
                             item = QTableWidgetItem()
-                            txt = utils.check_tag_value_2(n_tag, 'value')
+                            txt = utils.check_tag_value(n_tag, 'value')
                             item.setText(txt)
 
                             if tag_name == "FileName":
@@ -319,7 +319,7 @@ class TableDataBrowser(QTableWidget):
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                             else:
                                 if utils.compare_values(n_tag) == False:
-                                    txt = utils.check_tag_value_2(n_tag, 'original_value')
+                                    txt = utils.check_tag_value(n_tag, 'original_value')
                                     item.setToolTip("Original value: " + txt)
                                     color = QColor()
                                     if y % 2 == 1:
@@ -411,7 +411,7 @@ class TableDataBrowser(QTableWidget):
                 if file.file_path == scan_name:
                     for n_tag in file._get_tags():
                         if n_tag.name == tag_name:
-                            txt = utils.check_tag_value_2(n_tag, 'original_value')
+                            txt = utils.check_tag_value(n_tag, 'original_value')
                             self.item(row, col).setText(txt)
                             if n_tag.origin != "custom":
                                 color = QColor()
@@ -434,7 +434,7 @@ class TableDataBrowser(QTableWidget):
                 scan_id += 1
                 for n_tag in file._get_tags():
                     if n_tag.name == tag_name:
-                        txt = utils.check_tag_value_2(n_tag, 'original_value')
+                        txt = utils.check_tag_value(n_tag, 'original_value')
                         self.item(scan_id, col).setText(txt)
                         if n_tag.origin != "custom":
                             color = QColor()
@@ -458,7 +458,7 @@ class TableDataBrowser(QTableWidget):
                     for n_tag in file.getAllTags():
                         if n_tag.name in project.tags_to_visualize:
                             idx = project.tags_to_visualize.index(n_tag.name)
-                            txt = utils.check_tag_value_2(n_tag, 'original_value')
+                            txt = utils.check_tag_value(n_tag, 'original_value')
                             self.item(row, idx).setText(txt)
                             if n_tag.origin != "custom":
                                 color = QColor()
@@ -483,7 +483,7 @@ class TableDataBrowser(QTableWidget):
                         if tag_name == tag.name:
                             # It is put in the table
                             item = QTableWidgetItem()
-                            txt = utils.check_tag_value_2(tag, 'value')
+                            txt = utils.check_tag_value(tag, 'value')
                             if tag.origin == 'custom':
                                 color = QColor()
                                 if row % 2 == 1:
@@ -608,7 +608,7 @@ class TableDataBrowser(QTableWidget):
                         for tag in scan.getAllTags():
                             if tag_name == tag.name:
                                 tp = type(tag.original_value[0])
-                                txt = utils.check_tag_value_2(tag, 'original_value')
+                                txt = utils.check_tag_value(tag, 'original_value')
                                 color = QColor()
                                 if tag.origin != 'custom':
                                     if str(text_value) != str(txt):
