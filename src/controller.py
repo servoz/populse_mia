@@ -53,7 +53,7 @@ def getJsonTagsFromFile(file_path, path):
         :return: a list of the Json tags of the file
         """
     json_tags = []
-    with open(path + file_path + ".json") as f:
+    with open(os.path.join(path, file_path) + ".json") as f:
         for name,value in json.load(f).items():
             if value is None:
                 value = ""
@@ -275,10 +275,10 @@ def modified_tag_name(project, tagName, newName):
 
 def read_log(project):
 
-    raw_data_folder = os.path.abspath(project.folder) + '/data/raw_data/'
+    raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
 
     # Checking all the export logs from MRIManager and taking the most recent
-    list_logs = glob.glob(raw_data_folder + "logExport*.json")
+    list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
     log_to_read = max(list_logs, key=os.path.getctime)
 
     with open(log_to_read, "r", encoding="utf-8") as file:
@@ -288,9 +288,7 @@ def read_log(project):
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
-            print(path_name + file_name + ".nii")
-            with open(path_name + file_name + ".nii", 'rb') as scan_file:
-                #data = scan_file.encode('utf-8').strip()
+            with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
             scan_to_add = loadScan(str(1), file_name, path_name, original_md5)
