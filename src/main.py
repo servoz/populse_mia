@@ -297,8 +297,8 @@ class Project_Irmage(QMainWindow):
         utils.saveProjectAsJsonFile(project_path, self.project)
 
         if self.first_save:
-            if os.path.exists(os.path.join(old_folder, 'temp_data')):
-                shutil.rmtree(os.path.join(old_folder, 'temp_data'))
+            if os.path.exists(os.path.join(old_folder, 'data')):
+                shutil.rmtree(os.path.join(old_folder, 'data'))
             if os.listdir(old_folder) == []:
                 os.rmdir(old_folder)
 
