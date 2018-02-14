@@ -21,9 +21,6 @@ class Ui_Dialog_New_Project(QFileDialog):
         self.setLabelText(QFileDialog.Accept, "Create")
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
-        print(os.curdir)
-        print(os.path.abspath(os.curdir))
-        print(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
             os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
         self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects')))
@@ -77,6 +74,9 @@ class Ui_Dialog_Open_Project(QFileDialog):
         self.setFileMode(QFileDialog.Directory)
         #self.setOption(QFileDialog.ShowDirsOnly)
         # # Setting the Home directory as default
+        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
+            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
+        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects')))
         # self.setDirectory(os.path.expanduser("~"))
         #self.retranslateUi()
 
@@ -728,6 +728,9 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
         self.setOption(QFileDialog.ShowDirsOnly, True)
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
+        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
+            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))
+        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects')))
         # self.setDirectory(os.path.expanduser("~"))
         self.finished.connect(self.return_value)
 
