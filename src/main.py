@@ -281,34 +281,34 @@ class Project_Irmage(QMainWindow):
         import glob
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_Save_Project_As()
-        self.exPopup.exec()
+        # self.exPopup.exec()
+        if self.exPopup.exec_() == QDialog.Accepted:
+            old_folder = self.project.folder
+            self.project.folder = self.exPopup.relative_path
+            self.project.name = self.exPopup.name
+            self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
 
-        old_folder = self.project.folder
-        self.project.folder = self.exPopup.relative_path
-        self.project.name = self.exPopup.name
-        self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-        data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
-
-        if os.path.exists(os.path.join(old_folder, 'data')):
-            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
-                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
-            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
-                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
-
-        project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
-        utils.saveProjectAsJsonFile(project_path, self.project)
-
-        if self.first_save:
             if os.path.exists(os.path.join(old_folder, 'data')):
-                shutil.rmtree(os.path.join(old_folder, 'data'))
-            if os.listdir(old_folder) == []:
-                os.rmdir(old_folder)
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
-        # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
-        # Which will be connected to the modify_ui method that controls the following processes
-        self.exPopup.signal_saved_project.connect(self.modify_ui)
+            project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
+            utils.saveProjectAsJsonFile(project_path, self.project)
 
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
+            if self.first_save:
+                if os.path.exists(os.path.join(old_folder, 'data')):
+                    shutil.rmtree(os.path.join(old_folder, 'data'))
+                if os.listdir(old_folder) == []:
+                    os.rmdir(old_folder)
+
+            # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
+            # Which will be connected to the modify_ui method that controls the following processes
+            self.exPopup.signal_saved_project.connect(self.modify_ui)
+
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
 
 
 if __name__ == '__main__':

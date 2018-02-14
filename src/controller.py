@@ -139,7 +139,8 @@ def createProject(name, path, parent_folder):
     :return: the project object
     """
     # Instanciate project with name
-    project = listdirectory(name, path)
+    #project = listdirectory(name, path)
+    project = Project(name)
     project.name = name
     # Formating the name to remove spaces et strange characters -> folder name
     name = utils.remove_accents((name.lower()).replace(" ", "_"))

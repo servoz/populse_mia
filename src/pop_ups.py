@@ -19,6 +19,7 @@ class Ui_Dialog_New_Project(QFileDialog):
         super().__init__()
         #self.setOption(QFileDialog.DontUseNativeDialog)
         self.setLabelText(QFileDialog.Accept, "Create")
+        self.setAcceptMode(QFileDialog.AcceptSave)
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
@@ -727,6 +728,7 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
         #self.setOption(QFileDialog.DontUseNativeDialog)
         self.setLabelText(QFileDialog.Accept, "Save as")
         self.setOption(QFileDialog.ShowDirsOnly, True)
+        self.setAcceptMode(QFileDialog.AcceptSave)
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..'), 'projects'))):
