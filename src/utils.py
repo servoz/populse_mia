@@ -112,8 +112,8 @@ def check_tag_value_2(tag, which_value):
                     txt += ", "
 
     elif which_value == 'original_value':
-        if len(tag.value) == 1:
-            txt = str(tag.value[0])
+        if len(tag.original_value) == 1:
+            txt = str(tag.original_value[0])
         else:
             for idx, item in enumerate(tag.original_value):
                 if isinstance(item, list):
