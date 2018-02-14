@@ -21,7 +21,9 @@ class Ui_Dialog_New_Project(QFileDialog):
         self.setLabelText(QFileDialog.Accept, "Create")
         #self.setFileMode(QFileDialog.Directory)
         # # Setting the Home directory as default
-        # self.setDirectory(os.path.expanduser("~"))
+        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects'))):
+            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects'))
+        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.path.curdir), '..'), 'projects')))
         self.finished.connect(self.return_value)
 
     def return_value(self):
