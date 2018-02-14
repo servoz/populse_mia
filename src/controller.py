@@ -182,7 +182,7 @@ def open_project(name, path):
     :param path: project path
     :return: the project object
     """
-    path = os.path.abspath(path)
+    path = os.path.relpath(path)
     if os.path.exists(path):
         project_path = os.path.join(path, name)
         file_path = os.path.join(project_path, name)

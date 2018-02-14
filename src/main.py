@@ -5,25 +5,20 @@ Created on 11 janv. 2018
 
 '''
 import subprocess
-import sys
 import os
-from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, \
-    QMenuBar, QAction, qApp, QLineEdit, QMainWindow, QDialog, QMessageBox
-import PyQt5.QtCore
+from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, QMessageBox
 from Config import Config
-from DataBrowser.DataBrowser import DataBrowser   
+import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
 from models import *
-from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Settings, Ui_Dialog_Save_Project_As, \
-    Ui_Dialog_Quit
+from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Settings, Ui_Dialog_Save_Project_As, Ui_Dialog_Quit
 import controller
 import shutil
-
-
+import utils
+import json
 
 class Project_Irmage(QMainWindow):
     def __init__(self):
@@ -133,7 +128,7 @@ class Project_Irmage(QMainWindow):
         self.showMaximized()
 
     def closeEvent(self, event):
-        if self.project.name == "":
+        if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.project) # Crash if red cross clicked
             self.pop_up_close.save_as_signal.connect(self.save_project)
             self.pop_up_close.exec()
@@ -153,6 +148,41 @@ class Project_Irmage(QMainWindow):
         else:
             event.ignore()
 
+    def check_unsaved_modifications(self):
+        if(self.project.name == ""):
+            return 1
+        project_path = os.path.join(self.project.folder, self.project.name)
+        file_path = os.path.join(project_path, self.project.name)
+        with open(file_path+".json", "r", encoding="utf-8")as fichier:
+            project = json.load(fichier, object_hook=deserializer)
+            if not (self.project.name == project.name):
+                return 1
+            if not (self.project.folder == project.folder):
+                return 1
+            if not (self.project.date == project.date):
+                return 1
+            if not (self.project.tags_to_visualize == project.tags_to_visualize):
+                return 1
+            for scan in project._get_scans():
+                scanFound = 0
+                for scan2 in self.project._get_scans():
+                    if(scan.file_path == scan2.file_path):
+                        scanFound = 1
+                        for tag in scan.getAllTags():
+                            tagFound = 0
+                            for tag2 in scan2.getAllTags():
+                                if(tag.name == tag2.name):
+                                    tagFound = 1
+                                    if not (tag.value == tag2.value):
+                                        return 1
+                                    break
+                        if tagFound == 0:
+                            return 1
+                        break
+                if scanFound == 0:
+                    return 1
+
+        return 0
 
     @pyqtSlot()
     def modify_ui(self):
@@ -196,7 +226,7 @@ class Project_Irmage(QMainWindow):
         # self.textInfo.setEnabled(False)
         self.textInfo.setText('Welcome to Irmage')
 
-        self.data_browser = DataBrowser(self.project)
+        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer(self.textInfo)

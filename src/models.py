@@ -1,4 +1,3 @@
-import utils
 class Tag:
 
     def __init__(self, name, replace, value, origin, original_value):

@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def getFilePathWithoutExtension(filepath, path):
     return filepath[len(path):filepath.rfind('.')]
 
