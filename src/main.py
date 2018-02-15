@@ -15,7 +15,7 @@ from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
 from models import *
 from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Settings, Ui_Dialog_Save_Project_As, Ui_Dialog_Quit
-import controller
+import controller as controller
 import shutil
 import utils
 import json
@@ -71,20 +71,20 @@ class Project_Irmage(QMainWindow):
         menu_help.addAction('Documentations')
         menu_help.addAction('Credits')
 
+        self.project = Project("")
+
         # Connection of the several triggered signals of the actions to some other methods
         action_create.triggered.connect(self.create_project_pop_up)
         action_open.triggered.connect(self.open_project_pop_up)
         action_exit.triggered.connect(self.close)
-        action_save.triggered.connect(self.save_project)
-        action_save_as.triggered.connect(self.save_project_as)
+        action_save.triggered.connect(lambda : controller.save_project(self.project))
+        action_save_as.triggered.connect(lambda : controller.save_project_as(self.project))
         action_import.triggered.connect(self.import_data)
         self.action_preferences.triggered.connect(self.preferences_pop_up)
         action_settings.triggered.connect(self.settings_pop_up)
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
-
-        self.project = Project("")
 
         tmp_dir_exists = False
         while not tmp_dir_exists:
@@ -118,8 +118,6 @@ class Project_Irmage(QMainWindow):
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
 
-
-        self.first_save = True
         # BELOW : WAS AT THE END OF MODIFY_UI
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         ################ Create Tabs ###############################################################
@@ -130,7 +128,7 @@ class Project_Irmage(QMainWindow):
     def closeEvent(self, event):
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.project) # Crash if red cross clicked
-            self.pop_up_close.save_as_signal.connect(self.save_project)
+            self.pop_up_close.save_as_signal.connect(lambda : controller.save_projec(self.project))
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
@@ -247,7 +245,7 @@ class Project_Irmage(QMainWindow):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_New_Project()
         #file_name = self.exPopup.return_value()
-        self.first_save = False
+        controller.first_save = False
 
         # Once the user has selected his project, the 'signal_create_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
@@ -263,7 +261,7 @@ class Project_Irmage(QMainWindow):
     def open_project_pop_up(self):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_Open_Project()
-        self.first_save = False
+        controller.first_save = False
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
             self.exPopup.retranslateUi(self.exPopup.selectedFiles())
@@ -312,49 +310,6 @@ class Project_Irmage(QMainWindow):
 
         controller.read_log(self.project)
         self.data_browser.table_data.update_table(self.project)
-
-    def save_project(self):
-
-        if self.project.name == "":
-            self.save_project_as()
-        else:
-            project_path = os.path.join(self.project.folder, self.project.name, self.project.name)
-            utils.saveProjectAsJsonFile(project_path, self.project)
-            self.first_save = False
-
-    def save_project_as(self):
-        from datetime import datetime
-        import glob
-        # Ui_Dialog() is defined in pop_ups.py
-        self.exPopup = Ui_Dialog_Save_Project_As()
-        # self.exPopup.exec()
-        if self.exPopup.exec_() == QDialog.Accepted:
-            old_folder = self.project.folder
-            self.project.folder = self.exPopup.relative_path
-            self.project.name = self.exPopup.name
-            self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
-
-            if os.path.exists(os.path.join(old_folder, 'data')):
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
-
-            project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
-            utils.saveProjectAsJsonFile(project_path, self.project)
-
-            if self.first_save:
-                if os.path.exists(os.path.join(old_folder, 'data')):
-                    shutil.rmtree(os.path.join(old_folder, 'data'))
-                if os.listdir(old_folder) == []:
-                    os.rmdir(old_folder)
-
-            # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
-            # Which will be connected to the modify_ui method that controls the following processes
-            self.exPopup.signal_saved_project.connect(self.modify_ui)
-
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
 
 
 if __name__ == '__main__':

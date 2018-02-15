@@ -22,7 +22,7 @@ class Config():
                 print(exc)
                 
     def saveConfig(self):
-        with open('config/config.yml', 'w', encoding='utf8') as configfile:
+        with open('config.yml', 'w', encoding='utf8') as configfile:
             yaml.dump(self.config, configfile, default_flow_style=False, allow_unicode=True)
             
     def getPathToProjectsFolder(self):
@@ -40,3 +40,11 @@ class Config():
             self.config["paths"]["data"] = path
             #Then save the modification
             self.saveConfig()
+
+    def isAutoSave(self):
+        return self.config["auto_save"]
+
+    def setAutoSave(self, save):
+        self.config["auto_save"] = save
+        #Then save the modification
+        self.saveConfig()

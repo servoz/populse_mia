@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox
-import controller
+from controller import save_project, save_project_as, getAllTagsFile
 import os
 from models import *
 from pop_ups import Ui_Dialog_add_tag, Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_remove_tag, \
@@ -14,6 +14,7 @@ import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 import utils
+from Config import Config
 
 class DataBrowser(QWidget):
     def __init__(self, project):
@@ -216,6 +217,7 @@ class TableDataBrowser(QTableWidget):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
+
         project.sort_by_tags()
         self.flag_first_time += 1
 
@@ -294,7 +296,7 @@ class TableDataBrowser(QTableWidget):
             for tag_name in project.tags_to_visualize:
                 i += 1
                 # If the tag belong to the tags of the project (of course it does...)
-                if tag_name in controller.getAllTagsFile(file.file_path, project):
+                if tag_name in getAllTagsFile(file.file_path, project):
                     # Loop on the project tags
                     for n_tag in file._get_tags():
                         # If a project tag name matches our tag
@@ -342,6 +344,10 @@ class TableDataBrowser(QTableWidget):
         #self.itemChanged.connect(lambda item: self.change_cell_color(item, project))
         self.itemChanged.connect(partial(self.change_cell_color, project))
         """self.itemDoubleClicked.connect(self.sort_column)"""
+
+        config = Config()
+        if (config.isAutoSave() == "yes" and not project.name == ""):
+            save_project(project)
 
     def context_menu_table(self, project, position):
 
@@ -638,6 +644,10 @@ class TableDataBrowser(QTableWidget):
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))
 
         self.itemChanged.connect(partial(self.change_cell_color, project))
+
+        config = Config()
+        if (config.isAutoSave() == "yes" and not project.name == ""):
+            save_project(project)
 
 
 class MiniViewer(QScrollArea):

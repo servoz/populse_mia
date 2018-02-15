@@ -1,10 +1,11 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QFileDialog, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
     QMessageBox
 import os
 from functools import partial
 import controller
+from Config import Config
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
@@ -644,6 +645,19 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_appearance.setObjectName("tab_appearance")
         self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
 
+        # The 'Tools" tab
+        self.tab_tools = QtWidgets.QWidget()
+        self.tab_tools.setObjectName("tab_tools")
+        self.tab_widget.addTab(self.tab_tools, _translate("Dialog", "Tools"))
+
+        self.tools_layout = QVBoxLayout()
+        self.save_checkbox = QCheckBox('Auto Save', self)
+        config = Config()
+        if(config.isAutoSave() == "yes"):
+            self.save_checkbox.setChecked(1)
+        self.tools_layout.addWidget(self.save_checkbox)
+        self.tab_tools.setLayout(self.tools_layout)
+
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
@@ -666,7 +680,11 @@ class Ui_Dialog_Preferences(QDialog):
         self.setLayout(vbox)
 
     def ok_clicked(self, project):
-        # Action to define
+        config = Config()
+        if self.save_checkbox.isChecked():
+            config.setAutoSave("yes")
+        else:
+            config.setAutoSave("no")
         self.accept()
         self.close()
 
