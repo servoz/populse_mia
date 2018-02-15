@@ -9,6 +9,7 @@ import hashlib # To generate the md5 of each scan
 from pop_ups import Ui_Dialog_Save_Project_As
 from PyQt5.QtWidgets import QDialog
 from main import Project_Irmage
+from RecentProjects import RecentProjects
 
 
 def loadList(list, path):
@@ -359,6 +360,9 @@ def save_project_as(project):
 
         project_path = os.path.join(os.path.relpath(project.folder), project.name, project.name)
         utils.saveProjectAsJsonFile(project_path, project)
+
+        #Project_Irmage.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
+        #Project_Irmage.update_recent_projects_actions()
 
         if first_save:
             if os.path.exists(os.path.join(old_folder, 'data')):

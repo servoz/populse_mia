@@ -327,7 +327,6 @@ class Project_Irmage(QMainWindow):
 
             # If the file exists
             if os.path.exists(os.path.join(relative_path, name, name + '.json')):
-                list_to_add = []
                 controller.open_project(name, relative_path)
                 self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
                 self.update_recent_projects_actions()
