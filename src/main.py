@@ -10,6 +10,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, QMessageBox
 from Config import Config
+from RecentProjects import RecentProjects
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
@@ -30,58 +31,17 @@ class Project_Irmage(QMainWindow):
         config = Config()
         self.currentRep = config.getPathData()
 
-        ################ Create Menus ##############################################################
+        self.recent_projects = RecentProjects()
+        self.recent_projects_list = self.recent_projects.pathsList
 
-        # Menubar
-        menu_file = self.menuBar().addMenu('File')
-        menu_help = self.menuBar().addMenu('Help')
-        menu_about = self.menuBar().addMenu('About')
+        self.recent_projects_actions = []
 
-        # Actions in the "File" menu
-        action_create = QAction('New project', self)
-        action_create.setShortcut('Ctrl+N')
-        menu_file.addAction(action_create)
+        ################ Create actions & menus ####################################################
 
-        action_open = QAction('Open project', self)
-        action_open.setShortcut('Ctrl+O')
-        menu_file.addAction(action_open)
-
-        action_save = QAction('Save project', self)
-        action_save.setShortcut('Ctrl+S')
-        menu_file.addAction(action_save)
-
-        action_save_as = QAction('Save project as', self)
-        action_save_as.setShortcut('Ctrl+Shift+S')
-        menu_file.addAction(action_save_as)
-
-        action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
-        action_import.setShortcut('Ctrl+I')
-        menu_file.addAction(action_import)
-
-        action_settings = QAction('Project properties', self)
-        menu_file.addAction(action_settings)
-
-        self.action_preferences = QAction('MIA2 preferences', self)
-        menu_file.addAction(self.action_preferences)
-
-        action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
-        action_exit.setShortcut('Ctrl+W')
-        menu_file.addAction(action_exit)
-
-        menu_help.addAction('Documentations')
-        menu_help.addAction('Credits')
+        self.create_actions()
+        self.create_menus()
 
         self.project = Project("")
-
-        # Connection of the several triggered signals of the actions to some other methods
-        action_create.triggered.connect(self.create_project_pop_up)
-        action_open.triggered.connect(self.open_project_pop_up)
-        action_exit.triggered.connect(self.close)
-        action_save.triggered.connect(lambda : controller.save_project(self.project))
-        action_save_as.triggered.connect(lambda : controller.save_project_as(self.project))
-        action_import.triggered.connect(self.import_data)
-        self.action_preferences.triggered.connect(self.preferences_pop_up)
-        action_settings.triggered.connect(self.settings_pop_up)
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
@@ -124,6 +84,71 @@ class Project_Irmage(QMainWindow):
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
         self.showMaximized()
+
+    def create_actions(self):
+
+        self.action_create = QAction('New project', self)
+        self.action_create.setShortcut('Ctrl+N')
+
+        self.action_open = QAction('Open project', self)
+        self.action_open.setShortcut('Ctrl+O')
+
+        self.action_save = QAction('Save project', self)
+        self.action_save.setShortcut('Ctrl+S')
+
+        self.action_save_as = QAction('Save project as', self)
+        self.action_save_as.setShortcut('Ctrl+Shift+S')
+
+        self.action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
+        self.action_import.setShortcut('Ctrl+I')
+
+        for i in range(self.recent_projects.maxProjects):
+            self.recent_projects_actions.append(QAction(self, visible=False,
+                                                triggered=self.open_recent_project))
+        self.action_settings = QAction('Project properties', self)
+
+        self.action_preferences = QAction('MIA2 preferences', self)
+
+        self.action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
+        self.action_exit.setShortcut('Ctrl+W')
+
+        # Connection of the several triggered signals of the actions to some other methods
+        self.action_create.triggered.connect(self.create_project_pop_up)
+        self.action_open.triggered.connect(self.open_project_pop_up)
+        self.action_exit.triggered.connect(self.close)
+        self.action_save.triggered.connect(lambda : controller.save_project(self.project))
+        self.action_save_as.triggered.connect(lambda : controller.save_project_as(self.project))
+        self.action_import.triggered.connect(self.import_data)
+        self.action_preferences.triggered.connect(self.preferences_pop_up)
+        self.action_settings.triggered.connect(self.settings_pop_up)
+
+    def create_menus(self):
+
+        # Menubar
+        self.menu_file = self.menuBar().addMenu('File')
+        self.menu_help = self.menuBar().addMenu('Help')
+        self.menu_about = self.menuBar().addMenu('About')
+
+        # Actions in the "File" menu
+        self.menu_file.addAction(self.action_create)
+        self.menu_file.addAction(self.action_open)
+        self.menu_file.addAction(self.action_save)
+        self.menu_file.addAction(self.action_save_as)
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(self.action_import)
+        self.menu_file.addSeparator()
+        for i in range(self.recent_projects.maxProjects):
+            self.menu_file.addAction(self.recent_projects_actions[i])
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(self.action_settings)
+        self.menu_file.addAction(self.action_preferences)
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(self.action_exit)
+        self.update_recent_projects_actions()
+
+        # Actions in the "Help" menu
+        self.menu_help.addAction('Documentations')
+        self.menu_help.addAction('Credits')
 
     def closeEvent(self, event):
         if (self.check_unsaved_modifications() == 1):
@@ -252,7 +277,11 @@ class Project_Irmage(QMainWindow):
         self.exPopup.signal_create_project.connect(self.modify_ui)
 
         if self.exPopup.exec_() == QDialog.Accepted:
+            file_name = self.exPopup.selectedFiles()
             self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+            file_name = self.exPopup.relative_path
+            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.update_recent_projects_actions()
             if os.path.exists(self.temp_dir):
                 if os.path.exists(os.path.join(self.temp_dir, 'data')):
                     shutil.rmtree(os.path.join(self.temp_dir, 'data'))
@@ -264,7 +293,11 @@ class Project_Irmage(QMainWindow):
         controller.first_save = False
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
-            self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+            file_name = self.exPopup.selectedFiles()
+            self.exPopup.retranslateUi(file_name)
+            file_name = self.exPopup.relative_path
+            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.update_recent_projects_actions()
             if os.path.exists(self.temp_dir):
                 if os.path.exists(os.path.join(self.temp_dir, 'data')):
                     shutil.rmtree(os.path.join(self.temp_dir, 'data'))
@@ -283,6 +316,36 @@ class Project_Irmage(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
+
+    def open_recent_project(self):
+        action = self.sender()
+        if action:
+            file_name = action.data()
+            entire_path = os.path.abspath(file_name)
+            path, name = os.path.split(entire_path)
+            relative_path = os.path.relpath(file_name)
+
+            # If the file exists
+            if os.path.exists(os.path.join(relative_path, name, name + '.json')):
+                list_to_add = []
+                controller.open_project(name, relative_path)
+                self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+                self.update_recent_projects_actions()
+                self.exPopup = Ui_Dialog_New_Project()
+                self.exPopup.path = path
+                self.exPopup.name = name
+                self.modify_ui()
+            else:
+                print("TODO: ADD AN ERROR DIALOG")
+
+    def update_recent_projects_actions(self):
+        if self.recent_projects_list != []:
+            for i in range(len(self.recent_projects_list)):
+                text = os.path.basename(self.recent_projects_list[i])
+                self.recent_projects_actions[i].setText(text)
+                self.recent_projects_actions[i].setData(self.recent_projects_list[i])
+                self.recent_projects_actions[i].setVisible(True)
+
 
     def preferences_pop_up(self):
         self.pop_up_preferences = Ui_Dialog_Preferences(self.project)

@@ -1,4 +1,4 @@
-
+auto_save: 'no'
 name: MIA2
 paths:
   data : C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
