@@ -149,8 +149,10 @@ class Project_Irmage(QMainWindow):
             event.ignore()
 
     def check_unsaved_modifications(self):
-        if(self.project.name == ""):
+        if(self.project.name == "" and len(self.project._get_scans()) > 0):
             return 1
+        if(self.project.name == ""):
+            return 0
         project_path = os.path.join(self.project.folder, self.project.name)
         file_path = os.path.join(project_path, self.project.name)
         with open(file_path+".json", "r", encoding="utf-8")as fichier:
