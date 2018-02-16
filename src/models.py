@@ -1,3 +1,5 @@
+from Config import Config
+
 class Tag:
 
     def __init__(self, name, replace, value, origin, original_value):
@@ -154,7 +156,8 @@ class Project:
         self.user_tags = []
         self.sort_tags = ['FileName']
         self.sort_order = "ascending"
-        self.tags_to_visualize = ['FileName', 'PatientName', 'AcquisitionDate']  # Has to be read from MIA2 preferences later
+        config = Config()
+        self.tags_to_visualize = config.getDefaultTags()
 
     def add_user_tag(self, name, original_value):
         self.user_tags.append({'name': name, 'original_value': original_value})

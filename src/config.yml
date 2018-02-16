@@ -1,6 +1,10 @@
-auto_save: 'no'
+auto_save: 'yes'
+default_tags:
+- FileName
+- PatientName
+- AcquisitionDate
 name: MIA2
 paths:
-  data : C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
-  projects : ..\data
-  modules : modules
+  data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
+  modules: modules
+  projects: ..\data

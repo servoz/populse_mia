@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QMenu, QListWidget, QInputDialog, QLineEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
     QMessageBox
 import os
 from functools import partial
@@ -618,7 +618,6 @@ class Ui_Informations(QWidget):
 
         self.setLayout(box)
 
-
 class Ui_Dialog_Preferences(QDialog):
     """
     Is called when the user wants to change the software preferences
@@ -656,6 +655,15 @@ class Ui_Dialog_Preferences(QDialog):
         if(config.isAutoSave() == "yes"):
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
+        self.label_default_tags = QLabel("Default tags visualized")
+        self.list_default_tags = QListWidget()
+        self.default_tags = config.getDefaultTags()
+        self.list_default_tags.addItems(self.default_tags)
+        self.list_default_tags.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(partial(self.handleItemClicked, self.list_default_tags))
+        self.list_default_tags.customContextMenuRequested.connect(partial(self.handleItemClicked))
+        self.tools_layout.addWidget(self.label_default_tags)
+        self.tools_layout.addWidget(self.list_default_tags)
         self.tab_tools.setLayout(self.tools_layout)
 
         # The 'OK' push button
@@ -688,6 +696,31 @@ class Ui_Dialog_Preferences(QDialog):
         self.accept()
         self.close()
 
+    def handleItemClicked(self, pos):
+        menu = QMenu(self)
+        actionRemoveTag = menu.addAction("Remove tag")
+        actionAddTag = menu.addAction("Add a new tag")
+        # Show the context menu.
+        action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
+        if action == actionRemoveTag:
+            tag = self.list_default_tags.currentItem().text()
+            config = Config()
+            config.removeDefaultTag(tag)
+            self.list_default_tags.clear()
+            self.default_tags = config.getDefaultTags()
+            self.list_default_tags.addItems(self.default_tags)
+        elif action == actionAddTag:
+            config = Config()
+            res = self.getText()
+            if not res == None:
+                config.addDefaultTag(res)
+                self.list_default_tags.clear()
+                self.default_tags = config.getDefaultTags()
+                self.list_default_tags.addItems(self.default_tags)
+    def getText(self):
+        text, okPressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
 
 class Ui_Dialog_Settings(QDialog):
     """
