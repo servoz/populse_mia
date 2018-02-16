@@ -661,7 +661,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.list_default_tags.addItems(self.default_tags)
         self.list_default_tags.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.handleItemClicked, self.list_default_tags))
-        self.list_default_tags.customContextMenuRequested.connect(partial(self.handleItemClicked))
+        self.list_default_tags.customContextMenuRequested.connect(partial(self.handleItemClicked, project))
         self.tools_layout.addWidget(self.label_default_tags)
         self.tools_layout.addWidget(self.list_default_tags)
         self.tab_tools.setLayout(self.tools_layout)
@@ -696,7 +696,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.accept()
         self.close()
 
-    def handleItemClicked(self, pos):
+    def handleItemClicked(self, project, pos):
         menu = QMenu(self)
         actionRemoveTag = menu.addAction("Remove tag")
         actionAddTag = menu.addAction("Add a new tag")
@@ -717,6 +717,7 @@ class Ui_Dialog_Preferences(QDialog):
                 self.list_default_tags.clear()
                 self.default_tags = config.getDefaultTags()
                 self.list_default_tags.addItems(self.default_tags)
+        project.refresh_tags()
     def getText(self):
         text, okPressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
         if okPressed and text != '':

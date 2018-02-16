@@ -167,6 +167,10 @@ class Project:
             if tag['name'] == name:
                 self.user_tags.remove()
 
+    def refresh_tags(self):
+        config = Config()
+        self.tags_to_visualize = config.getDefaultTags()
+
     def _get_scans(self):
         return self._scans
 
