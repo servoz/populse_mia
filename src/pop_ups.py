@@ -650,7 +650,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_widget.addTab(self.tab_tools, _translate("Dialog", "Tools"))
 
         self.tools_layout = QVBoxLayout()
-        self.save_checkbox = QCheckBox('Auto Save', self)
+        self.save_checkbox = QCheckBox('Auto Save (only on saved projects, does not work on default unnamed project)', self)
         config = Config()
         if(config.isAutoSave() == "yes"):
             self.save_checkbox.setChecked(1)
@@ -807,34 +807,35 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
 
     def return_value(self):
         file_name = self.selectedFiles()
-        file_name = file_name[0]
-        if file_name:
-            entire_path = os.path.abspath(file_name)
-            self.path, self.name = os.path.split(entire_path)
-            self.total_path = entire_path
-            self.relative_path = os.path.relpath(file_name)
-            self.relative_subpath = os.path.relpath(self.path)
+        if len(file_name) > 0:
+            file_name = file_name[0]
+            if file_name:
+                entire_path = os.path.abspath(file_name)
+                self.path, self.name = os.path.split(entire_path)
+                self.total_path = entire_path
+                self.relative_path = os.path.relpath(file_name)
+                self.relative_subpath = os.path.relpath(self.path)
 
-            if not os.path.exists(self.relative_path):
-                controller.createProject(self.name, '~', self.relative_subpath)
-                self.close()
-                # A signal is emitted to tell that the project has been created
-                self.signal_saved_project.emit()
-            else:
-                _translate = QtCore.QCoreApplication.translate
-                self.dialog_box = QDialog()
-                self.label = QLabel(self.dialog_box)
-                self.label.setText(_translate("MainWindow", 'This name already exists in this parent folder'))
-                self.push_button_ok = QPushButton(self.dialog_box)
-                self.push_button_ok.setText('OK')
-                self.push_button_ok.clicked.connect(self.dialog_box.close)
-                hbox = QHBoxLayout()
-                hbox.addWidget(self.label)
-                hbox.addWidget(self.push_button_ok)
+                if not os.path.exists(self.relative_path):
+                    controller.createProject(self.name, '~', self.relative_subpath)
+                    self.close()
+                    # A signal is emitted to tell that the project has been created
+                    self.signal_saved_project.emit()
+                else:
+                    _translate = QtCore.QCoreApplication.translate
+                    self.dialog_box = QDialog()
+                    self.label = QLabel(self.dialog_box)
+                    self.label.setText(_translate("MainWindow", 'This name already exists in this parent folder'))
+                    self.push_button_ok = QPushButton(self.dialog_box)
+                    self.push_button_ok.setText('OK')
+                    self.push_button_ok.clicked.connect(self.dialog_box.close)
+                    hbox = QHBoxLayout()
+                    hbox.addWidget(self.label)
+                    hbox.addWidget(self.push_button_ok)
 
-                self.dialog_box.setLayout(hbox)
+                    self.dialog_box.setLayout(hbox)
 
-        return file_name
+            return file_name
 
 class Ui_Dialog_Type_Problem(QDialog):
     """

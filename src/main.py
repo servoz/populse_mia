@@ -116,8 +116,8 @@ class Project_Irmage(QMainWindow):
         self.action_create.triggered.connect(self.create_project_pop_up)
         self.action_open.triggered.connect(self.open_project_pop_up)
         self.action_exit.triggered.connect(self.close)
-        self.action_save.triggered.connect(lambda : controller.save_project(self.project))
-        self.action_save_as.triggered.connect(lambda : controller.save_project_as(self.project))
+        self.action_save.triggered.connect(self.saveClosing)
+        self.action_save_as.triggered.connect(self.save_project_as)
         self.action_import.triggered.connect(self.import_data)
         self.action_preferences.triggered.connect(self.preferences_pop_up)
         self.action_settings.triggered.connect(self.settings_pop_up)
@@ -152,13 +152,13 @@ class Project_Irmage(QMainWindow):
 
     def closeEvent(self, event):
         if (self.check_unsaved_modifications() == 1):
-            self.pop_up_close = Ui_Dialog_Quit(self.project) # Crash if red cross clicked
-            self.pop_up_close.save_as_signal.connect(lambda : controller.save_projec(self.project))
+            self.pop_up_close = Ui_Dialog_Quit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveClosing)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
         #TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
-        #TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM CRASHES
+        #TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM STOPS, IT'S NOT LIKE CANCEL
         else:
             can_exit = True
 
@@ -170,6 +170,12 @@ class Project_Irmage(QMainWindow):
                 os.rmdir(self.temp_dir)
         else:
             event.ignore()
+
+    def saveClosing(self):
+        if (self.project.name == ""):
+            self.save_project_as()
+        else:
+            controller.save_project(self.project)
 
     def check_unsaved_modifications(self):
         if(self.project.name == "" and len(self.project._get_scans()) > 0):
@@ -208,6 +214,8 @@ class Project_Irmage(QMainWindow):
                     return 1
 
         return 0
+
+
 
     @pyqtSlot()
     def modify_ui(self):
@@ -265,6 +273,45 @@ class Project_Irmage(QMainWindow):
         verticalLayout.addWidget(self.textInfo)
         self.centralWindow = QWidget()
         self.centralWindow.setLayout(verticalLayout)
+
+    def save_project_as(self):
+        from datetime import datetime
+        import glob
+        # Ui_Dialog() is defined in pop_ups.py
+        exPopup = Ui_Dialog_Save_Project_As()
+        # self.exPopup.exec()
+        if exPopup.exec_() == QDialog.Accepted:
+            old_folder = self.project.folder
+            self.project.folder = exPopup.relative_path
+            self.project.name = exPopup.name
+            self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
+
+            if os.path.exists(os.path.join(old_folder, 'data')):
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
+
+            project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
+            utils.saveProjectAsJsonFile(project_path, self.project)
+
+            #self.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
+            #self.update_recent_projects_actions()
+
+            if controller.first_save:
+                if os.path.exists(os.path.join(old_folder, 'data')):
+                    shutil.rmtree(os.path.join(old_folder, 'data'))
+                if os.listdir(old_folder) == []:
+                    os.rmdir(old_folder)
+
+            # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
+            # Which will be connected to the modify_ui method that controls the following processes
+            exPopup.signal_saved_project.connect(self.modify_ui)
+            if self.project.name == "":
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+            else:
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
 
     def create_project_pop_up(self):
         # Ui_Dialog() is defined in pop_ups.py

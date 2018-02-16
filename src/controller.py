@@ -331,45 +331,6 @@ first_save = True
 
 def save_project(project):
     global first_save
-    if project.name == "":
-        save_project_as(project)
-    else:
-        project_path = os.path.join(project.folder, project.name, project.name)
-        utils.saveProjectAsJsonFile(project_path, project)
-        first_save = False
-
-def save_project_as(project):
-    global first_save
-    from datetime import datetime
-    import glob
-    # Ui_Dialog() is defined in pop_ups.py
-    exPopup = Ui_Dialog_Save_Project_As()
-    # self.exPopup.exec()
-    if exPopup.exec_() == QDialog.Accepted:
-        old_folder = project.folder
-        project.folder = exPopup.relative_path
-        project.name = exPopup.name
-        project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-        data_path = os.path.join(os.path.relpath(project.folder), 'data')
-
-        if os.path.exists(os.path.join(old_folder, 'data')):
-            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
-                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
-            for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
-                shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
-
-        project_path = os.path.join(os.path.relpath(project.folder), project.name, project.name)
-        utils.saveProjectAsJsonFile(project_path, project)
-
-        #Project_Irmage.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
-        #Project_Irmage.update_recent_projects_actions()
-
-        if first_save:
-            if os.path.exists(os.path.join(old_folder, 'data')):
-                shutil.rmtree(os.path.join(old_folder, 'data'))
-            if os.listdir(old_folder) == []:
-                os.rmdir(old_folder)
-
-        # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
-        # Which will be connected to the modify_ui method that controls the following processes
-        exPopup.signal_saved_project.connect(Project_Irmage.modify_ui)
+    project_path = os.path.join(project.folder, project.name, project.name)
+    utils.saveProjectAsJsonFile(project_path, project)
+    first_save = False

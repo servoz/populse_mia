@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox
-from controller import save_project, save_project_as, getAllTagsFile
+from controller import save_project, getAllTagsFile
 import os
 from models import *
 from pop_ups import Ui_Dialog_add_tag, Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_remove_tag, \
