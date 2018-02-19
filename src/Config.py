@@ -69,3 +69,11 @@ class Config():
         self.config["background_color"] = color
         # Then save the modification
         self.saveConfig()
+
+    def getTextColor(self):
+        return self.config["text_color"]
+
+    def setTextColor(self, color):
+        self.config["text_color"] = color
+        # Then save the modification
+        self.saveConfig()

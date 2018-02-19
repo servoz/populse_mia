@@ -40,7 +40,8 @@ class Project_Irmage(QMainWindow):
 
         config = Config()
         background_color = config.getBackgroundColor()
-        self.setStyleSheet("background-color:" + background_color + ";")
+        text_color = config.getTextColor()
+        self.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
 
         self.create_actions()
         self.create_menus()
