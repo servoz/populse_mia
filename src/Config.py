@@ -61,3 +61,11 @@ class Config():
 
     def getDefaultTags(self):
         return self.config["default_tags"]
+
+    def getBackgroundColor(self):
+        return self.config["background_color"]
+
+    def setBackgroundColor(self, color):
+        self.config["background_color"] = color
+        # Then save the modification
+        self.saveConfig()

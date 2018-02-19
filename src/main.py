@@ -38,6 +38,10 @@ class Project_Irmage(QMainWindow):
 
         ################ Create actions & menus ####################################################
 
+        config = Config()
+        background_color = config.getBackgroundColor()
+        self.setStyleSheet("background-color:" + background_color + ";")
+
         self.create_actions()
         self.create_menus()
 
@@ -394,7 +398,7 @@ class Project_Irmage(QMainWindow):
 
 
     def preferences_pop_up(self):
-        self.pop_up_preferences = Ui_Dialog_Preferences(self.project)
+        self.pop_up_preferences = Ui_Dialog_Preferences(self.project, self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
 

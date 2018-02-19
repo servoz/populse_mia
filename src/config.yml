@@ -1,4 +1,5 @@
-auto_save: 'yes'
+auto_save: 'no'
+background_color: ''
 default_tags:
 - FileName
 - PatientName

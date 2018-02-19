@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QMenu, QListWidget, QInputDialog, QLineEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
+from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QMenu, QComboBox, QListWidget, QInputDialog, QLineEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
     QMessageBox
 import os
 from functools import partial
@@ -626,11 +626,11 @@ class Ui_Dialog_Preferences(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, project, main):
         super().__init__()
-        self.pop_up(project)
+        self.pop_up(project, main)
 
-    def pop_up(self, project):
+    def pop_up(self, project, main):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -644,6 +644,26 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_appearance.setObjectName("tab_appearance")
         self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
 
+        config = Config()
+
+        self.appearance_layout = QVBoxLayout()
+        self.label_background_color = QLabel("Background color")
+        self.background_color_combo = QComboBox(self)
+        self.background_color_combo.addItem("")
+        self.background_color_combo.addItem("Black")
+        self.background_color_combo.addItem("Blue")
+        self.background_color_combo.addItem("Green")
+        self.background_color_combo.addItem("Grey")
+        self.background_color_combo.addItem("Orange")
+        self.background_color_combo.addItem("Red")
+        self.background_color_combo.addItem("Yellow")
+        self.background_color_combo.addItem("White")
+        background_color = config.getBackgroundColor()
+        self.background_color_combo.setCurrentText(background_color)
+        self.appearance_layout.addWidget(self.label_background_color)
+        self.appearance_layout.addWidget(self.background_color_combo)
+        self.tab_appearance.setLayout(self.appearance_layout)
+
         # The 'Tools" tab
         self.tab_tools = QtWidgets.QWidget()
         self.tab_tools.setObjectName("tab_tools")
@@ -651,7 +671,7 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.tools_layout = QVBoxLayout()
         self.save_checkbox = QCheckBox('Auto Save (only on saved projects, does not work on default unnamed project)', self)
-        config = Config()
+
         if(config.isAutoSave() == "yes"):
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
@@ -669,7 +689,7 @@ class Ui_Dialog_Preferences(QDialog):
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project))
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project, main))
 
         # The 'Cancel' push button
         self.push_button_cancel = QtWidgets.QPushButton("Cancel")
@@ -687,12 +707,15 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.setLayout(vbox)
 
-    def ok_clicked(self, project):
+    def ok_clicked(self, project, main):
         config = Config()
         if self.save_checkbox.isChecked():
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
+        background_color = self.background_color_combo.currentText()
+        config.setBackgroundColor(background_color)
+        main.setStyleSheet("background-color:" + background_color + ";")
         self.accept()
         self.close()
 
