@@ -290,7 +290,10 @@ class Project_Irmage(QMainWindow):
             self.project.folder = exPopup.relative_path
             self.project.name = exPopup.name
             self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
+            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.update_recent_projects_actions()
 
             if os.path.exists(os.path.join(old_folder, 'data')):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
