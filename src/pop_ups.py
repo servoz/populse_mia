@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QRect
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QWidget, QMenu, QComboBox, QListWidget, QInputDialog, QLineEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel, \
     QMessageBox
 import os
@@ -647,6 +647,7 @@ class Ui_Dialog_Preferences(QDialog):
         config = Config()
 
         self.appearance_layout = QVBoxLayout()
+        self.appearance_layout.addStretch(1)
         self.label_background_color = QLabel("Background color")
         self.background_color_combo = QComboBox(self)
         self.background_color_combo.addItem("")
