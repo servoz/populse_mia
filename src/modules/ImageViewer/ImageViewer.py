@@ -20,8 +20,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QSplitter, \
     QFrame, QAbstractScrollArea
 from scipy.ndimage import rotate  # to work with NumPy arrays
 
-from About import AboutSoft
-from Config import Config
+# from About import AboutSoft
+from SoftwareProperties.Config import Config
 
 import nibabel as nib  # to read nifti file
 import numpy as np  # a N-dimensional array object

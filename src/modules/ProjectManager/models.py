@@ -1,4 +1,4 @@
-from Config import Config
+from SoftwareProperties.Config import Config
 
 class Tag:
 

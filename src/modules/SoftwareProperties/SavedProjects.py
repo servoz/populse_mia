@@ -1,9 +1,9 @@
-from os import path
+import os
 
 import yaml
 
 
-class RecentProjects:
+class SavedProjects:
 
     def __init__(self):
         self.recentProjects = self.loadRecentProjects()
@@ -13,14 +13,14 @@ class RecentProjects:
             self.pathsList = []
 
     def loadRecentProjects(self):
-        with open("recent_projects.yml", 'r') as stream:
+        with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
 
     def saveRecentProjects(self):
-        with open('recent_projects.yml', 'w', encoding='utf8') as configfile:
+        with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.recentProjects, configfile, default_flow_style=False, allow_unicode=True)
 
     def addRecentProject(self, newPath):

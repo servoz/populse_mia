@@ -8,31 +8,51 @@ import subprocess
 import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, QMessageBox
-from Config import Config
-from RecentProjects import RecentProjects
+from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, \
+    QMessageBox
+from SoftwareProperties.Config import Config
+from SoftwareProperties.SavedProjects import SavedProjects
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
-from models import *
-from pop_ups import Ui_Dialog_New_Project, Ui_Dialog_Open_Project, Ui_Dialog_Preferences, Ui_Dialog_Settings, Ui_Dialog_Save_Project_As, Ui_Dialog_Quit
-import controller as controller
+from ProjectManager.models import *
+from PopUps.Ui_Dialog_New_Project import Ui_Dialog_New_Project
+from PopUps.Ui_Dialog_Open_Project import Ui_Dialog_Open_Project
+from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
+from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
+from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
+
+import ProjectManager.controller as controller
 import shutil
-import utils
+import Utils.utils as utils
 import json
 import tempfile
 
-class Project_Irmage(QMainWindow):
+
+class Main_Window(QMainWindow):
+    """
+    Primary master class
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+    TODO
+
+    """
     def __init__(self):
-        
+
         ############### Main Window ################################################################
-        super(Project_Irmage, self).__init__()
-        
+        super(Main_Window, self).__init__()
+
         ############### initial setting ############################################################
         config = Config()
         self.currentRep = config.getPathData()
 
-        self.recent_projects = RecentProjects()
+        self.recent_projects = SavedProjects()
         self.recent_projects_list = self.recent_projects.pathsList
 
         self.recent_projects_actions = []
@@ -64,6 +84,7 @@ class Project_Irmage(QMainWindow):
         self.showMaximized()
 
     def create_actions(self):
+        """ Create the actions in each menu"""
 
         self.action_create = QAction('New project', self)
         self.action_create.setShortcut('Ctrl+N')
@@ -82,10 +103,10 @@ class Project_Irmage(QMainWindow):
 
         for i in range(self.recent_projects.maxProjects):
             self.recent_projects_actions.append(QAction(self, visible=False,
-                                                triggered=self.open_recent_project))
-        self.action_settings = QAction('Project properties', self)
+                                                        triggered=self.open_recent_project))
+        self.action_project_properties = QAction('Project properties', self)
 
-        self.action_preferences = QAction('MIA2 preferences', self)
+        self.action_software_preferences = QAction('MIA2 preferences', self)
 
         self.action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
@@ -97,10 +118,11 @@ class Project_Irmage(QMainWindow):
         self.action_save.triggered.connect(self.saveClosing)
         self.action_save_as.triggered.connect(self.save_project_as)
         self.action_import.triggered.connect(self.import_data)
-        self.action_preferences.triggered.connect(self.preferences_pop_up)
-        self.action_settings.triggered.connect(self.settings_pop_up)
+        self.action_project_properties.triggered.connect(self.project_properties_pop_up)
+        self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
 
     def create_menus(self):
+        """ Create the menubar"""
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
@@ -118,8 +140,8 @@ class Project_Irmage(QMainWindow):
         for i in range(self.recent_projects.maxProjects):
             self.menu_file.addAction(self.recent_projects_actions[i])
         self.menu_file.addSeparator()
-        self.menu_file.addAction(self.action_settings)
-        self.menu_file.addAction(self.action_preferences)
+        self.menu_file.addAction(self.action_software_preferences)
+        self.menu_file.addAction(self.action_project_properties)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.update_recent_projects_actions()
@@ -129,14 +151,15 @@ class Project_Irmage(QMainWindow):
         self.menu_help.addAction('Credits')
 
     def closeEvent(self, event):
+        """ Overriding the closing event to check if there are unsaved modifications"""
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveClosing)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
-        #TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
-        #TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM STOPS, IT'S NOT LIKE CANCEL
+        # TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
+        # TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM STOPS, IT'S NOT LIKE CANCEL
         else:
             can_exit = True
 
@@ -150,19 +173,21 @@ class Project_Irmage(QMainWindow):
             event.ignore()
 
     def saveClosing(self):
+        """ Checks if the project needs to be saved as """
         if (self.project.name == ""):
             self.save_project_as()
         else:
             controller.save_project(self.project)
 
     def check_unsaved_modifications(self):
-        if(self.project.name == "" and len(self.project._get_scans()) > 0):
+        """ Check if there are differences between the current project and the data base """
+        if (self.project.name == "" and len(self.project._get_scans()) > 0):
             return 1
-        if(self.project.name == ""):
+        if (self.project.name == ""):
             return 0
         project_path = os.path.join(self.project.folder, self.project.name)
         file_path = os.path.join(project_path, self.project.name)
-        with open(file_path+".json", "r", encoding="utf-8")as fichier:
+        with open(file_path + ".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
             if not (self.project.name == project.name):
                 return 1
@@ -175,12 +200,12 @@ class Project_Irmage(QMainWindow):
             for scan in project._get_scans():
                 scanFound = 0
                 for scan2 in self.project._get_scans():
-                    if(scan.file_path == scan2.file_path):
+                    if (scan.file_path == scan2.file_path):
                         scanFound = 1
                         for tag in scan.getAllTags():
                             tagFound = 0
                             for tag2 in scan2.getAllTags():
-                                if(tag.name == tag2.name):
+                                if (tag.name == tag2.name):
                                     tagFound = 1
                                     if not (tag.value == tag2.value):
                                         return 1
@@ -193,9 +218,10 @@ class Project_Irmage(QMainWindow):
 
         return 0
 
-
     @pyqtSlot()
     def modify_ui(self):
+        """ Each time a project is opened or created, this function refreshes the GUI + the current project from
+         the data base"""
 
         # This list will later contain all the tags in the project
         self.list_selected_tags = []
@@ -205,7 +231,7 @@ class Project_Irmage(QMainWindow):
         path = os.path.join(self.exPopup.path, name)
         self.project = controller.open_project(name, path)
 
-        #QtCore.QMetaObject.connectSlotsByName(self)
+        # QtCore.QMetaObject.connectSlotsByName(self)
 
         for file in self.project._get_scans():
             for n_tag in file._get_tags():
@@ -219,10 +245,10 @@ class Project_Irmage(QMainWindow):
         else:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
         self.statusBar().showMessage('')
-        #self.data_browser.table_data.update_table(self.project)
-
+        # self.data_browser.table_data.update_table(self.project)
 
     def create_tabs(self):
+        """ Creates the tabs """
         self.config = Config()
         self.currentRep = self.config.getPathData()
 
@@ -252,6 +278,7 @@ class Project_Irmage(QMainWindow):
         self.centralWindow.setLayout(verticalLayout)
 
     def save_project_as(self):
+        """ Open a pop-up to save the current project as """
         from datetime import datetime
         import glob
         # Ui_Dialog() is defined in pop_ups.py
@@ -276,14 +303,14 @@ class Project_Irmage(QMainWindow):
             project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
 
-            #self.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
-            #self.update_recent_projects_actions()
+            # self.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
+            # self.update_recent_projects_actions()
 
-            if controller.first_save:
+            """if controller.first_save:
                 if os.path.exists(os.path.join(old_folder, 'data')):
                     shutil.rmtree(os.path.join(old_folder, 'data'))
                 if os._exists(old_folder) and os.listdir(old_folder) == []:
-                    os.rmdir(old_folder)
+                    os.rmdir(old_folder)"""
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
@@ -294,9 +321,10 @@ class Project_Irmage(QMainWindow):
                 self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
 
     def create_project_pop_up(self):
+        """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_New_Project()
-        #file_name = self.exPopup.return_value()
+        # file_name = self.exPopup.return_value()
         controller.first_save = False
 
         # Once the user has selected his project, the 'signal_create_project" signal is emitted
@@ -315,6 +343,7 @@ class Project_Irmage(QMainWindow):
                 os.rmdir(self.temp_dir)
 
     def open_project_pop_up(self):
+        """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_Open_Project()
         controller.first_save = False
@@ -345,6 +374,7 @@ class Project_Irmage(QMainWindow):
                 msg.exec()
 
     def open_recent_project(self):
+        """ Opens a recent project """
         action = self.sender()
         if action:
             file_name = action.data()
@@ -365,6 +395,7 @@ class Project_Irmage(QMainWindow):
                 print("TODO: ADD AN ERROR DIALOG")
 
     def update_recent_projects_actions(self):
+        """ Updates the list of recent projects"""
         if self.recent_projects_list != []:
             for i in range(len(self.recent_projects_list)):
                 text = os.path.basename(self.recent_projects_list[i])
@@ -372,16 +403,8 @@ class Project_Irmage(QMainWindow):
                 self.recent_projects_actions[i].setData(self.recent_projects_list[i])
                 self.recent_projects_actions[i].setVisible(True)
 
-
-    def preferences_pop_up(self):
-        self.pop_up_preferences = Ui_Dialog_Preferences(self.project, self)
-        self.pop_up_preferences.setGeometry(300, 200, 800, 600)
-        self.pop_up_preferences.show()
-
-        if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project)
-
-    def settings_pop_up(self):
+    def project_properties_pop_up(self):
+        """ Opens the Project properties pop-up """
         self.pop_up_settings = Ui_Dialog_Settings(self.project)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
@@ -389,9 +412,20 @@ class Project_Irmage(QMainWindow):
         if self.pop_up_settings.exec_() == QDialog.Accepted:
             self.data_browser.table_data.update_table(self.project)
 
+    def software_preferences_pop_up(self):
+        """ Opens the MIA2 preferences pop-up """
+        self.pop_up_preferences = Ui_Dialog_Preferences(self.project, self)
+        self.pop_up_preferences.setGeometry(300, 200, 800, 600)
+        self.pop_up_preferences.show()
+
+        if self.pop_up_preferences.exec_() == QDialog.Accepted:
+            self.data_browser.table_data.update_table(self.project)
+
     def import_data(self):
+        """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
+         data base """
         # Opens the conversion software to convert the MRI files in Nifti/Json
-        subprocess.call(['java', '-Xmx4096M', '-jar', 'MRIManagerJ8.jar',
+        subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'MRI_File_Manager', 'MRIManagerJ8.jar'),
                          '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
                          'CloseAfterExport'])
@@ -400,12 +434,3 @@ class Project_Irmage(QMainWindow):
         controller.read_log(self.project)
         self.data_browser.table_data.update_table(self.project)
 
-
-if __name__ == '__main__':
-    import sys
-    app = QApplication(sys.argv)
-
-    imageViewer = Project_Irmage()
-    imageViewer.show()
-
-    sys.exit(app.exec_())

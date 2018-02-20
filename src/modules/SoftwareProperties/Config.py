@@ -4,8 +4,7 @@ Created on 14 déc. 2017
 @author: omonti
 '''
 
-from os import path
-
+import os
 import yaml
 
 
@@ -15,14 +14,14 @@ class Config():
         self.config = self.loadConfig()
         
     def loadConfig(self):
-        with open("config.yml", 'r') as stream:
+        with open(os.path.join('..', '..', 'properties', 'config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
                 
     def saveConfig(self):
-        with open('config.yml', 'w', encoding='utf8') as configfile:
+        with open(os.path.join('..', '..', 'properties', 'config.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.config, configfile, default_flow_style=False, allow_unicode=True)
             
     def getPathToProjectsFolder(self):

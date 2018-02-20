@@ -4,17 +4,27 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox
-from controller import save_project, getAllTagsFile
+from ProjectManager.controller import save_project
 import os
-from models import *
-from pop_ups import Ui_Dialog_add_tag, Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_remove_tag, \
-    Ui_Visualized_Tags, Ui_Dialog_Preferences, Ui_Dialog_Settings
+from ProjectManager.models import *
+
+from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
+from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
+from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
+from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
+from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
+from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
+from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+
+
+"""from pop_ups import , Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_, \
+    , , """
 from functools import partial
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
-import utils
-from Config import Config
+import Utils.utils as utils
+from SoftwareProperties.Config import Config
 
 class DataBrowser(QWidget):
     def __init__(self, project):
@@ -296,7 +306,7 @@ class TableDataBrowser(QTableWidget):
             for tag_name in project.tags_to_visualize:
                 i += 1
                 # If the tag belong to the tags of the project (of course it does...)
-                if tag_name in getAllTagsFile(file.file_path, project):
+                if tag_name in file.getAllTagsNames():
                     # Loop on the project tags
                     for n_tag in file._get_tags():
                         # If a project tag name matches our tag
