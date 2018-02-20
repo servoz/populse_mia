@@ -1,3 +1,7 @@
+import json
+from ProjectManager.models import serializer
+from os import path as os_path
+
 def getFilePathWithoutExtension(filepath, path):
     return filepath[len(path):filepath.rfind('.')]
 
@@ -18,8 +22,7 @@ def createJsonFile(path, name):
 
 
 def saveProjectAsJsonFile(name, project):
-    import json
-    from models import serializer
+
     """for scan in project._get_scans():
         for tag in scan.getAllTags():
             print(tag.name)
@@ -32,13 +35,12 @@ def saveProjectAsJsonFile(name, project):
 
 
 def findPath(name_file):
-    from os import path as os_path
     return (os_path.abspath(os_path.split(name_file)[0]))
 
 
 def remove_accents(txt):
-    ch1 = u"àâçéèêëîïôùûüÿ"
-    ch2 = u"aaceeeeiiouuuy"
+    ch1 = u"àâàçéèêëîïôöùûüÿÀÂÇÉÈÊËÎÏÔÙÛÜŸ"
+    ch2 = u"aaaceeeeiioouuuyAACEEEEIIOUUUY"
     s = ""
     for c in txt:
         i = ch1.find(c)
@@ -152,6 +154,7 @@ def text_to_tag_value(text_value, tag):
         tag_value.append(tp(text_value))
 
     return tag_value
+
 
 def text_to_list(text_value):
     string_values = []
