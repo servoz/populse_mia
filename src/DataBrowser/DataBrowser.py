@@ -370,29 +370,29 @@ class TableDataBrowser(QTableWidget):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning")
-        msg.setText("You are about to reset cells.")
         msg.setStandardButtons(QMessageBox.Ok)
 
         if action == action_reset_cell:
-
+            msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_cell(project))
             msg.exec()
             self.reset_cell(project)
         elif action == action_reset_column:
-            #msg.setText("You are about to reset " + str(nb_cells * self.rowCount()) + " cells.")
+            msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_column(project))
             msg.exec()
-            #self.reset_column(project)
         elif action == action_reset_row:
-            #msg.setText("You are about to reset " + str(nb_cells * self.columnCount()) + " cells.")
+            msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(lambda: self.reset_row(project))
             msg.exec()
-            #self.reset_row(project)
         elif action == action_remove_scan:
-            self.remove_scan(project)
+            msg.setText("You are about to remove a scan from the project.")
+            msg.buttonClicked.connect(msg.close)
+            msg.buttonClicked.connect(lambda: self.remove_scan(project))
+            msg.exec()
         elif action == action_sort_column:
             self.sort_column(project)
         elif action == action_sort_column_descending:
