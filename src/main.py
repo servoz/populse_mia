@@ -20,6 +20,7 @@ import controller as controller
 import shutil
 import utils
 import json
+import tempfile
 
 class Project_Irmage(QMainWindow):
     def __init__(self):
@@ -51,37 +52,9 @@ class Project_Irmage(QMainWindow):
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
 
-        tmp_dir_exists = False
-        while not tmp_dir_exists:
-            # Checking if the temp directory exists
-            check_path = os.path.join(os.path.relpath(os.path.curdir), 'temp_data')
-            check_path_2 = os.path.join(os.path.relpath(os.path.curdir), 'temp_data_2')
-            check_path_3 = os.path.join(os.path.relpath(os.path.curdir), 'temp_data_folder')
-
-            if not os.path.exists(check_path):
-                self.project.folder = check_path
-                self.temp_dir = check_path
-                os.makedirs(check_path)
-                tmp_dir_exists = True
-            elif not os.path.exists(check_path_2):
-                self.project.folder = check_path_2
-                self.temp_dir = check_path_2
-                os.makedirs(check_path_2)
-                tmp_dir_exists = True
-            elif not os.path.exists(check_path_3):
-                self.project.folder = check_path_3
-                self.temp_dir = check_path_3
-                os.makedirs(check_path_3)
-                tmp_dir_exists = True
-            else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText("Temporary folders already exists in the current folder")
-                msg.setInformativeText("Please remove temp_data or temp_data_2 or temp_data_folder")
-                msg.setWindowTitle("Error")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
+        tf = tempfile.TemporaryDirectory()
+        self.temp_dir = os.path.relpath(tf.name)
+        self.project.folder = os.path.relpath(tf.name)
 
         # BELOW : WAS AT THE END OF MODIFY_UI
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
@@ -221,7 +194,6 @@ class Project_Irmage(QMainWindow):
         return 0
 
 
-
     @pyqtSlot()
     def modify_ui(self):
 
@@ -307,7 +279,7 @@ class Project_Irmage(QMainWindow):
             if controller.first_save:
                 if os.path.exists(os.path.join(old_folder, 'data')):
                     shutil.rmtree(os.path.join(old_folder, 'data'))
-                if os.listdir(old_folder) == []:
+                if os._exists(old_folder) and os.listdir(old_folder) == []:
                     os.rmdir(old_folder)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
