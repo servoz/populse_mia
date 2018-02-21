@@ -203,6 +203,8 @@ class Main_Window(QMainWindow):
                 return 1
             if not (self.project.tags_to_visualize == project.tags_to_visualize):
                 return 1
+            if not (len(self.project._get_scans()) == len(project._get_scans())):
+                return 1
             for scan in project._get_scans():
                 scanFound = 0
                 for scan2 in self.project._get_scans():
