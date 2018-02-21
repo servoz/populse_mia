@@ -117,7 +117,16 @@ class Ui_Dialog_add_tag(QDialog):
         for tag_name in project.getAllTagsNames():
             if tag_name == self.text_edit_tag_name.text():
                 name_already_exists = True
-        if name_already_exists:
+        if (self.text_edit_tag_name.text() == ""):
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("The tag name cannot be empty")
+            msg.setInformativeText("Please enter a tag name")
+            msg.setWindowTitle("Error")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+        elif name_already_exists:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setText("This tag name already exists")

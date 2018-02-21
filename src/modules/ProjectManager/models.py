@@ -188,6 +188,8 @@ class Project:
 
     def getAllTagsNames(self):
         result = []
+        if(len(self._get_scans()) == 0):
+            return self.tags_to_visualize
         for scan in self._get_scans():
             tagnames = scan.getAllTagsNames()
             for i in range(len(tagnames)):
