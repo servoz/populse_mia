@@ -22,6 +22,7 @@ from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
+from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
 
 import ProjectManager.controller as controller
 import shutil
@@ -56,10 +57,10 @@ class Main_Window(QMainWindow):
         config = Config()
         self.currentRep = config.getPathData()
 
-        self.recent_projects = SavedProjects()
-        self.recent_projects_list = self.recent_projects.pathsList
+        self.saved_projects = SavedProjects()
+        self.saved_projects_list = self.saved_projects.pathsList
 
-        self.recent_projects_actions = []
+        self.saved_projects_actions = []
 
         ################ Create actions & menus ####################################################
 
@@ -103,9 +104,18 @@ class Main_Window(QMainWindow):
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
-        for i in range(self.recent_projects.maxProjects):
-            self.recent_projects_actions.append(QAction(self, visible=False,
-                                                        triggered=self.open_recent_project))
+        self.action_saved_projects = QAction('Saved projects', self)
+        font = QFont()
+        font.setItalic(True)
+        self.action_saved_projects.setFont(font)
+        self.action_saved_projects.setDisabled(True)
+
+        for i in range(self.saved_projects.maxProjects):
+            self.saved_projects_actions.append(QAction(self, visible=False,
+                                                       triggered=self.open_recent_project))
+
+        self.action_see_all_projects = QAction('See all projects', self)
+
         self.action_project_properties = QAction('Project properties', self)
 
         self.action_software_preferences = QAction('MIA2 preferences', self)
@@ -120,6 +130,7 @@ class Main_Window(QMainWindow):
         self.action_save.triggered.connect(self.saveChoice)
         self.action_save_as.triggered.connect(self.save_project_as)
         self.action_import.triggered.connect(self.import_data)
+        self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
 
@@ -139,8 +150,10 @@ class Main_Window(QMainWindow):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
-        for i in range(self.recent_projects.maxProjects):
-            self.menu_file.addAction(self.recent_projects_actions[i])
+        self.menu_file.addAction(self.action_saved_projects)
+        for i in range(self.saved_projects.maxProjects):
+            self.menu_file.addAction(self.saved_projects_actions[i])
+        self.menu_file.addAction(self.action_see_all_projects)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_software_preferences)
         self.menu_file.addAction(self.action_project_properties)
@@ -298,7 +311,7 @@ class Main_Window(QMainWindow):
             self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
-            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
             if os.path.exists(os.path.join(old_folder, 'data')):
@@ -342,7 +355,7 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.selectedFiles()
             self.exPopup.retranslateUi(self.exPopup.selectedFiles())
             file_name = self.exPopup.relative_path
-            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
             if os.path.exists(self.temp_dir):
                 if os.path.exists(os.path.join(self.temp_dir, 'data')):
@@ -359,7 +372,7 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.selectedFiles()
             self.exPopup.retranslateUi(file_name)
             file_name = self.exPopup.relative_path
-            self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
             if os.path.exists(self.temp_dir):
                 if os.path.exists(os.path.join(self.temp_dir, 'data')):
@@ -392,7 +405,7 @@ class Main_Window(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(relative_path, name, name + '.json')):
                 controller.open_project(name, relative_path)
-                self.recent_projects_list = self.recent_projects.addRecentProject(file_name)
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
                 self.exPopup = Ui_Dialog_New_Project()
                 self.exPopup.path = path
@@ -403,12 +416,41 @@ class Main_Window(QMainWindow):
 
     def update_recent_projects_actions(self):
         """ Updates the list of recent projects """
-        if self.recent_projects_list != []:
-            for i in range(len(self.recent_projects_list)):
-                text = os.path.basename(self.recent_projects_list[i])
-                self.recent_projects_actions[i].setText(text)
-                self.recent_projects_actions[i].setData(self.recent_projects_list[i])
-                self.recent_projects_actions[i].setVisible(True)
+        if self.saved_projects_list != []:
+            for i in range(min(len(self.saved_projects_list), self.saved_projects.maxProjects)):
+                text = os.path.basename(self.saved_projects_list[i])
+                self.saved_projects_actions[i].setText(text)
+                self.saved_projects_actions[i].setData(self.saved_projects_list[i])
+                self.saved_projects_actions[i].setVisible(True)
+
+    def see_all_projects(self):
+        """ Opens a pop-up when the 'See all projects' action is clicked and show the recent projects """
+        # Ui_Dialog() is defined in pop_ups.py
+        self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects)
+        controller.first_save = False
+        self.exPopup.signal_create_project.connect(self.modify_ui)
+        if self.exPopup.exec_() == QDialog.Accepted:
+            file_name = self.exPopup.relative_path
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+            self.update_recent_projects_actions()
+            if os.path.exists(self.temp_dir):
+                if os.path.exists(os.path.join(self.temp_dir, 'data')):
+                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
+                os.rmdir(self.temp_dir)
+
+            problem_list = controller.verify_scans(self.project)
+            if problem_list != []:
+                str_msg = ""
+                for element in problem_list:
+                    str_msg += element + "\n\n"
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("These files have been modified since they have been converted for the first time:")
+                msg.setInformativeText(str_msg)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
 
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
