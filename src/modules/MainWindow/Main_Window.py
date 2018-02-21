@@ -40,7 +40,7 @@ class Main_Window(QMainWindow):
 
     Methods
     -------
-    TODO
+    
 
     """
     def __init__(self):
@@ -84,7 +84,7 @@ class Main_Window(QMainWindow):
         self.showMaximized()
 
     def create_actions(self):
-        """ Create the actions in each menu"""
+        """ Create the actions in each menu """
 
         self.action_create = QAction('New project', self)
         self.action_create.setShortcut('Ctrl+N')
@@ -122,7 +122,7 @@ class Main_Window(QMainWindow):
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
 
     def create_menus(self):
-        """ Create the menubar"""
+        """ Create the menubar """
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
@@ -151,7 +151,7 @@ class Main_Window(QMainWindow):
         self.menu_help.addAction('Credits')
 
     def closeEvent(self, event):
-        """ Overriding the closing event to check if there are unsaved modifications"""
+        """ Overriding the closing event to check if there are unsaved modifications """
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveClosing)
@@ -221,7 +221,7 @@ class Main_Window(QMainWindow):
     @pyqtSlot()
     def modify_ui(self):
         """ Each time a project is opened or created, this function refreshes the GUI + the current project from
-         the data base"""
+         the data base """
 
         # This list will later contain all the tags in the project
         self.list_selected_tags = []
@@ -395,7 +395,7 @@ class Main_Window(QMainWindow):
                 print("TODO: ADD AN ERROR DIALOG")
 
     def update_recent_projects_actions(self):
-        """ Updates the list of recent projects"""
+        """ Updates the list of recent projects """
         if self.recent_projects_list != []:
             for i in range(len(self.recent_projects_list)):
                 text = os.path.basename(self.recent_projects_list[i])
