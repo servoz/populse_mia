@@ -29,6 +29,8 @@ import Utils.utils as utils
 import json
 import tempfile
 
+from DataBase.DataBase import DataBase
+
 
 class Main_Window(QMainWindow):
     """
