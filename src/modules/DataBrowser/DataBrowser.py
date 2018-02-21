@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLa
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox
+    QMessageBox, QSlider, QLineEdit, QSizePolicy
 from ProjectManager.controller import save_project
 import os
 from ProjectManager.models import *
@@ -15,6 +15,7 @@ from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+import scipy.misc as misc
 
 
 """from pop_ups import , Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_, \
@@ -683,38 +684,102 @@ class MiniViewer(QScrollArea):
         self.clear_layout(self.h_box_images)
         self.clear_layout(self.v_box)
         self.frame = QFrame()
-        im = nib.load(file_path)
+        self.img = nib.load(file_path)
 
-        if len(im.shape) == 3:
-            nb_slices = im.shape[2]
-            txt = "Slice n°"
-        elif len(im.shape) == 4:
-            nb_slices = im.shape[3]
-            txt = "Time n°"
-        elif len(im.shape) == 5:
-            nb_slices = im.shape[4]
-            txt = "Study n°"
+        show_cursors = True
+        if show_cursors:
+
+            self.boxSlider()
+            self.enableSliders()
+
+            sl1 = self.a1.value()
+            sl2 = self.a2.value()
+            sl3 = self.a3.value()
+            if (len(self.img.shape) == 3):
+                self.im_2D = self.img.get_data()[:, :, sl1].copy()
+                self.a1.setMaximum(self.img.shape[2] - 1)
+                self.a2.setMaximum(0)
+                self.a3.setMaximum(0)
+            if (len(self.img.shape) == 4):
+                self.im_2D = self.img.get_data()[:, :, sl1, sl2].copy()
+                self.a1.setMaximum(self.img.shape[2] - 1)
+                self.a2.setMaximum(self.img.shape[3] - 1)
+                self.a3.setMaximum(0)
+            if (len(self.img.shape) == 5):
+                self.im_2D = self.img.get_data()[:, :, sl1, sl2, sl3].copy()
+                self.a1.setMaximum(self.img.shape[2] - 1)
+                self.a2.setMaximum(self.img.shape[3] - 1)
+                self.a3.setMaximum(self.img.shape[4] - 1)
+
+            self.im_2D = rotate(self.im_2D, -90, reshape=False)
+            self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
+            self.im_2D = misc.imresize(self.im_2D, (128, 128))
+
+            w, h = self.im_2D.shape
+
+            im_Qt = QImage(self.im_2D.data, w, h, QImage.Format_Indexed8)
+            pixm = QPixmap.fromImage(im_Qt)
+
+            self.imageLabel = QLabel(self)
+            self.imageLabel.setPixmap(pixm)
+
+            self.h_box_slider_1 = QHBoxLayout()
+            self.h_box_slider_1.addWidget(self.txta1)
+            self.h_box_slider_1.addWidget(self.a1)
+
+            self.h_box_slider_2 = QHBoxLayout()
+            self.h_box_slider_2.addWidget(self.txta2)
+            self.h_box_slider_2.addWidget(self.a2)
+
+            self.h_box_slider_3 = QHBoxLayout()
+            self.h_box_slider_3.addWidget(self.txta3)
+            self.h_box_slider_3.addWidget(self.a3)
+
+            self.v_box_sliders = QVBoxLayout()
+            self.v_box_sliders.addLayout(self.h_box_slider_1)
+            self.v_box_sliders.addLayout(self.h_box_slider_2)
+            self.v_box_sliders.addLayout(self.h_box_slider_3)
+
+            self.h_box = QHBoxLayout()
+            self.h_box.addWidget(self.imageLabel)
+            self.h_box.addLayout(self.v_box_sliders)
+
+            self.frame.setLayout(self.h_box)
+
         else:
-            nb_slices = 0
+            if len(self.img.shape) == 3:
+                nb_slices = self.img.shape[2]
+                txt = "Slice n°"
+            elif len(self.img.shape) == 4:
+                nb_slices = self.img.shape[3]
+                txt = "Time n°"
+            elif len(self.img.shape) == 5:
+                nb_slices = self.img.shape[4]
+                txt = "Study n°"
+            else:
+                nb_slices = 0
 
-        for i in range(nb_slices):
-            pixm = self.image_to_pixmap(im, i)
+            for i in range(nb_slices):
+                pixm = self.image_to_pixmap(self.img, i)
 
-            self.v_box = QVBoxLayout()
+                self.v_box = QVBoxLayout()
 
-            label = QLabel(self)
-            label.setPixmap(pixm)
+                label = QLabel(self)
+                label.setPixmap(pixm)
 
-            label_info = QLabel()
-            label_info.setText(txt + str(i + 1))
-            label_info.setAlignment(QtCore.Qt.AlignCenter)
+                label_info = QLabel()
+                label_info.setText(txt + str(i + 1))
+                label_info.setAlignment(QtCore.Qt.AlignCenter)
 
-            self.v_box.addWidget(label)
-            self.v_box.addWidget(label_info)
+                self.v_box.addWidget(label)
+                self.v_box.addWidget(label_info)
 
-            self.h_box_images.addLayout(self.v_box)
-        self.frame.setLayout(self.h_box_images)
+                self.h_box_images.addLayout(self.v_box)
+            self.frame.setLayout(self.h_box_images)
+
+
         self.setWidget(self.frame)
+
 
     def clear_layout(self, layout):
         while layout.count() > 0:
@@ -729,31 +794,139 @@ class MiniViewer(QScrollArea):
     def image_to_pixmap(self, im, i):
         # The image to show depends on the dimension of the image
         if len(im.shape) == 3:
-            im_2D = im.get_data()[:, :, i].copy()
+            self.im_2D = im.get_data()[:, :, i].copy()
 
         elif len(im.shape) == 4:
             im_3D = im.get_data()[:, :, :, i].copy()
             middle_slice = int(im_3D.shape[2] / 2)
-            im_2D = im_3D[:, :, middle_slice]
+            self.im_2D = im_3D[:, :, middle_slice]
 
         elif len(im.shape) == 5:
             im_4D = im.get_data()[:, :, :, :, i].copy()
             im_3D = im_4D[:, :, :, 1]
             middle_slice = int(im_3D.shape[2] / 2)
-            im_2D = im_3D[:, :, middle_slice]
+            self.im_2D = im_3D[:, :, middle_slice]
 
         else:
-            im_2D = [0]
+            self.im_2D = [0]
 
-        import scipy.misc as misc
+        self.im_2D = rotate(self.im_2D, -90, reshape=False)
+        self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
+        self.im_2D = misc.imresize(self.im_2D, (128, 128))
 
-        im_2D = rotate(im_2D, -90, reshape=False)
-        im_2D = np.uint8((im_2D - im_2D.min()) / im_2D.ptp() * 255.0)
-        im_2D = misc.imresize(im_2D, (128, 128))
+        w, h = self.im_2D.shape
 
-        w, h = im_2D.shape
-
-        im_Qt = QImage(im_2D.data, w, h, QImage.Format_Indexed8)
+        im_Qt = QImage(self.im_2D.data, w, h, QImage.Format_Indexed8)
         pixm = QPixmap.fromImage(im_Qt)
 
         return pixm
+
+    def createSlider(self,maxm=0,minm=0,pos=0):
+        slider = QSlider(Qt.Horizontal)
+        slider.setFocusPolicy(Qt.StrongFocus)
+        #slider.setTickPosition(QSlider.TicksBothSides)
+        slider.setTickInterval(1)
+        #slider.setSingleStep(1)
+        slider.setMaximum(maxm)
+        slider.setMinimum(minm)
+        slider.setValue(pos)
+        slider.setEnabled(False)
+        return slider
+
+    def enableSliders(self):
+        self.a1.setEnabled(True)
+        self.a2.setEnabled(True)
+        self.a3.setEnabled(True)
+
+    def boxSlider(self):
+        self.a1 = self.createSlider(0, 0, 0)
+        self.a2 = self.createSlider(0, 0, 0)
+        self.a3 = self.createSlider(0, 0, 0)
+
+        self.a1.valueChanged.connect(self.changePosValue)
+        self.a2.valueChanged.connect(self.changePosValue)
+        self.a3.valueChanged.connect(self.changePosValue)
+
+        self.txta1 = self.createFieldValue()
+        self.txta2 = self.createFieldValue()
+        self.txta3 = self.createFieldValue()
+
+    def displayPosValue(self):
+        self.txta1.setText(str(self.a1.value()+1)+' / '+str(self.a1.maximum()+1))
+        self.txta2.setText(str(self.a2.value()+1)+' / '+str(self.a2.maximum()+1))
+        self.txta3.setText(str(self.a3.value()+1)+' / '+str(self.a3.maximum()+1))
+
+    def createFieldValue(self):
+        fieldValue = QLineEdit()
+        fieldValue.setEnabled(False)
+        fieldValue.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
+        return fieldValue
+
+    def changePosValue(self):
+        self.navigImage()
+
+    def navigImage(self):
+        self.indexImage()
+        self.displayPosValue()
+
+        self.im_2D = rotate(self.im_2D, -90, reshape=False)
+        self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
+        self.im_2D = misc.imresize(self.im_2D, (128, 128))
+
+        w, h = self.im_2D.shape
+
+        image = QImage(self.im_2D.data,w,h,QImage.Format_Indexed8)
+        self.pixm = QPixmap.fromImage(image)
+        self.imageLabel.setPixmap(self.pixm)
+        #self.imageLabel.adjustSize()
+        #self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())
+        #self.filter()
+
+    def indexImage(self):
+        sl1=self.a1.value()
+        sl2=self.a2.value()
+        sl3=self.a3.value()
+        if (len(self.img.shape)==3):
+            self.im_2D = self.img.get_data()[:,:,sl1].copy()
+            self.a1.setMaximum(self.img.shape[2]-1)
+            self.a2.setMaximum(0)
+            self.a3.setMaximum(0)
+        if (len(self.img.shape)==4):
+            self.im_2D = self.img.get_data()[:,:,sl1,sl2].copy()
+            self.a1.setMaximum(self.img.shape[2]-1)
+            self.a2.setMaximum(self.img.shape[3]-1)
+            self.a3.setMaximum(0)
+        if (len(self.img.shape)==5):
+            self.im_2D = self.img.get_data()[:,:,sl1,sl2,sl3].copy()
+            self.a1.setMaximum(self.img.shape[2]-1)
+            self.a2.setMaximum(self.img.shape[3]-1)
+            self.a3.setMaximum(self.img.shape[4]-1)
+
+    """def filter(self):
+        img = Image.fromarray(self.x, 'L')
+
+        brightness = ImageEnhance.Brightness(img)
+        newImg = brightness.enhance(1.2*(self.b1.value()+1)/50.0)
+
+        contrast = ImageEnhance.Contrast(newImg)
+        newImg = contrast.enhance((self.b2.value()+1)/50.0)
+
+        sharpness = ImageEnhance.Sharpness(newImg)
+        newImg = sharpness.enhance(2.0*(self.b3.value()+1)/50.0)
+
+        color = ImageEnhance.Color(newImg)
+        newImg = color.enhance((self.b4.value()+1)/50.0)
+
+        newImg = newImg.rotate(self.c1.value())
+
+        newImg = newImg.transform(img.size, Image.AFFINE,(1,0,self.c2.value(),0,1,self.c3.value()))
+
+        size1 = int(img.size[0] * (self.c4.value()+1))
+        size2 = int(img.size[1] * (self.c4.value()+1))
+
+        newImg = newImg.resize((size1,size2), Image.ANTIALIAS)
+
+        self.pixm = QPixmap.fromImage(newImg.toqimage())
+        self.imageLabel.setPixmap(self.pixm)
+        self.imageLabel.adjustSize()
+        self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())"""

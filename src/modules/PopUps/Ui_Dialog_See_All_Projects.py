@@ -77,7 +77,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
 
         self.setLayout(self.vBox)
 
-
     def checkState(self, path, text):
         """ Checks if the project still exists and returns the corresponding icon """
         if os.path.isfile(os.path.join(path, text, text + ".json")):
