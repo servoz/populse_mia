@@ -45,10 +45,12 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self):
+    def __init__(self, project):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
+
+        self.project = project
 
         ############### initial setting ############################################################
         config = Config()
@@ -68,8 +70,6 @@ class Main_Window(QMainWindow):
 
         self.create_actions()
         self.create_menus()
-
-        self.project = Project("")
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
@@ -117,7 +117,7 @@ class Main_Window(QMainWindow):
         self.action_create.triggered.connect(self.create_project_pop_up)
         self.action_open.triggered.connect(self.open_project_pop_up)
         self.action_exit.triggered.connect(self.close)
-        self.action_save.triggered.connect(self.saveClosing)
+        self.action_save.triggered.connect(self.saveChoice)
         self.action_save_as.triggered.connect(self.save_project_as)
         self.action_import.triggered.connect(self.import_data)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
@@ -156,7 +156,7 @@ class Main_Window(QMainWindow):
         """ Overriding the closing event to check if there are unsaved modifications """
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.project)
-            self.pop_up_close.save_as_signal.connect(self.saveClosing)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
@@ -174,7 +174,7 @@ class Main_Window(QMainWindow):
         else:
             event.ignore()
 
-    def saveClosing(self):
+    def saveChoice(self):
         """ Checks if the project needs to be saved as """
         if (self.project.name == ""):
             self.save_project_as()
