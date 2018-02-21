@@ -40,7 +40,7 @@ class Main_Window(QMainWindow):
 
     Methods
     -------
-    
+
 
     """
     def __init__(self):
@@ -180,7 +180,11 @@ class Main_Window(QMainWindow):
             controller.save_project(self.project)
 
     def check_unsaved_modifications(self):
-        """ Check if there are differences between the current project and the data base """
+        """ Check if there are differences between the current project and the data base
+
+            Retuns 1 if there are unsaved modifications, 0 otherwise
+
+        """
         if (self.project.name == "" and len(self.project._get_scans()) > 0):
             return 1
         if (self.project.name == ""):
@@ -215,7 +219,6 @@ class Main_Window(QMainWindow):
                         break
                 if scanFound == 0:
                     return 1
-
         return 0
 
     @pyqtSlot()
