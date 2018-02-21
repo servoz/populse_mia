@@ -94,7 +94,7 @@ class Ui_Visualized_Tags(QWidget):
                         return_list.append(tag_name)
         else:
             for tag_name in project.getAllTagsNames():
-                if tag_name not in project.tags_to_visualize():
+                if tag_name not in project.tags_to_visualize:
                     return_list.append(tag_name)
         self.list_widget_tags.clear()
         for tag_name in return_list:
