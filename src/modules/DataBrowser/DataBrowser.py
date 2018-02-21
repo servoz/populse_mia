@@ -277,9 +277,9 @@ class TableDataBrowser(QTableWidget):
             item = self.horizontalHeaderItem(nb)
             if element == project.sort_tags[0]:
                 if project.sort_order == 'ascending':
-                    item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
                 else:
-                    item.setIcon(QIcon(os.path.join('sources_images', 'up_arrow.png')))
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
@@ -524,13 +524,13 @@ class TableDataBrowser(QTableWidget):
         if tag_name == project.sort_tags[0]:
             if project.sort_order == 'ascending':
                 project.sort_order = 'descending'
-                item.setIcon(QIcon(os.path.join('sources_images', 'up_arrow.png')))
+                item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             else:
                 project.sort_order = 'ascending'
-                item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+                item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
         else:
             project.sort_order = 'ascending'
-            item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
+            item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
 
         project.reset_sort_tags()
         project.add_sort_tag(tag_name)

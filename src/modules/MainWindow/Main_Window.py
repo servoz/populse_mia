@@ -100,7 +100,7 @@ class Main_Window(QMainWindow):
         self.action_save_as = QAction('Save project as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
 
-        self.action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
+        self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
         for i in range(self.recent_projects.maxProjects):
@@ -110,7 +110,7 @@ class Main_Window(QMainWindow):
 
         self.action_software_preferences = QAction('MIA2 preferences', self)
 
-        self.action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
+        self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
         # Connection of the several triggered signals of the actions to some other methods
