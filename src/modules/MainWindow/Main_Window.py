@@ -242,19 +242,18 @@ class Main_Window(QMainWindow):
         self.project = controller.open_project(name, path) # TODO remove once it's useless
         self.database = DataBase(path)
 
-        for file in self.project._get_scans():
+        for file in self.project._get_scans(): # TODO read scans from database
             for n_tag in file._get_tags():
                 if n_tag.origin == 'custom' and n_tag.name not in self.project.tags_to_visualize:
                     self.project.tags_to_visualize.append(n_tag.name)
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
-        if self.project.name == "":
+        if self.project.name == "": # TODO check with databse
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         else:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
         self.statusBar().showMessage('')
-        # self.data_browser.table_data.update_table(self.project)
 
     def create_tabs(self):
         """ Creates the tabs """
@@ -292,14 +291,16 @@ class Main_Window(QMainWindow):
         import glob
         # Ui_Dialog() is defined in pop_ups.py
         exPopup = Ui_Dialog_Save_Project_As()
-        # self.exPopup.exec()
         if exPopup.exec_() == QDialog.Accepted:
-            old_folder = self.project.folder
+            old_folder = self.database.folder
+
+            # TODO read from database later
             self.project.folder = exPopup.relative_path
             self.project.name = exPopup.name
             self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
+            database_path = os.path.join(os.path.relpath(self.project.folder), 'database')
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
@@ -308,6 +309,13 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
+
+            if os.path.exists(os.path.join(old_folder, 'database')):
+                os.mkdir(os.path.relpath(database_path))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'database', '*.*')):
+                    shutil.copy(filename, os.path.relpath(database_path))
+
+            self.database = DataBase(exPopup.relative_path)
 
             project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
@@ -335,10 +343,7 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
-            if os.path.exists(self.temp_dir):
-                if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-                os.rmdir(self.temp_dir)
+            self.database = DataBase(self.exPopup.relative_path)
 
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
@@ -365,6 +370,7 @@ class Main_Window(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
+        self.database = DataBase(self.exPopup.relative_path)
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -378,6 +384,7 @@ class Main_Window(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(relative_path, name, name + '.json')):
                 controller.open_project(name, relative_path)
+                self.database = DataBase(relative_path)
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
                 self.exPopup = Ui_Dialog_New_Project()

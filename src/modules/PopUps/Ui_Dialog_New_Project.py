@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLab
 import os
 import ProjectManager.controller as controller
 import Utils.utils as utils
+from DataBase.DataBaseModel import createDatabase
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
@@ -36,6 +37,7 @@ class Ui_Dialog_New_Project(QFileDialog):
 
             if not os.path.exists(self.relative_path):
                 controller.createProject(self.name, self.relative_subpath, self.relative_subpath)
+                createDatabase(self.relative_path)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
