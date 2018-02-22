@@ -19,21 +19,19 @@ class Ui_Dialog_New_Project(QFileDialog):
         #self.setOption(QFileDialog.DontUseNativeDialog)
         self.setLabelText(QFileDialog.Accept, "Create")
         self.setAcceptMode(QFileDialog.AcceptSave)
-        #self.setFileMode(QFileDialog.Directory)
-        # # Setting the Home directory as default
+
+        # Setting the projects directory as default
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
             os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
         self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
-        #self.finished.connect(self.return_value)
 
     def retranslateUi(self, file_name):
         # file_name = self.selectedFiles()
         file_name = file_name[0]
+        file_name = utils.remove_accents(file_name.replace(" ", "_"))
         if file_name:
             entire_path = os.path.abspath(file_name)
-            entire_path = utils.remove_accents(entire_path.replace(" ", "_"))
             self.path, self.name = os.path.split(entire_path)
-            #self.path = entire_path
             self.relative_path = os.path.relpath(file_name)
             self.relative_subpath = os.path.relpath(self.path)
 

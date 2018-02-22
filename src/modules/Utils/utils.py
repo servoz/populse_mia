@@ -39,8 +39,8 @@ def findPath(name_file):
 
 
 def remove_accents(txt):
-    ch1 = u"àâàçéèêëîïôöùûüÿÀÂÇÉÈÊËÎÏÔÙÛÜŸ"
-    ch2 = u"aaaceeeeiioouuuyAACEEEEIIOUUUY"
+    ch1 = u"àáâãäåæçéèêëîïìíòóôõöøœùúûüÿýñšðÞÀÁÂÃÄÅÆÇÉÈÊËÎÏÌÍÔÒÓÕÖØŒÙÚÛÜŸÝÑŠÐþß¢¥£$"
+    ch2 = u"aaaaaaeceeeeiiiiooooooeuuuuyynsopAAAAAAECEEEEIIIIOOOOOOEUUUUYYNSDpScYES"
     s = ""
     for c in txt:
         i = ch1.find(c)

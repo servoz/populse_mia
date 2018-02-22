@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
 from ProjectManager import controller
-
+import Utils.utils as utils
 
 class Ui_Dialog_Open_Project(QFileDialog):
     """
@@ -16,20 +16,18 @@ class Ui_Dialog_Open_Project(QFileDialog):
     def __init__(self):
         super().__init__()
 
-        #self.setLabelText(QFileDialog.Accept, "Open")
         self.setOption(QFileDialog.DontUseNativeDialog, True)
         self.setFileMode(QFileDialog.Directory)
-        #self.setOption(QFileDialog.ShowDirsOnly)
-        # # Setting the Home directory as default
+
+        # Setting the projects directory as default
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
             os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
         self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
-        # self.setDirectory(os.path.expanduser("~"))
-        #self.retranslateUi()
 
     def retranslateUi(self, file_name):
         #file_name = self.getExistingDirectory(self, "Select a project directory")
         file_name = file_name[0]
+        file_name = utils.remove_accents(file_name.replace(" ", "_"))
         if file_name:
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)

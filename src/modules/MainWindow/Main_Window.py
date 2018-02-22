@@ -30,9 +30,6 @@ import Utils.utils as utils
 import json
 import tempfile
 
-from DataBase.DataBase import DataBase
-
-
 class Main_Window(QMainWindow):
     """
     Primary master class
@@ -323,14 +320,10 @@ class Main_Window(QMainWindow):
             project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
 
-            # self.recent_projects_list = RecentProjects.addRecentProject(exPopup.relative_path)
-            # self.update_recent_projects_actions()
-
-            """if controller.first_save:
-                if os.path.exists(os.path.join(old_folder, 'data')):
-                    shutil.rmtree(os.path.join(old_folder, 'data'))
-                if os._exists(old_folder) and os.listdir(old_folder) == []:
-                    os.rmdir(old_folder)"""
+            if os.path.exists(self.temp_dir):
+                if os.path.exists(os.path.join(self.temp_dir, 'data')):
+                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
+                os.rmdir(self.temp_dir)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
@@ -344,8 +337,6 @@ class Main_Window(QMainWindow):
         """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_New_Project()
-        # file_name = self.exPopup.return_value()
-        controller.first_save = False
 
         # Once the user has selected his project, the 'signal_create_project" signal is emitted
         # Which will be connected to the modify_ui method that controls the following processes
@@ -374,6 +365,7 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
+
             if os.path.exists(self.temp_dir):
                 if os.path.exists(os.path.join(self.temp_dir, 'data')):
                     shutil.rmtree(os.path.join(self.temp_dir, 'data'))

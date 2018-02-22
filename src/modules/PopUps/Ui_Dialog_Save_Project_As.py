@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
 from ProjectManager import controller
+import Utils.utils as utils
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
     """
@@ -14,22 +15,22 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
 
     def __init__(self):
         super().__init__()
-        #self.setOption(QFileDialog.DontUseNativeDialog)
+
         self.setLabelText(QFileDialog.Accept, "Save as")
         self.setOption(QFileDialog.ShowDirsOnly, True)
         self.setAcceptMode(QFileDialog.AcceptSave)
-        #self.setFileMode(QFileDialog.Directory)
-        # # Setting the Home directory as default
+
+        # Setting the projects directory as default
         if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
             os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
         self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
-        # self.setDirectory(os.path.expanduser("~"))
         self.finished.connect(self.return_value)
 
     def return_value(self):
         file_name = self.selectedFiles()
         if len(file_name) > 0:
             file_name = file_name[0]
+            file_name = utils.remove_accents(file_name.replace(" ", "_"))
             if file_name:
                 entire_path = os.path.abspath(file_name)
                 self.path, self.name = os.path.split(entire_path)
