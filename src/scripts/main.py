@@ -8,10 +8,14 @@ from ProjectManager.models import *
 from DataBase.DataBase import DataBase
 from DataBase.DataBaseModel import createDatabase
 import os
+import shutil
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+
+    if(os.path.exists(os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project'))):
+        shutil.rmtree(os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project')) # temp_project removed just in case
 
     project = Project("")
     database = DataBase(None)

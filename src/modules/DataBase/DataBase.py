@@ -9,8 +9,8 @@ class DataBase:
     def __init__(self, project_root_folder):
         if(project_root_folder == None):
             self.isTempProject = True
-            tf = tempfile.TemporaryDirectory()
-            self.folder = os.path.relpath(tf.name)
+            self.folder = os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project')
+            os.mkdir(self.folder)
             createDatabase(self.folder)
         else:
             self.isTempProject = False
