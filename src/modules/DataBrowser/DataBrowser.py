@@ -2,8 +2,7 @@ from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QPushButton, QAction, QMessageBox
 from ProjectManager.controller import save_project
 import os
 from ProjectManager.models import *
@@ -12,13 +11,8 @@ from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
-from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
-from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
+
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
-
-
-"""from pop_ups import , Ui_Dialog_clone_tag, Ui_Dialog_Type_Problem, Ui_Dialog_, \
-    , , """
 from functools import partial
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
@@ -33,7 +27,7 @@ class DataBrowser(QWidget):
 
         _translate = QtCore.QCoreApplication.translate
         self.create_actions(project)
-        self.create_toolbar_menus()
+        self.create_toolbar_menus(project)
 
         ################################### TABLE ###################################
 
@@ -43,42 +37,12 @@ class DataBrowser(QWidget):
         self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_table_data.setObjectName("frame_table_data")
 
-        """'# Label
-        self.label_principal_table = QtWidgets.QLabel(self.frame_table_data)
-        self.label_principal_table.setText(_translate("MainWindow", "Principal Table"))
-
-        # "Add tag" button
-        self.push_button_add_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_add_tag.setText(_translate("MainWindow", "Add tag"))
-        self.push_button_add_tag.setObjectName("pushButton_add_tag")
-        self.push_button_add_tag.clicked.connect(lambda: self.add_tag_pop_up(project))
-
-        # "Clone tag" button
-        self.push_button_clone_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_clone_tag.setText(_translate("MainWindow", "Clone tag"))
-        self.push_button_clone_tag.setObjectName("pushButton_clone_tag")
-        self.push_button_clone_tag.clicked.connect(lambda: self.clone_tag_pop_up(project))
-
-        # "Remove tag" button
-        self.push_button_remove_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_remove_tag.setText(_translate("MainWindow", "Remove tag"))
-        self.push_button_remove_tag.setObjectName("pushButton_remove_tag")
-        self.push_button_remove_tag.clicked.connect(lambda: self.remove_tag_pop_up(project))"""
-
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project)
         self.table_data.setObjectName("table_data")
         self.table_data.cellClicked.connect(partial(self.connect_viewer, project))
 
         ## LAYOUTS ##
-
-        """vbox_table = QVBoxLayout()
-        vbox_table.addWidget(self.label_principal_table)
-        vbox_table.addWidget(self.push_button_add_tag)
-        vbox_table.addWidget(self.push_button_clone_tag)
-        vbox_table.addWidget(self.push_button_remove_tag)
-        vbox_table.setSpacing(10)
-        vbox_table.addStretch(1)"""
 
         hbox_table = QHBoxLayout()
         # hbox_table.addLayout(vbox_table)
@@ -115,11 +79,6 @@ class DataBrowser(QWidget):
 
         self.setLayout(vbox_splitter)
 
-        """vbox = QVBoxLayout()
-        vbox.addWidget(self.menu_toolbar)
-        vbox.addLayout(hbox_splitter)
-        self.setLayout(vbox)"""
-
     def create_actions(self, project):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
         self.add_tag_action.triggered.connect(lambda: self.add_tag_pop_up(project))
@@ -130,7 +89,17 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(lambda: self.remove_tag_pop_up(project))
 
-    def create_toolbar_menus(self):
+    def visualized_tags_pop_up(self, project):
+        self.pop_up = Ui_Dialog_Settings(project)
+        self.pop_up.tab_widget.setCurrentIndex(1)
+
+        self.pop_up.setGeometry(300, 200, 800, 600)
+        self.pop_up.show()
+
+        if self.pop_up.exec_() == QDialog.Accepted:
+            self.table_data.update_table(project)
+
+    def create_toolbar_menus(self, project):
         self.menu_toolbar = QToolBar()
 
         tags_tool_button = QToolButton()
@@ -142,7 +111,12 @@ class DataBrowser(QWidget):
         tags_menu.addAction(self.remove_tag_action)
         tags_tool_button.setMenu(tags_menu)
 
+        visualized_tags_button = QPushButton()
+        visualized_tags_button.setText('Visualized tags')
+        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project))
+
         self.menu_toolbar.addWidget(tags_tool_button)
+        self.menu_toolbar.addWidget(visualized_tags_button)
 
     def connect_viewer(self, project, row, col):
         path_name = os.path.abspath(project.folder)
@@ -210,8 +184,6 @@ class TableDataBrowser(QTableWidget):
 
         # It allows to move the columns
         self.horizontalHeader().setSectionsMovable(True)
-        #self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
-        #self.setSelectionMode(QAbstractItemView.MultiSelection)
 
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -219,7 +191,7 @@ class TableDataBrowser(QTableWidget):
         self.flag_first_time = 0
         self.hh = self.horizontalHeader()
         self.hh.sectionClicked.connect(partial(self.sort_items, project))
-        #self.horizontalHeader.sectionClicked().connect(lambda: self.sort_items(project))
+
         if project:
             self.update_table(project)
 
@@ -265,11 +237,6 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
 
-        """# Filling the header of the columns
-        item = self.horizontalHeaderItem(0)
-        item.setIcon(QIcon(os.path.join('sources_images', 'down_arrow.png')))
-        item.setText('FileName')"""
-
         nb = 0
         for element in project.tags_to_visualize:
             element = str(element)
@@ -283,16 +250,6 @@ class TableDataBrowser(QTableWidget):
             item.setText(_translate("MainWindow", element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
-
-        """ Filling the first column with the path of each scan """
-        """nb = 0
-        for i in project._get_scans():
-            a = str(i.file_path)
-            item = QTableWidgetItem()
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-            item.setText(a)
-            self.setItem(nb, 0, item)
-            nb += 1"""
 
         # Filling all the cells
         y = -1
@@ -346,14 +303,10 @@ class TableDataBrowser(QTableWidget):
 
         ######
 
-        #__sortingEnabled = self.isSortingEnabled()
-        #self.setSortingEnabled(__sortingEnabled)
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
-        #self.itemChanged.connect(lambda item: self.change_cell_color(item, project))
         self.itemChanged.connect(partial(self.change_cell_color, project))
-        """self.itemDoubleClicked.connect(self.sort_column)"""
 
         config = Config()
         if (config.isAutoSave() == "yes" and not project.name == ""):
@@ -465,7 +418,6 @@ class TableDataBrowser(QTableWidget):
         for point in points:
             row = point.row()
             col = point.column()
-            # tag_name = self.table_widget_main.horizontalHeaderItem(col).text()
             scan_name = self.item(row, 0).text()
             for file in project._get_scans():
                 if file.file_path == scan_name:
@@ -540,7 +492,6 @@ class TableDataBrowser(QTableWidget):
         points = self.selectedItems()
 
         project.sort_order = "ascending"
-        #self.setSortingEnabled(True)
         project.reset_sort_tags()
 
         for point in points:
@@ -552,7 +503,6 @@ class TableDataBrowser(QTableWidget):
         points = self.selectedItems()
 
         project.sort_order = "descending"
-        #self.setSortingEnabled(True)
         project.reset_sort_tags()
 
         for point in points:
