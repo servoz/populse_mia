@@ -91,7 +91,7 @@ class DataBrowser(QWidget):
 
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)
-        self.pop_up.tab_widget.setCurrentIndex(1)
+        self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
@@ -512,7 +512,7 @@ class TableDataBrowser(QTableWidget):
 
     def visualized_tags_pop_up(self, project):
         self.pop_up = Ui_Dialog_Settings(project)
-        self.pop_up.tab_widget.setCurrentIndex(1)
+        self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
