@@ -8,11 +8,11 @@ import os
 import yaml
 
 
-class Config():
-    
+class Config:
+
     def __init__(self):
         self.config = self.loadConfig()
-        
+
     def loadConfig(self):
         with open(os.path.join('..', '..', 'properties', 'config.yml'), 'r') as stream:
             try:
@@ -74,5 +74,13 @@ class Config():
 
     def setTextColor(self, color):
         self.config["text_color"] = color
+        # Then save the modification
+        self.saveConfig()
+
+    def getShowAllSlices(self):
+        return self.config["show_all_slices"]
+
+    def setShowAllSlices(self, show_all_slices):
+        self.config["show_all_slices"] = show_all_slices
         # Then save the modification
         self.saveConfig()

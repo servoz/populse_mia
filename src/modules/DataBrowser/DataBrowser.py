@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLa
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QSlider, QLineEdit, QSizePolicy
+    QMessageBox, QSlider, QLineEdit, QSizePolicy, QCheckBox
 from ProjectManager.controller import save_project
 import os
 from ProjectManager.models import *
@@ -15,6 +15,8 @@ from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+
+from SoftwareProperties import Config
 import scipy.misc as misc
 
 
@@ -44,28 +46,6 @@ class DataBrowser(QWidget):
         self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_table_data.setObjectName("frame_table_data")
 
-        """'# Label
-        self.label_principal_table = QtWidgets.QLabel(self.frame_table_data)
-        self.label_principal_table.setText(_translate("MainWindow", "Principal Table"))
-
-        # "Add tag" button
-        self.push_button_add_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_add_tag.setText(_translate("MainWindow", "Add tag"))
-        self.push_button_add_tag.setObjectName("pushButton_add_tag")
-        self.push_button_add_tag.clicked.connect(lambda: self.add_tag_pop_up(project))
-
-        # "Clone tag" button
-        self.push_button_clone_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_clone_tag.setText(_translate("MainWindow", "Clone tag"))
-        self.push_button_clone_tag.setObjectName("pushButton_clone_tag")
-        self.push_button_clone_tag.clicked.connect(lambda: self.clone_tag_pop_up(project))
-
-        # "Remove tag" button
-        self.push_button_remove_tag = QtWidgets.QPushButton(self.frame_table_data)
-        self.push_button_remove_tag.setText(_translate("MainWindow", "Remove tag"))
-        self.push_button_remove_tag.setObjectName("pushButton_remove_tag")
-        self.push_button_remove_tag.clicked.connect(lambda: self.remove_tag_pop_up(project))"""
-
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project)
         self.table_data.setObjectName("table_data")
@@ -73,16 +53,7 @@ class DataBrowser(QWidget):
 
         ## LAYOUTS ##
 
-        """vbox_table = QVBoxLayout()
-        vbox_table.addWidget(self.label_principal_table)
-        vbox_table.addWidget(self.push_button_add_tag)
-        vbox_table.addWidget(self.push_button_clone_tag)
-        vbox_table.addWidget(self.push_button_remove_tag)
-        vbox_table.setSpacing(10)
-        vbox_table.addStretch(1)"""
-
         hbox_table = QHBoxLayout()
-        # hbox_table.addLayout(vbox_table)
         hbox_table.addWidget(self.table_data)
 
         self.frame_table_data.setLayout(hbox_table)
@@ -116,10 +87,6 @@ class DataBrowser(QWidget):
 
         self.setLayout(vbox_splitter)
 
-        """vbox = QVBoxLayout()
-        vbox.addWidget(self.menu_toolbar)
-        vbox.addLayout(hbox_splitter)
-        self.setLayout(vbox)"""
 
     def create_actions(self, project):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -661,7 +628,11 @@ class TableDataBrowser(QTableWidget):
             save_project(project)
 
 
-class MiniViewer(QScrollArea):
+class MiniViewer(QWidget):
+    #TODO: IF THE CHECKBOX TO SHOW ALL SLICES IS CHECKED OR UNCHECKED IN THE PREFERENCES POP-UP, IT DOES NOT UPDATE THE
+    #TODO: CHECKBOX OF THE MINIVIEWER : EVEN WITH SIGNALS IT DOES NOT WORK BECAUSE WE NEED TO CREATE TWO SEVERAL OBJECTS
+
+    #TODO: HANDLE THE MULTI SELECTION
 
     def __init__(self, project):
         super().__init__()
@@ -669,25 +640,51 @@ class MiniViewer(QScrollArea):
         self.setHidden(True)
         self.nb_labels = 6
 
+        self.config = Config()
+        # Updating the check_box if the preferences are changed
+        self.config.configSavedSignal.connect(self.change_check_box_state)
+
         self.labels = QWidget()
+        self.scroll_area = QScrollArea()
         self.frame = QFrame()
-        self.h_box_images = QHBoxLayout()
-        self.h_box_images.setSpacing(10)
-        self.v_box = QVBoxLayout()
+        self.scroll_area.setWidget(self.frame)
+        self.frame_final = QFrame()
+
+        self.createLayouts()
+
+        self.setLayout(self.v_box_final)
+
+        self.check_box = QCheckBox('Show all slices (no cursors)')
+
+        if self.config.getShowAllSlices() == 'yes':
+            self.check_box.setCheckState(Qt.Checked)
+        else:
+            self.check_box.setCheckState(Qt.Unchecked)
+
+        self.check_box.stateChanged.connect(self.check_box_state_changed)
+        self.file_path = ""
+
+    def check_box_state_changed(self):
+        if self.check_box.checkState() == Qt.Checked:
+            self.config.setShowAllSlices('yes')
+        elif self.check_box.checkState() == Qt.Unchecked:
+            self.config.setShowAllSlices('no')
+        self.show_slices(self.file_path)
 
     def show_slices(self, file_path):
+        self.file_path = file_path
         self.setMinimumHeight(180)
 
         if self.isHidden():
             self.setHidden(False)
 
-        self.clear_layout(self.h_box_images)
-        self.clear_layout(self.v_box)
-        self.frame = QFrame()
-        self.img = nib.load(file_path)
+        self.clearLayouts()
 
-        show_cursors = True
-        if show_cursors:
+        self.frame = QFrame(self)
+        self.frame_final = QFrame(self)
+        self.img = nib.load(self.file_path)
+
+        if self.check_box.checkState() == Qt.Unchecked:
 
             self.boxSlider()
             self.enableSliders()
@@ -695,6 +692,7 @@ class MiniViewer(QScrollArea):
             sl1 = self.a1.value()
             sl2 = self.a2.value()
             sl3 = self.a3.value()
+
             if (len(self.img.shape) == 3):
                 self.im_2D = self.img.get_data()[:, :, sl1].copy()
                 self.a1.setMaximum(self.img.shape[2] - 1)
@@ -715,6 +713,8 @@ class MiniViewer(QScrollArea):
             self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
             self.im_2D = misc.imresize(self.im_2D, (128, 128))
 
+            self.displayPosValue()
+
             w, h = self.im_2D.shape
 
             im_Qt = QImage(self.im_2D.data, w, h, QImage.Format_Indexed8)
@@ -722,6 +722,7 @@ class MiniViewer(QScrollArea):
 
             self.imageLabel = QLabel(self)
             self.imageLabel.setPixmap(pixm)
+            self.imageLabel.setToolTip(os.path.basename(self.file_path))
 
             self.h_box_slider_1 = QHBoxLayout()
             self.h_box_slider_1.addWidget(self.txta1)
@@ -743,10 +744,15 @@ class MiniViewer(QScrollArea):
             self.h_box = QHBoxLayout()
             self.h_box.addWidget(self.imageLabel)
             self.h_box.addLayout(self.v_box_sliders)
+            self.h_box.addStretch(1)
 
             self.frame.setLayout(self.h_box)
 
         else:
+
+            self.h_box_images = QHBoxLayout()
+            self.h_box_images.setSpacing(10)
+
             if len(self.img.shape) == 3:
                 nb_slices = self.img.shape[2]
                 txt = "Slice n°"
@@ -777,9 +783,15 @@ class MiniViewer(QScrollArea):
                 self.h_box_images.addLayout(self.v_box)
             self.frame.setLayout(self.h_box_images)
 
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidget(self.frame)
 
-        self.setWidget(self.frame)
+        self.h_box_check_box = QHBoxLayout()
+        self.h_box_check_box.addStretch(1)
+        self.h_box_check_box.addWidget(self.check_box)
 
+        self.v_box_final.addLayout(self.h_box_check_box)
+        self.v_box_final.addWidget(self.scroll_area)
 
     def clear_layout(self, layout):
         while layout.count() > 0:
@@ -790,6 +802,90 @@ class MiniViewer(QScrollArea):
             w = item.widget()
             if w:
                 w.deleteLater()
+
+    def clearLayouts(self):
+
+        for i in reversed(range(self.v_box_final.count())):
+            if self.v_box_final.itemAt(i).widget() is not None:
+                self.v_box_final.itemAt(i).widget().setParent(None)
+
+        """try:
+            self.clear_layout(self.h_box_images)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box_images)
+
+        try:
+            self.clear_layout(self.v_box)
+        except:
+            pass
+        else:
+            self.clear_layout(self.v_box)
+
+        try:
+            self.clear_layout(self.v_box_final)
+        except:
+            pass
+        else:
+            self.clear_layout(self.v_box_final)
+
+        try:
+            self.clear_layout(self.h_box_slider_1)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box_slider_1)
+
+        try:
+            self.clear_layout(self.h_box_slider_2)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box_slider_2)
+
+        try:
+            self.clear_layout(self.h_box_slider_3)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box_slider_3)
+
+        try:
+            self.clear_layout(self.v_box_sliders)
+        except:
+            pass
+        else:
+            self.clear_layout(self.v_box_sliders)
+
+        try:
+            self.clear_layout(self.h_box)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box)
+
+        try:
+            self.clear_layout(self.h_box_check_box)
+        except:
+            pass
+        else:
+            self.clear_layout(self.h_box_check_box)"""
+
+
+    def createLayouts(self):
+
+        self.h_box_images = QHBoxLayout()
+        self.h_box_images.setSpacing(10)
+        self.v_box = QVBoxLayout()
+        self.v_box_final = QVBoxLayout()
+        self.h_box_slider_1 = QHBoxLayout()
+        self.h_box_slider_2 = QHBoxLayout()
+        self.h_box_slider_3 = QHBoxLayout()
+        self.v_box_sliders = QVBoxLayout()
+        self.h_box = QHBoxLayout()
+        self.h_box_check_box = QHBoxLayout()
+
 
     def image_to_pixmap(self, im, i):
         # The image to show depends on the dimension of the image
@@ -878,9 +974,6 @@ class MiniViewer(QScrollArea):
         image = QImage(self.im_2D.data,w,h,QImage.Format_Indexed8)
         self.pixm = QPixmap.fromImage(image)
         self.imageLabel.setPixmap(self.pixm)
-        #self.imageLabel.adjustSize()
-        #self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())
-        #self.filter()
 
     def indexImage(self):
         sl1=self.a1.value()
@@ -901,32 +994,3 @@ class MiniViewer(QScrollArea):
             self.a1.setMaximum(self.img.shape[2]-1)
             self.a2.setMaximum(self.img.shape[3]-1)
             self.a3.setMaximum(self.img.shape[4]-1)
-
-    """def filter(self):
-        img = Image.fromarray(self.x, 'L')
-
-        brightness = ImageEnhance.Brightness(img)
-        newImg = brightness.enhance(1.2*(self.b1.value()+1)/50.0)
-
-        contrast = ImageEnhance.Contrast(newImg)
-        newImg = contrast.enhance((self.b2.value()+1)/50.0)
-
-        sharpness = ImageEnhance.Sharpness(newImg)
-        newImg = sharpness.enhance(2.0*(self.b3.value()+1)/50.0)
-
-        color = ImageEnhance.Color(newImg)
-        newImg = color.enhance((self.b4.value()+1)/50.0)
-
-        newImg = newImg.rotate(self.c1.value())
-
-        newImg = newImg.transform(img.size, Image.AFFINE,(1,0,self.c2.value(),0,1,self.c3.value()))
-
-        size1 = int(img.size[0] * (self.c4.value()+1))
-        size2 = int(img.size[1] * (self.c4.value()+1))
-
-        newImg = newImg.resize((size1,size2), Image.ANTIALIAS)
-
-        self.pixm = QPixmap.fromImage(newImg.toqimage())
-        self.imageLabel.setPixmap(self.pixm)
-        self.imageLabel.adjustSize()
-        self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())"""

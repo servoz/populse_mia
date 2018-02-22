@@ -79,6 +79,14 @@ class Ui_Dialog_Preferences(QDialog):
         if(config.isAutoSave() == "yes"):
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
+
+        self.show_all_slices_checkbox = QCheckBox('Visualize all slices of a scan when the latter is selected in the Data Browser',
+                                       self)
+
+        if (config.getShowAllSlices() == "yes"):
+            self.show_all_slices_checkbox.setChecked(1)
+        self.tools_layout.addWidget(self.show_all_slices_checkbox)
+
         self.label_default_tags = QLabel("Default tags visualized")
         self.list_default_tags = QListWidget()
         self.default_tags = config.getDefaultTags()
@@ -117,11 +125,18 @@ class Ui_Dialog_Preferences(QDialog):
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
+
+        if self.show_all_slices_checkbox.isChecked():
+            config.setShowAllSlices("yes")
+        else:
+            config.setShowAllSlices("no")
+
         background_color = self.background_color_combo.currentText()
         text_color = self.text_color_combo.currentText()
         config.setBackgroundColor(background_color)
         config.setTextColor(text_color)
         main.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
+        self.signal_preferences_change.emit()
         self.accept()
         self.close()
 
