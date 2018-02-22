@@ -40,6 +40,7 @@ def loadScan(uid,file_path, path, original_md5):
     scan = Scan(uid, file_path, original_md5)
 
     for json_tag in getJsonTagsFromFile(file_path, path):
+
         scan.addJsonTag(json_tag)
     return scan
 
@@ -123,7 +124,12 @@ def read_log(project, database):
             list_to_add = []
             list_to_add.append(file_name)
             tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
+
             database.addScan(file_name, original_md5)
+            for tag in getJsonTagsFromFile(file_name, path_name):
+                print(utils.check_tag_value(tag, 'original_value'))
+                database.addValue(file_name, tag.name, utils.check_tag_value(tag, 'original_value'))
+
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
             for tag in project.user_tags:

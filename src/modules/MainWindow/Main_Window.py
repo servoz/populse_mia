@@ -240,7 +240,6 @@ class Main_Window(QMainWindow):
         name = self.exPopup.name
         path = os.path.join(self.exPopup.path, name)
         self.project = controller.open_project(name, path) # TODO remove once it's useless
-        self.database = DataBase(path)
 
         for file in self.project._get_scans(): # TODO read scans from database
             for n_tag in file._get_tags():

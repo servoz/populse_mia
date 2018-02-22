@@ -34,7 +34,8 @@ class DataBase:
 
     def addValue(self, scan, tag, value):
         value = Value(scan=scan, tag=tag, current_value=value, raw_value=value)
-        self.session.add()
+        self.session.add(value)
+        self.session.commit()
 
     def getScans(self):
         scans = self.session.query(Scan).filter().all()
