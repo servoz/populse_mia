@@ -127,7 +127,6 @@ def read_log(project, database):
 
             database.addScan(file_name, original_md5)
             for tag in getJsonTagsFromFile(file_name, path_name):
-                print(utils.check_tag_value(tag, 'original_value'))
                 database.addValue(file_name, tag.name, utils.check_tag_value(tag, 'original_value'))
 
             scan_to_add.addJsonTag(tag_to_add)
