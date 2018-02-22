@@ -99,7 +99,7 @@ def open_project(name, path):
         return project
 
 
-def read_log(project):
+def read_log(project, database):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
@@ -123,6 +123,7 @@ def read_log(project):
             list_to_add = []
             list_to_add.append(file_name)
             tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
+            database.addScan(file_name, original_md5)
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
             for tag in project.user_tags:

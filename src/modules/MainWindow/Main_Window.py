@@ -460,6 +460,6 @@ class Main_Window(QMainWindow):
                          'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
 
-        controller.read_log(self.project)
+        controller.read_log(self.project, self.database)
         self.data_browser.table_data.update_table(self.project)
 

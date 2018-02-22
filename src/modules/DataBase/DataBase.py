@@ -41,6 +41,11 @@ class DataBase:
         print("list of scans : " + scans)
         return scans
 
+    def getValues(self):
+        values = self.session.query(Value).filter().all()
+        print("list of values : " + values)
+        return values
+
     def getVisualizedTags(self):
         tags = self.session.query(Tag).filter(Tag.visible == True).all()
         print("list of visible tags : " + tags)
@@ -56,10 +61,15 @@ class DataBase:
         Value.update().\
             where(Value.scan == scan and Value.tag == tag).\
             values(current_value = new_value)
-        self.session.commit
+        self.session.commit()
 
     def resetTag(self, scan, tag):
         Value.update(). \
             where(Value.scan == scan and Value.tag == tag). \
             values(current_value=Value.raw_value)
-        self.session.commit
+        self.session.commit()
+
+    def removeScan(self, scan):
+        Scan.delete().where(Scan.scan == scan)
+        Value.delete().where(Value.scan == scan)
+        self.session.commit()
