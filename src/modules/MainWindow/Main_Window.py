@@ -23,12 +23,12 @@ from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
+from DataBase.DataBase import DataBase
 
 import ProjectManager.controller as controller
 import shutil
 import Utils.utils as utils
 import json
-import tempfile
 
 class Main_Window(QMainWindow):
     """
@@ -43,12 +43,13 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self, project):
+    def __init__(self, project, database):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
         self.project = project
+        self.database = database
 
         ############### initial setting ############################################################
         config = Config()
@@ -71,10 +72,6 @@ class Main_Window(QMainWindow):
 
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
-
-        tf = tempfile.TemporaryDirectory()
-        self.temp_dir = os.path.relpath(tf.name)
-        self.project.folder = os.path.relpath(tf.name)
 
         # BELOW : WAS AT THE END OF MODIFY_UI
         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
@@ -177,10 +174,10 @@ class Main_Window(QMainWindow):
 
         if can_exit:
             event.accept()
-            if os.path.exists(self.temp_dir):
-                if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-                os.rmdir(self.temp_dir)
+            if self.database.isTempProject and os.path.exists(self.database.folder):
+                if os.path.exists(os.path.join(self.database.folder, 'data')):
+                    shutil.rmtree(os.path.join(self.database.folder, 'data'))
+                os.rmdir(self.database.folder)
         else:
             event.ignore()
 

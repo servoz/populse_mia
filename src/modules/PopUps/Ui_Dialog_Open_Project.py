@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLab
 import os
 from ProjectManager import controller
 import Utils.utils as utils
+from DataBase.DataBase import DataBase
+from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
 
 class Ui_Dialog_Open_Project(QFileDialog):
     """

@@ -5,7 +5,6 @@ import os
 import ProjectManager.controller as controller
 import Utils.utils as utils
 
-
 class Ui_Dialog_New_Project(QFileDialog):
     """
     Is called when the user wants to create a new project
