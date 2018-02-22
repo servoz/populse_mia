@@ -15,6 +15,7 @@ if __name__ == '__main__':
 
     project = Project("")
     database = DataBase(None)
+    project.folder = database.folder # TODO To remove once the Project class is useless
 
     imageViewer = Main_Window(project, database)
     imageViewer.show()

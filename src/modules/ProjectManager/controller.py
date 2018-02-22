@@ -152,6 +152,7 @@ def verify_scans(project):
     return return_list
 
 
-def save_project(project):
+def save_project(project, database):
+    # TODO USE DATABASE OBJECT
     project_path = os.path.join(project.folder, project.name, project.name)
     utils.saveProjectAsJsonFile(project_path, project)

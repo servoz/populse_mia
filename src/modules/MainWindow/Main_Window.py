@@ -8,9 +8,7 @@ import subprocess
 import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QWidget, QTabWidget, QApplication, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, \
-    QMessageBox
-from SoftwareProperties.Config import Config
+from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, QMessageBox
 from SoftwareProperties.SavedProjects import SavedProjects
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
@@ -23,12 +21,12 @@ from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
-from DataBase.DataBase import DataBase
 
 import ProjectManager.controller as controller
 import shutil
 import Utils.utils as utils
 import json
+from DataBase.DataBase import DataBase
 
 class Main_Window(QMainWindow):
     """
@@ -162,7 +160,7 @@ class Main_Window(QMainWindow):
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
         if (self.check_unsaved_modifications() == 1):
-            self.pop_up_close = Ui_Dialog_Quit(self.project)
+            self.pop_up_close = Ui_Dialog_Quit(self.project.name) # TODO name to charge from database
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
@@ -174,19 +172,15 @@ class Main_Window(QMainWindow):
 
         if can_exit:
             event.accept()
-            if self.database.isTempProject and os.path.exists(self.database.folder):
-                if os.path.exists(os.path.join(self.database.folder, 'data')):
-                    shutil.rmtree(os.path.join(self.database.folder, 'data'))
-                os.rmdir(self.database.folder)
         else:
             event.ignore()
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as """
-        if (self.project.name == ""):
+        if (self.project.name == "" and self.database.isTempProject):
             self.save_project_as()
         else:
-            controller.save_project(self.project)
+            controller.save_project(self.project, self.database)
 
     def check_unsaved_modifications(self):
         """ Check if there are differences between the current project and the data base
@@ -194,6 +188,8 @@ class Main_Window(QMainWindow):
             Retuns 1 if there are unsaved modifications, 0 otherwise
 
         """
+
+        # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
         if (self.project.name == "" and len(self.project._get_scans()) > 0):
             return 1
         if (self.project.name == ""):
@@ -243,9 +239,8 @@ class Main_Window(QMainWindow):
         # We get the name and the path of the current project to open it
         name = self.exPopup.name
         path = os.path.join(self.exPopup.path, name)
-        self.project = controller.open_project(name, path)
-
-        # QtCore.QMetaObject.connectSlotsByName(self)
+        self.project = controller.open_project(name, path) # TODO remove once it's useless
+        self.database = DataBase(path)
 
         for file in self.project._get_scans():
             for n_tag in file._get_tags():
@@ -317,11 +312,6 @@ class Main_Window(QMainWindow):
             project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
 
-            if os.path.exists(self.temp_dir):
-                if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-                os.rmdir(self.temp_dir)
-
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
             exPopup.signal_saved_project.connect(self.modify_ui)
@@ -354,7 +344,6 @@ class Main_Window(QMainWindow):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_Open_Project()
-        controller.first_save = False
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
             file_name = self.exPopup.selectedFiles()
@@ -362,11 +351,6 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
-
-            if os.path.exists(self.temp_dir):
-                if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-                os.rmdir(self.temp_dir)
 
             problem_list = controller.verify_scans(self.project)
             if problem_list != []:
