@@ -333,6 +333,7 @@ class TableDataBrowser(QTableWidget):
         action_sort_column = menu.addAction("Sort column")
         action_sort_column_descending = menu.addAction("Sort column (descending)")
         action_visualized_tags = menu.addAction("Visualized tags")
+        action_select_column = menu.addAction("Select column")
 
         action = menu.exec_(self.mapToGlobal(position))
         nb_cells = len(self.selectedIndexes())
@@ -368,9 +369,13 @@ class TableDataBrowser(QTableWidget):
             self.sort_column_descending(project)
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up(project)
+        elif action == action_select_column:
+            self.selectAllColumn(self.currentItem().column())
 
         self.update_table(project)
-        self.hh.sectionClicked.connect(partial(self.sort_items, project))
+        self.hh.sectionClicked.connect(partial(self.selectAllColumn))
+        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
+
 
     def reset_cell(self, project):
         points = self.selectedIndexes()
@@ -477,6 +482,7 @@ class TableDataBrowser(QTableWidget):
                     project.remove_scan(scan_path)
 
     def sort_items(self, project, col):
+        self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
         if tag_name == project.sort_tags[0]:
