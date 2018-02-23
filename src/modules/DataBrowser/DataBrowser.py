@@ -114,12 +114,59 @@ class DataBrowser(QWidget):
         tags_menu.addAction(self.remove_tag_action)
         tags_tool_button.setMenu(tags_menu)
 
+        self.search_bar = QtWidgets.QLineEdit(self)
+        self.search_bar.setObjectName("lineEdit_search_bar")
+        self.search_bar.setPlaceholderText("Search")
+        self.search_bar.textChanged.connect(partial(self.search_str, project))
+
+        self.button_cross = QToolButton()
+        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
+        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.clicked.connect(self.reset_search_bar)
+
+        search_bar_layout = QHBoxLayout()
+        search_bar_layout.setSpacing(0)
+        search_bar_layout.addWidget(self.search_bar)
+        search_bar_layout.addWidget(self.button_cross)
+
+        self.frame_test = QFrame()
+        self.frame_test.setLayout(search_bar_layout)
+
         visualized_tags_button = QPushButton()
         visualized_tags_button.setText('Visualized tags')
         visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project))
 
         self.menu_toolbar.addWidget(tags_tool_button)
+        self.menu_toolbar.addSeparator()
+        self.menu_toolbar.addWidget(self.frame_test)
+        self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(visualized_tags_button)
+
+    def search_str(self, project, str_search):
+        return_list = []
+        if str_search != "":
+            split_list = str_search.split('*')
+            for scan in project._get_scans():
+                for tag in scan.getAllTags():
+                    if scan.file_path in return_list:
+                        break
+                    if tag.name in project.tags_to_visualize:
+                        i = 0
+                        for element in split_list:
+                            if element.upper() in str(tag.value[0]).upper():
+                                i += 1
+                        if i == len(split_list):
+                            return_list.append(scan.file_path)
+        else:
+            for scan in project._get_scans():
+                return_list.append(scan.file_path)
+
+
+        self.table_data.scans_to_visualize = return_list
+        self.table_data.update_table(project)
+
+    def reset_search_bar(self):
+        self.search_bar.setText("")
 
     def connect_viewer(self, project, row, col):
         path_name = os.path.abspath(project.folder)
@@ -185,6 +232,11 @@ class TableDataBrowser(QTableWidget):
     def __init__(self, project):
         super().__init__()
 
+        # The list of scans to visualize
+        self.scans_to_visualize = []
+        for scan in project._get_scans():
+            self.scans_to_visualize.append(scan.file_path)
+
         # It allows to move the columns
         self.horizontalHeader().setSectionsMovable(True)
 
@@ -215,7 +267,7 @@ class TableDataBrowser(QTableWidget):
 
         self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
-        self.nb_rows = len(project._get_scans())
+        self.nb_rows = len(self.scans_to_visualize)
         self.setRowCount(self.nb_rows)
 
         self.setColumnCount(self.nb_columns)
@@ -262,50 +314,55 @@ class TableDataBrowser(QTableWidget):
         # Loop on the scans
 
         for file in project._get_scans():
-            y += 1
-            i = -1
 
-            # Loop on the selected tags
-            for tag_name in project.tags_to_visualize:
-                i += 1
-                # If the tag belong to the tags of the project (of course it does...)
-                if tag_name in file.getAllTagsNames():
-                    # Loop on the project tags
-                    for n_tag in file._get_tags():
-                        # If a project tag name matches our tag
-                        if n_tag.name == tag_name:
-                            # It is put in the table
-                            item = QTableWidgetItem()
-                            txt = utils.check_tag_value(n_tag, 'value')
-                            item.setText(txt)
+            if file.file_path in self.scans_to_visualize:
 
-                            if tag_name == "FileName":
-                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                y += 1
+                i = -1
 
-                            # If this tag has been added by the user
-                            if n_tag.origin == "custom":
-                                color = QColor()
-                                if y % 2 == 1:
-                                    color.setRgb(255, 240, 240)
-                                else:
-                                    color.setRgb(255, 225, 225)
-                                item.setData(Qt.BackgroundRole, QVariant(color))
-                            else:
-                                if utils.compare_values(n_tag) == False:
-                                    txt = utils.check_tag_value(n_tag, 'original_value')
-                                    item.setToolTip("Original value: " + txt)
+                # Loop on the selected tags
+                for tag_name in project.tags_to_visualize:
+                    i += 1
+                    # If the tag belong to the tags of the project (of course it does...)
+                    if tag_name in file.getAllTagsNames():
+                        # Loop on the project tags
+                        for n_tag in file._get_tags():
+                            # If a project tag name matches our tag
+                            if n_tag.name == tag_name:
+                                # It is put in the table
+                                item = QTableWidgetItem()
+                                txt = utils.check_tag_value(n_tag, 'value')
+                                item.setText(txt)
+
+                                if tag_name == "FileName":
+                                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+
+                                # If this tag has been added by the user
+                                if n_tag.origin == "custom":
                                     color = QColor()
                                     if y % 2 == 1:
-                                        color.setRgb(240, 240, 255)
+                                        color.setRgb(255, 240, 240)
                                     else:
-                                        color.setRgb(225, 225, 255)
+                                        color.setRgb(255, 225, 225)
                                     item.setData(Qt.BackgroundRole, QVariant(color))
-                            self.setItem(y, i, item)
-                else:
-                    a = str('NaN')
-                    item = QTableWidgetItem()
-                    item.setText(a)
-                    self.setItem(y, i, item)
+                                else:
+                                    if utils.compare_values(n_tag) == False:
+                                        txt = utils.check_tag_value(n_tag, 'original_value')
+                                        item.setToolTip("Original value: " + txt)
+                                        color = QColor()
+                                        if y % 2 == 1:
+                                            color.setRgb(240, 240, 255)
+                                        else:
+                                            color.setRgb(225, 225, 255)
+                                        item.setData(Qt.BackgroundRole, QVariant(color))
+                                self.setItem(y, i, item)
+                    else:
+                        a = str('NaN')
+                        item = QTableWidgetItem()
+                        item.setText(a)
+                        self.setItem(y, i, item)
+
+
 
         ######
 
