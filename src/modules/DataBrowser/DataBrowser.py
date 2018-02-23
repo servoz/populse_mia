@@ -134,7 +134,7 @@ class DataBrowser(QWidget):
         self.pop_up_add_tag.show()
 
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
-            (new_tag_name, new_default_value, type) = self.pop_up_add_tag.get_values()
+            (new_tag_name, new_default_value, type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
             if type != list:
                 list_to_add = []

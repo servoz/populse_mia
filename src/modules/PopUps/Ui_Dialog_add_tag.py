@@ -50,6 +50,15 @@ class Ui_Dialog_add_tag(QDialog):
         self.text_edit_description_value = QtWidgets.QLineEdit(self)
         self.text_edit_description_value.setObjectName("textEdit_description_value")
 
+        # The 'Unit value' label
+        self.label_unit_value = QtWidgets.QLabel(self)
+        self.label_unit_value.setTextFormat(QtCore.Qt.AutoText)
+        self.label_unit_value.setObjectName("unit_value")
+
+        # The 'Unit value' text edit
+        self.text_edit_unit_value = QtWidgets.QLineEdit(self)
+        self.text_edit_unit_value.setObjectName("textEdit_unit_value")
+
         # The 'Default value' label
         self.label_type = QtWidgets.QLabel(self)
         self.label_type.setTextFormat(QtCore.Qt.AutoText)
@@ -75,12 +84,14 @@ class Ui_Dialog_add_tag(QDialog):
         v_box_labels.addWidget(self.label_tag_name)
         v_box_labels.addWidget(self.label_default_value)
         v_box_labels.addWidget(self.label_description_value)
+        v_box_labels.addWidget(self.label_unit_value)
         v_box_labels.addWidget(self.label_type)
 
         v_box_edits = QVBoxLayout()
         v_box_edits.addWidget(self.text_edit_tag_name)
         v_box_edits.addWidget(self.text_edit_default_value)
         v_box_edits.addWidget(self.text_edit_description_value)
+        v_box_edits.addWidget(self.text_edit_unit_value)
         v_box_edits.addWidget(self.combo_box_type)
 
         h_box_top = QHBoxLayout()
@@ -105,6 +116,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.label_tag_name.setText(_translate("Add a tag", "Tag name:"))
         self.label_default_value.setText(_translate("Add a tag", "Default value:"))
         self.label_description_value.setText(_translate("Add a tag", "Description:"))
+        self.label_unit_value.setText(_translate("Add a tag", "Unit:"))
         self.label_type.setText(_translate("Add a tag", "Tag type:"))
 
         # Connecting the OK push button
@@ -154,4 +166,6 @@ class Ui_Dialog_add_tag(QDialog):
     def get_values(self):
         self.new_tag_name = self.text_edit_tag_name.text()
         self.new_default_value = self.text_edit_default_value.text()
-        return self.new_tag_name, self.new_default_value, self.type
+        self.new_tag_description = self.text_edit_description_value.text()
+        self.new_tag_unit = self.text_edit_unit_value.text()
+        return self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit
