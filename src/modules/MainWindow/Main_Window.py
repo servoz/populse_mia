@@ -170,7 +170,8 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
-            shutil.rmtree(os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project')) # temp_project removed when closing
+            if(os.path.exists(os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project'))):
+                shutil.rmtree(os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project')) # temp_project removed when closing
             event.accept()
         else:
             event.ignore()

@@ -82,6 +82,7 @@ class DataBrowser(QWidget):
 
         self.setLayout(vbox_splitter)
 
+
     def create_actions(self, project):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
         self.add_tag_action.triggered.connect(lambda: self.add_tag_pop_up(project))
@@ -254,6 +255,7 @@ class TableDataBrowser(QTableWidget):
                 else:
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
+            item.setToolTip("Description to add")
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
 

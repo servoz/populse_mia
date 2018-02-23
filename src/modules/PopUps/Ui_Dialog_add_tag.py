@@ -41,6 +41,15 @@ class Ui_Dialog_add_tag(QDialog):
         self.text_edit_default_value = QtWidgets.QLineEdit(self)
         self.text_edit_default_value.setObjectName("textEdit_default_value")
 
+        # The 'Description value' label
+        self.label_description_value = QtWidgets.QLabel(self)
+        self.label_description_value.setTextFormat(QtCore.Qt.AutoText)
+        self.label_description_value.setObjectName("description_value")
+
+        # The 'Description value' text edit
+        self.text_edit_description_value = QtWidgets.QLineEdit(self)
+        self.text_edit_description_value.setObjectName("textEdit_description_value")
+
         # The 'Default value' label
         self.label_type = QtWidgets.QLabel(self)
         self.label_type.setTextFormat(QtCore.Qt.AutoText)
@@ -65,11 +74,13 @@ class Ui_Dialog_add_tag(QDialog):
         v_box_labels = QVBoxLayout()
         v_box_labels.addWidget(self.label_tag_name)
         v_box_labels.addWidget(self.label_default_value)
+        v_box_labels.addWidget(self.label_description_value)
         v_box_labels.addWidget(self.label_type)
 
         v_box_edits = QVBoxLayout()
         v_box_edits.addWidget(self.text_edit_tag_name)
         v_box_edits.addWidget(self.text_edit_default_value)
+        v_box_edits.addWidget(self.text_edit_description_value)
         v_box_edits.addWidget(self.combo_box_type)
 
         h_box_top = QHBoxLayout()
@@ -93,6 +104,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.push_button_ok.setText(_translate("Add a tag", "OK"))
         self.label_tag_name.setText(_translate("Add a tag", "Tag name:"))
         self.label_default_value.setText(_translate("Add a tag", "Default value:"))
+        self.label_description_value.setText(_translate("Add a tag", "Description:"))
         self.label_type.setText(_translate("Add a tag", "Tag type:"))
 
         # Connecting the OK push button
