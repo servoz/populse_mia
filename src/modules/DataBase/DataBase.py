@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
-import tempfile
 
 class DataBase:
 

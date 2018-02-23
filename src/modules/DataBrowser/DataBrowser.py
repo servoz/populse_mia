@@ -193,10 +193,14 @@ class TableDataBrowser(QTableWidget):
         self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
         self.hh = self.horizontalHeader()
-        self.hh.sectionClicked.connect(partial(self.sort_items, project))
+        self.hh.sectionClicked.connect(partial(self.selectAllColumn))
+        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
 
         if project:
             self.update_table(project)
+
+    def selectAllColumn(self, col):
+        self.selectColumn(col)
 
     def update_table(self, project):
         """
@@ -243,7 +247,6 @@ class TableDataBrowser(QTableWidget):
         nb = 0
         for element in project.tags_to_visualize:
             element = str(element)
-            #item = QTableWidgetItem()
             item = self.horizontalHeaderItem(nb)
             if element == project.sort_tags[0]:
                 if project.sort_order == 'ascending':
