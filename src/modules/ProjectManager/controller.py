@@ -121,6 +121,8 @@ def read_log(project, database):
             list_to_add.append(file_name)
             tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
 
+            #### Database
+
             database.addScan(file_name, original_md5)
             database.addValue(file_name, "FileName", file_name)
             tag_already_in_database = False
@@ -147,6 +149,8 @@ def read_log(project, database):
                         database.addTag(tag.name, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
                     else:
                         database.addTag(tag.name, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+
+            #### Database
 
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
