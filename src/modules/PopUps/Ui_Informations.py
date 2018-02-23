@@ -11,11 +11,11 @@ class Ui_Informations(QWidget):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, project, database):
         super().__init__()
-        self.retranslate_Ui(project)
+        self.retranslate_Ui(project, database)
 
-    def retranslate_Ui(self, project):
+    def retranslate_Ui(self, project, database):
         _translate = QtCore.QCoreApplication.translate
 
         self.tableWidget = QTableWidget()
@@ -33,7 +33,7 @@ class Ui_Informations(QWidget):
         item = QTableWidgetItem("Folder")
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(1, 0, item)
-        item = QTableWidgetItem(project.folder)
+        item = QTableWidgetItem(database.folder)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(1, 1, item)
 

@@ -67,7 +67,6 @@ def createProject(name, path, parent_folder):
         raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
         derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))
 
-        project.folder = new_path
         project.bdd_file = path
 
         # Create a json file -> folder_name.json
@@ -100,7 +99,7 @@ def read_log(project, database):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
-    raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
+    raw_data_folder = os.path.relpath(os.path.join(database.folder, 'data', 'raw_data'))
 
     # Checking all the export logs from MRIManager and taking the most recent
     list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
@@ -164,13 +163,13 @@ def read_log(project, database):
     database.saveModifications()
 
 
-def verify_scans(project):
+def verify_scans(project, database):
     # Returning the files that are problematic
     return_list = []
     for scan in project._get_scans():
 
         file_name = scan.file_path
-        path_name = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
+        path_name = os.path.relpath(os.path.join(database.folder, 'data', 'raw_data'))
 
         with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
             data = scan_file.read()
@@ -183,6 +182,5 @@ def verify_scans(project):
 
 
 def save_project(project, database):
-    # TODO USE DATABASE OBJECT
-    project_path = os.path.join(project.folder, project.name, project.name)
+    project_path = os.path.join(database.folder, project.name, project.name)
     utils.saveProjectAsJsonFile(project_path, project)

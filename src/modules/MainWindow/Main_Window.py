@@ -195,14 +195,13 @@ class Main_Window(QMainWindow):
             return 1
         if (self.project.name == ""):
             return 0
-        project_path = os.path.join(self.project.folder, self.project.name)
+        project_path = os.path.join(self.database.folder, self.project.name)
         file_path = os.path.join(project_path, self.project.name)
         with open(file_path + ".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
             if not (self.project.name == project.name):
                 return 1
-            if not (self.project.folder == project.folder):
-                return 1
+            # Check folder removed
             if not (self.project.date == project.date):
                 return 1
             if not (self.project.tags_to_visualize == project.tags_to_visualize):
@@ -267,7 +266,6 @@ class Main_Window(QMainWindow):
 
         self.textInfo = QLineEdit(self)
         self.textInfo.resize(500, 40)
-        # self.textInfo.setEnabled(False)
         self.textInfo.setText('Welcome to Irmage')
 
         self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self.database)
@@ -294,13 +292,11 @@ class Main_Window(QMainWindow):
         if exPopup.exec_() == QDialog.Accepted:
             old_folder = self.database.folder
 
-            # TODO read from database later
-            self.project.folder = exPopup.relative_path
             self.project.name = exPopup.name
             self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
             file_name = exPopup.relative_path
-            data_path = os.path.join(os.path.relpath(self.project.folder), 'data')
-            database_path = os.path.join(os.path.relpath(self.project.folder), 'database')
+            data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
+            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
@@ -317,7 +313,7 @@ class Main_Window(QMainWindow):
 
             self.database = DataBase(exPopup.relative_path)
 
-            project_path = os.path.join(os.path.relpath(self.project.folder), self.project.name, self.project.name)
+            project_path = os.path.join(os.path.relpath(self.database.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
@@ -357,7 +353,7 @@ class Main_Window(QMainWindow):
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
-            problem_list = controller.verify_scans(self.project)
+            problem_list = controller.verify_scans(self.project, self.database)
             if problem_list != []:
                 str_msg = ""
                 for element in problem_list:
@@ -413,10 +409,6 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
-            if os.path.exists(self.temp_dir):
-                if os.path.exists(os.path.join(self.temp_dir, 'data')):
-                    shutil.rmtree(os.path.join(self.temp_dir, 'data'))
-                os.rmdir(self.temp_dir)
 
             problem_list = controller.verify_scans(self.project)
             if problem_list != []:
@@ -434,7 +426,7 @@ class Main_Window(QMainWindow):
 
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
-        self.pop_up_settings = Ui_Dialog_Settings(self.project)
+        self.pop_up_settings = Ui_Dialog_Settings(self.project, self.database)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
@@ -455,7 +447,7 @@ class Main_Window(QMainWindow):
          data base """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'MRI_File_Manager', 'MRIManagerJ8.jar'),
-                         '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
+                         '[ExportNifti] ' + os.path.join(self.database.folder, 'data', 'raw_data'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
                          'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export

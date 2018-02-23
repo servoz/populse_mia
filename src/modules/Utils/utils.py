@@ -23,13 +23,6 @@ def createJsonFile(path, name):
 
 def saveProjectAsJsonFile(name, project):
 
-    """for scan in project._get_scans():
-        for tag in scan.getAllTags():
-            print(tag.name)
-            print(tag.value)
-            print(tag.original_value)
-            print("")"""
-
     with open(name+'.json', 'w') as f:
         f.write(json.dumps(project, default=serializer))
 

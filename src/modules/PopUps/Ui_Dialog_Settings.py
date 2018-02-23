@@ -13,11 +13,11 @@ class Ui_Dialog_Settings(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_settings_change = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, project, database):
         super().__init__()
-        self.pop_up(project)
+        self.pop_up(project, database)
 
-    def pop_up(self, project):
+    def pop_up(self, project, database):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -32,7 +32,7 @@ class Ui_Dialog_Settings(QDialog):
         self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
 
         # The 'Informations" tab
-        self.tab_infos = Ui_Informations(project)
+        self.tab_infos = Ui_Informations(project, database)
         self.tab_infos.setObjectName("tab_infos")
         self.tab_widget.addTab(self.tab_infos, _translate("Dialog", "Informations"))
 

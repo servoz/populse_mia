@@ -44,7 +44,7 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project, database)
         self.table_data.setObjectName("table_data")
-        self.table_data.cellClicked.connect(partial(self.connect_viewer, project))
+        self.table_data.cellClicked.connect(partial(self.connect_viewer, project, database))
 
         ## LAYOUTS ##
 
@@ -169,8 +169,8 @@ class DataBrowser(QWidget):
     def reset_search_bar(self):
         self.search_bar.setText("")
 
-    def connect_viewer(self, project, row, col):
-        path_name = os.path.abspath(project.folder)
+    def connect_viewer(self, project, database, row, col):
+        path_name = os.path.relpath(database.folder)
         file_name = self.table_data.item(row, 0).text() + ".nii"
         full_name = path_name + '/data/raw_data/' + file_name
         self.viewer.show_slices(full_name)
