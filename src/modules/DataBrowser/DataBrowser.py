@@ -25,7 +25,7 @@ import Utils.utils as utils
 from SoftwareProperties.Config import Config
 
 class DataBrowser(QWidget):
-    def __init__(self, project):
+    def __init__(self, project, database):
 
         super(DataBrowser, self).__init__()
 
@@ -42,7 +42,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(project)
+        self.table_data = TableDataBrowser(project, database)
         self.table_data.setObjectName("table_data")
         self.table_data.cellClicked.connect(partial(self.connect_viewer, project))
 
@@ -183,7 +183,7 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, project):
+    def __init__(self, project, database):
         super().__init__()
 
         # It allows to move the columns
@@ -191,19 +191,19 @@ class TableDataBrowser(QTableWidget):
 
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
+        self.customContextMenuRequested.connect(partial(self.context_menu_table, project, database))
         self.flag_first_time = 0
         self.hh = self.horizontalHeader()
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
 
         if project:
-            self.update_table(project)
+            self.update_table(project, database)
 
     def selectAllColumn(self, col):
         self.selectColumn(col)
 
-    def update_table(self, project):
+    def update_table(self, project, database):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
@@ -214,9 +214,11 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
+        self.nb_columns = len(database.getVisualizedTags())
+        #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
-        self.nb_rows = len(project._get_scans())
+        self.nb_rows = len(database.getScans())
+        #self.nb_rows = len(project._get_scans())
         self.setRowCount(self.nb_rows)
 
         self.setColumnCount(self.nb_columns)
@@ -246,14 +248,16 @@ class TableDataBrowser(QTableWidget):
                 column += 1
 
         nb = 0
-        for element in project.tags_to_visualize:
-            element = str(element)
+        #for element in project.tags_to_visualize:
+        for element in database.getVisualizedTags():
+            #element = str(element)
+            element = element.tag
             item = self.horizontalHeaderItem(nb)
-            if element == project.sort_tags[0]:
-                if project.sort_order == 'ascending':
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-                else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
+            #if element == project.sort_tags[0]:
+                #if project.sort_order == 'ascending':
+                 #   item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
+                #else:
+                 #   item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
             item.setToolTip("Description to add")
             self.setHorizontalHeaderItem(nb, item)
@@ -263,7 +267,18 @@ class TableDataBrowser(QTableWidget):
         y = -1
         # Loop on the scans
 
-        for file in project._get_scans():
+        nb = 0
+        while nb < len(self.horizontalHeader()):
+            item = self.horizontalHeaderItem(nb)
+            current_tag = item.text()
+            nb2 = 0
+            for values in database.getValuesGivenTag(current_tag):
+                item = self.item(nb2, nb)
+                item.setText(values.current_value)
+                nb2 += 1
+            nb += 1
+
+        """for file in project._get_scans():
             y += 1
             i = -1
 
@@ -307,7 +322,7 @@ class TableDataBrowser(QTableWidget):
                     a = str('NaN')
                     item = QTableWidgetItem()
                     item.setText(a)
-                    self.setItem(y, i, item)
+                    self.setItem(y, i, item)"""
 
         ######
 
@@ -320,7 +335,7 @@ class TableDataBrowser(QTableWidget):
         if (config.isAutoSave() == "yes" and not project.name == ""):
             save_project(project)
 
-    def context_menu_table(self, project, position):
+    def context_menu_table(self, project, database, position):
 
         self.hh.disconnect()
 
@@ -374,7 +389,7 @@ class TableDataBrowser(QTableWidget):
         elif action == action_select_column:
             self.selectAllColumn(self.currentItem().column())
 
-        self.update_table(project)
+        self.update_table(project, database)
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
 

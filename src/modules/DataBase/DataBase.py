@@ -39,12 +39,16 @@ class DataBase:
         values = self.session.query(Value).filter().all()
         return values
 
+    def getValuesGivenTag(self, tag):
+        values = self.session.query(Value).filter(Value.tag == tag).all()
+        return values
+
     def getTags(self):
-        tags = self.session.query(Tag.tag).filter().all()
+        tags = self.session.query(Tag).filter().all()
         return tags
 
     def getVisualizedTags(self):
-        tags = self.session.query(Tag.tag).filter(Tag.visible == True).all()
+        tags = self.session.query(Tag).filter(Tag.visible == True).all()
         return tags
 
     def setTagVisibility(self, name, visibility):

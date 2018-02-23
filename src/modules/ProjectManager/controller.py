@@ -6,6 +6,7 @@ import Utils.utils as utils
 import shutil
 import hashlib # To generate the md5 of each scan
 from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
+from SoftwareProperties.Config import Config
 
 def getJsonTagsFromFile(file_path, path):
     """
@@ -121,16 +122,31 @@ def read_log(project, database):
             tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
 
             database.addScan(file_name, original_md5)
+            database.addValue(file_name, "FileName", file_name)
+            tag_already_in_database = False
+            for database_tag in database.getTags():
+                database_tag = database_tag.tag
+                if ("FileName" == database_tag):
+                    tag_already_in_database = True
+            if not tag_already_in_database:
+                config = Config()
+                if ("FileName" in config.getDefaultTags()):
+                    database.addTag("FileName", True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                else:
+                    database.addTag("FileName", False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
             for tag in getJsonTagsFromFile(file_name, path_name):
                 database.addValue(file_name, tag.name, utils.check_tag_value(tag, 'original_value'))
                 tag_already_in_database = False
                 for database_tag in database.getTags():
-                    database_tag = str(database_tag)
-                    database_tag = database_tag[2:-3]
+                    database_tag = database_tag.tag
                     if(tag.name == database_tag):
                         tag_already_in_database = True
                 if not tag_already_in_database:
-                    database.addTag(tag.name, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                    config = Config()
+                    if(tag.name in config.getDefaultTags()):
+                        database.addTag(tag.name, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                    else:
+                        database.addTag(tag.name, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
 
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)

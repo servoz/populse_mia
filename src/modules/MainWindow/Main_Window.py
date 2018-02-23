@@ -270,7 +270,7 @@ class Main_Window(QMainWindow):
         # self.textInfo.setEnabled(False)
         self.textInfo.setText('Welcome to Irmage')
 
-        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project)
+        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self.database)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer(self.textInfo)
@@ -448,7 +448,7 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project)
+            self.data_browser.table_data.update_table(self.project, self.database)
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
@@ -461,5 +461,5 @@ class Main_Window(QMainWindow):
         # 'NoLogExport'if we don't want log export
 
         controller.read_log(self.project, self.database)
-        self.data_browser.table_data.update_table(self.project)
+        self.data_browser.table_data.update_table(self.project, self.database)
 
