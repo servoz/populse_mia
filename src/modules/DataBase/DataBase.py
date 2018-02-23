@@ -18,58 +18,53 @@ class DataBase:
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
-        print("isTempProject : " + str(self.isTempProject))
-        print("folder : " + self.folder)
 
     def addScan(self, name, checksum):
         scan = Scan(scan=name, checksum=checksum)
         self.session.add(scan)
-        self.session.commit()
 
     def addTag(self, tag, visible, origin, type, unit, default, description):
         tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
         self.session.add(tag)
-        self.session.commit()
 
     def addValue(self, scan, tag, value):
         value = Value(scan=scan, tag=tag, current_value=value, raw_value=value)
         self.session.add(value)
-        self.session.commit()
 
     def getScans(self):
         scans = self.session.query(Scan).filter().all()
-        print("list of scans : " + scans)
         return scans
 
     def getValues(self):
         values = self.session.query(Value).filter().all()
-        print("list of values : " + values)
         return values
 
+    def getTags(self):
+        tags = self.session.query(Tag.tag).filter().all()
+        return tags
+
     def getVisualizedTags(self):
-        tags = self.session.query(Tag).filter(Tag.visible == True).all()
-        print("list of visible tags : " + tags)
+        tags = self.session.query(Tag.tag).filter(Tag.visible == True).all()
         return tags
 
     def setTagVisibility(self, name, visibility):
         Tag.update().\
             where(Tag.tag == name).\
             values(visible = visibility)
-        self.session.commit()
 
     def setTagValue(self, scan, tag, new_value):
         Value.update().\
             where(Value.scan == scan and Value.tag == tag).\
             values(current_value = new_value)
-        self.session.commit()
 
     def resetTag(self, scan, tag):
         Value.update(). \
             where(Value.scan == scan and Value.tag == tag). \
             values(current_value=Value.raw_value)
-        self.session.commit()
 
     def removeScan(self, scan):
         Scan.delete().where(Scan.scan == scan)
         Value.delete().where(Value.scan == scan)
+
+    def saveModifications(self):
         self.session.commit()

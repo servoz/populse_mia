@@ -1,16 +1,11 @@
 import glob
 import os.path
 import json
-import nibabel as nib
 from ProjectManager.models import Tag, Scan, Project, serializer, deserializer
 import Utils.utils as utils
 import shutil
 import hashlib # To generate the md5 of each scan
-#from pop_ups import Ui_Dialog_Save_Project_As
-#from PyQt5.QtWidgets import QDialog
-#from MainWindow import Main_Window
-#from RecentProjects import RecentProjects
-
+from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
 
 def getJsonTagsFromFile(file_path, path):
     """
@@ -128,6 +123,14 @@ def read_log(project, database):
             database.addScan(file_name, original_md5)
             for tag in getJsonTagsFromFile(file_name, path_name):
                 database.addValue(file_name, tag.name, utils.check_tag_value(tag, 'original_value'))
+                tag_already_in_database = False
+                for database_tag in database.getTags():
+                    database_tag = str(database_tag)
+                    database_tag = database_tag[2:-3]
+                    if(tag.name == database_tag):
+                        tag_already_in_database = True
+                if not tag_already_in_database:
+                    database.addTag(tag.name, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
 
             scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
@@ -138,6 +141,7 @@ def read_log(project, database):
                         if user_tag_name not in scan.getAllTagsNames():
                             tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
                             scan.addCustomTag(tag)
+    database.saveModifications()
 
 
 def verify_scans(project):
