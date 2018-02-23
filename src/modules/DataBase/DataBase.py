@@ -14,10 +14,11 @@ class DataBase:
         else:
             self.isTempProject = False
             self.folder = project_root_folder
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), echo=True)
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
+        print("new database : " + self.folder)
 
     def addScan(self, name, checksum):
         scan = Scan(scan=name, checksum=checksum)
@@ -57,14 +58,16 @@ class DataBase:
             values(visible = visibility)
 
     def setTagValue(self, scan, tag, new_value):
-        Value.update().\
-            where(Value.scan == scan and Value.tag == tag).\
-            values(current_value = new_value)
+        tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
+        #TODO return error if len(tags) != 0
+        tag = tags[0]
+        tag.current_value = new_value
 
     def resetTag(self, scan, tag):
-        Value.update(). \
-            where(Value.scan == scan and Value.tag == tag). \
-            values(current_value=Value.raw_value)
+        tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
+        # TODO return error if len(tags) != 0
+        tag = tags[0]
+        tag.current_value = tag.raw_value
 
     def removeScan(self, scan):
         Scan.delete().where(Scan.scan == scan)

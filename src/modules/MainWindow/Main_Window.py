@@ -353,7 +353,7 @@ class Main_Window(QMainWindow):
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
-            problem_list = controller.verify_scans(self.project, self.database)
+            problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
             if problem_list != []:
                 str_msg = ""
                 for element in problem_list:
@@ -410,7 +410,7 @@ class Main_Window(QMainWindow):
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
-            problem_list = controller.verify_scans(self.project)
+            problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
             if problem_list != []:
                 str_msg = ""
                 for element in problem_list:

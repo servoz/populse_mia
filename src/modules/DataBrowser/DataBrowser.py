@@ -402,7 +402,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
-        self.itemChanged.connect(partial(self.change_cell_color, project))
+        self.itemChanged.connect(partial(self.change_cell_color, project, database))
 
         config = Config()
         if (config.isAutoSave() == "yes" and not project.name == ""):
@@ -446,7 +446,7 @@ class TableDataBrowser(QTableWidget):
         elif action == action_reset_row:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.reset_row(project))
+            msg.buttonClicked.connect(lambda: self.reset_row(project, database))
             msg.exec()
         elif action == action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
@@ -513,7 +513,7 @@ class TableDataBrowser(QTableWidget):
                             self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
                         n_tag.resetTag()
 
-    def reset_row(self, project):
+    def reset_row(self, project, database):
         points = self.selectedIndexes()
 
         for point in points:
@@ -535,6 +535,10 @@ class TableDataBrowser(QTableWidget):
                                     color.setRgb(250, 250, 250)
                                 self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
                             n_tag.resetTag()
+
+                        # DATABASE
+                        database.resetTag(scan_name, n_tag.name)
+                        database.saveModifications()
 
     def reset_cells_with_item(self, project, items_in):
         for item_in in items_in:
@@ -622,7 +626,7 @@ class TableDataBrowser(QTableWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.update_table(project)
 
-    def change_cell_color(self, project, item_origin):
+    def change_cell_color(self, project, database, item_origin):
         """
         The background color of the table will change when the user changes an item
         Handles the multi-selection case
@@ -696,6 +700,11 @@ class TableDataBrowser(QTableWidget):
 
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                                 item.setText(text_value)
+
+                                #DATABASE
+                                database.setTagValue(scan_path, tag_name, text_value)
+                                database.saveModifications()
+
                                 tag_origin = tag.origin
                                 tag_replace = tag.replace
                                 if tp == list:
@@ -705,7 +714,7 @@ class TableDataBrowser(QTableWidget):
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))
 
-        self.itemChanged.connect(partial(self.change_cell_color, project))
+        self.itemChanged.connect(partial(self.change_cell_color, project, database))
 
         config = Config()
         if (config.isAutoSave() == "yes" and not project.name == ""):

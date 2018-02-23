@@ -163,13 +163,13 @@ def read_log(project, database):
     database.saveModifications()
 
 
-def verify_scans(project, database):
+def verify_scans(project, database, path):
     # Returning the files that are problematic
     return_list = []
     for scan in project._get_scans():
 
         file_name = scan.file_path
-        path_name = os.path.relpath(os.path.join(database.folder, 'data', 'raw_data'))
+        path_name = os.path.relpath(os.path.join(path, 'data', 'raw_data'))
 
         with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
             data = scan_file.read()
