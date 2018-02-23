@@ -144,6 +144,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(visualized_tags_button)
 
     def search_str(self, project, str_search):
+
         return_list = []
         if str_search != "":
             split_list = str_search.split('*')
@@ -161,7 +162,6 @@ class DataBrowser(QWidget):
         else:
             for scan in project._get_scans():
                 return_list.append(scan.file_path)
-
 
         self.table_data.scans_to_visualize = return_list
         self.table_data.update_table(project)

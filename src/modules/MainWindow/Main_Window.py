@@ -461,5 +461,10 @@ class Main_Window(QMainWindow):
         # 'NoLogExport'if we don't want log export
 
         controller.read_log(self.project, self.database)
+        scan_names_list = []
+        for scan in self.project._get_scans():
+            scan_names_list.append(scan.file_path)
+
+        self.data_browser.table_data.scans_to_visualize = scan_names_list
         self.data_browser.table_data.update_table(self.project)
 
