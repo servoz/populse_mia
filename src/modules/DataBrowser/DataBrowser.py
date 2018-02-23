@@ -31,7 +31,7 @@ class DataBrowser(QWidget):
 
         _translate = QtCore.QCoreApplication.translate
         self.create_actions(project)
-        self.create_toolbar_menus(project)
+        self.create_toolbar_menus(project, database)
 
         ################################### TABLE ###################################
 
@@ -103,7 +103,7 @@ class DataBrowser(QWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.table_data.update_table(project)
 
-    def create_toolbar_menus(self, project):
+    def create_toolbar_menus(self, project, database):
         self.menu_toolbar = QToolBar()
 
         tags_tool_button = QToolButton()
@@ -118,7 +118,7 @@ class DataBrowser(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, project))
+        self.search_bar.textChanged.connect(partial(self.search_str, project, database))
 
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
@@ -143,7 +143,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(visualized_tags_button)
 
-    def search_str(self, project, str_search):
+    def search_str(self, project, database, str_search):
 
         return_list = []
         if str_search != "":
@@ -164,7 +164,7 @@ class DataBrowser(QWidget):
                 return_list.append(scan.file_path)
 
         self.table_data.scans_to_visualize = return_list
-        self.table_data.update_table(project)
+        self.table_data.update_table(project, database)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -230,7 +230,9 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
+    # DATABASE
     def __init__(self, project, database):
+
         super().__init__()
 
         # The list of scans to visualize
@@ -266,12 +268,17 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        self.nb_columns = len(database.getVisualizedTags())
-        #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
+        # DATABASE
+        #self.nb_columns = len(database.getVisualizedTags())
 
-        self.nb_rows = len(database.getScans())
-        #self.nb_rows = len(project._get_scans())
-        # #self.nb_rows = len(self.scans_to_visualize)
+        # PROJECT
+        self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
+
+        # DATABASE
+        #self.nb_rows = len(database.getScans())
+
+        # PROJECT
+        self.nb_rows = len(self.scans_to_visualize)
 
         self.setRowCount(self.nb_rows)
 
@@ -302,16 +309,21 @@ class TableDataBrowser(QTableWidget):
                 column += 1
 
         nb = 0
-        #for element in project.tags_to_visualize:
-        for element in database.getVisualizedTags():
-            #element = str(element)
-            element = element.tag
+        # PROJECT
+        for element in project.tags_to_visualize:
+        # DATABASE
+        #for element in database.getVisualizedTags():
+            # PROJECT
+            element = str(element)
+            # DATABASE
+            #element = element.tag
             item = self.horizontalHeaderItem(nb)
-            #if element == project.sort_tags[0]:
-                #if project.sort_order == 'ascending':
-                 #   item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-                #else:
-                 #   item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
+            # PROJECT
+            if element == project.sort_tags[0]:
+                if project.sort_order == 'ascending':
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
+                else:
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
             item.setToolTip("Description to add")
             self.setHorizontalHeaderItem(nb, item)
@@ -321,7 +333,8 @@ class TableDataBrowser(QTableWidget):
         y = -1
         # Loop on the scans
 
-        nb = 0
+        # DATABASE
+        """nb = 0
         while nb < len(self.horizontalHeader()):
             item = self.horizontalHeaderItem(nb)
             current_tag = item.text()
@@ -330,7 +343,7 @@ class TableDataBrowser(QTableWidget):
                 item = self.item(nb2, nb)
                 item.setText(values.current_value)
                 nb2 += 1
-            nb += 1
+            nb += 1"""
 
         for file in project._get_scans():
         
@@ -451,7 +464,7 @@ class TableDataBrowser(QTableWidget):
 
         self.update_table(project, database)
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
-        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
+        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project, database))
 
 
     def reset_cell(self, project):
@@ -558,7 +571,7 @@ class TableDataBrowser(QTableWidget):
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
 
-    def sort_items(self, project, col):
+    def sort_items(self, project, database, col):
         self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
@@ -575,7 +588,7 @@ class TableDataBrowser(QTableWidget):
 
         project.reset_sort_tags()
         project.add_sort_tag(tag_name)
-        self.update_table(project)
+        self.update_table(project, database)
 
     def sort_column(self, project):
         points = self.selectedItems()
