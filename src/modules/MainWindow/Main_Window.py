@@ -8,7 +8,8 @@ import subprocess
 import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, QMainWindow, QDialog, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
+    QMainWindow, QDialog, QMessageBox, QMenu
 from SoftwareProperties.SavedProjects import SavedProjects
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
@@ -96,12 +97,6 @@ class Main_Window(QMainWindow):
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
-        self.action_saved_projects = QAction('Saved projects', self)
-        font = QFont()
-        font.setItalic(True)
-        self.action_saved_projects.setFont(font)
-        self.action_saved_projects.setDisabled(True)
-
         for i in range(self.saved_projects.maxProjects):
             self.saved_projects_actions.append(QAction(self, visible=False,
                                                        triggered=self.open_recent_project))
@@ -134,6 +129,9 @@ class Main_Window(QMainWindow):
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
 
+        # Submenu of menu_file menu
+        self.menu_saved_projects = QMenu('Saved projects', self)
+
         # Actions in the "File" menu
         self.menu_file.addAction(self.action_create)
         self.menu_file.addAction(self.action_open)
@@ -142,10 +140,11 @@ class Main_Window(QMainWindow):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
-        self.menu_file.addAction(self.action_saved_projects)
+        self.menu_file.addMenu(self.menu_saved_projects)
         for i in range(self.saved_projects.maxProjects):
-            self.menu_file.addAction(self.saved_projects_actions[i])
-        self.menu_file.addAction(self.action_see_all_projects)
+            self.menu_saved_projects.addAction(self.saved_projects_actions[i])
+        self.menu_saved_projects.addSeparator()
+        self.menu_saved_projects.addAction(self.action_see_all_projects)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_software_preferences)
         self.menu_file.addAction(self.action_project_properties)
