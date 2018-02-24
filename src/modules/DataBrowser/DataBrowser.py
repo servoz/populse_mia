@@ -93,15 +93,15 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(lambda: self.remove_tag_pop_up(project))
 
-    def visualized_tags_pop_up(self, project):
-        self.pop_up = Ui_Dialog_Settings(project)
+    def visualized_tags_pop_up(self, project, database):
+        self.pop_up = Ui_Dialog_Settings(project, database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.table_data.update_table(project)
+            self.table_data.update_table(project, database)
 
     def create_toolbar_menus(self, project, database):
         self.menu_toolbar = QToolBar()
@@ -135,7 +135,7 @@ class DataBrowser(QWidget):
 
         visualized_tags_button = QPushButton()
         visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project))
+        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project, database))
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
@@ -458,7 +458,7 @@ class TableDataBrowser(QTableWidget):
         elif action == action_sort_column_descending:
             self.sort_column_descending(project)
         elif action == action_visualized_tags:
-            self.visualized_tags_pop_up(project)
+            self.visualized_tags_pop_up(project, database)
         elif action == action_select_column:
             self.selectAllColumn(self.currentItem().column())
 
@@ -616,15 +616,15 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             project.add_sort_tag(tag_name)
 
-    def visualized_tags_pop_up(self, project):
-        self.pop_up = Ui_Dialog_Settings(project)
+    def visualized_tags_pop_up(self, project, database):
+        self.pop_up = Ui_Dialog_Settings(project, database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.update_table(project)
+            self.update_table(project, database)
 
     def change_cell_color(self, project, database, item_origin):
         """

@@ -431,7 +431,7 @@ class Main_Window(QMainWindow):
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project)
+            self.data_browser.table_data.update_table(self.project, self.database)
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """
