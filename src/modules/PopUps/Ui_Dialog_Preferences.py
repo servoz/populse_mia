@@ -35,7 +35,6 @@ class Ui_Dialog_Preferences(QDialog):
         config = Config()
 
         self.appearance_layout = QVBoxLayout()
-        self.appearance_layout.addStretch(1)
         self.label_background_color = QLabel("Background color")
         self.background_color_combo = QComboBox(self)
         self.background_color_combo.addItem("")
@@ -66,6 +65,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.appearance_layout.addWidget(self.background_color_combo)
         self.appearance_layout.addWidget(self.label_text_color)
         self.appearance_layout.addWidget(self.text_color_combo)
+        self.appearance_layout.addStretch(1)
         self.tab_appearance.setLayout(self.appearance_layout)
 
         # The 'Tools" tab
