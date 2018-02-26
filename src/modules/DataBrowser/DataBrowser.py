@@ -33,7 +33,7 @@ class DataBrowser(QWidget):
 
         _translate = QtCore.QCoreApplication.translate
         self.create_actions(project)
-        self.create_toolbar_menus(project, database)
+        self.create_toolbar_menus(project)
 
         ################################### TABLE ###################################
 
@@ -109,7 +109,7 @@ class DataBrowser(QWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.table_data.update_table(project)
 
-    def create_toolbar_menus(self, project, database):
+    def create_toolbar_menus(self, project):
         self.menu_toolbar = QToolBar()
 
         tags_tool_button = QToolButton()
@@ -141,7 +141,7 @@ class DataBrowser(QWidget):
 
         visualized_tags_button = QPushButton()
         visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project, database))
+        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(project, self.database))
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
@@ -253,7 +253,7 @@ class TableDataBrowser(QTableWidget):
 
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(partial(self.context_menu_table, project, database))
+        self.customContextMenuRequested.connect(partial(self.context_menu_table, project))
         self.flag_first_time = 0
         self.hh = self.horizontalHeader()
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
@@ -413,7 +413,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
         config = Config()
-        if (config.isAutoSave() == "yes" and not project.name == ""):
+        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(project)
 
     def context_menu_table(self, project, position):
@@ -725,7 +725,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(partial(self.change_cell_color, project, database))
 
         config = Config()
-        if (config.isAutoSave() == "yes" and not project.name == ""):
+        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(project)
 
 

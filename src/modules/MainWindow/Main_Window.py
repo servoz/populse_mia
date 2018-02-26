@@ -159,7 +159,7 @@ class Main_Window(QMainWindow):
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
         if (self.check_unsaved_modifications() == 1):
-            self.pop_up_close = Ui_Dialog_Quit(self.project.name) # TODO name to charge from database
+            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
@@ -176,7 +176,7 @@ class Main_Window(QMainWindow):
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as """
-        if (self.project.name == "" and self.database.isTempProject):
+        if (self.database.isTempProject):
             self.save_project_as()
         else:
             controller.save_project(self.project, self.database)
@@ -189,19 +189,15 @@ class Main_Window(QMainWindow):
         """
 
         # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
-        if (self.project.name == "" and len(self.project._get_scans()) > 0):
+        if (self.database.isTempProject and len(self.project._get_scans()) > 0):
             return 1
-        if (self.project.name == ""):
+        if (self.database.isTempProject):
             return 0
-        project_path = os.path.join(self.database.folder, self.project.name)
-        file_path = os.path.join(project_path, self.project.name)
+        project_path = os.path.join(self.database.folder, self.database.getName())
+        file_path = os.path.join(project_path, self.database.getName())
         with open(file_path + ".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
-            if not (self.project.name == project.name):
-                return 1
-            # Check folder removed
-            if not (self.project.date == project.date):
-                return 1
+            # Check folder, name and date removed
             if not (self.project.tags_to_visualize == project.tags_to_visualize):
                 return 1
             if not (len(self.project._get_scans()) == len(project._get_scans())):
@@ -246,10 +242,10 @@ class Main_Window(QMainWindow):
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
-        if self.project.name == "": # TODO check with databse
+        if self.database.isTempProject:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         else:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
         self.statusBar().showMessage('')
 
     def create_tabs(self):
@@ -290,8 +286,6 @@ class Main_Window(QMainWindow):
         if exPopup.exec_() == QDialog.Accepted:
             old_folder = self.database.folder
 
-            self.project.name = exPopup.name
-            self.project.date = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
             database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
@@ -313,16 +307,16 @@ class Main_Window(QMainWindow):
             self.database = DataBase(exPopup.relative_path)
             self.data_browser.update_database(self.database)
 
-            project_path = os.path.join(os.path.relpath(self.database.folder), self.project.name, self.project.name)
+            project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
             utils.saveProjectAsJsonFile(project_path, self.project)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
             exPopup.signal_saved_project.connect(self.modify_ui)
-            if self.project.name == "":
+            if self.database.isTempProject:
                 self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
             else:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.name)
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def create_project_pop_up(self):
         """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
@@ -413,7 +407,6 @@ class Main_Window(QMainWindow):
         """ Opens a pop-up when the 'See all projects' action is clicked and show the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects)
-        controller.first_save = False
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
             file_name = self.exPopup.relative_path
@@ -441,7 +434,7 @@ class Main_Window(QMainWindow):
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project, self.database)
+            self.data_browser.table_data.update_table(self.project)
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """

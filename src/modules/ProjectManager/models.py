@@ -146,11 +146,9 @@ class Scan:
 
 class Project:
 
-    def __init__(self, name):
+    def __init__(self):
         import time
-        self.name = name
         self.bdd_file = ""
-        self.date = time.strftime('%d/%m/%y %H:%M', time.localtime())
         self._scans = []
         self.user_tags = []
         self.sort_tags = ['FileName']
@@ -261,9 +259,7 @@ def serializer(obj):
     import numpy as np
     if isinstance(obj, Project):
         return {'__class__': 'Project',
-                'name': obj.name,
                 'bdd_file': obj.bdd_file,
-                'date': obj.date,
                 'scans': obj._get_scans(),
                 'user_tags': obj.user_tags,
                 'sort_tags': obj.sort_tags,
@@ -310,9 +306,8 @@ def serializer(obj):
 def deserializer(obj_dict):
     if "__class__" in obj_dict:
         if obj_dict["__class__"] == "Project":
-            obj = Project(obj_dict["name"])
+            obj = Project()
             obj.bdd_file = obj_dict["bdd_file"]
-            obj.date = obj_dict["date"]
             obj._scans = obj_dict["scans"]
             obj.user_tags = obj_dict["user_tags"]
             obj.sort_tags = obj_dict["sort_tags"]

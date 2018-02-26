@@ -52,8 +52,7 @@ def createProject(name, path, parent_folder):
     :return: the project object
     """
     # Instanciate project with name
-    project = Project(name)
-    project.name = name
+    project = Project()
 
     # Formating the name to remove spaces et strange characters -> folder name
     name = utils.remove_accents(name.replace(" ", "_"))
@@ -73,7 +72,7 @@ def createProject(name, path, parent_folder):
         os.mkdir(os.path.join(new_path, 'properties'))
         properties = dict(
             name=name,
-            date=datetime.datetime.now()
+            date=datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
         )
         with open(os.path.join(new_path, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
             yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
@@ -193,5 +192,5 @@ def verify_scans(project, database, path):
 
 
 def save_project(project, database):
-    project_path = os.path.join(database.folder, project.name, project.name)
+    project_path = os.path.join(database.folder, database.getName(), database.getName())
     utils.saveProjectAsJsonFile(project_path, project)

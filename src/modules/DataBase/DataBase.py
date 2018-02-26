@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
+import yaml
 
 class DataBase:
 
@@ -14,11 +15,19 @@ class DataBase:
         else:
             self.isTempProject = False
             self.folder = project_root_folder
+            self.properties = self.loadProperties()
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
         print("new database : " + self.folder)
+
+    def loadProperties(self):
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
+            try:
+                return yaml.load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
 
     def addScan(self, name, checksum):
         scan = Scan(scan=name, checksum=checksum)
@@ -75,3 +84,15 @@ class DataBase:
 
     def saveModifications(self):
         self.session.commit()
+
+    def getName(self):
+        if(self.isTempProject):
+            return ""
+        else:
+            return self.properties["name"]
+
+    def getDate(self):
+        if(self.isTempProject):
+            return ""
+        else:
+            return self.properties["date"]

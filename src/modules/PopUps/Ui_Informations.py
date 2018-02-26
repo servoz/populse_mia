@@ -26,7 +26,7 @@ class Ui_Informations(QWidget):
         item = QTableWidgetItem("Name")
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(0, 0, item)
-        item = QTableWidgetItem(project.name)
+        item = QTableWidgetItem(database.getName())
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(0, 1, item)
 
@@ -41,7 +41,7 @@ class Ui_Informations(QWidget):
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(2, 0, item)
 
-        item = QTableWidgetItem(project.date)
+        item = QTableWidgetItem(database.getDate())
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.tableWidget.setItem(2, 1, item)
 
