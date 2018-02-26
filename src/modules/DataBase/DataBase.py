@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, update
+from sqlalchemy import create_engine, update, Table
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -16,7 +16,7 @@ class DataBase:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), echo=True)
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
@@ -79,8 +79,12 @@ class DataBase:
         tag.current_value = tag.raw_value
 
     def removeScan(self, scan):
-        Scan.delete().where(Scan.scan == scan)
-        Value.delete().where(Value.scan == scan)
+        tags = self.session.query(Value).filter(Value.scan == scan).all()
+        for tag in tags:
+            self.session.delete(tag)
+        scans = self.session.query(Scan).filter(Scan.scan == scan).all()
+        for scan in scans:
+            self.session.delete(scan)
 
     def saveModifications(self):
         self.session.commit()

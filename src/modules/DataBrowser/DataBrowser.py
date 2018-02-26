@@ -483,6 +483,11 @@ class TableDataBrowser(QTableWidget):
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
             scan_name = self.item(row, 0).text()
+
+            # DATABASE
+            self.database.resetTag(scan_name, tag_name)
+
+
             for file in project._get_scans():
                 if file.file_path == scan_name:
                     for n_tag in file._get_tags():
@@ -497,6 +502,7 @@ class TableDataBrowser(QTableWidget):
                                     color.setRgb(250, 250, 250)
                                 self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
                             n_tag.resetTag()
+        self.database.saveModifications()
 
     def reset_column(self, project):
         points = self.selectedIndexes()
@@ -507,6 +513,10 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             scan_id = -1
             for file in project._get_scans():
+
+                # DATABASE
+                self.database.resetTag(file.file_path, tag_name)
+
                 scan_id += 1
                 for n_tag in file._get_tags():
                     if n_tag.name == tag_name:
@@ -520,8 +530,9 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(250, 250, 250)
                             self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
                         n_tag.resetTag()
+        self.database.saveModifications()
 
-    def reset_row(self, project, database):
+    def reset_row(self, project):
         points = self.selectedIndexes()
 
         for point in points:
@@ -545,8 +556,8 @@ class TableDataBrowser(QTableWidget):
                             n_tag.resetTag()
 
                         # DATABASE
-                        database.resetTag(scan_name, n_tag.name)
-                        database.saveModifications()
+                        self.database.resetTag(scan_name, n_tag.name)
+        self.database.saveModifications()
 
     def reset_cells_with_item(self, project, items_in):
         for item_in in items_in:
@@ -555,6 +566,10 @@ class TableDataBrowser(QTableWidget):
 
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
+
+            # DATABASE
+            self.database.resetTag(scan_path, tag.name)
+
 
             for scan in project._get_scans():
                 if scan_path == scan.file_path:
@@ -572,6 +587,7 @@ class TableDataBrowser(QTableWidget):
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                             item.setText(txt)
                             self.setItem(row, col, item)
+        self.database.saveModifications()
 
     def remove_scan(self, project):
         points = self.selectedIndexes()
@@ -582,6 +598,10 @@ class TableDataBrowser(QTableWidget):
             for scan in project._get_scans():
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
+
+            self.database.removeScan(scan_path)
+        self.database.saveModifications()
+
 
     def sort_items(self, project, col):
         self.clearSelection() # Remove the column selection from single click
@@ -634,7 +654,7 @@ class TableDataBrowser(QTableWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.update_table(project)
 
-    def change_cell_color(self, project, database, item_origin):
+    def change_cell_color(self, project, item_origin):
         """
         The background color of the table will change when the user changes an item
         Handles the multi-selection case
@@ -710,8 +730,8 @@ class TableDataBrowser(QTableWidget):
                                 item.setText(text_value)
 
                                 #DATABASE
-                                database.setTagValue(scan_path, tag_name, text_value)
-                                database.saveModifications()
+                                self.database.setTagValue(scan_path, tag_name, text_value)
+                                self.database.saveModifications()
 
                                 tag_origin = tag.origin
                                 tag_replace = tag.replace
@@ -722,7 +742,7 @@ class TableDataBrowser(QTableWidget):
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))
 
-        self.itemChanged.connect(partial(self.change_cell_color, project, database))
+        self.itemChanged.connect(partial(self.change_cell_color, project))
 
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
