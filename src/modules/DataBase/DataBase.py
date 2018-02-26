@@ -62,19 +62,25 @@ class DataBase:
         return tags
 
     def setTagVisibility(self, name, visibility):
-        Tag.update().\
-            where(Tag.tag == name).\
-            values(visible = visibility)
+        tags = self.session.query(Tag).filter(Tag.tag == name).all()
+        # TODO return error if len(tags) != 1
+        tag = tags[0]
+        tag.visible = visibility
+
+    def resetAllVisibilities(self):
+        tags = self.session.query(Tag).filter().all()
+        for tag in tags:
+            tag.visible = False
 
     def setTagValue(self, scan, tag, new_value):
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
-        #TODO return error if len(tags) != 0
+        #TODO return error if len(tags) != 1
         tag = tags[0]
         tag.current_value = new_value
 
     def resetTag(self, scan, tag):
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
-        # TODO return error if len(tags) != 0
+        # TODO return error if len(tags) != 1
         tag = tags[0]
         tag.current_value = tag.raw_value
 

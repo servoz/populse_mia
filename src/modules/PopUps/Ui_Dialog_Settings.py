@@ -59,8 +59,11 @@ class Ui_Dialog_Settings(QDialog):
 
     def ok_clicked(self, project, database):
         project.tags_to_visualize = []
+        database.resetAllVisibilities()
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             project.tags_to_visualize.append(self.tab_tags.list_widget_selected_tags.item(x).text())
+            database.setTagVisibility(self.tab_tags.list_widget_selected_tags.item(x).text(), True)
+        database.saveModifications()
         #database.setName(self.tab_infos.name_value.text())
         self.accept()
         self.close()
