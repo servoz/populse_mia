@@ -410,7 +410,14 @@ class Main_Window(QMainWindow):
                 self.exPopup.name = name
                 self.modify_ui()
             else:
-                print("TODO: ADD AN ERROR DIALOG")
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The project selected doesn't exist anymore:")
+                msg.setInformativeText("The project selected " + name + " doesn't exist anymore.\nPlease select another one.")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
 
     def update_recent_projects_actions(self):
         """ Updates the list of recent projects """
