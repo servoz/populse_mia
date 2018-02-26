@@ -2,14 +2,14 @@ from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
+import tempfile
 
 class DataBase:
 
     def __init__(self, project_root_folder):
         if(project_root_folder == None):
             self.isTempProject = True
-            self.folder = os.path.join(os.path.relpath(os.curdir), '..', '..', 'temp_project')
-            os.mkdir(self.folder)
+            self.folder = os.path.relpath(tempfile.mkdtemp())
             createDatabase(self.folder)
         else:
             self.isTempProject = False
