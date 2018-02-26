@@ -1,12 +1,10 @@
-from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal, QItemSelectionModel
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QWidget, QTreeWidget, QTreeWidgetItem, \
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTreeWidget, QTreeWidgetItem, \
     QVBoxLayout, QMessageBox, QHeaderView
-from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon
 import os
 from ProjectManager import controller
-
+from DataBase.DataBase import DataBase
 
 class Ui_Dialog_See_All_Projects(QDialog):
     """
@@ -16,8 +14,10 @@ class Ui_Dialog_See_All_Projects(QDialog):
     # Signal that will be emitted at the end to tell that a new project has been opened
     signal_create_project = pyqtSignal()
 
-    def __init__(self, savedProjects):
+    def __init__(self, savedProjects, mainWindow):
         super().__init__()
+
+        self.mainWindow = mainWindow
 
         self.setWindowTitle('See all saved projects')
         self.setMinimumWidth(500)
@@ -45,8 +45,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
 
             #self.treeWidget.resizeColumnsToContents(i)
 
-        #self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        #self.treeWidget.header().setStretchLastSection(False)
 
         hd = self.treeWidget.header()
         hd.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -111,6 +109,9 @@ class Ui_Dialog_See_All_Projects(QDialog):
             # If the file exists
             if os.path.exists(os.path.join(self.relative_path, self.name, self.name + '.json')):
                 controller.open_project(self.name, self.relative_path)
+                # DATABASE
+                self.mainWindow.database = DataBase(self.relative_path)
+                self.mainWindow.data_browser.update_database(self.mainWindow.database)
 
                 self.accept()
                 self.close()

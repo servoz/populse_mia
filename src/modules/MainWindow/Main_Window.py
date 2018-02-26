@@ -406,7 +406,7 @@ class Main_Window(QMainWindow):
     def see_all_projects(self):
         """ Opens a pop-up when the 'See all projects' action is clicked and show the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
-        self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects)
+        self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
         self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_() == QDialog.Accepted:
             file_name = self.exPopup.relative_path
