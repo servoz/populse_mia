@@ -28,7 +28,7 @@ class Ui_Dialog_New_Project(QFileDialog):
     def retranslateUi(self, file_name):
         # file_name = self.selectedFiles()
         file_name = file_name[0]
-        file_name = utils.remove_accents(file_name.replace(" ", "_"))
+        #file_name = utils.remove_accents(file_name.replace(" ", "_"))
         if file_name:
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
