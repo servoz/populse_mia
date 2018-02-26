@@ -91,6 +91,15 @@ class DataBase:
         else:
             return self.properties["name"]
 
+    def setName(self, name):
+        if not self.isTempProject:
+            self.properties["name"] = name
+            self.saveConfig()
+
+    def saveConfig(self):
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
+
     def getDate(self):
         if(self.isTempProject):
             return ""

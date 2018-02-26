@@ -1,6 +1,6 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit
 
 
 class Ui_Informations(QWidget):
@@ -18,37 +18,18 @@ class Ui_Informations(QWidget):
     def retranslate_Ui(self, project, database):
         _translate = QtCore.QCoreApplication.translate
 
-        self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(3)
-        self.tableWidget.setColumnCount(2)
-        self.tableWidget.setHorizontalHeaderLabels(('Property', 'Value'))
-
-        item = QTableWidgetItem("Name")
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(0, 0, item)
-        item = QTableWidgetItem(database.getName())
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(0, 1, item)
-
-        item = QTableWidgetItem("Folder")
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(1, 0, item)
-        item = QTableWidgetItem(database.folder)
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(1, 1, item)
-
-        item = QTableWidgetItem("Date of creation")
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(2, 0, item)
-
-        item = QTableWidgetItem(database.getDate())
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.tableWidget.setItem(2, 1, item)
-
-        self.tableWidget.resizeRowsToContents()
-        self.tableWidget.resizeColumnsToContents()
+        name_label = QLabel("Name: ")
+        self.name_value = QLineEdit(database.getName())
+        folder_label = QLabel("Root folder: " + database.folder)
+        date_label = QLabel("Date of creation: " + database.getDate())
 
         box = QVBoxLayout()
-        box.addWidget(self.tableWidget)
+        row = QHBoxLayout()
+        row.addWidget(name_label)
+        row.addWidget(self.name_value)
+        box.addLayout(row)
+        box.addWidget(folder_label)
+        box.addWidget(date_label)
+        box.addStretch(1)
 
         self.setLayout(box)

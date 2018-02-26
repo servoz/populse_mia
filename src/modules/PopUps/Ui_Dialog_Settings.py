@@ -39,7 +39,7 @@ class Ui_Dialog_Settings(QDialog):
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project))
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project, database))
 
         # The 'Cancel' push button
         self.push_button_cancel = QtWidgets.QPushButton("Cancel")
@@ -57,10 +57,11 @@ class Ui_Dialog_Settings(QDialog):
 
         self.setLayout(vbox)
 
-    def ok_clicked(self, project):
+    def ok_clicked(self, project, database):
         project.tags_to_visualize = []
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             project.tags_to_visualize.append(self.tab_tags.list_widget_selected_tags.item(x).text())
+        #database.setName(self.tab_infos.name_value.text())
         self.accept()
         self.close()
 

@@ -242,6 +242,8 @@ class Main_Window(QMainWindow):
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
+        print("in modify_ui : " + str(self.database.isTempProject))
+        print("in modify_ui : " + self.database.folder)
         if self.database.isTempProject:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         else:
@@ -313,6 +315,7 @@ class Main_Window(QMainWindow):
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
             exPopup.signal_saved_project.connect(self.modify_ui)
+
             if self.database.isTempProject:
                 self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
             else:
@@ -337,6 +340,11 @@ class Main_Window(QMainWindow):
             #DATABASE
             self.database = DataBase(self.exPopup.relative_path)
             self.data_browser.update_database(self.database)
+
+            if self.database.isTempProject:
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+            else:
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
@@ -364,9 +372,14 @@ class Main_Window(QMainWindow):
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
 
-        #DATABASE
-        self.database = DataBase(self.exPopup.relative_path)
-        self.data_browser.update_database(self.database)
+            #DATABASE
+            self.database = DataBase(self.exPopup.relative_path)
+            self.data_browser.update_database(self.database)
+
+            if self.database.isTempProject:
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+            else:
+                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -384,6 +397,11 @@ class Main_Window(QMainWindow):
                 #DATABASE
                 self.database = DataBase(relative_path)
                 self.data_browser.update_database(self.database)
+
+                if self.database.isTempProject:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                else:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
