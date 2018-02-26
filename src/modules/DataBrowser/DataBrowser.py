@@ -27,6 +27,8 @@ from SoftwareProperties.Config import Config
 class DataBrowser(QWidget):
     def __init__(self, project, database):
 
+        self.database = database
+
         super(DataBrowser, self).__init__()
 
         _translate = QtCore.QCoreApplication.translate
@@ -44,7 +46,7 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(project, database)
         self.table_data.setObjectName("table_data")
-        self.table_data.cellClicked.connect(partial(self.connect_viewer, project, database))
+        self.table_data.cellClicked.connect(partial(self.connect_viewer, project))
 
         ## LAYOUTS ##
 
@@ -61,7 +63,7 @@ class DataBrowser(QWidget):
         self.frame_visualization.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_visualization.setObjectName("frame_5")
 
-        self.viewer = MiniViewer(project)
+        self.viewer = MiniViewer(project, database)
         self.viewer.setObjectName("viewer")
         self.viewer.adjustSize()
 
@@ -82,6 +84,10 @@ class DataBrowser(QWidget):
 
         self.setLayout(vbox_splitter)
 
+    def update_database(self, database):
+        self.database = database
+        self.table_data.database = database
+        self.viewer.database = database
 
     def create_actions(self, project):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -101,7 +107,7 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.table_data.update_table(project, database)
+            self.table_data.update_table(project)
 
     def create_toolbar_menus(self, project, database):
         self.menu_toolbar = QToolBar()
@@ -118,7 +124,7 @@ class DataBrowser(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, project, database))
+        self.search_bar.textChanged.connect(partial(self.search_str, project))
 
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
@@ -143,7 +149,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(visualized_tags_button)
 
-    def search_str(self, project, database, str_search):
+    def search_str(self, project, str_search):
 
         return_list = []
         if str_search != "":
@@ -164,13 +170,13 @@ class DataBrowser(QWidget):
                 return_list.append(scan.file_path)
 
         self.table_data.scans_to_visualize = return_list
-        self.table_data.update_table(project, database)
+        self.table_data.update_table(project)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
 
-    def connect_viewer(self, project, database, row, col):
-        path_name = os.path.relpath(database.folder)
+    def connect_viewer(self, project, row, col):
+        path_name = os.path.relpath(self.database.folder)
         file_name = self.table_data.item(row, 0).text() + ".nii"
         full_name = path_name + '/data/raw_data/' + file_name
         self.viewer.show_slices(full_name)
@@ -233,6 +239,8 @@ class TableDataBrowser(QTableWidget):
     # DATABASE
     def __init__(self, project, database):
 
+        self.database = database
+
         super().__init__()
 
         # The list of scans to visualize
@@ -252,12 +260,12 @@ class TableDataBrowser(QTableWidget):
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
 
         if project:
-            self.update_table(project, database)
+            self.update_table(project)
 
     def selectAllColumn(self, col):
         self.selectColumn(col)
 
-    def update_table(self, project, database):
+    def update_table(self, project):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
@@ -402,13 +410,13 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
-        self.itemChanged.connect(partial(self.change_cell_color, project, database))
+        self.itemChanged.connect(partial(self.change_cell_color, project))
 
         config = Config()
         if (config.isAutoSave() == "yes" and not project.name == ""):
             save_project(project)
 
-    def context_menu_table(self, project, database, position):
+    def context_menu_table(self, project, position):
 
         self.hh.disconnect()
 
@@ -446,7 +454,7 @@ class TableDataBrowser(QTableWidget):
         elif action == action_reset_row:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.reset_row(project, database))
+            msg.buttonClicked.connect(lambda: self.reset_row(project))
             msg.exec()
         elif action == action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
@@ -458,13 +466,13 @@ class TableDataBrowser(QTableWidget):
         elif action == action_sort_column_descending:
             self.sort_column_descending(project)
         elif action == action_visualized_tags:
-            self.visualized_tags_pop_up(project, database)
+            self.visualized_tags_pop_up(project)
         elif action == action_select_column:
             self.selectAllColumn(self.currentItem().column())
 
-        self.update_table(project, database)
+        self.update_table(project)
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
-        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project, database))
+        self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
 
 
     def reset_cell(self, project):
@@ -575,7 +583,7 @@ class TableDataBrowser(QTableWidget):
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)
 
-    def sort_items(self, project, database, col):
+    def sort_items(self, project, col):
         self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
@@ -592,7 +600,7 @@ class TableDataBrowser(QTableWidget):
 
         project.reset_sort_tags()
         project.add_sort_tag(tag_name)
-        self.update_table(project, database)
+        self.update_table(project)
 
     def sort_column(self, project):
         points = self.selectedItems()
@@ -616,15 +624,15 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             project.add_sort_tag(tag_name)
 
-    def visualized_tags_pop_up(self, project, database):
-        self.pop_up = Ui_Dialog_Settings(project, database)
+    def visualized_tags_pop_up(self, project):
+        self.pop_up = Ui_Dialog_Settings(project, self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.update_table(project, database)
+            self.update_table(project)
 
     def change_cell_color(self, project, database, item_origin):
         """
@@ -727,8 +735,11 @@ class MiniViewer(QWidget):
 
     #TODO: HANDLE THE MULTI SELECTION
 
-    def __init__(self, project):
+    def __init__(self, project, database):
+
         super().__init__()
+
+        self.database = database
 
         self.setHidden(True)
         self.nb_labels = 6

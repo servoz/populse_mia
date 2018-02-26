@@ -311,7 +311,9 @@ class Main_Window(QMainWindow):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'database', '*.*')):
                     shutil.copy(filename, os.path.relpath(database_path))
 
+            #DATABASE
             self.database = DataBase(exPopup.relative_path)
+            self.data_browser.update_database(self.database)
 
             project_path = os.path.join(os.path.relpath(self.database.folder), self.project.name, self.project.name)
             utils.saveProjectAsJsonFile(project_path, self.project)
@@ -339,7 +341,10 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
+
+            #DATABASE
             self.database = DataBase(self.exPopup.relative_path)
+            self.data_browser.update_database(self.database)
 
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
@@ -366,7 +371,10 @@ class Main_Window(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
+
+        #DATABASE
         self.database = DataBase(self.exPopup.relative_path)
+        self.data_browser.update_database(self.database)
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -380,7 +388,11 @@ class Main_Window(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(relative_path, name, name + '.json')):
                 controller.open_project(name, relative_path)
+
+                #DATABASE
                 self.database = DataBase(relative_path)
+                self.data_browser.update_database(self.database)
+
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
                 self.exPopup = Ui_Dialog_New_Project()
@@ -459,6 +471,6 @@ class Main_Window(QMainWindow):
             scan_names_list.append(scan.file_path)
 
         self.data_browser.table_data.scans_to_visualize = scan_names_list
-        self.data_browser.table_data.update_table(self.project, self.database)
+        self.data_browser.table_data.update_table(self.project)
 
 
