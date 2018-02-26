@@ -7,6 +7,8 @@ import shutil
 import hashlib # To generate the md5 of each scan
 from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
 from SoftwareProperties.Config import Config
+import datetime
+import yaml
 
 def getJsonTagsFromFile(file_path, path):
     """
@@ -66,6 +68,15 @@ def createProject(name, path, parent_folder):
         project_path = os.path.join(new_path, name)
         raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
         derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))
+
+        #Properties
+        os.mkdir(os.path.join(new_path, 'properties'))
+        properties = dict(
+            name=name,
+            date=datetime.datetime.now()
+        )
+        with open(os.path.join(new_path, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
+            yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
         project.bdd_file = path
 
