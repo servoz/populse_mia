@@ -242,8 +242,6 @@ class Main_Window(QMainWindow):
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
-        print("in modify_ui : " + str(self.database.isTempProject))
-        print("in modify_ui : " + self.database.folder)
         if self.database.isTempProject:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         else:
