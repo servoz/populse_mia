@@ -251,6 +251,8 @@ class TableDataBrowser(QTableWidget):
 
         super().__init__()
 
+        self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+
         # The list of scans to visualize
         self.scans_to_visualize = []
         for scan in project._get_scans():
@@ -271,15 +273,17 @@ class TableDataBrowser(QTableWidget):
             self.update_table(project)
 
     def selectAllColumn(self, col):
+        self.clearSelection()
         self.selectColumn(col)
 
     def selectAllColumns(self):
         self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         points = self.selectedIndexes()
+        self.clearSelection()
         for point in points:
             col = point.column()
             self.selectColumn(col)
-        self.setSelectionMode(3) # Reput extended selection mode as before
+        self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def update_table(self, project):
         """
@@ -428,6 +432,7 @@ class TableDataBrowser(QTableWidget):
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
+        # Auto-save
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(project, self.database)
@@ -759,6 +764,7 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
+        #Auto-save
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(project, self.database)
