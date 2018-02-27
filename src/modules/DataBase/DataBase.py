@@ -13,11 +13,12 @@ class DataBase:
         if(project_root_folder == None):
             self.isTempProject = True
             self.folder = os.path.relpath(tempfile.mkdtemp())
-            createDatabase(self.folder)
         else:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
+        if(new_project or self.isTempProject):
+            createDatabase(self.folder)
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)

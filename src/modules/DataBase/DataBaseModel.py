@@ -32,7 +32,7 @@ class Tag(Base):
     visible = Column(Boolean, nullable=False)
     origin = Column(Enum(TAG_ORIGIN_RAW, TAG_ORIGIN_USER), nullable=False)
     type = Column(Enum(TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_LIST), nullable=False)
-    unit = Column(Enum(''), nullable=False)
+    unit = Column(Enum(''), nullable=True)
     default = Column(String, nullable=False)
     description = Column(String, nullable=False)
     def __repr__(self):
