@@ -97,8 +97,8 @@ class DataBase:
         for tag in tags:
             self.session.delete(tag)
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
-        for scan in scans:
-            self.session.delete(scan)
+        # TODO return error if len(scans) != 1
+        self.session.delete(scans[0])
 
     def saveModifications(self):
         self.session.commit()
