@@ -111,7 +111,7 @@ class Ui_Dialog_See_All_Projects(QDialog):
                 controller.open_project(self.name, self.relative_path)
 
                 # DATABASE
-                self.mainWindow.database = DataBase(self.relative_path)
+                self.mainWindow.database = DataBase(self.relative_path, False)
                 self.mainWindow.data_browser.update_database(self.mainWindow.database)
 
                 if self.mainWindow.database.isTempProject:

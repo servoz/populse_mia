@@ -15,7 +15,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     project = Project()
-    database = DataBase(None)
+    database = DataBase(None, True)
 
     imageViewer = Main_Window(project, database)
     imageViewer.show()

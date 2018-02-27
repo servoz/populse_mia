@@ -305,7 +305,7 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.relpath(database_path))
 
             #DATABASE
-            self.database = DataBase(exPopup.relative_path)
+            self.database = DataBase(exPopup.relative_path, False)
             self.data_browser.update_database(self.database)
 
             project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
@@ -337,7 +337,7 @@ class Main_Window(QMainWindow):
             self.update_recent_projects_actions()
 
             #DATABASE
-            self.database = DataBase(self.exPopup.relative_path)
+            self.database = DataBase(self.exPopup.relative_path, True)
             self.data_browser.update_database(self.database)
 
             if self.database.isTempProject:
@@ -372,7 +372,7 @@ class Main_Window(QMainWindow):
                 msg.exec()
 
             #DATABASE
-            self.database = DataBase(self.exPopup.relative_path)
+            self.database = DataBase(self.exPopup.relative_path, False)
             self.data_browser.update_database(self.database)
 
             if self.database.isTempProject:
@@ -394,7 +394,7 @@ class Main_Window(QMainWindow):
                 controller.open_project(name, relative_path)
 
                 #DATABASE
-                self.database = DataBase(relative_path)
+                self.database = DataBase(relative_path, False)
                 self.data_browser.update_database(self.database)
 
                 if self.database.isTempProject:

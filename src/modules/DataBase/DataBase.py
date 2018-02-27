@@ -4,10 +4,12 @@ from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
 import yaml
+from SoftwareProperties.Config import Config
+from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
 
 class DataBase:
 
-    def __init__(self, project_root_folder):
+    def __init__(self, project_root_folder, new_project):
         if(project_root_folder == None):
             self.isTempProject = True
             self.folder = os.path.relpath(tempfile.mkdtemp())
@@ -21,6 +23,11 @@ class DataBase:
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
         print("new database : " + self.folder)
+        if new_project:
+            config = Config()
+            for default_tag in config.getDefaultTags():
+                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") #Modify params
+                self.saveModifications()
 
     def loadProperties(self):
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
