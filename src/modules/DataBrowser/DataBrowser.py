@@ -23,6 +23,7 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 import Utils.utils as utils
 from SoftwareProperties.Config import Config
+from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 
 class DataBrowser(QWidget):
     def __init__(self, project, database):
@@ -205,10 +206,26 @@ class DataBrowser(QWidget):
 
             new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
 
+
             # Updating the data base
             project.add_user_tag(new_tag_name, list_to_add)
             project.add_tag(new_tag)
             project.tags_to_visualize.append(new_tag_name)
+
+            # Database
+            real_type = ""
+            if(type == str):
+                real_type = TAG_TYPE_STRING
+            if (type == int):
+                real_type = TAG_TYPE_INTEGER
+            if (type == float):
+                real_type = TAG_TYPE_FLOAT
+            if (type == list):
+                real_type = TAG_TYPE_LIST
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
+            for scan in project._get_scans():
+                self.database.addValue(scan.file_path, new_tag_name, new_default_value)
+            self.database.saveModifications()
 
             # Updating the table
             self.table_data.update_table(project)

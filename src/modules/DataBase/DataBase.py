@@ -17,7 +17,7 @@ class DataBase:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
-        if(new_project or self.isTempProject):
+        if(new_project):
             createDatabase(self.folder)
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         Base.metadata.bind = engine
