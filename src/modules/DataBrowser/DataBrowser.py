@@ -274,11 +274,12 @@ class TableDataBrowser(QTableWidget):
         self.selectColumn(col)
 
     def selectAllColumns(self):
+        self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         points = self.selectedIndexes()
         for point in points:
-            row = point.row()
             col = point.column()
-            #Select each col
+            self.selectColumn(col)
+        self.setSelectionMode(3) # Reput extended selection mode as before
 
     def update_table(self, project):
         """
