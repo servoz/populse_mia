@@ -177,9 +177,17 @@ class DataBrowser(QWidget):
 
     def connect_viewer(self, project, row, col):
         path_name = os.path.relpath(self.database.folder)
-        file_name = self.table_data.item(row, 0).text() + ".nii"
-        full_name = path_name + '/data/raw_data/' + file_name
-        self.viewer.show_slices(full_name)
+        items = self.table_data.selectedItems()
+        full_names = []
+        for item in items:
+            row = item.row()
+            file_name = self.table_data.item(row, 0).text() + ".nii"
+            full_name = path_name + '/data/raw_data/' + file_name
+            full_names.append(full_name)
+
+        #self.viewer.show_slices(full_names[-3:])
+        self.viewer.show_slices(full_names)
+
 
     def add_tag_pop_up(self, project):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
@@ -773,6 +781,16 @@ class MiniViewer(QWidget):
         self.scroll_area.setWidget(self.frame)
         self.frame_final = QFrame()
 
+        self.im_2D = []
+        self.a1 = []
+        self.a2 = []
+        self.a3 = []
+        self.txta1 = []
+        self.txta2 = []
+        self.txta3 = []
+        self.imageLabel = []
+        self.img = []
+
         self.createLayouts()
 
         self.setLayout(self.v_box_final)
@@ -785,18 +803,22 @@ class MiniViewer(QWidget):
             self.check_box.setCheckState(Qt.Unchecked)
 
         self.check_box.stateChanged.connect(self.check_box_state_changed)
-        self.file_path = ""
+        self.file_paths = ""
 
     def check_box_state_changed(self):
         if self.check_box.checkState() == Qt.Checked:
             self.config.setShowAllSlices('yes')
         elif self.check_box.checkState() == Qt.Unchecked:
             self.config.setShowAllSlices('no')
-        self.show_slices(self.file_path)
+        self.show_slices(self.file_paths)
 
-    def show_slices(self, file_path):
-        self.file_path = file_path
-        self.setMinimumHeight(180)
+    def show_slices(self, file_paths):
+
+        #self.check_differences(file_paths)
+        self.do_nothing = [False] * len(file_paths)
+
+        self.file_paths = file_paths
+        self.setMinimumHeight(200)
 
         if self.isHidden():
             self.setHidden(False)
@@ -805,106 +827,125 @@ class MiniViewer(QWidget):
 
         self.frame = QFrame(self)
         self.frame_final = QFrame(self)
-        self.img = nib.load(self.file_path)
+        max_scans = 10
+        #self.img = []
+
+        for idx, file_path in enumerate(self.file_paths):
+            self.img.insert(idx, nib.load(file_path))
 
         if self.check_box.checkState() == Qt.Unchecked:
 
-            self.boxSlider()
-            self.enableSliders()
-
-            sl1 = self.a1.value()
-            sl2 = self.a2.value()
-            sl3 = self.a3.value()
-
-            if (len(self.img.shape) == 3):
-                self.im_2D = self.img.get_data()[:, :, sl1].copy()
-                self.a1.setMaximum(self.img.shape[2] - 1)
-                self.a2.setMaximum(0)
-                self.a3.setMaximum(0)
-            if (len(self.img.shape) == 4):
-                self.im_2D = self.img.get_data()[:, :, sl1, sl2].copy()
-                self.a1.setMaximum(self.img.shape[2] - 1)
-                self.a2.setMaximum(self.img.shape[3] - 1)
-                self.a3.setMaximum(0)
-            if (len(self.img.shape) == 5):
-                self.im_2D = self.img.get_data()[:, :, sl1, sl2, sl3].copy()
-                self.a1.setMaximum(self.img.shape[2] - 1)
-                self.a2.setMaximum(self.img.shape[3] - 1)
-                self.a3.setMaximum(self.img.shape[4] - 1)
-
-            self.im_2D = rotate(self.im_2D, -90, reshape=False)
-            self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
-            self.im_2D = misc.imresize(self.im_2D, (128, 128))
-
-            self.displayPosValue()
-
-            w, h = self.im_2D.shape
-
-            im_Qt = QImage(self.im_2D.data, w, h, QImage.Format_Indexed8)
-            pixm = QPixmap.fromImage(im_Qt)
-
-            self.imageLabel = QLabel(self)
-            self.imageLabel.setPixmap(pixm)
-            self.imageLabel.setToolTip(os.path.basename(self.file_path))
-
-            self.h_box_slider_1 = QHBoxLayout()
-            self.h_box_slider_1.addWidget(self.txta1)
-            self.h_box_slider_1.addWidget(self.a1)
-
-            self.h_box_slider_2 = QHBoxLayout()
-            self.h_box_slider_2.addWidget(self.txta2)
-            self.h_box_slider_2.addWidget(self.a2)
-
-            self.h_box_slider_3 = QHBoxLayout()
-            self.h_box_slider_3.addWidget(self.txta3)
-            self.h_box_slider_3.addWidget(self.a3)
-
-            self.v_box_sliders = QVBoxLayout()
-            self.v_box_sliders.addLayout(self.h_box_slider_1)
-            self.v_box_sliders.addLayout(self.h_box_slider_2)
-            self.v_box_sliders.addLayout(self.h_box_slider_3)
-
             self.h_box = QHBoxLayout()
-            self.h_box.addWidget(self.imageLabel)
-            self.h_box.addLayout(self.v_box_sliders)
-            self.h_box.addStretch(1)
 
+            for idx in range(min(max_scans, len(self.file_paths))):
+                if not self.do_nothing[idx]:
+
+                    self.boxSlider(idx)
+                    self.enableSliders(idx)
+
+                    sl1 = self.a1[idx].value()
+                    sl2 = self.a2[idx].value()
+                    sl3 = self.a3[idx].value()
+
+                    if (len(self.img[idx].shape) == 3):
+                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1].copy())
+                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                        self.a2[idx].setMaximum(0)
+                        self.a3[idx].setMaximum(0)
+                    if (len(self.img[idx].shape) == 4):
+                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2].copy())
+                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                        self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
+                        self.a3[idx].setMaximum(0)
+                    if (len(self.img[idx].shape) == 5):
+                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy())
+                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                        self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
+                        self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
+
+                    self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
+                    self.im_2D[idx] = np.uint8(
+                        (self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
+                    self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
+
+############################
+                self.displayPosValue(idx)
+
+                w, h = self.im_2D[idx].shape
+
+                im_Qt = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
+                pixm = QPixmap.fromImage(im_Qt)
+
+                self.imageLabel.insert(idx, QLabel(self))
+                self.imageLabel[idx].setPixmap(pixm)
+                self.imageLabel[idx].setToolTip(os.path.basename(self.file_paths[idx]))
+
+                self.h_box_slider_1 = QHBoxLayout()
+                self.h_box_slider_1.addWidget(self.txta1[idx])
+                self.h_box_slider_1.addWidget(self.a1[idx])
+
+                self.h_box_slider_2 = QHBoxLayout()
+                self.h_box_slider_2.addWidget(self.txta2[idx])
+                self.h_box_slider_2.addWidget(self.a2[idx])
+
+                self.h_box_slider_3 = QHBoxLayout()
+                self.h_box_slider_3.addWidget(self.txta3[idx])
+                self.h_box_slider_3.addWidget(self.a3[idx])
+
+                self.v_box_sliders = QVBoxLayout()
+                self.v_box_sliders.addLayout(self.h_box_slider_1)
+                self.v_box_sliders.addLayout(self.h_box_slider_2)
+                self.v_box_sliders.addLayout(self.h_box_slider_3)
+
+                # self.h_box = QHBoxLayout()
+                self.h_box.addWidget(self.imageLabel[idx])
+                self.h_box.addLayout(self.v_box_sliders)
+                # self.h_box.addStretch(1)
+
+
+            #self.h_box.addStretch(1)
             self.frame.setLayout(self.h_box)
 
         else:
 
             self.h_box_images = QHBoxLayout()
             self.h_box_images.setSpacing(10)
+            self.v_box_scans = QVBoxLayout()
 
-            if len(self.img.shape) == 3:
-                nb_slices = self.img.shape[2]
-                txt = "Slice n°"
-            elif len(self.img.shape) == 4:
-                nb_slices = self.img.shape[3]
-                txt = "Time n°"
-            elif len(self.img.shape) == 5:
-                nb_slices = self.img.shape[4]
-                txt = "Study n°"
-            else:
-                nb_slices = 0
+            for idx in range(min(max_scans, len(self.file_paths))):
+                frame_test = QFrame()
+                if not self.do_nothing[idx]:
+                    if len(self.img[idx].shape) == 3:
+                        nb_slices = self.img[idx].shape[2]
+                        txt = "Slice n°"
+                    elif len(self.img[idx].shape) == 4:
+                        nb_slices = self.img[idx].shape[3]
+                        txt = "Time n°"
+                    elif len(self.img[idx].shape) == 5:
+                        nb_slices = self.img[idx].shape[4]
+                        txt = "Study n°"
+                    else:
+                        nb_slices = 0
 
-            for i in range(nb_slices):
-                pixm = self.image_to_pixmap(self.img, i)
+                    for i in range(nb_slices):
+                        pixm = self.image_to_pixmap(self.img[idx], i)
 
-                self.v_box = QVBoxLayout()
+                        self.v_box = QVBoxLayout()
 
-                label = QLabel(self)
-                label.setPixmap(pixm)
+                        label = QLabel(self)
+                        label.setPixmap(pixm)
+                        label.setToolTip(os.path.basename(self.file_paths[idx]))
 
-                label_info = QLabel()
-                label_info.setText(txt + str(i + 1))
-                label_info.setAlignment(QtCore.Qt.AlignCenter)
+                        label_info = QLabel()
+                        label_info.setText(txt + str(i + 1))
+                        label_info.setAlignment(QtCore.Qt.AlignCenter)
 
-                self.v_box.addWidget(label)
-                self.v_box.addWidget(label_info)
+                        self.v_box.addWidget(label)
+                        self.v_box.addWidget(label_info)
 
-                self.h_box_images.addLayout(self.v_box)
-            self.frame.setLayout(self.h_box_images)
+                        self.h_box_images.addLayout(self.v_box)
+                    self.v_box_scans.addLayout(self.h_box_images)
+            self.frame.setLayout(self.v_box_scans)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidget(self.frame)
@@ -915,6 +956,35 @@ class MiniViewer(QWidget):
 
         self.v_box_final.addLayout(self.h_box_check_box)
         self.v_box_final.addWidget(self.scroll_area)
+
+    def check_differences(self, file_paths):
+        #TODO
+        old_to_new = []
+        self.do_nothing = [False, False, False]
+        for idx_old, file_path in enumerate(self.file_paths):
+            if file_path in file_paths:
+                idx_new = file_paths.index(file_path)
+                old_to_new.append((idx_old, idx_new))
+                #if idx_new == idx_old:
+                self.do_nothing[idx_new] = True
+
+        for tp in old_to_new:
+            idx_old = tp[0]
+            idx_new = tp[1]
+            self.shift_thumbnail(idx_old, idx_new)
+
+    def shift_thumbnail(self, idx_old, idx_new):
+        """ Copying the values from the thumbnail n°idx_old to the thumbnail n°idx_new """
+
+        self.im_2D[idx_new] = self.im_2D[idx_old]
+
+        self.a1[idx_new].setMaximum(self.a1[idx_old].maximum())
+        self.a2[idx_new].setMaximum(self.a2[idx_old].maximum())
+        self.a3[idx_new].setMaximum(self.a3[idx_old].maximum())
+
+        self.a1[idx_new].setValue(self.a1[idx_old].value())
+        self.a2[idx_new].setValue(self.a2[idx_old].value())
+        self.a3[idx_new].setValue(self.a3[idx_old].value())
 
     def clear_layout(self, layout):
         while layout.count() > 0:
@@ -931,70 +1001,6 @@ class MiniViewer(QWidget):
         for i in reversed(range(self.v_box_final.count())):
             if self.v_box_final.itemAt(i).widget() is not None:
                 self.v_box_final.itemAt(i).widget().setParent(None)
-
-        """try:
-            self.clear_layout(self.h_box_images)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box_images)
-
-        try:
-            self.clear_layout(self.v_box)
-        except:
-            pass
-        else:
-            self.clear_layout(self.v_box)
-
-        try:
-            self.clear_layout(self.v_box_final)
-        except:
-            pass
-        else:
-            self.clear_layout(self.v_box_final)
-
-        try:
-            self.clear_layout(self.h_box_slider_1)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box_slider_1)
-
-        try:
-            self.clear_layout(self.h_box_slider_2)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box_slider_2)
-
-        try:
-            self.clear_layout(self.h_box_slider_3)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box_slider_3)
-
-        try:
-            self.clear_layout(self.v_box_sliders)
-        except:
-            pass
-        else:
-            self.clear_layout(self.v_box_sliders)
-
-        try:
-            self.clear_layout(self.h_box)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box)
-
-        try:
-            self.clear_layout(self.h_box_check_box)
-        except:
-            pass
-        else:
-            self.clear_layout(self.h_box_check_box)"""
-
 
     def createLayouts(self):
 
@@ -1013,29 +1019,29 @@ class MiniViewer(QWidget):
     def image_to_pixmap(self, im, i):
         # The image to show depends on the dimension of the image
         if len(im.shape) == 3:
-            self.im_2D = im.get_data()[:, :, i].copy()
+            im_2D = im.get_data()[:, :, i].copy()
 
         elif len(im.shape) == 4:
             im_3D = im.get_data()[:, :, :, i].copy()
             middle_slice = int(im_3D.shape[2] / 2)
-            self.im_2D = im_3D[:, :, middle_slice]
+            im_2D = im_3D[:, :, middle_slice]
 
         elif len(im.shape) == 5:
             im_4D = im.get_data()[:, :, :, :, i].copy()
             im_3D = im_4D[:, :, :, 1]
             middle_slice = int(im_3D.shape[2] / 2)
-            self.im_2D = im_3D[:, :, middle_slice]
+            im_2D = im_3D[:, :, middle_slice]
 
         else:
-            self.im_2D = [0]
+            im_2D = [0]
 
-        self.im_2D = rotate(self.im_2D, -90, reshape=False)
-        self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
-        self.im_2D = misc.imresize(self.im_2D, (128, 128))
+        im_2D = rotate(im_2D, -90, reshape=False)
+        im_2D = np.uint8((im_2D - im_2D.min()) / im_2D.ptp() * 255.0)
+        im_2D = misc.imresize(im_2D, (128, 128))
 
-        w, h = self.im_2D.shape
+        w, h = im_2D.shape
 
-        im_Qt = QImage(self.im_2D.data, w, h, QImage.Format_Indexed8)
+        im_Qt = QImage(im_2D.data, w, h, QImage.Format_Indexed8)
         pixm = QPixmap.fromImage(im_Qt)
 
         return pixm
@@ -1052,28 +1058,30 @@ class MiniViewer(QWidget):
         slider.setEnabled(False)
         return slider
 
-    def enableSliders(self):
-        self.a1.setEnabled(True)
-        self.a2.setEnabled(True)
-        self.a3.setEnabled(True)
+    def enableSliders(self, idx):
+        self.a1[idx].setEnabled(True)
+        self.a2[idx].setEnabled(True)
+        self.a3[idx].setEnabled(True)
 
-    def boxSlider(self):
-        self.a1 = self.createSlider(0, 0, 0)
-        self.a2 = self.createSlider(0, 0, 0)
-        self.a3 = self.createSlider(0, 0, 0)
+    def boxSlider(self, idx):
 
-        self.a1.valueChanged.connect(self.changePosValue)
-        self.a2.valueChanged.connect(self.changePosValue)
-        self.a3.valueChanged.connect(self.changePosValue)
+        self.a1.insert(idx, self.createSlider(0, 0, 0))
+        self.a2.insert(idx, self.createSlider(0, 0, 0))
+        self.a3.insert(idx, self.createSlider(0, 0, 0))
 
-        self.txta1 = self.createFieldValue()
-        self.txta2 = self.createFieldValue()
-        self.txta3 = self.createFieldValue()
+        self.a1[idx].valueChanged.connect(lambda: self.changePosValue(idx))
+        self.a2[idx].valueChanged.connect(lambda: self.changePosValue(idx))
+        self.a3[idx].valueChanged.connect(lambda: self.changePosValue(idx))
 
-    def displayPosValue(self):
-        self.txta1.setText(str(self.a1.value()+1)+' / '+str(self.a1.maximum()+1))
-        self.txta2.setText(str(self.a2.value()+1)+' / '+str(self.a2.maximum()+1))
-        self.txta3.setText(str(self.a3.value()+1)+' / '+str(self.a3.maximum()+1))
+        self.txta1.insert(idx, self.createFieldValue())
+        self.txta2.insert(idx, self.createFieldValue())
+        self.txta3.insert(idx, self.createFieldValue())
+
+
+    def displayPosValue(self, idx):
+        self.txta1[idx].setText(str(self.a1[idx].value()+1)+' / '+str(self.a1[idx].maximum()+1))
+        self.txta2[idx].setText(str(self.a2[idx].value()+1)+' / '+str(self.a2[idx].maximum()+1))
+        self.txta3[idx].setText(str(self.a3[idx].value()+1)+' / '+str(self.a3[idx].maximum()+1))
 
     def createFieldValue(self):
         fieldValue = QLineEdit()
@@ -1081,39 +1089,39 @@ class MiniViewer(QWidget):
         fieldValue.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
         return fieldValue
 
-    def changePosValue(self):
-        self.navigImage()
+    def changePosValue(self, idx):
+        self.navigImage(idx)
 
-    def navigImage(self):
-        self.indexImage()
-        self.displayPosValue()
+    def navigImage(self, idx):
+        self.indexImage(idx)
+        self.displayPosValue(idx)
 
-        self.im_2D = rotate(self.im_2D, -90, reshape=False)
-        self.im_2D = np.uint8((self.im_2D - self.im_2D.min()) / self.im_2D.ptp() * 255.0)
-        self.im_2D = misc.imresize(self.im_2D, (128, 128))
+        self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
+        self.im_2D[idx] = np.uint8((self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
+        self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
 
-        w, h = self.im_2D.shape
+        w, h = self.im_2D[idx].shape
 
-        image = QImage(self.im_2D.data,w,h,QImage.Format_Indexed8)
-        self.pixm = QPixmap.fromImage(image)
-        self.imageLabel.setPixmap(self.pixm)
+        image = QImage(self.im_2D[idx].data,w,h,QImage.Format_Indexed8)
+        pixm = QPixmap.fromImage(image)
+        self.imageLabel[idx].setPixmap(pixm)
 
-    def indexImage(self):
-        sl1=self.a1.value()
-        sl2=self.a2.value()
-        sl3=self.a3.value()
-        if (len(self.img.shape)==3):
-            self.im_2D = self.img.get_data()[:,:,sl1].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
-            self.a2.setMaximum(0)
-            self.a3.setMaximum(0)
-        if (len(self.img.shape)==4):
-            self.im_2D = self.img.get_data()[:,:,sl1,sl2].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
-            self.a2.setMaximum(self.img.shape[3]-1)
-            self.a3.setMaximum(0)
-        if (len(self.img.shape)==5):
-            self.im_2D = self.img.get_data()[:,:,sl1,sl2,sl3].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
-            self.a2.setMaximum(self.img.shape[3]-1)
-            self.a3.setMaximum(self.img.shape[4]-1)
+    def indexImage(self, idx):
+        sl1=self.a1[idx].value()
+        sl2=self.a2[idx].value()
+        sl3=self.a3[idx].value()
+        if (len(self.img[idx].shape)==3):
+            self.im_2D[idx] = self.img[idx].get_data()[:,:,sl1].copy()
+            self.a1[idx].setMaximum(self.img[idx].shape[2]-1)
+            self.a2[idx].setMaximum(0)
+            self.a3[idx].setMaximum(0)
+        if (len(self.img[idx].shape)==4):
+            self.im_2D[idx] = self.img[idx].get_data()[:,:,sl1,sl2].copy()
+            self.a1[idx].setMaximum(self.img[idx].shape[2]-1)
+            self.a2[idx].setMaximum(self.img[idx].shape[3]-1)
+            self.a3[idx].setMaximum(0)
+        if (len(self.img[idx].shape)==5):
+            self.im_2D[idx] = self.img[idx].get_data()[:,:,sl1,sl2,sl3].copy()
+            self.a1[idx].setMaximum(self.img[idx].shape[2]-1)
+            self.a2[idx].setMaximum(self.img[idx].shape[3]-1)
+            self.a3[idx].setMaximum(self.img[idx].shape[4]-1)
