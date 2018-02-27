@@ -16,7 +16,7 @@ class DataBase:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), echo=True)
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()

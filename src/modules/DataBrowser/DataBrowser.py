@@ -414,7 +414,7 @@ class TableDataBrowser(QTableWidget):
 
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(project)
+            save_project(project, self.database)
 
     def context_menu_table(self, project, position):
 
@@ -746,7 +746,7 @@ class TableDataBrowser(QTableWidget):
 
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(project)
+            save_project(project, self.database)
 
 
 class MiniViewer(QWidget):

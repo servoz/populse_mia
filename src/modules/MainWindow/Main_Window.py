@@ -298,6 +298,7 @@ class Main_Window(QMainWindow):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
+            #DATABASE COPY
             if os.path.exists(os.path.join(old_folder, 'database')):
                 os.mkdir(os.path.relpath(database_path))
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'database', '*.*')):
@@ -466,7 +467,7 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project, self.database)
+            self.data_browser.table_data.update_table(self.project)
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
