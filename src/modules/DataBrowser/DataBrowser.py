@@ -265,6 +265,13 @@ class TableDataBrowser(QTableWidget):
     def selectAllColumn(self, col):
         self.selectColumn(col)
 
+    def selectAllColumns(self):
+        points = self.selectedIndexes()
+        for point in points:
+            row = point.row()
+            col = point.column()
+            #Select each col
+
     def update_table(self, project):
         """
         This method will fill the tables in the 'Table' tab with the project data
@@ -431,7 +438,7 @@ class TableDataBrowser(QTableWidget):
         action_sort_column = menu.addAction("Sort column")
         action_sort_column_descending = menu.addAction("Sort column (descending)")
         action_visualized_tags = menu.addAction("Visualized tags")
-        action_select_column = menu.addAction("Select column")
+        action_select_column = menu.addAction("Select column(s)")
 
         action = menu.exec_(self.mapToGlobal(position))
         nb_cells = len(self.selectedIndexes())
@@ -468,12 +475,11 @@ class TableDataBrowser(QTableWidget):
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up(project)
         elif action == action_select_column:
-            self.selectAllColumn(self.currentItem().column())
+            self.selectAllColumns()
 
         self.update_table(project)
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items, project))
-
 
     def reset_cell(self, project):
         points = self.selectedIndexes()
