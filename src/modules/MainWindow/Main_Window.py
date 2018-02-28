@@ -321,29 +321,39 @@ class Main_Window(QMainWindow):
                 self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def create_project_pop_up(self):
-        """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
-        # Ui_Dialog() is defined in pop_ups.py
-        self.exPopup = Ui_Dialog_New_Project()
+        if (self.check_unsaved_modifications() == 1):
+            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
 
-        # Once the user has selected his project, the 'signal_create_project" signal is emitted
-        # Which will be connected to the modify_ui method that controls the following processes
-        self.exPopup.signal_create_project.connect(self.modify_ui)
+        else:
+            can_switch = True
+        if can_switch:
 
-        if self.exPopup.exec_() == QDialog.Accepted:
-            file_name = self.exPopup.selectedFiles()
-            self.exPopup.retranslateUi(self.exPopup.selectedFiles())
-            file_name = self.exPopup.relative_path
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-            self.update_recent_projects_actions()
+            """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
+            # Ui_Dialog() is defined in pop_ups.py
+            self.exPopup = Ui_Dialog_New_Project()
 
-            #DATABASE
-            self.database = DataBase(self.exPopup.relative_path, True)
-            self.data_browser.update_database(self.database)
+            # Once the user has selected his project, the 'signal_create_project" signal is emitted
+            # Which will be connected to the modify_ui method that controls the following processes
+            self.exPopup.signal_create_project.connect(self.modify_ui)
 
-            if self.database.isTempProject:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-            else:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+            if self.exPopup.exec_() == QDialog.Accepted:
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+                file_name = self.exPopup.relative_path
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                self.update_recent_projects_actions()
+
+                #DATABASE
+                self.database = DataBase(self.exPopup.relative_path, True)
+                self.data_browser.update_database(self.database)
+
+                if self.database.isTempProject:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                else:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """

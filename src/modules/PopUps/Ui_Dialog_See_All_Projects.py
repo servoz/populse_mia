@@ -31,7 +31,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
         self.treeWidget = QTreeWidget()
         self.treeWidget.setColumnCount(3)
         self.treeWidget.setHeaderLabels(['Name', 'Path', 'State'])
-        #self.treeWidget.setSelectionModel(QItemSelectionModel.ClearAndSelect)
 
         i = -1
         for path in savedProjects.pathsList:
@@ -43,9 +42,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
             wdg.setIcon(2, self.checkState(path, text))
 
             self.treeWidget.addTopLevelItem(wdg)
-
-            #self.treeWidget.resizeColumnsToContents(i)
-
 
         hd = self.treeWidget.header()
         hd.setSectionResizeMode(QHeaderView.ResizeToContents)
