@@ -894,14 +894,25 @@ class MiniViewer(QWidget):
         self.setLayout(self.v_box_final)
 
         self.check_box = QCheckBox('Show all slices (no cursors)')
-
         if self.config.getShowAllSlices() == 'yes':
             self.check_box.setCheckState(Qt.Checked)
         else:
             self.check_box.setCheckState(Qt.Unchecked)
-
         self.check_box.stateChanged.connect(self.check_box_state_changed)
+
+        self.label_nb_slices = QLabel()
+        self.label_nb_slices.setText("Maximum number of slices: ")
+
+        self.line_edit_nb_slices = QLineEdit()
+        self.line_edit_nb_slices.setText(str(self.config.getNbAllSlicesMax()))
+        self.line_edit_nb_slices.returnPressed.connect(self.update_nb_slices)
+
         self.file_paths = ""
+
+    def update_nb_slices(self):
+        nb_slices = self.line_edit_nb_slices.text()
+        self.config.setNbAllSlicesMax(nb_slices)
+        self.verify_slices(self.file_paths)
 
     def check_box_state_changed(self):
         if self.check_box.checkState() == Qt.Checked:
@@ -1016,12 +1027,11 @@ class MiniViewer(QWidget):
                 self.frame.setLayout(self.h_box)
 
             else:
-
                 self.h_box_images = QHBoxLayout()
                 self.h_box_images.setSpacing(10)
                 self.v_box_scans = QVBoxLayout()
 
-                for idx in range(min(max_scans, len(self.file_paths))):
+                for idx in range(len(self.file_paths)):
                     frame_test = QFrame()
                     if not self.do_nothing[idx]:
                         if len(self.img[idx].shape) == 3:
@@ -1036,7 +1046,7 @@ class MiniViewer(QWidget):
                         else:
                             nb_slices = 0
 
-                        for i in range(nb_slices):
+                        for i in range(min(nb_slices, int(self.line_edit_nb_slices.text()))):
                             pixm = self.image_to_pixmap(self.img[idx], i)
 
                             self.v_box = QVBoxLayout()
@@ -1061,13 +1071,22 @@ class MiniViewer(QWidget):
 
             self.h_box_check_box = QHBoxLayout()
             self.h_box_check_box.addStretch(1)
+            
+            if self.check_box.isChecked():
+                self.label_nb_slices.setHidden(False)
+                self.line_edit_nb_slices.setHidden(False)
+                self.h_box_check_box.addWidget(self.label_nb_slices)
+                self.h_box_check_box.addWidget(self.line_edit_nb_slices)
+            else:
+                self.label_nb_slices.setHidden(True)
+                self.line_edit_nb_slices.setHidden(True)
+
             self.h_box_check_box.addWidget(self.check_box)
 
             self.v_box_final.addLayout(self.h_box_check_box)
             self.v_box_final.addWidget(self.scroll_area)
 
     def check_differences(self, file_paths):
-        #TODO
         old_to_new = []
         self.do_nothing = [False, False, False]
         for idx_old, file_path in enumerate(self.file_paths):
