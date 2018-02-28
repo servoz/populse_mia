@@ -75,13 +75,15 @@ class DataBrowser(QWidget):
 
         ## SPLITTER AND LAYOUT ##
 
-        splitter_vertical = QSplitter(Qt.Vertical)
-        splitter_vertical.addWidget(self.frame_table_data)
-        splitter_vertical.addWidget(self.frame_visualization)
+        self.splitter_vertical = QSplitter(Qt.Vertical)
+        self.splitter_vertical.addWidget(self.frame_table_data)
+        self.splitter_vertical.addWidget(self.frame_visualization)
+        #self.splitter_vertical.mouseDoubleClickEvent.connect(self.move_splitter)
+        self.splitter_vertical.splitterMoved.connect(self.move_splitter)
 
         vbox_splitter = QVBoxLayout(self)
         vbox_splitter.addWidget(self.menu_toolbar)
-        vbox_splitter.addWidget(splitter_vertical)
+        vbox_splitter.addWidget(self.splitter_vertical)
 
         self.setLayout(vbox_splitter)
 
@@ -176,19 +178,42 @@ class DataBrowser(QWidget):
     def reset_search_bar(self):
         self.search_bar.setText("")
 
+    def move_splitter(self):
+        if self.splitter_vertical.sizes()[1] != self.splitter_vertical.minimumHeight():
+            self.connect_viewer()
+            """
+            self.viewer.setHidden(False)
+        else:
+            self.viewer.setHidden(True)
+            path_name = os.path.relpath(self.database.folder)
+            items = self.table_data.selectedItems()
+            full_names = []
+            for item in items:
+                row = item.row()
+                file_name = self.table_data.item(row, 0).text() + ".nii"
+                full_name = path_name + '/data/raw_data/' + file_name
+                if not full_name in full_names:
+                    full_names.append(full_name)
+
+            self.viewer.show_slices(full_names)"""
+
     def connect_viewer(self):
-        path_name = os.path.relpath(self.database.folder)
-        items = self.table_data.selectedItems()
-        full_names = []
-        for item in items:
-            row = item.row()
-            file_name = self.table_data.item(row, 0).text() + ".nii"
-            full_name = path_name + '/data/raw_data/' + file_name
-            if not full_name in full_names:
-                full_names.append(full_name)
 
-        self.viewer.show_slices(full_names)
+        if self.splitter_vertical.sizes()[1] == self.splitter_vertical.minimumHeight():
+            self.viewer.setHidden(True)
+        else:
+            self.viewer.setHidden(False)
+            path_name = os.path.relpath(self.database.folder)
+            items = self.table_data.selectedItems()
+            full_names = []
+            for item in items:
+                row = item.row()
+                file_name = self.table_data.item(row, 0).text() + ".nii"
+                full_name = path_name + '/data/raw_data/' + file_name
+                if not full_name in full_names:
+                    full_names.append(full_name)
 
+            self.viewer.show_slices(full_names)
 
     def add_tag_pop_up(self, project):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
@@ -840,6 +865,7 @@ class MiniViewer(QWidget):
         super().__init__()
 
         self.database = database
+        self.first_time = True
 
         self.setHidden(True)
         self.nb_labels = 6
@@ -886,148 +912,149 @@ class MiniViewer(QWidget):
 
     def show_slices(self, file_paths):
 
-        #self.check_differences(file_paths)
-        self.do_nothing = [False] * len(file_paths)
-
-        self.file_paths = file_paths
-        self.setMinimumHeight(200)
+        if self.first_time:
+            self.setHidden(False)
+            self.first_time = False
 
         if self.isHidden():
-            self.setHidden(False)
-
-        self.clearLayouts()
-
-        self.frame = QFrame(self)
-        self.frame_final = QFrame(self)
-        max_scans = 10
-        #self.img = []
-
-        for idx, file_path in enumerate(self.file_paths):
-            self.img.insert(idx, nib.load(file_path))
-
-        if self.check_box.checkState() == Qt.Unchecked:
-
-            self.h_box = QHBoxLayout()
-
-            for idx in range(min(max_scans, len(self.file_paths))):
-                if not self.do_nothing[idx]:
-
-                    self.boxSlider(idx)
-                    self.enableSliders(idx)
-
-                    sl1 = self.a1[idx].value()
-                    sl2 = self.a2[idx].value()
-                    sl3 = self.a3[idx].value()
-
-                    if (len(self.img[idx].shape) == 3):
-                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1].copy())
-                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                        self.a2[idx].setMaximum(0)
-                        self.a3[idx].setMaximum(0)
-                    if (len(self.img[idx].shape) == 4):
-                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2].copy())
-                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                        self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
-                        self.a3[idx].setMaximum(0)
-                    if (len(self.img[idx].shape) == 5):
-                        self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy())
-                        self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                        self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
-                        self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
-
-                    self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
-                    self.im_2D[idx] = np.uint8(
-                        (self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
-                    self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
-
-############################
-                self.displayPosValue(idx)
-
-                w, h = self.im_2D[idx].shape
-
-                im_Qt = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
-                pixm = QPixmap.fromImage(im_Qt)
-
-                self.imageLabel.insert(idx, QLabel(self))
-                self.imageLabel[idx].setPixmap(pixm)
-                self.imageLabel[idx].setToolTip(os.path.basename(self.file_paths[idx]))
-
-                self.h_box_slider_1 = QHBoxLayout()
-                self.h_box_slider_1.addWidget(self.txta1[idx])
-                self.h_box_slider_1.addWidget(self.a1[idx])
-
-                self.h_box_slider_2 = QHBoxLayout()
-                self.h_box_slider_2.addWidget(self.txta2[idx])
-                self.h_box_slider_2.addWidget(self.a2[idx])
-
-                self.h_box_slider_3 = QHBoxLayout()
-                self.h_box_slider_3.addWidget(self.txta3[idx])
-                self.h_box_slider_3.addWidget(self.a3[idx])
-
-                self.v_box_sliders = QVBoxLayout()
-                self.v_box_sliders.addLayout(self.h_box_slider_1)
-                self.v_box_sliders.addLayout(self.h_box_slider_2)
-                self.v_box_sliders.addLayout(self.h_box_slider_3)
-
-                # self.h_box = QHBoxLayout()
-                self.h_box.addWidget(self.imageLabel[idx])
-                self.h_box.addLayout(self.v_box_sliders)
-                # self.h_box.addStretch(1)
-
-
-            #self.h_box.addStretch(1)
-            self.frame.setLayout(self.h_box)
-
+            pass
         else:
+            self.do_nothing = [False] * len(file_paths)
 
-            self.h_box_images = QHBoxLayout()
-            self.h_box_images.setSpacing(10)
-            self.v_box_scans = QVBoxLayout()
+            self.file_paths = file_paths
+            self.setMinimumHeight(200)
 
-            for idx in range(min(max_scans, len(self.file_paths))):
-                frame_test = QFrame()
-                if not self.do_nothing[idx]:
-                    if len(self.img[idx].shape) == 3:
-                        nb_slices = self.img[idx].shape[2]
-                        txt = "Slice n°"
-                    elif len(self.img[idx].shape) == 4:
-                        nb_slices = self.img[idx].shape[3]
-                        txt = "Time n°"
-                    elif len(self.img[idx].shape) == 5:
-                        nb_slices = self.img[idx].shape[4]
-                        txt = "Study n°"
-                    else:
-                        nb_slices = 0
+            self.clearLayouts()
 
-                    for i in range(nb_slices):
-                        pixm = self.image_to_pixmap(self.img[idx], i)
+            self.frame = QFrame(self)
+            self.frame_final = QFrame(self)
+            max_scans = 4
 
-                        self.v_box = QVBoxLayout()
+            for idx, file_path in enumerate(self.file_paths):
+                self.img.insert(idx, nib.load(file_path))
 
-                        label = QLabel(self)
-                        label.setPixmap(pixm)
-                        label.setToolTip(os.path.basename(self.file_paths[idx]))
+            if self.check_box.checkState() == Qt.Unchecked:
 
-                        label_info = QLabel()
-                        label_info.setText(txt + str(i + 1))
-                        label_info.setAlignment(QtCore.Qt.AlignCenter)
+                self.h_box = QHBoxLayout()
 
-                        self.v_box.addWidget(label)
-                        self.v_box.addWidget(label_info)
+                for idx in range(min(max_scans, len(self.file_paths))):
+                    if not self.do_nothing[idx]:
 
-                        self.h_box_images.addLayout(self.v_box)
-                    self.v_box_scans.addLayout(self.h_box_images)
-            self.frame.setLayout(self.v_box_scans)
+                        self.boxSlider(idx)
+                        self.enableSliders(idx)
 
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidget(self.frame)
+                        sl1 = self.a1[idx].value()
+                        sl2 = self.a2[idx].value()
+                        sl3 = self.a3[idx].value()
 
-        self.h_box_check_box = QHBoxLayout()
-        self.h_box_check_box.addStretch(1)
-        self.h_box_check_box.addWidget(self.check_box)
+                        if (len(self.img[idx].shape) == 3):
+                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1].copy())
+                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                            self.a2[idx].setMaximum(0)
+                            self.a3[idx].setMaximum(0)
+                        if (len(self.img[idx].shape) == 4):
+                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2].copy())
+                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                            self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
+                            self.a3[idx].setMaximum(0)
+                        if (len(self.img[idx].shape) == 5):
+                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy())
+                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
+                            self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
+                            self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
 
-        self.v_box_final.addLayout(self.h_box_check_box)
-        self.v_box_final.addWidget(self.scroll_area)
+                        self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
+                        self.im_2D[idx] = np.uint8(
+                            (self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
+                        self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
+
+                    ############################
+                    self.displayPosValue(idx)
+
+                    w, h = self.im_2D[idx].shape
+
+                    im_Qt = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
+                    pixm = QPixmap.fromImage(im_Qt)
+
+                    self.imageLabel.insert(idx, QLabel(self))
+                    self.imageLabel[idx].setPixmap(pixm)
+                    self.imageLabel[idx].setToolTip(os.path.basename(self.file_paths[idx]))
+
+                    self.h_box_slider_1 = QHBoxLayout()
+                    self.h_box_slider_1.addWidget(self.txta1[idx])
+                    self.h_box_slider_1.addWidget(self.a1[idx])
+
+                    self.h_box_slider_2 = QHBoxLayout()
+                    self.h_box_slider_2.addWidget(self.txta2[idx])
+                    self.h_box_slider_2.addWidget(self.a2[idx])
+
+                    self.h_box_slider_3 = QHBoxLayout()
+                    self.h_box_slider_3.addWidget(self.txta3[idx])
+                    self.h_box_slider_3.addWidget(self.a3[idx])
+
+                    self.v_box_sliders = QVBoxLayout()
+                    self.v_box_sliders.addLayout(self.h_box_slider_1)
+                    self.v_box_sliders.addLayout(self.h_box_slider_2)
+                    self.v_box_sliders.addLayout(self.h_box_slider_3)
+
+                    # self.h_box = QHBoxLayout()
+                    self.h_box.addWidget(self.imageLabel[idx])
+                    self.h_box.addLayout(self.v_box_sliders)
+                    # self.h_box.addStretch(1)
+
+                # self.h_box.addStretch(1)
+                self.frame.setLayout(self.h_box)
+
+            else:
+
+                self.h_box_images = QHBoxLayout()
+                self.h_box_images.setSpacing(10)
+                self.v_box_scans = QVBoxLayout()
+
+                for idx in range(min(max_scans, len(self.file_paths))):
+                    frame_test = QFrame()
+                    if not self.do_nothing[idx]:
+                        if len(self.img[idx].shape) == 3:
+                            nb_slices = self.img[idx].shape[2]
+                            txt = "Slice n°"
+                        elif len(self.img[idx].shape) == 4:
+                            nb_slices = self.img[idx].shape[3]
+                            txt = "Time n°"
+                        elif len(self.img[idx].shape) == 5:
+                            nb_slices = self.img[idx].shape[4]
+                            txt = "Study n°"
+                        else:
+                            nb_slices = 0
+
+                        for i in range(nb_slices):
+                            pixm = self.image_to_pixmap(self.img[idx], i)
+
+                            self.v_box = QVBoxLayout()
+
+                            label = QLabel(self)
+                            label.setPixmap(pixm)
+                            label.setToolTip(os.path.basename(self.file_paths[idx]))
+
+                            label_info = QLabel()
+                            label_info.setText(txt + str(i + 1))
+                            label_info.setAlignment(QtCore.Qt.AlignCenter)
+
+                            self.v_box.addWidget(label)
+                            self.v_box.addWidget(label_info)
+
+                            self.h_box_images.addLayout(self.v_box)
+                        self.v_box_scans.addLayout(self.h_box_images)
+                self.frame.setLayout(self.v_box_scans)
+
+            self.scroll_area = QScrollArea()
+            self.scroll_area.setWidget(self.frame)
+
+            self.h_box_check_box = QHBoxLayout()
+            self.h_box_check_box.addStretch(1)
+            self.h_box_check_box.addWidget(self.check_box)
+
+            self.v_box_final.addLayout(self.h_box_check_box)
+            self.v_box_final.addWidget(self.scroll_area)
 
     def check_differences(self, file_paths):
         #TODO
