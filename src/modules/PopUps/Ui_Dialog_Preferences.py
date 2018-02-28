@@ -14,11 +14,11 @@ class Ui_Dialog_Preferences(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, project, main):
+    def __init__(self, main):
         super().__init__()
-        self.pop_up(project, main)
+        self.pop_up(main)
 
-    def pop_up(self, project, main):
+    def pop_up(self, main):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -93,7 +93,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.list_default_tags.addItems(self.default_tags)
         self.list_default_tags.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.handleItemClicked, self.list_default_tags))
-        self.list_default_tags.customContextMenuRequested.connect(partial(self.handleItemClicked, project))
+        self.list_default_tags.customContextMenuRequested.connect(self.handleItemClicked)
         self.tools_layout.addWidget(self.label_default_tags)
         self.tools_layout.addWidget(self.list_default_tags)
         self.tab_tools.setLayout(self.tools_layout)
@@ -101,7 +101,7 @@ class Ui_Dialog_Preferences(QDialog):
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, project, main))
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, main))
 
         # The 'Cancel' push button
         self.push_button_cancel = QtWidgets.QPushButton("Cancel")
@@ -119,7 +119,7 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.setLayout(vbox)
 
-    def ok_clicked(self, project, main):
+    def ok_clicked(self, main):
         config = Config()
         if self.save_checkbox.isChecked():
             config.setAutoSave("yes")
@@ -140,7 +140,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.accept()
         self.close()
 
-    def handleItemClicked(self, project, pos):
+    def handleItemClicked(self, pos):
         menu = QMenu(self)
         actionRemoveTag = menu.addAction("Remove tag")
         actionAddTag = menu.addAction("Add a new tag")
@@ -161,7 +161,7 @@ class Ui_Dialog_Preferences(QDialog):
                 self.list_default_tags.clear()
                 self.default_tags = config.getDefaultTags()
                 self.list_default_tags.addItems(self.default_tags)
-        project.refresh_tags()
+        #project.refresh_tags()
     def getText(self):
         text, okPressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
         if okPressed and text != '':

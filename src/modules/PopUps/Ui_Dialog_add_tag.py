@@ -11,12 +11,13 @@ class Ui_Dialog_add_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_add_tag = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, database):
         super().__init__()
+        self.database = database
         self.type = str
-        self.pop_up(project)
+        self.pop_up()
 
-    def pop_up(self, project):
+    def pop_up(self):
         self.setObjectName("Add a tag")
 
         # The 'OK' push button
@@ -120,7 +121,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.label_type.setText(_translate("Add a tag", "Tag type:"))
 
         # Connecting the OK push button
-        self.push_button_ok.clicked.connect(lambda: self.ok_action(project))
+        self.push_button_ok.clicked.connect(self.ok_action)
 
     def on_activated(self, text):
         if text == "String":
@@ -136,10 +137,10 @@ class Ui_Dialog_add_tag(QDialog):
             self.type = list
             self.info_label.setText('Please seperate each list item by a comma. No need to use brackets.')
 
-    def ok_action(self, project):
+    def ok_action(self):
         name_already_exists = False
-        for tag_name in project.getAllTagsNames():
-            if tag_name == self.text_edit_tag_name.text():
+        for tag in self.database.getTags():
+            if tag.tag == self.text_edit_tag_name.text():
                 name_already_exists = True
         if (self.text_edit_tag_name.text() == ""):
             msg = QMessageBox()

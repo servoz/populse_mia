@@ -83,6 +83,11 @@ class DataBase:
         # TODO return error if len(tags) != 1
         return tags[0].origin
 
+    def getTagVisibility(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].visible
+
     def getTagType(self, tag):
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1

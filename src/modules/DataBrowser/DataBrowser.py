@@ -93,13 +93,13 @@ class DataBrowser(QWidget):
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
-        self.add_tag_action.triggered.connect(lambda: self.add_tag_pop_up(project))
+        self.add_tag_action.triggered.connect(self.add_tag_pop_up)
 
         self.clone_tag_action = QAction("Clone tag", self)
-        self.clone_tag_action.triggered.connect(lambda: self.clone_tag_pop_up(project))
+        self.clone_tag_action.triggered.connect(self.clone_tag_pop_up)
 
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
-        self.remove_tag_action.triggered.connect(lambda: self.remove_tag_pop_up(project))
+        self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
     def visualized_tags_pop_up(self, database):
         self.pop_up = Ui_Dialog_Settings(database)
@@ -160,13 +160,15 @@ class DataBrowser(QWidget):
                 for tag in self.database.getValuesGivenScan(scan.scan):
                     if scan.scan in return_list:
                         break
-                    if tag.tag in self.database.getVisualizedTags():
+                    if self.database.getTagVisibility(tag.tag):
                         i = 0
                         for element in split_list:
-                            if element.upper() in str(tag.value[0]).upper():
+                            print("element.upper() = " + element.upper())
+                            print("str(tag.currentValue[0]).upper() = " + str(tag.current_value[0]).upper())
+                            if element.upper() in str(tag.current_value[0]).upper():
                                 i += 1
                         if i == len(split_list):
-                            return_list.append(scan.file_path)
+                            return_list.append(scan.scan)
         else:
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
@@ -216,7 +218,7 @@ class DataBrowser(QWidget):
 
     def add_tag_pop_up(self):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
-        self.pop_up_add_tag = Ui_Dialog_add_tag(project)
+        self.pop_up_add_tag = Ui_Dialog_add_tag(self.database)
         self.pop_up_add_tag.show()
 
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
@@ -228,13 +230,13 @@ class DataBrowser(QWidget):
             else:
                 list_to_add = utils.text_to_list(new_default_value)
 
-            new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
+            #new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
 
 
             # Updating the data base
-            project.add_user_tag(new_tag_name, list_to_add)
-            project.add_tag(new_tag)
-            project.tags_to_visualize.append(new_tag_name)
+            #project.add_user_tag(new_tag_name, list_to_add)
+            #project.add_tag(new_tag)
+            #project.tags_to_visualize.append(new_tag_name)
 
             # Database
             real_type = ""
@@ -247,24 +249,24 @@ class DataBrowser(QWidget):
             if (type == list):
                 real_type = TAG_TYPE_LIST
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
-            for scan in project._get_scans():
-                self.database.addValue(scan.file_path, new_tag_name, new_default_value)
+            for scan in self.database.getScans():
+                self.database.addValue(scan.scan, new_tag_name, new_default_value)
             self.database.saveModifications()
 
             # Updating the table
-            self.table_data.update_table(project)
+            self.table_data.update_table()
 
     def clone_tag_pop_up(self):
         # Ui_Dialog_clone_tag() is defined in pop_ups.py
-        self.pop_up_clone_tag = Ui_Dialog_clone_tag(project)
+        self.pop_up_clone_tag = Ui_Dialog_clone_tag()
         self.pop_up_clone_tag.show()
 
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
             (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
 
             # Updating the data base
-            project.clone_tag(tag_to_clone, new_tag_name)
-            project.tags_to_visualize.append(new_tag_name)
+            #project.clone_tag(tag_to_clone, new_tag_name)
+            #project.tags_to_visualize.append(new_tag_name)
 
             # Updating the table
             self.table_data.update_table(project)
@@ -278,15 +280,15 @@ class DataBrowser(QWidget):
             tag_names_to_remove = self.pop_up_clone_tag.get_values()
 
             #PROJECT
-            for tag_name in tag_names_to_remove:
-                project.remove_tag_by_name(tag_name)
+            #for tag_name in tag_names_to_remove:
+                #project.remove_tag_by_name(tag_name)
 
             #DATABASE
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
             self.database.saveModifications()
 
-            self.table_data.update_table(project)
+            self.table_data.update_table()
 
 
 class TableDataBrowser(QTableWidget):
@@ -522,30 +524,30 @@ class TableDataBrowser(QTableWidget):
         if action == action_reset_cell:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.reset_cell(project))
+            msg.buttonClicked.connect(self.reset_cell)
             msg.exec()
-            self.reset_cell(project)
+            self.reset_cell()
         elif action == action_reset_column:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.reset_column(project))
+            msg.buttonClicked.connect(self.reset_column)
             msg.exec()
         elif action == action_reset_row:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.reset_row(project))
+            msg.buttonClicked.connect(self.reset_row)
             msg.exec()
         elif action == action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(lambda: self.remove_scan(project))
+            msg.buttonClicked.connect(self.remove_scan)
             msg.exec()
         elif action == action_sort_column:
-            self.sort_column(project)
+            self.sort_column()
         elif action == action_sort_column_descending:
-            self.sort_column_descending(project)
+            self.sort_column_descending()
         elif action == action_visualized_tags:
-            self.visualized_tags_pop_up(project)
+            self.visualized_tags_pop_up()
         elif action == action_select_column:
             self.selectAllColumns()
 
@@ -723,14 +725,14 @@ class TableDataBrowser(QTableWidget):
             project.add_sort_tag(tag_name)
 
     def visualized_tags_pop_up(self):
-        self.pop_up = Ui_Dialog_Settings(project, self.database)
+        self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.update_table(project)
+            self.update_table()
 
     def change_cell_color(self, item_origin):
         """

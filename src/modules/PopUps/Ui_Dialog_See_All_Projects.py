@@ -74,7 +74,7 @@ class Ui_Dialog_See_All_Projects(QDialog):
 
     def checkState(self, path, text):
         """ Checks if the project still exists and returns the corresponding icon """
-        if os.path.isfile(os.path.join(path, text, text + ".json")):
+        if os.path.exists(os.path.join(path)):
             icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
         else:
             icon = QIcon(os.path.join('..', 'sources_images', 'red_cross.png'))

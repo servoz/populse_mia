@@ -41,7 +41,7 @@ def createProject(name, path, parent_folder):
     if not os.path.exists(new_path):
         project_parent_folder = os.makedirs(new_path)
         data_folder = os.makedirs(os.path.join(new_path, 'data'))
-        project_folder = os.makedirs(os.path.join(new_path, name))
+        #project_folder = os.makedirs(os.path.join(new_path, name))
         project_path = os.path.join(new_path, name)
         raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
         derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))

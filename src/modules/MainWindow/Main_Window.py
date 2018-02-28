@@ -348,6 +348,7 @@ class Main_Window(QMainWindow):
                 #DATABASE
                 self.database = DataBase(self.exPopup.relative_path, True)
                 self.data_browser.update_database(self.database)
+                self.data_browser.table_data.update_table()
 
                 if self.database.isTempProject:
                     self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
@@ -410,7 +411,7 @@ class Main_Window(QMainWindow):
             relative_path = os.path.relpath(file_name)
 
             # If the file exists
-            if os.path.exists(os.path.join(relative_path, name, name + '.json')):
+            if os.path.exists(os.path.join(relative_path)):
 
                 if (self.check_unsaved_modifications() == 1):
                     self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
@@ -468,7 +469,7 @@ class Main_Window(QMainWindow):
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
-            problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
+            problem_list = controller.verify_scans(self.database, self.exPopup.relative_path)
             if problem_list != []:
                 str_msg = ""
                 for element in problem_list:
@@ -484,21 +485,21 @@ class Main_Window(QMainWindow):
 
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
-        self.pop_up_settings = Ui_Dialog_Settings(self.project, self.database)
+        self.pop_up_settings = Ui_Dialog_Settings(self.database)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project)
+            self.data_browser.table_data.update_table()
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """
-        self.pop_up_preferences = Ui_Dialog_Preferences(self.project, self)
+        self.pop_up_preferences = Ui_Dialog_Preferences(self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table(self.project)
+            self.data_browser.table_data.update_table()
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
