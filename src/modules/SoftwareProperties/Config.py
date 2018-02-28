@@ -32,7 +32,7 @@ class Config:
     
     def getPathToProjectsDBFile(self):
         folder = self.getPathToProjectsFolder()
-        return path.join(folder,'projects.json')
+        return os.path.join(folder,'projects.json')
     
     def setPathToData(self,path):
         if(path is not None and path != ''):

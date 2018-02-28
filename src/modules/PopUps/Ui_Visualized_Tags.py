@@ -14,11 +14,11 @@ class Ui_Visualized_Tags(QWidget):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, database):
         super().__init__()
-        self.retranslate_Ui(project)
+        self.retranslate_Ui(database)
 
-    def retranslate_Ui(self, project):
+    def retranslate_Ui(self, database):
         _translate = QtCore.QCoreApplication.translate
 
         # Two buttons to select or unselect tags
@@ -47,7 +47,7 @@ class Ui_Visualized_Tags(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, project))
+        self.search_bar.textChanged.connect(partial(self.search_str, database))
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
@@ -74,33 +74,33 @@ class Ui_Visualized_Tags(QWidget):
 
         self.setLayout(hbox_tags)
 
-        for tag_name in project.tags_to_visualize:
+        for tag in database.getVisualizedTags():
             item = QtWidgets.QListWidgetItem()
             self.list_widget_selected_tags.addItem(item)
-            item.setText(tag_name)
+            item.setText(tag.tag)
 
-        for tag_name in project.getAllTagsNames():
+        for tag in database.getTags():
             item = QtWidgets.QListWidgetItem()
-            if tag_name not in project.tags_to_visualize:
+            if tag.visible == False:
                 self.list_widget_tags.addItem(item)
-                item.setText(tag_name)
+                item.setText(tag.tag)
 
-    def search_str(self, project, str_search):
+    def search_str(self, database, str_search):
         return_list = []
         if str_search != "":
-            for tag_name in project.getAllTagsNames():
-                if str_search.upper() in tag_name.upper():
-                    if tag_name not in project.tags_to_visualize:
-                        return_list.append(tag_name)
+            for tag in database.getTags():
+                if str_search.upper() in tag.tag.upper():
+                    if tag.visible == False:
+                        return_list.append(tag.tag)
         else:
-            for tag_name in project.getAllTagsNames():
-                if tag_name not in project.tags_to_visualize:
-                    return_list.append(tag_name)
+            for tag in database.getTags():
+                if tag.visible == False:
+                    return_list.append(tag.name)
         self.list_widget_tags.clear()
-        for tag_name in return_list:
+        for tag in return_list:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
-            item.setText(tag_name)
+            item.setText(tag.tag)
 
     def click_select_tag(self):
         # Put the selected tags in the "selected tag" table

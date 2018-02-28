@@ -11,10 +11,10 @@ from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
     QMainWindow, QDialog, QMessageBox, QMenu
 from SoftwareProperties.SavedProjects import SavedProjects
+from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from NodeEditor.PipeLine_Irmage import ProjectEditor
-from ProjectManager.models import *
 from PopUps.Ui_Dialog_New_Project import Ui_Dialog_New_Project
 from PopUps.Ui_Dialog_Open_Project import Ui_Dialog_Open_Project
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
@@ -42,12 +42,11 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self, project, database):
+    def __init__(self, database):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
-        self.project = project
         self.database = database
 
         ############### initial setting ############################################################
@@ -179,7 +178,7 @@ class Main_Window(QMainWindow):
         if (self.database.isTempProject):
             self.save_project_as()
         else:
-            controller.save_project(self.project, self.database)
+            controller.save_project(self.database)
 
     def check_unsaved_modifications(self):
         """ Check if there are differences between the current project and the data base
@@ -189,13 +188,13 @@ class Main_Window(QMainWindow):
         """
 
         # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
-        if (self.database.isTempProject and len(self.project._get_scans()) > 0):
+        if (self.database.isTempProject and len(self.database.getScans()) > 0):
             return 1
         if (self.database.isTempProject):
             return 0
         project_path = os.path.join(self.database.folder, self.database.getName())
         file_path = os.path.join(project_path, self.database.getName())
-        with open(file_path + ".json", "r", encoding="utf-8")as fichier:
+        """with open(file_path + ".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
             # Check folder, name and date removed
             if not (self.project.tags_to_visualize == project.tags_to_visualize):
@@ -219,7 +218,7 @@ class Main_Window(QMainWindow):
                             return 1
                         break
                 if scanFound == 0:
-                    return 1
+                    return 1"""
         return 0
 
     @pyqtSlot()
@@ -235,10 +234,10 @@ class Main_Window(QMainWindow):
         path = os.path.join(self.exPopup.path, name)
         self.project = controller.open_project(name, path) # TODO remove once it's useless
 
-        for file in self.project._get_scans(): # TODO read scans from database
+        """for file in self.project._get_scans():
             for n_tag in file._get_tags():
                 if n_tag.origin == 'custom' and n_tag.name not in self.project.tags_to_visualize:
-                    self.project.tags_to_visualize.append(n_tag.name)
+                    self.project.tags_to_visualize.append(n_tag.name)"""
 
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
@@ -262,7 +261,7 @@ class Main_Window(QMainWindow):
         self.textInfo.resize(500, 40)
         self.textInfo.setText('Welcome to Irmage')
 
-        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self.database)
+        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.database)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer(self.textInfo)
@@ -309,7 +308,7 @@ class Main_Window(QMainWindow):
             self.data_browser.update_database(self.database)
 
             project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
-            utils.saveProjectAsJsonFile(project_path, self.project)
+            #utils.saveProjectAsJsonFile(project_path, self.project)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
@@ -377,7 +376,7 @@ class Main_Window(QMainWindow):
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
 
-                problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
+                problem_list = controller.verify_scans(self.database, self.exPopup.relative_path)
                 if problem_list != []:
                     str_msg = ""
                     for element in problem_list:
@@ -511,13 +510,13 @@ class Main_Window(QMainWindow):
                          'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
 
-        controller.read_log(self.project, self.database)
+        controller.read_log(self.database)
 
         scan_names_list = []
-        for scan in self.project._get_scans():
-            scan_names_list.append(scan.file_path)
+        for scan in self.database.getScans():
+            scan_names_list.append(scan.scan)
 
         self.data_browser.table_data.scans_to_visualize = scan_names_list
-        self.data_browser.table_data.update_table(self.project)
+        self.data_browser.table_data.update_table()
 
 

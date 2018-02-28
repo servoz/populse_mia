@@ -4,20 +4,15 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
-from ProjectManager.models import *
 from DataBase.DataBase import DataBase
-from DataBase.DataBaseModel import createDatabase
-import os
-import shutil
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    project = Project()
     database = DataBase(None, True)
 
-    imageViewer = Main_Window(project, database)
+    imageViewer = Main_Window(database)
     imageViewer.show()
 
     sys.exit(app.exec_())

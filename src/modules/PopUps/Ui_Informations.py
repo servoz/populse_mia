@@ -11,11 +11,11 @@ class Ui_Informations(QWidget):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, project, database):
+    def __init__(self, database):
         super().__init__()
-        self.retranslate_Ui(project, database)
+        self.retranslate_Ui(database)
 
-    def retranslate_Ui(self, project, database):
+    def retranslate_Ui(self, database):
         _translate = QtCore.QCoreApplication.translate
 
         name_label = QLabel("Name: ")

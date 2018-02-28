@@ -1,79 +1,15 @@
-import json
-from ProjectManager.models import serializer
-from os import path as os_path
-
-def getFilePathWithoutExtension(filepath, path):
-    return filepath[len(path):filepath.rfind('.')]
-
-
-def substractLists(listA,listB):
-    """
-
-    :param listA: a list
-    :param listB: a list
-    :return: a list of the elements that are in listA and not in listB
-    """
-    return list(set(listA) - set(listB))
-
-
-def createJsonFile(path, name):
-    open(path+name+'.json', 'w')
-    return name+'.json'
-
-
-def saveProjectAsJsonFile(name, project):
-
-    with open(name+'.json', 'w') as f:
-        f.write(json.dumps(project, default=serializer))
-
-
-def findPath(name_file):
-    return (os_path.abspath(os_path.split(name_file)[0]))
-
-
-def remove_accents(txt):
-    ch1 = u"àáâãäåæçéèêëîïìíòóôõöøœùúûüÿýñšðÞÀÁÂÃÄÅÆÇÉÈÊËÎÏÌÍÔÒÓÕÖØŒÙÚÛÜŸÝÑŠÐþß¢¥£$"
-    ch2 = u"aaaaaaeceeeeiiiiooooooeuuuuyynsopAAAAAAECEEEEIIIIOOOOOOEUUUUYYNSDpScYES"
-    s = ""
-    for c in txt:
-        i = ch1.find(c)
-        if i >= 0:
-            s += ch2[i]
-        else:
-            s += c
-    return s
-
-
-def check_tag_value(tag, which_value):
+def check_tag_value(tag):
     txt = ""
-    if which_value == 'value':
-        if len(tag.value) == 1:
-            txt = str(tag.value[0])
-        else:
-            for idx, item in enumerate(tag.value):
-                if isinstance(item, list):
-                    txt += str(item[0])
-                else:
-                    txt += str(item)
-                if idx < len(tag.value) - 1:
-                    txt += ", "
-
-    elif which_value == 'original_value':
-        if len(tag.original_value) == 1:
-            txt = str(tag.original_value[0])
-        else:
-            for idx, item in enumerate(tag.original_value):
-                if isinstance(item, list):
-                    txt += str(item[0])
-                else:
-                    txt += str(item)
-                if idx < len(tag.value) - 1:
-                    txt += ", "
-
+    if len(tag) == 1:
+        txt = str(tag[0])
     else:
-        print("which_value has to be 'value' or 'original_value'")
-        txt = 'error'
-
+        for idx, item in enumerate(tag):
+            if isinstance(item, list):
+                txt += str(item[0])
+            else:
+                txt += str(item)
+            if idx < len(tag) - 1: # < len(current_value)
+                txt += ", "
     return txt
 
 

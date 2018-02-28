@@ -61,6 +61,10 @@ class DataBase:
         values = self.session.query(Value).filter(Value.tag == tag).all()
         return values
 
+    def getValuesGivenScan(self, scan):
+        values = self.session.query(Value).filter(Value.scan == scan).all()
+        return values
+
     def getValue(self, scan, tag):
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         # TODO return error if len(values) != 1
