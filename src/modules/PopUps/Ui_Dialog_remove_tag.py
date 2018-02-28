@@ -81,13 +81,13 @@ class Ui_Dialog_remove_tag(QDialog):
 
         if str_search != "":
             return_list = []
-            for tag in self.database.getTags():
+            for tag in self.database.getUserTags():
                 tag_name = tag.tag
                 if str_search.upper() in tag_name.upper():
                     return_list.append(tag_name)
         else:
             return_list = []
-            for tag in self.database.getTags():
+            for tag in self.database.getUserTags():
                 tag_name = tag.tag
                 return_list.append(tag_name)
         self.list_widget_tags.clear()
