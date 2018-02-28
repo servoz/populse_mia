@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon
+from PyQt5.QtGui import QColor, QImage, QPixmap, QIcon, QFont
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox, QSlider, QLineEdit, QSizePolicy, QCheckBox, QPushButton
 import os
@@ -896,7 +896,7 @@ class MiniViewer(QWidget):
 
             self.frame = QFrame(self)
             self.frame_final = QFrame(self)
-            max_scans = 4
+            max_scans = 5
 
             for idx, file_path in enumerate(self.file_paths):
                 self.img.insert(idx, nib.load(file_path))
@@ -1116,9 +1116,7 @@ class MiniViewer(QWidget):
     def createSlider(self,maxm=0,minm=0,pos=0):
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
-        #slider.setTickPosition(QSlider.TicksBothSides)
         slider.setTickInterval(1)
-        #slider.setSingleStep(1)
         slider.setMaximum(maxm)
         slider.setMinimum(minm)
         slider.setValue(pos)
@@ -1153,7 +1151,12 @@ class MiniViewer(QWidget):
     def createFieldValue(self):
         fieldValue = QLineEdit()
         fieldValue.setEnabled(False)
-        fieldValue.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
+        fieldValue.setFixedWidth(50)
+        fieldValue.setAlignment(Qt.AlignCenter)
+        fieldValue.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        font = QFont()
+        font.setPointSize(9)
+        fieldValue.setFont(font)
         return fieldValue
 
     def changePosValue(self, idx):
