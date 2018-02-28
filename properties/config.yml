@@ -11,4 +11,4 @@ paths:
   projects: ..\data
 show_all_slices: 'no'
 text_color: ''
-max_nb_slices:'100'
+max_nb_slices: '100'
