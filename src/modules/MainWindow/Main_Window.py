@@ -348,37 +348,48 @@ class Main_Window(QMainWindow):
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
-        self.exPopup = Ui_Dialog_Open_Project()
-        self.exPopup.signal_create_project.connect(self.modify_ui)
-        if self.exPopup.exec_() == QDialog.Accepted:
-            file_name = self.exPopup.selectedFiles()
-            self.exPopup.retranslateUi(file_name)
-            file_name = self.exPopup.relative_path
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-            self.update_recent_projects_actions()
 
-            problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
-            if problem_list != []:
-                str_msg = ""
-                for element in problem_list:
-                    str_msg += element + "\n\n"
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("These files have been modified since they have been converted for the first time:")
-                msg.setInformativeText(str_msg)
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
+        if (self.check_unsaved_modifications() == 1):
+            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
 
-            #DATABASE
-            self.database = DataBase(self.exPopup.relative_path, False)
-            self.data_browser.update_database(self.database)
+        else:
+            can_switch = True
+        if can_switch:
+            self.exPopup = Ui_Dialog_Open_Project()
+            self.exPopup.signal_create_project.connect(self.modify_ui)
+            if self.exPopup.exec_() == QDialog.Accepted:
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.retranslateUi(file_name)
+                file_name = self.exPopup.relative_path
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                self.update_recent_projects_actions()
 
-            if self.database.isTempProject:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-            else:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+                problem_list = controller.verify_scans(self.project, self.database, self.exPopup.relative_path)
+                if problem_list != []:
+                    str_msg = ""
+                    for element in problem_list:
+                        str_msg += element + "\n\n"
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("These files have been modified since they have been converted for the first time:")
+                    msg.setInformativeText(str_msg)
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+
+                # DATABASE
+                self.database = DataBase(self.exPopup.relative_path, False)
+                self.data_browser.update_database(self.database)
+
+                if self.database.isTempProject:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                else:
+                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -391,23 +402,34 @@ class Main_Window(QMainWindow):
 
             # If the file exists
             if os.path.exists(os.path.join(relative_path, name, name + '.json')):
-                controller.open_project(name, relative_path)
 
-                #DATABASE
-                self.database = DataBase(relative_path, False)
-                self.data_browser.update_database(self.database)
+                if (self.check_unsaved_modifications() == 1):
+                    self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
+                    self.pop_up_close.save_as_signal.connect(self.saveChoice)
+                    self.pop_up_close.exec()
+                    can_switch = self.pop_up_close.can_exit()
 
-                if self.database.isTempProject:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
                 else:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+                    can_switch = True
+                if can_switch:
 
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                self.update_recent_projects_actions()
-                self.exPopup = Ui_Dialog_New_Project()
-                self.exPopup.path = path
-                self.exPopup.name = name
-                self.modify_ui()
+                    controller.open_project(name, relative_path)
+
+                    #DATABASE
+                    self.database = DataBase(relative_path, False)
+                    self.data_browser.update_database(self.database)
+
+                    if self.database.isTempProject:
+                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                    else:
+                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+
+                    self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                    self.update_recent_projects_actions()
+                    self.exPopup = Ui_Dialog_New_Project()
+                    self.exPopup.path = path
+                    self.exPopup.name = name
+                    self.modify_ui()
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)

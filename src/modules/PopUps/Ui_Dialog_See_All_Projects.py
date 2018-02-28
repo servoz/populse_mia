@@ -5,6 +5,7 @@ from PyQt5.QtGui import QIcon
 import os
 from ProjectManager import controller
 from DataBase.DataBase import DataBase
+from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 
 class Ui_Dialog_See_All_Projects(QDialog):
     """
@@ -108,18 +109,29 @@ class Ui_Dialog_See_All_Projects(QDialog):
 
             # If the file exists
             if os.path.exists(os.path.join(self.relative_path, self.name, self.name + '.json')):
-                controller.open_project(self.name, self.relative_path)
 
-                # DATABASE
-                self.mainWindow.database = DataBase(self.relative_path, False)
-                self.mainWindow.data_browser.update_database(self.mainWindow.database)
+                if (self.mainWindow.check_unsaved_modifications() == 1):
+                    self.mainWindow.pop_up_close = Ui_Dialog_Quit(self.mainWindow.database.getName())
+                    self.mainWindow.pop_up_close.save_as_signal.connect(self.mainWindow.saveChoice)
+                    self.mainWindow.pop_up_close.exec()
+                    can_switch = self.mainWindow.pop_up_close.can_exit()
 
-                if self.mainWindow.database.isTempProject:
-                    self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
                 else:
-                    self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.mainWindow.database.getName())
+                    can_switch = True
+                if can_switch:
 
-                self.accept()
-                self.close()
-                # A signal is emitted to tell that the project has been created
-                self.signal_create_project.emit()
+                    controller.open_project(self.name, self.relative_path)
+
+                    # DATABASE
+                    self.mainWindow.database = DataBase(self.relative_path, False)
+                    self.mainWindow.data_browser.update_database(self.mainWindow.database)
+
+                    if self.mainWindow.database.isTempProject:
+                        self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                    else:
+                        self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.mainWindow.database.getName())
+
+                    self.accept()
+                    self.close()
+                    # A signal is emitted to tell that the project has been created
+                    self.signal_create_project.emit()
