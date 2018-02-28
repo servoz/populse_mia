@@ -5,7 +5,7 @@ import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
+from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
 
 class DataBase:
 
@@ -69,6 +69,10 @@ class DataBase:
         tags = self.session.query(Tag).filter(Tag.visible == True).all()
         return tags
 
+    def getUserTags(self):
+        tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
+        return tags
+
     def setTagVisibility(self, name, visibility):
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
         # TODO return error if len(tags) != 1
@@ -99,6 +103,14 @@ class DataBase:
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
         # TODO return error if len(scans) != 1
         self.session.delete(scans[0])
+
+    def removeTag(self, tag):
+        values = self.session.query(Value).filter(Value.tag == tag).all()
+        for value in values:
+            self.session.delete(value)
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        self.session.delete(tags[0])
 
     def saveModifications(self):
         self.session.commit()

@@ -247,14 +247,20 @@ class DataBrowser(QWidget):
 
     def remove_tag_pop_up(self, project):
         # Ui_Dialog_remove_tag() is defined in pop_ups.py
-        self.pop_up_clone_tag = Ui_Dialog_remove_tag(project)
+        self.pop_up_clone_tag = Ui_Dialog_remove_tag(project, self.database)
         self.pop_up_clone_tag.show()
 
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
             tag_names_to_remove = self.pop_up_clone_tag.get_values()
 
+            #PROJECT
             for tag_name in tag_names_to_remove:
                 project.remove_tag_by_name(tag_name)
+
+            #DATABASE
+            for tag in tag_names_to_remove:
+                self.database.removeTag(tag)
+            self.database.saveModifications()
 
             self.table_data.update_table(project)
 

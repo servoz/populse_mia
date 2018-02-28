@@ -11,9 +11,10 @@ class Ui_Dialog_remove_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_remove_tag = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, project, database):
         super().__init__()
         self.project = project
+        self.database = database
         self.pop_up()
 
     def pop_up(self):
@@ -58,11 +59,18 @@ class Ui_Dialog_remove_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag in self.project.user_tags:
+        #DATABASE
+        for tag in self.database.getUserTags():
+            item = QtWidgets.QListWidgetItem()
+            self.list_widget_tags.addItem(item)
+            item.setText(_translate("Dialog", tag.tag))
+
+        #PROJECT
+        """for tag in self.project.user_tags:
             tag_name = tag['name']
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
-            item.setText(_translate("Dialog", tag_name))
+            item.setText(_translate("Dialog", tag_name))"""
 
         self.setLayout(vbox)
 
@@ -90,6 +98,7 @@ class Ui_Dialog_remove_tag(QDialog):
             item.setText(_translate("Dialog", tag_name))
 
     def ok_action(self):
+
         self.accept()
         self.close()
 
