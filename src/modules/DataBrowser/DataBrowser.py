@@ -213,7 +213,7 @@ class DataBrowser(QWidget):
                 if not full_name in full_names:
                     full_names.append(full_name)
 
-            self.viewer.show_slices(full_names)
+            self.viewer.verify_slices(full_names)
 
     def add_tag_pop_up(self, project):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
@@ -866,7 +866,17 @@ class MiniViewer(QWidget):
             self.config.setShowAllSlices('yes')
         elif self.check_box.checkState() == Qt.Unchecked:
             self.config.setShowAllSlices('no')
-        self.show_slices(self.file_paths)
+        self.verify_slices(self.file_paths)
+
+    def verify_slices(self, file_paths):
+        """ For a multi-selection of scans, the 'Show all slices' check box cannot be checked. """
+        if len(file_paths) > 1:
+            self.config.setShowAllSlices('no')
+            self.check_box.setCheckState(Qt.Unchecked)
+            self.check_box.setCheckable(False)
+        else:
+            self.check_box.setCheckable(True)
+        self.show_slices(file_paths)
 
     def show_slices(self, file_paths):
 
