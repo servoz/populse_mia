@@ -886,8 +886,7 @@ class MiniViewer(QWidget):
 
             self.frame = QFrame(self)
             self.frame_final = QFrame(self)
-            max_scans = 10
-            # self.img = []
+            max_scans = 4
 
             for idx, file_path in enumerate(self.file_paths):
                 self.img.insert(idx, nib.load(file_path))
