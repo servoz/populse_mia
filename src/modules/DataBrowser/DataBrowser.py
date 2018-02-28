@@ -320,16 +320,16 @@ class TableDataBrowser(QTableWidget):
             self.itemChanged.disconnect()
 
         # DATABASE
-        #self.nb_columns = len(database.getVisualizedTags())
+        self.nb_columns = len(self.database.getVisualizedTags())
 
         # PROJECT
-        self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
+        #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
         # DATABASE
-        #self.nb_rows = len(database.getScans())
+        self.nb_rows = len(self.database.getScans())
 
         # PROJECT
-        self.nb_rows = len(self.scans_to_visualize)
+        #self.nb_rows = len(self.scans_to_visualize)
 
         self.setRowCount(self.nb_rows)
 
@@ -361,20 +361,20 @@ class TableDataBrowser(QTableWidget):
 
         nb = 0
         # PROJECT
-        for element in project.tags_to_visualize:
+        #for element in project.tags_to_visualize:
         # DATABASE
-        #for element in database.getVisualizedTags():
+        for element in self.database.getVisualizedTags():
             # PROJECT
-            element = str(element)
+            #element = str(element)
             # DATABASE
-            #element = element.tag
+            element = element.tag
             item = self.horizontalHeaderItem(nb)
             # PROJECT
-            if element == project.sort_tags[0]:
+            """if element == project.sort_tags[0]:
                 if project.sort_order == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
                 else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))"""
             item.setText(_translate("MainWindow", element))
             item.setToolTip("Description to add")
             self.setHorizontalHeaderItem(nb, item)
@@ -385,18 +385,30 @@ class TableDataBrowser(QTableWidget):
         # Loop on the scans
 
         # DATABASE
-        """nb = 0
-        while nb < len(self.horizontalHeader()):
-            item = self.horizontalHeaderItem(nb)
+        column = 0
+        while column < len(self.horizontalHeader()):
+            item = self.horizontalHeaderItem(column)
             current_tag = item.text()
-            nb2 = 0
-            for values in database.getValuesGivenTag(current_tag):
-                item = self.item(nb2, nb)
+            row = 0
+            for values in self.database.getValuesGivenTag(current_tag):
+                item = QTableWidgetItem()
                 item.setText(values.current_value)
-                nb2 += 1
-            nb += 1"""
+                # FileName not editable
+                if current_tag == "FileName":
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                # User tag
+                if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
+                    color = QColor()
+                    if y % 2 == 1:
+                        color.setRgb(255, 240, 240)
+                    else:
+                        color.setRgb(255, 225, 225)
+                    item.setData(Qt.BackgroundRole, QVariant(color))
+                self.setItem(row, column, item)
+                row += 1
+            column += 1
 
-        for file in project._get_scans():
+        """for file in project._get_scans():
         
             if file.file_path in self.scans_to_visualize:
             
@@ -445,7 +457,7 @@ class TableDataBrowser(QTableWidget):
                         a = str('NaN')
                         item = QTableWidgetItem()
                         item.setText(a)
-                        self.setItem(y, i, item)
+                        self.setItem(y, i, item)"""
 
 
         ######
@@ -638,9 +650,9 @@ class TableDataBrowser(QTableWidget):
         for point in points:
             row = point.row()
             scan_path = self.item(row, 0).text()
-            for scan in project._get_scans():
+            """for scan in project._get_scans():
                 if scan_path == scan.file_path:
-                    project.remove_scan(scan_path)
+                    project.remove_scan(scan_path)"""
             self.scans_to_visualize.remove(scan_path)
             self.database.removeScan(scan_path)
         self.database.saveModifications()
@@ -706,7 +718,8 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
         text_value = item_origin.text()
-        is_error = False
+
+        """is_error = False
         for item in self.selectedItems():
             if is_error:
                 break
@@ -721,10 +734,11 @@ class TableDataBrowser(QTableWidget):
                     for tag in scan.getAllTags():
                         if tag_name == tag.name:
                             tp = type(tag.original_value[0])
+
             try:
-                """# TODO: THIS HAVE TO BE IMPROVE (CHECK EACH VALUE OF THE WRITTEN LIST)
+                # TODO: THIS HAVE TO BE IMPROVE (CHECK EACH VALUE OF THE WRITTEN LIST)
                 if tp == list and (text_value[0] != '[' or text_value[-1] != ']'):
-                    is_error = True"""
+                    is_error = True
                 test = tp(text_value)
 
             except ValueError:
@@ -738,13 +752,38 @@ class TableDataBrowser(QTableWidget):
             # Resetting the cells
             self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, project, items))
             self.pop_up_type.exec()
-        else:
+        else:"""
+        if True:
             for item in self.selectedItems():
                 row = item.row()
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
-                for scan in project._get_scans():
+
+                color = QColor()
+                #User tag
+                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_USER):
+                    if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
+                        if row % 2 == 1:
+                            color.setRgb(240, 240, 255)
+                        else:
+                            color.setRgb(225, 225, 255)
+                    else:
+                        if row % 2 == 1:
+                            color.setRgb(255, 255, 255)
+                        else:
+                            color.setRgb(250, 250, 250)
+                else:
+                    if row % 2 == 1:
+                        color.setRgb(255, 240, 240)
+                    else:
+                        color.setRgb(255, 225, 225)
+
+                item.setData(Qt.BackgroundRole, QVariant(color))
+                item.setText(text_value)
+                self.database.setTagValue(scan_path, tag_name, text_value)
+
+                """for scan in project._get_scans():
                     if scan_path == scan.file_path:
                         for tag in scan.getAllTags():
                             if tag_name == tag.name:
@@ -772,10 +811,6 @@ class TableDataBrowser(QTableWidget):
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                                 item.setText(text_value)
 
-                                #DATABASE
-                                self.database.setTagValue(scan_path, tag_name, text_value)
-                                self.database.saveModifications()
-
                                 tag_origin = tag.origin
                                 tag_replace = tag.replace
                                 if tp == list:
@@ -783,8 +818,9 @@ class TableDataBrowser(QTableWidget):
                                 else:
                                     tag_value_to_add = utils.text_to_tag_value(text_value, tag)
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
-                                scan.replaceTag(new_tag, tag_name, str(tag_origin))
+                                scan.replaceTag(new_tag, tag_name, str(tag_origin))"""
 
+        self.database.saveModifications()
         self.itemChanged.connect(partial(self.change_cell_color, project))
 
         #Auto-save

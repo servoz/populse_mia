@@ -61,6 +61,11 @@ class DataBase:
         values = self.session.query(Value).filter(Value.tag == tag).all()
         return values
 
+    def getValue(self, scan, tag):
+        values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
+        # TODO return error if len(values) != 1
+        return values[0]
+
     def getTags(self):
         tags = self.session.query(Tag).filter().all()
         return tags
@@ -68,6 +73,16 @@ class DataBase:
     def getVisualizedTags(self):
         tags = self.session.query(Tag).filter(Tag.visible == True).all()
         return tags
+
+    def getTagOrigin(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].origin
+
+    def getTagType(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].type
 
     def getUserTags(self):
         tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
