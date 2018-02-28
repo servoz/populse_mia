@@ -84,3 +84,11 @@ class Config:
         self.config["show_all_slices"] = show_all_slices
         # Then save the modification
         self.saveConfig()
+
+    def getNbAllSlicesMax(self):
+        return self.config["nb_slices_max"]
+
+    def setNbAllSlicesMax(self, nb_slices_max):
+        self.config["nb_slices_max"] = nb_slices_max
+        # Then save the modification
+        self.saveConfig()
