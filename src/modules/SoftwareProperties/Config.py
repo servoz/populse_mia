@@ -92,3 +92,11 @@ class Config:
         self.config["nb_slices_max"] = nb_slices_max
         # Then save the modification
         self.saveConfig()
+
+    def getThumbnailTag(self):
+        return self.config["thumbnail_tag"]
+
+    def setThumbnailTag(self, thumbnail_tag):
+        self.config["thumbnail_tag"] = thumbnail_tag
+        # Then save the modification
+        self.saveConfig()

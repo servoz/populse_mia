@@ -7,11 +7,14 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame
 import os
 from ProjectManager.controller import save_project
 
+#from Utils.Tools import ClickableLabel
+
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from PopUps.Ui_Select_Tag import Ui_Select_Tag
 
 from SoftwareProperties import Config
 import scipy.misc as misc
@@ -496,7 +499,6 @@ class TableDataBrowser(QTableWidget):
                         item.setText(a)
                         self.setItem(y, i, item)"""
 
-
         ######
 
         self.resizeColumnsToContents()
@@ -939,6 +941,7 @@ class MiniViewer(QWidget):
         self.txta3 = []
         self.imageLabel = []
         self.img = []
+        self.label_description = []
 
         self.createLayouts()
 
@@ -974,6 +977,7 @@ class MiniViewer(QWidget):
 
     def verify_slices(self, file_paths):
         """ For a multi-selection of scans, the 'Show all slices' check box cannot be checked. """
+        self.config = Config()
         if len(file_paths) > 1:
             self.config.setShowAllSlices('no')
             self.check_box.setCheckState(Qt.Unchecked)
@@ -994,20 +998,23 @@ class MiniViewer(QWidget):
             self.do_nothing = [False] * len(file_paths)
 
             self.file_paths = file_paths
-            self.setMinimumHeight(200)
+            self.setMinimumHeight(220)
 
             self.clearLayouts()
 
             self.frame = QFrame(self)
             self.frame_final = QFrame(self)
             max_scans = 5
+            nb_char_max = 60
+            font = QFont()
+            font.setPointSize(9)
 
             for idx, file_path in enumerate(self.file_paths):
                 self.img.insert(idx, nib.load(file_path))
 
             if self.check_box.checkState() == Qt.Unchecked:
 
-                self.h_box = QHBoxLayout()
+                self.h_box_thumb = QHBoxLayout()
 
                 for idx in range(min(max_scans, len(self.file_paths))):
                     if not self.do_nothing[idx]:
@@ -1048,9 +1055,22 @@ class MiniViewer(QWidget):
                     im_Qt = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
                     pixm = QPixmap.fromImage(im_Qt)
 
+                    file_path_base_name = os.path.basename(self.file_paths[idx])[:-4 or None]
+
                     self.imageLabel.insert(idx, QLabel(self))
                     self.imageLabel[idx].setPixmap(pixm)
-                    self.imageLabel[idx].setToolTip(os.path.basename(self.file_paths[idx]))
+                    self.imageLabel[idx].setToolTip(file_path_base_name)
+
+                    self.label_description.insert(idx, ClickableLabel())
+                    self.label_description[idx].setFont(font)
+                    self.label_description[idx].clicked.connect(self.openTagsPopUp)
+
+                    for scan in self.project._get_scans():
+                        if scan.file_path == file_path_base_name:
+                            for tag in scan.getAllTags():
+                                if tag.name == self.config.getThumbnailTag():
+                                    self.label_description[idx].setText(str(tag.value[0])[:nb_char_max])
+                                    self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
                     self.h_box_slider_1 = QHBoxLayout()
                     self.h_box_slider_1.addWidget(self.txta1[idx])
@@ -1069,13 +1089,19 @@ class MiniViewer(QWidget):
                     self.v_box_sliders.addLayout(self.h_box_slider_2)
                     self.v_box_sliders.addLayout(self.h_box_slider_3)
 
-                    # self.h_box = QHBoxLayout()
+                    self.h_box = QHBoxLayout()
                     self.h_box.addWidget(self.imageLabel[idx])
                     self.h_box.addLayout(self.v_box_sliders)
-                    # self.h_box.addStretch(1)
+
+                    self.v_box_thumb = QVBoxLayout()
+                    self.v_box_thumb.addLayout(self.h_box)
+                    self.v_box_thumb.addWidget(self.label_description[idx])
+
+                    self.h_box_thumb.addLayout(self.v_box_thumb)
+
 
                 # self.h_box.addStretch(1)
-                self.frame.setLayout(self.h_box)
+                self.frame.setLayout(self.h_box_thumb)
 
             else:
                 self.h_box_images = QHBoxLayout()
@@ -1083,7 +1109,18 @@ class MiniViewer(QWidget):
                 self.v_box_scans = QVBoxLayout()
 
                 for idx in range(len(self.file_paths)):
-                    frame_test = QFrame()
+                    file_path_base_name = os.path.basename(self.file_paths[idx])[:-4 or None]
+
+                    self.label_description.insert(idx, ClickableLabel())
+                    self.label_description[idx].setFont(font)
+                    self.label_description[idx].clicked.connect(self.openTagsPopUp)
+                    for scan in self.project._get_scans():
+                        if scan.file_path == file_path_base_name:
+                            for tag in scan.getAllTags():
+                                if tag.name == self.config.getThumbnailTag():
+                                    self.label_description[idx].setText(str(tag.value[0])[:nb_char_max])
+                                    self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
+
                     if not self.do_nothing[idx]:
                         if len(self.img[idx].shape) == 3:
                             nb_slices = self.img[idx].shape[2]
@@ -1107,6 +1144,7 @@ class MiniViewer(QWidget):
                             label.setToolTip(os.path.basename(self.file_paths[idx]))
 
                             label_info = QLabel()
+                            label_info.setFont(font)
                             label_info.setText(txt + str(i + 1))
                             label_info.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -1115,6 +1153,7 @@ class MiniViewer(QWidget):
 
                             self.h_box_images.addLayout(self.v_box)
                         self.v_box_scans.addLayout(self.h_box_images)
+                        self.v_box_scans.addWidget(self.label_description[idx])
                 self.frame.setLayout(self.v_box_scans)
 
             self.scroll_area = QScrollArea()
@@ -1137,7 +1176,7 @@ class MiniViewer(QWidget):
             self.v_box_final.addLayout(self.h_box_check_box)
             self.v_box_final.addWidget(self.scroll_area)
 
-    def check_differences(self, file_paths):
+    """def check_differences(self, file_paths):
         old_to_new = []
         self.do_nothing = [False, False, False]
         for idx_old, file_path in enumerate(self.file_paths):
@@ -1153,7 +1192,6 @@ class MiniViewer(QWidget):
             self.shift_thumbnail(idx_old, idx_new)
 
     def shift_thumbnail(self, idx_old, idx_new):
-        """ Copying the values from the thumbnail n°idx_old to the thumbnail n°idx_new """
 
         self.im_2D[idx_new] = self.im_2D[idx_old]
 
@@ -1163,9 +1201,9 @@ class MiniViewer(QWidget):
 
         self.a1[idx_new].setValue(self.a1[idx_old].value())
         self.a2[idx_new].setValue(self.a2[idx_old].value())
-        self.a3[idx_new].setValue(self.a3[idx_old].value())
+        self.a3[idx_new].setValue(self.a3[idx_old].value())"""
 
-    def clear_layout(self, layout):
+    """def clear_layout(self, layout):
         while layout.count() > 0:
             item = layout.takeAt(0)
             if not item:
@@ -1173,7 +1211,7 @@ class MiniViewer(QWidget):
 
             w = item.widget()
             if w:
-                w.deleteLater()
+                w.deleteLater()"""
 
     def clearLayouts(self):
 
@@ -1193,6 +1231,8 @@ class MiniViewer(QWidget):
         self.v_box_sliders = QVBoxLayout()
         self.h_box = QHBoxLayout()
         self.h_box_check_box = QHBoxLayout()
+        self.v_box_thumb = QVBoxLayout()
+        self.h_box_thumb = QHBoxLayout()
 
 
     def image_to_pixmap(self, im, i):
@@ -1307,3 +1347,9 @@ class MiniViewer(QWidget):
             self.a1[idx].setMaximum(self.img[idx].shape[2]-1)
             self.a2[idx].setMaximum(self.img[idx].shape[3]-1)
             self.a3[idx].setMaximum(self.img[idx].shape[4]-1)
+
+
+    def openTagsPopUp(self):
+        self.popUp = Ui_Select_Tag(self.project)
+        if self.popUp.exec_() == QDialog.Accepted:
+            self.verify_slices(self.file_paths)
