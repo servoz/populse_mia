@@ -6,6 +6,7 @@ import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
+import re
 
 class DataBase:
 
@@ -159,3 +160,12 @@ class DataBase:
             return ""
         else:
             return self.properties["date"]
+
+    def getScansSimpleSearch(self, search):
+        pattern = re.compile(search)
+        values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
+        scans = []
+        for value in values:
+            if not value.scan in scans and self.getTagVisibility(value.tag):
+                scans.append(value.scan)
+        return scans

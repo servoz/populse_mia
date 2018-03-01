@@ -153,7 +153,7 @@ class DataBrowser(QWidget):
 
     def search_str(self, str_search):
 
-        return_list = []
+        """return_list = []
         if str_search != "":
             split_list = str_search.split('*')
             for scan in self.database.getScans():
@@ -163,12 +163,19 @@ class DataBrowser(QWidget):
                     if self.database.getTagVisibility(tag.tag):
                         i = 0
                         for element in split_list:
-                            print("element.upper() = " + element.upper())
-                            print("str(tag.currentValue[0]).upper() = " + str(tag.current_value[0]).upper())
                             if element.upper() in str(tag.current_value[0]).upper():
                                 i += 1
                         if i == len(split_list):
                             return_list.append(scan.scan)
+        else:
+            for scan in self.database.getScans():
+                return_list.append(scan.scan)"""
+
+        return_list = []
+
+        if str_search != "":
+            for scan in self.database.getScansSimpleSearch(str_search):
+                return_list.append(scan)
         else:
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
@@ -339,10 +346,10 @@ class TableDataBrowser(QTableWidget):
         """
 
         #project.sort_by_tags()
-        self.flag_first_time += 1
+        #self.flag_first_time += 1
 
-        if self.flag_first_time > 1:
-            self.itemChanged.disconnect()
+        #if self.flag_first_time > 1:
+            #self.itemChanged.disconnect()
 
         # DATABASE
         self.nb_columns = len(self.database.getVisualizedTags())
@@ -351,7 +358,7 @@ class TableDataBrowser(QTableWidget):
         #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
         # DATABASE
-        self.nb_rows = len(self.database.getScans())
+        self.nb_rows = len(self.scans_to_visualize)
 
         # PROJECT
         #self.nb_rows = len(self.scans_to_visualize)
@@ -406,32 +413,32 @@ class TableDataBrowser(QTableWidget):
             nb += 1
 
         # Filling all the cells
-        y = -1
+        #y = -1
         # Loop on the scans
 
-        # DATABASE
-        column = 0
-        while column < len(self.horizontalHeader()):
-            item = self.horizontalHeaderItem(column)
-            current_tag = item.text()
-            row = 0
-            for values in self.database.getValuesGivenTag(current_tag):
+        row = 0
+        for scan in self.scans_to_visualize:
+            column = 0
+            while column < len(self.horizontalHeader()):
+                item = self.horizontalHeaderItem(column)
+                current_tag = item.text()
+                value =  self.database.getValue(scan, current_tag)
                 item = QTableWidgetItem()
-                item.setText(values.current_value)
+                item.setText(value.current_value)
                 # FileName not editable
                 if current_tag == "FileName":
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 # User tag
                 if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
                     color = QColor()
-                    if y % 2 == 1:
+                    if row % 2 == 1:
                         color.setRgb(255, 240, 240)
                     else:
                         color.setRgb(255, 225, 225)
                     item.setData(Qt.BackgroundRole, QVariant(color))
                 self.setItem(row, column, item)
-                row += 1
-            column += 1
+                column += 1
+            row += 1
 
         """for file in project._get_scans():
         
@@ -551,13 +558,12 @@ class TableDataBrowser(QTableWidget):
         elif action == action_select_column:
             self.selectAllColumns()
 
-        self.itemChanged.connect(self.change_cell_color)
-
         self.update_table()
 
         # Signals reconnected
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
+        self.itemChanged.connect(self.change_cell_color)
 
     def reset_cell(self):
 
