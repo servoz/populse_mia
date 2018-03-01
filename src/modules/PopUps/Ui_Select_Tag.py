@@ -15,12 +15,13 @@ class Ui_Select_Tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_tag_selected = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, database):
         super().__init__()
+        self.database = database
         self.config = Config()
-        self.retranslate_Ui(project)
+        self.retranslate_Ui()
 
-    def retranslate_Ui(self, project):
+    def retranslate_Ui(self):
         _translate = QtCore.QCoreApplication.translate
 
         # The "Tag list" label
@@ -33,7 +34,7 @@ class Ui_Select_Tag(QDialog):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, project))
+        self.search_bar.textChanged.connect(self.search_str)
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
@@ -70,25 +71,25 @@ class Ui_Select_Tag(QDialog):
 
         self.setLayout(vbox_final)
 
-        for tag_name in project.getAllTagsNames():
+        for tag in self.database.getTags():
             item = QtWidgets.QListWidgetItem()
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            if tag_name == self.config.getThumbnailTag():
+            if tag.tag == self.config.getThumbnailTag():
                 item.setCheckState(QtCore.Qt.Checked)
             else:
                 item.setCheckState(QtCore.Qt.Unchecked)
             self.list_widget_tags.addItem(item)
-            item.setText(tag_name)
+            item.setText(tag.tag)
 
-    def search_str(self, project, str_search):
+    def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for tag_name in project.getAllTagsNames():
-                if str_search.upper() in tag_name.upper():
-                    return_list.append(tag_name)
+            for tag in self.database.getTags():
+                if str_search.upper() in tag.tag.upper():
+                    return_list.append(tag.tag)
         else:
-            for tag_name in project.getAllTagsNames():
-                return_list.append(tag_name)
+            for tag in self.database.getTags():
+                return_list.append(tag.tag)
 
         for idx in range(self.list_widget_tags.count()):
             item = self.list_widget_tags.item(idx)

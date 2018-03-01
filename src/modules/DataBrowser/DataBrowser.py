@@ -1065,11 +1065,11 @@ class MiniViewer(QWidget):
                     self.label_description[idx].setFont(font)
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
-                    for scan in self.project._get_scans():
-                        if scan.file_path == file_path_base_name:
-                            for tag in scan.getAllTags():
-                                if tag.name == self.config.getThumbnailTag():
-                                    self.label_description[idx].setText(str(tag.value[0])[:nb_char_max])
+                    for scan in self.database.getScans():
+                        if scan.scan == file_path_base_name:
+                            for tag in self.database.getTags():
+                                if tag.tag == self.config.getThumbnailTag():
+                                    self.label_description[idx].setText(str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
                                     self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
                     self.h_box_slider_1 = QHBoxLayout()
@@ -1114,11 +1114,11 @@ class MiniViewer(QWidget):
                     self.label_description.insert(idx, ClickableLabel())
                     self.label_description[idx].setFont(font)
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
-                    for scan in self.project._get_scans():
-                        if scan.file_path == file_path_base_name:
-                            for tag in scan.getAllTags():
-                                if tag.name == self.config.getThumbnailTag():
-                                    self.label_description[idx].setText(str(tag.value[0])[:nb_char_max])
+                    for scan in self.database.getScans():
+                        if scan.scan == file_path_base_name:
+                            for tag in self.database.getTags():
+                                if tag.tag == self.config.getThumbnailTag():
+                                    self.label_description[idx].setText(str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
                                     self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
                     if not self.do_nothing[idx]:
@@ -1350,6 +1350,6 @@ class MiniViewer(QWidget):
 
 
     def openTagsPopUp(self):
-        self.popUp = Ui_Select_Tag(self.project)
+        self.popUp = Ui_Select_Tag(self.database)
         if self.popUp.exec_() == QDialog.Accepted:
             self.verify_slices(self.file_paths)
