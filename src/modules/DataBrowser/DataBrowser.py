@@ -408,7 +408,7 @@ class TableDataBrowser(QTableWidget):
                 else:
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))"""
             item.setText(_translate("MainWindow", element))
-            item.setToolTip("Description to add")
+            item.setToolTip(self.database.getTagDescription(element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
 

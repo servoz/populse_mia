@@ -94,6 +94,11 @@ class DataBase:
         # TODO return error if len(tags) != 1
         return tags[0].type
 
+    def getTagDescription(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].description
+
     def getUserTags(self):
         tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
         return tags
@@ -162,7 +167,6 @@ class DataBase:
             return self.properties["date"]
 
     def getScansSimpleSearch(self, search):
-        pattern = re.compile(search)
         values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
         scans = []
         for value in values:
