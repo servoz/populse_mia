@@ -122,7 +122,7 @@ class DataBase:
 
     def scanHasTag(self, scan, tag):
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
-        len(values) == 1
+        return len(values) == 1
 
     def getTags(self):
         tags = self.session.query(Tag).filter().all()

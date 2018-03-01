@@ -430,20 +430,28 @@ class TableDataBrowser(QTableWidget):
             while column < len(self.horizontalHeader()):
                 item = self.horizontalHeaderItem(column)
                 current_tag = item.text()
-                value =  self.database.getValue(scan, current_tag)
-                item = QTableWidgetItem()
-                item.setText(value.current_value)
-                # FileName not editable
-                if current_tag == "FileName":
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                # User tag
-                if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
-                    color = QColor()
-                    if row % 2 == 1:
-                        color.setRgb(255, 240, 240)
-                    else:
-                        color.setRgb(255, 225, 225)
-                    item.setData(Qt.BackgroundRole, QVariant(color))
+                # The scan has a value for the tag
+                if(self.database.scanHasTag(scan, current_tag)):
+                    value =  self.database.getValue(scan, current_tag)
+                    item = QTableWidgetItem()
+                    item.setText(value.current_value)
+                    # FileName not editable
+                    if current_tag == "FileName":
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                    # User tag
+                    if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
+                        color = QColor()
+                        if row % 2 == 1:
+                            color.setRgb(255, 240, 240)
+                        else:
+                            color.setRgb(255, 225, 225)
+                        item.setData(Qt.BackgroundRole, QVariant(color))
+
+                # The scan does not have a value for the tag
+                else:
+                    a = str('NaN')
+                    item = QTableWidgetItem()
+                    item.setText(a)
                 self.setItem(row, column, item)
                 column += 1
             row += 1
@@ -581,18 +589,18 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             scan_name = self.item(row, 0).text()
 
-            # DATABASE
-            self.database.resetTag(scan_name, tag_name)
-            self.database.saveModifications()
+            if(self.database.scanHasTag(scan_name, tag_name)):
+                self.database.resetTag(scan_name, tag_name)
+                self.database.saveModifications()
+                self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
 
-            self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
-            if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
-                color = QColor()
-                if row % 2 == 1:
-                    color.setRgb(255, 255, 255)
-                else:
-                    color.setRgb(250, 250, 250)
-                self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
+                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
+                    color = QColor()
+                    if row % 2 == 1:
+                        color.setRgb(255, 255, 255)
+                    else:
+                        color.setRgb(250, 250, 250)
+                    self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
 
             """for file in self.database.getScans():
                 if file.file_path == scan_name:
@@ -619,17 +627,18 @@ class TableDataBrowser(QTableWidget):
 
             scan_id = -1
             for scan in self.database.getScans():
-                self.database.resetTag(scan.scan, tag_name)
-                self.database.saveModifications()
-                scan_id += 1
-                self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
-                if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
-                    color = QColor()
-                    if row % 2 == 1:
-                        color.setRgb(255, 255, 255)
-                    else:
-                        color.setRgb(250, 250, 250)
-                    self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
+                if (self.database.scanHasTag(scan.scan, tag_name)):
+                    self.database.resetTag(scan.scan, tag_name)
+                    self.database.saveModifications()
+                    scan_id += 1
+                    self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
+                    if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
+                        color = QColor()
+                        if row % 2 == 1:
+                            color.setRgb(255, 255, 255)
+                        else:
+                            color.setRgb(250, 250, 250)
+                        self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
 
             """scan_id = -1
             for file in project._get_scans():
@@ -662,16 +671,17 @@ class TableDataBrowser(QTableWidget):
             idx = -1
             for tag in self.database.getVisualizedTags():
                 idx += 1
-                self.database.resetTag(scan_name, tag.tag)
-                self.database.saveModifications()
-                self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
-                if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
-                    color = QColor()
-                    if row % 2 == 1:
-                        color.setRgb(255, 255, 255)
-                    else:
-                        color.setRgb(250, 250, 250)
-                    self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
+                if (self.database.scanHasTag(scan_name, tag.tag)):
+                    self.database.resetTag(scan_name, tag.tag)
+                    self.database.saveModifications()
+                    self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
+                    if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
+                        color = QColor()
+                        if row % 2 == 1:
+                            color.setRgb(255, 255, 255)
+                        else:
+                            color.setRgb(250, 250, 250)
+                        self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
 
             """for file in project._get_scans():
                 if file.file_path == scan_name:
@@ -839,6 +849,16 @@ class TableDataBrowser(QTableWidget):
                 tag_name = self.horizontalHeaderItem(col).text()
 
                 color = QColor()
+
+                # The scan already have a value for the tag
+                if(self.database.scanHasTag(scan_path, tag_name)):
+                    self.database.setTagValue(scan_path, tag_name, text_value)
+                    self.database.saveModifications()
+                # The scan does not have a value for the tag yet
+                else:
+                    self.database.addValue(scan_path, tag_name, text_value)
+                    self.database.saveModifications()
+
                 #User tag
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
@@ -859,8 +879,6 @@ class TableDataBrowser(QTableWidget):
 
                 item.setData(Qt.BackgroundRole, QVariant(color))
                 item.setText(text_value)
-                self.database.setTagValue(scan_path, tag_name, text_value)
-                self.database.saveModifications()
 
                 """for scan in project._get_scans():
                     if scan_path == scan.file_path:
