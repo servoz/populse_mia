@@ -500,6 +500,7 @@ class TableDataBrowser(QTableWidget):
     def context_menu_table(self, position):
 
         self.hh.disconnect()
+        self.itemChanged.disconnect()
 
         self.flag_first_time += 1
 
@@ -526,7 +527,6 @@ class TableDataBrowser(QTableWidget):
             msg.buttonClicked.connect(msg.close)
             msg.buttonClicked.connect(self.reset_cell)
             msg.exec()
-            self.reset_cell()
         elif action == action_reset_column:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
@@ -551,11 +551,16 @@ class TableDataBrowser(QTableWidget):
         elif action == action_select_column:
             self.selectAllColumns()
 
+        self.itemChanged.connect(self.change_cell_color)
+
         self.update_table()
+
+        # Signals reconnected
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
 
     def reset_cell(self):
+
         points = self.selectedIndexes()
 
         for point in points:
@@ -566,6 +571,7 @@ class TableDataBrowser(QTableWidget):
 
             # DATABASE
             self.database.resetTag(scan_name, tag_name)
+            self.database.saveModifications()
 
             self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
             if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
@@ -590,7 +596,6 @@ class TableDataBrowser(QTableWidget):
                                     color.setRgb(250, 250, 250)
                                 self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
                             n_tag.resetTag()"""
-        self.database.saveModifications()
 
     def reset_column(self):
         points = self.selectedIndexes()
@@ -603,6 +608,7 @@ class TableDataBrowser(QTableWidget):
             scan_id = -1
             for scan in self.database.getScans():
                 self.database.resetTag(scan.scan, tag_name)
+                self.database.saveModifications()
                 scan_id += 1
                 self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
                 if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
@@ -632,7 +638,6 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(250, 250, 250)
                             self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
                         n_tag.resetTag()"""
-        self.database.saveModifications()
 
     def reset_row(self):
         points = self.selectedIndexes()
@@ -672,7 +677,6 @@ class TableDataBrowser(QTableWidget):
 
                         # DATABASE
                         self.database.resetTag(scan_name, n_tag.name)"""
-        self.database.saveModifications()
 
     def reset_cells_with_item(self, items_in):
         for item_in in items_in:
@@ -842,6 +846,7 @@ class TableDataBrowser(QTableWidget):
                 item.setData(Qt.BackgroundRole, QVariant(color))
                 item.setText(text_value)
                 self.database.setTagValue(scan_path, tag_name, text_value)
+                self.database.saveModifications()
 
                 """for scan in project._get_scans():
                     if scan_path == scan.file_path:
@@ -880,7 +885,6 @@ class TableDataBrowser(QTableWidget):
                                 new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))"""
 
-        self.database.saveModifications()
         self.itemChanged.connect(self.change_cell_color)
 
         #Auto-save
