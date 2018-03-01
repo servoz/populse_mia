@@ -5,10 +5,11 @@ default_tags:
 - PatientName
 - AcquisitionDate
 name: MIA2
+nb_slices_max: '10'
 paths:
   data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
   modules: modules
   projects: ..\data
 show_all_slices: 'no'
 text_color: ''
-nb_slices_max: '100'
+thumbnail_tag: SequenceName
