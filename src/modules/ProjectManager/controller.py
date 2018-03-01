@@ -50,7 +50,9 @@ def createProject(name, path, parent_folder):
         os.mkdir(os.path.join(new_path, 'properties'))
         properties = dict(
             name=name,
-            date=datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            date=datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+            sorted_tag='',
+            sort_order=''
         )
         with open(os.path.join(new_path, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
             yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
@@ -159,7 +161,7 @@ def verify_scans(database, path):
             data = scan_file.read()
             actual_md5 = hashlib.md5(data).hexdigest()
 
-        if actual_md5 != scan.original_md5:
+        if actual_md5 != scan.checksum:
             return_list.append(file_name)
 
     return return_list

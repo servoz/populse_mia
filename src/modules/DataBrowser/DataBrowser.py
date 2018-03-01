@@ -345,7 +345,16 @@ class TableDataBrowser(QTableWidget):
         This method will fill the tables in the 'Table' tab with the project data
         """
 
-        #project.sort_by_tags()
+        if(self.database.getSortedTag() != ''):
+            list_tags = []
+            for scan in self.scans_to_visualize:
+                list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
+
+            if self.database.getSortOrder() == "ascending":
+                self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize))]
+            elif self.database.getSortOrder() == "descending":
+                self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize), reverse=True)]
+
         #self.flag_first_time += 1
 
         #if self.flag_first_time > 1:
@@ -357,11 +366,7 @@ class TableDataBrowser(QTableWidget):
         # PROJECT
         #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
 
-        # DATABASE
         self.nb_rows = len(self.scans_to_visualize)
-
-        # PROJECT
-        #self.nb_rows = len(self.scans_to_visualize)
 
         self.setRowCount(self.nb_rows)
 
@@ -402,11 +407,11 @@ class TableDataBrowser(QTableWidget):
             element = element.tag
             item = self.horizontalHeaderItem(nb)
             # PROJECT
-            """if element == project.sort_tags[0]:
-                if project.sort_order == 'ascending':
+            if element == self.database.getSortedTag():
+                if self.database.getSortOrder() == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
                 else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))"""
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(_translate("MainWindow", element))
             item.setToolTip(self.database.getTagDescription(element))
             self.setHorizontalHeaderItem(nb, item)
@@ -523,7 +528,6 @@ class TableDataBrowser(QTableWidget):
         action_select_column = menu.addAction("Select column(s)")
 
         action = menu.exec_(self.mapToGlobal(position))
-        nb_cells = len(self.selectedIndexes())
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning")
@@ -734,42 +738,41 @@ class TableDataBrowser(QTableWidget):
         self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
-        if tag_name == project.sort_tags[0]:
-            if project.sort_order == 'ascending':
-                project.sort_order = 'descending'
+        if tag_name == self.database.getSortedTag():
+            if self.database.getSortOrder() == 'ascending':
+                self.database.setSortOrder('descending')
                 item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             else:
-                project.sort_order = 'ascending'
+                self.database.setSortOrder('ascending')
                 item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
         else:
-            project.sort_order = 'ascending'
+            self.database.setSortOrder('ascending')
             item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
 
-        project.reset_sort_tags()
-        project.add_sort_tag(tag_name)
+        self.database.setSortedTag(tag_name)
         self.update_table()
 
     def sort_column(self):
         points = self.selectedItems()
 
-        project.sort_order = "ascending"
-        project.reset_sort_tags()
+        self.database.setSortOrder('ascending')
+        self.database.setSortedTag('')
 
         for point in points:
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
-            project.add_sort_tag(tag_name)
+            self.database.setSortedTag(tag_name)
 
     def sort_column_descending(self):
         points = self.selectedItems()
 
-        project.sort_order = "descending"
-        project.reset_sort_tags()
+        self.database.setSortOrder('descending')
+        self.database.setSortedTag('')
 
         for point in points:
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
-            project.add_sort_tag(tag_name)
+            self.database.setSortedTag(tag_name)
 
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
@@ -825,6 +828,7 @@ class TableDataBrowser(QTableWidget):
             self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, project, items))
             self.pop_up_type.exec()
         else:"""
+
         if True:
             for item in self.selectedItems():
                 row = item.row()

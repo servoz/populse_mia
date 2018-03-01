@@ -28,8 +28,11 @@ class DataBase:
         if new_project:
             config = Config()
             for default_tag in config.getDefaultTags():
-                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") #Modify params
+                # Tags by default set as visible
+                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") # Modify params
                 self.saveModifications()
+
+    """ FROM properties/properties.yml """
 
     def loadProperties(self):
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
@@ -37,6 +40,52 @@ class DataBase:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
+
+    def getName(self):
+        if(self.isTempProject):
+            return ""
+        else:
+            return self.properties["name"]
+
+    def setName(self, name):
+        if not self.isTempProject:
+            self.properties["name"] = name
+            self.saveConfig()
+
+    def saveConfig(self):
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
+
+    def getDate(self):
+        if(self.isTempProject):
+            return ""
+        else:
+            return self.properties["date"]
+
+    def getSortedTag(self):
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["sorted_tag"]
+
+    def setSortedTag(self, tag):
+        if not self.isTempProject:
+            self.properties["sorted_tag"] = tag
+            self.saveConfig()
+
+    def getSortOrder(self):
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["sort_order"]
+
+    def setSortOrder(self, order):
+        if not self.isTempProject:
+            self.properties["sort_order"] = order
+            self.saveConfig()
+
+
+    """ FROM SQlite Database """
 
     def addScan(self, name, checksum):
         scan = Scan(scan=name, checksum=checksum)
@@ -144,27 +193,6 @@ class DataBase:
 
     def saveModifications(self):
         self.session.commit()
-
-    def getName(self):
-        if(self.isTempProject):
-            return ""
-        else:
-            return self.properties["name"]
-
-    def setName(self, name):
-        if not self.isTempProject:
-            self.properties["name"] = name
-            self.saveConfig()
-
-    def saveConfig(self):
-        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
-
-    def getDate(self):
-        if(self.isTempProject):
-            return ""
-        else:
-            return self.properties["date"]
 
     def getScansSimpleSearch(self, search):
         values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
