@@ -117,6 +117,7 @@ class DataBase:
     def resetTag(self, scan, tag):
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
         # TODO return error if len(tags) != 1
+        print(len(tags))
         tag = tags[0]
         tag.current_value = tag.raw_value
 

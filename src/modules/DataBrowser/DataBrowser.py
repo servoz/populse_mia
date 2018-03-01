@@ -22,7 +22,7 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 import Utils.utils as utils
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
+from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 
 class DataBrowser(QWidget):
     def __init__(self, database):
@@ -555,7 +555,7 @@ class TableDataBrowser(QTableWidget):
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
 
-    def reset_cell(self, project):
+    def reset_cell(self):
         points = self.selectedIndexes()
 
         for point in points:
@@ -567,8 +567,16 @@ class TableDataBrowser(QTableWidget):
             # DATABASE
             self.database.resetTag(scan_name, tag_name)
 
+            self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
+            if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
+                color = QColor()
+                if row % 2 == 1:
+                    color.setRgb(255, 255, 255)
+                else:
+                    color.setRgb(250, 250, 250)
+                self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
 
-            for file in project._get_scans():
+            """for file in self.database.getScans():
                 if file.file_path == scan_name:
                     for n_tag in file._get_tags():
                         if n_tag.name == tag_name:
@@ -581,7 +589,7 @@ class TableDataBrowser(QTableWidget):
                                 else:
                                     color.setRgb(250, 250, 250)
                                 self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
-                            n_tag.resetTag()
+                            n_tag.resetTag()"""
         self.database.saveModifications()
 
     def reset_column(self):
@@ -591,7 +599,21 @@ class TableDataBrowser(QTableWidget):
             row = point.row()
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
+
             scan_id = -1
+            for scan in self.database.getScans():
+                self.database.resetTag(scan.scan, tag_name)
+                scan_id += 1
+                self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
+                if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
+                    color = QColor()
+                    if row % 2 == 1:
+                        color.setRgb(255, 255, 255)
+                    else:
+                        color.setRgb(250, 250, 250)
+                    self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
+
+            """scan_id = -1
             for file in project._get_scans():
 
                 # DATABASE
@@ -609,7 +631,7 @@ class TableDataBrowser(QTableWidget):
                             else:
                                 color.setRgb(250, 250, 250)
                             self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
-                        n_tag.resetTag()
+                        n_tag.resetTag()"""
         self.database.saveModifications()
 
     def reset_row(self):
@@ -619,7 +641,20 @@ class TableDataBrowser(QTableWidget):
             row = point.row()
             col = point.column()
             scan_name = self.item(row, 0).text()
-            for file in project._get_scans():
+
+            idx = -1
+            for tag in self.database.getVisualizedTags():
+                idx += 1
+                self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
+                if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
+                    color = QColor()
+                    if row % 2 == 1:
+                        color.setRgb(255, 255, 255)
+                    else:
+                        color.setRgb(250, 250, 250)
+                    self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
+
+            """for file in project._get_scans():
                 if file.file_path == scan_name:
                     for n_tag in file.getAllTags():
                         if n_tag.name in project.tags_to_visualize:
@@ -636,7 +671,7 @@ class TableDataBrowser(QTableWidget):
                             n_tag.resetTag()
 
                         # DATABASE
-                        self.database.resetTag(scan_name, n_tag.name)
+                        self.database.resetTag(scan_name, n_tag.name)"""
         self.database.saveModifications()
 
     def reset_cells_with_item(self, items_in):
@@ -787,7 +822,7 @@ class TableDataBrowser(QTableWidget):
 
                 color = QColor()
                 #User tag
-                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_USER):
+                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
                         if row % 2 == 1:
                             color.setRgb(240, 240, 255)
@@ -846,12 +881,12 @@ class TableDataBrowser(QTableWidget):
                                 scan.replaceTag(new_tag, tag_name, str(tag_origin))"""
 
         self.database.saveModifications()
-        self.itemChanged.connect(partial(self.change_cell_color, project))
+        self.itemChanged.connect(self.change_cell_color)
 
         #Auto-save
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(project, self.database)
+            save_project(self.database)
 
 
 class MiniViewer(QWidget):
