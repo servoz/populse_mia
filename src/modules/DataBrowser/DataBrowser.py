@@ -650,6 +650,8 @@ class TableDataBrowser(QTableWidget):
             idx = -1
             for tag in self.database.getVisualizedTags():
                 idx += 1
+                self.database.resetTag(scan_name, tag.tag)
+                self.database.saveModifications()
                 self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
                 if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
                     color = QColor()
