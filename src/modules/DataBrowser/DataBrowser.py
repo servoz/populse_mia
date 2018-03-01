@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QLabel, QScrollArea, QFrame
 import os
 from ProjectManager.controller import save_project
 
-#from Utils.Tools import ClickableLabel
+from Utils.Tools import ClickableLabel
 
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
