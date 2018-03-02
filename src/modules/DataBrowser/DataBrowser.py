@@ -351,7 +351,10 @@ class TableDataBrowser(QTableWidget):
         if(self.database.getSortedTag() != ''):
             list_tags = []
             for scan in self.scans_to_visualize:
-                list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
+                if(self.database.scanHasTag(scan, self.database.getSortedTag())):
+                    list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
+                else:
+                    list_tags.append("NaN")
 
             if self.database.getSortOrder() == "ascending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize))]
