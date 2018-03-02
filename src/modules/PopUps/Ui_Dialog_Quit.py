@@ -10,15 +10,17 @@ class Ui_Dialog_Quit(QDialog):
     do_not_save_signal = pyqtSignal()
     cancel_signal = pyqtSignal()
 
-    def __init__(self, name):
+    def __init__(self, database):
         super().__init__()
+
+        self.database = database
 
         self.bool_exit = False
 
         self.setWindowTitle("Confirm exit")
 
         label = QLabel(self)
-        label.setText('Do you want to exit without saving ' + name + '?')
+        label.setText('Do you want to exit without saving ' + self.database.getName() + '?')
 
         push_button_save_as = QPushButton("Save", self)
         push_button_do_not_save = QPushButton("Do not save", self)

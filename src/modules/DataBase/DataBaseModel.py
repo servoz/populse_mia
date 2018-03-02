@@ -13,7 +13,6 @@ TAG_TYPE_LIST = "list"
 Base = declarative_base()
 
 def createDatabase(project_root_folder):
-    print("create database : " + project_root_folder)
     os.mkdir(os.path.join(project_root_folder, 'database'))
     engine = create_engine('sqlite:///' + os.path.join(project_root_folder, 'database', 'mia2.db'))
     Base.metadata.create_all(engine)

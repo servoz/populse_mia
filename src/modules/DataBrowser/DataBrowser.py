@@ -852,7 +852,11 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             #scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-            tp = self.database.getTagType(tag_name)
+            # Default type is string if we don't find the real one
+            if(tag_name != ""):
+                tp = self.database.getTagType(tag_name)
+            else:
+                tp = TAG_TYPE_STRING
             if(tp == ""):
                 tp = TAG_TYPE_STRING
             if(tp == TAG_TYPE_INTEGER):

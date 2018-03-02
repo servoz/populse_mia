@@ -159,7 +159,7 @@ class Main_Window(QMainWindow):
         """ Overriding the closing event to check if there are unsaved modifications """
 
         if (self.check_unsaved_modifications() == 1):
-            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
+            self.pop_up_close = Ui_Dialog_Quit(self.database)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
@@ -170,7 +170,6 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
-            self.database.unsaveModifications()
             event.accept()
         else:
             event.ignore()
@@ -286,8 +285,6 @@ class Main_Window(QMainWindow):
         exPopup = Ui_Dialog_Save_Project_As()
         if exPopup.exec_() == QDialog.Accepted:
 
-            self.database.unsaveModifications()
-
             old_folder = self.database.folder
 
             file_name = exPopup.relative_path
@@ -302,17 +299,33 @@ class Main_Window(QMainWindow):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
-            #DATABASE COPY
+            #First we register the database before commiting the last pending modifications
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
+
+            #We commit the last pending modifications
+            self.database.saveModifications()
+
+            #We copy the database with all the modifications commited in the new project
             if os.path.exists(os.path.join(old_folder, 'database')):
                 os.mkdir(os.path.relpath(database_path))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'database', '*.*')):
-                    shutil.copy(filename, os.path.relpath(database_path))
+                shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
 
-            #DATABASE
+            #We remove the database with all the modifications saved in the old project
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+
+            #We reput the database without the last modifications in the old project
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+
             self.database = DataBase(exPopup.relative_path, False)
             self.data_browser.update_database(self.database)
+            self.database.saveModifications()
+            scan_names_list = []
+            for scan in self.database.getScans():
+                scan_names_list.append(scan.scan)
+            self.data_browser.table_data.scans_to_visualize = scan_names_list
+            self.data_browser.table_data.update_table()
 
-            project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
+            #project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
             #utils.saveProjectAsJsonFile(project_path, self.project)
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted

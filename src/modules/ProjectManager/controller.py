@@ -121,6 +121,8 @@ def read_log(database):
                     database.addTag("FileName", True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
                 else:
                     database.addTag("FileName", False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+            else:
+                database.setTagOrigin("FileName", TAG_ORIGIN_RAW)
             for tag in getJsonTagsFromFile(file_name, path_name):
                 database.addValue(file_name, tag[0], utils.check_tag_value(tag[1]))
                 tag_already_in_database = False
@@ -134,6 +136,8 @@ def read_log(database):
                         database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
                     else:
                         database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                else:
+                    database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
 
             #### Database
 

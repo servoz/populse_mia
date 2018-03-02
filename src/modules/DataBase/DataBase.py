@@ -1,12 +1,11 @@
-from sqlalchemy import create_engine, update, Table
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
-import re
+from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER
 
 class DataBase:
 
@@ -24,12 +23,11 @@ class DataBase:
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
-        print("new database : " + self.folder)
         if new_project:
             config = Config()
             for default_tag in config.getDefaultTags():
                 # Tags by default set as visible
-                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") # Modify params, can bug because all default tags are considered raw
+                self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "") # Modify params
                 self.saveModifications()
 
     """ FROM properties/properties.yml """
@@ -161,6 +159,12 @@ class DataBase:
         # TODO return error if len(tags) != 1
         tag = tags[0]
         tag.visible = visibility
+
+    def setTagOrigin(self, name, origin):
+        tags = self.session.query(Tag).filter(Tag.tag == name).all()
+        # TODO return error if len(tags) != 1
+        tag = tags[0]
+        tag.origin = origin
 
     def resetAllVisibilities(self):
         tags = self.session.query(Tag).filter().all()
