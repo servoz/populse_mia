@@ -348,6 +348,10 @@ class Main_Window(QMainWindow):
                 #DATABASE
                 self.database = DataBase(self.exPopup.relative_path, True)
                 self.data_browser.update_database(self.database)
+                scan_names_list = []
+                for scan in self.database.getScans():
+                    scan_names_list.append(scan.scan)
+                self.data_browser.table_data.scans_to_visualize = scan_names_list
                 self.data_browser.table_data.update_table()
 
                 if self.database.isTempProject:
@@ -394,6 +398,11 @@ class Main_Window(QMainWindow):
                 # DATABASE
                 self.database = DataBase(self.exPopup.relative_path, False)
                 self.data_browser.update_database(self.database)
+                scan_names_list = []
+                for scan in self.database.getScans():
+                    scan_names_list.append(scan.scan)
+                self.data_browser.table_data.scans_to_visualize = scan_names_list
+                self.data_browser.table_data.update_table()
 
                 if self.database.isTempProject:
                     self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
@@ -428,6 +437,11 @@ class Main_Window(QMainWindow):
                     #DATABASE
                     self.database = DataBase(relative_path, False)
                     self.data_browser.update_database(self.database)
+                    scan_names_list = []
+                    for scan in self.database.getScans():
+                        scan_names_list.append(scan.scan)
+                    self.data_browser.table_data.scans_to_visualize = scan_names_list
+                    self.data_browser.table_data.update_table()
 
                     if self.database.isTempProject:
                         self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')

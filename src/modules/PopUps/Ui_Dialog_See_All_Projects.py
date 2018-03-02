@@ -104,7 +104,7 @@ class Ui_Dialog_See_All_Projects(QDialog):
             self.relative_path = os.path.relpath(file_name)
 
             # If the file exists
-            if os.path.exists(os.path.join(self.relative_path, self.name, self.name + '.json')):
+            if os.path.exists(self.relative_path):
 
                 if (self.mainWindow.check_unsaved_modifications() == 1):
                     self.mainWindow.pop_up_close = Ui_Dialog_Quit(self.mainWindow.database.getName())
@@ -121,6 +121,11 @@ class Ui_Dialog_See_All_Projects(QDialog):
                     # DATABASE
                     self.mainWindow.database = DataBase(self.relative_path, False)
                     self.mainWindow.data_browser.update_database(self.mainWindow.database)
+                    scan_names_list = []
+                    for scan in self.mainWindow.database.getScans():
+                        scan_names_list.append(scan.scan)
+                    self.mainWindow.data_browser.table_data.scans_to_visualize = scan_names_list
+                    self.mainWindow.data_browser.table_data.update_table()
 
                     if self.mainWindow.database.isTempProject:
                         self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
