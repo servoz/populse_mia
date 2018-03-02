@@ -11,11 +11,10 @@ class Ui_Dialog_Type_Problem(QDialog):
     def __init__(self, tp):
         super().__init__()
 
-        tp_str = str(tp)
         self.setWindowTitle("Type error")
 
         label = QLabel(self)
-        label.setText('This value should be of type ' + tp_str[8:-2])
+        label.setText('This value should be of type ' + tp)
 
         push_button_ok = QPushButton("OK", self)
 

@@ -29,7 +29,7 @@ class DataBase:
             config = Config()
             for default_tag in config.getDefaultTags():
                 # Tags by default set as visible
-                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") # Modify params
+                self.addTag(default_tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, "", "", "") # Modify params, can bug because all default tags are considered raw
                 self.saveModifications()
 
     """ FROM properties/properties.yml """

@@ -142,6 +142,28 @@ class Ui_Dialog_add_tag(QDialog):
         for tag in self.database.getTags():
             if tag.tag == self.text_edit_tag_name.text():
                 name_already_exists = True
+        wrong_default_value_type = False
+        default_value = self.text_edit_default_value.text()
+        if self.type == int:
+            try:
+                int(default_value)
+            except ValueError:
+                wrong_default_value_type = True
+        if self.type == float:
+            try:
+                float(default_value)
+            except ValueError:
+                wrong_default_value_type = True
+        if self.type == str:
+            try:
+                str(default_value)
+            except ValueError:
+                wrong_default_value_type = True
+        if self.type == list:
+            try:
+                list(default_value)
+            except ValueError:
+                wrong_default_value_type = True
         if (self.text_edit_tag_name.text() == ""):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -156,6 +178,15 @@ class Ui_Dialog_add_tag(QDialog):
             msg.setIcon(QMessageBox.Critical)
             msg.setText("This tag name already exists")
             msg.setInformativeText("Please select another tag name")
+            msg.setWindowTitle("Error")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+        elif wrong_default_value_type:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("The default value is not of the good type")
+            msg.setInformativeText("Please select another default value")
             msg.setWindowTitle("Error")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)

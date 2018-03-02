@@ -701,6 +701,7 @@ class TableDataBrowser(QTableWidget):
                         self.database.resetTag(scan_name, n_tag.name)"""
 
     def reset_cells_with_item(self, items_in):
+
         for item_in in items_in:
             row = item_in.row()
             col = item_in.column()
@@ -708,11 +709,18 @@ class TableDataBrowser(QTableWidget):
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
 
-            # DATABASE
-            self.database.resetTag(scan_path, tag.name)
+            item = QTableWidgetItem()
+            if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_USER:
+                color = QColor()
+                if row % 2 == 1:
+                    color.setRgb(255, 240, 240)
+                else:
+                    color.setRgb(255, 225, 225)
+                item.setData(Qt.BackgroundRole, QVariant(color))
+            item.setText(self.database.getValue(scan_path, tag_name).current_value)
+            self.setItem(row, col, item)
 
-
-            for scan in project._get_scans():
+            """for scan in project._get_scans():
                 if scan_path == scan.file_path:
                     for tag in scan.getAllTags():
                         if tag_name == tag.name:
@@ -727,7 +735,7 @@ class TableDataBrowser(QTableWidget):
                                     color.setRgb(255, 225, 225)
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                             item.setText(txt)
-                            self.setItem(row, col, item)
+                            self.setItem(row, col, item)"""
 
     def remove_scan(self):
         points = self.selectedIndexes()
@@ -836,7 +844,48 @@ class TableDataBrowser(QTableWidget):
             self.pop_up_type.exec()
         else:"""
 
-        if True:
+        is_error = False
+        for item in self.selectedItems():
+            if is_error:
+                break
+            row = item.row()
+            col = item.column()
+            #scan_path = self.item(row, 0).text()
+            tag_name = self.horizontalHeaderItem(col).text()
+            tp = self.database.getTagType(tag_name)
+            if(tp == ""):
+                tp = TAG_TYPE_STRING
+            if(tp == TAG_TYPE_INTEGER):
+                try:
+                    int(text_value)
+                except ValueError:
+                    is_error = True
+            elif (tp == TAG_TYPE_FLOAT):
+                try:
+                    float(text_value)
+                except ValueError:
+                    is_error = True
+            elif (tp == TAG_TYPE_STRING):
+                try:
+                    str(text_value)
+                except ValueError:
+                    is_error = True
+            elif (tp == TAG_TYPE_LIST):
+                try:
+                    list(text_value)
+                except ValueError:
+                    is_error = True
+
+        if is_error:
+            items = self.selectedItems()
+
+            # Dialog that says that it is not possible
+            self.pop_up_type = Ui_Dialog_Type_Problem(str(tp))
+            # Resetting the cells
+            self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, items))
+            self.pop_up_type.exec()
+
+        else:
             for item in self.selectedItems():
                 row = item.row()
                 col = item.column()
