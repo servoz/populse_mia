@@ -310,6 +310,7 @@ class TableDataBrowser(QTableWidget):
     def __init__(self, database):
 
         self.database = database
+        self.flag_first_time = 0
 
         super().__init__()
 
@@ -320,7 +321,7 @@ class TableDataBrowser(QTableWidget):
         for scan in self.database.getScans():
             self.scans_to_visualize.append(scan.scan)
 
-        # It allows to move the columns
+        # It allows to move th  e columns
         self.horizontalHeader().setSectionsMovable(True)
 
         # Adding a custom context menu
@@ -364,10 +365,11 @@ class TableDataBrowser(QTableWidget):
             elif self.database.getSortOrder() == "descending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize), reverse=True)]
 
-        #self.flag_first_time += 1
+        self.flag_first_time += 1
+        print(self.flag_first_time)
 
-        #if self.flag_first_time > 1:
-            #self.itemChanged.disconnect()
+        if self.flag_first_time > 1:
+            self.itemChanged.disconnect()
 
         # DATABASE
         self.nb_columns = len(self.database.getVisualizedTags())
@@ -578,12 +580,12 @@ class TableDataBrowser(QTableWidget):
         elif action == action_select_column:
             self.selectAllColumns()
 
-        self.update_table()
-
         # Signals reconnected
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
         self.itemChanged.connect(self.change_cell_color)
+
+        self.update_table()
 
     def reset_cell(self):
 
