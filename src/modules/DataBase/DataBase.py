@@ -140,6 +140,21 @@ class DataBase:
         # TODO return error if len(tags) != 1
         return tags[0].visible
 
+    def getTagDefault(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].default
+
+    def getTagUnit(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].unit
+
+    def getTagDescription(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        # TODO return error if len(tags) != 1
+        return tags[0].description
+
     def getTagType(self, tag):
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1

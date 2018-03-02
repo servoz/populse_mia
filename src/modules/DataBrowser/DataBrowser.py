@@ -267,7 +267,7 @@ class DataBrowser(QWidget):
 
     def clone_tag_pop_up(self):
         # Ui_Dialog_clone_tag() is defined in pop_ups.py
-        self.pop_up_clone_tag = Ui_Dialog_clone_tag()
+        self.pop_up_clone_tag = Ui_Dialog_clone_tag(self.database)
         self.pop_up_clone_tag.show()
 
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
@@ -277,8 +277,12 @@ class DataBrowser(QWidget):
             #project.clone_tag(tag_to_clone, new_tag_name)
             #project.tags_to_visualize.append(new_tag_name)
 
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
+            for scan in self.database.getScans():
+                self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value)
+
             # Updating the table
-            self.table_data.update_table(project)
+            self.table_data.update_table()
 
     def remove_tag_pop_up(self):
         # Ui_Dialog_remove_tag() is defined in pop_ups.py
