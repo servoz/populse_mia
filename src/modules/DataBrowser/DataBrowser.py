@@ -279,7 +279,8 @@ class DataBrowser(QWidget):
 
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
             for scan in self.database.getScans():
-                self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value)
+                if(self.database.scanHasTag(scan.scan, tag_to_clone)):
+                    self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value)
 
             # Updating the table
             self.table_data.update_table()
