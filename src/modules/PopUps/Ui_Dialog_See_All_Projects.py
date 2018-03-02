@@ -116,6 +116,8 @@ class Ui_Dialog_See_All_Projects(QDialog):
                     can_switch = True
                 if can_switch:
 
+                    self.database.unsaveModifications()
+
                     controller.open_project(self.name, self.relative_path)
 
                     # DATABASE

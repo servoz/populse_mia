@@ -157,6 +157,7 @@ class Main_Window(QMainWindow):
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
+
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
@@ -169,6 +170,7 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
+            self.database.unsaveModifications()
             event.accept()
         else:
             event.ignore()
@@ -283,6 +285,9 @@ class Main_Window(QMainWindow):
         # Ui_Dialog() is defined in pop_ups.py
         exPopup = Ui_Dialog_Save_Project_As()
         if exPopup.exec_() == QDialog.Accepted:
+
+            self.database.unsaveModifications()
+
             old_folder = self.database.folder
 
             file_name = exPopup.relative_path
@@ -339,6 +344,9 @@ class Main_Window(QMainWindow):
             self.exPopup.signal_create_project.connect(self.modify_ui)
 
             if self.exPopup.exec_() == QDialog.Accepted:
+
+                self.database.unsaveModifications()
+
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.retranslateUi(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
@@ -372,6 +380,7 @@ class Main_Window(QMainWindow):
         else:
             can_switch = True
         if can_switch:
+            self.database.unsaveModifications()
             self.exPopup = Ui_Dialog_Open_Project()
             self.exPopup.signal_create_project.connect(self.modify_ui)
             if self.exPopup.exec_() == QDialog.Accepted:
@@ -431,6 +440,8 @@ class Main_Window(QMainWindow):
                 else:
                     can_switch = True
                 if can_switch:
+
+                    self.database.unsaveModifications()
 
                     controller.open_project(name, relative_path)
 

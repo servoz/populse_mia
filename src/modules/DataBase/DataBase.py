@@ -198,6 +198,9 @@ class DataBase:
     def saveModifications(self):
         self.session.commit()
 
+    def unsaveModifications(self):
+        self.session.rollback()
+
     def getScansSimpleSearch(self, search):
         values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
         scans = []

@@ -261,7 +261,6 @@ class DataBrowser(QWidget):
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.database.getScans():
                 self.database.addValue(scan.scan, new_tag_name, new_default_value)
-            self.database.saveModifications()
 
             # Updating the table
             self.table_data.update_table()
@@ -296,7 +295,6 @@ class DataBrowser(QWidget):
             #DATABASE
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
-            self.database.saveModifications()
 
             self.table_data.update_table()
 
@@ -594,7 +592,6 @@ class TableDataBrowser(QTableWidget):
 
             if(self.database.scanHasTag(scan_name, tag_name)):
                 self.database.resetTag(scan_name, tag_name)
-                self.database.saveModifications()
                 self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
 
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
@@ -632,7 +629,6 @@ class TableDataBrowser(QTableWidget):
             for scan in self.database.getScans():
                 if (self.database.scanHasTag(scan.scan, tag_name)):
                     self.database.resetTag(scan.scan, tag_name)
-                    self.database.saveModifications()
                     scan_id += 1
                     self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
                     if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
@@ -676,7 +672,6 @@ class TableDataBrowser(QTableWidget):
                 idx += 1
                 if (self.database.scanHasTag(scan_name, tag.tag)):
                     self.database.resetTag(scan_name, tag.tag)
-                    self.database.saveModifications()
                     self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
                     if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
                         color = QColor()
@@ -733,7 +728,6 @@ class TableDataBrowser(QTableWidget):
                                 item.setData(Qt.BackgroundRole, QVariant(color))
                             item.setText(txt)
                             self.setItem(row, col, item)
-        self.database.saveModifications()
 
     def remove_scan(self):
         points = self.selectedIndexes()
@@ -746,8 +740,6 @@ class TableDataBrowser(QTableWidget):
                     project.remove_scan(scan_path)"""
             self.scans_to_visualize.remove(scan_path)
             self.database.removeScan(scan_path)
-        self.database.saveModifications()
-
 
     def sort_items(self, col):
         self.clearSelection() # Remove the column selection from single click
@@ -856,14 +848,12 @@ class TableDataBrowser(QTableWidget):
                 # The scan already have a value for the tag
                 if(self.database.scanHasTag(scan_path, tag_name)):
                     self.database.setTagValue(scan_path, tag_name, text_value)
-                    self.database.saveModifications()
                 # The scan does not have a value for the tag yet
                 else:
                     self.database.addValue(scan_path, tag_name, text_value)
-                    self.database.saveModifications()
 
                 #User tag
-                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
+                if(tag_name != "" and self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
                         if row % 2 == 1:
                             color.setRgb(240, 240, 255)

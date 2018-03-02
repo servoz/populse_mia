@@ -146,8 +146,6 @@ def read_log(database):
                         if user_tag_name not in scan.getAllTagsNames():
                             tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
                             scan.addCustomTag(tag)"""
-    database.saveModifications()
-
 
 def verify_scans(database, path):
     # Returning the files that are problematic
@@ -168,5 +166,6 @@ def verify_scans(database, path):
 
 
 def save_project(database):
-    project_path = os.path.join(database.folder, database.getName(), database.getName())
+    #project_path = os.path.join(database.folder, database.getName(), database.getName())
     #utils.saveProjectAsJsonFile(project_path, project)
+    database.saveModifications()
