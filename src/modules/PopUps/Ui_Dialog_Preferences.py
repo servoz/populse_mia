@@ -90,7 +90,8 @@ class Ui_Dialog_Preferences(QDialog):
         self.label_default_tags = QLabel("Default tags visualized")
         self.list_default_tags = QListWidget()
         self.default_tags = config.getDefaultTags()
-        self.list_default_tags.addItems(self.default_tags)
+        if(config.getDefaultTags() != None):
+            self.list_default_tags.addItems(self.default_tags)
         self.list_default_tags.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.handleItemClicked, self.list_default_tags))
         self.list_default_tags.customContextMenuRequested.connect(self.handleItemClicked)
@@ -121,21 +122,36 @@ class Ui_Dialog_Preferences(QDialog):
 
     def ok_clicked(self, main):
         config = Config()
+
+        #Auto-save
         if self.save_checkbox.isChecked():
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
 
+        #Show all slices
         if self.show_all_slices_checkbox.isChecked():
             config.setShowAllSlices("yes")
         else:
             config.setShowAllSlices("no")
 
+        #Default tags
+        list_tags = []
+        i = 0
+        while i < len(self.list_default_tags):
+            list_tags.append(self.list_default_tags.item(i).text())
+            i = i + 1
+        config.setDefaultTags(list_tags)
+        if main.database.isTempProject:
+            main.database.refreshTags()
+
+        #Colors
         background_color = self.background_color_combo.currentText()
         text_color = self.text_color_combo.currentText()
         config.setBackgroundColor(background_color)
         config.setTextColor(text_color)
         main.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
+
         self.signal_preferences_change.emit()
         self.accept()
         self.close()
@@ -147,21 +163,12 @@ class Ui_Dialog_Preferences(QDialog):
         # Show the context menu.
         action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
         if action == actionRemoveTag:
-            tag = self.list_default_tags.currentItem().text()
-            config = Config()
-            config.removeDefaultTag(tag)
-            self.list_default_tags.clear()
-            self.default_tags = config.getDefaultTags()
-            self.list_default_tags.addItems(self.default_tags)
+            self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
         elif action == actionAddTag:
-            config = Config()
             res = self.getText()
             if not res == None:
-                config.addDefaultTag(res)
-                self.list_default_tags.clear()
-                self.default_tags = config.getDefaultTags()
-                self.list_default_tags.addItems(self.default_tags)
-        #project.refresh_tags()
+                self.list_default_tags.addItem(res)
+
     def getText(self):
         text, okPressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
         if okPressed and text != '':

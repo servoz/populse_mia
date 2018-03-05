@@ -48,14 +48,9 @@ class Config:
         #Then save the modification
         self.saveConfig()
 
-    def addDefaultTag(self, tag):
-        self.config["default_tags"].append(tag)
-        #Then save the modification
-        self.saveConfig()
-
-    def removeDefaultTag(self, tag):
-        self.config["default_tags"].remove(tag)
-        #Then save the modification
+    def setDefaultTags(self, tags):
+        self.config["default_tags"] = tags
+        # Then save the modification
         self.saveConfig()
 
     def getDefaultTags(self):

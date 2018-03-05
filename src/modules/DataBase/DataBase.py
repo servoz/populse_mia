@@ -24,13 +24,25 @@ class DataBase:
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
         if new_project:
-            config = Config()
-            for default_tag in config.getDefaultTags():
-                # Tags by default set as visible
-                self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "") # Modify params
-                self.saveModifications()
+            self.refreshTags()
 
     """ FROM properties/properties.yml """
+
+    def refreshTags(self):
+
+        #Tags cleared
+        tags = self.session.query(Tag).filter().all()
+        for tag in tags:
+            self.session.delete(tag)
+
+        #New tags added
+        config = Config()
+        if config.getDefaultTags() != None:
+            for default_tag in config.getDefaultTags():
+                if not self.hasTag(default_tag):
+                    # Tags by default set as visible
+                    self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "")  # Modify params
+                    self.saveModifications()
 
     def loadProperties(self):
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
@@ -129,6 +141,10 @@ class DataBase:
     def getVisualizedTags(self):
         tags = self.session.query(Tag).filter(Tag.visible == True).all()
         return tags
+
+    def hasTag(self, tag):
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        return len(tags) == 1
 
     def getTagOrigin(self, tag):
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
