@@ -215,7 +215,7 @@ class DataBrowser(QWidget):
             for item in items:
                 row = item.row()
                 file_name = self.table_data.item(row, 0).text() + ".nii"
-                full_name = path_name + '/data/raw_data/' + file_name
+                full_name = os.path.join(path_name, 'data', 'raw_data', file_name)
                 if not full_name in full_names:
                     full_names.append(full_name)
 
