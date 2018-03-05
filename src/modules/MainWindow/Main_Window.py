@@ -187,14 +187,15 @@ class Main_Window(QMainWindow):
             Retuns 1 if there are unsaved modifications, 0 otherwise
 
         """
-
         # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
         if (self.database.isTempProject and len(self.database.getScans()) > 0):
             return 1
         if (self.database.isTempProject):
             return 0
-        project_path = os.path.join(self.database.folder, self.database.getName())
-        file_path = os.path.join(project_path, self.database.getName())
+        if (self.database.unsavedModifications):
+            return 1
+        else:
+            return 0
         """with open(file_path + ".json", "r", encoding="utf-8")as fichier:
             project = json.load(fichier, object_hook=deserializer)
             # Check folder, name and date removed
@@ -220,7 +221,6 @@ class Main_Window(QMainWindow):
                         break
                 if scanFound == 0:
                     return 1"""
-        return 0
 
     @pyqtSlot()
     def modify_ui(self):
@@ -338,6 +338,7 @@ class Main_Window(QMainWindow):
                 self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def create_project_pop_up(self):
+
         if (self.check_unsaved_modifications() == 1):
             self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
             self.pop_up_close.save_as_signal.connect(self.saveChoice)

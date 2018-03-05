@@ -25,6 +25,7 @@ class DataBase:
         self.session = DBSession()
         if new_project:
             self.refreshTags()
+        self.unsavedModifications = False
 
     """ FROM properties/properties.yml """
 
@@ -41,7 +42,7 @@ class DataBase:
             for default_tag in config.getDefaultTags():
                 if not self.hasTag(default_tag):
                     # Tags by default set as visible
-                    self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "")  # Modify params
+                    self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "")  # Modify params?
                     self.saveModifications()
 
     def loadProperties(self):
@@ -82,6 +83,7 @@ class DataBase:
         if not self.isTempProject:
             self.properties["sorted_tag"] = tag
             self.saveConfig()
+            self.unsavedModifications = True
 
     def getSortOrder(self):
         if (self.isTempProject):
@@ -93,6 +95,7 @@ class DataBase:
         if not self.isTempProject:
             self.properties["sort_order"] = order
             self.saveConfig()
+            self.unsavedModifications = True
 
 
     """ FROM SQlite Database """
@@ -100,14 +103,17 @@ class DataBase:
     def addScan(self, name, checksum):
         scan = Scan(scan=name, checksum=checksum)
         self.session.add(scan)
+        self.unsavedModifications = True
 
     def addTag(self, tag, visible, origin, type, unit, default, description):
         tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
         self.session.add(tag)
+        self.unsavedModifications = True
 
     def addValue(self, scan, tag, value):
         value = Value(scan=scan, tag=tag, current_value=value, raw_value=value)
         self.session.add(value)
+        self.unsavedModifications = True
 
     def getScans(self):
         scans = self.session.query(Scan).filter().all()
@@ -190,29 +196,34 @@ class DataBase:
         # TODO return error if len(tags) != 1
         tag = tags[0]
         tag.visible = visibility
+        self.unsavedModifications = True
 
     def setTagOrigin(self, name, origin):
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
         tag.origin = origin
+        self.unsavedModifications = True
 
     def resetAllVisibilities(self):
         tags = self.session.query(Tag).filter().all()
         for tag in tags:
             tag.visible = False
+        self.unsavedModifications = True
 
     def setTagValue(self, scan, tag, new_value):
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
         #TODO return error if len(tags) != 1
         tag = tags[0]
         tag.current_value = new_value
+        self.unsavedModifications = True
 
     def resetTag(self, scan, tag):
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
         tag.current_value = tag.raw_value
+        self.unsavedModifications = True
 
     def removeScan(self, scan):
         tags = self.session.query(Value).filter(Value.scan == scan).all()
@@ -221,6 +232,7 @@ class DataBase:
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
         # TODO return error if len(scans) != 1
         self.session.delete(scans[0])
+        self.unsavedModifications = True
 
     def removeTag(self, tag):
         values = self.session.query(Value).filter(Value.tag == tag).all()
@@ -229,12 +241,15 @@ class DataBase:
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         self.session.delete(tags[0])
+        self.unsavedModifications = True
 
     def saveModifications(self):
         self.session.commit()
+        self.unsavedModifications = False
 
     def unsaveModifications(self):
         self.session.rollback()
+        self.unsavedModifications = False
 
     def getScansSimpleSearch(self, search):
         values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
