@@ -523,7 +523,6 @@ class TableDataBrowser(QTableWidget):
 
     def context_menu_table(self, position):
 
-        self.hh.disconnect()
         self.itemChanged.disconnect()
 
         self.flag_first_time += 1
@@ -575,8 +574,6 @@ class TableDataBrowser(QTableWidget):
             self.selectAllColumns()
 
         # Signals reconnected
-        self.hh.sectionClicked.connect(partial(self.selectAllColumn))
-        self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
         self.itemChanged.connect(self.change_cell_color)
 
         self.update_table()
@@ -795,10 +792,10 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
-        self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.update_table()
+            pass
+
 
     def change_cell_color(self, item_origin):
         """

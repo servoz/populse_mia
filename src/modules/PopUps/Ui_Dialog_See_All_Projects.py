@@ -115,26 +115,40 @@ class Ui_Dialog_See_All_Projects(QDialog):
                 else:
                     can_switch = True
                 if can_switch:
+                    tempDatabase = DataBase(self.relative_path, False)
+                    problem_list = controller.verify_scans(tempDatabase, self.relative_path)
+                    if problem_list != []:
+                        str_msg = ""
+                        for element in problem_list:
+                            str_msg += element + "\n\n"
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText("These files have been modified since they have been converted for the first time:")
+                        msg.setInformativeText(str_msg)
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
 
-                    self.database.unsaveModifications()
-
-                    controller.open_project(self.name, self.relative_path)
-
-                    # DATABASE
-                    self.mainWindow.database = DataBase(self.relative_path, False)
-                    self.mainWindow.data_browser.update_database(self.mainWindow.database)
-                    scan_names_list = []
-                    for scan in self.mainWindow.database.getScans():
-                        scan_names_list.append(scan.scan)
-                    self.mainWindow.data_browser.table_data.scans_to_visualize = scan_names_list
-                    self.mainWindow.data_browser.table_data.update_table()
-
-                    if self.mainWindow.database.isTempProject:
-                        self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
                     else:
-                        self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.mainWindow.database.getName())
+                        self.mainWindow.database.unsaveModifications()
 
-                    self.accept()
-                    self.close()
-                    # A signal is emitted to tell that the project has been created
-                    self.signal_create_project.emit()
+                        controller.open_project(self.name, self.relative_path)
+
+                        self.mainWindow.database = DataBase(self.relative_path, False)
+                        self.mainWindow.data_browser.update_database(self.mainWindow.database)
+                        scan_names_list = []
+                        for scan in self.mainWindow.database.getScans():
+                            scan_names_list.append(scan.scan)
+                        self.mainWindow.data_browser.table_data.scans_to_visualize = scan_names_list
+                        self.mainWindow.data_browser.table_data.update_table()
+
+                        if self.mainWindow.database.isTempProject:
+                            self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                        else:
+                            self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.mainWindow.database.getName())
+
+                        self.accept()
+                        self.close()
+                        # A signal is emitted to tell that the project has been created
+                        self.signal_create_project.emit()

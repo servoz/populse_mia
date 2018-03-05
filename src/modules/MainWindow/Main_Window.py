@@ -394,17 +394,15 @@ class Main_Window(QMainWindow):
         else:
             can_switch = True
         if can_switch:
-            self.database.unsaveModifications()
             self.exPopup = Ui_Dialog_Open_Project()
             self.exPopup.signal_create_project.connect(self.modify_ui)
             if self.exPopup.exec_() == QDialog.Accepted:
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.retranslateUi(file_name)
                 file_name = self.exPopup.relative_path
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                self.update_recent_projects_actions()
 
-                problem_list = controller.verify_scans(self.database, self.exPopup.relative_path)
+                tempDatabase = DataBase(self.exPopup.relative_path, False)
+                problem_list = controller.verify_scans(tempDatabase, self.exPopup.relative_path)
                 if problem_list != []:
                     str_msg = ""
                     for element in problem_list:
@@ -418,20 +416,22 @@ class Main_Window(QMainWindow):
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
 
-                # DATABASE
-                self.database = DataBase(self.exPopup.relative_path, False)
-                self.data_browser.update_database(self.database)
-                scan_names_list = []
-                for scan in self.database.getScans():
-                    scan_names_list.append(scan.scan)
-                self.data_browser.table_data.scans_to_visualize = scan_names_list
-                self.data_browser.table_data.update_table()
-
-                if self.database.isTempProject:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
                 else:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+                    self.database.unsaveModifications()
+                    self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                    self.update_recent_projects_actions()
+                    self.database = DataBase(self.exPopup.relative_path, False)
+                    self.data_browser.update_database(self.database)
+                    scan_names_list = []
+                    for scan in self.database.getScans():
+                        scan_names_list.append(scan.scan)
+                    self.data_browser.table_data.scans_to_visualize = scan_names_list
+                    self.data_browser.table_data.update_table()
 
+                    if self.database.isTempProject:
+                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                    else:
+                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -453,32 +453,45 @@ class Main_Window(QMainWindow):
 
                 else:
                     can_switch = True
+
                 if can_switch:
+                    tempDatabase = DataBase(relative_path, False)
+                    problem_list = controller.verify_scans(tempDatabase, relative_path)
+                    if problem_list != []:
+                        str_msg = ""
+                        for element in problem_list:
+                            str_msg += element + "\n\n"
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText("These files have been modified since they have been converted for the first time:")
+                        msg.setInformativeText(str_msg)
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
 
-                    self.database.unsaveModifications()
-
-                    controller.open_project(name, relative_path)
-
-                    #DATABASE
-                    self.database = DataBase(relative_path, False)
-                    self.data_browser.update_database(self.database)
-                    scan_names_list = []
-                    for scan in self.database.getScans():
-                        scan_names_list.append(scan.scan)
-                    self.data_browser.table_data.scans_to_visualize = scan_names_list
-                    self.data_browser.table_data.update_table()
-
-                    if self.database.isTempProject:
-                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
                     else:
-                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
-                    self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                    self.update_recent_projects_actions()
-                    self.exPopup = Ui_Dialog_New_Project()
-                    self.exPopup.path = path
-                    self.exPopup.name = name
-                    self.modify_ui()
+                        self.database.unsaveModifications()
+
+                        controller.open_project(name, relative_path)
+
+                        self.database = DataBase(relative_path, False)
+                        self.data_browser.update_database(self.database)
+                        scan_names_list = []
+                        for scan in self.database.getScans():
+                            scan_names_list.append(scan.scan)
+                        self.data_browser.table_data.scans_to_visualize = scan_names_list
+                        self.data_browser.table_data.update_table()
+
+                        if self.database.isTempProject:
+                            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+                        else:
+                            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+
+                        self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                        self.update_recent_projects_actions()
+
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
