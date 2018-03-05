@@ -95,12 +95,12 @@ class Ui_Visualized_Tags(QWidget):
         else:
             for tag in database.getTags():
                 if tag.visible == False:
-                    return_list.append(tag.name)
+                    return_list.append(tag.tag)
         self.list_widget_tags.clear()
-        for tag in return_list:
+        for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
-            item.setText(tag.tag)
+            item.setText(tag_name)
 
     def click_select_tag(self):
         # Put the selected tags in the "selected tag" table

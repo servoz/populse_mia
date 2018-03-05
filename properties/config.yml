@@ -12,4 +12,4 @@ paths:
   projects: ..\data
 show_all_slices: 'no'
 text_color: ''
-thumbnail_tag: SequenceName
+thumbnail_tag: Dataset data file
