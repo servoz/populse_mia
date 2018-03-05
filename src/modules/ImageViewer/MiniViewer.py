@@ -180,8 +180,13 @@ class MiniViewer(QWidget):
                         if scan.scan == file_path_base_name:
                             for tag in self.database.getTags():
                                 if tag.tag == self.config.getThumbnailTag():
-                                    self.label_description[idx].setText \
+                                    if(self.database.scanHasTag(scan.scan, tag.tag)):
+                                        self.label_description[idx].setText \
                                         (str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
+                                    else:
+                                        self.label_description[idx].setText \
+                                            ("NaN"[
+                                             :nb_char_max])
                                     self.label_description[idx].setToolTip \
                                         (os.path.basename(self.config.getThumbnailTag()))
 
