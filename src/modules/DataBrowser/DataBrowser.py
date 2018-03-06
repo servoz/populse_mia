@@ -21,6 +21,7 @@ from functools import partial
 import Utils.utils as utils
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
+from DataBrowser.AdvancedSearch import AdvancedSearch
 
 class DataBrowser(QWidget):
     def __init__(self, database):
@@ -61,7 +62,7 @@ class DataBrowser(QWidget):
         self.frame_visualization.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_visualization.setObjectName("frame_5")
 
-        self.viewer = MiniViewer(database)
+        self.viewer = MiniViewer(self.database)
         self.viewer.setObjectName("viewer")
         self.viewer.adjustSize()
 
@@ -70,12 +71,20 @@ class DataBrowser(QWidget):
 
         self.frame_visualization.setLayout(hbox_viewer)
 
+        # ADVANCED SEARCH
+
+        self.frame_advanced_search = QtWidgets.QFrame(self)
+        self.frame_advanced_search.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_advanced_search.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_advanced_search.setObjectName("frame_search")
+        self.frame_advanced_search.setHidden(True)
+
         ## SPLITTER AND LAYOUT ##
 
         self.splitter_vertical = QSplitter(Qt.Vertical)
+        self.splitter_vertical.addWidget(self.frame_advanced_search)
         self.splitter_vertical.addWidget(self.frame_table_data)
         self.splitter_vertical.addWidget(self.frame_visualization)
-        #self.splitter_vertical.mouseDoubleClickEvent.connect(self.move_splitter)
         self.splitter_vertical.splitterMoved.connect(self.move_splitter)
 
         vbox_splitter = QVBoxLayout(self)
@@ -99,8 +108,8 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
-    def visualized_tags_pop_up(self, database):
-        self.pop_up = Ui_Dialog_Settings(database)
+    def visualized_tags_pop_up(self):
+        self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
@@ -136,16 +145,22 @@ class DataBrowser(QWidget):
         search_bar_layout.addWidget(self.search_bar)
         search_bar_layout.addWidget(self.button_cross)
 
+        advanced_search_button = QPushButton()
+        advanced_search_button.setText('Advanced search')
+        advanced_search_button.clicked.connect(self.advanced_search)
+
         self.frame_test = QFrame()
         self.frame_test.setLayout(search_bar_layout)
 
         visualized_tags_button = QPushButton()
         visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(lambda: self.visualized_tags_pop_up(self.database))
+        visualized_tags_button.clicked.connect(self.visualized_tags_pop_up)
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.frame_test)
+        self.menu_toolbar.addSeparator()
+        self.menu_toolbar.addWidget(advanced_search_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(visualized_tags_button)
 
@@ -220,6 +235,17 @@ class DataBrowser(QWidget):
                     full_names.append(full_name)
 
             self.viewer.verify_slices(full_names)
+
+    def advanced_search(self):
+        if(self.frame_advanced_search.isHidden()):
+            self.frame_advanced_search.setHidden(False)
+            self.advanced_search = AdvancedSearch(self.database)
+            vbox_viewer_search = QVBoxLayout()
+            vbox_viewer_search.addWidget(self.advanced_search)
+            self.frame_advanced_search.setLayout(vbox_viewer_search)
+        else:
+            self.frame_advanced_search.setHidden(True)
+
 
     def add_tag_pop_up(self):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
