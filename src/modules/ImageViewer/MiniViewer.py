@@ -50,6 +50,9 @@ class MiniViewer(QWidget):
         self.txta1 = []
         self.txta2 = []
         self.txta3 = []
+        self.label3D = []
+        self.label4D = []
+        self.label5D = []
         self.imageLabel = []
         self.img = []
         self.label_description = []
@@ -132,6 +135,7 @@ class MiniViewer(QWidget):
 
                         self.boxSlider(idx)
                         self.enableSliders(idx)
+                        self.createDimensionLabels(idx)
 
                         sl1 = self.a1[idx].value()
                         sl2 = self.a2[idx].value()
@@ -191,14 +195,17 @@ class MiniViewer(QWidget):
                                         (os.path.basename(self.config.getThumbnailTag()))
 
                     self.h_box_slider_1 = QHBoxLayout()
+                    self.h_box_slider_1.addWidget(self.label3D[idx])
                     self.h_box_slider_1.addWidget(self.txta1[idx])
                     self.h_box_slider_1.addWidget(self.a1[idx])
 
                     self.h_box_slider_2 = QHBoxLayout()
+                    self.h_box_slider_2.addWidget(self.label4D[idx])
                     self.h_box_slider_2.addWidget(self.txta2[idx])
                     self.h_box_slider_2.addWidget(self.a2[idx])
 
                     self.h_box_slider_3 = QHBoxLayout()
+                    self.h_box_slider_3.addWidget(self.label5D[idx])
                     self.h_box_slider_3.addWidget(self.txta3[idx])
                     self.h_box_slider_3.addWidget(self.a3[idx])
 
@@ -391,7 +398,7 @@ class MiniViewer(QWidget):
 
         return pixm
 
-    def createSlider(self ,maxm=0 ,minm=0 ,pos=0):
+    def createSlider(self, maxm=0, minm=0, pos=0):
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
         slider.setTickInterval(1)
@@ -420,11 +427,10 @@ class MiniViewer(QWidget):
         self.txta2.insert(idx, self.createFieldValue())
         self.txta3.insert(idx, self.createFieldValue())
 
-
     def displayPosValue(self, idx):
-        self.txta1[idx].setText(str(self.a1[idx].value( ) +1 ) +' /  ' +str(self.a1[idx].maximum( ) +1))
-        self.txta2[idx].setText(str(self.a2[idx].value( ) +1 ) +' /  ' +str(self.a2[idx].maximum( ) +1))
-        self.txta3[idx].setText(str(self.a3[idx].value( ) +1 ) +' /  ' +str(self.a3[idx].maximum( ) +1))
+        self.txta1[idx].setText(str(self.a1[idx].value() + 1) + ' / ' + str(self.a1[idx].maximum() + 1))
+        self.txta2[idx].setText(str(self.a2[idx].value() + 1) + ' / ' + str(self.a2[idx].maximum() + 1))
+        self.txta3[idx].setText(str(self.a3[idx].value() + 1) + ' / ' + str(self.a3[idx].maximum() + 1))
 
     def createFieldValue(self):
         fieldValue = QLineEdit()
@@ -436,6 +442,22 @@ class MiniViewer(QWidget):
         font.setPointSize(9)
         fieldValue.setFont(font)
         return fieldValue
+
+    def createDimensionLabels(self, idx):
+        font = QFont()
+        font.setPointSize(9)
+
+        self.label3D.insert(idx, QLabel())
+        self.label4D.insert(idx, QLabel())
+        self.label5D.insert(idx, QLabel())
+
+        self.label3D[idx].setFont(font)
+        self.label4D[idx].setFont(font)
+        self.label5D[idx].setFont(font)
+
+        self.label3D[idx].setText('3D: ')
+        self.label4D[idx].setText('4D: ')
+        self.label5D[idx].setText('5D: ')
 
     def changePosValue(self, idx):
         self.navigImage(idx)
@@ -450,7 +472,7 @@ class MiniViewer(QWidget):
 
         w, h = self.im_2D[idx].shape
 
-        image = QImage(self.im_2D[idx].data ,w ,h ,QImage.Format_Indexed8)
+        image = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
         pixm = QPixmap.fromImage(image)
         self.imageLabel[idx].setPixmap(pixm)
 
