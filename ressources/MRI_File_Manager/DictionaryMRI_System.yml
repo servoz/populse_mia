@@ -1,6 +1,6 @@
 # Dictionary MRI by IRMaGe - Grenoble, 2017 July.
 #
-#  Important :      only developpers and advanced users can modified this database (the others users can used the file DictionaryMRI_Bruker_User.yml which is in the same directory)
+#  Important :      only developpers and advanced users can modified this database (the others users can used the file DictionaryMRI_User.yml which is in the same directory)
 #
 #  YAML validator online :    see http://yaml-online-parser.appspot.com/ , copy all this text (Ctrl-A and Ctrl-C) and paste in the left case (Ctrl-V) of the web page.
 #                                           if the Output case don't show red error message, it's ok !
@@ -317,6 +317,12 @@ dictionaryMRI:
 
                   viewer: {category: ~}
                   json:   {tagJson: PixelBandwidth, type: float, format: ~, units: ms}
+
+  Pixel Representation:
+                  whereDicom:   {file: ~, keyName: Pixel Representation, type: int, format: ~, units: ~}
+                  
+                  viewer: {category: MRI parameters}
+                  json:   {tagJson: Pixel Representation, type: int, format: ~, units: ~}
 
   Pixel Spacing:
                   whereBruker:  {file: method, keyName: $PVM_SpatResol=, type: int, format: ~, units: ~}

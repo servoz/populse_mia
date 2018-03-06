@@ -1,6 +1,6 @@
 # Dictionary MRI by IRMaGe - Grenoble, 2017 July.
 #
-#  Important :      only developpers and advanced users can modified this database (the others users can used the file DictionaryMRI_Bruker_User.yml which is in the same directory)
+#
 #
 #  YAML validator online :    see http://yaml-online-parser.appspot.com/ , copy all this text (Ctrl-A and Ctrl-C) and paste in the left case (Ctrl-V) of the web page.
 #                                           if the Output case don't show red error message, it's ok !
@@ -11,9 +11,17 @@
 #dictionaryMRI:
 #
 #  Label MRI:
-#     where:
-#          file :           subject , visu_pars , method , acqp , reco (for Bruker Paravasion 5 , Paravision 6)
+#     where'Constructor':
+#          file :           'subject' , 'visu_pars' , 'method' , 'acqp' or 'reco' (for Bruker Paravasion 5 , Paravision 6)
+#                           'par , xml' (for Philips Achieva PAR 4.2 , Xml)
+#                           'Dirfile, DicomDir or ~ (for Dicom)
+#                           'niftiheader' or 'json' (for Nifti)
+#                            
 #          keyName :        $'nameparameter'= (for Bruker)
+#                           tag without [],(),<> and its elements which are inside (for Philips)
+#                           tag (for Dicom)
+#                           tag (for Nifti)
+#                            
 #          type :           string, float, int
 #          format :         "HH:mm:ss dd/MM/yyyy" , "dd/MM/yyyy HH:mm:ss" ,"SSS" (ms) for date, duree,... (Put the parameter in quote "" !)
 #          units : (not yet operational)
@@ -30,7 +38,7 @@
 #          format :         (see before)
 #          units :          (not yet operational)
 #
-#---------------------------------- Bruker Paravision 5, Paravision 6 ------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 dictionaryMRI:
 
   Coding Scheme Designator:
