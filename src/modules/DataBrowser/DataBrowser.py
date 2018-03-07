@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QVariant
-from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter
+from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
@@ -78,6 +78,10 @@ class DataBrowser(QWidget):
         self.frame_advanced_search.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_advanced_search.setObjectName("frame_search")
         self.frame_advanced_search.setHidden(True)
+        self.advanced_search = AdvancedSearch(self.database)
+        layout_search = QGridLayout()
+        layout_search.addWidget(self.advanced_search)
+        self.frame_advanced_search.setLayout(layout_search)
 
         ## SPLITTER AND LAYOUT ##
 
@@ -97,6 +101,7 @@ class DataBrowser(QWidget):
         self.database = database
         self.table_data.database = database
         self.viewer.database = database
+        self.advanced_search.database = database
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -239,13 +244,9 @@ class DataBrowser(QWidget):
     def advanced_search(self):
         if(self.frame_advanced_search.isHidden()):
             self.frame_advanced_search.setHidden(False)
-            self.advanced_search = AdvancedSearch(self.database)
-            vbox_viewer_search = QVBoxLayout()
-            vbox_viewer_search.addWidget(self.advanced_search)
-            self.frame_advanced_search.setLayout(vbox_viewer_search)
+            self.advanced_search.show_search()
         else:
             self.frame_advanced_search.setHidden(True)
-
 
     def add_tag_pop_up(self):
         # Ui_Dialog_add_tag() is defined in pop_ups.py
