@@ -269,6 +269,10 @@ class DataBase:
                 condition = condition + "tag == '" + fields[i] + "' and "
             if(conditions[i] == "CONTAINS"):
                 condition = condition + "current_value LIKE '%" + values[i] + "%'"
+            elif(conditions[i] == "IN"):
+                condition = condition + "current_value IN " + values[i]
+            elif (conditions[i] == "BETWEEN"):
+                condition = condition + "current_value BETWEEN " + values[i]
             else:
                 condition = condition + "current_value " + conditions[i] + " '" + values[i] + "'"
             request = request + condition
