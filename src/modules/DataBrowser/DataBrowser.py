@@ -78,7 +78,7 @@ class DataBrowser(QWidget):
         self.frame_advanced_search.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_advanced_search.setObjectName("frame_search")
         self.frame_advanced_search.setHidden(True)
-        self.advanced_search = AdvancedSearch(self.database)
+        self.advanced_search = AdvancedSearch(self.database, self)
         layout_search = QGridLayout()
         layout_search.addWidget(self.advanced_search)
         self.frame_advanced_search.setLayout(layout_search)
@@ -247,6 +247,11 @@ class DataBrowser(QWidget):
             self.advanced_search.show_search()
         else:
             self.frame_advanced_search.setHidden(True)
+            return_list = []
+            for scan in self.database.getScans():
+                return_list.append(scan.scan)
+            self.table_data.scans_to_visualize = return_list
+            self.table_data.update_table()
 
     def add_tag_pop_up(self):
         # Ui_Dialog_add_tag() is defined in pop_ups.py

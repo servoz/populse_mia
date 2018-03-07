@@ -6,11 +6,12 @@ from Utils.Tools import ClickableLabel
 
 class AdvancedSearch(QWidget):
 
-    def __init__(self, database):
+    def __init__(self, database, dataBrowser):
 
         super().__init__()
 
         self.database = database
+        self.dataBrowser = dataBrowser
         self.rows = []
 
     def show_search(self):
@@ -31,20 +32,25 @@ class AdvancedSearch(QWidget):
         rowLayout.setObjectName("row layout")
 
         fieldChoice = QComboBox()
+        fieldChoice.setObjectName('field')
         for tag in self.database.getVisualizedTags():
             fieldChoice.addItem(tag.tag)
         fieldChoice.addItem("All visualized tags")
 
         conditionChoice = QComboBox()
-        conditionChoice.addItem("==")
+        conditionChoice.setObjectName('condition')
+        conditionChoice.addItem("=")
         conditionChoice.addItem("!=")
         conditionChoice.addItem(">=")
         conditionChoice.addItem("<=")
         conditionChoice.addItem("<")
         conditionChoice.addItem(">")
         conditionChoice.addItem("BETWEEN")
+        conditionChoice.addItem("IN")
+        conditionChoice.addItem("CONTAINS")
 
         conditionValue = QLineEdit()
+        conditionValue.setObjectName('value')
 
         removeRowLabel = ClickableLabel()
         removeRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
@@ -94,7 +100,6 @@ class AdvancedSearch(QWidget):
             linkChoice.setObjectName('link')
             linkChoice.addItem("AND")
             linkChoice.addItem("OR")
-            linkChoice.addItem("NOT")
             row.insertWidget(0, linkChoice)
             i = i + 1
 
@@ -114,6 +119,7 @@ class AdvancedSearch(QWidget):
         searchLayout.setObjectName("search layout")
         search = QPushButton("Search")
         search.setFixedWidth(100)
+        search.clicked.connect(self.launch_search)
         searchLayout.addWidget(search)
         searchLayout.setParent(None)
         main_layout.insertLayout(i, searchLayout)
@@ -130,3 +136,26 @@ class AdvancedSearch(QWidget):
                     widget.deleteLater()
                 else:
                     self.clearLayout(item.layout())
+
+    def launch_search(self):
+        fields = []
+        conditions = []
+        values = []
+        links = []
+        for row in self.rows:
+            i = 0
+            while i < row.count():
+                child = row.itemAt(i).widget()
+                childName = child.objectName()
+                if(childName == 'link'):
+                    links.append(child.currentText())
+                elif(childName == 'condition'):
+                    conditions.append(child.currentText())
+                elif (childName == 'field'):
+                    fields.append(child.currentText())
+                elif (childName == 'value'):
+                    values.append(child.displayText())
+                i = i + 1
+        result = self.database.getScansAdvancedSearch(links, fields, conditions, values)
+        self.dataBrowser.table_data.scans_to_visualize = result
+        self.dataBrowser.table_data.update_table()

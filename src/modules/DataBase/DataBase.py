@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_, or_, not_
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -257,4 +257,31 @@ class DataBase:
         for value in values:
             if not value.scan in scans and self.getTagVisibility(value.tag):
                 scans.append(value.scan)
+        return scans
+
+    def getScansAdvancedSearch(self, links, fields, conditions, values):
+        masterRequest = ""
+        i = 0
+        while i < len(conditions):
+            request = "select scan from Value where "
+            condition = ""
+            if(fields[i] != "All visualized tags"):
+                condition = condition + "tag == '" + fields[i] + "' and "
+            if(conditions[i] == "CONTAINS"):
+                condition = condition + "current_value LIKE '%" + values[i] + "%'"
+            else:
+                condition = condition + "current_value " + conditions[i] + " '" + values[i] + "'"
+            request = request + condition
+            if i < len(conditions) - 1:
+                if(links[i] == "AND"):
+                    request = request + " INTERSECT "
+                else:
+                    request = request + " UNION "
+            masterRequest = masterRequest + request
+            i = i + 1
+        result = self.session.execute(masterRequest)
+        scans = []
+        for row in result:
+            if not row[0] in scans:
+                scans.append(row[0])
         return scans
