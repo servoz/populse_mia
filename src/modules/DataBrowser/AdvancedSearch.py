@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLineEdit, QLabel, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLineEdit, QPushButton
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QObjectCleanupHandler
+from PyQt5.QtCore import QObjectCleanupHandler, QObject
 import os
 from Utils.Tools import ClickableLabel
 
@@ -42,6 +42,7 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("<=")
         conditionChoice.addItem("<")
         conditionChoice.addItem(">")
+        conditionChoice.addItem("BETWEEN")
 
         conditionValue = QLineEdit()
 
@@ -66,21 +67,38 @@ class AdvancedSearch(QWidget):
         self.clearLayout(self.layout())
         QObjectCleanupHandler().add(self.layout())
 
-        i = 0
-        while i < len(self.rows) - 1:
-            if(self.rows[i].count() == 5):
-                greenPlus = self.rows[i].takeAt(self.rows[i].count() - 1)
-                greenPlusWidget = greenPlus.widget()
-                greenPlusWidget.deleteLater()
+        for row in self.rows:
+            # Plus removed from every row
+            lastRowWidget = row.itemAt(row.count() - 1).widget()
+            lastRowWidgetName = lastRowWidget.objectName()
+            if(lastRowWidgetName == "plus"):
+                lastRowWidget.deleteLater()
+            # Link removed from every row
+            firstRowWidget = row.itemAt(0).widget()
+            firstRowWidgetName = firstRowWidget.objectName()
+            if (firstRowWidgetName == "link"):
+                firstRowWidget.deleteLater()
+
+        #Plus added to the last row
+        addRowLabel = ClickableLabel()
+        addRowLabel.setObjectName('plus')
+        addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
+        addRowPicture = addRowPicture.scaledToHeight(20)
+        addRowLabel.setPixmap(addRowPicture)
+        addRowLabel.clicked.connect(self.add_row)
+
+        i = 1
+        while i < len(self.rows):
+            row = self.rows[i]
+            linkChoice = QComboBox()
+            linkChoice.setObjectName('link')
+            linkChoice.addItem("AND")
+            linkChoice.addItem("OR")
+            linkChoice.addItem("NOT")
+            row.insertWidget(0, linkChoice)
             i = i + 1
 
-        if (self.rows[len(self.rows) - 1].count() == 4):
-            addRowLabel = ClickableLabel()
-            addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
-            addRowPicture = addRowPicture.scaledToHeight(20)
-            addRowLabel.setPixmap(addRowPicture)
-            addRowLabel.clicked.connect(self.add_row)
-            self.rows[len(self.rows) - 1].addWidget(addRowLabel)
+        self.rows[len(self.rows) - 1].addWidget(addRowLabel)
 
         main_layout = QVBoxLayout()
         main_layout.setObjectName("main layout")
