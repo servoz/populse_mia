@@ -1,5 +1,6 @@
 auto_save: 'no'
 background_color: ''
+chain_cursors: 'yes'
 default_tags:
 - FileName
 - PatientName
