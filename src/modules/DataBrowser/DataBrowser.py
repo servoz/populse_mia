@@ -262,11 +262,12 @@ class DataBrowser(QWidget):
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
             (new_tag_name, new_default_value, type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
-            if type != list:
+            """if type != list:
                 list_to_add = []
                 list_to_add.append(type(new_default_value))
             else:
-                list_to_add = utils.text_to_list(new_default_value)
+                list_to_add = utils.text_to_list(new_default_value)"""
+
 
             #new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
 
@@ -881,7 +882,7 @@ class TableDataBrowser(QTableWidget):
                 break
             row = item.row()
             col = item.column()
-            #scan_path = self.item(row, 0).text()
+            scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
             # Default type is string if we don't find the real one
             if(tag_name != ""):
@@ -907,7 +908,8 @@ class TableDataBrowser(QTableWidget):
                     is_error = True
             elif (tp == TAG_TYPE_LIST):
                 try:
-                    list(text_value)
+                    text_value.split(",")
+
                 except ValueError:
                     is_error = True
 

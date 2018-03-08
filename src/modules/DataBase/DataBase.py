@@ -286,7 +286,6 @@ class DataBase:
                     request = request + " UNION "
             masterRequest = masterRequest + request
             i = i + 1
-        print(masterRequest)
         result = self.session.execute(masterRequest)
         scans = []
         for row in result:
