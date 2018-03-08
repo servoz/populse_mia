@@ -263,14 +263,13 @@ class DataBase:
         masterRequest = ""
         i = 0
         while i < len(conditions):
-            request = "select scan from Value where "
+            request = ""
             if(nots[i] == "NOT"):
-                request = request + "NOT "
+                request = request + "select scan from Value EXCEPT "
+            request = request + "select scan from Value where "
             condition = ""
             if(fields[i] != "All visualized tags"):
                 condition = condition + "tag == '" + fields[i] + "' and "
-                if (nots[i] == "NOT"):
-                    condition = condition + " NOT "
             if(conditions[i] == "CONTAINS"):
                 condition = condition + "current_value LIKE '%" + values[i] + "%'"
             elif(conditions[i] == "IN"):
