@@ -796,14 +796,31 @@ class TableDataBrowser(QTableWidget):
     def remove_scan(self):
         points = self.selectedIndexes()
 
+        historyMaker = []
+        historyMaker.append("remove_scans")
+        scans_removed = []
+        values_removed = []
+
         for point in points:
             row = point.row()
             scan_path = self.item(row, 0).text()
+
             """for scan in project._get_scans():
                 if scan_path == scan.file_path:
                     project.remove_scan(scan_path)"""
+
+            scan_object = self.database.getScan(scan_path)
+            scans_removed.append(scan_object)
+            for value in self.database.getValuesGivenScan(scan_path):
+                values_removed.append(value)
+
             self.scans_to_visualize.remove(scan_path)
             self.database.removeScan(scan_path)
+
+        historyMaker.append(scans_removed)
+        historyMaker.append(values_removed)
+        self.database.history.append(historyMaker)
+        self.database.historyHead = self.database.historyHead + 1
 
     def sort_items(self, col):
         self.clearSelection() # Remove the column selection from single click

@@ -125,6 +125,11 @@ class DataBase:
         values = self.session.query(Value).filter().all()
         return values
 
+    def getScan(self, scan):
+        scans = self.session.query(Scan).filter(Scan.scan == scan).all()
+        #TODO return error if len(scans) != 1
+        return scans[0]
+
     def getValuesGivenTag(self, tag):
         values = self.session.query(Value).filter(Value.tag == tag).all()
         return values
@@ -305,10 +310,10 @@ class DataBase:
                 tagToRemove = toUndo[1]
                 self.removeTag(tagToRemove)
             if (action == "remove_tags"):
-                scansRemoved = toUndo[1]
+                tagsRemoved = toUndo[1]
                 i = 0
-                while i < len(scansRemoved):
-                    tagToReput = scansRemoved[i]
+                while i < len(tagsRemoved):
+                    tagToReput = tagsRemoved[i]
                     self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
                     i = i + 1
                 valuesRemoved = toUndo[2]
@@ -323,5 +328,18 @@ class DataBase:
                 while i < len(scansAdded):
                     scanToRemove = scansAdded[i]
                     self.removeScan(scanToRemove)
+                    i = i + 1
+            if(action == "remove_scans"):
+                scansRemoved = toUndo[1]
+                i = 0
+                while i < len(scansRemoved):
+                    scanToReput = scansRemoved[i]
+                    self.addScan(scanToReput.scan, scanToReput.checksum)
+                    i = i + 1
+                valuesRemoved = toUndo[2]
+                i = 0
+                while i < len(valuesRemoved):
+                    valueToReput = valuesRemoved[i]
+                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             self.historyHead = self.historyHead - 1
