@@ -95,3 +95,11 @@ class Config:
         self.config["thumbnail_tag"] = thumbnail_tag
         # Then save the modification
         self.saveConfig()
+
+    def getChainCursors(self):
+        return self.config["chain_cursors"]
+
+    def setChainCursors(self, chain_cursors):
+        self.config["chain_cursors"] = chain_cursors
+        # Then save the modification
+        self.saveConfig()
