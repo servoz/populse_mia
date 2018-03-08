@@ -251,6 +251,11 @@ class DataBase:
         self.session.delete(tags[0])
         self.unsavedModifications = True
 
+    def removeValue(self, scan, tag):
+        values = self.session.query(Value).filter(Value.scan == scan).filter(Value.tag == tag).all()
+        self.session.delete(values[0])
+        self.unsavedModifications = True
+
     def saveModifications(self):
         self.session.commit()
         self.unsavedModifications = False
@@ -302,7 +307,6 @@ class DataBase:
         return scans
 
     def undo(self):
-        print(self.history)
         if(self.historyHead > 0 and len(self.history) >= self.historyHead):
             toUndo = self.history[self.historyHead - 1]
             action = toUndo[0]
@@ -341,5 +345,18 @@ class DataBase:
                 while i < len(valuesRemoved):
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+                    i = i + 1
+            if (action == "modified_values"):
+                modifiedValues = toUndo[1]
+                i = 0
+                while i < len(modifiedValues):
+                    valueToRestore = modifiedValues[i]
+                    scan = valueToRestore[0]
+                    tag = valueToRestore[1]
+                    value = valueToRestore[2]
+                    if(value == None):
+                        self.removeValue(scan, tag)
+                    else:
+                        self.setTagValue(scan, tag, value)
                     i = i + 1
             self.historyHead = self.historyHead - 1
