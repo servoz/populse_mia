@@ -102,6 +102,7 @@ class DataBrowser(QWidget):
         self.table_data.database = database
         self.viewer.database = database
         self.advanced_search.database = database
+        self.frame_advanced_search.setHidden(True)
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
