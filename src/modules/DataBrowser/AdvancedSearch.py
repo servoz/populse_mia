@@ -31,6 +31,11 @@ class AdvancedSearch(QWidget):
         rowLayout = QHBoxLayout(None)
         rowLayout.setObjectName("row layout")
 
+        notChoice = QComboBox()
+        notChoice.setObjectName('not')
+        notChoice.addItem("")
+        notChoice.addItem("NOT")
+
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
         for tag in self.database.getVisualizedTags():
@@ -57,6 +62,7 @@ class AdvancedSearch(QWidget):
         removeRowPicture = removeRowPicture.scaledToHeight(30)
         removeRowLabel.setPixmap(removeRowPicture)
 
+        rowLayout.addWidget(notChoice)
         rowLayout.addWidget(fieldChoice)
         rowLayout.addWidget(conditionChoice)
         rowLayout.addWidget(conditionValue)
@@ -142,6 +148,7 @@ class AdvancedSearch(QWidget):
         conditions = []
         values = []
         links = []
+        nots = []
         for row in self.rows:
             i = 0
             while i < row.count():
@@ -155,7 +162,9 @@ class AdvancedSearch(QWidget):
                     fields.append(child.currentText())
                 elif (childName == 'value'):
                     values.append(child.displayText())
+                elif (childName == 'not'):
+                    nots.append(child.currentText())
                 i = i + 1
-        result = self.database.getScansAdvancedSearch(links, fields, conditions, values)
+        result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_table()
