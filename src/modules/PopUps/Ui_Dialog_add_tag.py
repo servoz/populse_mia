@@ -161,7 +161,7 @@ class Ui_Dialog_add_tag(QDialog):
                 wrong_default_value_type = True
         if self.type == list:
             try:
-                list(default_value)
+                default_value.split(",")
             except ValueError:
                 wrong_default_value_type = True
         if (self.text_edit_tag_name.text() == ""):
