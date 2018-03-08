@@ -109,7 +109,7 @@ def read_log(database):
 
             #### Database
             database.addScan(file_name, original_md5)
-            database.addValue(file_name, "FileName", file_name)
+            database.addValue(file_name, "FileName", file_name, file_name)
             tag_already_in_database = False
             for database_tag in database.getTags():
                 database_tag = database_tag.tag
@@ -124,7 +124,7 @@ def read_log(database):
             else:
                 database.setTagOrigin("FileName", TAG_ORIGIN_RAW)
             for tag in getJsonTagsFromFile(file_name, path_name):
-                database.addValue(file_name, tag[0], utils.check_tag_value(tag[1]))
+                database.addValue(file_name, tag[0], utils.check_tag_value(tag[1]), utils.check_tag_value(tag[1]))
                 tag_already_in_database = False
                 for database_tag in database.getTags():
                     database_tag = database_tag.tag

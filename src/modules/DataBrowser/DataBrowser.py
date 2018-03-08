@@ -289,7 +289,13 @@ class DataBrowser(QWidget):
                 real_type = TAG_TYPE_LIST
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.database.getScans():
-                self.database.addValue(scan.scan, new_tag_name, new_default_value)
+                self.database.addValue(scan.scan, new_tag_name, new_default_value, new_default_value)
+
+            historyMaker = []
+            historyMaker.append("add_tag")
+            historyMaker.append(new_tag_name)
+            self.database.history.append(historyMaker)
+            self.database.historyHead = self.database.historyHead + 1
 
             # Updating the table
             self.table_data.update_table()
@@ -311,6 +317,12 @@ class DataBrowser(QWidget):
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
                     self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value)
 
+            historyMaker = []
+            historyMaker.append("add_tag")
+            historyMaker.append(new_tag_name)
+            self.database.history.append(historyMaker)
+            self.database.historyHead = self.database.historyHead + 1
+
             # Updating the table
             self.table_data.update_table()
 
@@ -322,16 +334,28 @@ class DataBrowser(QWidget):
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
             tag_names_to_remove = self.pop_up_clone_tag.get_values()
 
-            #PROJECT
             #for tag_name in tag_names_to_remove:
                 #project.remove_tag_by_name(tag_name)
 
-            #DATABASE
+            historyMaker = []
+            historyMaker.append("remove_tags")
+            tags_removed = []
+            for tag in tag_names_to_remove:
+                tagObject = self.database.getTag(tag)
+                tags_removed.append(tagObject)
+            historyMaker.append(tags_removed)
+            values_removed = []
+            for tag in tag_names_to_remove:
+                for value in self.database.getValuesGivenTag(tag):
+                    values_removed.append(value)
+            historyMaker.append(values_removed)
+            self.database.history.append(historyMaker)
+            self.database.historyHead = self.database.historyHead + 1
+
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
 
             self.table_data.update_table()
-
 
 class TableDataBrowser(QTableWidget):
 

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, and_, or_, not_
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -26,6 +26,8 @@ class DataBase:
         if new_project:
             self.refreshTags()
         self.unsavedModifications = False
+        self.history = []
+        self.historyHead = 0
 
     """ FROM properties/properties.yml """
 
@@ -110,8 +112,8 @@ class DataBase:
         self.session.add(tag)
         self.unsavedModifications = True
 
-    def addValue(self, scan, tag, value):
-        value = Value(scan=scan, tag=tag, current_value=value, raw_value=value)
+    def addValue(self, scan, tag, current_value, raw_value):
+        value = Value(scan=scan, tag=tag, current_value=current_value, raw_value=raw_value)
         self.session.add(value)
         self.unsavedModifications = True
 
@@ -182,10 +184,10 @@ class DataBase:
         # TODO return error if len(tags) != 1
         return tags[0].type
 
-    def getTagDescription(self, tag):
+    def getTag(self, tag):
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
-        return tags[0].description
+        return tags[0]
 
     def getUserTags(self):
         tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
@@ -292,3 +294,26 @@ class DataBase:
             if not row[0] in scans:
                 scans.append(row[0])
         return scans
+
+    def undo(self):
+        print(self.history)
+        if(self.historyHead > 0 and len(self.history) >= self.historyHead):
+            toUndo = self.history[self.historyHead - 1]
+            action = toUndo[0]
+            if(action == "add_tag"):
+                tagToRemove = toUndo[1]
+                self.removeTag(tagToRemove)
+            if (action == "remove_tags"):
+                scansRemoved = toUndo[1]
+                i = 0
+                while i < len(scansRemoved):
+                    tagToReput = scansRemoved[i]
+                    self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
+                    i = i + 1
+                valuesRemoved = toUndo[2]
+                i = 0
+                while i < len(valuesRemoved):
+                    valueToReput = valuesRemoved[i]
+                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+                    i = i + 1
+            self.historyHead = self.historyHead - 1
