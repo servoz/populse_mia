@@ -165,10 +165,10 @@ class Main_Window(QMainWindow):
 
     def undo(self):
         self.database.undo()
-        """scan_names_list = []
+        scan_names_list = []
         for scan in self.database.getScans():
             scan_names_list.append(scan.scan)
-        self.data_browser.table_data.scans_to_visualize = scan_names_list"""
+        self.data_browser.table_data.scans_to_visualize = scan_names_list
         self.data_browser.table_data.update_table()
 
     def closeEvent(self, event):

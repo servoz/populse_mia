@@ -95,7 +95,12 @@ def read_log(database):
     with open(log_to_read, "r", encoding="utf-8") as file:
         list_dict_log = json.load(file)
 
+    historyMaker = []
+    historyMaker.append("add_scans")
+    scans_added = []
+
     for dict_log in list_dict_log:
+
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
@@ -107,8 +112,10 @@ def read_log(database):
             #list_to_add.append(file_name)
             #tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
 
-            #### Database
             database.addScan(file_name, original_md5)
+
+            scans_added.append(file_name)
+
             database.addValue(file_name, "FileName", file_name, file_name)
             tag_already_in_database = False
             for database_tag in database.getTags():
@@ -139,8 +146,6 @@ def read_log(database):
                 else:
                     database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
 
-            #### Database
-
             """scan_to_add.addJsonTag(tag_to_add)
             project.addScan(scan_to_add)
             for tag in project.user_tags:
@@ -150,6 +155,10 @@ def read_log(database):
                         if user_tag_name not in scan.getAllTagsNames():
                             tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
                             scan.addCustomTag(tag)"""
+
+    historyMaker.append(scans_added)
+    database.history.append(historyMaker)
+    database.historyHead = database.historyHead + 1
 
 def verify_scans(database, path):
     # Returning the files that are problematic

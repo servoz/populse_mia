@@ -233,6 +233,7 @@ class DataBase:
             self.session.delete(tag)
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
         # TODO return error if len(scans) != 1
+        # TODO remove tag if only used for this scan
         self.session.delete(scans[0])
         self.unsavedModifications = True
 
@@ -315,5 +316,12 @@ class DataBase:
                 while i < len(valuesRemoved):
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+                    i = i + 1
+            if (action == "add_scans"):
+                scansAdded = toUndo[1]
+                i = 0
+                while i < len(scansAdded):
+                    scanToRemove = scansAdded[i]
+                    self.removeScan(scanToRemove)
                     i = i + 1
             self.historyHead = self.historyHead - 1
