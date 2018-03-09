@@ -125,7 +125,6 @@ class DataBase:
         """
         if not self.isTempProject:
             self.properties["sorted_tag"] = tag
-            self.saveConfig()
             self.unsavedModifications = True
 
     def getSortOrder(self):
@@ -141,7 +140,6 @@ class DataBase:
         """
         if not self.isTempProject:
             self.properties["sort_order"] = order
-            self.saveConfig()
             self.unsavedModifications = True
 
 
@@ -329,6 +327,8 @@ class DataBase:
         Saves the pending operations of the project (actions still not saved)
         """
         self.session.commit()
+        if not self.isTempProject:
+            self.saveConfig()
         self.unsavedModifications = False
 
     def unsaveModifications(self):
