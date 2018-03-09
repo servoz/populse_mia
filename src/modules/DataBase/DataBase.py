@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, and_, or_, not_
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -10,33 +10,61 @@ from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER
 class DataBase:
 
     def __init__(self, project_root_folder, new_project):
+        """ Database constructor
+            New instance when switching project
+            :param project_root_folder: projet root folder
+                   If None, a temporary folder will be created
+
+            :param new_project: Boolean to know if we have to create the database
+                                True when New Project pop up or at the beginning for unnamed project
+                                False when Open Project or Save as pop up
+
+            self.isTempProject: To know if it's still unnamed project or not
+            self.folder: Project root folder, relative
+            self.properties: Properties of the project: Name, date of creation, sorted tag, and sort order (Not for Unnamed project)
+            self.unsavedModifications: To know if there are unsaved modifications
+            self.history: List of actions done on the project since the last opening
+            self.historyHead: Index to know where we are in the history list
+        """
+        # We don't have a project root folder at the opening of the software (Unnamed project), we generate a temporary folder
         if(project_root_folder == None):
             self.isTempProject = True
             self.folder = os.path.relpath(tempfile.mkdtemp())
+        # We have a project root folder(New, Open, Save As)
         else:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
+        # We create the database if it does not exists yet (for Unnamed project and New project)
         if(new_project):
             createDatabase(self.folder)
+        # We open the database
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         Base.metadata.bind = engine
+        # We create a session
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
+        # If it's a new project, we refresh the list of tags, in case of changes in MIA2 preferences
         if new_project:
             self.refreshTags()
+        # Initialisation
         self.unsavedModifications = False
+        self.history = []
+        self.historyHead = 0
 
     """ FROM properties/properties.yml """
 
     def refreshTags(self):
+        """ Refreshes the tag if the project is new
+            Makes sense if the user just changed the list of default tags in MIA2 preferences
+        """
 
-        #Tags cleared
+        # Tags cleared
         tags = self.session.query(Tag).filter().all()
         for tag in tags:
             self.session.delete(tag)
 
-        #New tags added
+        # New tags added
         config = Config()
         if config.getDefaultTags() != None:
             for default_tag in config.getDefaultTags():
@@ -46,6 +74,7 @@ class DataBase:
                     self.saveModifications()
 
     def loadProperties(self):
+        """ Loads the properties file (Unnamed project does not have this file) """
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
@@ -53,45 +82,59 @@ class DataBase:
                 print(exc)
 
     def getName(self):
+        """ Returns the name of the project if it's not Unnamed project, otherwise empty string """
         if(self.isTempProject):
             return ""
         else:
             return self.properties["name"]
 
     def setName(self, name):
+        """ Sets the name of the project if it's not Unnamed project, otherwise does nothing
+            :param name: new name of the project
+        """
         if not self.isTempProject:
             self.properties["name"] = name
             self.saveConfig()
 
     def saveConfig(self):
+        """ Save the changes in the properties file """
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
 
     def getDate(self):
+        """ Returns the date of creation of the project if it's not Unnamed project, otherwise empty string """
         if(self.isTempProject):
             return ""
         else:
             return self.properties["date"]
 
     def getSortedTag(self):
+        """ Returns the sorted tag of the project if it's not Unnamed project, otherwise empty string """
         if (self.isTempProject):
             return ""
         else:
             return self.properties["sorted_tag"]
 
     def setSortedTag(self, tag):
+        """ Sets the sorted tag of the project if it's not Unnamed project, otherwise does nothing
+            :param tag: new sorted tag of the project
+        """
         if not self.isTempProject:
             self.properties["sorted_tag"] = tag
             self.saveConfig()
             self.unsavedModifications = True
 
     def getSortOrder(self):
+        """ Returns the sort order of the project if it's not Unnamed project, otherwise empty string """
         if (self.isTempProject):
             return ""
         else:
             return self.properties["sort_order"]
 
     def setSortOrder(self, order):
+        """ Sets the sort order of the project if it's not Unnamed project, otherwise does nothing
+            :param order: new sort order of the project (ascending or descending)
+        """
         if not self.isTempProject:
             self.properties["sort_order"] = order
             self.saveConfig()
@@ -110,8 +153,8 @@ class DataBase:
         self.session.add(tag)
         self.unsavedModifications = True
 
-    def addValue(self, scan, tag, value):
-        value = Value(scan=scan, tag=tag, current_value=value, raw_value=value)
+    def addValue(self, scan, tag, current_value, raw_value):
+        value = Value(scan=scan, tag=tag, current_value=current_value, raw_value=raw_value)
         self.session.add(value)
         self.unsavedModifications = True
 
@@ -122,6 +165,11 @@ class DataBase:
     def getValues(self):
         values = self.session.query(Value).filter().all()
         return values
+
+    def getScan(self, scan):
+        scans = self.session.query(Scan).filter(Scan.scan == scan).all()
+        #TODO return error if len(scans) != 1
+        return scans[0]
 
     def getValuesGivenTag(self, tag):
         values = self.session.query(Value).filter(Value.tag == tag).all()
@@ -182,10 +230,10 @@ class DataBase:
         # TODO return error if len(tags) != 1
         return tags[0].type
 
-    def getTagDescription(self, tag):
+    def getTag(self, tag):
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
-        return tags[0].description
+        return tags[0]
 
     def getUserTags(self):
         tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
@@ -226,15 +274,28 @@ class DataBase:
         self.unsavedModifications = True
 
     def removeScan(self, scan):
+        """
+        Removes a scan from the project (corresponds to a row in the databrowser)
+        Removes the scan from the list of scans (Scan table), and all the values corresponding to this scan (Value table)
+        :param scan: FileName of the scan to remove
+        """
+        # All the values of the scan are removed
         tags = self.session.query(Value).filter(Value.scan == scan).all()
         for tag in tags:
             self.session.delete(tag)
+        # The scan is removed from the list of scans
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
         # TODO return error if len(scans) != 1
+        # TODO remove tag if only used for this scan
         self.session.delete(scans[0])
         self.unsavedModifications = True
 
     def removeTag(self, tag):
+        """
+        Removes a tag from the project (corresponds to a column in the databrowser)
+        We can only remove user tags from the software
+        :param tag: Name of the tag to remove
+        """
         values = self.session.query(Value).filter(Value.tag == tag).all()
         for value in values:
             self.session.delete(value)
@@ -243,52 +304,163 @@ class DataBase:
         self.session.delete(tags[0])
         self.unsavedModifications = True
 
+    def removeValue(self, scan, tag):
+        """
+        Removes the value of the tuple <scan, tag> (corresponds to a case in the databrowser)
+        :param scan: FileName of the scan
+        :param tag: Name of the tag
+        """
+        values = self.session.query(Value).filter(Value.scan == scan).filter(Value.tag == tag).all()
+        self.session.delete(values[0])
+        self.unsavedModifications = True
+
     def saveModifications(self):
+        """
+        Saves the pending operations of the project (actions still not saved)
+        """
         self.session.commit()
         self.unsavedModifications = False
 
     def unsaveModifications(self):
+        """
+        Unsaves the pending operations of the project (actions still not saved)
+        """
         self.session.rollback()
         self.unsavedModifications = False
 
     def getScansSimpleSearch(self, search):
+        """
+        Executes the rapid search (search bar) and returns the list of scans that contain the search in their tag values
+
+        :param search: string corresponding to the search
+        :return: The list of scans containing the search
+        """
+
+        # We take all the scans that contain the search in at least one of their tag values
         values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
-        scans = []
+        scans = [] # List of scans to return
         for value in values:
+            # We add the scan only if the tag is visible in the databrowser)
             if not value.scan in scans and self.getTagVisibility(value.tag):
                 scans.append(value.scan)
         return scans
 
     def getScansAdvancedSearch(self, links, fields, conditions, values, nots):
-        masterRequest = ""
+        """
+        Executes the advanced search and returns the list of scans corresponding to the criterias
+
+        :param links: list of links (AND/OR)
+        :param fields: list of fields (tag name or all visualized tags)
+        :param conditions: list of conditions (=, !=, <=, >=, <, >, IN, BETWEEN, CONTAINS)
+        :param values: list of values (tag values)
+        :param nots: list of nots (NOT?)
+        :return: list of scans corresponding to those criterias
+        """
+        result = [] # list of scans to return
+        queries = [] # list of scans of each query (row)
         i = 0
         while i < len(conditions):
-            request = ""
-            if(nots[i] == "NOT"):
-                request = request + "select scan from Value EXCEPT "
-            request = request + "select scan from Value where "
-            condition = ""
+            rowResult = self.session.query(Value.scan) # Every scan to start with
             if(fields[i] != "All visualized tags"):
-                condition = condition + "tag == '" + fields[i] + "' and "
-            if(conditions[i] == "CONTAINS"):
-                condition = condition + "current_value LIKE '%" + values[i] + "%'"
-            elif(conditions[i] == "IN"):
-                condition = condition + "current_value IN " + values[i]
+                # Filter on the tag if necessary
+                rowResult = rowResult.filter(Value.tag == fields[i])
+            # Filter on the condition on the tag value (condition type + value)
+            if(conditions[i] == "="):
+                rowResult = rowResult.filter(Value.current_value == values[i])
+            elif(conditions[i] == "!="):
+                rowResult = rowResult.filter(Value.current_value != values[i])
+            elif(conditions[i] == ">="):
+                rowResult = rowResult.filter(Value.current_value >= values[i])
+            elif (conditions[i] == "<="):
+                rowResult = rowResult.filter(Value.current_value <= values[i])
+            elif (conditions[i] == ">"):
+                rowResult = rowResult.filter(Value.current_value > values[i])
+            elif (conditions[i] == "<"):
+                rowResult = rowResult.filter(Value.current_value < values[i])
+            elif (conditions[i] == "CONTAINS"):
+                rowResult = rowResult.filter(Value.current_value.contains(values[i]))
+            elif (conditions[i] == "IN"):
+                rowResult = rowResult.filter(Value.current_value.in_(values[i].split(', ')))
             elif (conditions[i] == "BETWEEN"):
-                condition = condition + "current_value BETWEEN " + values[i]
-            else:
-                condition = condition + "current_value " + conditions[i] + " '" + values[i] + "'"
-            request = request + condition
-            if i < len(conditions) - 1:
-                if(links[i] == "AND"):
-                    request = request + " INTERSECT "
-                else:
-                    request = request + " UNION "
-            masterRequest = masterRequest + request
+                borders = values[i].split(', ')
+                rowResult = rowResult.filter(Value.current_value.between(borders[0], borders[1]))
+            if(nots[i] == "NOT"):
+                # If NOT, we take the opposite: All scans MINUS the result of the query
+                rowResult = self.session.query(Value.scan).except_(rowResult)
+            # We add the list of scans to the subresults
+            queries.append(rowResult)
             i = i + 1
-        result = self.session.execute(masterRequest)
-        scans = []
-        for row in result:
-            if not row[0] in scans:
-                scans.append(row[0])
-        return scans
+        # We start with the first row to put the link between the conditions
+        # Links are made row by row, there is no priority like in SQL where AND is stronger than OR
+        finalQuery = queries[0]
+        i = 0
+        while i < len(links):
+            if(links[i] == "AND"):
+                # If the link is AND, we do an intersection between the current result and the next row
+                finalQuery = finalQuery.intersect(queries[i + 1])
+            else:
+                # If the link is OR, we do an union between the current result and the next row
+                finalQuery = finalQuery.union(queries[i + 1])
+            i = i + 1
+        # We take the list of all the scans that respect every conditions
+        finalQuery = finalQuery.all()
+        # We create the return list with the name of the scans (FileName)
+        for value in finalQuery:
+            if not value.scan in result:
+                result.append(value.scan)
+        return result
+
+    def undo(self):
+        if(self.historyHead > 0 and len(self.history) >= self.historyHead):
+            toUndo = self.history[self.historyHead - 1]
+            action = toUndo[0]
+            if(action == "add_tag"):
+                tagToRemove = toUndo[1]
+                self.removeTag(tagToRemove)
+            if (action == "remove_tags"):
+                tagsRemoved = toUndo[1]
+                i = 0
+                while i < len(tagsRemoved):
+                    tagToReput = tagsRemoved[i]
+                    self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
+                    i = i + 1
+                valuesRemoved = toUndo[2]
+                i = 0
+                while i < len(valuesRemoved):
+                    valueToReput = valuesRemoved[i]
+                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+                    i = i + 1
+            if (action == "add_scans"):
+                scansAdded = toUndo[1]
+                i = 0
+                while i < len(scansAdded):
+                    scanToRemove = scansAdded[i]
+                    self.removeScan(scanToRemove)
+                    i = i + 1
+            if(action == "remove_scans"):
+                scansRemoved = toUndo[1]
+                i = 0
+                while i < len(scansRemoved):
+                    scanToReput = scansRemoved[i]
+                    self.addScan(scanToReput.scan, scanToReput.checksum)
+                    i = i + 1
+                valuesRemoved = toUndo[2]
+                i = 0
+                while i < len(valuesRemoved):
+                    valueToReput = valuesRemoved[i]
+                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+                    i = i + 1
+            if (action == "modified_values"):
+                modifiedValues = toUndo[1]
+                i = 0
+                while i < len(modifiedValues):
+                    valueToRestore = modifiedValues[i]
+                    scan = valueToRestore[0]
+                    tag = valueToRestore[1]
+                    value = valueToRestore[2]
+                    if(value == None):
+                        self.removeValue(scan, tag)
+                    else:
+                        self.setTagValue(scan, tag, value)
+                    i = i + 1
+            self.historyHead = self.historyHead - 1

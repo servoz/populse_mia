@@ -109,6 +109,9 @@ class Main_Window(QMainWindow):
         self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
+        self.action_undo = QAction('Undo', self)
+        self.action_undo.setShortcut('Ctrl+Z')
+
         # Connection of the several triggered signals of the actions to some other methods
         self.action_create.triggered.connect(self.create_project_pop_up)
         self.action_open.triggered.connect(self.open_project_pop_up)
@@ -119,12 +122,14 @@ class Main_Window(QMainWindow):
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
+        self.action_undo.triggered.connect(self.undo)
 
     def create_menus(self):
         """ Create the menubar """
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
+        self.menu_edition = self.menuBar().addMenu('Edition')
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
 
@@ -151,9 +156,20 @@ class Main_Window(QMainWindow):
         self.menu_file.addAction(self.action_exit)
         self.update_recent_projects_actions()
 
+        # Actions in the "Edition" menu
+        self.menu_edition.addAction(self.action_undo)
+
         # Actions in the "Help" menu
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
+
+    def undo(self):
+        self.database.undo()
+        scan_names_list = []
+        for scan in self.database.getScans():
+            scan_names_list.append(scan.scan)
+        self.data_browser.table_data.scans_to_visualize = scan_names_list
+        self.data_browser.table_data.update_table()
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
