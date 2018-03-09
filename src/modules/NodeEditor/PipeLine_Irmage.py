@@ -20,6 +20,7 @@ from capsul.api import get_process_instance
 
 from NodeEditor.callStudent import callStudent
 from capsul.qt_gui.widgets import PipelineDevelopperView
+from .Processes.processes import AvailableProcesses
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -171,14 +172,35 @@ class EditorGraphicsView(PipelineDevelopperView):
 
     def dropEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
-            #name = str(event.mimeData().data('component/name'))
-            #nIn = int(name[name.index('(')+1:name.index(',')])
-            #nOut= int(name[name.index(',')+1:name.index(')')])
-            #self.b1 = BlockItem(name, nIn , nOut)
-            #self.b1.setPos(self.mapToScene(event.pos()))
             self.click_pos = QtGui.QCursor.pos()
-            self.add_process()
-            #self.scene().addItem(self.b1)
+            classNameByte = bytes(event.mimeData().data('component/name'))
+            className = classNameByte.decode('utf8')
+            for classProcess in AvailableProcesses():
+                if className == classProcess.__name__:
+                    self.add_process(classProcess)
+
+    def add_process(self, class_process):
+        class_name = class_process.__name__
+        pipeline = self.scene.pipeline
+        i = 1
+        node_name = class_name.lower() + str(i)
+        while node_name in pipeline.nodes and i < 100:
+            i += 1
+            node_name = class_name.lower() + str(i)
+
+        process_to_use = class_process(node_name)
+
+        try:
+            process = get_process_instance(
+                process_to_use)
+        except Exception as e:
+            print(e)
+            return
+        pipeline.add_process(node_name, process)
+
+        node = pipeline.nodes[node_name]
+        gnode = self.scene.add_node(node_name, node)
+        gnode.setPos(self.mapToScene(self.mapFromGlobal(self.click_pos)))
 
 
     #============================================================================
@@ -445,12 +467,14 @@ class ProjectEditor(QWidget):
         pxm = LibItem(self)
     
         self.libItems = []
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
+        for classProcess in AvailableProcesses():
+            self.libItems.append(QStandardItem(classProcess.__name__))
+        '''self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 1 (1,2)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 2 (3,3)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Display (1,0)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Student (3,2)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )'''
     
         for i in self.libItems:
             self.libraryModel.appendRow(i)
