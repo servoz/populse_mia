@@ -6,6 +6,7 @@ import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER
+import pickle
 
 class DataBase:
 
@@ -25,6 +26,9 @@ class DataBase:
             self.unsavedModifications: To know if there are unsaved modifications
             self.history: List of actions done on the project since the last opening
             self.historyHead: Index to know where we are in the history list
+
+            Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
+
         """
         # We don't have a project root folder at the opening of the software (Unnamed project), we generate a temporary folder
         if(project_root_folder == None):
@@ -488,3 +492,17 @@ class DataBase:
                     i = i + 1
             # Reading history index decreased
             self.historyHead = self.historyHead - 1
+
+        print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
+
+        """
+        Approximate results
+        
+        - Changing 1 case value: 180 bits
+        - Changing 10 case values: 1350 bits
+        - Removing 1 scan: 20000 bits
+        - Removing 10 scans: 200000 bits
+        - Removing 1 tag: From 300 bits to 4000 bits => Depends on the number of values defined
+        - Adding 1 tag: 40 bits
+        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
+        """
