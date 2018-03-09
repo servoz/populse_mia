@@ -355,7 +355,7 @@ class DataBase:
         """
 
         # We take all the scans that contain the search in at least one of their tag values
-        values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
+        values = self.session.query(Value).filter(Value.current_value.like("%" + search + "%")).all()
         scans = [] # List of scans to return
         for value in values:
             # We add the scan only if the tag is visible in the databrowser)
