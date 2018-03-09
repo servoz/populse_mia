@@ -158,7 +158,7 @@ def read_log(database):
 
     historyMaker.append(scans_added)
     database.history.append(historyMaker)
-    database.historyHead = database.historyHead + 1
+    database.historyHead = len(database.history)
 
 def verify_scans(database, path):
     # Returning the files that are problematic
