@@ -277,7 +277,6 @@ class DataBrowser(QWidget):
             #project.add_tag(new_tag)
             #project.tags_to_visualize.append(new_tag_name)
 
-            # Database
             real_type = ""
             if(type == str):
                 real_type = TAG_TYPE_STRING
@@ -295,7 +294,7 @@ class DataBrowser(QWidget):
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
             self.database.history.append(historyMaker)
-            self.database.historyHead = self.database.historyHead + 1
+            self.database.historyHead = len(self.database.history)
 
             # Updating the table
             self.table_data.update_table()
@@ -321,7 +320,7 @@ class DataBrowser(QWidget):
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
             self.database.history.append(historyMaker)
-            self.database.historyHead = self.database.historyHead + 1
+            self.database.historyHead = len(self.database.history)
 
             # Updating the table
             self.table_data.update_table()
@@ -350,7 +349,7 @@ class DataBrowser(QWidget):
                     values_removed.append(value)
             historyMaker.append(values_removed)
             self.database.history.append(historyMaker)
-            self.database.historyHead = self.database.historyHead + 1
+            self.database.historyHead = len(self.database.history)
 
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
@@ -680,7 +679,7 @@ class TableDataBrowser(QTableWidget):
 
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
-        self.database.historyHead = self.database.historyHead + 1
+        self.database.historyHead = len(self.database.history)
 
     def reset_column(self):
 
@@ -732,7 +731,7 @@ class TableDataBrowser(QTableWidget):
 
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
-        self.database.historyHead = self.database.historyHead + 1
+        self.database.historyHead = len(self.database.history)
 
     def reset_row(self):
 
@@ -783,7 +782,7 @@ class TableDataBrowser(QTableWidget):
 
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
-        self.database.historyHead = self.database.historyHead + 1
+        self.database.historyHead = len(self.database.history)
 
     def reset_cells_with_item(self, items_in):
 
@@ -849,7 +848,7 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append(scans_removed)
         historyMaker.append(values_removed)
         self.database.history.append(historyMaker)
-        self.database.historyHead = self.database.historyHead + 1
+        self.database.historyHead = len(self.database.history)
 
     def sort_items(self, col):
         self.clearSelection() # Remove the column selection from single click
@@ -1074,7 +1073,7 @@ class TableDataBrowser(QTableWidget):
 
             historyMaker.append(modified_values)
             self.database.history.append(historyMaker)
-            self.database.historyHead = self.database.historyHead + 1
+            self.database.historyHead = len(self.database.history)
 
         self.itemChanged.connect(self.change_cell_color)
 
@@ -1082,4 +1081,3 @@ class TableDataBrowser(QTableWidget):
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(self.database)
-

@@ -411,56 +411,80 @@ class DataBase:
         return result
 
     def undo(self):
+        """
+        Undo the last action made by the user on the project
+        An history list is maintained, and cleared at every project opening
+        An index is kept, showing where the user is in the history, visually
+        Every new action made by the user is appended at the end of the history list
+        At every undo, the index is decreased
+        """
+
+        # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
         if(self.historyHead > 0 and len(self.history) >= self.historyHead):
-            toUndo = self.history[self.historyHead - 1]
+            toUndo = self.history[self.historyHead - 1] # Action to revert
+            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
             if(action == "add_tag"):
+                # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
                 self.removeTag(tagToRemove)
             if (action == "remove_tags"):
-                tagsRemoved = toUndo[1]
+                # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
+                tagsRemoved = toUndo[1] # The second element is a list of the removed tags (Tag class)
                 i = 0
                 while i < len(tagsRemoved):
+                    # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
                     self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
                     i = i + 1
-                valuesRemoved = toUndo[2]
+                valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 i = 0
                 while i < len(valuesRemoved):
+                    # We reput each tag value in the values, keeping all the attributes
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             if (action == "add_scans"):
-                scansAdded = toUndo[1]
+                # To remove added scans, we just need their file name
+                scansAdded = toUndo[1] # The second element is a list of added scans to remove
                 i = 0
                 while i < len(scansAdded):
+                    # We remove each scan added
                     scanToRemove = scansAdded[i]
                     self.removeScan(scanToRemove)
                     i = i + 1
             if(action == "remove_scans"):
-                scansRemoved = toUndo[1]
+                # To reput a removed scan, we need the scans names, and all the values associated
+                scansRemoved = toUndo[1] # The second element is the list of removed scans (Scan class)
                 i = 0
                 while i < len(scansRemoved):
+                    # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
                     self.addScan(scanToReput.scan, scanToReput.checksum)
                     i = i + 1
-                valuesRemoved = toUndo[2]
+                valuesRemoved = toUndo[2] # The third element is the list of removed values (Value class)
                 i = 0
                 while i < len(valuesRemoved):
+                    # We reput each value, exactly the same as it was before
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             if (action == "modified_values"):
-                modifiedValues = toUndo[1]
+                # To revert a value changed in the databrowser, we need two things: the case (scan and tag, and the old value)
+                modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)
                 i = 0
                 while i < len(modifiedValues):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
                     value = valueToRestore[2]
                     if(value == None):
+                        # If the case was NaN (not defined) before, we reput it
                         self.removeValue(scan, tag)
                     else:
+                        # If the case was there before, we just set it to the old value
                         self.setTagValue(scan, tag, value)
                     i = i + 1
+            # Reading history index decreased
             self.historyHead = self.historyHead - 1
