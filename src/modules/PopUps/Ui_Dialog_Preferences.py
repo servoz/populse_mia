@@ -80,13 +80,6 @@ class Ui_Dialog_Preferences(QDialog):
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
 
-        self.show_all_slices_checkbox = QCheckBox('Visualize all slices of a scan when the latter is selected in the Data Browser',
-                                       self)
-
-        if (config.getShowAllSlices() == "yes"):
-            self.show_all_slices_checkbox.setChecked(1)
-        self.tools_layout.addWidget(self.show_all_slices_checkbox)
-
         self.label_default_tags = QLabel("Default tags visualized")
         self.list_default_tags = QListWidget()
         self.default_tags = config.getDefaultTags()
@@ -128,12 +121,6 @@ class Ui_Dialog_Preferences(QDialog):
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
-
-        #Show all slices
-        if self.show_all_slices_checkbox.isChecked():
-            config.setShowAllSlices("yes")
-        else:
-            config.setShowAllSlices("no")
 
         #Default tags
         list_tags = []
