@@ -262,11 +262,19 @@ class DataBase:
         self.unsavedModifications = True
 
     def setTagValue(self, scan, tag, new_value):
-        tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
-        #TODO return error if len(tags) != 1
-        tag = tags[0]
-        tag.current_value = new_value
-        self.unsavedModifications = True
+        """ Sets the value of the case asked
+            :param scan: The FileName of the scan to reset
+            :param tag: The tag name to reset
+            :param new_value: New value of the case
+        """
+        # We only change the case if the tag is not FileName
+        if not tag == "FileName":
+            tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
+            # There is already a value
+            if len(tags) == 1:
+                tag = tags[0]
+                tag.current_value = new_value
+            self.unsavedModifications = True
 
     def resetTag(self, scan, tag):
         """

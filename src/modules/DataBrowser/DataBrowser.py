@@ -411,9 +411,6 @@ class TableDataBrowser(QTableWidget):
         # DATABASE
         self.nb_columns = len(self.database.getVisualizedTags())
 
-        # PROJECT
-        #self.nb_columns = len(project.tags_to_visualize) # Read from MIA2 preferences
-
         self.nb_rows = len(self.scans_to_visualize)
 
         self.setRowCount(self.nb_rows)
@@ -445,16 +442,10 @@ class TableDataBrowser(QTableWidget):
                 column += 1
 
         nb = 0
-        # PROJECT
-        #for element in project.tags_to_visualize:
-        # DATABASE
+
         for element in self.database.getVisualizedTags():
-            # PROJECT
-            #element = str(element)
-            # DATABASE
             element = element.tag
             item = self.horizontalHeaderItem(nb)
-            # PROJECT
             if element == self.database.getSortedTag():
                 if self.database.getSortOrder() == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
@@ -698,9 +689,6 @@ class TableDataBrowser(QTableWidget):
             """scan_id = -1
             for file in project._get_scans():
 
-                # DATABASE
-                self.database.resetTag(file.file_path, tag_name)
-
                 scan_id += 1
                 for n_tag in file._get_tags():
                     if n_tag.name == tag_name:
@@ -818,10 +806,6 @@ class TableDataBrowser(QTableWidget):
         for point in points:
             row = point.row()
             scan_path = self.item(row, 0).text()
-
-            """for scan in project._get_scans():
-                if scan_path == scan.file_path:
-                    project.remove_scan(scan_path)"""
 
             scan_object = self.database.getScan(scan_path)
             scans_removed.append(scan_object)
@@ -1000,7 +984,7 @@ class TableDataBrowser(QTableWidget):
                     self.database.addValue(scan_path, tag_name, text_value, text_value)
 
                 #User tag
-                if(tag_name != "" and self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
+                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
                         if row % 2 == 1:
                             color.setRgb(240, 240, 255)
@@ -1017,8 +1001,10 @@ class TableDataBrowser(QTableWidget):
                     else:
                         color.setRgb(255, 225, 225)
 
-                item.setData(Qt.BackgroundRole, QVariant(color))
-                item.setText(text_value)
+                # We only set the case if it's not the tag FileName
+                if(tag_name != "FileName"):
+                    item.setData(Qt.BackgroundRole, QVariant(color))
+                    item.setText(text_value)
 
                 """for scan in project._get_scans():
                     if scan_path == scan.file_path:
