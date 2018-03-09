@@ -13,6 +13,7 @@ from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from DataBrowser.CountTable import CountTable
 
 from SoftwareProperties import Config
 from ImageViewer.MiniViewer import MiniViewer
@@ -124,6 +125,13 @@ class DataBrowser(QWidget):
         if self.pop_up.exec_() == QDialog.Accepted:
             self.table_data.update_table()
 
+    def count_table_pop_up(self):
+        pop_up = CountTable(self.database)
+
+        if pop_up.exec_() == QDialog.Accepted:
+            pass
+
+
     def create_toolbar_menus(self):
         self.menu_toolbar = QToolBar()
 
@@ -162,6 +170,10 @@ class DataBrowser(QWidget):
         visualized_tags_button.setText('Visualized tags')
         visualized_tags_button.clicked.connect(self.visualized_tags_pop_up)
 
+        count_table_button = QPushButton()
+        count_table_button.setText('Count table')
+        count_table_button.clicked.connect(self.count_table_pop_up)
+
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.frame_test)
@@ -169,6 +181,8 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(advanced_search_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(visualized_tags_button)
+        self.menu_toolbar.addSeparator()
+        self.menu_toolbar.addWidget(count_table_button)
 
     def search_str(self, str_search):
 

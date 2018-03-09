@@ -638,4 +638,5 @@ class MiniViewer(QWidget):
         """
         self.popUp = Ui_Select_Tag(self.database)
         if self.popUp.exec_() == QDialog.Accepted:
+
             self.verify_slices(self.file_paths)
