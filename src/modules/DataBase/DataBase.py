@@ -6,6 +6,7 @@ import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER
+import pickle
 
 class DataBase:
 
@@ -25,6 +26,9 @@ class DataBase:
             self.unsavedModifications: To know if there are unsaved modifications
             self.history: List of actions done on the project since the last opening
             self.historyHead: Index to know where we are in the history list
+
+            Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
+
         """
         # We don't have a project root folder at the opening of the software (Unnamed project), we generate a temporary folder
         if(project_root_folder == None):
@@ -121,7 +125,6 @@ class DataBase:
         """
         if not self.isTempProject:
             self.properties["sorted_tag"] = tag
-            self.saveConfig()
             self.unsavedModifications = True
 
     def getSortOrder(self):
@@ -137,7 +140,6 @@ class DataBase:
         """
         if not self.isTempProject:
             self.properties["sort_order"] = order
-            self.saveConfig()
             self.unsavedModifications = True
 
 
@@ -260,18 +262,32 @@ class DataBase:
         self.unsavedModifications = True
 
     def setTagValue(self, scan, tag, new_value):
-        tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
-        #TODO return error if len(tags) != 1
-        tag = tags[0]
-        tag.current_value = new_value
-        self.unsavedModifications = True
+        """ Sets the value of the case asked
+            :param scan: The FileName of the scan to reset
+            :param tag: The tag name to reset
+            :param new_value: New value of the case
+        """
+        # We only change the case if the tag is not FileName
+        if not tag == "FileName":
+            tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
+            # There is already a value
+            if len(tags) == 1:
+                tag = tags[0]
+                tag.current_value = new_value
+            self.unsavedModifications = True
 
     def resetTag(self, scan, tag):
+        """
+        Resets the value of the case asked, only done on raw tags, does not make sense on user tags
+        :param scan: The FileName of the scan to reset
+        :param tag: The tag name to reset
+        """
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
-        tag.current_value = tag.raw_value
-        self.unsavedModifications = True
+        if(tag.raw_value != None):
+            tag.current_value = tag.raw_value
+            self.unsavedModifications = True
 
     def removeScan(self, scan):
         """
@@ -319,6 +335,8 @@ class DataBase:
         Saves the pending operations of the project (actions still not saved)
         """
         self.session.commit()
+        if not self.isTempProject:
+            self.saveConfig()
         self.unsavedModifications = False
 
     def unsaveModifications(self):
@@ -337,7 +355,7 @@ class DataBase:
         """
 
         # We take all the scans that contain the search in at least one of their tag values
-        values = self.session.query(Value).filter(Value.current_value.contains(search)).all()
+        values = self.session.query(Value).filter(Value.current_value.like("%" + search + "%")).all()
         scans = [] # List of scans to return
         for value in values:
             # We add the scan only if the tag is visible in the databrowser)
@@ -411,56 +429,94 @@ class DataBase:
         return result
 
     def undo(self):
+        """
+        Undo the last action made by the user on the project
+        An history list is maintained, and cleared at every project opening
+        An index is kept, showing where the user is in the history, visually
+        Every new action made by the user is appended at the end of the history list
+        At every undo, the index is decreased
+        """
+
+        # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
         if(self.historyHead > 0 and len(self.history) >= self.historyHead):
-            toUndo = self.history[self.historyHead - 1]
+            toUndo = self.history[self.historyHead - 1] # Action to revert
+            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
             if(action == "add_tag"):
+                # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
                 self.removeTag(tagToRemove)
             if (action == "remove_tags"):
-                tagsRemoved = toUndo[1]
+                # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
+                tagsRemoved = toUndo[1] # The second element is a list of the removed tags (Tag class)
                 i = 0
                 while i < len(tagsRemoved):
+                    # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
                     self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
                     i = i + 1
-                valuesRemoved = toUndo[2]
+                valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 i = 0
                 while i < len(valuesRemoved):
+                    # We reput each tag value in the values, keeping all the attributes
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             if (action == "add_scans"):
-                scansAdded = toUndo[1]
+                # To remove added scans, we just need their file name
+                scansAdded = toUndo[1] # The second element is a list of added scans to remove
                 i = 0
                 while i < len(scansAdded):
+                    # We remove each scan added
                     scanToRemove = scansAdded[i]
                     self.removeScan(scanToRemove)
                     i = i + 1
             if(action == "remove_scans"):
-                scansRemoved = toUndo[1]
+                # To reput a removed scan, we need the scans names, and all the values associated
+                scansRemoved = toUndo[1] # The second element is the list of removed scans (Scan class)
                 i = 0
                 while i < len(scansRemoved):
+                    # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
                     self.addScan(scanToReput.scan, scanToReput.checksum)
                     i = i + 1
-                valuesRemoved = toUndo[2]
+                valuesRemoved = toUndo[2] # The third element is the list of removed values (Value class)
                 i = 0
                 while i < len(valuesRemoved):
+                    # We reput each value, exactly the same as it was before
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             if (action == "modified_values"):
-                modifiedValues = toUndo[1]
+                # To revert a value changed in the databrowser, we need two things: the case (scan and tag, and the old value)
+                modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)
                 i = 0
                 while i < len(modifiedValues):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
                     value = valueToRestore[2]
                     if(value == None):
+                        # If the case was NaN (not defined) before, we reput it
                         self.removeValue(scan, tag)
                     else:
+                        # If the case was there before, we just set it to the old value
                         self.setTagValue(scan, tag, value)
                     i = i + 1
+            # Reading history index decreased
             self.historyHead = self.historyHead - 1
+
+        print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
+
+        """
+        Approximate results
+        
+        - Changing 1 case value: 180 bits
+        - Changing 10 case values: 1350 bits
+        - Removing 1 scan: 20000 bits
+        - Removing 10 scans: 200000 bits
+        - Removing 1 tag: From 300 bits to 4000 bits => Depends on the number of values defined
+        - Adding 1 tag: 40 bits
+        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
+        """
