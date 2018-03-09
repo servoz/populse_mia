@@ -41,6 +41,9 @@ class AdvancedSearch(QWidget):
             fieldChoice.addItem(tag.tag)
         fieldChoice.addItem("All visualized tags")
 
+        conditionValue = QLineEdit()
+        conditionValue.setObjectName('value')
+
         conditionChoice = QComboBox()
         conditionChoice.setObjectName('condition')
         conditionChoice.addItem("=")
@@ -52,9 +55,9 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("BETWEEN")
         conditionChoice.addItem("IN")
         conditionChoice.addItem("CONTAINS")
+        conditionChoice.currentTextChanged.connect(lambda : self.displayValueRules(conditionChoice, conditionValue))
 
-        conditionValue = QLineEdit()
-        conditionValue.setObjectName('value')
+
 
         removeRowLabel = ClickableLabel()
         removeRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
@@ -74,6 +77,14 @@ class AdvancedSearch(QWidget):
         self.rows.append(rowLayout)
 
         self.refresh_search()
+
+    def displayValueRules(self, choice, value):
+        if(choice.currentText() == "BETWEEN"):
+            value.setPlaceholderText("Please separate the two borders by , (a comma and a space).")
+        elif (choice.currentText() == "IN"):
+            value.setPlaceholderText("Please separate each element of the list by , (a comma and a space).")
+        else:
+            value.setPlaceholderText("")
 
     def refresh_search(self):
 
