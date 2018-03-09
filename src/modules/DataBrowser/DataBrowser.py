@@ -268,15 +268,7 @@ class DataBrowser(QWidget):
             else:
                 list_to_add = utils.text_to_list(new_default_value)"""
 
-
-            #new_tag = Tag(new_tag_name, "", list_to_add, "custom", list_to_add)
-
-
-            # Updating the data base
-            #project.add_user_tag(new_tag_name, list_to_add)
-            #project.add_tag(new_tag)
-            #project.tags_to_visualize.append(new_tag_name)
-
+            # Type conversion
             real_type = ""
             if(type == str):
                 real_type = TAG_TYPE_STRING
@@ -286,9 +278,10 @@ class DataBrowser(QWidget):
                 real_type = TAG_TYPE_FLOAT
             if (type == list):
                 real_type = TAG_TYPE_LIST
+
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.database.getScans():
-                self.database.addValue(scan.scan, new_tag_name, new_default_value, new_default_value)
+                self.database.addValue(scan.scan, new_tag_name, new_default_value, None)
 
             historyMaker = []
             historyMaker.append("add_tag")
@@ -307,14 +300,10 @@ class DataBrowser(QWidget):
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
             (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
 
-            # Updating the data base
-            #project.clone_tag(tag_to_clone, new_tag_name)
-            #project.tags_to_visualize.append(new_tag_name)
-
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
             for scan in self.database.getScans():
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
-                    self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value, self.database.getValue(scan.scan, tag_to_clone).current_value)
+                    self.database.addValue(scan.scan, new_tag_name, self.database.getValue(scan.scan, tag_to_clone).current_value, None)
 
             historyMaker = []
             historyMaker.append("add_tag")
@@ -332,9 +321,6 @@ class DataBrowser(QWidget):
 
         if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
             tag_names_to_remove = self.pop_up_clone_tag.get_values()
-
-            #for tag_name in tag_names_to_remove:
-                #project.remove_tag_by_name(tag_name)
 
             historyMaker = []
             historyMaker.append("remove_tags")

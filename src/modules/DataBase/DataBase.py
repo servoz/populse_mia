@@ -271,11 +271,17 @@ class DataBase:
         self.unsavedModifications = True
 
     def resetTag(self, scan, tag):
+        """
+        Resets the value of the case asked, only done on raw tags, does not make sense on user tags
+        :param scan: The FileName of the scan to reset
+        :param tag: The tag name to reset
+        """
         tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
-        tag.current_value = tag.raw_value
-        self.unsavedModifications = True
+        if(tag.raw_value != None):
+            tag.current_value = tag.raw_value
+            self.unsavedModifications = True
 
     def removeScan(self, scan):
         """
