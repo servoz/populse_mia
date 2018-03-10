@@ -146,102 +146,216 @@ class DataBase:
     """ FROM SQlite Database """
 
     def addScan(self, name, checksum):
+        """
+        To add a new scan to the project
+        :param name: FileName of the scan
+        :param checksum: MD5 checksum of the scan file
+        """
         scan = Scan(scan=name, checksum=checksum)
         self.session.add(scan)
         self.unsavedModifications = True
 
     def addTag(self, tag, visible, origin, type, unit, default, description):
+        """
+        To add a new tag to the project
+        :param tag: Tag name
+        :param visible: True or False
+        :param origin: Raw or user
+        :param type: String, Integer, Float, or List
+        :param unit:
+        :param default:
+        :param description:
+        """
         tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
         self.session.add(tag)
         self.unsavedModifications = True
 
     def addValue(self, scan, tag, current_value, raw_value):
+        """
+        To add a new value (a new cell in the databrowser)
+        :param scan: FileName of the scan
+        :param tag: Tag name
+        :param current_value: Current value displayed in the DataBrowser (Raw_value for raw tags and default_value for user tags)
+        :param raw_value: Raw value of the cell (None of user tags)
+        """
         value = Value(scan=scan, tag=tag, current_value=current_value, raw_value=raw_value)
         self.session.add(value)
         self.unsavedModifications = True
 
     def getScans(self):
+        """
+        To get all Scan objects
+        :return: All Scan objects
+        """
         scans = self.session.query(Scan).filter().all()
         return scans
 
     def getValues(self):
+        """
+        To get all values
+        :return: All Value objects
+        """
         values = self.session.query(Value).filter().all()
         return values
 
     def getScan(self, scan):
+        """
+        To get the Scan object of the scan
+        :param scan: FileName of the scan
+        :return: The Scan object of the scan
+        """
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
         #TODO return error if len(scans) != 1
         return scans[0]
 
     def getValuesGivenTag(self, tag):
+        """
+        To get all the values of the tag
+        :param tag: Tag name
+        :return: A list of Value objects for the tag
+        """
         values = self.session.query(Value).filter(Value.tag == tag).all()
         return values
 
     def getValuesGivenScan(self, scan):
+        """
+        To get all the values of the scan
+        :param scan: FileName of the scan
+        :return: A list of Value objects for the scan
+        """
         values = self.session.query(Value).filter(Value.scan == scan).all()
         return values
 
     def getValue(self, scan, tag):
+        """
+        To get the Value object of the cell <Scan, Tag>
+        :param scan: FileName of the scan
+        :param tag: Tag name
+        :return: The Value object of the cell
+        """
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         #TODO return error if len(values) != 1
         return values[0]
 
     def scanHasTag(self, scan, tag):
+        """
+        To know if the scan has a value for the tag
+        :param scan: FileName of the scan
+        :param tag: Tag name
+        :return: True if the scan has a value for the tag, False otherwise
+        """
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         return len(values) == 1
 
     def getTags(self):
+        """
+        Gives a list of the tags of the project (Tag objects)
+        :return: A list of Tag objects of the project
+        """
         tags = self.session.query(Tag).filter().all()
         return tags
 
     def getVisualizedTags(self):
+        """
+        Gives a list of the visualized tags of the project
+        :return: A list of the visualized tags of the project
+        """
         tags = self.session.query(Tag).filter(Tag.visible == True).all()
         return tags
 
     def hasTag(self, tag):
+        """
+        To know if the tag is in the project
+        :param tag: Tag name
+        :return: True if the tag is in the project, False otherwise
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         return len(tags) == 1
 
     def getTagOrigin(self, tag):
+        """
+        Gives the origin of the tag
+        :param tag: Tag name
+        :return: The origin of the tag (raw or user)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].origin
 
     def getTagVisibility(self, tag):
+        """
+        Gives the visibility of the tag
+        :param tag: Tag name
+        :return: The visibility of the tag (True or False)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].visible
 
     def getTagDefault(self, tag):
+        """
+        Gives the default value of the tag
+        :param tag: Tag name
+        :return: Default value of the tag
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].default
 
     def getTagUnit(self, tag):
+        """
+        Gives the unit of the tag
+        :param tag: Tag name
+        :return: The unit of the tag
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].unit
 
     def getTagDescription(self, tag):
+        """
+        Gives the description of the tag
+        :param tag: Tag name
+        :return: The description of the tag (tooltip displayed when putting the mouse on the headers in the DataBrowser)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].description
 
     def getTagType(self, tag):
+        """
+        Gives the type of the tag
+        :param tag: Tag name
+        :return: The type of the tag (String, Integer, Float, or List)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0].type
 
     def getTag(self, tag):
+        """
+        Gives the Tag object of the tag
+        :param tag: Tag name
+        :return: The Tag object associated to the tag
+        """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         return tags[0]
 
     def getUserTags(self):
+        """
+        Gives all the user tags of the project
+        :return: The list of user tags of the project
+        """
         tags = self.session.query(Tag).filter(Tag.origin == TAG_ORIGIN_USER).all()
         return tags
 
     def setTagVisibility(self, name, visibility):
+        """
+        Sets the visibility of the tag
+        :param name: Tag name
+        :param visibility: New visibility (True or False)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
@@ -249,6 +363,11 @@ class DataBase:
         self.unsavedModifications = True
 
     def setTagOrigin(self, name, origin):
+        """
+        Sets the origin of the tag
+        :param name: Tag name
+        :param origin: New origin of the tag (raw or user)
+        """
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
         # TODO return error if len(tags) != 1
         tag = tags[0]
@@ -256,18 +375,21 @@ class DataBase:
         self.unsavedModifications = True
 
     def resetAllVisibilities(self):
+        """
+        Puts the visibility of all tags of the project to False
+        """
         tags = self.session.query(Tag).filter().all()
         for tag in tags:
             tag.visible = False
         self.unsavedModifications = True
 
     def setTagValue(self, scan, tag, new_value):
-        """ Sets the value of the case asked
+        """ Sets the value of the cell asked
             :param scan: The FileName of the scan to reset
             :param tag: The tag name to reset
-            :param new_value: New value of the case
+            :param new_value: New value of the cell
         """
-        # We only change the case if the tag is not FileName
+        # We only change the cell if the tag is not FileName
         if not tag == "FileName":
             tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
             # There is already a value
@@ -278,7 +400,7 @@ class DataBase:
 
     def resetTag(self, scan, tag):
         """
-        Resets the value of the case asked, only done on raw tags, does not make sense on user tags
+        Resets the value of the cell asked, only done on raw tags, does not make sense on user tags
         :param scan: The FileName of the scan to reset
         :param tag: The tag name to reset
         """
@@ -322,7 +444,7 @@ class DataBase:
 
     def removeValue(self, scan, tag):
         """
-        Removes the value of the tuple <scan, tag> (corresponds to a case in the databrowser)
+        Removes the value of the tuple <scan, tag> (corresponds to a cell in the databrowser)
         :param scan: FileName of the scan
         :param tag: Name of the tag
         """
@@ -488,7 +610,7 @@ class DataBase:
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
             if (action == "modified_values"):
-                # To revert a value changed in the databrowser, we need two things: the case (scan and tag, and the old value)
+                # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)
                 i = 0
                 while i < len(modifiedValues):
@@ -498,22 +620,22 @@ class DataBase:
                     tag = valueToRestore[1]
                     value = valueToRestore[2]
                     if(value == None):
-                        # If the case was NaN (not defined) before, we reput it
+                        # If the cell was NaN (not defined) before, we reput it
                         self.removeValue(scan, tag)
                     else:
-                        # If the case was there before, we just set it to the old value
+                        # If the cell was there before, we just set it to the old value
                         self.setTagValue(scan, tag, value)
                     i = i + 1
             # Reading history index decreased
             self.historyHead = self.historyHead - 1
 
-        print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
+        #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
 
         """
         Approximate results
         
-        - Changing 1 case value: 180 bits
-        - Changing 10 case values: 1350 bits
+        - Changing 1 cell value: 180 bits
+        - Changing 10 cell values: 1350 bits
         - Removing 1 scan: 20000 bits
         - Removing 10 scans: 200000 bits
         - Removing 1 tag: From 300 bits to 4000 bits => Depends on the number of values defined

@@ -135,7 +135,7 @@ class Ui_Dialog_add_tag(QDialog):
             self.info_label.setText('')
         else:
             self.type = list
-            self.info_label.setText('Please seperate each list item by a comma. No need to use brackets.')
+            self.info_label.setText('Please seperate each list item by a comma and a space. No need to use brackets.')
 
     def ok_action(self):
         name_already_exists = False
@@ -161,7 +161,7 @@ class Ui_Dialog_add_tag(QDialog):
                 wrong_default_value_type = True
         if self.type == list:
             try:
-                default_value.split(",")
+                default_value.split(", ")
             except ValueError:
                 wrong_default_value_type = True
         if (self.text_edit_tag_name.text() == ""):

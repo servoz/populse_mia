@@ -138,7 +138,7 @@ class DataBrowser(QWidget):
 
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
-        self.search_bar.setPlaceholderText("Search, type % to replace any type of string")
+        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any type of string")
         self.search_bar.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()
@@ -951,8 +951,7 @@ class TableDataBrowser(QTableWidget):
                     is_error = True
             elif (tp == TAG_TYPE_LIST):
                 try:
-                    text_value.split(",")
-
+                    text_value.split(", ")
                 except ValueError:
                     is_error = True
 
