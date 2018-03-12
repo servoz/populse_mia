@@ -492,12 +492,14 @@ class Main_Window(QMainWindow):
 
                         controller.open_project(name, relative_path)
 
-                        self.database = DataBase(relative_path, False)
+                        self.database = tempDatabase
                         self.data_browser.update_database(self.database)
+
                         scan_names_list = []
                         for scan in self.database.getScans():
                             scan_names_list.append(scan.scan)
                         self.data_browser.table_data.scans_to_visualize = scan_names_list
+
                         self.data_browser.table_data.update_table()
 
                         if self.database.isTempProject:

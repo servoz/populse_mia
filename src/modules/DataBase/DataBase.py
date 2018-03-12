@@ -30,6 +30,7 @@ class DataBase:
             Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
 
         """
+
         # We don't have a project root folder at the opening of the software (Unnamed project), we generate a temporary folder
         if(project_root_folder == None):
             self.isTempProject = True
@@ -609,6 +610,7 @@ class DataBase:
                     valueToReput = valuesRemoved[i]
                     self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
                     i = i + 1
+
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)

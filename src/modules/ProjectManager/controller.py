@@ -104,9 +104,12 @@ def read_log(database):
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
+
             with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
+
+
             #scan_to_add = loadScan(str(1), file_name, path_name, original_md5)
             #list_to_add = []
             #list_to_add.append(file_name)
@@ -130,6 +133,7 @@ def read_log(database):
                     database.addTag("FileName", False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
             else:
                 database.setTagOrigin("FileName", TAG_ORIGIN_RAW)
+
             for tag in getJsonTagsFromFile(file_name, path_name):
                 database.addValue(file_name, tag[0], utils.check_tag_value(tag[1]), utils.check_tag_value(tag[1]))
                 tag_already_in_database = False
