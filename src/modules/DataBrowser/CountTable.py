@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QFrame, \
-    QVBoxLayout, QMessageBox, QHeaderView
+    QVBoxLayout, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QPixmap
 import os
 from ProjectManager import controller
@@ -81,7 +81,7 @@ class CountTable(QDialog):
     def add_tag(self):
         push_button = QPushButton()
         push_button.setText('Tag n°' + str(len(self.tag_labels) + 1))
-        push_button.clicked.connect(lambda: len(self.tag_labels))
+        push_button.clicked.connect(lambda: self.select_tag(len(self.tag_labels) - 1))
         self.tag_labels.insert(len(self.tag_labels), push_button)
         self.refresh_layout()
 
@@ -102,7 +102,7 @@ class CountTable(QDialog):
     def fill_values(self, idx):
         tag_name = self.tag_labels[idx].text()
         values = self.database.getValuesGivenTag(tag_name)
-        if len(self.values_list) < idx:
+        if len(self.values_list) <= idx:
             self.values_list.insert(idx, [])
         for value in values:
             if value.current_value not in self.values_list[idx]:
@@ -119,6 +119,57 @@ class CountTable(QDialog):
         self.table.setRowCount(nb_row)
         self.table.setColumnCount(nb_col)
 
+        idx_end = 0
+        # Headers
+        for idx in range(len(self.values_list) - 1):
+            header_name = self.tag_labels[idx].text()
+            item = QTableWidgetItem()
+            item.setText(header_name)
+            self.table.setHorizontalHeaderItem(idx, item)
+            idx_end = idx
 
-        #header_name = self.tag_labels[idx].text()
-        pass
+        for header_name in self.values_list[-1]:
+            idx_end += 1
+            item = QTableWidgetItem()
+            item.setText(header_name)
+            self.table.setHorizontalHeaderItem(idx_end, item)
+
+        # Cells
+        cell_text = []
+        for col in range(len(self.values_list) - 1):
+            cell_text.append(self.values_list[col][0])
+
+        for row in range(nb_row):
+
+            for col in range(len(self.values_list) - 1):
+                item = QTableWidgetItem()
+                item.setText(cell_text[col])
+                self.table.setItem(row, col, item)
+
+            col_checked = len(self.values_list) - 2
+            flag_up = False
+            while col_checked > 0:
+                if flag_up:
+                    if cell_text[col_checked] == self.values_list[col_checked][-1]:
+                        cell_text[col_checked] = self.values_list[col_checked][0]
+                    else:
+                        idx = self.values_list[col_checked].index(cell_text[col_checked])
+                        cell_text[col_checked] = self.values_list[col_checked][idx+1]
+                        flag_up = False
+
+                if cell_text[col_checked] == self.values_list[col_checked][-1]:
+                    cell_text[col_checked] = self.values_list[col_checked][0]
+                    flag_up = True
+                else:
+                    idx = self.values_list[col_checked].index(cell_text[col_checked])
+                    cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                    flag_up = False
+
+                if not flag_up:
+                    break
+
+                col_checked -= 1
+
+
+
+
