@@ -4,6 +4,8 @@ codequality:
     DOCKER_DRIVER: overlay
   services:
     - docker:dind
+  before_script:
+    - docker info
   script:
     - docker pull codeclimate/codeclimate
     - docker run --env CODECLIMATE_CODE="$PWD" --volume "$PWD":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate:0.69.0 init
