@@ -44,6 +44,8 @@ class Main_Window(QMainWindow):
     """
     def __init__(self, database):
 
+        print("TO DELETE")
+
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
