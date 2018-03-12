@@ -19,7 +19,6 @@ from SoftwareProperties import Config
 from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
-import Utils.utils as utils
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 from DataBrowser.AdvancedSearch import AdvancedSearch
@@ -373,7 +372,7 @@ class TableDataBrowser(QTableWidget):
         for scan in self.database.getScans():
             self.scans_to_visualize.append(scan.scan)
 
-        # It allows to move th  e columns
+        # It allows to move the columns
         self.horizontalHeader().setSectionsMovable(True)
 
         # Adding a custom context menu
@@ -383,8 +382,14 @@ class TableDataBrowser(QTableWidget):
         self.hh = self.horizontalHeader()
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
+        self.hh.sectionMoved.connect(partial(self.section_moved))
 
         self.update_table()
+
+    def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
+        # FileName column is moved, to revert because it has to stay the first column
+        if(oldVisualIndex == 0):
+            self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
 
     def selectAllColumn(self, col):
         self.clearSelection()
@@ -469,10 +474,6 @@ class TableDataBrowser(QTableWidget):
             item.setToolTip(self.database.getTagDescription(element))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
-
-        # Filling all the cells
-        #y = -1
-        # Loop on the scans
 
         row = 0
         for scan in self.scans_to_visualize:
