@@ -20,6 +20,8 @@ class CountTable(QDialog):
     def __init__(self, database=None):
         super().__init__()
 
+        print("DELETE ME")
+
         self.database = database
         self.values_list = [[], []]
 
