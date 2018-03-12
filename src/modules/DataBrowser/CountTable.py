@@ -22,7 +22,6 @@ class CountTable(QDialog):
 
         print("DELETE ME")
         print("DELETE ME")
-        print("DELETE ME")
 
         self.database = database
         self.values_list = [[], []]
