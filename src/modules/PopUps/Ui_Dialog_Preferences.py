@@ -149,11 +149,14 @@ class Ui_Dialog_Preferences(QDialog):
         actionAddTag = menu.addAction("Add a new tag")
         # Show the context menu.
         action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
+        config = Config()
         if action == actionRemoveTag:
-            self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
+            if(self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) != None and self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()).text() != "FileName"):
+                self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
         elif action == actionAddTag:
             res = self.getText()
-            if not res == None:
+            itemsWithText = self.list_default_tags.findItems(res, Qt.MatchExactly)
+            if not res == None and len(itemsWithText) == 0:
                 self.list_default_tags.addItem(res)
 
     def getText(self):
