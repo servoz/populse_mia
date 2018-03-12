@@ -5,6 +5,7 @@ codequality:
   services:
     - docker:dind
   before_script:
+    - systemctl start docker
     - docker info
   script:
     - docker pull codeclimate/codeclimate
