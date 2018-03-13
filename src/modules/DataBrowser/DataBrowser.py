@@ -396,7 +396,6 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        # DATABASE
         self.nb_columns = len(self.database.getVisualizedTags())
 
         self.nb_rows = len(self.scans_to_visualize)
@@ -805,9 +804,16 @@ class TableDataBrowser(QTableWidget):
         self.database.historyHead = len(self.database.history)
 
     def sort_items(self, col):
+
         self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
+        historyMaker = []
+        historyMaker.append("modified_sort")
+        historyMaker.append(self.database.getSortedTag())
+        historyMaker.append(self.database.getSortOrder())
+        self.database.history.append(historyMaker)
+        self.database.historyHead = len(self.database.history)
         if tag_name == self.database.getSortedTag():
             if self.database.getSortOrder() == 'ascending':
                 self.database.setSortOrder('descending')
