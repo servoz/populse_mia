@@ -477,11 +477,11 @@ class DataBase:
         """
 
         # We take all the scans that contain the search in at least one of their tag values
-        values = self.session.query(Value).filter(Value.current_value.like("%" + search + "%")).all()
+        values = self.session.query(Value).filter(Value.current_value.like("%" + search + "%")).distinct().all()
         scans = [] # List of scans to return
         for value in values:
-            # We add the scan only if the tag is visible in the databrowser)
-            if not value.scan in scans and self.getTagVisibility(value.tag):
+            # We add the scan only if the tag is visible in the databrowser
+            if self.getTagVisibility(value.tag):
                 scans.append(value.scan)
         return scans
 
@@ -543,11 +543,10 @@ class DataBase:
                 finalQuery = finalQuery.union(queries[i + 1])
             i = i + 1
         # We take the list of all the scans that respect every conditions
-        finalQuery = finalQuery.all()
+        finalQuery = finalQuery.distinct().all()
         # We create the return list with the name of the scans (FileName)
         for value in finalQuery:
-            if not value.scan in result:
-                result.append(value.scan)
+            result.append(value.scan)
         return result
 
     def check_count_table(self, values):
