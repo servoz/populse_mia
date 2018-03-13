@@ -135,7 +135,7 @@ class Ui_Dialog_See_All_Projects(QDialog):
 
                         controller.open_project(self.name, self.relative_path)
 
-                        self.mainWindow.database = DataBase(self.relative_path, False)
+                        self.mainWindow.database = tempDatabase
                         self.mainWindow.data_browser.update_database(self.mainWindow.database)
                         scan_names_list = []
                         for scan in self.mainWindow.database.getScans():

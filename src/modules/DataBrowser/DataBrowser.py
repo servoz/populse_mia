@@ -409,6 +409,9 @@ class TableDataBrowser(QTableWidget):
         This method will fill the tables in the 'Table' tab with the project data
         """
 
+        ########################################## TO REMOVE AFTERWARDS ###############################
+        print(self.database.check_count_table([["PatientName", "eg"], ["AcquisitionDate", "dfg"]]))
+
         if(self.database.getSortedTag() != ''):
             list_tags = []
             for scan in self.scans_to_visualize:
