@@ -659,6 +659,11 @@ class DataBase:
                         # If the cell was there before, we just set it to the old value
                         self.setTagValue(scan, tag, value)
                     i = i + 1
+            if (action == "modified_visibilities"):
+                visibles = toUndo[1]
+                self.resetAllVisibilities()
+                for visible in visibles:
+                    self.setTagVisibility(visible.tag, True)
             # Reading history index decreased
             self.historyHead = self.historyHead - 1
 

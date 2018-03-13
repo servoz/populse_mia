@@ -340,7 +340,6 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    # DATABASE
     def __init__(self, database):
 
         self.database = database
