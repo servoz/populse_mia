@@ -23,8 +23,6 @@ class CountTable(QDialog):
         self.database = database
         self.values_list = [[], []]
 
-        self.frame_back = QFrame()
-
         self.label_tags = QLabel('Tags: ')
 
         push_button_tag_1 = QPushButton()
@@ -104,11 +102,15 @@ class CountTable(QDialog):
         values = self.database.getValuesGivenTag(tag_name)
         if len(self.values_list) <= idx:
             self.values_list.insert(idx, [])
+        if self.values_list[idx] is not None:
+            self.values_list[idx] = []
         for value in values:
             if value.current_value not in self.values_list[idx]:
                 self.values_list[idx].append(value.current_value)
 
     def count_scans(self):
+        self.table.clear()
+
         self.nb_values = []
         for values in self.values_list:
             self.nb_values.append(len(values))
@@ -127,6 +129,8 @@ class CountTable(QDialog):
             item.setText(header_name)
             self.table.setHorizontalHeaderItem(idx, item)
             idx_end = idx
+
+        idx_last_tag = idx_end
 
         for header_name in self.values_list[-1]:
             idx_end += 1
@@ -170,6 +174,33 @@ class CountTable(QDialog):
 
                 col_checked -= 1
 
+        # Cells of the last tag
+        for col in range(idx_last_tag+1, nb_col):
+            for row in range(nb_row):
+                tag_list = []
+                for idx_first_columns in range(idx_last_tag+1):
+                    value = self.table.item(row, idx_first_columns).text()
+                    tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
+                    tag_list.append([tag_name, value])
+                value_last_columns = self.table.horizontalHeaderItem(col).text()
+                tag_last_columns = self.tag_labels[-1].text()
+                tag_list.append([tag_last_columns, value_last_columns])
 
+                item = QTableWidgetItem()
+                list_scans = self.database.check_count_table(tag_list)
 
+                if list_scans:
+                    icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
+                    text = str(len(list_scans))
+                    item.setText(text)
+                    tool_tip = ''
+                    for tuple in list_scans:
+                        tool_tip += (tuple.scan + '\n')
+                    tool_tip = tool_tip[:-1]
+                    item.setToolTip(tool_tip)
+                else:
+                    icon = QIcon(os.path.join('..', 'sources_images', 'red_cross.png'))
+                item.setIcon(icon)
+                self.table.setItem(row, col, item)
 
+        self.table.resizeColumnsToContents()

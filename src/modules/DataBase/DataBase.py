@@ -571,9 +571,9 @@ class DataBase:
         while i < len(queries) - 1:
             finalResult = finalResult.intersect(queries[i + 1])
             i = i + 1
-        finalResult = finalResult.all()
+        finalResult = finalResult.distinct().all()
         # If there is a scan, we return True, and False otherwise
-        return len(finalResult) == 1
+        return finalResult
 
     def undo(self):
         """

@@ -126,6 +126,7 @@ class DataBrowser(QWidget):
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
+        pop_up.show()
 
         if pop_up.exec_() == QDialog.Accepted:
             pass
@@ -408,9 +409,6 @@ class TableDataBrowser(QTableWidget):
         """
         This method will fill the tables in the 'Table' tab with the project data
         """
-
-        ########################################## TO REMOVE AFTERWARDS ###############################
-        print(self.database.check_count_table([["PatientName", "eg"], ["AcquisitionDate", "dfg"]]))
 
         if(self.database.getSortedTag() != ''):
             list_tags = []
