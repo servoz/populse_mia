@@ -383,7 +383,6 @@ class Main_Window(QMainWindow):
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                 self.update_recent_projects_actions()
 
-                #DATABASE
                 self.database = DataBase(self.exPopup.relative_path, True)
                 self.data_browser.update_database(self.database)
                 scan_names_list = []
