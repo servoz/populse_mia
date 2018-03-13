@@ -189,8 +189,7 @@ class DataBrowser(QWidget):
         return_list = []
 
         if str_search != "":
-            for scan in self.database.getScansSimpleSearch(str_search):
-                return_list.append(scan)
+            return_list = self.database.getScansSimpleSearch(str_search)
         else:
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
@@ -257,12 +256,6 @@ class DataBrowser(QWidget):
 
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
             (new_tag_name, new_default_value, type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
-
-            """if type != list:
-                list_to_add = []
-                list_to_add.append(type(new_default_value))
-            else:
-                list_to_add = utils.text_to_list(new_default_value)"""
 
             # Type conversion
             real_type = ""
@@ -370,10 +363,11 @@ class TableDataBrowser(QTableWidget):
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         # FileName column is moved, to revert because it has to stay the first column
+        # We need to disconnect the sectionMoved signal, otherwise infinite call to this function
+        self.hh.sectionMoved.disconnect()
         if(oldVisualIndex == 0 or newVisualIndex == 0):
-            self.hh.sectionMoved.disconnect()
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
-            self.hh.sectionMoved.connect(partial(self.section_moved))
+        self.hh.sectionMoved.connect(partial(self.section_moved))
 
     def selectAllColumn(self, col):
         self.clearSelection()
@@ -490,59 +484,6 @@ class TableDataBrowser(QTableWidget):
                 column += 1
             row += 1
 
-        """for file in project._get_scans():
-        
-            if file.file_path in self.scans_to_visualize:
-            
-                y += 1
-                i = -1
-
-                # Loop on the selected tags
-                for tag_name in project.tags_to_visualize:
-                    i += 1
-                    # If the tag belong to the tags of the project (of course it does...)
-                    if tag_name in file.getAllTagsNames():
-                        # Loop on the project tags
-                        for n_tag in file._get_tags():
-                            # If a project tag name matches our tag
-                            if n_tag.name == tag_name:
-                                # It is put in the table
-                                item = QTableWidgetItem()
-                                txt = utils.check_tag_value(n_tag, 'value')
-                                item.setText(txt)
-
-                                if tag_name == "FileName":
-                                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-
-                                # If this tag has been added by the user
-                                if n_tag.origin == "custom":
-                                    color = QColor()
-                                    if y % 2 == 1:
-                                        color.setRgb(255, 240, 240)
-                                    else:
-                                        color.setRgb(255, 225, 225)
-                                    item.setData(Qt.BackgroundRole, QVariant(color))
-
-                                else:
-                                    if utils.compare_values(n_tag) == False:
-                                        txt = utils.check_tag_value(n_tag, 'original_value')
-                                        item.setToolTip("Original value: " + txt)
-                                        color = QColor()
-                                        if y % 2 == 1:
-                                            color.setRgb(240, 240, 255)
-                                        else:
-                                            color.setRgb(225, 225, 255)
-                                        item.setData(Qt.BackgroundRole, QVariant(color))
-
-                                self.setItem(y, i, item)
-                    else:
-                        a = str('NaN')
-                        item = QTableWidgetItem()
-                        item.setText(a)
-                        self.setItem(y, i, item)"""
-
-        ######
-
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
@@ -637,21 +578,6 @@ class TableDataBrowser(QTableWidget):
                         color.setRgb(250, 250, 250)
                     self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
 
-            """for file in self.database.getScans():
-                if file.file_path == scan_name:
-                    for n_tag in file._get_tags():
-                        if n_tag.name == tag_name:
-                            txt = utils.check_tag_value(n_tag, 'original_value')
-                            self.item(row, col).setText(txt)
-                            if n_tag.origin != "custom":
-                                color = QColor()
-                                if row % 2 == 1:
-                                    color.setRgb(255, 255, 255)
-                                else:
-                                    color.setRgb(250, 250, 250)
-                                self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
-                            n_tag.resetTag()"""
-
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
         self.database.historyHead = len(self.database.history)
@@ -683,23 +609,6 @@ class TableDataBrowser(QTableWidget):
                         else:
                             color.setRgb(250, 250, 250)
                         self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
-
-            """scan_id = -1
-            for file in project._get_scans():
-
-                scan_id += 1
-                for n_tag in file._get_tags():
-                    if n_tag.name == tag_name:
-                        txt = utils.check_tag_value(n_tag, 'original_value')
-                        self.item(scan_id, col).setText(txt)
-                        if n_tag.origin != "custom":
-                            color = QColor()
-                            if row % 2 == 1:
-                                color.setRgb(255, 255, 255)
-                            else:
-                                color.setRgb(250, 250, 250)
-                            self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
-                        n_tag.resetTag()"""
 
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
@@ -733,25 +642,6 @@ class TableDataBrowser(QTableWidget):
                             color.setRgb(250, 250, 250)
                         self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
 
-            """for file in project._get_scans():
-                if file.file_path == scan_name:
-                    for n_tag in file.getAllTags():
-                        if n_tag.name in project.tags_to_visualize:
-                            idx = project.tags_to_visualize.index(n_tag.name)
-                            txt = utils.check_tag_value(n_tag, 'original_value')
-                            self.item(row, idx).setText(txt)
-                            if n_tag.origin != "custom":
-                                color = QColor()
-                                if row % 2 == 1:
-                                    color.setRgb(255, 255, 255)
-                                else:
-                                    color.setRgb(250, 250, 250)
-                                self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
-                            n_tag.resetTag()
-
-                        # DATABASE
-                        self.database.resetTag(scan_name, n_tag.name)"""
-
         historyMaker.append(modified_values)
         self.database.history.append(historyMaker)
         self.database.historyHead = len(self.database.history)
@@ -775,23 +665,6 @@ class TableDataBrowser(QTableWidget):
                 item.setData(Qt.BackgroundRole, QVariant(color))
             item.setText(self.database.getValue(scan_path, tag_name).current_value)
             self.setItem(row, col, item)
-
-            """for scan in project._get_scans():
-                if scan_path == scan.file_path:
-                    for tag in scan.getAllTags():
-                        if tag_name == tag.name:
-                            # It is put in the table
-                            item = QTableWidgetItem()
-                            txt = utils.check_tag_value(tag, 'value')
-                            if tag.origin == 'custom':
-                                color = QColor()
-                                if row % 2 == 1:
-                                    color.setRgb(255, 240, 240)
-                                else:
-                                    color.setRgb(255, 225, 225)
-                                item.setData(Qt.BackgroundRole, QVariant(color))
-                            item.setText(txt)
-                            self.setItem(row, col, item)"""
 
     def remove_scan(self):
         points = self.selectedIndexes()
