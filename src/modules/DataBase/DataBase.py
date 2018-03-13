@@ -550,6 +550,30 @@ class DataBase:
                 result.append(value.scan)
         return result
 
+    def check_count_table(self, values):
+        """
+        Checks if a scan contains all the couples <tag, value> given in parameter
+        :param values: List of couple <tag, value> to check
+        :return: True if a scan has all the couples <tag, value> given in parameter, False otherwise
+        """
+        queries = []
+        for value in values:
+            tag = value[0]
+            value = value[1]
+            cellResult = self.session.query(Value.scan)  # Every scan to start with
+            cellResult = cellResult.filter(Value.tag == tag).filter(Value.current_value == value) # We apply the tag and value filter
+            queries.append(cellResult)
+        # We put all the cells together, with intersections
+        # We only want a scan that has all the values
+        finalResult = queries[0]
+        i = 0
+        while i < len(queries) - 1:
+            finalResult = finalResult.intersect(queries[i + 1])
+            i = i + 1
+        finalResult = finalResult.all()
+        # If there is a scan, we return True, and False otherwise
+        return len(finalResult) == 1
+
     def undo(self):
         """
         Undo the last action made by the user on the project
