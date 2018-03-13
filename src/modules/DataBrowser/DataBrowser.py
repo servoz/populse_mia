@@ -146,7 +146,7 @@ class DataBrowser(QWidget):
 
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
-        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any type of string")
+        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character")
         self.search_bar.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()
@@ -185,24 +185,6 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(count_table_button)
 
     def search_str(self, str_search):
-
-        """return_list = []
-        if str_search != "":
-            split_list = str_search.split('*')
-            for scan in self.database.getScans():
-                for tag in self.database.getValuesGivenScan(scan.scan):
-                    if scan.scan in return_list:
-                        break
-                    if self.database.getTagVisibility(tag.tag):
-                        i = 0
-                        for element in split_list:
-                            if element.upper() in str(tag.current_value[0]).upper():
-                                i += 1
-                        if i == len(split_list):
-                            return_list.append(scan.scan)
-        else:
-            for scan in self.database.getScans():
-                return_list.append(scan.scan)"""
 
         return_list = []
 
@@ -389,8 +371,10 @@ class TableDataBrowser(QTableWidget):
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         # FileName column is moved, to revert because it has to stay the first column
-        if(oldVisualIndex == 0):
+        if(oldVisualIndex == 0 or newVisualIndex == 0):
+            self.hh.sectionMoved.disconnect()
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
+            self.hh.sectionMoved.connect(partial(self.section_moved))
 
     def selectAllColumn(self, col):
         self.clearSelection()

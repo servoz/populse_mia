@@ -10,11 +10,26 @@ from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, QGraphicsView, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QListView, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout
 from matplotlib.backends.qt_compat import QtWidgets
 import sip
+import os
+import six
+from capsul.pipeline import pipeline_tools
+from capsul.api import get_process_instance
 
 from NodeEditor.callStudent import callStudent
+from capsul.qt_gui.widgets import PipelineDevelopperView
+from .Processes.processes import AvailableProcesses
+
+if sys.version_info[0] >= 3:
+    unicode = str
+    def values(d):
+        return list(d.values())
+else:
+    def values(d):
+        return d.values()
+
 
 
 class MenuBar(QMenuBar):
@@ -59,21 +74,20 @@ class ToolBar(QToolBar):
         sep = QAction(self)
         sep.setSeparator(True)
        
-        projAct = QAction(QIcon('sources_images/icons-403.png'),'Project',self)
+        projAct = QAction(QIcon(os.path.join('..', 'sources_images', 'icons-403.png')),'Project',self)
         projAct.setShortcut('Ctrl+j')
-        toolAct = QAction(QIcon('sources_images/Tool_Application.png'),'Tool',self)
+        toolAct = QAction(QIcon(os.path.join('..', 'sources_images', 'Tool_Application.png')),'Tool',self)
         toolAct.setShortcut('Ctrl+t')
-        protAct = QAction(QIcon('sources_images/Protocol_record.png'),'Protocol',self)
+        protAct = QAction(QIcon(os.path.join('..', 'sources_images', 'Protocol_record.png')),'Protocol',self)
         protAct.setShortcut('Ctrl+p')
-        creatAct = QAction(QIcon('sources_images/create.png'),'Create ROI',self)
+        creatAct = QAction(QIcon(os.path.join('..', 'sources_images', 'create.png')),'Create ROI',self)
         creatAct.setShortcut('Ctrl+r')
-        openAct = QAction(QIcon('sources_images/open.png'),'Open ROI',self)
+        openAct = QAction(QIcon(os.path.join('..', 'sources_images', 'open.png')) ,'Open ROI',self)
         openAct.setShortcut('Ctrl+o')
-        plotAct = QAction(QIcon('sources_images/plot.png'),'Plotting',self)
+        plotAct = QAction(QIcon(os.path.join('..', 'sources_images', 'plot.png')),'Plotting',self)
         plotAct.setShortcut('Ctrl+g')
-        prefAct = QAction(QIcon('sources_images/pref.png'),'Preferences',self)
+        prefAct = QAction(QIcon(os.path.join('..', 'sources_images', 'pref.png')),'Preferences',self)
         prefAct.setShortcut('Ctrl+h')
-       
 
         self.setIconSize(QSize(50,50))
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -121,15 +135,18 @@ class DiagramScene(QGraphicsScene):
         editor.sceneMouseReleaseEvent(mouseEvent)
         super(DiagramScene, self).mouseReleaseEvent(mouseEvent)
 
-class EditorGraphicsView(QGraphicsView):
+"""class EditorGraphicsView(QGraphicsView): # ORIGINAL CLASS
     def __init__(self, scene, parent=None):
         QGraphicsView.__init__(self, scene, parent)
+        
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             event.accept()
+            
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             event.accept()
+            
     def dropEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             name = str(event.mimeData().data('component/name'))
@@ -137,7 +154,55 @@ class EditorGraphicsView(QGraphicsView):
             nOut= int(name[name.index(',')+1:name.index(')')])
             self.b1 = BlockItem(name, nIn , nOut)
             self.b1.setPos(self.mapToScene(event.pos()))
-            self.scene().addItem(self.b1)
+            self.scene().addItem(self.b1)"""
+
+
+class EditorGraphicsView(PipelineDevelopperView):
+    def __init__(self, scene, parent=None):
+        PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
+                                        show_sub_pipelines=True, enable_edition=True)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat('component/name'):
+            event.accept()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat('component/name'):
+            event.accept()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasFormat('component/name'):
+            self.click_pos = QtGui.QCursor.pos()
+            classNameByte = bytes(event.mimeData().data('component/name'))
+            className = classNameByte.decode('utf8')
+            for classProcess in AvailableProcesses():
+                if className == classProcess.__name__:
+                    self.add_process(classProcess)
+
+    def add_process(self, class_process):
+        class_name = class_process.__name__
+        pipeline = self.scene.pipeline
+        i = 1
+        node_name = class_name.lower() + str(i)
+        while node_name in pipeline.nodes and i < 100:
+            i += 1
+            node_name = class_name.lower() + str(i)
+
+        process_to_use = class_process(node_name)
+
+        try:
+            process = get_process_instance(
+                process_to_use)
+        except Exception as e:
+            print(e)
+            return
+        pipeline.add_process(node_name, process)
+
+        node = pipeline.nodes[node_name]
+        gnode = self.scene.add_node(node_name, node)
+        gnode.setPos(self.mapToScene(self.mapFromGlobal(self.click_pos)))
+
+
     #============================================================================
     # def mousePressEvent(self, event):
     #     print(event)      
@@ -402,12 +467,14 @@ class ProjectEditor(QWidget):
         pxm = LibItem(self)
     
         self.libItems = []
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
+        for classProcess in AvailableProcesses():
+            self.libItems.append(QStandardItem(classProcess.__name__))
+        '''self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 1 (1,2)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 2 (3,3)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Display (1,0)') )
         self.libItems.append( QStandardItem(QIcon(pxm), 'Student (3,2)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )'''
     
         for i in self.libItems:
             self.libraryModel.appendRow(i)
@@ -417,16 +484,23 @@ class ProjectEditor(QWidget):
     
         self.diagramScene = DiagramScene(self)
         self.diagramView = EditorGraphicsView(self.diagramScene, self)
-    
-    
-        textedit = TextEditor(self)
-        textedit.setStyleSheet("background-color : lightgray")
+
+        self.textedit = TextEditor(self)
+        self.textedit.setStyleSheet("background-color : lightgray")
         redText = "<span style=\" font-size:12pt; font-weight:600; color:#ff0000;\" >"
         redText = redText + ("Code of the box")
         redText = redText + ("</span>")
-        textedit.append(redText)
+        self.textedit.append(redText)
         
         tagEditor = QWidget(self)
+
+        self.runButton = QPushButton('Run pipeline', self)
+        self.runButton.clicked.connect(self.runPipeline)
+
+        self.hLayout = QHBoxLayout()
+        self.hLayout.addWidget(menub)
+        self.hLayout.addWidget(self.runButton)
+        self.hLayout.addStretch(1)
     
         self.splitter0 = QSplitter(Qt.Horizontal)
         self.splitter0.addWidget(self.diagramView)
@@ -440,14 +514,35 @@ class ProjectEditor(QWidget):
     
         self.splitter2 = QSplitter(Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
-        self.splitter2.addWidget(textedit)
+        self.splitter2.addWidget(self.textedit)
         self.splitter2.setSizes([400,200])
            
-        self.verticalLayout.addWidget(menub)
+        self.verticalLayout.addLayout(self.hLayout)
         self.verticalLayout.addWidget(self.splitter2)
     
         self.startedConnection = None
-     
+
+    def runPipeline(self):
+        '''# Saving the pipeline
+        pipeline = self.diagramView.scene.pipeline
+        filename = '/tmp/pipeline.py'
+        posdict = dict([(key, (value.x(), value.y())) \
+                        for key, value in six.iteritems(self.scene.pos)])
+        old_pos = pipeline.node_position
+        pipeline.node_position = posdict
+        pipeline_tools.save_pipeline(pipeline, filename)
+        self._pipeline_filename = unicode(filename)
+        pipeline.node_position = old_pos'''
+
+        pipeline = get_process_instance(self.diagramView.scene.pipeline)
+        with open('/tmp/tmp_pipeline.txt', 'w') as f:
+            sys.stdout = f
+            f.write('Pipeline execution\n...\n\n')
+            pipeline()
+
+        with open('/tmp/tmp_pipeline.txt', 'r') as f:
+            self.textedit.setText(f.read())
+
     def startConnection(self, port):
         self.startedConnection = Connection(port, None)
      
