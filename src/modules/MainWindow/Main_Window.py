@@ -436,7 +436,7 @@ class Main_Window(QMainWindow):
                     self.database.unsaveModifications()
                     self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
                     self.update_recent_projects_actions()
-                    self.database = DataBase(self.exPopup.relative_path, False)
+                    self.database = tempDatabase
                     self.data_browser.update_database(self.database)
                     scan_names_list = []
                     for scan in self.database.getScans():
