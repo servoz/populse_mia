@@ -115,4 +115,5 @@ class Ui_Visualized_Tags(QWidget):
         rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],
                       reverse=True)
         for row in rows:
-            self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
+            if (self.list_widget_selected_tags.item(row).text() != "FileName"):
+                self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))

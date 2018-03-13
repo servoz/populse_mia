@@ -80,9 +80,9 @@ class AdvancedSearch(QWidget):
 
     def displayValueRules(self, choice, value):
         if(choice.currentText() == "BETWEEN"):
-            value.setPlaceholderText("Please separate the two borders by , (a comma and a space).")
+            value.setPlaceholderText("Please separate the two inclusive borders of the range by a comma and a space")
         elif (choice.currentText() == "IN"):
-            value.setPlaceholderText("Please separate each element of the list by , (a comma and a space).")
+            value.setPlaceholderText("Please separate each list item by a comma and a space")
         else:
             value.setPlaceholderText("")
 
