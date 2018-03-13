@@ -424,7 +424,7 @@ class Main_Window(QMainWindow):
                         str_msg += element + "\n\n"
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
-                    msg.setText("These files have been modified since they have been converted for the first time:")
+                    msg.setText("These files have been modified or removed since they have been converted for the first time:")
                     msg.setInformativeText(str_msg)
                     msg.setWindowTitle("Warning")
                     msg.setStandardButtons(QMessageBox.Ok)
@@ -478,7 +478,7 @@ class Main_Window(QMainWindow):
                             str_msg += element + "\n\n"
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
-                        msg.setText("These files have been modified since they have been converted for the first time:")
+                        msg.setText("These files have been modified or removed since they have been converted for the first time:")
                         msg.setInformativeText(str_msg)
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok)

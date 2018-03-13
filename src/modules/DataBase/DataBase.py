@@ -660,10 +660,19 @@ class DataBase:
                         self.setTagValue(scan, tag, value)
                     i = i + 1
             if (action == "modified_visibilities"):
-                visibles = toUndo[1]
-                self.resetAllVisibilities()
+                # To revert the modifications of the visualized tags
+                visibles = toUndo[1] # List of the tags visibles before the modification (Tag objects)
+                self.resetAllVisibilities() # Reset of the visibilities
                 for visible in visibles:
+                    # We reput each old tag visible
                     self.setTagVisibility(visible.tag, True)
+            if (action == "modified_sort"):
+                # To revert a sort change
+                old_sorted_tag = toUndo[1]
+                old_sort_order = toUndo[2]
+                self.setSortedTag(old_sorted_tag)
+                self.setSortOrder(old_sort_order)
+
             # Reading history index decreased
             self.historyHead = self.historyHead - 1
 
