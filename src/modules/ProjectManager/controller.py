@@ -7,6 +7,7 @@ from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
 from SoftwareProperties.Config import Config
 import datetime
 import yaml
+from time import time
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -107,54 +108,24 @@ def read_log(database):
             with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
-            #scan_to_add = loadScan(str(1), file_name, path_name, original_md5)
-            #list_to_add = []
-            #list_to_add.append(file_name)
-            #tag_to_add = Tag("FileName", "", list_to_add, "Json", list_to_add)
 
-            database.addScan(file_name, original_md5)
+            database.addScan(file_name, original_md5) # Scan added to the database
 
-            scans_added.append(file_name)
+            scans_added.append(file_name) # Scan added to history
 
-            database.addValue(file_name, "FileName", file_name, file_name)
-            tag_already_in_database = False
-            for database_tag in database.getTags():
-                database_tag = database_tag.tag
-                if ("FileName" == database_tag):
-                    tag_already_in_database = True
-            if not tag_already_in_database:
+            database.addValue(file_name, "FileName", file_name, file_name) # FileName tag added
+
+            start_time = time()
+            for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
+                value = utils.check_tag_value(tag[1])
+                database.addValue(file_name, tag[0], value, value) # Value added to the database
                 config = Config()
-                if ("FileName" in config.getDefaultTags()):
-                    database.addTag("FileName", True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                if(tag[0] in config.getDefaultTags()):
+                    database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
                 else:
-                    database.addTag("FileName", False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-            else:
-                database.setTagOrigin("FileName", TAG_ORIGIN_RAW)
-            for tag in getJsonTagsFromFile(file_name, path_name):
-                database.addValue(file_name, tag[0], utils.check_tag_value(tag[1]), utils.check_tag_value(tag[1]))
-                tag_already_in_database = False
-                for database_tag in database.getTags():
-                    database_tag = database_tag.tag
-                    if(tag[0] == database_tag):
-                        tag_already_in_database = True
-                if not tag_already_in_database:
-                    config = Config()
-                    if(tag[0] in config.getDefaultTags()):
-                        database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                    else:
-                        database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                else:
-                    database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
-
-            """scan_to_add.addJsonTag(tag_to_add)
-            project.addScan(scan_to_add)
-            for tag in project.user_tags:
-                user_tag_name = tag['name']
-                for scan in project._get_scans():
-                    if scan.file_path == file_name:
-                        if user_tag_name not in scan.getAllTagsNames():
-                            tag = Tag(user_tag_name, "", tag["original_value"], "custom", tag["original_value"])
-                            scan.addCustomTag(tag)"""
+                    database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
+            print("--- %s seconds ---" % (time() - start_time))
 
     historyMaker.append(scans_added)
     database.history.append(historyMaker)
@@ -168,17 +139,21 @@ def verify_scans(database, path):
         file_name = scan.scan
         path_name = os.path.relpath(os.path.join(path, 'data', 'raw_data'))
 
-        with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
-            data = scan_file.read()
-            actual_md5 = hashlib.md5(data).hexdigest()
+        if os.path.exists(os.path.join(path_name, file_name) + ".nii"):
+            # If the file exists, we do the checksum
+            with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
+                data = scan_file.read()
+                actual_md5 = hashlib.md5(data).hexdigest()
 
-        if actual_md5 != scan.checksum:
+            if actual_md5 != scan.checksum:
+                return_list.append(file_name)
+
+        else:
+            # Otherwise, we directly add the file in the list
             return_list.append(file_name)
 
     return return_list
 
 
 def save_project(database):
-    #project_path = os.path.join(database.folder, database.getName(), database.getName())
-    #utils.saveProjectAsJsonFile(project_path, project)
     database.saveModifications()

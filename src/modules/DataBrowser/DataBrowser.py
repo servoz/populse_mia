@@ -356,8 +356,10 @@ class TableDataBrowser(QTableWidget):
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         # FileName column is moved, to revert because it has to stay the first column
-        if(oldVisualIndex == 0):
+        if(oldVisualIndex == 0 or newVisualIndex == 0):
+            self.hh.sectionMoved.disconnect()
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
+            self.hh.sectionMoved.connect(partial(self.section_moved))
 
     def selectAllColumn(self, col):
         self.clearSelection()

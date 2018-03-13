@@ -5,7 +5,7 @@ import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER
+from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
 import pickle
 
 class DataBase:
@@ -76,6 +76,9 @@ class DataBase:
                     # Tags by default set as visible
                     self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "")  # Modify params?
                     self.saveModifications()
+
+        # FileName as raw tag
+        self.setTagOrigin("FileName", TAG_ORIGIN_RAW)
 
     def loadProperties(self):
         """ Loads the properties file (Unnamed project does not have this file) """
@@ -166,9 +169,13 @@ class DataBase:
         :param default:
         :param description:
         """
-        tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
-        self.session.add(tag)
-        self.unsavedModifications = True
+        # We only add the tag to the database if it does not already exist
+        # We don't put the tags Dataset data file and Dataset header file, redundant with FileName
+        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
+        if len(tags) == 0 and not tag == "Dataset data file" and not tag == "Dataset header file":
+            tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
+            self.session.add(tag)
+            self.unsavedModifications = True
 
     def addValue(self, scan, tag, current_value, raw_value):
         """
@@ -370,9 +377,10 @@ class DataBase:
         """
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
         # TODO return error if len(tags) != 1
-        tag = tags[0]
-        tag.origin = origin
-        self.unsavedModifications = True
+        if len(tags) == 1:
+            tag = tags[0]
+            tag.origin = origin
+            self.unsavedModifications = True
 
     def resetAllVisibilities(self):
         """
