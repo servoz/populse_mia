@@ -47,8 +47,6 @@ class Main_Window(QMainWindow):
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
-        print("to delete")
-
         self.database = database
 
         ############### initial setting ############################################################
