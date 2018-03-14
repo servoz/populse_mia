@@ -102,6 +102,9 @@ def read_log(database):
 
     for dict_log in list_dict_log:
 
+        config = Config()
+        default_tags = config.getDefaultTags()
+
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
             path_name = raw_data_folder
@@ -118,13 +121,15 @@ def read_log(database):
             start_time = time()
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
                 value = utils.check_tag_value(tag[1])
-                database.addValue(file_name, tag[0], value, value) # Value added to the database
-                config = Config()
-                if(tag[0] in config.getDefaultTags()):
-                    database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                else:
-                    database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
+
+                if(value != ""):
+                    database.addValue(file_name, tag[0], value, value) # Value added to the database
+
+                    if(tag[0] in default_tags):
+                        database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                    else:
+                        database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+                    database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
             print("--- %s seconds ---" % (time() - start_time))
 
     historyMaker.append(scans_added)

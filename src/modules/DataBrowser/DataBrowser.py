@@ -393,7 +393,7 @@ class TableDataBrowser(QTableWidget):
                 if(self.database.scanHasTag(scan, self.database.getSortedTag())):
                     list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
                 else:
-                    list_tags.append("NaN")
+                    list_tags.append("Not Defined")
 
             if self.database.getSortOrder() == "ascending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize))]
@@ -477,7 +477,7 @@ class TableDataBrowser(QTableWidget):
 
                 # The scan does not have a value for the tag
                 else:
-                    a = str('NaN')
+                    a = str('Not Defined')
                     item = QTableWidgetItem()
                     item.setText(a)
                 self.setItem(row, column, item)
@@ -758,41 +758,6 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.disconnect()
         text_value = item_origin.text()
 
-        """is_error = False
-        for item in self.selectedItems():
-            if is_error:
-                break
-            row = item.row()
-            col = item.column()
-            tp = str
-            scan_path = self.item(row, 0).text()
-            tag_name = self.horizontalHeaderItem(col).text()
-
-            for scan in project._get_scans():
-                if scan_path == scan.file_path:
-                    for tag in scan.getAllTags():
-                        if tag_name == tag.name:
-                            tp = type(tag.original_value[0])
-
-            try:
-                # TODO: THIS HAVE TO BE IMPROVE (CHECK EACH VALUE OF THE WRITTEN LIST)
-                if tp == list and (text_value[0] != '[' or text_value[-1] != ']'):
-                    is_error = True
-                test = tp(text_value)
-
-            except ValueError:
-                is_error = True
-
-        if is_error:
-            items = self.selectedItems()
-
-            # Dialog that says that it is not possible
-            self.pop_up_type = Ui_Dialog_Type_Problem(tp)
-            # Resetting the cells
-            self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, project, items))
-            self.pop_up_type.exec()
-        else:"""
-
         historyMaker = []
         historyMaker.append("modified_values")
         modified_values = []
@@ -882,43 +847,6 @@ class TableDataBrowser(QTableWidget):
                 if(tag_name != "FileName"):
                     item.setData(Qt.BackgroundRole, QVariant(color))
                     item.setText(text_value)
-
-                """for scan in project._get_scans():
-                    if scan_path == scan.file_path:
-                        for tag in scan.getAllTags():
-                            if tag_name == tag.name:
-                                tp = type(tag.original_value[0])
-                                txt = utils.check_tag_value(tag, 'original_value')
-                                color = QColor()
-                                if tag.origin != 'custom':
-                                    if str(text_value) != str(txt):
-                                        if row % 2 == 1:
-                                            color.setRgb(240, 240, 255)
-                                        else:
-                                            color.setRgb(225, 225, 255)
-                                    else:
-                                        if row % 2 == 1:
-                                            color.setRgb(255, 255, 255)
-                                        else:
-                                            color.setRgb(250, 250, 250)
-
-                                else:
-                                    if row % 2 == 1:
-                                        color.setRgb(255, 240, 240)
-                                    else:
-                                        color.setRgb(255, 225, 225)
-
-                                item.setData(Qt.BackgroundRole, QVariant(color))
-                                item.setText(text_value)
-
-                                tag_origin = tag.origin
-                                tag_replace = tag.replace
-                                if tp == list:
-                                    tag_value_to_add = utils.text_to_list(text_value)
-                                else:
-                                    tag_value_to_add = utils.text_to_tag_value(text_value, tag)
-                                new_tag = Tag(tag_name, tag_replace, tag_value_to_add, tag_origin, tag.original_value)
-                                scan.replaceTag(new_tag, tag_name, str(tag_origin))"""
 
             historyMaker.append(modified_values)
             self.database.history.append(historyMaker)
