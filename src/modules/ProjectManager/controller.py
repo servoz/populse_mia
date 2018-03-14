@@ -3,7 +3,7 @@ import os.path
 import json
 import Utils.utils as utils
 import hashlib # To generate the md5 of each scan
-from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING
+from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
 from SoftwareProperties.Config import Config
 import datetime
 import yaml
@@ -136,6 +136,10 @@ def read_log(database):
                 database.addTag(tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
             else:
                 database.addTag(tag, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+
+    for tag in database.getUserTags():
+        # We add the default value if it exists and no value to scan
+        database.put_default_values(tag.tag)
 
     # For history
     historyMaker.append(scans_added)
