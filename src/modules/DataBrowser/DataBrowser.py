@@ -101,10 +101,17 @@ class DataBrowser(QWidget):
         self.setLayout(vbox_splitter)
 
     def update_database(self, database):
+        """
+        Called when switching project (new, open, and save as)
+        :param database: New instance of database
+        :return:
+        """
+        # Database updated everywhere
         self.database = database
         self.table_data.database = database
         self.viewer.database = database
         self.advanced_search.database = database
+        # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
 
     def create_actions(self):
@@ -245,15 +252,22 @@ class DataBrowser(QWidget):
             self.viewer.verify_slices(full_names)
 
     def advanced_search(self):
+        """
+        Called when the button advanced search is called
+        """
         if(self.frame_advanced_search.isHidden()):
+            # If the advanced search is hidden, we reset it and display it
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
         else:
+            # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
+            # We reput all the scans in the databrowser
             return_list = []
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
             self.table_data.scans_to_visualize = return_list
+            # The table must be updated
             self.table_data.update_table()
 
     def add_tag_pop_up(self):
@@ -429,6 +443,7 @@ class TableDataBrowser(QTableWidget):
         This method will fill the tables in the 'Table' tab with the project data
         """
 
+        # Scans sorted
         if(self.database.getSortedTag() != ''):
             list_tags = []
             for scan in self.scans_to_visualize:
@@ -460,6 +475,40 @@ class TableDataBrowser(QTableWidget):
 
         _translate = QtCore.QCoreApplication.translate
 
+        # Headers filled
+        self.fill_header_update_table()
+
+        nb = 0
+
+        # Sort visual management
+        for element in self.database.getVisualizedTags():
+            element = element.tag
+            item = self.horizontalHeaderItem(nb)
+            if element == self.database.getSortedTag():
+                if self.database.getSortOrder() == 'ascending':
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
+                else:
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
+            item.setText(_translate("MainWindow", element))
+            item.setToolTip(self.database.getTagDescription(element))
+            self.setHorizontalHeaderItem(nb, item)
+            nb += 1
+
+        # Cells filled
+        self.fill_cells_update_table()
+
+        # Columns resized
+        self.resizeColumnsToContents()
+
+        # When the user changes one item of the table, the background will change
+        self.itemChanged.connect(self.change_cell_color)
+
+        # Auto-save
+        config = Config()
+        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+            save_project(self.database)
+
+    def fill_header_update_table(self):
         # Initializing the headers for each row and each column
         item = QtWidgets.QTableWidgetItem()
         i = 0
@@ -479,21 +528,7 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
 
-        nb = 0
-
-        for element in self.database.getVisualizedTags():
-            element = element.tag
-            item = self.horizontalHeaderItem(nb)
-            if element == self.database.getSortedTag():
-                if self.database.getSortOrder() == 'ascending':
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-                else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
-            item.setText(_translate("MainWindow", element))
-            item.setToolTip(self.database.getTagDescription(element))
-            self.setHorizontalHeaderItem(nb, item)
-            nb += 1
-
+    def fill_cells_update_table(self):
         row = 0
         for scan in self.scans_to_visualize:
             column = 0
@@ -501,8 +536,8 @@ class TableDataBrowser(QTableWidget):
                 item = self.horizontalHeaderItem(column)
                 current_tag = item.text()
                 # The scan has a value for the tag
-                if(self.database.scanHasTag(scan, current_tag)):
-                    value =  self.database.getValue(scan, current_tag)
+                if (self.database.scanHasTag(scan, current_tag)):
+                    value = self.database.getValue(scan, current_tag)
                     item = QTableWidgetItem()
                     item.setText(value.current_value)
                     # FileName not editable
@@ -525,16 +560,6 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
             row += 1
-
-        self.resizeColumnsToContents()
-
-        # When the user changes one item of the table, the background will change
-        self.itemChanged.connect(self.change_cell_color)
-
-        # Auto-save
-        config = Config()
-        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(self.database)
 
     def context_menu_table(self, position):
 
@@ -745,14 +770,24 @@ class TableDataBrowser(QTableWidget):
         self.database.redos.clear()
 
     def sort_items(self, col):
+        """
+        Manages the sort when a column is double clicked
+        :param col: Column clicked to sort
+        :return:
+        """
 
         self.clearSelection() # Remove the column selection from single click
         item = self.horizontalHeaderItem(col)
         tag_name = self.horizontalHeaderItem(col).text()
+
+        # For history
         historyMaker = []
         historyMaker.append("modified_sort")
+        # Old values
         historyMaker.append(self.database.getSortedTag())
         historyMaker.append(self.database.getSortOrder())
+
+        # Sort values updated
         if tag_name == self.database.getSortedTag():
             if self.database.getSortOrder() == 'ascending':
                 self.database.setSortOrder('descending')
@@ -765,10 +800,14 @@ class TableDataBrowser(QTableWidget):
             item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
 
         self.database.setSortedTag(tag_name)
+
+        # For history
+        # New values
         historyMaker.append(self.database.getSortedTag())
         historyMaker.append(self.database.getSortOrder())
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
+
         self.update_table()
 
     def sort_column(self):
@@ -813,10 +852,12 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.disconnect()
         text_value = item_origin.text()
 
+        # For history
         historyMaker = []
         historyMaker.append("modified_values")
         modified_values = []
 
+        # For each item selected, we check that the new value is valid (type check)
         is_error = False
         for item in self.selectedItems():
             if is_error:
@@ -853,6 +894,7 @@ class TableDataBrowser(QTableWidget):
                 except ValueError:
                     is_error = True
 
+        # If there is invalidity in the new values, we display an error message
         if is_error:
             items = self.selectedItems()
 
@@ -862,6 +904,7 @@ class TableDataBrowser(QTableWidget):
             self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, items))
             self.pop_up_type.exec()
 
+        # Otherwise we update the value
         else:
             for item in self.selectedItems():
                 row = item.row()
@@ -871,11 +914,11 @@ class TableDataBrowser(QTableWidget):
 
                 color = QColor()
 
-                # The scan already have a value for the tag
+                # The scan already have a value for the tag: we update it
                 if(self.database.scanHasTag(scan_path, tag_name)):
                     modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, text_value])
                     self.database.setTagValue(scan_path, tag_name, text_value)
-                # The scan does not have a value for the tag yet
+                # The scan does not have a value for the tag yet: we add it
                 else:
                     modified_values.append([scan_path, tag_name, None, text_value])
                     self.database.addValue(scan_path, tag_name, text_value, text_value)
@@ -903,6 +946,7 @@ class TableDataBrowser(QTableWidget):
                     item.setData(Qt.BackgroundRole, QVariant(color))
                     item.setText(text_value)
 
+            # For history
             historyMaker.append(modified_values)
             self.database.undos.append(historyMaker)
             self.database.redos.clear()

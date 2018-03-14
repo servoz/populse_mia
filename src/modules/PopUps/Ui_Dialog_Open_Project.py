@@ -36,7 +36,6 @@ class Ui_Dialog_Open_Project(QFileDialog):
 
             # If the file exists
             if os.path.exists(os.path.join(self.relative_path, self.name, self.name + '.json')):
-                controller.open_project(self.name, self.relative_path)
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()

@@ -66,23 +66,6 @@ def createProject(name, path, parent_folder):
         #return project
 
 
-def open_project(name, path):
-    """
-
-    :param name: project name
-    :param path: project path
-    :return: the project object
-    """
-    path = os.path.relpath(path)
-    if os.path.exists(path):
-        project_path = os.path.join(path, name)
-        file_path = os.path.join(project_path, name)
-        #with open(file_path+".json", "r", encoding="utf-8")as fichier:
-            #project = json.load(fichier, object_hook=deserializer)
-
-        #return project
-
-
 def read_log(database):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""

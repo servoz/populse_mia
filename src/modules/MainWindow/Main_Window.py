@@ -238,19 +238,6 @@ class Main_Window(QMainWindow):
         """ Each time a project is opened or created, this function refreshes the GUI + the current project from
          the data base """
 
-        # This list will later contain all the tags in the project
-        self.list_selected_tags = []
-
-        # We get the name and the path of the current project to open it
-        name = self.exPopup.name
-        path = os.path.join(self.exPopup.path, name)
-        self.project = controller.open_project(name, path) # TODO remove once it's useless
-
-        """for file in self.project._get_scans():
-            for n_tag in file._get_tags():
-                if n_tag.origin == 'custom' and n_tag.name not in self.project.tags_to_visualize:
-                    self.project.tags_to_visualize.append(n_tag.name)"""
-
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
         if self.database.isTempProject:
@@ -483,8 +470,6 @@ class Main_Window(QMainWindow):
                     else:
 
                         self.database.unsaveModifications()
-
-                        controller.open_project(name, relative_path)
 
                         self.database = tempDatabase
                         self.data_browser.update_database(self.database)

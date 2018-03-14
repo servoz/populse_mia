@@ -133,8 +133,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
                     else:
                         self.mainWindow.database.unsaveModifications()
 
-                        controller.open_project(self.name, self.relative_path)
-
                         self.mainWindow.database = tempDatabase
                         self.mainWindow.data_browser.update_database(self.mainWindow.database)
                         scan_names_list = []
