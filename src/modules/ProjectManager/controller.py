@@ -67,6 +67,9 @@ def createProject(name, path, parent_folder):
 
 
 def read_log(database):
+
+    start_func = time()
+
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
@@ -79,15 +82,18 @@ def read_log(database):
     with open(log_to_read, "r", encoding="utf-8") as file:
         list_dict_log = json.load(file)
 
+    # For history
     historyMaker = []
     historyMaker.append("add_scans")
     scans_added = []
     values_added = []
 
-    for dict_log in list_dict_log:
+    # Default tags stored
+    config = Config()
+    default_tags = config.getDefaultTags()
+    import_tags = []
 
-        config = Config()
-        default_tags = config.getDefaultTags()
+    for dict_log in list_dict_log:
 
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
@@ -97,32 +103,47 @@ def read_log(database):
                 original_md5 = hashlib.md5(data).hexdigest()
 
             database.addScan(file_name, original_md5) # Scan added to the database
-
             scans_added.append([file_name, original_md5]) # Scan added to history
 
+            # We create the tag FileName
             database.addValue(file_name, "FileName", file_name, file_name) # FileName tag added
             values_added.append([file_name, "FileName", file_name])
 
             start_time = time()
+
+            # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
+
                 value = utils.check_tag_value(tag[1])
 
+                # We only accept the value if it's not empty
                 if(value != ""):
                     database.addValue(file_name, tag[0], value, value) # Value added to the database
-                    values_added.append([file_name, tag[0], value])
+                    values_added.append([file_name, tag[0], value]) # Value added to history
 
-                    if(tag[0] in default_tags):
-                        database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                    else:
-                        database.addTag(tag[0], False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-                    database.setTagOrigin(tag[0], TAG_ORIGIN_RAW)
+                    if not tag[0] in import_tags:
+                        import_tags.append(tag[0])
+
             print("--- %s seconds ---" % (time() - start_time))
 
+    # Tags added to the database
+    for tag in import_tags:
+        # Default tags are already in the database with user origin
+        if database.hasTag(tag):
+            database.setTagOrigin(tag, TAG_ORIGIN_RAW)
+        else:
+            if tag in default_tags:
+                database.addTag(tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+            else:
+                database.addTag(tag, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
+
+    # For history
     historyMaker.append(scans_added)
     historyMaker.append(values_added)
     database.undos.append(historyMaker)
     database.redos.clear()
 
+    print("--- %s seconds ---" % (time() - start_func))
 
 def verify_scans(database, path):
     # Returning the files that are problematic
