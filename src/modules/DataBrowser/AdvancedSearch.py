@@ -61,7 +61,7 @@ class AdvancedSearch(QWidget):
         conditionValue = QLineEdit()
         conditionValue.setObjectName('value')
 
-        # COndition choice
+        # Condition choice
         conditionChoice = QComboBox()
         conditionChoice.setObjectName('condition')
         conditionChoice.addItem("=")

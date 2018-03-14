@@ -172,11 +172,9 @@ class DataBase:
         """
         # We only add the tag to the database if it does not already exist
         # We don't put the tags Dataset data file and Dataset header file, redundant with FileName
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        if len(tags) == 0 and not tag == "Dataset data file" and not tag == "Dataset header file":
-            tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
-            self.session.add(tag)
-            self.unsavedModifications = True
+        tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
+        self.session.add(tag)
+        self.unsavedModifications = True
 
     def addValue(self, scan, tag, current_value, raw_value):
         """
