@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtGui import QColor, QIcon, QFont
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox, QPushButton
 import os
@@ -540,6 +540,10 @@ class TableDataBrowser(QTableWidget):
                     value = self.database.getValue(scan, current_tag)
                     item = QTableWidgetItem()
                     item.setText(value.current_value)
+                    font = item.font()
+                    font.setItalic(False)
+                    font.setBold(False)
+                    item.setFont(font)
                     # FileName not editable
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
@@ -557,6 +561,10 @@ class TableDataBrowser(QTableWidget):
                     a = str(not_defined_value)
                     item = QTableWidgetItem()
                     item.setText(a)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
                 self.setItem(row, column, item)
                 column += 1
             row += 1
@@ -923,7 +931,12 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan_path, tag_name, None, text_value])
                     self.database.addValue(scan_path, tag_name, text_value, text_value)
 
-                #User tag
+                font = item.font()
+                font.setItalic(False)
+                font.setBold(False)
+                item.setFont(font)
+
+                #Raw tag
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
                         if row % 2 == 1:
