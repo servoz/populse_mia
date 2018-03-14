@@ -24,8 +24,8 @@ class DataBase:
             self.folder: Project root folder, relative
             self.properties: Properties of the project: Name, date of creation, sorted tag, and sort order (Not for Unnamed project)
             self.unsavedModifications: To know if there are unsaved modifications
-            self.history: List of actions done on the project since the last opening
-            self.historyHead: Index to know where we are in the history list
+            self.undos: Stack of undo actions we can do
+            self.redos: Stack of redo actions we can do
 
             Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
 
@@ -54,8 +54,8 @@ class DataBase:
             self.refreshTags()
         # Initialisation
         self.unsavedModifications = False
-        self.history = []
-        self.historyHead = 0
+        self.undos = []
+        self.redos = []
 
     """ FROM properties/properties.yml """
 
@@ -598,19 +598,14 @@ class DataBase:
     def undo(self):
         """
         Undo the last action made by the user on the project
-        An history list is maintained, and cleared at every project opening
-        An index is kept, showing where the user is in the history, visually
-        Every new action made by the user is appended at the end of the history list
-        At every undo, the index is decreased
         """
 
-        # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
-        if(self.historyHead > 0 and self.historyHead <= len(self.history)):
-            toUndo = self.history[self.historyHead - 1] # Action to revert
+        # We can undo if we have an action to revert
+        if len(self.undos) > 0:
+            toUndo = self.undos.pop()
+            self.redos.append(toUndo) # We pop the undo action in the redo stack
             # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
-            print("undo " + action)
-            print("head " + str(self.historyHead))
             if(action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
@@ -688,9 +683,6 @@ class DataBase:
                 self.setSortedTag(old_sorted_tag)
                 self.setSortOrder(old_sort_order)
 
-            # Reading history index decreased
-            self.historyHead = self.historyHead - 1
-
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
 
         """
@@ -708,26 +700,20 @@ class DataBase:
     def redo(self):
         """
         Redo the last action made by the user on the project
-        An history list is maintained, and cleared at every project opening
-        An index is kept, showing where the user is in the history, visually
-        Every new action made by the user is appended at the end of the history list
-        At every redo, the index is increased
         """
-
-        # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
-        if(self.historyHead >= 0 and self.historyHead < len(self.history)):
-            toUndo = self.history[self.historyHead] # Action to revert
+        # We can redo if we have an action to make again
+        if len(self.redos) > 0:
+            toRedo = self.redos.pop()
+            self.undos.append(toRedo)  # We pop the redo action in the undo stack
             # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
-            action = toUndo[0]
-            print("redo " + action)
-            print("head " + str(self.historyHead))
+            action = toRedo[0]
             if(action == "add_tag"):
                 # For adding the tag, we need the tag name, and all its attributes
-                tagToAdd = toUndo[1]
-                tagType = toUndo[2]
-                tagUnit = toUndo[3]
-                tagDefaultValue = toUndo[4]
-                tagDescription = toUndo[5]
+                tagToAdd = toRedo[1]
+                tagType = toRedo[2]
+                tagUnit = toRedo[3]
+                tagDefaultValue = toRedo[4]
+                tagDescription = toRedo[5]
                 # Adding the tag
                 self.addTag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
                 # Adding all the values associated
@@ -735,7 +721,7 @@ class DataBase:
                     self.addValue(scan.scan, tagToAdd, tagDefaultValue, None)
             if (action == "remove_tags"):
                 # To remove the tags, we need the names
-                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
+                tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
                 i = 0
                 while i < len(tagsRemoved):
                     # We reput each tag in the tag list, keeping all the tags params
@@ -744,7 +730,7 @@ class DataBase:
                     i = i + 1
             if (action == "add_scans"):
                 # To add the scans, we need the FileNames and the values associated to the scans
-                scansAdded = toUndo[1]  # The second element is a list of the scans to add
+                scansAdded = toRedo[1]  # The second element is a list of the scans to add
                 # We add all the scans
                 i = 0
                 while i < len(scansAdded):
@@ -754,14 +740,14 @@ class DataBase:
                     i = i + 1
                 # We add all the values
                 i = 0
-                valuesAdded = toUndo[2] # The third element is a list of the values to add
+                valuesAdded = toRedo[2] # The third element is a list of the values to add
                 while i < len(valuesAdded):
                     valueToAdd = valuesAdded[i]
                     self.addValue(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
                     i = i + 1
             if(action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
-                scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
+                scansRemoved = toRedo[1]  # The second element is the list of removed scans (Scan class)
                 i = 0
                 while i < len(scansRemoved):
                     # We reput each scan, keeping the same values
@@ -770,7 +756,7 @@ class DataBase:
                     i = i + 1
             if (action == "modified_values"):
                 # To modily the values, we need the cells, and the updated values
-                modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
+                modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
                 i = 0
                 while i < len(modifiedValues):
                     # Each modified value is a list of 3 elements: scan, tag, and old_value
@@ -783,7 +769,7 @@ class DataBase:
                     i = i + 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                visibles = toUndo[2]  # List of the tags visibles after the modification (Tag objects)
+                visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
                 self.resetAllVisibilities()  # Reset of the visibilities
                 for visible in visibles:
                     # We reput each new tag visible
@@ -791,11 +777,9 @@ class DataBase:
             if (action == "modified_sort"):
                 # To revert a sort change
                 # toUndo[1] and toUndo[2] are old values
-                new_sorted_tag = toUndo[3]
-                new_sort_order = toUndo[4]
+                new_sorted_tag = toRedo[3]
+                new_sort_order = toRedo[4]
                 self.setSortedTag(new_sorted_tag)
                 self.setSortOrder(new_sort_order)
-            # Reading history index increased
-            self.historyHead = self.historyHead + 1
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits

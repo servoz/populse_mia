@@ -137,8 +137,8 @@ def read_log(database):
 
     historyMaker.append(scans_added)
     historyMaker.append(values_added)
-    database.history.append(historyMaker)
-    database.historyHead = len(database.history)
+    database.undos.append(historyMaker)
+    database.redos.clear()
 
 
 def verify_scans(database, path):

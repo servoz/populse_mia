@@ -286,8 +286,8 @@ class DataBrowser(QWidget):
             historyMaker.append(new_tag_unit)
             historyMaker.append(new_default_value)
             historyMaker.append(new_tag_description)
-            self.database.history.append(historyMaker)
-            self.database.historyHead = len(self.database.history)
+            self.database.undos.append(historyMaker)
+            self.database.redos.clear()
 
             # Updating the table
             self.table_data.update_table()
@@ -308,8 +308,8 @@ class DataBrowser(QWidget):
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            self.database.history.append(historyMaker)
-            self.database.historyHead = len(self.database.history)
+            self.database.undos.append(historyMaker)
+            self.database.redos.clear()
 
             # Updating the table
             self.table_data.update_table()
@@ -334,8 +334,8 @@ class DataBrowser(QWidget):
                 for value in self.database.getValuesGivenTag(tag):
                     values_removed.append(value)
             historyMaker.append(values_removed)
-            self.database.history.append(historyMaker)
-            self.database.historyHead = len(self.database.history)
+            self.database.undos.append(historyMaker)
+            self.database.redos.clear()
 
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
@@ -591,8 +591,8 @@ class TableDataBrowser(QTableWidget):
                     self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
 
         historyMaker.append(modified_values)
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
+        self.database.undos.append(historyMaker)
+        self.database.redos.clear()
 
     def reset_column(self):
 
@@ -624,8 +624,8 @@ class TableDataBrowser(QTableWidget):
                         self.item(scan_id, col).setData(Qt.BackgroundRole, QVariant(color))
 
         historyMaker.append(modified_values)
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
+        self.database.undos.append(historyMaker)
+        self.database.redos.clear()
 
     def reset_row(self):
 
@@ -657,8 +657,8 @@ class TableDataBrowser(QTableWidget):
                         self.item(row, idx).setData(Qt.BackgroundRole, QVariant(color))
 
         historyMaker.append(modified_values)
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
+        self.database.undos.append(historyMaker)
+        self.database.redos.clear()
 
     def reset_cells_with_item(self, items_in):
 
@@ -702,8 +702,8 @@ class TableDataBrowser(QTableWidget):
 
         historyMaker.append(scans_removed)
         historyMaker.append(values_removed)
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
+        self.database.undos.append(historyMaker)
+        self.database.redos.clear()
 
     def sort_items(self, col):
 
@@ -728,8 +728,8 @@ class TableDataBrowser(QTableWidget):
         self.database.setSortedTag(tag_name)
         historyMaker.append(self.database.getSortedTag())
         historyMaker.append(self.database.getSortOrder())
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
+        self.database.undos.append(historyMaker)
+        self.database.redos.clear()
         self.update_table()
 
     def sort_column(self):
@@ -865,8 +865,8 @@ class TableDataBrowser(QTableWidget):
                     item.setText(text_value)
 
             historyMaker.append(modified_values)
-            self.database.history.append(historyMaker)
-            self.database.historyHead = len(self.database.history)
+            self.database.undos.append(historyMaker)
+            self.database.redos.clear()
 
         self.itemChanged.connect(self.change_cell_color)
 
