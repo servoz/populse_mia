@@ -461,6 +461,16 @@ class DataBase:
         self.session.delete(values[0])
         self.unsavedModifications = True
 
+    def put_default_values(self, tag):
+        """
+        To fill all the missing values of the user tag with the default value
+        :param tag: Tag to fill
+        """
+        default_value = self.getTagDefault(tag)
+        for scan in self.getScans():
+            if not self.scanHasTag(scan.scan, tag):
+                self.addValue(scan.scan, tag, default_value, None)
+
     def saveModifications(self):
         """
         Saves the pending operations of the project (actions still not saved)
