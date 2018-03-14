@@ -577,9 +577,10 @@ class TableDataBrowser(QTableWidget):
             scan_name = self.item(row, 0).text()
 
             if(self.database.scanHasTag(scan_name, tag_name)):
-                modified_values.append([scan_name, tag_name, self.database.getValue(scan_name, tag_name).current_value])
+                cell = self.database.getValue(scan_name, tag_name)
+                modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value])
                 self.database.resetTag(scan_name, tag_name)
-                self.item(row, col).setText(self.database.getValue(scan_name, tag_name).raw_value)
+                self.item(row, col).setText(cell.raw_value)
 
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     color = QColor()
@@ -610,9 +611,10 @@ class TableDataBrowser(QTableWidget):
             for scan in self.database.getScans():
                 scan_id += 1
                 if (self.database.scanHasTag(scan.scan, tag_name)):
-                    modified_values.append([scan.scan, tag_name, self.database.getValue(scan.scan, tag_name).current_value])
+                    cell = self.database.getValue(scan.scan, tag_name) # Value object of the cell
+                    modified_values.append([scan.scan, tag_name, cell.current_value, cell.raw_value])
                     self.database.resetTag(scan.scan, tag_name)
-                    self.item(scan_id, col).setText(self.database.getValue(scan.scan, tag_name).raw_value)
+                    self.item(scan_id, col).setText(cell.raw_value)
                     if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
                         color = QColor()
                         if row % 2 == 1:
@@ -642,9 +644,10 @@ class TableDataBrowser(QTableWidget):
             for tag in self.database.getVisualizedTags():
                 idx += 1
                 if (self.database.scanHasTag(scan_name, tag.tag)):
-                    modified_values.append([scan_name, tag.tag, self.database.getValue(scan_name, tag.tag).current_value])
+                    cell = self.database.getValue(scan_name, tag.tag) # Value object of the cell
+                    modified_values.append([scan_name, tag.tag, cell.current_value, cell.raw_value])
                     self.database.resetTag(scan_name, tag.tag)
-                    self.item(row, idx).setText(self.database.getValue(scan_name, tag.tag).raw_value)
+                    self.item(row, idx).setText(cell.raw_value)
                     if(self.database.getTagOrigin(tag.tag) == TAG_ORIGIN_RAW):
                         color = QColor()
                         if row % 2 == 1:
@@ -711,8 +714,6 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append("modified_sort")
         historyMaker.append(self.database.getSortedTag())
         historyMaker.append(self.database.getSortOrder())
-        self.database.history.append(historyMaker)
-        self.database.historyHead = len(self.database.history)
         if tag_name == self.database.getSortedTag():
             if self.database.getSortOrder() == 'ascending':
                 self.database.setSortOrder('descending')
@@ -725,6 +726,10 @@ class TableDataBrowser(QTableWidget):
             item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
 
         self.database.setSortedTag(tag_name)
+        historyMaker.append(self.database.getSortedTag())
+        historyMaker.append(self.database.getSortOrder())
+        self.database.history.append(historyMaker)
+        self.database.historyHead = len(self.database.history)
         self.update_table()
 
     def sort_column(self):
@@ -829,11 +834,11 @@ class TableDataBrowser(QTableWidget):
 
                 # The scan already have a value for the tag
                 if(self.database.scanHasTag(scan_path, tag_name)):
-                    modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value])
+                    modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, text_value])
                     self.database.setTagValue(scan_path, tag_name, text_value)
                 # The scan does not have a value for the tag yet
                 else:
-                    modified_values.append([scan_path, tag_name, None])
+                    modified_values.append([scan_path, tag_name, None, text_value])
                     self.database.addValue(scan_path, tag_name, text_value, text_value)
 
                 #User tag

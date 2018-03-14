@@ -443,9 +443,11 @@ class DataBase:
         We can only remove user tags from the software
         :param tag: Name of the tag to remove
         """
+        # Values associated to the tags removed
         values = self.session.query(Value).filter(Value.tag == tag).all()
         for value in values:
             self.session.delete(value)
+        # Tag removed
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
         # TODO return error if len(tags) != 1
         self.session.delete(tags[0])
@@ -603,10 +605,12 @@ class DataBase:
         """
 
         # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
-        if(self.historyHead > 0 and len(self.history) >= self.historyHead):
+        if(self.historyHead > 0 and self.historyHead <= len(self.history)):
             toUndo = self.history[self.historyHead - 1] # Action to revert
             # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
+            print("undo " + action)
+            print("head " + str(self.historyHead))
             if(action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
@@ -662,13 +666,13 @@ class DataBase:
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
-                    value = valueToRestore[2]
-                    if(value == None):
+                    old_value = valueToRestore[2]
+                    if(old_value == None):
                         # If the cell was not defined before, we reput it
                         self.removeValue(scan, tag)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.setTagValue(scan, tag, value)
+                        self.setTagValue(scan, tag, old_value)
                     i = i + 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
@@ -711,10 +715,12 @@ class DataBase:
         """
 
         # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
-        if(self.historyHead >= 0 and len(self.history) > self.historyHead):
-            toUndo = self.history[self.historyHead - 1] # Action to revert
+        if(self.historyHead >= 0 and self.historyHead < len(self.history)):
+            toUndo = self.history[self.historyHead] # Action to revert
             # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
+            print("redo " + action)
+            print("head " + str(self.historyHead))
             if(action == "add_tag"):
                 # For adding the tag, we need the tag name, and all its attributes
                 tagToAdd = toUndo[1]
@@ -728,7 +734,14 @@ class DataBase:
                 for scan in self.getScans():
                     self.addValue(scan.scan, tagToAdd, tagDefaultValue, None)
             if (action == "remove_tags"):
-                pass
+                # To remove the tags, we need the names
+                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
+                i = 0
+                while i < len(tagsRemoved):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToRemove = tagsRemoved[i].tag
+                    self.removeTag(tagToRemove)
+                    i = i + 1
             if (action == "add_scans"):
                 pass
             if(action == "remove_scans"):
@@ -741,11 +754,32 @@ class DataBase:
                     self.removeScan(scanToRemove)
                     i = i + 1
             if (action == "modified_values"):
-                pass
+                # To modily the values, we need the cells, and the updated values
+                modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
+                i = 0
+                while i < len(modifiedValues):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
+                    valueToRestore = modifiedValues[i]
+                    scan = valueToRestore[0]
+                    tag = valueToRestore[1]
+                    # valueToRestore[2] is the old value of the cell
+                    new_value = valueToRestore[3]
+                    self.setTagValue(scan, tag, new_value)
+                    i = i + 1
             if (action == "modified_visibilities"):
-                pass
+                # To revert the modifications of the visualized tags
+                visibles = toUndo[2]  # List of the tags visibles after the modification (Tag objects)
+                self.resetAllVisibilities()  # Reset of the visibilities
+                for visible in visibles:
+                    # We reput each new tag visible
+                    self.setTagVisibility(visible, True)
             if (action == "modified_sort"):
-                pass
+                # To revert a sort change
+                # toUndo[1] and toUndo[2] are old values
+                new_sorted_tag = toUndo[3]
+                new_sort_order = toUndo[4]
+                self.setSortedTag(new_sorted_tag)
+                self.setSortOrder(new_sort_order)
             # Reading history index increased
             self.historyHead = self.historyHead + 1
 
