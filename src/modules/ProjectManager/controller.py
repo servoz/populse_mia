@@ -99,6 +99,7 @@ def read_log(database):
     historyMaker = []
     historyMaker.append("add_scans")
     scans_added = []
+    values_added = []
 
     for dict_log in list_dict_log:
 
@@ -114,9 +115,10 @@ def read_log(database):
 
             database.addScan(file_name, original_md5) # Scan added to the database
 
-            scans_added.append(file_name) # Scan added to history
+            scans_added.append([file_name, original_md5]) # Scan added to history
 
             database.addValue(file_name, "FileName", file_name, file_name) # FileName tag added
+            values_added.append([file_name, "FileName", file_name])
 
             start_time = time()
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -124,6 +126,7 @@ def read_log(database):
 
                 if(value != ""):
                     database.addValue(file_name, tag[0], value, value) # Value added to the database
+                    values_added.append([file_name, tag[0], value])
 
                     if(tag[0] in default_tags):
                         database.addTag(tag[0], True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
@@ -133,6 +136,7 @@ def read_log(database):
             print("--- %s seconds ---" % (time() - start_time))
 
     historyMaker.append(scans_added)
+    historyMaker.append(values_added)
     database.history.append(historyMaker)
     database.historyHead = len(database.history)
 

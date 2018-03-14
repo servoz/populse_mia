@@ -637,7 +637,7 @@ class DataBase:
                 i = 0
                 while i < len(scansAdded):
                     # We remove each scan added
-                    scanToRemove = scansAdded[i]
+                    scanToRemove = scansAdded[i][0]
                     self.removeScan(scanToRemove)
                     i = i + 1
             if(action == "remove_scans"):
@@ -743,7 +743,22 @@ class DataBase:
                     self.removeTag(tagToRemove)
                     i = i + 1
             if (action == "add_scans"):
-                pass
+                # To add the scans, we need the FileNames and the values associated to the scans
+                scansAdded = toUndo[1]  # The second element is a list of the scans to add
+                # We add all the scans
+                i = 0
+                while i < len(scansAdded):
+                    # We remove each scan added
+                    scanToAdd = scansAdded[i]
+                    self.addScan(scanToAdd[0], scanToAdd[1])
+                    i = i + 1
+                # We add all the values
+                i = 0
+                valuesAdded = toUndo[2] # The third element is a list of the values to add
+                while i < len(valuesAdded):
+                    valueToAdd = valuesAdded[i]
+                    self.addValue(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
+                    i = i + 1
             if(action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
