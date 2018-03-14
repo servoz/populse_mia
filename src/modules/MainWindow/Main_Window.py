@@ -112,6 +112,9 @@ class Main_Window(QMainWindow):
         self.action_undo = QAction('Undo', self)
         self.action_undo.setShortcut('Ctrl+Z')
 
+        self.action_redo = QAction('Redo', self)
+        self.action_redo.setShortcut('Ctrl+Y')
+
         # Connection of the several triggered signals of the actions to some other methods
         self.action_create.triggered.connect(self.create_project_pop_up)
         self.action_open.triggered.connect(self.open_project_pop_up)
@@ -123,6 +126,7 @@ class Main_Window(QMainWindow):
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
         self.action_undo.triggered.connect(self.undo)
+        self.action_redo.triggered.connect(self.redo)
 
     def create_menus(self):
         """ Create the menubar """
@@ -158,13 +162,30 @@ class Main_Window(QMainWindow):
 
         # Actions in the "Edition" menu
         self.menu_edition.addAction(self.action_undo)
+        self.menu_edition.addAction(self.action_redo)
 
         # Actions in the "Help" menu
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
 
     def undo(self):
-        self.database.undo()
+        """
+        To undo the last action done by the user
+        """
+        self.database.undo() # Action reverted in the database
+        # Gui refreshed
+        scan_names_list = []
+        for scan in self.database.getScans():
+            scan_names_list.append(scan.scan)
+        self.data_browser.table_data.scans_to_visualize = scan_names_list
+        self.data_browser.table_data.update_table()
+
+    def redo(self):
+        """
+        To redo the last action made by the user
+        """
+        self.database.redo() # Action remade in the database
+        # Gui refreshed
         scan_names_list = []
         for scan in self.database.getScans():
             scan_names_list.append(scan.scan)
@@ -199,8 +220,7 @@ class Main_Window(QMainWindow):
 
     def check_unsaved_modifications(self):
         """ Check if there are differences between the current project and the data base
-
-            Retuns 1 if there are unsaved modifications, 0 otherwise
+            Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
         # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
@@ -212,31 +232,6 @@ class Main_Window(QMainWindow):
             return 1
         else:
             return 0
-        """with open(file_path + ".json", "r", encoding="utf-8")as fichier:
-            project = json.load(fichier, object_hook=deserializer)
-            # Check folder, name and date removed
-            if not (self.project.tags_to_visualize == project.tags_to_visualize):
-                return 1
-            if not (len(self.project._get_scans()) == len(project._get_scans())):
-                return 1
-            for scan in project._get_scans():
-                scanFound = 0
-                for scan2 in self.project._get_scans():
-                    if (scan.file_path == scan2.file_path):
-                        scanFound = 1
-                        for tag in scan.getAllTags():
-                            tagFound = 0
-                            for tag2 in scan2.getAllTags():
-                                if (tag.name == tag2.name):
-                                    tagFound = 1
-                                    if not (tag.value == tag2.value):
-                                        return 1
-                                    break
-                        if tagFound == 0:
-                            return 1
-                        break
-                if scanFound == 0:
-                    return 1"""
 
     @pyqtSlot()
     def modify_ui(self):

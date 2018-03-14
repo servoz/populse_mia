@@ -700,3 +700,53 @@ class DataBase:
         - Adding 1 tag: 40 bits
         => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
         """
+
+    def redo(self):
+        """
+        Redo the last action made by the user on the project
+        An history list is maintained, and cleared at every project opening
+        An index is kept, showing where the user is in the history, visually
+        Every new action made by the user is appended at the end of the history list
+        At every redo, the index is increased
+        """
+
+        # We can undo if we have an action to revert: history list not empty, and still some actions to read by the index
+        if(self.historyHead >= 0 and len(self.history) > self.historyHead):
+            toUndo = self.history[self.historyHead - 1] # Action to revert
+            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
+            action = toUndo[0]
+            if(action == "add_tag"):
+                # For adding the tag, we need the tag name, and all its attributes
+                tagToAdd = toUndo[1]
+                tagType = toUndo[2]
+                tagUnit = toUndo[3]
+                tagDefaultValue = toUndo[4]
+                tagDescription = toUndo[5]
+                # Adding the tag
+                self.addTag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
+                # Adding all the values associated
+                for scan in self.getScans():
+                    self.addValue(scan.scan, tagToAdd, tagDefaultValue, None)
+            if (action == "remove_tags"):
+                pass
+            if (action == "add_scans"):
+                pass
+            if(action == "remove_scans"):
+                # To remove a scan, we only need the FileName of the scan
+                scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
+                i = 0
+                while i < len(scansRemoved):
+                    # We reput each scan, keeping the same values
+                    scanToRemove = scansRemoved[i].scan
+                    self.removeScan(scanToRemove)
+                    i = i + 1
+            if (action == "modified_values"):
+                pass
+            if (action == "modified_visibilities"):
+                pass
+            if (action == "modified_sort"):
+                pass
+            # Reading history index increased
+            self.historyHead = self.historyHead + 1
+
+        #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits

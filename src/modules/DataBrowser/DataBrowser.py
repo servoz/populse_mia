@@ -282,6 +282,10 @@ class DataBrowser(QWidget):
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
+            historyMaker.append(real_type)
+            historyMaker.append(new_tag_unit)
+            historyMaker.append(new_default_value)
+            historyMaker.append(new_tag_description)
             self.database.history.append(historyMaker)
             self.database.historyHead = len(self.database.history)
 
