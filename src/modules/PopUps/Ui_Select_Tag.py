@@ -1,28 +1,22 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 from SoftwareProperties.Config import Config
-
-from functools import partial
-
+from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
 
 
-class Ui_Select_Tag(QDialog):
+
+class Ui_Select_Tag(Ui_Tag_Selection):
     """
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    # Signal that will be emitted at the end to tell that the project has been created
-    signal_tag_selected = pyqtSignal()
-
     def __init__(self, database):
-        super().__init__()
+        super(Ui_Select_Tag, self).__init__(database)
         self.database = database
         self.config = Config()
         self.retranslate_Ui()
 
     def retranslate_Ui(self):
-        _translate = QtCore.QCoreApplication.translate
+        """_translate = QtCore.QCoreApplication.translate
 
         # The "Tag list" label
         self.label_tag_list = QtWidgets.QLabel(self)
@@ -69,7 +63,7 @@ class Ui_Select_Tag(QDialog):
         vbox_final.addLayout(vbox_top_left)
         vbox_final.addLayout(hbox_buttons)
 
-        self.setLayout(vbox_final)
+        self.setLayout(vbox_final)"""
 
         for tag in self.database.getTags():
             item = QtWidgets.QListWidgetItem()
@@ -81,7 +75,7 @@ class Ui_Select_Tag(QDialog):
             self.list_widget_tags.addItem(item)
             item.setText(tag.tag)
 
-    def search_str(self, str_search):
+    """def search_str(self, str_search):
         return_list = []
         if str_search != "":
             for tag in self.database.getTags():
@@ -104,7 +98,7 @@ class Ui_Select_Tag(QDialog):
             if itm == item:
                 itm.setCheckState(QtCore.Qt.Checked)
             else:
-                itm.setCheckState(QtCore.Qt.Unchecked)
+                itm.setCheckState(QtCore.Qt.Unchecked)"""
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
@@ -116,6 +110,6 @@ class Ui_Select_Tag(QDialog):
         self.accept()
         self.close()
 
-    def cancel_clicked(self):
-        self.close()
+    """def cancel_clicked(self):
+        self.close()"""
 

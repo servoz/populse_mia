@@ -1,18 +1,18 @@
 from PyQt5 import QtWidgets, QtCore
-from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
+from SoftwareProperties.Config import Config
 
 
-class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
+class Ui_Tag_Selection(QDialog):
     """
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    def __init__(self, database, tag_name_checked=None):
-        super(Ui_Select_Tag_Count_Table, self).__init__(database)
-        self.retranslate_Ui(tag_name_checked)
+    def __init__(self, database):
+        super().__init__()
+        self.database = database
 
-    def retranslate_Ui(self, tag_name_checked):
-        """_translate = QtCore.QCoreApplication.translate
+        _translate = QtCore.QCoreApplication.translate
 
         # The "Tag list" label
         self.label_tag_list = QtWidgets.QLabel(self)
@@ -59,19 +59,9 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
         vbox_final.addLayout(vbox_top_left)
         vbox_final.addLayout(hbox_buttons)
 
-        self.setLayout(vbox_final)"""
+        self.setLayout(vbox_final)
 
-        for tag in self.database.getTags():
-            item = QtWidgets.QListWidgetItem()
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            if tag.tag == tag_name_checked:
-                item.setCheckState(QtCore.Qt.Checked)
-            else:
-                item.setCheckState(QtCore.Qt.Unchecked)
-            self.list_widget_tags.addItem(item)
-            item.setText(tag.tag)
-
-    """def search_str(self, str_search):
+    def search_str(self, str_search):
         return_list = []
         if str_search != "":
             for tag in self.database.getTags():
@@ -94,18 +84,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
             if itm == item:
                 itm.setCheckState(QtCore.Qt.Checked)
             else:
-                itm.setCheckState(QtCore.Qt.Unchecked)"""
+                itm.setCheckState(QtCore.Qt.Unchecked)
 
-    def ok_clicked(self):
-        for idx in range(self.list_widget_tags.count()):
-            item = self.list_widget_tags.item(idx)
-            if item.checkState() == QtCore.Qt.Checked:
-                self.selected_tag = item.text()
-                break
-
-        self.accept()
+    def cancel_clicked(self):
         self.close()
-
-    """def cancel_clicked(self):
-        self.close()"""
-
