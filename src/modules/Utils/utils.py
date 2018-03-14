@@ -1,3 +1,6 @@
+import os
+from PyQt5.QtWidgets import QMessageBox
+
 def check_tag_value(tag):
     txt = ""
     if len(tag) == 1:
@@ -175,3 +178,21 @@ def check_tag_value(tag, which_value):
 
     return txt
 """
+
+
+def message_already_exists():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText("This name already exists in this parent folder")
+    msg.setWindowTitle("Warning")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.buttonClicked.connect(msg.close)
+    msg.exec()
+
+
+def set_projects_directory_as_default(dialog):
+    # Setting the projects directory as default
+    if not (os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
+        os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
+    dialog.setDirectory(
+        os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))

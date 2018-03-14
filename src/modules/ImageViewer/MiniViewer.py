@@ -162,7 +162,7 @@ class MiniViewer(QWidget):
             self.frame_final = QFrame(self)
 
             # Limiting the legend of the thumbnails
-            nb_char_max = 60
+            self.nb_char_max = 60
 
             font = QFont()
             font.setPointSize(9)
@@ -186,33 +186,11 @@ class MiniViewer(QWidget):
                         self.enableSliders(idx)
                         self.createDimensionLabels(idx)
 
-                        # Getting the sliders value
-                        sl1 = self.a1[idx].value()
-                        sl2 = self.a2[idx].value()
-                        sl3 = self.a3[idx].value()
+                        # Getting the sliders value and reading the image data
+                        self.indexImage(idx)
 
-                        # Depending on the dimension, reading the image data and changing the cursors maximum
-                        if len(self.img[idx].shape) == 3:
-                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1].copy())
-                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                            self.a2[idx].setMaximum(0)
-                            self.a3[idx].setMaximum(0)
-                        if len(self.img[idx].shape) == 4:
-                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2].copy())
-                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                            self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
-                            self.a3[idx].setMaximum(0)
-                        if len(self.img[idx].shape) == 5:
-                            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy())
-                            self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
-                            self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
-                            self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
-
-                        # Making some pixel modification to show the image correctly
-                        self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
-                        self.im_2D[idx] = np.uint8(
-                            (self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
-                        self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
+                        # Making some pixel modification to display the image correctly
+                        self.image2DModifications(idx)
 
                     self.displayPosValue(idx)
 
@@ -233,19 +211,7 @@ class MiniViewer(QWidget):
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
                     # Looking for the tag value to display as a legend of the thumbnail
-                    for scan in self.database.getScans():
-                        if scan.scan == file_path_base_name:
-                            for tag in self.database.getTags():
-                                if tag.tag == self.config.getThumbnailTag():
-                                    if self.database.scanHasTag(scan.scan, tag.tag):
-                                        self.label_description[idx].setText \
-                                        (str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
-                                    else:
-                                        self.label_description[idx].setText \
-                                            (DataBrowser.DataBrowser.not_defined_value[
-                                             :nb_char_max])
-                                    self.label_description[idx].setToolTip \
-                                        (os.path.basename(self.config.getThumbnailTag()))
+                    self.setThumbnail(file_path_base_name, idx)
 
                     # Layout that corresponds to the third dimension
                     self.h_box_slider_1 = QHBoxLayout()
@@ -302,20 +268,7 @@ class MiniViewer(QWidget):
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
                     # Looking for the tag value to display as a legend of the thumbnail
-                    for scan in self.database.getScans():
-                        if scan.scan == file_path_base_name:
-                            for tag in self.database.getTags():
-                                if tag.tag == self.config.getThumbnailTag():
-                                    if (self.database.scanHasTag(scan.scan, tag.tag)):
-                                        self.label_description[idx].setText \
-                                            (str(self.database.getValue(scan.scan, tag.tag).current_value)[
-                                             :nb_char_max])
-                                    else:
-                                        self.label_description[idx].setText \
-                                            (DataBrowser.DataBrowser.not_defined_value[
-                                             :nb_char_max])
-                                    self.label_description[idx].setToolTip \
-                                        (os.path.basename(self.config.getThumbnailTag()))
+                    self.setThumbnail(file_path_base_name, idx)
 
                     # Depending of the dimension of the image, the legend of each image
                     # and the number of images to display will change
@@ -419,6 +372,22 @@ class MiniViewer(QWidget):
             if w:
                 w.deleteLater()"""
 
+    def setThumbnail(self, file_path_base_name, idx):
+        # Looking for the tag value to display as a legend of the thumbnail
+        for scan in self.database.getScans():
+            if scan.scan == file_path_base_name:
+                for tag in self.database.getTags():
+                    if tag.tag == self.config.getThumbnailTag():
+                        if self.database.scanHasTag(scan.scan, tag.tag):
+                            self.label_description[idx].setText \
+                                (str(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
+                        else:
+                            self.label_description[idx].setText \
+                                (DataBrowser.DataBrowser.not_defined_value[
+                                 :self.nb_char_max])
+                        self.label_description[idx].setToolTip \
+                            (os.path.basename(self.config.getThumbnailTag()))
+
     def clearLayouts(self):
         """ Method that clears the final layout.
         """
@@ -471,10 +440,8 @@ class MiniViewer(QWidget):
         else:
             im_2D = [0]
 
-        # Making some pixel modification to show the image correctly
-        im_2D = rotate(im_2D, -90, reshape=False)
-        im_2D = np.uint8((im_2D - im_2D.min()) / im_2D.ptp() * 255.0)
-        im_2D = misc.imresize(im_2D, (128, 128))
+        # Making some pixel modification to display the image correctly
+        im_2D = self.image2DModifications(0, im_2D)
 
         w, h = im_2D.shape
 
@@ -601,10 +568,7 @@ class MiniViewer(QWidget):
         self.indexImage(idx)
         self.displayPosValue(idx)
 
-        self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
-        self.im_2D[idx] = np.uint8((self.im_2D[idx] - self.im_2D[idx].min()) / self.im_2D[idx].ptp() * 255.0)
-        self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
-
+        self.image2DModifications(idx)
         w, h = self.im_2D[idx].shape
 
         image = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
@@ -615,21 +579,24 @@ class MiniViewer(QWidget):
         """ Method that changes the sliders values depending on the
         size of the image.
         """
+        # Getting the sliders value
         sl1 = self.a1[idx].value()
         sl2 = self.a2[idx].value()
         sl3 = self.a3[idx].value()
+
+        # Depending on the dimension, reading the image data and changing the cursors maximum
         if len(self.img[idx].shape) == 3:
-            self.im_2D[idx] = self.img[idx].get_data()[:, :, sl1].copy()
+            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1].copy())
             self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
             self.a2[idx].setMaximum(0)
             self.a3[idx].setMaximum(0)
         if len(self.img[idx].shape) == 4:
-            self.im_2D[idx] = self.img[idx].get_data()[:, :, sl1, sl2].copy()
+            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2].copy())
             self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
             self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
             self.a3[idx].setMaximum(0)
         if len(self.img[idx].shape) == 5:
-            self.im_2D[idx] = self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy()
+            self.im_2D.insert(idx, self.img[idx].get_data()[:, :, sl1, sl2, sl3].copy())
             self.a1[idx].setMaximum(self.img[idx].shape[2] - 1)
             self.a2[idx].setMaximum(self.img[idx].shape[3] - 1)
             self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
@@ -641,3 +608,16 @@ class MiniViewer(QWidget):
         if self.popUp.exec_() == QDialog.Accepted:
 
             self.verify_slices(self.file_paths)
+
+    def image2DModifications(self, idx, im2D=None):
+        """ Method that applies modifications to the image to display it correctly."""
+        if im2D is not None:
+            im2D = rotate(im2D, -90, reshape=False)
+            im2D = np.uint8((im2D - im2D.min()) / im2D.ptp() * 255.0)
+            im2D = misc.imresize(im2D, (128, 128))
+            return im2D
+        else:
+            self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
+            self.im_2D[idx] = np.uint8((self.im_2D[idx] - self.im_2D[idx].min())
+                                       / self.im_2D[idx].ptp() * 255.0)
+            self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
