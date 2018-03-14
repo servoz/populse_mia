@@ -162,7 +162,7 @@ class MiniViewer(QWidget):
             self.frame_final = QFrame(self)
 
             # Limiting the legend of the thumbnails
-            nb_char_max = 60
+            self.nb_char_max = 60
 
             font = QFont()
             font.setPointSize(9)
@@ -233,19 +233,7 @@ class MiniViewer(QWidget):
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
                     # Looking for the tag value to display as a legend of the thumbnail
-                    for scan in self.database.getScans():
-                        if scan.scan == file_path_base_name:
-                            for tag in self.database.getTags():
-                                if tag.tag == self.config.getThumbnailTag():
-                                    if self.database.scanHasTag(scan.scan, tag.tag):
-                                        self.label_description[idx].setText \
-                                        (str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
-                                    else:
-                                        self.label_description[idx].setText \
-                                            (DataBrowser.DataBrowser.not_defined_value[
-                                             :nb_char_max])
-                                    self.label_description[idx].setToolTip \
-                                        (os.path.basename(self.config.getThumbnailTag()))
+                    self.setThumbnail(file_path_base_name, idx)
 
                     # Layout that corresponds to the third dimension
                     self.h_box_slider_1 = QHBoxLayout()
@@ -302,20 +290,7 @@ class MiniViewer(QWidget):
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
                     # Looking for the tag value to display as a legend of the thumbnail
-                    for scan in self.database.getScans():
-                        if scan.scan == file_path_base_name:
-                            for tag in self.database.getTags():
-                                if tag.tag == self.config.getThumbnailTag():
-                                    if (self.database.scanHasTag(scan.scan, tag.tag)):
-                                        self.label_description[idx].setText \
-                                            (str(self.database.getValue(scan.scan, tag.tag).current_value)[
-                                             :nb_char_max])
-                                    else:
-                                        self.label_description[idx].setText \
-                                            (DataBrowser.DataBrowser.not_defined_value[
-                                             :nb_char_max])
-                                    self.label_description[idx].setToolTip \
-                                        (os.path.basename(self.config.getThumbnailTag()))
+                    self.setThumbnail(file_path_base_name, idx)
 
                     # Depending of the dimension of the image, the legend of each image
                     # and the number of images to display will change
@@ -418,6 +393,22 @@ class MiniViewer(QWidget):
             w = item.widget()
             if w:
                 w.deleteLater()"""
+
+    def setThumbnail(self, file_path_base_name, idx):
+        # Looking for the tag value to display as a legend of the thumbnail
+        for scan in self.database.getScans():
+            if scan.scan == file_path_base_name:
+                for tag in self.database.getTags():
+                    if tag.tag == self.config.getThumbnailTag():
+                        if self.database.scanHasTag(scan.scan, tag.tag):
+                            self.label_description[idx].setText \
+                                (str(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
+                        else:
+                            self.label_description[idx].setText \
+                                (DataBrowser.DataBrowser.not_defined_value[
+                                 :self.nb_char_max])
+                        self.label_description[idx].setToolTip \
+                            (os.path.basename(self.config.getThumbnailTag()))
 
     def clearLayouts(self):
         """ Method that clears the final layout.
