@@ -23,7 +23,10 @@ from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 from DataBrowser.AdvancedSearch import AdvancedSearch
 
+not_defined_value = "Not Defined"
+
 class DataBrowser(QWidget):
+
     def __init__(self, database):
 
         self.database = database
@@ -393,7 +396,7 @@ class TableDataBrowser(QTableWidget):
                 if(self.database.scanHasTag(scan, self.database.getSortedTag())):
                     list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
                 else:
-                    list_tags.append("Not Defined")
+                    list_tags.append(not_defined_value)
 
             if self.database.getSortOrder() == "ascending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize))]
@@ -477,7 +480,7 @@ class TableDataBrowser(QTableWidget):
 
                 # The scan does not have a value for the tag
                 else:
-                    a = str('Not Defined')
+                    a = str(not_defined_value)
                     item = QTableWidgetItem()
                     item.setText(a)
                 self.setItem(row, column, item)

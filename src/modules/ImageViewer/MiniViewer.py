@@ -17,6 +17,7 @@ import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
+import DataBrowser.DataBrowser
 
 
 class MiniViewer(QWidget):
@@ -241,7 +242,7 @@ class MiniViewer(QWidget):
                                         (str(self.database.getValue(scan.scan, tag.tag).current_value)[:nb_char_max])
                                     else:
                                         self.label_description[idx].setText \
-                                            ("NaN"[
+                                            (DataBrowser.DataBrowser.not_defined_value[
                                              :nb_char_max])
                                     self.label_description[idx].setToolTip \
                                         (os.path.basename(self.config.getThumbnailTag()))
@@ -311,7 +312,7 @@ class MiniViewer(QWidget):
                                              :nb_char_max])
                                     else:
                                         self.label_description[idx].setText \
-                                            ("NaN"[
+                                            (DataBrowser.DataBrowser.not_defined_value[
                                              :nb_char_max])
                                     self.label_description[idx].setToolTip \
                                         (os.path.basename(self.config.getThumbnailTag()))

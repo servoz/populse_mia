@@ -653,7 +653,7 @@ class DataBase:
                     tag = valueToRestore[1]
                     value = valueToRestore[2]
                     if(value == None):
-                        # If the cell was NaN (not defined) before, we reput it
+                        # If the cell was not defined before, we reput it
                         self.removeValue(scan, tag)
                     else:
                         # If the cell was there before, we just set it to the old value
