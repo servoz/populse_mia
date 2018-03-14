@@ -23,7 +23,7 @@ from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 from DataBrowser.AdvancedSearch import AdvancedSearch
 
-not_defined_value = "Not Defined"
+not_defined_value = "Not Defined" # Variable shown everywhere when no value for the tag
 
 class DataBrowser(QWidget):
 
@@ -134,7 +134,6 @@ class DataBrowser(QWidget):
         if pop_up.exec_() == QDialog.Accepted:
             pass
 
-
     def create_toolbar_menus(self):
         self.menu_toolbar = QToolBar()
 
@@ -149,7 +148,7 @@ class DataBrowser(QWidget):
 
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
-        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character")
+        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character, *Not Defined* for the scans with missing value(s)")
         self.search_bar.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()
@@ -191,8 +190,13 @@ class DataBrowser(QWidget):
 
         return_list = []
 
-        if str_search != "":
+        # Returns the list of scans that have at least one not defined value in the visualized tags
+        if str_search == "*Not Defined*":
+        # Returns the list of scans that have a match with the search in their visible tag values
+            return_list = self.database.getScansMissingTags()
+        elif str_search != "":
             return_list = self.database.getScansSimpleSearch(str_search)
+        # Otherwise, we take every scan
         else:
             for scan in self.database.getScans():
                 return_list.append(scan.scan)

@@ -477,6 +477,18 @@ class DataBase:
         self.session.rollback()
         self.unsavedModifications = False
 
+    def getScansMissingTags(self):
+        """
+        Checks for scans that have missing values in the visualized tags
+        :return: The list of scans with missing values in the visualized tags
+        """
+        return_list = []
+        for scan in self.getScans():
+            for tag in self.getVisualizedTags():
+                if not self.scanHasTag(scan.scan, tag.tag) and not scan.scan in return_list:
+                    return_list.append(scan.scan)
+        return return_list
+
     def getScansSimpleSearch(self, search):
         """
         Executes the rapid search (search bar) and returns the list of scans that contain the search in their tag values
