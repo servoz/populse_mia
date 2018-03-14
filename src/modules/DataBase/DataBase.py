@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -497,13 +497,12 @@ class DataBase:
         :return: The list of scans containing the search
         """
 
-        # We take all the scans that contain the search in at least one of their tag values
-        values = self.session.query(Value).filter(Value.current_value.like("%" + search + "%")).distinct().all()
+        # We take all the scans that contain the search in at least one of their visible tag values
+        values = self.session.query(Value.scan).filter(Value.current_value.like("%" + search + "%"), Value.tag == Tag.tag, Tag.visible == True).distinct().all()
         scans = [] # List of scans to return
         for value in values:
-            # We add the scan only if the tag is visible in the databrowser
-            if self.getTagVisibility(value.tag):
-                scans.append(value.scan)
+            # We add the scan to the list
+            scans.append(value.scan)
         return scans
 
     def getScansAdvancedSearch(self, links, fields, conditions, values, nots):
