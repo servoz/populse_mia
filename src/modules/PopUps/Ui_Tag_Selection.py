@@ -86,5 +86,9 @@ class Ui_Tag_Selection(QDialog):
             else:
                 itm.setCheckState(QtCore.Qt.Unchecked)
 
+    def ok_clicked(self):
+        # Has to be override in the Ui_Select_Tag* classes
+        pass
+
     def cancel_clicked(self):
         self.close()
