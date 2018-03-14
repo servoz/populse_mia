@@ -522,27 +522,27 @@ class TableDataBrowser(QTableWidget):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning")
-        msg.setStandardButtons(QMessageBox.Ok)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         if action == action_reset_cell:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(self.reset_cell)
+            msg.buttons()[0].clicked.connect(self.reset_cell)
             msg.exec()
         elif action == action_reset_column:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(self.reset_column)
+            msg.buttons()[0].clicked.connect(self.reset_column)
             msg.exec()
         elif action == action_reset_row:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(self.reset_row)
+            msg.buttons()[0].clicked.connect(self.reset_row)
             msg.exec()
         elif action == action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
             msg.buttonClicked.connect(msg.close)
-            msg.buttonClicked.connect(self.remove_scan)
+            msg.buttons()[0].clicked.connect(self.remove_scan)
             msg.exec()
         elif action == action_sort_column:
             self.sort_column()
