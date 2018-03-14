@@ -200,7 +200,7 @@ class CountTable(QDialog):
             col_checked = len(self.values_list) - 2
             # Flag up will be True when all values of the tag have been iterated
             flag_up = False
-            while col_checked > 0:
+            while col_checked >= 0:
                 if flag_up:
                     # In this case, the value of the right column has reach its last value
                     # This value has been reset to the first value
