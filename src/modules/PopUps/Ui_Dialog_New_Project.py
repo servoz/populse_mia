@@ -21,9 +21,7 @@ class Ui_Dialog_New_Project(QFileDialog):
         self.setAcceptMode(QFileDialog.AcceptSave)
 
         # Setting the projects directory as default
-        if not(os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
-            os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
-        self.setDirectory(os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
+        utils.set_projects_directory_as_default(self)
 
     def retranslateUi(self, file_name):
         # file_name = self.selectedFiles()
@@ -37,22 +35,10 @@ class Ui_Dialog_New_Project(QFileDialog):
 
             if not os.path.exists(self.relative_path):
                 controller.createProject(self.name, self.relative_subpath, self.relative_subpath)
-
                 self.close()
                 # A signal is emitted to tell that the project has been created
                 self.signal_create_project.emit()
             else:
-                _translate = QtCore.QCoreApplication.translate
-                self.dialog_box = QDialog()
-                self.label = QLabel(self.dialog_box)
-                self.label.setText(_translate("MainWindow", 'This name already exists in this parent folder'))
-                self.push_button_ok = QPushButton(self.dialog_box)
-                self.push_button_ok.setText('OK')
-                self.push_button_ok.clicked.connect(self.dialog_box.close)
-                hbox = QHBoxLayout()
-                hbox.addWidget(self.label)
-                hbox.addWidget(self.push_button_ok)
-
-                self.dialog_box.setLayout(hbox)
+                utils.message_already_exists()
 
         return file_name
