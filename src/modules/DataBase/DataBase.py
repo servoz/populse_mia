@@ -714,11 +714,12 @@ class DataBase:
                 tagUnit = toRedo[3]
                 tagDefaultValue = toRedo[4]
                 tagDescription = toRedo[5]
+                values = toRedo[6] # List of values stored
                 # Adding the tag
                 self.addTag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
                 # Adding all the values associated
-                for scan in self.getScans():
-                    self.addValue(scan.scan, tagToAdd, tagDefaultValue, None)
+                for value in values:
+                    self.addValue(value[0], value[1], value[2], value[3])
             if (action == "remove_tags"):
                 # To remove the tags, we need the names
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
