@@ -132,6 +132,10 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
+            self.table_data.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.table_data.nb_columns)
+            self.table_data.initialize_headers()
+            self.table_data.fill_headers()
             self.table_data.update_table()
 
     def count_table_pop_up(self):
@@ -464,7 +468,8 @@ class TableDataBrowser(QTableWidget):
 
         self.nb_columns = len(self.database.getVisualizedTags())
 
-        self.nb_rows = len(self.scans_to_visualize)
+        #self.nb_rows = len(self.scans_to_visualize)
+        self.nb_rows = len(self.database.getScans())
 
         self.setRowCount(self.nb_rows)
 
@@ -475,24 +480,12 @@ class TableDataBrowser(QTableWidget):
 
         _translate = QtCore.QCoreApplication.translate
 
-        # Headers filled
-        self.fill_header_update_table()
-
-        nb = 0
+        if self.flag_first_time <= 1:
+            self.initialize_headers()
+            self.initialize_cells()
 
         # Sort visual management
-        for element in self.database.getVisualizedTags():
-            element = element.tag
-            item = self.horizontalHeaderItem(nb)
-            if element == self.database.getSortedTag():
-                if self.database.getSortOrder() == 'ascending':
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-                else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
-            item.setText(_translate("MainWindow", element))
-            item.setToolTip(self.database.getTagDescription(element))
-            self.setHorizontalHeaderItem(nb, item)
-            nb += 1
+        self.fill_headers()
 
         # Cells filled
         self.fill_cells_update_table()
@@ -508,7 +501,7 @@ class TableDataBrowser(QTableWidget):
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(self.database)
 
-    def fill_header_update_table(self):
+    def initialize_headers(self):
         # Initializing the headers for each row and each column
         item = QtWidgets.QTableWidgetItem()
         i = 0
@@ -517,6 +510,7 @@ class TableDataBrowser(QTableWidget):
             item = QtWidgets.QTableWidgetItem()
             i += 1
 
+    def initialize_cells(self):
         # Initializing each cell of the table
         row = (-1)
 
@@ -528,45 +522,69 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
 
+    def fill_headers(self):
+        nb = 0
+        for element in self.database.getVisualizedTags():
+            element = element.tag
+            item = self.horizontalHeaderItem(nb)
+            if element == self.database.getSortedTag():
+                if self.database.getSortOrder() == 'ascending':
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
+                else:
+                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
+            item.setText(element)
+            item.setToolTip(self.database.getTagDescription(element))
+            self.setHorizontalHeaderItem(nb, item)
+            nb += 1
+
     def fill_cells_update_table(self):
         row = 0
-        for scan in self.scans_to_visualize:
-            column = 0
-            while column < len(self.horizontalHeader()):
-                item = self.horizontalHeaderItem(column)
-                current_tag = item.text()
-                # The scan has a value for the tag
-                if (self.database.scanHasTag(scan, current_tag)):
-                    value = self.database.getValue(scan, current_tag)
-                    item = QTableWidgetItem()
-                    item.setText(value.current_value)
-                    font = item.font()
-                    font.setItalic(False)
-                    font.setBold(False)
-                    item.setFont(font)
-                    # FileName not editable
-                    if current_tag == "FileName":
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                    # User tag
-                    if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
-                        color = QColor()
-                        if row % 2 == 1:
-                            color.setRgb(255, 240, 240)
-                        else:
-                            color.setRgb(255, 225, 225)
-                        item.setData(Qt.BackgroundRole, QVariant(color))
+        for scan in self.database.getScans():
+            self.setRowHidden(row, False)
+            if scan.scan not in self.scans_to_visualize:
+                for searched_row in range(len(self.database.getScans())):
+                    if self.item(searched_row, 0) is not None \
+                            and scan.scan == self.item(searched_row, 0).text():
+                        self.setRowHidden(searched_row, True)
+            else:
+                column = 0
+                self.setRowHidden(row, False)
+                while column < len(self.horizontalHeader()):
+                    item = self.horizontalHeaderItem(column)
+                    current_tag = item.text()
+                    # The scan has a value for the tag
+                    if (self.database.scanHasTag(scan.scan, current_tag)):
+                        value = self.database.getValue(scan.scan, current_tag)
+                        item = QTableWidgetItem()
+                        item.setText(value.current_value)
+                        font = item.font()
+                        font.setItalic(False)
+                        font.setBold(False)
+                        item.setFont(font)
+                        # FileName not editable
+                        if current_tag == "FileName":
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        # User tag
+                        if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
+                            color = QColor()
+                            if row % 2 == 1:
+                                color.setRgb(255, 240, 240)
+                            else:
+                                color.setRgb(255, 225, 225)
+                            item.setData(Qt.BackgroundRole, QVariant(color))
 
-                # The scan does not have a value for the tag
-                else:
-                    a = str(not_defined_value)
-                    item = QTableWidgetItem()
-                    item.setText(a)
-                    font = item.font()
-                    font.setItalic(True)
-                    font.setBold(True)
-                    item.setFont(font)
-                self.setItem(row, column, item)
-                column += 1
+                    # The scan does not have a value for the tag
+                    else:
+                        a = str(not_defined_value)
+                        item = QTableWidgetItem()
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    self.setItem(row, column, item)
+                    column += 1
+
             row += 1
 
     def context_menu_table(self, position):
@@ -847,7 +865,10 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            pass
+            self.nb_columns = len(self.database.getVisualizedTags())
+            self.setColumnCount(self.nb_columns)
+            self.initialize_headers()
+            self.fill_headers()
 
 
     def change_cell_color(self, item_origin):
