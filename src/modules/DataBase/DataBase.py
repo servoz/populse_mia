@@ -253,6 +253,15 @@ class DataBase:
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         return len(values) == 1
 
+    def hasScan(self, scan):
+        """
+        To know if the scan exists
+        :param scan: FileName of the scan
+        :return: True if the scan exists, False otherwise
+        """
+        scans = self.session.query(Scan).filter(Scan.scan == scan).all()
+        return len(scans) == 1
+
     def getTags(self):
         """
         Gives a list of the tags of the project (Tag objects)
@@ -460,16 +469,6 @@ class DataBase:
         values = self.session.query(Value).filter(Value.scan == scan).filter(Value.tag == tag).all()
         self.session.delete(values[0])
         self.unsavedModifications = True
-
-    def put_default_values(self, tag):
-        """
-        To fill all the missing values of the user tag with the default value
-        :param tag: Tag to fill
-        """
-        default_value = self.getTagDefault(tag)
-        for scan in self.getScans():
-            if not self.scanHasTag(scan.scan, tag):
-                self.addValue(scan.scan, tag, default_value, None)
 
     def saveModifications(self):
         """

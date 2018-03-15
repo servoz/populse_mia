@@ -207,12 +207,30 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
+            self.remove_raw_files_useless() # To remove the useless raw files
             event.accept()
         else:
             event.ignore()
 
+    def remove_raw_files_useless(self):
+        """
+        Removes the useless raw files of the current project
+        """
+        import glob
+
+        # If it's unnamed project, we can remove the whole project
+        if self.database.isTempProject:
+            shutil.rmtree(self.database.folder)
+        else:
+            for filename in glob.glob(os.path.join(os.path.relpath(self.database.folder), 'data', 'raw_data', '*')):
+                scan, extension = os.path.splitext(os.path.basename(filename))
+                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                if not self.database.hasScan(scan) and "logExport" not in scan:
+                    os.remove(filename)
+
+
     def saveChoice(self):
-        """ Checks if the project needs to be saved as """
+        """ Checks if the project needs to be saved as or just saved """
         if (self.database.isTempProject):
             self.save_project_as()
         else:
@@ -277,63 +295,54 @@ class Main_Window(QMainWindow):
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
-        from datetime import datetime
+
         import glob
-        # Ui_Dialog() is defined in pop_ups.py
         exPopup = Ui_Dialog_Save_Project_As()
         if exPopup.exec_() == QDialog.Accepted:
 
             old_folder = self.database.folder
-
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
             database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
+
+            # List of projects updated
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
+            # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
-            #First we register the database before commiting the last pending modifications
+            # First we register the database before commiting the last pending modifications
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
 
-            #We commit the last pending modifications
+            # We commit the last pending modifications
             self.database.saveModifications()
 
-            #We copy the database with all the modifications commited in the new project
+            # We copy the database with all the modifications commited in the new project
             if os.path.exists(os.path.join(old_folder, 'database')):
                 os.mkdir(os.path.relpath(database_path))
                 shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
 
-            #We remove the database with all the modifications saved in the old project
+            # We remove the database with all the modifications saved in the old project
             os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
 
-            #We reput the database without the last modifications in the old project
+            # We reput the database without the last modifications in the old project
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
 
-            self.database = DataBase(exPopup.relative_path, False)
-            self.data_browser.update_database(self.database)
-            self.database.saveModifications()
-            scan_names_list = []
-            for scan in self.database.getScans():
-                scan_names_list.append(scan.scan)
-            self.data_browser.table_data.scans_to_visualize = scan_names_list
-            self.data_browser.table_data.update_table()
+            self.remove_raw_files_useless() # We remove the useless files from the old project
 
-            #project_path = os.path.join(os.path.relpath(self.database.folder), self.database.getName(), self.database.getName())
-            #utils.saveProjectAsJsonFile(project_path, self.project)
+            # Project updated everywhere
+            self.database = DataBase(exPopup.relative_path, False)
+
+            self.update_project(file_name) # Project updated everywhere
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following processes
             exPopup.signal_saved_project.connect(self.modify_ui)
-
-            if self.database.isTempProject:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-            else:
-                self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
 
     def create_project_pop_up(self):
 
@@ -347,8 +356,7 @@ class Main_Window(QMainWindow):
             can_switch = True
         if can_switch:
 
-            """ Opens a pop-up when the 'New Project' action is clicked and updates the recent projects """
-            # Ui_Dialog() is defined in pop_ups.py
+            # Opens a pop-up when the 'New Project' action is clicked and updates the recent projects
             self.exPopup = Ui_Dialog_New_Project()
 
             # Once the user has selected his project, the 'signal_create_project" signal is emitted
@@ -357,78 +365,29 @@ class Main_Window(QMainWindow):
 
             if self.exPopup.exec_() == QDialog.Accepted:
 
-                self.database.unsaveModifications()
+                self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.retranslateUi(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                self.update_recent_projects_actions()
 
                 self.database = DataBase(self.exPopup.relative_path, True)
-                self.data_browser.update_database(self.database)
-                scan_names_list = []
-                for scan in self.database.getScans():
-                    scan_names_list.append(scan.scan)
-                self.data_browser.table_data.scans_to_visualize = scan_names_list
-                self.data_browser.table_data.update_table()
 
-                if self.database.isTempProject:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-                else:
-                    self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+                self.update_project(file_name) # Project updated everywhere
 
     def open_project_pop_up(self):
         """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
 
-        if (self.check_unsaved_modifications() == 1):
-            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
-            self.pop_up_close.save_as_signal.connect(self.saveChoice)
-            self.pop_up_close.exec()
-            can_switch = self.pop_up_close.can_exit()
+        self.exPopup = Ui_Dialog_Open_Project()
+        self.exPopup.signal_create_project.connect(self.modify_ui)
+        if self.exPopup.exec_() == QDialog.Accepted:
 
-        else:
-            can_switch = True
-        if can_switch:
-            self.exPopup = Ui_Dialog_Open_Project()
-            self.exPopup.signal_create_project.connect(self.modify_ui)
-            if self.exPopup.exec_() == QDialog.Accepted:
-                file_name = self.exPopup.selectedFiles()
-                self.exPopup.retranslateUi(file_name)
-                file_name = self.exPopup.relative_path
+            file_name = self.exPopup.selectedFiles()
+            self.exPopup.retranslateUi(file_name)
+            file_name = self.exPopup.relative_path
 
-                tempDatabase = DataBase(self.exPopup.relative_path, False)
-                problem_list = controller.verify_scans(tempDatabase, self.exPopup.relative_path)
-                if problem_list != []:
-                    str_msg = ""
-                    for element in problem_list:
-                        str_msg += element + "\n\n"
-                    msg = QMessageBox()
-                    msg.setIcon(QMessageBox.Warning)
-                    msg.setText("These files have been modified or removed since they have been converted for the first time:")
-                    msg.setInformativeText(str_msg)
-                    msg.setWindowTitle("Warning")
-                    msg.setStandardButtons(QMessageBox.Ok)
-                    msg.buttonClicked.connect(msg.close)
-                    msg.exec()
-
-                else:
-                    self.database.unsaveModifications()
-                    self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                    self.update_recent_projects_actions()
-                    self.database = tempDatabase
-                    self.data_browser.update_database(self.database)
-                    scan_names_list = []
-                    for scan in self.database.getScans():
-                        scan_names_list.append(scan.scan)
-                    self.data_browser.table_data.scans_to_visualize = scan_names_list
-                    self.data_browser.table_data.update_table()
-
-                    if self.database.isTempProject:
-                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-                    else:
-                        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+            self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch project
 
     def open_recent_project(self):
         """ Opens a recent project """
@@ -439,65 +398,101 @@ class Main_Window(QMainWindow):
             path, name = os.path.split(entire_path)
             relative_path = os.path.relpath(file_name)
 
-            # If the file exists
-            if os.path.exists(os.path.join(relative_path)):
+            self.switch_project(relative_path, file_name, name) # We switch project
 
-                if (self.check_unsaved_modifications() == 1):
-                    self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
-                    self.pop_up_close.save_as_signal.connect(self.saveChoice)
-                    self.pop_up_close.exec()
-                    can_switch = self.pop_up_close.can_exit()
+    def switch_project(self, path, file_name, name):
+        """
+        Called to switch project if it's possible
+        :param path: relative path of the new project
+        :param file_name: raw file_name
+        """
 
-                else:
-                    can_switch = True
+        # If the file exists
+        if os.path.exists(os.path.join(path)):
 
-                if can_switch:
-                    tempDatabase = DataBase(relative_path, False)
-                    problem_list = controller.verify_scans(tempDatabase, relative_path)
-                    if problem_list != []:
-                        str_msg = ""
-                        for element in problem_list:
-                            str_msg += element + "\n\n"
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Warning)
-                        msg.setText("These files have been modified or removed since they have been converted for the first time:")
-                        msg.setInformativeText(str_msg)
-                        msg.setWindowTitle("Warning")
-                        msg.setStandardButtons(QMessageBox.Ok)
-                        msg.buttonClicked.connect(msg.close)
-                        msg.exec()
+            # We check for unsaved modifications
+            if (self.check_unsaved_modifications() == 1):
 
-                    else:
-
-                        self.database.unsaveModifications()
-
-                        self.database = tempDatabase
-                        self.data_browser.update_database(self.database)
-
-                        scan_names_list = []
-                        for scan in self.database.getScans():
-                            scan_names_list.append(scan.scan)
-                        self.data_browser.table_data.scans_to_visualize = scan_names_list
-
-                        self.data_browser.table_data.update_table()
-
-                        if self.database.isTempProject:
-                            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-                        else:
-                            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
-
-                        self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-                        self.update_recent_projects_actions()
+                # If there are unsaved modifications, we ask the user what he wants to do
+                self.pop_up_close = Ui_Dialog_Quit(self.database)
+                self.pop_up_close.save_as_signal.connect(self.saveChoice)
+                self.pop_up_close.exec()
+                can_switch = self.pop_up_close.can_exit()
 
             else:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("The project selected doesn't exist anymore:")
-                msg.setInformativeText("The project selected " + name + " doesn't exist anymore.\nPlease select another one.")
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
+                can_switch = True
+
+            # We can open a new project
+            if can_switch:
+
+                # We check for invalid scans in the project
+                tempDatabase = DataBase(path, False)
+                problem_list = controller.verify_scans(tempDatabase, path)
+
+                # Message if invalid files
+                if problem_list != []:
+                    str_msg = ""
+                    for element in problem_list:
+                        str_msg += element + "\n\n"
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText(
+                        "These files have been modified or removed since they have been converted for the first time:")
+                    msg.setInformativeText(str_msg)
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+                    return False
+
+                # No errors in files, we can open the project
+                else:
+                    self.remove_raw_files_useless()  # We remove the useless files from the old project
+
+                    self.database = tempDatabase  # New database
+
+                    self.update_project(file_name) # Project updated everywhere
+
+                    return True
+
+        # The project doesn't exist anymore
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("The project selected doesn't exist anymore:")
+            msg.setInformativeText(
+                "The project selected " + name + " doesn't exist anymore.\nPlease select another one.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            return False
+
+    def update_project(self, file_name):
+        """
+        Updates the project once the database has been updated
+        :param file_name: File name of the new project
+        """
+
+        self.data_browser.update_database(self.database)  # Database update databrowser
+
+        # List of scans refreshed with all the scans of the project
+        scan_names_list = []
+        for scan in self.database.getScans():
+            scan_names_list.append(scan.scan)
+        self.data_browser.table_data.scans_to_visualize = scan_names_list
+
+        self.data_browser.table_data.update_table()  # Table updated with the new project
+
+        # Window name updated
+        if self.database.isTempProject:
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+        else:
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+
+        # List of project updated
+        self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+        self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
         """ Updates the list of recent projects """

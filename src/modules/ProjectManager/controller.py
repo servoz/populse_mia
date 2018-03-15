@@ -137,9 +137,10 @@ def read_log(database):
             else:
                 database.addTag(tag, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
 
-    for tag in database.getUserTags():
-        # We add the default value if it exists and no value to scan
-        database.put_default_values(tag.tag)
+    for scan in scans_added:
+        for tag in database.getUserTags():
+            if not database.scanHasTag(scan[0], tag.tag):
+                database.addValue(scan[0], tag.tag, tag.default, None)
 
     # For history
     historyMaker.append(scans_added)
