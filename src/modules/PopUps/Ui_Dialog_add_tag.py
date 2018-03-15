@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
+from DataBase.DataBaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS
 
 
 class Ui_Dialog_add_tag(QDialog):
@@ -57,15 +58,21 @@ class Ui_Dialog_add_tag(QDialog):
         self.label_unit_value.setObjectName("unit_value")
 
         # The 'Unit value' text edit
-        self.text_edit_unit_value = QtWidgets.QLineEdit(self)
-        self.text_edit_unit_value.setObjectName("textEdit_unit_value")
+        self.combo_box_unit = QtWidgets.QComboBox(self)
+        self.combo_box_unit.setObjectName("combo_box_unit")
+        self.combo_box_unit.addItem(None)
+        self.combo_box_unit.addItem(TAG_UNIT_MS)
+        self.combo_box_unit.addItem(TAG_UNIT_MM)
+        self.combo_box_unit.addItem(TAG_UNIT_MHZ)
+        self.combo_box_unit.addItem(TAG_UNIT_HZPIXEL)
+        self.combo_box_unit.addItem(TAG_UNIT_DEGREE)
 
-        # The 'Default value' label
+        # The 'Type' label
         self.label_type = QtWidgets.QLabel(self)
         self.label_type.setTextFormat(QtCore.Qt.AutoText)
         self.label_type.setObjectName("type")
 
-        # The 'Default value' text edit
+        # The 'Type' text edit
         self.combo_box_type = QtWidgets.QComboBox(self)
         self.combo_box_type.setObjectName("combo_box_type")
         self.combo_box_type.addItem("String")
@@ -92,7 +99,7 @@ class Ui_Dialog_add_tag(QDialog):
         v_box_edits.addWidget(self.text_edit_tag_name)
         v_box_edits.addWidget(self.text_edit_default_value)
         v_box_edits.addWidget(self.text_edit_description_value)
-        v_box_edits.addWidget(self.text_edit_unit_value)
+        v_box_edits.addWidget(self.combo_box_unit)
         v_box_edits.addWidget(self.combo_box_type)
 
         h_box_top = QHBoxLayout()
@@ -199,5 +206,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.new_tag_name = self.text_edit_tag_name.text()
         self.new_default_value = self.text_edit_default_value.text()
         self.new_tag_description = self.text_edit_description_value.text()
-        self.new_tag_unit = self.text_edit_unit_value.text()
+        self.new_tag_unit = self.combo_box_unit.currentText()
+        if self.new_tag_unit == '':
+            self.new_tag_unit = None
         return self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit
