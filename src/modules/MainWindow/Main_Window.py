@@ -549,19 +549,26 @@ class Main_Window(QMainWindow):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
          data base """
         # Opens the conversion software to convert the MRI files in Nifti/Json
-        subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'MRI_File_Manager', 'MRIManagerJ8.jar'),
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'MRI_File_Manager', 'MRIManager.jar'),
                          '[ExportNifti] ' + os.path.join(self.database.folder, 'data', 'raw_data'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
                          'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
 
-        controller.read_log(self.database)
+        if code_exit == 0:
+            controller.read_log(self.database)
 
-        scan_names_list = []
-        for scan in self.database.getScans():
-            scan_names_list.append(scan.scan)
+            scan_names_list = []
+            for scan in self.database.getScans():
+                scan_names_list.append(scan.scan)
 
-        self.data_browser.table_data.scans_to_visualize = scan_names_list
-        self.data_browser.table_data.update_table()
+            self.data_browser.table_data.scans_to_visualize = scan_names_list
+
+            self.data_browser.table_data.nb_rows = len(scan_names_list)
+            self.data_browser.table_data.setRowCount(self.data_browser.table_data.nb_rows)
+            self.data_browser.table_data.update_table()
+
+        else:
+            pass
 
 
