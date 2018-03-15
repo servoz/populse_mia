@@ -253,6 +253,15 @@ class DataBase:
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         return len(values) == 1
 
+    def hasScan(self, scan):
+        """
+        To know if the scan exists
+        :param scan: FileName of the scan
+        :return: True if the scan exists, False otherwise
+        """
+        scans = self.session.query(Scan).filter(Scan.scan == scan).all()
+        return len(scans) == 1
+
     def getTags(self):
         """
         Gives a list of the tags of the project (Tag objects)

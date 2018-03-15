@@ -48,6 +48,7 @@ class Ui_Dialog_Quit(QDialog):
         self.close()
 
     def do_not_save_clicked(self):
+        self.database.unsaveModifications()
         self.bool_exit = True
         self.close()
 

@@ -100,53 +100,12 @@ class Ui_Dialog_See_All_Projects(QDialog):
         if file_name != "":
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
-            #self.path = entire_path
             self.relative_path = os.path.relpath(file_name)
 
-            # If the file exists
-            if os.path.exists(self.relative_path):
+            project_switched = self.mainWindow.switch_project(self.relative_path, file_name, self.name)
 
-                if (self.mainWindow.check_unsaved_modifications() == 1):
-                    self.mainWindow.pop_up_close = Ui_Dialog_Quit(self.mainWindow.database.getName())
-                    self.mainWindow.pop_up_close.save_as_signal.connect(self.mainWindow.saveChoice)
-                    self.mainWindow.pop_up_close.exec()
-                    can_switch = self.mainWindow.pop_up_close.can_exit()
-
-                else:
-                    can_switch = True
-                if can_switch:
-                    tempDatabase = DataBase(self.relative_path, False)
-                    problem_list = controller.verify_scans(tempDatabase, self.relative_path)
-                    if problem_list != []:
-                        str_msg = ""
-                        for element in problem_list:
-                            str_msg += element + "\n\n"
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Warning)
-                        msg.setText("These files have been modified or removed since they have been converted for the first time:")
-                        msg.setInformativeText(str_msg)
-                        msg.setWindowTitle("Warning")
-                        msg.setStandardButtons(QMessageBox.Ok)
-                        msg.buttonClicked.connect(msg.close)
-                        msg.exec()
-
-                    else:
-                        self.mainWindow.database.unsaveModifications()
-
-                        self.mainWindow.database = tempDatabase
-                        self.mainWindow.data_browser.update_database(self.mainWindow.database)
-                        scan_names_list = []
-                        for scan in self.mainWindow.database.getScans():
-                            scan_names_list.append(scan.scan)
-                        self.mainWindow.data_browser.table_data.scans_to_visualize = scan_names_list
-                        self.mainWindow.data_browser.table_data.update_table()
-
-                        if self.mainWindow.database.isTempProject:
-                            self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-                        else:
-                            self.mainWindow.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.mainWindow.database.getName())
-
-                        self.accept()
-                        self.close()
-                        # A signal is emitted to tell that the project has been created
-                        self.signal_create_project.emit()
+            if project_switched:
+                self.accept()
+                self.close()
+                # A signal is emitted to tell that the project has been created
+                self.signal_create_project.emit()
