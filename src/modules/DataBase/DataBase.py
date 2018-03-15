@@ -170,8 +170,6 @@ class DataBase:
         :param default:
         :param description:
         """
-        # We only add the tag to the database if it does not already exist
-        # We don't put the tags Dataset data file and Dataset header file, redundant with FileName
         tag = Tag(tag=tag, visible=visible, origin=origin, type=type, unit=unit, default=default, description=description)
         self.session.add(tag)
         self.unsavedModifications = True
