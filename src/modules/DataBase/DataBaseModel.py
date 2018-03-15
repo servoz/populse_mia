@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean, Enum, ForeignKey, UnicodeText
+from sqlalchemy import Column, Boolean, Enum, ForeignKey, String
 from sqlalchemy import create_engine
 import os
 
@@ -48,7 +48,7 @@ class Value(Base):
     __tablename__ = 'value'
     scan = Column(String, ForeignKey(Scan.scan), primary_key=True)
     tag = Column(String, ForeignKey(Tag.tag), primary_key=True)
-    current_value = Column(UnicodeText, nullable=False)
+    current_value = Column(String, nullable=False)
     raw_value = Column(String, nullable=True)
 
     def __repr__(self):

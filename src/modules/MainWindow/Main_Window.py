@@ -181,8 +181,8 @@ class Main_Window(QMainWindow):
         self.data_browser.table_data.scans_to_visualize = scan_names_list
 
         # Reset of headers
-        self.data_browser.nb_columns = len(self.database.getVisualizedTags())
-        self.data_browser.table_data.setColumnCount(self.data_browser.nb_columns)
+        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
+        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
         self.data_browser.table_data.initialize_headers()
         self.data_browser.table_data.fill_headers()
 
@@ -201,8 +201,8 @@ class Main_Window(QMainWindow):
         self.data_browser.table_data.scans_to_visualize = scan_names_list
 
         # Reset of headers
-        self.data_browser.nb_columns = len(self.database.getVisualizedTags())
-        self.data_browser.table_data.setColumnCount(self.data_browser.nb_columns)
+        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
+        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
         self.data_browser.table_data.initialize_headers()
         self.data_browser.table_data.fill_headers()
 
@@ -491,6 +491,12 @@ class Main_Window(QMainWindow):
         """
 
         self.data_browser.update_database(self.database)  # Database update databrowser
+
+        # We reset the headers
+        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
+        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
+        self.data_browser.table_data.initialize_headers()
+        self.data_browser.table_data.fill_headers()
 
         # List of scans refreshed with all the scans of the project
         scan_names_list = []

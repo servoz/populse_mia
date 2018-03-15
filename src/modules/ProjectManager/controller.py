@@ -82,6 +82,7 @@ def read_log(database):
     default_tags = config.getDefaultTags()
     import_tags = []
     import_tags_names = []
+    tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
     for dict_log in list_dict_log:
 
@@ -96,44 +97,50 @@ def read_log(database):
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
-            database.addValue(file_name, "FileName", file_name, file_name) # FileName tag added
-            values_added.append([file_name, "FileName", file_name])
+            database.addValue(file_name, "FileName", "['" + file_name + "']", None) # FileName tag added
+            values_added.append([file_name, "FileName", "['" + file_name + "']"])
 
             #start_time = time()
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
 
-                properties = tag[1]
-                unit = None
-                format = ''
-                type = TAG_TYPE_STRING
-                description = None
-                if isinstance(properties, dict):
-                    value = properties['value']
-                    unit = properties['units']
-                    if unit == "":
-                        unit = None
-                    format = properties['format']
-                    type = properties['type']
-                    if type == "":
-                        type = TAG_TYPE_STRING
-                    description = properties['description']
-                    if description == "":
-                        description = None
-                else:
-                    value = properties[0]
+                # We do the tag only if it's not in the tags to remove
+                if tag[0] not in tags_to_remove:
+                    properties = tag[1]
+                    unit = None
+                    format = ''
+                    type = TAG_TYPE_STRING
+                    description = None
+                    if isinstance(properties, dict):
+                        value = properties['value']
+                        unit = properties['units']
+                        if unit == "":
+                            unit = None
+                        format = properties['format']
+                        type = properties['type']
+                        if type == "":
+                            type = TAG_TYPE_STRING
+                        description = properties['description']
+                        if description == "":
+                            description = None
+                    else:
+                        value = properties[0]
 
-                value = utils.check_tag_value(value)
+                    value = str(value) # Value list converted in str
 
-                # We only accept the value if it's not empty
-                if value is not None and value is not "":
-                    database.addValue(file_name, tag[0], value, value) # Value added to the database
-                    values_added.append([file_name, tag[0], value]) # Value added to history
+                    # We have to put Json_Version tag value to list
+                    if tag[0] == "Json_Version":
+                        value = "['" + value + "']"
 
-                    if not tag[0] in import_tags_names:
-                        import_tags.append([tag[0], type, unit, description])
-                        import_tags_names.append(tag[0])
+                    # We only accept the value if it's not empty
+                    if value is not None and value is not "":
+                        database.addValue(file_name, tag[0], value, value) # Value added to the database
+                        values_added.append([file_name, tag[0], value]) # Value added to history
+
+                        if not tag[0] in import_tags_names:
+                            import_tags.append([tag[0], type, unit, description])
+                            import_tags_names.append(tag[0])
 
             #print("Loop --- %s seconds ---" % (time() - start_time))
 

@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButt
 import os
 from ProjectManager.controller import save_project
 
-
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
@@ -111,6 +110,7 @@ class DataBrowser(QWidget):
         self.table_data.database = database
         self.viewer.database = database
         self.advanced_search.database = database
+
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
 
@@ -316,8 +316,8 @@ class DataBrowser(QWidget):
             self.database.redos.clear()
 
             # Reset of headers
-            self.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.table_data.nb_columns)
             self.table_data.initialize_headers()
             self.table_data.fill_headers()
 
@@ -358,8 +358,8 @@ class DataBrowser(QWidget):
             self.database.redos.clear()
 
             # Reset of headers
-            self.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.table_data.nb_columns)
             self.table_data.initialize_headers()
             self.table_data.fill_headers()
 
@@ -402,8 +402,8 @@ class DataBrowser(QWidget):
                 self.database.removeTag(tag)
 
             # Reset of headers
-            self.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.table_data.nb_columns)
             self.table_data.initialize_headers()
             self.table_data.fill_headers()
 
@@ -543,15 +543,15 @@ class TableDataBrowser(QTableWidget):
     def fill_headers(self):
         nb = 0
         for element in self.database.getVisualizedTags():
-            element = element.tag
+            tag_name = element.tag
             item = self.horizontalHeaderItem(nb)
-            if element == self.database.getSortedTag():
+            if tag_name == self.database.getSortedTag():
                 if self.database.getSortOrder() == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
                 else:
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
-            item.setText(element)
-            item.setToolTip("Description: " + str(self.database.getTagDescription(element)) + "\nUnit: " + str(self.database.getTagUnit(element)))
+            item.setText(tag_name)
+            item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
 
@@ -574,14 +574,13 @@ class TableDataBrowser(QTableWidget):
                     if (self.database.scanHasTag(scan.scan, current_tag)):
                         value = self.database.getValue(scan.scan, current_tag)
                         item = QTableWidgetItem()
-                        item.setText(value.current_value)
+                        if current_tag == "FileName":
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
+                        item.setText(self.format_value(value.current_value))
                         font = item.font()
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                        # FileName not editable
-                        if current_tag == "FileName":
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                         # User tag
                         if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
                             color = QColor()
@@ -604,6 +603,18 @@ class TableDataBrowser(QTableWidget):
                     column += 1
 
             row += 1
+
+    def format_value(self, value):
+        import ast
+
+        # String from Database converted in List
+        list_value = ast.literal_eval(value)
+
+        # If there is a single element, we return it directly
+        if len(list_value) == 1:
+            return str(list_value[0])
+        else:
+            return str(list_value)
 
     def context_menu_table(self, position):
 
@@ -970,11 +981,6 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan_path, tag_name, None, text_value])
                     self.database.addValue(scan_path, tag_name, text_value, text_value)
 
-                font = item.font()
-                font.setItalic(False)
-                font.setBold(False)
-                item.setFont(font)
-
                 #Raw tag
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
                     if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
@@ -997,6 +1003,12 @@ class TableDataBrowser(QTableWidget):
                 if(tag_name != "FileName"):
                     item.setData(Qt.BackgroundRole, QVariant(color))
                     item.setText(text_value)
+
+                    # Font reseted in case it was a not defined cell
+                    font = item.font()
+                    font.setItalic(False)
+                    font.setBold(False)
+                    item.setFont(font)
 
             # For history
             historyMaker.append(modified_values)
