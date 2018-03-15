@@ -131,6 +131,10 @@ class CountTable(QDialog):
         # Clearing the table
         self.table.clear()
 
+        # Font
+        self.font = QFont()
+        self.font.setBold(True)
+
         # nb_values will contain, for each index, the number of
         # different values that a tag can take
         self.nb_values = []
@@ -139,16 +143,25 @@ class CountTable(QDialog):
 
         # The number of rows will be the multiplication of all these
         # values
-        nb_row = reduce(operator.mul, self.nb_values[:-1], 1)
+        self.nb_row = reduce(operator.mul, self.nb_values[:-1], 1)
 
         # The number of columns will be the addition of the number of
         # selected tags (minus 1) and the number of different values
         # that can take the last selected tag
-        nb_col = len(self.values_list) - 1 + self.nb_values[-1]
+        self.nb_col = len(self.values_list) - 1 + self.nb_values[-1]
 
-        self.table.setRowCount(nb_row)
-        self.table.setColumnCount(nb_col)
+        self.table.setRowCount(self.nb_row)
+        self.table.setColumnCount(self.nb_col)
 
+        self.fill_headers()
+        self.fill_first_tags()
+        self.fill_last_tag()
+
+        self.table.resizeColumnsToContents()
+
+    def fill_headers(self):
+        """ Method that fills the headers of the table depending on
+        the selected tags. """
         idx_end = 0
         # Headers
         for idx in range(len(self.values_list) - 1):
@@ -159,7 +172,7 @@ class CountTable(QDialog):
             idx_end = idx
 
         # idx_last_tag corresponds to the index of the (n-1)th tag
-        idx_last_tag = idx_end
+        self.idx_last_tag = idx_end
 
         for header_name in self.values_list[-1]:
             idx_end += 1
@@ -168,15 +181,17 @@ class CountTable(QDialog):
             self.table.setHorizontalHeaderItem(idx_end, item)
 
         # Adding a "Total" row and to count the scans
-        self.table.insertRow(nb_row)
+        self.table.insertRow(self.nb_row)
         item = QTableWidgetItem()
         item.setText('Total')
-        font = QFont()
-        font.setBold(True)
-        item.setFont(font)
 
-        self.table.setVerticalHeaderItem(nb_row, item)
+        item.setFont(self.font)
 
+        self.table.setVerticalHeaderItem(self.nb_row, item)
+
+    def fill_first_tags(self):
+        """ Method that fills the cells of the table corresponding to
+        the (n-1) first selected tags. """
         cell_text = []
         for col in range(len(self.values_list) - 1):
             # cell_text will contain the n-1 element to display
@@ -185,11 +200,11 @@ class CountTable(QDialog):
             # Filling the last "Total" column
             item = QTableWidgetItem()
             item.setText(str(self.nb_values[col]))
-            item.setFont(font)
-            self.table.setItem(nb_row, col, item)
+            item.setFont(self.font)
+            self.table.setItem(self.nb_row, col, item)
 
         # Filling the cells of the n-1 first tags
-        for row in range(nb_row):
+        for row in range(self.nb_row):
 
             for col in range(len(self.values_list) - 1):
                 item = QTableWidgetItem()
@@ -211,7 +226,7 @@ class CountTable(QDialog):
                     else:
                         # Else we iterate on the next value
                         idx = self.values_list[col_checked].index(cell_text[col_checked])
-                        cell_text[col_checked] = self.values_list[col_checked][idx+1]
+                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
                         flag_up = False
 
                 if cell_text[col_checked] == self.values_list[col_checked][-1]:
@@ -231,14 +246,16 @@ class CountTable(QDialog):
 
                 col_checked -= 1
 
+    def fill_last_tag(self):
+        """ Method that fills the cells corresponding to the last selected tag. """
         # Cells of the last tag
-        for col in range(idx_last_tag+1, nb_col):
+        for col in range(self.idx_last_tag + 1, self.nb_col):
             nb_scans_ok = 0
             # Creating a tag_list that will contain couples tag_name/tag_value that
             # will then querying the database
-            for row in range(nb_row):
+            for row in range(self.nb_row):
                 tag_list = []
-                for idx_first_columns in range(idx_last_tag+1):
+                for idx_first_columns in range(self.idx_last_tag + 1):
                     value = self.table.item(row, idx_first_columns).text()
                     tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
                     tag_list.append([tag_name, value])
@@ -271,7 +288,5 @@ class CountTable(QDialog):
 
             item = QTableWidgetItem()
             item.setText(str(nb_scans_ok))
-            item.setFont(font)
-            self.table.setItem(nb_row, col, item)
-
-        self.table.resizeColumnsToContents()
+            item.setFont(self.font)
+            self.table.setItem(self.nb_row, col, item)
