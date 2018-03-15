@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, and_
+from sqlalchemy import create_engine, cast, VARCHAR
 from sqlalchemy.orm import sessionmaker
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
@@ -75,7 +75,7 @@ class DataBase:
             for default_tag in config.getDefaultTags():
                 if not self.hasTag(default_tag):
                     # Tags by default set as visible
-                    self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, "", "", "")  # Modify params?
+                    self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
                     self.saveModifications()
 
         # FileName as raw tag
@@ -372,10 +372,10 @@ class DataBase:
         :param visibility: New visibility (True or False)
         """
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        # TODO return error if len(tags) != 1
-        tag = tags[0]
-        tag.visible = visibility
-        self.unsavedModifications = True
+        if len(tags) == 1:
+            tag = tags[0]
+            tag.visible = visibility
+            self.unsavedModifications = True
 
     def setTagOrigin(self, name, origin):
         """
@@ -384,10 +384,45 @@ class DataBase:
         :param origin: New origin of the tag (raw or user)
         """
         tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        # TODO return error if len(tags) != 1
         if len(tags) == 1:
             tag = tags[0]
             tag.origin = origin
+            self.unsavedModifications = True
+
+    def setTagDescription(self, name, description):
+        """
+        Sets the description of the tag
+        :param name: Tag name
+        :param description: New description of the tag
+        """
+        tags = self.session.query(Tag).filter(Tag.tag == name).all()
+        if len(tags) == 1:
+            tag = tags[0]
+            tag.description = description
+            self.unsavedModifications = True
+
+    def setTagUnit(self, name, unit):
+        """
+        Sets the unit of the tag
+        :param name: Tag name
+        :param unit: New unit of the tag
+        """
+        tags = self.session.query(Tag).filter(Tag.tag == name).all()
+        if len(tags) == 1:
+            tag = tags[0]
+            tag.unit = unit
+            self.unsavedModifications = True
+
+    def setTagType(self, name, type):
+        """
+        Sets the type of the tag
+        :param name: Tag name
+        :param unit: New type of the tag
+        """
+        tags = self.session.query(Tag).filter(Tag.tag == name).all()
+        if len(tags) == 1:
+            tag = tags[0]
+            tag.type = type
             self.unsavedModifications = True
 
     def resetAllVisibilities(self):
@@ -508,6 +543,7 @@ class DataBase:
 
         # We take all the scans that contain the search in at least one of their visible tag values
         values = self.session.query(Value.scan).filter(Value.current_value.like("%" + search + "%"), Value.tag == Tag.tag, Tag.visible == True).distinct().all()
+
         scans = [] # List of scans to return
         for value in values:
             # We add the scan to the list

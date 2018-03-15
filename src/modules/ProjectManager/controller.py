@@ -18,23 +18,20 @@ def getJsonTagsFromFile(file_path, path):
    json_tags = []
    with open(os.path.join(path, file_path) + ".json") as f:
        for name,value in json.load(f).items():
-            if value is None:
-                value = ""
             json_tags.append([name, value])
    return json_tags
 
 
 def createProject(name, path, parent_folder):
     """
-
+    Creates a new project
     :param name: project name
     :param path: project path
-    :param parent_folder:
+    :param parent_folder: project folder
     :return: the project object
     """
 
     # Formating the name to remove spaces et strange characters -> folder name
-    #name = utils.remove_accents(name.replace(" ", "_"))
     recorded_path = os.path.relpath(parent_folder)
     new_path = os.path.join(recorded_path, name)
 
@@ -42,7 +39,6 @@ def createProject(name, path, parent_folder):
     if not os.path.exists(new_path):
         project_parent_folder = os.makedirs(new_path)
         data_folder = os.makedirs(os.path.join(new_path, 'data'))
-        #project_folder = os.makedirs(os.path.join(new_path, name))
         project_path = os.path.join(new_path, name)
         raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
         derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))
@@ -57,13 +53,6 @@ def createProject(name, path, parent_folder):
         )
         with open(os.path.join(new_path, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
             yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
-
-        # Create a json file -> folder_name.json
-        #json_file_name = utils.createJsonFile("", name)
-        #json_file_name = utils.saveProjectAsJsonFile(name, project)
-        #shutil.move(name+'.json', project_path)
-
-        #return project
 
 
 def read_log(database):
@@ -92,6 +81,7 @@ def read_log(database):
     config = Config()
     default_tags = config.getDefaultTags()
     import_tags = []
+    import_tags_names = []
 
     for dict_log in list_dict_log:
 
@@ -109,38 +99,78 @@ def read_log(database):
             database.addValue(file_name, "FileName", file_name, file_name) # FileName tag added
             values_added.append([file_name, "FileName", file_name])
 
-            start_time = time()
+            #start_time = time()
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
 
-                value = utils.check_tag_value(tag[1])
+                properties = tag[1]
+                unit = None
+                format = ''
+                type = TAG_TYPE_STRING
+                description = None
+                if isinstance(properties, dict):
+                    value = properties['value']
+                    unit = properties['units']
+                    if unit == "":
+                        unit = None
+                    format = properties['format']
+                    type = properties['type']
+                    if type == "":
+                        type = TAG_TYPE_STRING
+                    description = properties['description']
+                    if description == "":
+                        description = None
+                else:
+                    value = properties[0]
+
+                value = utils.check_tag_value(value)
 
                 # We only accept the value if it's not empty
-                if(value != ""):
+                if value is not None and value is not "":
                     database.addValue(file_name, tag[0], value, value) # Value added to the database
                     values_added.append([file_name, tag[0], value]) # Value added to history
 
-                    if not tag[0] in import_tags:
-                        import_tags.append(tag[0])
+                    if not tag[0] in import_tags_names:
+                        import_tags.append([tag[0], type, unit, description])
+                        import_tags_names.append(tag[0])
 
-            print("--- %s seconds ---" % (time() - start_time))
+            #print("Loop --- %s seconds ---" % (time() - start_time))
 
     # Tags added to the database
     for tag in import_tags:
-        # Default tags are already in the database with user origin
-        if database.hasTag(tag):
-            database.setTagOrigin(tag, TAG_ORIGIN_RAW)
-        else:
-            if tag in default_tags:
-                database.addTag(tag, True, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
-            else:
-                database.addTag(tag, False, TAG_ORIGIN_RAW, TAG_TYPE_STRING, '', '', '')
 
+        #start_time = time()
+
+        # Default tags are already in the database with user origin
+        tag_name = tag[0]
+        tag_type = tag[1]
+        tag_unit = tag[2]
+        tag_description = tag[3]
+        if database.hasTag(tag_name):
+            tag_object = database.getTag(tag_name)
+            tag_object.origin = TAG_ORIGIN_RAW
+            tag_object.description = tag_description
+            tag_object.unit = tag_unit
+            tag_object.type = tag_type
+        else:
+            if tag_name in default_tags:
+                database.addTag(tag_name, True, TAG_ORIGIN_RAW, tag_type, tag_unit, None, tag_description)
+            else:
+                database.addTag(tag_name, False, TAG_ORIGIN_RAW, tag_type, tag_unit, None, tag_description)
+
+        #print("Tag --- %s seconds ---" % (time() - start_time))
+
+    # start_time = time()
+    # Missing values added thanks to default values
     for scan in scans_added:
         for tag in database.getUserTags():
-            if not database.scanHasTag(scan[0], tag.tag):
+            #loop_time = time()
+            if not database.scanHasTag(scan[0], tag.tag) and tag.default is not None:
+                #print(tag.default)
                 database.addValue(scan[0], tag.tag, tag.default, None)
+            #print("Value added --- %s seconds ---" % (time() - loop_time))
+    #print("Values added --- %s seconds ---" % (time() - start_time))
 
     # For history
     historyMaker.append(scans_added)
@@ -148,7 +178,7 @@ def read_log(database):
     database.undos.append(historyMaker)
     database.redos.clear()
 
-    print("--- %s seconds ---" % (time() - start_func))
+    print("total --- %s seconds ---" % (time() - start_func))
 
 def verify_scans(database, path):
     # Returning the files that are problematic

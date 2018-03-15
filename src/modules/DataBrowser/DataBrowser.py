@@ -23,7 +23,7 @@ from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
 from DataBrowser.AdvancedSearch import AdvancedSearch
 
-not_defined_value = "Not Defined" # Variable shown everywhere when no value for the tag
+not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
 class DataBrowser(QWidget):
 
@@ -533,7 +533,7 @@ class TableDataBrowser(QTableWidget):
                 else:
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(element)
-            item.setToolTip(self.database.getTagDescription(element))
+            item.setToolTip("Description: " + str(self.database.getTagDescription(element)) + "\nUnit: " + str(self.database.getTagUnit(element)))
             self.setHorizontalHeaderItem(nb, item)
             nb += 1
 
