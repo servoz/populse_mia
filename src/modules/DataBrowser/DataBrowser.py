@@ -315,6 +315,12 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
+            # Reset of headers
+            self.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.initialize_headers()
+            self.table_data.fill_headers()
+
             # Updating the table
             self.table_data.update_table()
 
@@ -350,6 +356,12 @@ class DataBrowser(QWidget):
             historyMaker.append(values)
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
+
+            # Reset of headers
+            self.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.initialize_headers()
+            self.table_data.fill_headers()
 
             # Updating the table
             self.table_data.update_table()
@@ -389,6 +401,13 @@ class DataBrowser(QWidget):
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
 
+            # Reset of headers
+            self.nb_columns = len(self.database.getVisualizedTags())
+            self.table_data.setColumnCount(self.nb_columns)
+            self.table_data.initialize_headers()
+            self.table_data.fill_headers()
+
+            # Table updated
             self.table_data.update_table()
 
 class TableDataBrowser(QTableWidget):
@@ -468,7 +487,6 @@ class TableDataBrowser(QTableWidget):
 
         self.nb_columns = len(self.database.getVisualizedTags())
 
-        #self.nb_rows = len(self.scans_to_visualize)
         self.nb_rows = len(self.database.getScans())
 
         self.setRowCount(self.nb_rows)

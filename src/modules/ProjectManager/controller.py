@@ -163,11 +163,10 @@ def read_log(database):
 
     # start_time = time()
     # Missing values added thanks to default values
-    for scan in scans_added:
-        for tag in database.getUserTags():
+    for tag in database.getUserTags():
+        for scan in scans_added:
             #loop_time = time()
-            if not database.scanHasTag(scan[0], tag.tag) and tag.default is not None:
-                #print(tag.default)
+            if tag.default is not None and not database.scanHasTag(scan[0], tag.tag):
                 database.addValue(scan[0], tag.tag, tag.default, None)
             #print("Value added --- %s seconds ---" % (time() - loop_time))
     #print("Values added --- %s seconds ---" % (time() - start_time))
@@ -178,7 +177,7 @@ def read_log(database):
     database.undos.append(historyMaker)
     database.redos.clear()
 
-    print("total --- %s seconds ---" % (time() - start_func))
+    #print("total --- %s seconds ---" % (time() - start_func))
 
 def verify_scans(database, path):
     # Returning the files that are problematic

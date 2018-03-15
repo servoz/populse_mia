@@ -173,11 +173,19 @@ class Main_Window(QMainWindow):
         To undo the last action done by the user
         """
         self.database.undo() # Action reverted in the database
+
         # Gui refreshed
         scan_names_list = []
         for scan in self.database.getScans():
             scan_names_list.append(scan.scan)
         self.data_browser.table_data.scans_to_visualize = scan_names_list
+
+        # Reset of headers
+        self.data_browser.nb_columns = len(self.database.getVisualizedTags())
+        self.data_browser.table_data.setColumnCount(self.data_browser.nb_columns)
+        self.data_browser.table_data.initialize_headers()
+        self.data_browser.table_data.fill_headers()
+
         self.data_browser.table_data.update_table()
 
     def redo(self):
@@ -185,11 +193,19 @@ class Main_Window(QMainWindow):
         To redo the last action made by the user
         """
         self.database.redo() # Action remade in the database
+
         # Gui refreshed
         scan_names_list = []
         for scan in self.database.getScans():
             scan_names_list.append(scan.scan)
         self.data_browser.table_data.scans_to_visualize = scan_names_list
+
+        # Reset of headers
+        self.data_browser.nb_columns = len(self.database.getVisualizedTags())
+        self.data_browser.table_data.setColumnCount(self.data_browser.nb_columns)
+        self.data_browser.table_data.initialize_headers()
+        self.data_browser.table_data.fill_headers()
+
         self.data_browser.table_data.update_table()
 
     def closeEvent(self, event):
