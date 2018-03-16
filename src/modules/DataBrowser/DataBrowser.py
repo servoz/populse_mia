@@ -520,9 +520,6 @@ class TableDataBrowser(QTableWidget):
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
 
-        # When the user clicks on cells
-        self.itemClicked.connect(self.display_change)
-
         # Auto-save
         config = Config()
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
@@ -908,55 +905,105 @@ class TableDataBrowser(QTableWidget):
             self.initialize_headers()
             self.fill_headers()
 
-    def display_change(self, item_clicked):
+    def mouseReleaseEvent(self, e):
+        """
+        Called when clicking released on cells, for table change
+        :param e: event
+        """
+
         import ast
 
-        # Signals disconnected
-        self.itemClicked.disconnect()
-        self.itemChanged.disconnect()
+        super(TableDataBrowser, self).mouseReleaseEvent(e)
 
-        item_text = item_clicked.text()
-        item_column = item_clicked.column()
-        tag_name = self.horizontalHeaderItem(item_column).text()
-        tag_type = self.database.getTagType(tag_name)
-        item_row = item_clicked.row()
-        scan_name = self.item(item_row, 0).text()
-        if self.database.scanHasTag(scan_name, tag_name):
-            old_value = self.database.getValue(scan_name, tag_name).current_value
+        table_types = []  # List of types
+        table_sizes = []  # List of lengths
+        table_scans = []  # List of table scans
+        table_tags = []  # List of table tags
+
         try:
-            list_value = ast.literal_eval(item_text)
-            if isinstance(list_value, list):
-                # ModifyTable called only if table in cell
-                pop_up = ModifyTable(self.database, list_value, [tag_type], [scan_name], [tag_name])
+
+            for item in self.selectedItems():
+                column = item.column()
+                row = item.row()
+                tag_name = self.horizontalHeaderItem(column).text()
+                tag_type = self.database.getTagType(tag_name)
+                scan_name = self.item(row, 0).text()
+
+                # Scan and tag added
+                table_tags.append(tag_name)
+                table_scans.append(scan_name)
+
+                # Type checked
+                if not tag_type in table_types:
+                    table_types.append(tag_type)
+
+                # Length checked
+                text = item.text()
+
+                list_value = ast.literal_eval(text)
+                if isinstance(list_value, list):
+
+                    size = len(list_value)
+                    if size not in table_sizes:
+                        table_sizes.append(size)
+
+                else:
+                    return
+
+            # Error if tables of different sizes
+            if len(table_sizes) > 1:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Incompatible table sizes")
+                msg.setInformativeText("The tables can't have different sizes")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            # Ok
+            else:
+                list_value = []
+                i = 0
+                while i < table_sizes[0]:
+                    list_value.append([0])
+                    i += 1
+
+                # Window to change table values displayed
+                pop_up = ModifyTable(self.database, list_value, table_types, table_scans, table_tags)
                 pop_up.show()
                 if pop_up.exec_() == QDialog.Accepted:
                     pass
-
-                # Table updated
-                new_value = self.database.getValue(scan_name, tag_name)
-                item_clicked.setText(database_to_table(new_value.current_value))
 
                 # For history
                 historyMaker = []
                 historyMaker.append("modified_values")
                 modified_values = []
-                modified_values.append([scan_name, tag_name, old_value, new_value.current_value])
+
+                # Tables updated
+                i = 0
+                for item in self.selectedItems():
+                    old_value = ast.literal_eval(item.text())
+                    new_value = self.database.getValue(table_scans[i], table_tags[i])
+                    modified_values.append([table_scans[i], table_tags[i], old_value, new_value.current_value])
+                    item.setText(database_to_table(new_value.current_value))
+                    i += 1
+
+                # For history
+
                 historyMaker.append(modified_values)
                 self.database.undos.append(historyMaker)
                 self.database.redos.clear()
 
-                # Auto-save
-                config = Config()
-                if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-                    save_project(self.database)
-        except SyntaxError:
-            pass
-        except ValueError:
-            pass
+            self.itemChanged.connect(self.change_cell_color)
 
-        # Signals reconnected
-        self.itemClicked.connect(self.display_change)
-        self.itemChanged.connect(self.change_cell_color)
+            # Auto-save
+            config = Config()
+            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+                save_project(self.database)
+
+        except:
+            pass
 
     def change_cell_color(self, item_origin):
         """
@@ -1009,88 +1056,9 @@ class TableDataBrowser(QTableWidget):
             self.itemChanged.connect(self.change_cell_color)
             return
 
-        # Several tables to change
+        # Nothing to do if table
         if "table" in cells_types:
-
-            table_types = [] # List of types
-            table_sizes = [] # List of lengths
-            table_scans = [] # List of table scans
-            table_tags = [] # List of table tags
-
-            for item in self.selectedItems():
-                column = item.column()
-                row = item.row()
-                tag_name = self.horizontalHeaderItem(column).text()
-                tag_type = self.database.getTagType(tag_name)
-                scan_name = self.item(row, 0).text()
-
-                # Scan and tag added
-                table_tags.append(tag_name)
-                table_scans.append(scan_name)
-
-                # Type checked
-                if not tag_type in table_types:
-                    table_types.append(tag_type)
-
-                # Length checked
-                text = item.text()
-                list_value = ast.literal_eval(text)
-                size = len(list_value)
-                if size not in table_sizes:
-                    table_sizes.append(size)
-
-            # Error if tables of different sizes
-            if len(table_sizes) > 1:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("Incompatible table sizes")
-                msg.setInformativeText("The tables can't have different sizes")
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
-
-            # Ok
-            else:
-                list_value = []
-                i = 0
-                while i < table_sizes[0]:
-                    list_value.append([0])
-                    i += 1
-
-                # Window to change table values displayed
-                pop_up = ModifyTable(self.database, list_value, table_types, table_scans, table_tags)
-                pop_up.show()
-                if pop_up.exec_() == QDialog.Accepted:
-                    pass
-
-                # For history
-                historyMaker = []
-                historyMaker.append("modified_values")
-                modified_values = []
-
-                # Tables updated
-                i = 0
-                for item in self.selectedItems():
-                    old_value = ast.literal_eval(item.text())
-                    new_value = self.database.getValue(table_scans[i], table_tags[i])
-                    item.setText(database_to_table(new_value.current_value))
-                    modified_values.append([table_scans[i], table_tags[i], old_value, new_value.current_value])
-                    i += 1
-
-                # For history
-
-                historyMaker.append(modified_values)
-                self.database.undos.append(historyMaker)
-                self.database.redos.clear()
-
             self.itemChanged.connect(self.change_cell_color)
-
-            # Auto-save
-            config = Config()
-            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-                save_project(self.database)
-
             return
 
         # We check that the value is compatible with all the types
