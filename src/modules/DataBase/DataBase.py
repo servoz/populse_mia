@@ -708,7 +708,7 @@ class DataBase:
                         self.removeValue(scan, tag)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.setTagValue(scan, tag, old_value)
+                        self.setTagValue(scan, tag, str(old_value))
                     i = i + 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags

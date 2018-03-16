@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton
+from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.utils import check_value_type
-from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
 from DataBase.DataBaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 
 class ModifyTable(QDialog):
@@ -8,21 +7,21 @@ class ModifyTable(QDialog):
     Is called when the user wants to verify precisely the scans of the project.
     """
 
-    def __init__(self, database, list_value, type, scan, tag):
+    def __init__(self, database, list_value, types, scans, tags):
         """
         ModifyTable init
         :param database: Instance of database
         :param list_value: List of values of the cell
-        :param type: Value type
-        :param scan: Scan of the row
-        :param tag: Tag of the column
+        :param types: Value types
+        :param scans: Scans of the rows
+        :param tags: Tags of the columns
         """
         super().__init__()
 
         # Variables init
-        self.type = type
-        self.scan = scan
-        self.tag = tag
+        self.types = types
+        self.scans = scans
+        self.tags = tags
         self.database = database
         self.value = list_value
 
@@ -79,8 +78,12 @@ class ModifyTable(QDialog):
             total_width += self.table.columnWidth(i)
             total_height += self.table.rowHeight(i)
             i += 1
-        self.table.setFixedWidth(total_width + 20)
-        self.table.setFixedHeight(total_height + 25)
+        if total_width + 20 < 900:
+            self.table.setFixedWidth(total_width + 20)
+            self.table.setFixedHeight(total_height + 25)
+        else:
+            self.table.setFixedWidth(900)
+            self.table.setFixedHeight(total_height + 40)
 
     def update_table_values(self):
         """
@@ -95,25 +98,59 @@ class ModifyTable(QDialog):
             item = self.table.item(0, i)
             text = item.text()
 
+            valid_type = True
+            for type in self.types:
+                if not check_value_type(text, type):
+                    valid_type = False
+                    type_problem = type
+                    break
+
             # Type checked
-            if not check_value_type(text, self.type):
+            if not valid_type:
 
                 # Error dialog if invalid cell
                 valid = False
                 # Dialog that says that it is not possible
-                self.pop_up_type = Ui_Dialog_Type_Problem(str(self.type))
-                self.pop_up_type.exec()
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Invalid value")
+                msg.setInformativeText("The value " + text + " is invalid with the type " + type_problem)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
                 break
-            else:
-                # Type ok
-                if self.type == TAG_TYPE_INTEGER:
-                    database_value.append([int(text)])
-                elif self.type == TAG_TYPE_FLOAT:
-                    database_value.append([float(text)])
-                else:
-                    database_value.append([str(text)])
+
             i += 1
+
         if valid:
             # Database updated only if valid type for every cell
-            self.database.setTagValue(self.scan, self.tag, str(database_value))
+
+            cell = 0
+            while cell < len(self.scans):
+                scan = self.scans[cell]
+                tag = self.tags[cell]
+                type = self.database.getTagType(tag)
+
+                database_value = []
+
+                # For each value
+                i = 0
+                while i < self.table.columnCount():
+                    item = self.table.item(0, i)
+                    text = item.text()
+
+                    if type == TAG_TYPE_INTEGER:
+                        database_value.append([int(text)])
+                    elif type == TAG_TYPE_FLOAT:
+                        database_value.append([float(text)])
+                    else:
+                        database_value.append([str(text)])
+                    i += 1
+
+                # Database updated for every cell
+                self.database.setTagValue(scan, tag, str(database_value))
+
+                cell += 1
+
             self.close()

@@ -3,7 +3,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 from DataBase.DataBaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER
 
-
 class Ui_Dialog_add_tag(QDialog):
     """
     Is called when the user wants to add a tag to the project
@@ -194,8 +193,8 @@ class Ui_Dialog_add_tag(QDialog):
         elif wrong_default_value_type:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
-            msg.setText("The default value is not of the good type")
-            msg.setInformativeText("Please select another default value")
+            msg.setText("Invalid default value")
+            msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type)
             msg.setWindowTitle("Error")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)

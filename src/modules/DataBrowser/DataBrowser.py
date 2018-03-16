@@ -9,7 +9,6 @@ from ProjectManager.controller import save_project
 
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
-from PopUps.Ui_Dialog_Type_Problem import Ui_Dialog_Type_Problem
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from DataBrowser.CountTable import CountTable
@@ -521,6 +520,7 @@ class TableDataBrowser(QTableWidget):
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
 
+        # When the user clicks on cells
         self.itemClicked.connect(self.display_change)
 
         # Auto-save
@@ -908,7 +908,6 @@ class TableDataBrowser(QTableWidget):
             self.initialize_headers()
             self.fill_headers()
 
-
     def display_change(self, item_clicked):
         import ast
 
@@ -922,12 +921,13 @@ class TableDataBrowser(QTableWidget):
         tag_type = self.database.getTagType(tag_name)
         item_row = item_clicked.row()
         scan_name = self.item(item_row, 0).text()
-        old_value = self.database.getValue(scan_name, tag_name).current_value
+        if self.database.scanHasTag(scan_name, tag_name):
+            old_value = self.database.getValue(scan_name, tag_name).current_value
         try:
             list_value = ast.literal_eval(item_text)
             if isinstance(list_value, list):
                 # ModifyTable called only if table in cell
-                pop_up = ModifyTable(self.database, list_value, tag_type, scan_name, tag_name)
+                pop_up = ModifyTable(self.database, list_value, [tag_type], [scan_name], [tag_name])
                 pop_up.show()
                 if pop_up.exec_() == QDialog.Accepted:
                     pass
@@ -944,6 +944,11 @@ class TableDataBrowser(QTableWidget):
                 historyMaker.append(modified_values)
                 self.database.undos.append(historyMaker)
                 self.database.redos.clear()
+
+                # Auto-save
+                config = Config()
+                if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+                    save_project(self.database)
         except SyntaxError:
             pass
         except ValueError:
@@ -960,41 +965,161 @@ class TableDataBrowser(QTableWidget):
         :return:
         """
 
+        import ast
+
         self.itemChanged.disconnect()
         text_value = item_origin.text()
 
-        # For history
-        historyMaker = []
-        historyMaker.append("modified_values")
-        modified_values = []
+        cells_types = [] # Will contain the type list of the selection
 
-        # For each item selected, we check that the new value is valid (type check)
-        is_error = False
+        self.reset_cells_with_item(self.selectedItems()) # To reset the first cell already changed
+
+        # For each item selected, we check the validity of the types
         for item in self.selectedItems():
-            if is_error:
-                break
             row = item.row()
             col = item.column()
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-
-            # Validity of the new value checked
             type = self.database.getTagType(tag_name)
-            if not check_value_type(text_value, type):
-                is_error = True
+            old_value = item.text()
 
-        # If there is invalidity in the new values, we display an error message
-        if is_error:
-            items = self.selectedItems()
+            # Type check
+            try:
+                list_value = ast.literal_eval(old_value)
+                if isinstance(list_value, list):
+                    if not "table" in cells_types:
+                        cells_types.append("table")
+                else:
+                    if not type in cells_types:
+                        cells_types.append(type)
+            except:
+                if not type in cells_types:
+                    cells_types.append(type)
 
-            # Dialog that says that it is not possible
-            self.pop_up_type = Ui_Dialog_Type_Problem(str(type))
-            # Resetting the cells
-            self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, items))
-            self.pop_up_type.exec()
+        # Error if table with other types
+        if "table" in cells_types and len(cells_types) > 1:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Incompatible types")
+            msg.setInformativeText("The following types in the selection are not compatible: " + str(cells_types))
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            self.itemChanged.connect(self.change_cell_color)
+            return
 
-        # Otherwise we update the value
+        # Several tables to change
+        if "table" in cells_types:
+
+            table_types = [] # List of types
+            table_sizes = [] # List of lengths
+            table_scans = [] # List of table scans
+            table_tags = [] # List of table tags
+
+            for item in self.selectedItems():
+                column = item.column()
+                row = item.row()
+                tag_name = self.horizontalHeaderItem(column).text()
+                tag_type = self.database.getTagType(tag_name)
+                scan_name = self.item(row, 0).text()
+
+                # Scan and tag added
+                table_tags.append(tag_name)
+                table_scans.append(scan_name)
+
+                # Type checked
+                if not tag_type in table_types:
+                    table_types.append(tag_type)
+
+                # Length checked
+                text = item.text()
+                list_value = ast.literal_eval(text)
+                size = len(list_value)
+                if size not in table_sizes:
+                    table_sizes.append(size)
+
+            # Error if tables of different sizes
+            if len(table_sizes) > 1:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Incompatible table sizes")
+                msg.setInformativeText("The tables can't have different sizes")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            # Ok
+            else:
+                list_value = []
+                i = 0
+                while i < table_sizes[0]:
+                    list_value.append([0])
+                    i += 1
+
+                # Window to change table values displayed
+                pop_up = ModifyTable(self.database, list_value, table_types, table_scans, table_tags)
+                pop_up.show()
+                if pop_up.exec_() == QDialog.Accepted:
+                    pass
+
+                # For history
+                historyMaker = []
+                historyMaker.append("modified_values")
+                modified_values = []
+
+                # Tables updated
+                i = 0
+                for item in self.selectedItems():
+                    old_value = ast.literal_eval(item.text())
+                    new_value = self.database.getValue(table_scans[i], table_tags[i])
+                    item.setText(database_to_table(new_value.current_value))
+                    modified_values.append([table_scans[i], table_tags[i], old_value, new_value.current_value])
+                    i += 1
+
+                # For history
+
+                historyMaker.append(modified_values)
+                self.database.undos.append(historyMaker)
+                self.database.redos.clear()
+
+            self.itemChanged.connect(self.change_cell_color)
+
+            # Auto-save
+            config = Config()
+            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+                save_project(self.database)
+
+            return
+
+        # We check that the value is compatible with all the types
+        types_compatibles = True
+        for cell_type in cells_types:
+            if not check_value_type(text_value, cell_type):
+                types_compatibles = False
+                type_problem = cell_type
+                break
+
+        # Error if invalid value
+        if not types_compatibles:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Invalid value")
+            msg.setInformativeText("The value " + text_value + " is invalid with the type " + type_problem)
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
+        # Otherwise we update the values
         else:
+
+            # For history
+            historyMaker = []
+            historyMaker.append("modified_values")
+            modified_values = []
+
             for item in self.selectedItems():
                 row = item.row()
                 col = item.column()
@@ -1048,9 +1173,11 @@ class TableDataBrowser(QTableWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
+            # Auto-save
+            config = Config()
+            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+                save_project(self.database)
+
         self.itemChanged.connect(self.change_cell_color)
 
-        #Auto-save
-        config = Config()
-        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(self.database)
+
