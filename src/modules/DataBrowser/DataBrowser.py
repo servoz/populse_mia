@@ -19,8 +19,10 @@ from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST
+from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 from DataBrowser.AdvancedSearch import AdvancedSearch
+
+from Utils.utils import database_to_table, table_to_database, check_value_type
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
@@ -284,32 +286,23 @@ class DataBrowser(QWidget):
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
             (new_tag_name, new_default_value, type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
-            # Type conversion
-            real_type = ""
-            if(type == str):
-                real_type = TAG_TYPE_STRING
-            if (type == int):
-                real_type = TAG_TYPE_INTEGER
-            if (type == float):
-                real_type = TAG_TYPE_FLOAT
-            if (type == list):
-                real_type = TAG_TYPE_LIST
-
             values = []
 
+            database_value = table_to_database(new_default_value)
+
             # We add the tag and a value for each scan in the database
-            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, real_type, new_tag_unit, new_default_value, new_tag_description)
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, type, new_tag_unit, database_value, new_tag_description)
             for scan in self.database.getScans():
-                self.database.addValue(scan.scan, new_tag_name, new_default_value, None)
-                values.append([scan.scan, new_tag_name, new_default_value, None]) # For history
+                self.database.addValue(scan.scan, new_tag_name, database_value, None)
+                values.append([scan.scan, new_tag_name, database_value, None]) # For history
 
             # For history
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(real_type)
+            historyMaker.append(type)
             historyMaker.append(new_tag_unit)
-            historyMaker.append(new_default_value)
+            historyMaker.append(database_value)
             historyMaker.append(new_tag_description)
             historyMaker.append(values)
             self.database.undos.append(historyMaker)
@@ -576,7 +569,7 @@ class TableDataBrowser(QTableWidget):
                         item = QTableWidgetItem()
                         if current_tag == "FileName":
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
-                        item.setText(self.format_value(value.current_value))
+                        item.setText(database_to_table(value.current_value))
                         font = item.font()
                         font.setItalic(False)
                         font.setBold(False)
@@ -603,18 +596,6 @@ class TableDataBrowser(QTableWidget):
                     column += 1
 
             row += 1
-
-    def format_value(self, value):
-        import ast
-
-        # String from Database converted in List
-        list_value = ast.literal_eval(value)
-
-        # If there is a single element, we return it directly
-        if len(list_value) == 1:
-            return str(list_value[0])
-        else:
-            return str(list_value)
 
     def context_menu_table(self, position):
 
@@ -796,7 +777,7 @@ class TableDataBrowser(QTableWidget):
                 else:
                     color.setRgb(255, 225, 225)
                 item.setData(Qt.BackgroundRole, QVariant(color))
-            item.setText(self.database.getValue(scan_path, tag_name).current_value)
+            item.setText(database_to_table(self.database.getValue(scan_path, tag_name).current_value))
             self.setItem(row, col, item)
 
     def remove_scan(self):
@@ -924,40 +905,18 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-            # Default type is string if we don't find the real one
-            if(tag_name != ""):
-                tp = self.database.getTagType(tag_name)
-            else:
-                tp = TAG_TYPE_STRING
-            if(tp == ""):
-                tp = TAG_TYPE_STRING
-            if(tp == TAG_TYPE_INTEGER):
-                try:
-                    int(text_value)
-                except ValueError:
-                    is_error = True
-            elif (tp == TAG_TYPE_FLOAT):
-                try:
-                    float(text_value)
-                except ValueError:
-                    is_error = True
-            elif (tp == TAG_TYPE_STRING):
-                try:
-                    str(text_value)
-                except ValueError:
-                    is_error = True
-            elif (tp == TAG_TYPE_LIST):
-                try:
-                    text_value.split(", ")
-                except ValueError:
-                    is_error = True
+
+            # Validity of the new value checked
+            type = self.database.getTagType(tag_name)
+            if not check_value_type(self.database.getValue(scan_path, tag_name).current_value, text_value, type):
+                is_error = True
 
         # If there is invalidity in the new values, we display an error message
         if is_error:
             items = self.selectedItems()
 
             # Dialog that says that it is not possible
-            self.pop_up_type = Ui_Dialog_Type_Problem(str(tp))
+            self.pop_up_type = Ui_Dialog_Type_Problem(str(type))
             # Resetting the cells
             self.pop_up_type.ok_signal.connect(partial(self.reset_cells_with_item, items))
             self.pop_up_type.exec()
@@ -972,14 +931,16 @@ class TableDataBrowser(QTableWidget):
 
                 color = QColor()
 
+                value_database = table_to_database(text_value)
+
                 # The scan already have a value for the tag: we update it
                 if(self.database.scanHasTag(scan_path, tag_name)):
-                    modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, text_value])
-                    self.database.setTagValue(scan_path, tag_name, text_value)
+                    modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, value_database])
+                    self.database.setTagValue(scan_path, tag_name, value_database)
                 # The scan does not have a value for the tag yet: we add it
                 else:
-                    modified_values.append([scan_path, tag_name, None, text_value])
-                    self.database.addValue(scan_path, tag_name, text_value, text_value)
+                    modified_values.append([scan_path, tag_name, None, value_database])
+                    self.database.addValue(scan_path, tag_name, value_database, value_database)
 
                 #Raw tag
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):

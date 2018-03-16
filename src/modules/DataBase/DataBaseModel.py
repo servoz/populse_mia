@@ -9,7 +9,6 @@ TAG_ORIGIN_USER = "user"
 TAG_TYPE_STRING = "string"
 TAG_TYPE_INTEGER = "int"
 TAG_TYPE_FLOAT = "float"
-TAG_TYPE_LIST = "list"
 
 TAG_UNIT_MS = "ms"
 TAG_UNIT_MM = "mm"
@@ -37,7 +36,7 @@ class Tag(Base):
     tag = Column(String, primary_key=True)
     visible = Column(Boolean, nullable=False)
     origin = Column(Enum(TAG_ORIGIN_RAW, TAG_ORIGIN_USER), nullable=False)
-    type = Column(Enum(TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_LIST), nullable=False)
+    type = Column(Enum(TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_FLOAT), nullable=False)
     unit = Column(Enum(TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ), nullable=True)
     default = Column(String, nullable=True)
     description = Column(String, nullable=True)

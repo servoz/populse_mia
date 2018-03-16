@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from DataBase.DataBaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS
+from DataBase.DataBaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER
 
 
 class Ui_Dialog_add_tag(QDialog):
@@ -78,7 +78,6 @@ class Ui_Dialog_add_tag(QDialog):
         self.combo_box_type.addItem("String")
         self.combo_box_type.addItem("Integer")
         self.combo_box_type.addItem("Float")
-        self.combo_box_type.addItem("List")
         self.combo_box_type.activated[str].connect(self.on_activated)
 
         # The status bar
@@ -132,45 +131,44 @@ class Ui_Dialog_add_tag(QDialog):
 
     def on_activated(self, text):
         if text == "String":
-            self.type = str
+            self.type = TAG_TYPE_STRING
             self.info_label.setText('')
         elif text == "Integer":
-            self.type = int
-            self.info_label.setText('')
-        elif text == "Float":
-            self.type = float
+            self.type = TAG_TYPE_INTEGER
             self.info_label.setText('')
         else:
-            self.type = list
-            self.info_label.setText('Please seperate each list item by a comma and a space. No need to use brackets.')
+            self.type = TAG_TYPE_FLOAT
+            self.info_label.setText('')
 
     def ok_action(self):
+
+        # Tag name checked
         name_already_exists = False
         for tag in self.database.getTags():
             if tag.tag == self.text_edit_tag_name.text():
                 name_already_exists = True
         wrong_default_value_type = False
+
+        # Default value checked
         default_value = self.text_edit_default_value.text()
-        if self.type == int:
+        if self.type == TAG_TYPE_INTEGER:
             try:
                 int(default_value)
             except ValueError:
                 wrong_default_value_type = True
-        if self.type == float:
+        if self.type == TAG_TYPE_FLOAT:
             try:
                 float(default_value)
             except ValueError:
                 wrong_default_value_type = True
-        if self.type == str:
+        # Otherwise str
+        else:
             try:
                 str(default_value)
             except ValueError:
                 wrong_default_value_type = True
-        if self.type == list:
-            try:
-                default_value.split(", ")
-            except ValueError:
-                wrong_default_value_type = True
+
+        # Tag name can't be empty
         if (self.text_edit_tag_name.text() == ""):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -180,6 +178,8 @@ class Ui_Dialog_add_tag(QDialog):
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
             msg.exec()
+
+        # Tag name can't exist already
         elif name_already_exists:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -189,6 +189,8 @@ class Ui_Dialog_add_tag(QDialog):
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
             msg.exec()
+
+        # The default value must be valid
         elif wrong_default_value_type:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -198,6 +200,8 @@ class Ui_Dialog_add_tag(QDialog):
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
             msg.exec()
+
+        # Ok
         else:
             self.accept()
             self.close()

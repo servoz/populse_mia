@@ -1,7 +1,76 @@
 import os
 from PyQt5.QtWidgets import QMessageBox
 
+
+def database_to_table(value):
+    """
+    Converts a value from the database to the databrowser
+    :param value: Value to convert
+    :return: The value converted for the table
+    """
+    import ast
+
+    # String from Database converted in List
+    list_value = ast.literal_eval(value)
+
+    # If there is a single element, we return it directly
+    if len(list_value) == 1:
+        return str(list_value[0])
+    # Otherwise, we return the str representation of the list
+    else:
+        return str(list_value)
+
+def table_to_database(value):
+    """
+    Converts a value from the table (str) to the database
+    :param value: Value to convert
+    :return: The value converted for the database (list)
+    """
+    return "['" + value + "']"
+
+def check_value_type(old_value, new_value, type):
+    """
+    Checks the type of the new value
+    :param old_value: Old value of the cell from the database: List
+    :param new_value: New value of the cell from the table: User str input
+    :param type: Type expected
+    :return: True if the value is valid to replace the old one, False otherwise
+    """
+    import ast
+    from DataBase.DataBaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_STRING
+
+    # Old value from Database converted in List
+    list_old_value = ast.literal_eval(old_value)
+    if len(list_old_value) == 1:
+        if type == TAG_TYPE_INTEGER:
+            try:
+                int(new_value)
+                return True
+            except ValueError:
+                return False
+        elif type == TAG_TYPE_FLOAT:
+            try:
+                float(new_value)
+                return True
+            except ValueError:
+                return False
+        # Otherwise, str
+        else:
+            try:
+                str(new_value)
+                return True
+            except ValueError:
+                return False
+    else:
+        return True
+
+
 def check_tag_value(tag):
+    """
+    NOT USED ANYMORE
+    :param tag: Tag value to convert
+    :return:
+    """
     txt = ""
     if len(tag) == 1:
         txt = str(tag[0])

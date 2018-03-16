@@ -97,8 +97,8 @@ def read_log(database):
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
-            database.addValue(file_name, "FileName", "['" + file_name + "']", None) # FileName tag added
-            values_added.append([file_name, "FileName", "['" + file_name + "']"])
+            database.addValue(file_name, "FileName", utils.table_to_database(file_name), None) # FileName tag added
+            values_added.append([file_name, "FileName", utils.table_to_database(file_name)])
 
             #start_time = time()
 
@@ -133,8 +133,8 @@ def read_log(database):
                     if tag[0] == "Json_Version":
                         value = "['" + value + "']"
 
-                    # We only accept the value if it's not empty
-                    if value is not None and value is not "":
+                    # We only accept the value if it's not empty or null
+                    if value is not None and utils.database_to_table(value) is not "":
                         database.addValue(file_name, tag[0], value, value) # Value added to the database
                         values_added.append([file_name, tag[0], value]) # Value added to history
 
