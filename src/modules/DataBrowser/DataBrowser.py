@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QColor, QIcon, QFont
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox, QPushButton
 import os
@@ -21,6 +21,7 @@ from functools import partial
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 from DataBrowser.AdvancedSearch import AdvancedSearch
+from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.utils import database_to_table, table_to_database, check_value_type
 
@@ -115,6 +116,8 @@ class DataBrowser(QWidget):
 
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
+
+        #TODO update count table database???
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -434,11 +437,22 @@ class TableDataBrowser(QTableWidget):
         self.update_table()
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
-        # FileName column is moved, to revert because it has to stay the first column
+        """
+        Called when the columns of the databrowser are moved
+        We have to ensure FileName column stays at index 0
+        :param logicalIndex:
+        :param oldVisualIndex: From index
+        :param newVisualIndex: To index
+        """
+
         # We need to disconnect the sectionMoved signal, otherwise infinite call to this function
         self.hh.sectionMoved.disconnect()
+
         if(oldVisualIndex == 0 or newVisualIndex == 0):
+            # FileName column is moved, to revert because it has to stay the first column
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
+
+        # We reconnect the signal
         self.hh.sectionMoved.connect(partial(self.section_moved))
 
     def selectAllColumn(self, col):
@@ -501,11 +515,13 @@ class TableDataBrowser(QTableWidget):
         # Cells filled
         self.fill_cells_update_table()
 
-        # Columns resized
+        # Columns and rows resized
         self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
+
+        self.itemClicked.connect(self.display_change)
 
         # Auto-save
         config = Config()
@@ -570,10 +586,13 @@ class TableDataBrowser(QTableWidget):
                         if current_tag == "FileName":
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
                         item.setText(database_to_table(value.current_value))
+
+                        # Font reset
                         font = item.font()
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
+
                         # User tag
                         if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
                             color = QColor()
@@ -881,6 +900,40 @@ class TableDataBrowser(QTableWidget):
             self.fill_headers()
 
 
+    def display_change(self, item_clicked):
+        import ast
+
+        # Signals disconnected
+        self.itemClicked.disconnect()
+        self.itemChanged.disconnect()
+
+        item_text = item_clicked.text()
+        item_column = item_clicked.column()
+        tag_name = self.horizontalHeaderItem(item_column).text()
+        tag_type = self.database.getTagType(tag_name)
+        item_row = item_clicked.row()
+        scan_name = self.item(item_row, 0).text()
+        try:
+            list_value = ast.literal_eval(item_text)
+            if isinstance(list_value, list):
+                # ModifyTable called only if table in cell
+                pop_up = ModifyTable(self.database, list_value, tag_type, scan_name, tag_name)
+                pop_up.show()
+                if pop_up.exec_() == QDialog.Accepted:
+                    pass
+
+                # Table updated
+                new_value = self.database.getValue(scan_name, tag_name)
+                item_clicked.setText(database_to_table(new_value.current_value))
+        except SyntaxError:
+            pass
+        except ValueError:
+            pass
+
+        # Signals reconnected
+        self.itemClicked.connect(self.display_change)
+        self.itemChanged.connect(self.change_cell_color)
+
     def change_cell_color(self, item_origin):
         """
         The background color of the table will change when the user changes an item
@@ -908,7 +961,7 @@ class TableDataBrowser(QTableWidget):
 
             # Validity of the new value checked
             type = self.database.getTagType(tag_name)
-            if not check_value_type(self.database.getValue(scan_path, tag_name).current_value, text_value, type):
+            if not check_value_type(text_value, type):
                 is_error = True
 
         # If there is invalidity in the new values, we display an error message

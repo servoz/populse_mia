@@ -18,6 +18,7 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
+from Utils.utils import database_to_table
 
 
 class MiniViewer(QWidget):
@@ -380,7 +381,7 @@ class MiniViewer(QWidget):
                     if tag.tag == self.config.getThumbnailTag():
                         if self.database.scanHasTag(scan.scan, tag.tag):
                             self.label_description[idx].setText \
-                                (str(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
+                                (database_to_table(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
                         else:
                             self.label_description[idx].setText \
                                 (DataBrowser.DataBrowser.not_defined_value[
