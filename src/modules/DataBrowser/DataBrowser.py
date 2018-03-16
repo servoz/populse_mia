@@ -796,7 +796,16 @@ class TableDataBrowser(QTableWidget):
                 else:
                     color.setRgb(255, 225, 225)
                 item.setData(Qt.BackgroundRole, QVariant(color))
-            item.setText(database_to_table(self.database.getValue(scan_path, tag_name).current_value))
+            if self.database.scanHasTag(scan_path, tag_name):
+                item.setText(database_to_table(self.database.getValue(scan_path, tag_name).current_value))
+            else:
+                a = str(not_defined_value)
+                item = QTableWidgetItem()
+                item.setText(a)
+                font = item.font()
+                font.setItalic(True)
+                font.setBold(True)
+                item.setFont(font)
             self.setItem(row, col, item)
 
     def remove_scan(self):
@@ -913,6 +922,7 @@ class TableDataBrowser(QTableWidget):
         tag_type = self.database.getTagType(tag_name)
         item_row = item_clicked.row()
         scan_name = self.item(item_row, 0).text()
+        old_value = self.database.getValue(scan_name, tag_name).current_value
         try:
             list_value = ast.literal_eval(item_text)
             if isinstance(list_value, list):
@@ -925,6 +935,15 @@ class TableDataBrowser(QTableWidget):
                 # Table updated
                 new_value = self.database.getValue(scan_name, tag_name)
                 item_clicked.setText(database_to_table(new_value.current_value))
+
+                # For history
+                historyMaker = []
+                historyMaker.append("modified_values")
+                modified_values = []
+                modified_values.append([scan_name, tag_name, old_value, new_value.current_value])
+                historyMaker.append(modified_values)
+                self.database.undos.append(historyMaker)
+                self.database.redos.clear()
         except SyntaxError:
             pass
         except ValueError:
