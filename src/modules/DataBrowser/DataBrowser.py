@@ -915,27 +915,30 @@ class TableDataBrowser(QTableWidget):
 
         super(TableDataBrowser, self).mouseReleaseEvent(e)
 
-        table_types = []  # List of types
-        table_sizes = []  # List of lengths
-        table_scans = []  # List of table scans
-        table_tags = []  # List of table tags
+        self.coordinates = [] # Coordinates of selected cells stored
+        self.old_values = [] # Old values stored
+        self.table_types = []  # List of types
+        self.table_sizes = []  # List of lengths
+        self.table_scans = []  # List of table scans
+        self.table_tags = []  # List of table tags
 
         try:
 
             for item in self.selectedItems():
                 column = item.column()
                 row = item.row()
+                self.coordinates.append([row, column])
                 tag_name = self.horizontalHeaderItem(column).text()
                 tag_type = self.database.getTagType(tag_name)
                 scan_name = self.item(row, 0).text()
 
                 # Scan and tag added
-                table_tags.append(tag_name)
-                table_scans.append(scan_name)
+                self.table_tags.append(tag_name)
+                self.table_scans.append(scan_name)
 
                 # Type checked
-                if not tag_type in table_types:
-                    table_types.append(tag_type)
+                if not tag_type in self.table_types:
+                    self.table_types.append(tag_type)
 
                 # Length checked
                 text = item.text()
@@ -943,15 +946,17 @@ class TableDataBrowser(QTableWidget):
                 list_value = ast.literal_eval(text)
                 if isinstance(list_value, list):
 
+                    self.old_values.append(list_value)
+
                     size = len(list_value)
-                    if size not in table_sizes:
-                        table_sizes.append(size)
+                    if size not in self.table_sizes:
+                        self.table_sizes.append(size)
 
                 else:
                     return
 
             # Error if tables of different sizes
-            if len(table_sizes) > 1:
+            if len(self.table_sizes) > 1:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText("Incompatible table sizes")
@@ -963,14 +968,18 @@ class TableDataBrowser(QTableWidget):
 
             # Ok
             else:
-                list_value = []
-                i = 0
-                while i < table_sizes[0]:
-                    list_value.append([0])
-                    i += 1
+
+                if len(self.coordinates) > 1:
+                    list_value = []
+                    i = 0
+                    while i < self.table_sizes[0]:
+                        list_value.append([0])
+                        i += 1
+                else:
+                    list_value = self.old_values[0]
 
                 # Window to change table values displayed
-                pop_up = ModifyTable(self.database, list_value, table_types, table_scans, table_tags)
+                pop_up = ModifyTable(self.database, list_value, self.table_types, self.table_scans, self.table_tags)
                 pop_up.show()
                 if pop_up.exec_() == QDialog.Accepted:
                     pass
@@ -982,15 +991,16 @@ class TableDataBrowser(QTableWidget):
 
                 # Tables updated
                 i = 0
-                for item in self.selectedItems():
-                    old_value = ast.literal_eval(item.text())
-                    new_value = self.database.getValue(table_scans[i], table_tags[i])
-                    modified_values.append([table_scans[i], table_tags[i], old_value, new_value.current_value])
-                    item.setText(database_to_table(new_value.current_value))
+                while i < len(self.coordinates):
+                    new_item = QTableWidgetItem()
+                    old_value = self.old_values[i]
+                    new_value = self.database.getValue(self.table_scans[i], self.table_tags[i])
+                    modified_values.append([self.table_scans[i], self.table_tags[i], old_value, new_value.current_value])
+                    new_item.setText(database_to_table(new_value.current_value))
+                    self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
                     i += 1
 
                 # For history
-
                 historyMaker.append(modified_values)
                 self.database.undos.append(historyMaker)
                 self.database.redos.clear()
@@ -1002,8 +1012,8 @@ class TableDataBrowser(QTableWidget):
             if (config.isAutoSave() == "yes" and not self.database.isTempProject):
                 save_project(self.database)
 
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     def change_cell_color(self, item_origin):
         """
