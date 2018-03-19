@@ -299,9 +299,7 @@ class DataBase:
         :param tag: Tag name
         :return: The origin of the tag (raw or user)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].origin
+        return self.getTag(tag).origin
 
     def getTagVisibility(self, tag):
         """
@@ -309,9 +307,7 @@ class DataBase:
         :param tag: Tag name
         :return: The visibility of the tag (True or False)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].visible
+        return self.getTag(tag).visible
 
     def getTagDefault(self, tag):
         """
@@ -319,9 +315,7 @@ class DataBase:
         :param tag: Tag name
         :return: Default value of the tag
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].default
+        return self.getTag(tag).default
 
     def getTagUnit(self, tag):
         """
@@ -329,9 +323,7 @@ class DataBase:
         :param tag: Tag name
         :return: The unit of the tag
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].unit
+        return self.getTag(tag).unit
 
     def getTagDescription(self, tag):
         """
@@ -339,9 +331,7 @@ class DataBase:
         :param tag: Tag name
         :return: The description of the tag (tooltip displayed when putting the mouse on the headers in the DataBrowser)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].description
+        return self.getTag(tag).description
 
     def getTagType(self, tag):
         """
@@ -349,9 +339,7 @@ class DataBase:
         :param tag: Tag name
         :return: The type of the tag (String, Integer, Float, or List)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0].type
+        return self.getTag(tag).type
 
     def getTag(self, tag):
         """
@@ -377,11 +365,9 @@ class DataBase:
         :param name: Tag name
         :param visibility: New visibility (True or False)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        if len(tags) == 1:
-            tag = tags[0]
-            tag.visible = visibility
-            self.unsavedModifications = True
+        tag = self.getTag(name)
+        tag.visible = visibility
+        self.unsavedModifications = True
 
     def setTagOrigin(self, name, origin):
         """
@@ -389,11 +375,9 @@ class DataBase:
         :param name: Tag name
         :param origin: New origin of the tag (raw or user)
         """
-        tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        if len(tags) == 1:
-            tag = tags[0]
-            tag.origin = origin
-            self.unsavedModifications = True
+        tag = self.getTag(name)
+        tag.origin = origin
+        self.unsavedModifications = True
 
     def setTagDescription(self, name, description):
         """
@@ -401,11 +385,9 @@ class DataBase:
         :param name: Tag name
         :param description: New description of the tag
         """
-        tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        if len(tags) == 1:
-            tag = tags[0]
-            tag.description = description
-            self.unsavedModifications = True
+        tag = self.getTag(name)
+        tag.description = description
+        self.unsavedModifications = True
 
     def setTagUnit(self, name, unit):
         """
@@ -413,11 +395,9 @@ class DataBase:
         :param name: Tag name
         :param unit: New unit of the tag
         """
-        tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        if len(tags) == 1:
-            tag = tags[0]
-            tag.unit = unit
-            self.unsavedModifications = True
+        tag = self.getTag(name)
+        tag.unit = unit
+        self.unsavedModifications = True
 
     def setTagType(self, name, type):
         """
@@ -425,11 +405,9 @@ class DataBase:
         :param name: Tag name
         :param unit: New type of the tag
         """
-        tags = self.session.query(Tag).filter(Tag.tag == name).all()
-        if len(tags) == 1:
-            tag = tags[0]
-            tag.type = type
-            self.unsavedModifications = True
+        tag = self.getTag(name)
+        tag.type = type
+        self.unsavedModifications = True
 
     def resetAllVisibilities(self):
         """
