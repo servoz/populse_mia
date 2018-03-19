@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Boolean, Enum, ForeignKey, String
 from sqlalchemy import create_engine
+
 import os
 
 TAG_ORIGIN_RAW = "raw"
