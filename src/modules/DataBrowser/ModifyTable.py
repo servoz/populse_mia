@@ -90,9 +90,8 @@ class ModifyTable(QDialog):
         To update the table in the database after Ok is clicked
         """
         valid = True
-        database_value = []
 
-        # For each value
+        # For each value, type checked
         i = 0
         while i < self.table.columnCount():
             item = self.table.item(0, i)

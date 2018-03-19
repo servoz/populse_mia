@@ -14,7 +14,7 @@ class Ui_Dialog_add_tag(QDialog):
     def __init__(self, database):
         super().__init__()
         self.database = database
-        self.type = str
+        self.type = TAG_TYPE_STRING
         self.pop_up()
 
     def pop_up(self):
@@ -160,7 +160,7 @@ class Ui_Dialog_add_tag(QDialog):
                 float(default_value)
             except ValueError:
                 wrong_default_value_type = True
-        # Otherwise str
+        # Otherwise string
         else:
             try:
                 str(default_value)
