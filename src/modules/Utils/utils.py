@@ -20,13 +20,32 @@ def database_to_table(value):
     else:
         return str(list_value)
 
-def table_to_database(value):
+def table_to_database(value, type):
     """
     Converts a value from the table (str) to the database
     :param value: Value to convert
+    :param type: Type of tag value
     :return: The value converted for the database (list)
     """
-    return "['" + value + "']"
+    import ast
+    from DataBase.DataBaseModel import TAG_TYPE_STRING
+    try:
+        list_value = ast.literal_eval(value)
+        if isinstance(list_value, list):
+            # The value is a list
+            return str(list_value)
+        else:
+            # The value is a single value, we return it as a list
+            if type == TAG_TYPE_STRING:
+                return "['" + list_value + "']"
+            else:
+                return "[" + list_value + "]"
+    except Exception:
+        # The value is a single value, we return it as a list
+        if type == TAG_TYPE_STRING:
+            return "['" + value + "']"
+        else:
+            return "[" + value + "]"
 
 def check_value_type(value, type):
     """

@@ -1146,7 +1146,7 @@ class TableDataBrowser(QTableWidget):
 
                 color = QColor()
 
-                value_database = table_to_database(text_value)
+                value_database = table_to_database(text_value, self.database.getTagType(tag_name))
 
                 # The scan already have a value for the tag: we update it
                 if(self.database.scanHasTag(scan_path, tag_name)):
