@@ -709,14 +709,7 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText("Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
 
     def reset_column(self):
 
@@ -758,15 +751,7 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText(
-                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
 
     def reset_row(self):
 
@@ -810,15 +795,18 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText(
-                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
+
+    def display_unreset_values(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("Some values do not have a raw value")
+        msg.setInformativeText(
+            "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.buttonClicked.connect(msg.close)
+        msg.exec()
 
     def reset_cells_with_item(self, items_in):
 
