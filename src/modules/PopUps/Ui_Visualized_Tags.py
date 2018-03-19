@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from functools import partial
 
 
 class Ui_Visualized_Tags(QWidget):
@@ -44,7 +45,7 @@ class Ui_Visualized_Tags(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(self.search_str)
+        self.search_bar.textChanged.connect(partial(self.search_str, database))
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
