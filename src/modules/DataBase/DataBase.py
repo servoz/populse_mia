@@ -439,9 +439,7 @@ class DataBase:
         :param scan: The FileName of the scan to reset
         :param tag: The tag name to reset
         """
-        tags = self.session.query(Value).filter(Value.scan==scan).filter(Value.tag==tag).all()
-        # TODO return error if len(tags) != 1
-        tag = tags[0]
+        tag = self.getValue(scan, tag)
         if(tag.raw_value != None):
             tag.current_value = tag.raw_value
             self.unsavedModifications = True
@@ -488,8 +486,8 @@ class DataBase:
         :param scan: FileName of the scan
         :param tag: Name of the tag
         """
-        values = self.session.query(Value).filter(Value.scan == scan).filter(Value.tag == tag).all()
-        self.session.delete(values[0])
+        value = self.getValue(scan, tag)
+        self.session.delete(value)
         self.unsavedModifications = True
 
     def saveModifications(self):
@@ -650,12 +648,7 @@ class DataBase:
                     self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
                     i = i + 1
                 valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
-                i = 0
-                while i < len(valuesRemoved):
-                    # We reput each tag value in the values, keeping all the attributes
-                    valueToReput = valuesRemoved[i]
-                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
-                    i = i + 1
+                self.reput_values(valuesRemoved)
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1] # The second element is a list of added scans to remove
@@ -675,12 +668,7 @@ class DataBase:
                     self.addScan(scanToReput.scan, scanToReput.checksum)
                     i = i + 1
                 valuesRemoved = toUndo[2] # The third element is the list of removed values (Value class)
-                i = 0
-                while i < len(valuesRemoved):
-                    # We reput each value, exactly the same as it was before
-                    valueToReput = valuesRemoved[i]
-                    self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
-                    i = i + 1
+                self.reput_values(valuesRemoved)
 
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
@@ -726,6 +714,18 @@ class DataBase:
         - Adding 1 tag: 40 bits
         => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
         """
+
+    def reput_values(self, values):
+        """
+        To reput the Value objects in the database
+        :param values: List of Value objects
+        """
+        i = 0
+        while i < len(values):
+            # We reput each value, exactly the same as it was before
+            valueToReput = values[i]
+            self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
+            i = i + 1
 
     def redo(self):
         """
