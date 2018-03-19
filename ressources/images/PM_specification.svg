@@ -14,6 +14,7 @@
    <glyph unicode="→" horiz-adv-x="1258" d="M 1407,637 C 1388,660 1368,687 1349,720 1329,753 1309,791 1288,834 L 1360,834 C 1399,789 1440,747 1483,710 1526,673 1575,640 1630,612 L 1630,576 C 1575,548 1526,515 1483,478 1440,441 1399,399 1360,354 L 1288,354 C 1309,397 1329,435 1349,468 1368,501 1388,528 1407,551 L 418,551 418,637 1407,637 Z"/>
    <glyph unicode="…" horiz-adv-x="1525" d="M 1576,0 L 1576,219 1770,219 1770,0 1576,0 Z M 929,0 L 929,219 1121,219 1121,0 929,0 Z M 278,0 L 278,219 473,219 473,0 278,0 Z"/>
    <glyph unicode="y" horiz-adv-x="1044" d="M 604,1 C 579,-64 553,-123 527,-175 500,-227 471,-272 438,-309 405,-346 369,-374 329,-394 289,-413 243,-423 191,-423 168,-423 147,-423 128,-423 109,-423 88,-420 67,-414 L 67,-279 C 80,-282 94,-284 110,-284 126,-284 140,-284 151,-284 204,-284 253,-264 298,-225 343,-186 383,-124 417,-38 L 434,5 5,1082 197,1082 425,484 C 432,466 440,442 451,412 461,382 471,352 482,322 492,292 501,265 509,241 517,217 522,202 523,196 525,203 530,218 538,240 545,261 554,285 564,312 573,339 583,366 593,393 603,420 611,444 618,464 L 830,1082 1020,1082 604,1 Z"/>
+   <glyph unicode="x" horiz-adv-x="1017" d="M 801,0 L 510,444 217,0 23,0 408,556 41,1082 240,1082 510,661 778,1082 979,1082 612,558 1002,0 801,0 Z"/>
    <glyph unicode="v" horiz-adv-x="1044" d="M 613,0 L 400,0 7,1082 199,1082 437,378 C 442,363 447,346 454,325 460,304 466,282 473,259 480,236 486,215 492,194 497,173 502,155 506,141 510,155 515,173 522,194 528,215 534,236 541,258 548,280 555,302 562,323 569,344 575,361 580,376 L 826,1082 1017,1082 613,0 Z"/>
    <glyph unicode="u" horiz-adv-x="883" d="M 314,1082 L 314,396 C 314,343 318,299 326,264 333,229 346,200 363,179 380,157 403,142 432,133 460,124 495,119 537,119 580,119 618,127 653,142 687,157 716,178 741,207 765,235 784,270 797,312 810,353 817,401 817,455 L 817,1082 997,1082 997,228 C 997,205 997,181 998,156 998,131 998,107 999,85 1000,62 1000,43 1001,27 1002,11 1002,3 1003,3 L 833,3 C 832,6 832,15 831,30 830,44 830,61 829,79 828,98 827,117 826,136 825,156 825,172 825,185 L 822,185 C 805,154 786,125 765,100 744,75 720,53 693,36 666,18 634,4 599,-6 564,-15 523,-20 476,-20 416,-20 364,-13 321,2 278,17 242,39 214,70 186,101 166,140 153,188 140,236 133,294 133,361 L 133,1082 314,1082 Z"/>
    <glyph unicode="t" horiz-adv-x="535" d="M 554,8 C 527,1 499,-5 471,-10 442,-14 409,-16 372,-16 228,-16 156,66 156,229 L 156,951 31,951 31,1082 163,1082 216,1324 336,1324 336,1082 536,1082 536,951 336,951 336,268 C 336,216 345,180 362,159 379,138 408,127 450,127 467,127 484,128 501,131 517,134 535,137 554,141 L 554,8 Z"/>
@@ -33,10 +34,12 @@
    <glyph unicode="c" horiz-adv-x="910" d="M 275,546 C 275,484 280,427 289,375 298,323 313,278 334,241 355,203 384,174 419,153 454,132 497,122 548,122 612,122 666,139 709,173 752,206 778,258 788,328 L 970,328 C 964,283 951,239 931,197 911,155 884,118 850,86 815,54 773,28 724,9 675,-10 618,-20 553,-20 468,-20 396,-6 337,23 278,52 230,91 193,142 156,192 129,251 112,320 95,388 87,462 87,542 87,615 93,679 105,735 117,790 134,839 156,881 177,922 203,957 232,986 261,1014 293,1037 328,1054 362,1071 398,1083 436,1091 474,1098 512,1102 551,1102 612,1102 666,1094 713,1077 760,1060 801,1038 836,1009 870,980 898,945 919,906 940,867 955,824 964,779 L 779,765 C 770,825 746,873 708,908 670,943 616,961 546,961 495,961 452,953 418,936 383,919 355,893 334,859 313,824 298,781 289,729 280,677 275,616 275,546 Z"/>
    <glyph unicode="b" horiz-adv-x="963" d="M 1053,546 C 1053,169 920,-20 655,-20 573,-20 505,-5 451,25 396,54 352,102 318,168 L 316,168 C 316,150 316,132 315,113 314,94 313,77 312,61 311,45 310,31 309,19 308,8 307,2 306,2 L 132,2 C 133,8 133,18 134,32 135,47 135,64 136,84 137,104 137,126 138,150 138,174 138,199 138,225 L 138,1484 318,1484 318,1061 C 318,1041 318,1022 318,1004 317,985 317,969 316,955 315,938 315,923 314,908 L 318,908 C 351,977 396,1027 451,1057 506,1087 574,1102 655,1102 792,1102 892,1056 957,964 1021,872 1053,733 1053,546 Z M 864,540 C 864,615 859,679 850,732 841,785 826,829 805,864 784,898 758,923 726,939 694,955 655,963 609,963 562,963 520,955 484,940 447,925 417,900 393,866 368,832 350,787 337,732 324,677 318,609 318,529 318,452 324,387 337,334 350,281 368,239 393,206 417,173 447,149 483,135 519,120 560,113 607,113 651,113 689,121 721,136 753,151 780,176 801,210 822,244 838,288 849,343 859,397 864,463 864,540 Z"/>
    <glyph unicode="a" horiz-adv-x="1071" d="M 414,-20 C 305,-20 224,9 169,66 114,124 87,203 87,303 87,375 101,434 128,480 155,526 190,562 234,588 277,614 327,632 383,642 439,652 496,657 554,657 L 797,657 797,717 C 797,762 792,800 783,832 774,863 759,889 740,908 721,928 697,942 668,951 639,960 604,965 565,965 530,965 499,963 471,958 443,953 419,944 398,931 377,918 361,900 348,878 335,855 327,827 323,793 L 135,810 C 142,853 154,892 173,928 192,963 218,994 253,1020 287,1046 330,1066 382,1081 433,1095 496,1102 569,1102 705,1102 807,1071 876,1009 945,946 979,856 979,738 L 979,272 C 979,219 986,179 1000,152 1014,125 1041,111 1080,111 1090,111 1100,112 1110,113 1120,114 1130,116 1139,118 L 1139,6 C 1116,1 1094,-3 1072,-6 1049,-9 1025,-10 1000,-10 966,-10 937,-5 913,4 888,13 868,26 853,45 838,63 826,86 818,113 810,140 805,171 803,207 L 797,207 C 778,172 757,141 734,113 711,85 684,61 653,42 622,22 588,7 549,-4 510,-15 465,-20 414,-20 Z M 455,115 C 512,115 563,125 606,146 649,167 684,194 713,226 741,259 762,294 776,332 790,371 797,408 797,443 L 797,531 600,531 C 556,531 514,528 475,522 435,517 400,506 370,489 340,472 316,449 299,418 281,388 272,349 272,300 272,241 288,195 320,163 351,131 396,115 455,115 Z"/>
+   <glyph unicode="Y" horiz-adv-x="1311" d="M 777,584 L 777,0 587,0 587,584 45,1409 255,1409 684,738 1111,1409 1321,1409 777,584 Z"/>
    <glyph unicode="V" horiz-adv-x="1391" d="M 782,0 L 584,0 9,1409 210,1409 600,417 C 610,387 620,357 630,328 640,298 649,271 657,248 666,221 675,194 684,168 692,193 701,219 710,246 718,269 727,296 737,325 746,354 757,385 768,417 L 1156,1409 1357,1409 782,0 Z"/>
    <glyph unicode="U" horiz-adv-x="1204" d="M 731,-20 C 654,-20 580,-10 511,11 442,32 381,64 329,108 276,151 235,207 204,274 173,341 158,420 158,512 L 158,1409 349,1409 349,528 C 349,457 359,396 378,347 397,297 423,256 457,225 491,194 531,171 578,157 624,142 675,135 730,135 785,135 836,142 885,157 934,172 976,195 1013,227 1050,259 1079,301 1100,353 1121,404 1131,467 1131,541 L 1131,1409 1321,1409 1321,530 C 1321,436 1306,355 1275,286 1244,217 1201,159 1148,114 1095,69 1032,35 961,13 889,-9 812,-20 731,-20 Z"/>
    <glyph unicode="T" horiz-adv-x="1204" d="M 720,1253 L 720,0 530,0 530,1253 46,1253 46,1409 1204,1409 1204,1253 720,1253 Z"/>
    <glyph unicode="S" horiz-adv-x="1204" d="M 1272,389 C 1272,330 1261,275 1238,225 1215,175 1179,132 1131,96 1083,59 1023,31 950,11 877,-10 790,-20 690,-20 515,-20 378,11 280,72 182,133 120,222 93,338 L 278,375 C 287,338 302,305 321,275 340,245 367,219 400,198 433,176 473,159 522,147 571,135 629,129 697,129 754,129 806,134 853,144 900,153 941,168 975,188 1009,208 1036,234 1055,266 1074,297 1083,335 1083,379 1083,425 1073,462 1052,491 1031,520 1001,543 963,562 925,581 880,596 827,609 774,622 716,635 652,650 613,659 573,668 534,679 494,689 456,701 420,716 383,730 349,747 317,766 285,785 257,809 234,836 211,863 192,894 179,930 166,965 159,1006 159,1053 159,1120 173,1177 200,1225 227,1272 264,1311 312,1342 360,1373 417,1395 482,1409 547,1423 618,1430 694,1430 781,1430 856,1423 918,1410 980,1396 1032,1375 1075,1348 1118,1321 1152,1287 1178,1247 1203,1206 1224,1159 1239,1106 L 1051,1073 C 1042,1107 1028,1137 1011,1164 993,1191 970,1213 941,1231 912,1249 878,1263 837,1272 796,1281 747,1286 692,1286 627,1286 572,1280 528,1269 483,1257 448,1241 421,1221 394,1201 374,1178 363,1151 351,1124 345,1094 345,1063 345,1021 356,987 377,960 398,933 426,910 462,892 498,874 540,859 587,847 634,835 685,823 738,811 781,801 825,791 868,781 911,770 952,758 991,744 1030,729 1067,712 1102,693 1136,674 1166,650 1191,622 1216,594 1236,561 1251,523 1265,485 1272,440 1272,389 Z"/>
+   <glyph unicode="R" horiz-adv-x="1258" d="M 1164,0 L 798,585 359,585 359,0 168,0 168,1409 831,1409 C 911,1409 982,1400 1044,1382 1105,1363 1157,1337 1199,1302 1241,1267 1273,1225 1295,1175 1317,1125 1328,1069 1328,1006 1328,961 1322,917 1309,874 1296,831 1275,791 1247,755 1219,719 1183,688 1140,662 1097,636 1045,618 984,607 L 1384,0 1164,0 Z M 1136,1004 C 1136,1047 1129,1084 1114,1115 1099,1146 1078,1173 1050,1194 1022,1215 988,1230 948,1241 908,1251 863,1256 812,1256 L 359,1256 359,736 820,736 C 875,736 922,743 962,757 1002,770 1035,789 1061,813 1086,837 1105,865 1118,898 1130,931 1136,966 1136,1004 Z"/>
    <glyph unicode="P" horiz-adv-x="1124" d="M 1258,985 C 1258,924 1248,867 1228,814 1207,761 1177,715 1137,676 1096,637 1046,606 985,583 924,560 854,549 773,549 L 359,549 359,0 168,0 168,1409 761,1409 C 844,1409 917,1399 979,1379 1041,1358 1093,1330 1134,1293 1175,1256 1206,1211 1227,1159 1248,1106 1258,1048 1258,985 Z M 1066,983 C 1066,1072 1039,1140 984,1187 929,1233 847,1256 738,1256 L 359,1256 359,700 746,700 C 856,700 937,724 989,773 1040,822 1066,892 1066,983 Z"/>
    <glyph unicode="O" horiz-adv-x="1445" d="M 1495,711 C 1495,601 1479,501 1448,411 1416,321 1370,244 1310,180 1250,116 1177,67 1090,32 1003,-3 905,-20 795,-20 679,-20 577,-2 490,35 403,71 330,122 272,187 214,252 170,329 141,418 112,507 97,605 97,711 97,821 112,920 143,1009 174,1098 219,1173 278,1236 337,1298 411,1346 498,1380 585,1413 684,1430 797,1430 909,1430 1009,1413 1096,1379 1183,1345 1256,1297 1315,1234 1374,1171 1418,1096 1449,1007 1480,918 1495,820 1495,711 Z M 1300,711 C 1300,796 1289,873 1268,942 1246,1011 1214,1071 1172,1120 1129,1169 1077,1207 1014,1234 951,1261 879,1274 797,1274 713,1274 639,1261 576,1234 513,1207 460,1169 418,1120 375,1071 344,1011 323,942 302,873 291,796 291,711 291,626 302,549 324,479 345,408 377,348 420,297 462,246 515,206 578,178 641,149 713,135 795,135 883,135 959,149 1023,178 1086,207 1139,247 1180,298 1221,349 1251,409 1271,480 1290,551 1300,628 1300,711 Z"/>
    <glyph unicode="N" horiz-adv-x="1178" d="M 1082,0 L 328,1200 C 329,1167 331,1135 333,1103 334,1076 336,1047 337,1017 338,986 338,959 338,936 L 338,0 168,0 168,1409 390,1409 1152,201 C 1150,234 1148,266 1146,299 1145,327 1143,358 1142,391 1141,424 1140,455 1140,485 L 1140,1409 1312,1409 1312,0 1082,0 Z"/>
@@ -44,6 +47,7 @@
    <glyph unicode="L" horiz-adv-x="937" d="M 168,0 L 168,1409 359,1409 359,156 1071,156 1071,0 168,0 Z"/>
    <glyph unicode="I" horiz-adv-x="215" d="M 189,0 L 189,1409 380,1409 380,0 189,0 Z"/>
    <glyph unicode="F" horiz-adv-x="1017" d="M 359,1253 L 359,729 1145,729 1145,571 359,571 359,0 168,0 168,1409 1169,1409 1169,1253 359,1253 Z"/>
+   <glyph unicode="E" horiz-adv-x="1151" d="M 168,0 L 168,1409 1237,1409 1237,1253 359,1253 359,801 1177,801 1177,647 359,647 359,156 1278,156 1278,0 168,0 Z"/>
    <glyph unicode="D" horiz-adv-x="1231" d="M 1381,719 C 1381,602 1363,498 1328,409 1293,319 1244,244 1183,184 1122,123 1049,78 966,47 882,16 792,0 695,0 L 168,0 168,1409 634,1409 C 743,1409 843,1396 935,1369 1026,1342 1105,1300 1171,1244 1237,1187 1289,1116 1326,1029 1363,942 1381,839 1381,719 Z M 1189,719 C 1189,814 1175,896 1148,964 1121,1031 1082,1087 1033,1130 984,1173 925,1205 856,1226 787,1246 712,1256 630,1256 L 359,1256 359,153 673,153 C 747,153 816,165 879,189 942,213 996,249 1042,296 1088,343 1124,402 1150,473 1176,544 1189,626 1189,719 Z"/>
    <glyph unicode="B" horiz-adv-x="1124" d="M 1258,397 C 1258,326 1244,265 1216,215 1188,164 1150,123 1103,92 1056,60 1001,37 938,22 875,7 809,0 740,0 L 168,0 168,1409 680,1409 C 758,1409 828,1403 889,1390 950,1377 1002,1356 1045,1328 1088,1300 1120,1265 1143,1222 1165,1179 1176,1127 1176,1067 1176,1028 1171,991 1160,956 1149,921 1132,890 1110,862 1087,833 1059,809 1026,789 992,768 953,753 908,743 965,736 1015,723 1059,704 1102,685 1139,660 1168,630 1197,600 1220,565 1235,526 1250,486 1258,443 1258,397 Z M 984,1044 C 984,1120 958,1174 906,1207 854,1240 779,1256 680,1256 L 359,1256 359,810 680,810 C 736,810 783,816 822,827 861,838 892,853 916,874 940,894 957,918 968,947 979,976 984,1008 984,1044 Z M 1065,412 C 1065,457 1057,495 1041,526 1024,557 1001,583 970,603 939,623 903,638 860,647 817,656 768,661 715,661 L 359,661 359,153 730,153 C 779,153 824,157 865,165 906,173 941,187 971,207 1000,227 1023,254 1040,287 1057,320 1065,362 1065,412 Z"/>
    <glyph unicode="A" horiz-adv-x="1391" d="M 1167,0 L 1006,412 364,412 202,0 4,0 579,1409 796,1409 1362,0 1167,0 Z M 768,1026 C 757,1053 747,1080 738,1107 728,1134 719,1159 712,1182 705,1204 699,1223 694,1238 689,1253 686,1262 685,1265 684,1262 681,1252 676,1237 671,1222 665,1203 658,1180 650,1157 641,1132 632,1105 622,1078 612,1051 602,1024 L 422,561 949,561 768,1026 Z"/>
@@ -140,98 +144,108 @@
      <g class="Group">
       <g class="com.sun.star.drawing.CustomShape">
        <g id="id3">
-        <rect class="BoundingBox" stroke="none" fill="none" x="999" y="2055" width="4159" height="8146"/>
-        <path fill="rgb(255,255,255)" stroke="none" d="M 3078,10199 L 1000,10199 1000,2056 5156,2056 5156,10199 3078,10199 Z"/>
-        <path fill="none" stroke="rgb(52,101,164)" d="M 3078,10199 L 1000,10199 1000,2056 5156,2056 5156,10199 3078,10199 Z"/>
-        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1250" y="2426"><tspan id="id14.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1850" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Pipeline Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1250" y="2820"><tspan id="id15.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1850" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Loop specification</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="3214"><tspan id="id16.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Loop1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2250" y="3608"><tspan id="id17.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2850" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2250" y="4002"><tspan id="id18.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2850" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">Tag</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2250" y="4396"><tspan id="id19.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2850" y="4469"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="4790"><tspan id="id20.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="4863"><tspan fill="rgb(0,0,0)" stroke="none">Loop2</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2250" y="5184"><tspan id="id21.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2850" y="5257"><tspan fill="rgb(0,0,0)" stroke="none">List</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="5578"><tspan id="id22.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="5651"><tspan fill="rgb(0,0,0)" stroke="none">Loop3</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1250" y="5972"><tspan id="id23.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1850" y="6045"><tspan fill="rgb(0,0,0)" stroke="none">Aliases</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="6366"><tspan id="id24.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="6439"><tspan fill="rgb(0,0,0)" stroke="none">Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="6760"><tspan id="id25.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="6833"><tspan fill="rgb(0,0,0)" stroke="none">Data Source</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="7154"><tspan id="id26.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="7227"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="7621"><tspan fill="rgb(0,0,0)" stroke="none">-or-</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="7942"><tspan id="id27.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="8015"><tspan fill="rgb(0,0,0)" stroke="none">Value</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1250" y="8336"><tspan id="id28.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1850" y="8409"><tspan fill="rgb(0,0,0)" stroke="none">Output Tags</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="8730"><tspan id="id29.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="8803"><tspan fill="rgb(0,0,0)" stroke="none">?</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1250" y="9124"><tspan id="id30.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1850" y="9197"><tspan fill="rgb(0,0,0)" stroke="none">Master Input Filter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1750" y="9518"><tspan id="id31.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2350" y="9591"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="999" y="2055" width="4159" height="8446"/>
+        <path fill="rgb(255,255,255)" stroke="none" d="M 3078,10499 L 1000,10499 1000,2056 5156,2056 5156,10499 3078,10499 Z"/>
+        <path fill="none" stroke="rgb(52,101,164)" d="M 3078,10499 L 1000,10499 1000,2056 5156,2056 5156,10499 3078,10499 Z"/>
+        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1188" y="2426"><tspan id="id14.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1788" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Pipeline Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1188" y="2820"><tspan id="id15.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1788" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Loop specification</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="3214"><tspan id="id16.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Loop1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2188" y="3608"><tspan id="id17.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2788" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2188" y="4002"><tspan id="id18.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2788" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">Tag</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2188" y="4396"><tspan id="id19.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2788" y="4469"><tspan fill="rgb(0,0,0)" stroke="none">Range</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2188" y="4790"><tspan id="id20.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2788" y="4863"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="5184"><tspan id="id21.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="5257"><tspan fill="rgb(0,0,0)" stroke="none">Loop2</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2188" y="5578"><tspan id="id22.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2788" y="5651"><tspan fill="rgb(0,0,0)" stroke="none">List</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="5972"><tspan id="id23.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="6045"><tspan fill="rgb(0,0,0)" stroke="none">Loop3</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1188" y="6366"><tspan id="id24.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1788" y="6439"><tspan fill="rgb(0,0,0)" stroke="none">Aliases</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="6760"><tspan id="id25.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="6833"><tspan fill="rgb(0,0,0)" stroke="none">Name</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="7154"><tspan id="id26.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="7227"><tspan fill="rgb(0,0,0)" stroke="none">External Par. Y/N</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="7548"><tspan id="id27.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="7621"><tspan fill="rgb(0,0,0)" stroke="none">Data Source</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="7942"><tspan id="id28.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="8015"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="8409"><tspan fill="rgb(0,0,0)" stroke="none">-or-</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="8730"><tspan id="id29.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="8803"><tspan fill="rgb(0,0,0)" stroke="none">Value</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1188" y="9124"><tspan id="id30.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1788" y="9197"><tspan fill="rgb(0,0,0)" stroke="none">Output Tags</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="9518"><tspan id="id31.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="9591"><tspan fill="rgb(0,0,0)" stroke="none">?</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1188" y="9912"><tspan id="id32.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="1788" y="9985"><tspan fill="rgb(0,0,0)" stroke="none">Master Input Filter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="1688" y="10306"><tspan id="id33.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="2288" y="10379"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan></text>
         <g class="BulletChars">
          <g id="bullet-char(id29.bp)" class="BulletChar">
-          <g transform="translate(1750,8730)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,8730)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id28.bp)" class="BulletChar">
-          <g transform="translate(1250,8336)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,7942)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id27.bp)" class="BulletChar">
-          <g transform="translate(1750,7942)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,7548)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id26.bp)" class="BulletChar">
-          <g transform="translate(1750,7154)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,7154)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id25.bp)" class="BulletChar">
-          <g transform="translate(1750,6760)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,6760)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id24.bp)" class="BulletChar">
-          <g transform="translate(1750,6366)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1188,6366)" fill="rgb(0,0,0)" stroke="none">
+           <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
+          </g>
+         </g>
+         <g id="bullet-char(id32.bp)" class="BulletChar">
+          <g transform="translate(1188,9912)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id17.bp)" class="BulletChar">
-          <g transform="translate(2250,3608)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(2188,3608)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id23.bp)" class="BulletChar">
-          <g transform="translate(1250,5972)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,5972)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id31.bp)" class="BulletChar">
-          <g transform="translate(1750,9518)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,9518)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id16.bp)" class="BulletChar">
-          <g transform="translate(1750,3214)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,3214)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id22.bp)" class="BulletChar">
-          <g transform="translate(1750,5578)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(2188,5578)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id30.bp)" class="BulletChar">
-          <g transform="translate(1250,9124)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1188,9124)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id15.bp)" class="BulletChar">
-          <g transform="translate(1250,2820)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1188,2820)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id21.bp)" class="BulletChar">
-          <g transform="translate(2250,5184)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1688,5184)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id14.bp)" class="BulletChar">
-          <g transform="translate(1250,2426)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(1188,2426)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id20.bp)" class="BulletChar">
-          <g transform="translate(1750,4790)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(2188,4790)" fill="rgb(0,0,0)" stroke="none">
+           <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
+          </g>
+         </g>
+         <g id="bullet-char(id33.bp)" class="BulletChar">
+          <g transform="translate(1688,10306)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id18.bp)" class="BulletChar">
-          <g transform="translate(2250,4002)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(2188,4002)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
          <g id="bullet-char(id19.bp)" class="BulletChar">
-          <g transform="translate(2250,4396)" fill="rgb(0,0,0)" stroke="none">
+          <g transform="translate(2188,4396)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
@@ -248,17 +262,17 @@
      <g class="Group">
       <g class="com.sun.star.drawing.CustomShape">
        <g id="id5">
-        <rect class="BoundingBox" stroke="none" fill="none" x="5987" y="2055" width="4159" height="8146"/>
-        <path fill="rgb(255,255,255)" stroke="none" d="M 8066,10199 L 5988,10199 5988,2056 10144,2056 10144,10199 8066,10199 Z"/>
-        <path fill="none" stroke="rgb(52,101,164)" d="M 8066,10199 L 5988,10199 5988,2056 10144,2056 10144,10199 8066,10199 Z"/>
-        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="2426"><tspan id="id32.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="6809" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Brick 1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="2820"><tspan id="id33.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="6809" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Brick 2</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">→ </tspan><tspan fill="rgb(0,0,0)" stroke="none">List and select bricks</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="5987" y="2055" width="4159" height="8446"/>
+        <path fill="rgb(255,255,255)" stroke="none" d="M 8066,10499 L 5988,10499 5988,2056 10144,2056 10144,10499 8066,10499 Z"/>
+        <path fill="none" stroke="rgb(52,101,164)" d="M 8066,10499 L 5988,10499 5988,2056 10144,2056 10144,10499 8066,10499 Z"/>
+        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="2426"><tspan id="id34.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="6809" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Brick 1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="2820"><tspan id="id35.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="6809" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Brick 2</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="6209" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">→ </tspan><tspan fill="rgb(0,0,0)" stroke="none">List and select bricks</tspan></tspan></tspan></text>
         <g class="BulletChars">
-         <g id="bullet-char(id33.bp)" class="BulletChar">
+         <g id="bullet-char(id35.bp)" class="BulletChar">
           <g transform="translate(6209,2820)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id32.bp)" class="BulletChar">
+         <g id="bullet-char(id34.bp)" class="BulletChar">
           <g transform="translate(6209,2426)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
@@ -276,97 +290,97 @@
      <g class="Group">
       <g class="com.sun.star.drawing.CustomShape">
        <g id="id7">
-        <rect class="BoundingBox" stroke="none" fill="none" x="10799" y="2055" width="4503" height="8146"/>
-        <path fill="rgb(255,255,255)" stroke="none" d="M 13050,10199 L 10800,10199 10800,2056 15300,2056 15300,10199 13050,10199 Z"/>
-        <path fill="none" stroke="rgb(52,101,164)" d="M 13050,10199 L 10800,10199 10800,2056 15300,2056 15300,10199 13050,10199 Z"/>
-        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="10984" y="2426"><tspan id="id34.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="11584" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Brick 1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="2820"><tspan id="id35.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">ID: DefaultName</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="3214"><tspan id="id36.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Loop specification</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="3608"><tspan id="id37.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">…</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="4002"><tspan id="id38.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">Parameters</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="4396"><tspan id="id39.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="4469"><tspan fill="rgb(0,0,0)" stroke="none">InputFile</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="4790"><tspan id="id40.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="4863"><tspan fill="rgb(0,0,0)" stroke="none">Data Source</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5184"><tspan id="id41.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="5257"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5651"><tspan fill="rgb(0,0,0)" stroke="none">-or-</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5972"><tspan id="id42.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="6045"><tspan fill="rgb(0,0,0)" stroke="none">Alias</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="6366"><tspan id="id43.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="6439"><tspan fill="rgb(0,0,0)" stroke="none">InputParameter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="6760"><tspan id="id44.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="6833"><tspan fill="rgb(0,0,0)" stroke="none">Value / Alias</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="7154"><tspan id="id45.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="7227"><tspan fill="rgb(0,0,0)" stroke="none">…</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="7548"><tspan id="id46.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="7621"><tspan fill="rgb(0,0,0)" stroke="none">Outputs</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="7942"><tspan id="id47.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="8015"><tspan fill="rgb(0,0,0)" stroke="none">OutParam1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="8336"><tspan id="id48.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="8409"><tspan fill="rgb(0,0,0)" stroke="none">Save: yes/no</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="8730"><tspan id="id49.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="8803"><tspan fill="rgb(0,0,0)" stroke="none">Tags</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="10984" y="9124"><tspan id="id50.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="11584" y="9197"><tspan fill="rgb(0,0,0)" stroke="none">Brick2 (if selected)</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="9518"><tspan id="id51.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="9591"><tspan fill="rgb(0,0,0)" stroke="none">...</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="10799" y="2055" width="4503" height="8446"/>
+        <path fill="rgb(255,255,255)" stroke="none" d="M 13050,10499 L 10800,10499 10800,2056 15300,2056 15300,10499 13050,10499 Z"/>
+        <path fill="none" stroke="rgb(52,101,164)" d="M 13050,10499 L 10800,10499 10800,2056 15300,2056 15300,10499 13050,10499 Z"/>
+        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="10984" y="2426"><tspan id="id36.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="11584" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Brick 1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="2820"><tspan id="id37.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">ID: DefaultName</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="3214"><tspan id="id38.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Loop specification</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="3608"><tspan id="id39.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">…</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="4002"><tspan id="id40.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">Parameters</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="4396"><tspan id="id41.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="4469"><tspan fill="rgb(0,0,0)" stroke="none">InputFile</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="4790"><tspan id="id42.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="4863"><tspan fill="rgb(0,0,0)" stroke="none">Data Source</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5184"><tspan id="id43.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="5257"><tspan fill="rgb(0,0,0)" stroke="none">Filter</tspan></tspan></tspan><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5651"><tspan fill="rgb(0,0,0)" stroke="none">-or-</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="5972"><tspan id="id44.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="6045"><tspan fill="rgb(0,0,0)" stroke="none">Alias</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="6366"><tspan id="id45.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="6439"><tspan fill="rgb(0,0,0)" stroke="none">InputParameter</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="6760"><tspan id="id46.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="6833"><tspan fill="rgb(0,0,0)" stroke="none">Value / Alias</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="7154"><tspan id="id47.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="7227"><tspan fill="rgb(0,0,0)" stroke="none">…</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="7548"><tspan id="id48.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="7621"><tspan fill="rgb(0,0,0)" stroke="none">Outputs</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11984" y="7942"><tspan id="id49.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12584" y="8015"><tspan fill="rgb(0,0,0)" stroke="none">OutParam1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="8336"><tspan id="id50.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="8409"><tspan fill="rgb(0,0,0)" stroke="none">Save: yes/no</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="12484" y="8730"><tspan id="id51.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="13084" y="8803"><tspan fill="rgb(0,0,0)" stroke="none">Tags</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="10984" y="9124"><tspan id="id52.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="11584" y="9197"><tspan fill="rgb(0,0,0)" stroke="none">Brick2 (if selected)</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="11484" y="9518"><tspan id="id53.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="12084" y="9591"><tspan fill="rgb(0,0,0)" stroke="none">...</tspan></tspan></tspan></text>
         <g class="BulletChars">
-         <g id="bullet-char(id49.bp)" class="BulletChar">
-          <g transform="translate(12484,8730)" fill="rgb(0,0,0)" stroke="none">
-           <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
-          </g>
-         </g>
-         <g id="bullet-char(id48.bp)" class="BulletChar">
+         <g id="bullet-char(id50.bp)" class="BulletChar">
           <g transform="translate(12484,8336)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id47.bp)" class="BulletChar">
+         <g id="bullet-char(id49.bp)" class="BulletChar">
           <g transform="translate(11984,7942)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id46.bp)" class="BulletChar">
+         <g id="bullet-char(id48.bp)" class="BulletChar">
           <g transform="translate(11484,7548)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id45.bp)" class="BulletChar">
+         <g id="bullet-char(id47.bp)" class="BulletChar">
           <g transform="translate(11984,7154)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id44.bp)" class="BulletChar">
+         <g id="bullet-char(id46.bp)" class="BulletChar">
           <g transform="translate(12484,6760)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id43.bp)" class="BulletChar">
+         <g id="bullet-char(id45.bp)" class="BulletChar">
           <g transform="translate(11984,6366)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id42.bp)" class="BulletChar">
+         <g id="bullet-char(id44.bp)" class="BulletChar">
           <g transform="translate(12484,5972)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id41.bp)" class="BulletChar">
+         <g id="bullet-char(id43.bp)" class="BulletChar">
           <g transform="translate(12484,5184)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id40.bp)" class="BulletChar">
+         <g id="bullet-char(id42.bp)" class="BulletChar">
           <g transform="translate(12484,4790)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id39.bp)" class="BulletChar">
+         <g id="bullet-char(id41.bp)" class="BulletChar">
           <g transform="translate(11984,4396)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id38.bp)" class="BulletChar">
+         <g id="bullet-char(id40.bp)" class="BulletChar">
           <g transform="translate(11484,4002)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id37.bp)" class="BulletChar">
+         <g id="bullet-char(id39.bp)" class="BulletChar">
           <g transform="translate(11984,3608)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id51.bp)" class="BulletChar">
+         <g id="bullet-char(id53.bp)" class="BulletChar">
           <g transform="translate(11484,9518)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id36.bp)" class="BulletChar">
+         <g id="bullet-char(id38.bp)" class="BulletChar">
           <g transform="translate(11484,3214)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id50.bp)" class="BulletChar">
+         <g id="bullet-char(id52.bp)" class="BulletChar">
           <g transform="translate(10984,9124)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id35.bp)" class="BulletChar">
+         <g id="bullet-char(id37.bp)" class="BulletChar">
           <g transform="translate(11484,2820)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id34.bp)" class="BulletChar">
+         <g id="bullet-char(id51.bp)" class="BulletChar">
+          <g transform="translate(12484,8730)" fill="rgb(0,0,0)" stroke="none">
+           <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
+          </g>
+         </g>
+         <g id="bullet-char(id36.bp)" class="BulletChar">
           <g transform="translate(10984,2426)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
@@ -384,32 +398,32 @@
      <g class="Group">
       <g class="com.sun.star.drawing.CustomShape">
        <g id="id9">
-        <rect class="BoundingBox" stroke="none" fill="none" x="15843" y="2055" width="4159" height="8146"/>
-        <path fill="rgb(255,255,255)" stroke="none" d="M 17922,10199 L 15844,10199 15844,2056 20000,2056 20000,10199 17922,10199 Z"/>
-        <path fill="none" stroke="rgb(52,101,164)" d="M 17922,10199 L 15844,10199 15844,2056 20000,2056 20000,10199 17922,10199 Z"/>
-        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="2426"><tspan id="id52.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Database</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="2820"><tspan id="id53.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Brick1 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="3214"><tspan id="id54.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Brick1 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="3608"><tspan id="id55.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">Brick2 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="4002"><tspan id="id56.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">...</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="15843" y="2055" width="4159" height="8446"/>
+        <path fill="rgb(255,255,255)" stroke="none" d="M 17922,10499 L 15844,10499 15844,2056 20000,2056 20000,10499 17922,10499 Z"/>
+        <path fill="none" stroke="rgb(52,101,164)" d="M 17922,10499 L 15844,10499 15844,2056 20000,2056 20000,10499 17922,10499 Z"/>
+        <text class="TextShape"><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="2426"><tspan id="id54.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="2499"><tspan fill="rgb(0,0,0)" stroke="none">Database</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="2820"><tspan id="id55.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="2893"><tspan fill="rgb(0,0,0)" stroke="none">Brick1 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="3214"><tspan id="id56.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="3287"><tspan fill="rgb(0,0,0)" stroke="none">Brick1 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="3608"><tspan id="id57.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="3681"><tspan fill="rgb(0,0,0)" stroke="none">Brick2 output1</tspan></tspan></tspan><tspan ooo:numbering-type="bullet-style" class="ListItem" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="16094" y="4002"><tspan id="id58.bp" class="BulletPlaceholder"/></tspan><tspan class="TextPosition" x="16694" y="4075"><tspan fill="rgb(0,0,0)" stroke="none">...</tspan></tspan></tspan></text>
         <g class="BulletChars">
-         <g id="bullet-char(id56.bp)" class="BulletChar">
+         <g id="bullet-char(id58.bp)" class="BulletChar">
           <g transform="translate(16094,4002)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id55.bp)" class="BulletChar">
+         <g id="bullet-char(id57.bp)" class="BulletChar">
           <g transform="translate(16094,3608)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id54.bp)" class="BulletChar">
+         <g id="bullet-char(id56.bp)" class="BulletChar">
           <g transform="translate(16094,3214)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id53.bp)" class="BulletChar">
+         <g id="bullet-char(id55.bp)" class="BulletChar">
           <g transform="translate(16094,2820)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
          </g>
-         <g id="bullet-char(id52.bp)" class="BulletChar">
+         <g id="bullet-char(id54.bp)" class="BulletChar">
           <g transform="translate(16094,2426)" fill="rgb(0,0,0)" stroke="none">
            <use transform="scale(158,158)" xlink:href="#bullet-char-template(9679)"/>
           </g>
@@ -426,22 +440,22 @@
      </g>
      <g class="com.sun.star.drawing.CustomShape">
       <g id="id11">
-       <rect class="BoundingBox" stroke="none" fill="none" x="999" y="11399" width="19003" height="6603"/>
-       <path fill="rgb(255,255,255)" stroke="none" d="M 10500,18000 L 1000,18000 1000,11400 20000,11400 20000,18000 10500,18000 Z"/>
-       <path fill="none" stroke="rgb(52,101,164)" d="M 10500,18000 L 1000,18000 1000,11400 20000,11400 20000,18000 10500,18000 Z"/>
+       <rect class="BoundingBox" stroke="none" fill="none" x="999" y="11699" width="19003" height="6303"/>
+       <path fill="rgb(255,255,255)" stroke="none" d="M 10500,18000 L 1000,18000 1000,11700 20000,11700 20000,18000 10500,18000 Z"/>
+       <path fill="none" stroke="rgb(52,101,164)" d="M 10500,18000 L 1000,18000 1000,11700 20000,11700 20000,18000 10500,18000 Z"/>
       </g>
      </g>
      <g class="Group">
       <g class="com.sun.star.drawing.TextShape">
        <g id="id12">
-        <rect class="BoundingBox" stroke="none" fill="none" x="1000" y="10650" width="3301" height="646"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="700"><tspan class="TextPosition" x="1250" y="11093"><tspan fill="rgb(0,0,0)" stroke="none">Pipeline Viewer</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="1000" y="10950" width="3301" height="646"/>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="700"><tspan class="TextPosition" x="1250" y="11393"><tspan fill="rgb(0,0,0)" stroke="none">Pipeline Viewer</tspan></tspan></tspan></text>
        </g>
       </g>
       <g class="com.sun.star.drawing.TextShape">
        <g id="id13">
-        <rect class="BoundingBox" stroke="none" fill="none" x="5300" y="10650" width="2662" height="646"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="5550" y="11093"><tspan fill="rgb(0,0,0)" stroke="none">Unroll loops </tspan><tspan fill="rgb(0,0,0)" stroke="none">□</tspan></tspan></tspan></text>
+        <rect class="BoundingBox" stroke="none" fill="none" x="5300" y="10950" width="2662" height="646"/>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="353px" font-weight="400"><tspan class="TextPosition" x="5550" y="11393"><tspan fill="rgb(0,0,0)" stroke="none">Unroll loops </tspan><tspan fill="rgb(0,0,0)" stroke="none">□</tspan></tspan></tspan></text>
        </g>
       </g>
      </g>
