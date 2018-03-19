@@ -286,14 +286,14 @@ class DataBrowser(QWidget):
 
         # We get the values entered by the user
         if self.pop_up_add_tag.exec_() == QDialog.Accepted:
-            (new_tag_name, new_default_value, type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
+            (new_tag_name, new_default_value, tag_type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
             values = []
 
             database_value = table_to_database(new_default_value)
 
             # We add the tag and a value for each scan in the database
-            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, type, new_tag_unit, database_value, new_tag_description)
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, database_value, new_tag_description)
             for scan in self.database.getScans():
                 self.database.addValue(scan.scan, new_tag_name, database_value, None)
                 values.append([scan.scan, new_tag_name, database_value, None]) # For history
@@ -912,8 +912,11 @@ class TableDataBrowser(QTableWidget):
         """
 
         import ast
+        import sys
 
         super(TableDataBrowser, self).mouseReleaseEvent(e)
+
+        self.setMouseTracking(False)
 
         self.coordinates = [] # Coordinates of selected cells stored
         self.old_values = [] # Old values stored
@@ -953,6 +956,7 @@ class TableDataBrowser(QTableWidget):
                         self.table_sizes.append(size)
 
                 else:
+                    self.setMouseTracking(True)
                     return
 
             # Error if tables of different sizes
@@ -967,7 +971,7 @@ class TableDataBrowser(QTableWidget):
                 msg.exec()
 
             # Ok
-            else:
+            elif len(self.old_values) > 0:
 
                 if len(self.coordinates) > 1:
                     list_value = []
@@ -989,6 +993,8 @@ class TableDataBrowser(QTableWidget):
                 historyMaker.append("modified_values")
                 modified_values = []
 
+                self.itemChanged.disconnect()
+
                 # Tables updated
                 i = 0
                 while i < len(self.coordinates):
@@ -1005,7 +1011,9 @@ class TableDataBrowser(QTableWidget):
                 self.database.undos.append(historyMaker)
                 self.database.redos.clear()
 
-            self.itemChanged.connect(self.change_cell_color)
+                self.itemChanged.connect(self.change_cell_color)
+
+            self.setMouseTracking(True)
 
             # Auto-save
             config = Config()
@@ -1013,7 +1021,7 @@ class TableDataBrowser(QTableWidget):
                 save_project(self.database)
 
         except Exception as e:
-            print(e)
+            self.setMouseTracking(True)
 
     def change_cell_color(self, item_origin):
         """
