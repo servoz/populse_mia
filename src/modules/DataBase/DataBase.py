@@ -467,6 +467,9 @@ class DataBase:
         if(tag.raw_value != None):
             tag.current_value = tag.raw_value
             self.unsavedModifications = True
+            return True
+        else:
+            return False
 
     def removeScan(self, scan):
         """

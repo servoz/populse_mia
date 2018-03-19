@@ -679,6 +679,8 @@ class TableDataBrowser(QTableWidget):
 
         points = self.selectedIndexes()
 
+        has_unreset_values = False # To know if some values do not have raw values (user tags)
+
         for point in points:
             row = point.row()
             col = point.column()
@@ -688,7 +690,8 @@ class TableDataBrowser(QTableWidget):
             if(self.database.scanHasTag(scan_name, tag_name)):
                 cell = self.database.getValue(scan_name, tag_name)
                 modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value]) # For history
-                self.database.resetTag(scan_name, tag_name)
+                if not self.database.resetTag(scan_name, tag_name):
+                    has_unreset_values = True
                 self.item(row, col).setText(cell.raw_value)
 
                 if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
@@ -704,6 +707,17 @@ class TableDataBrowser(QTableWidget):
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
 
+        # Warning message if unreset values
+        if has_unreset_values:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Some values do not have a raw value")
+            msg.setInformativeText("Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
     def reset_column(self):
 
         # For history
@@ -712,6 +726,8 @@ class TableDataBrowser(QTableWidget):
         modified_values = []
 
         points = self.selectedIndexes()
+
+        has_unreset_values = False  # To know if some values do not have raw values (user tags)
 
         for point in points:
             col = point.column()
@@ -723,7 +739,8 @@ class TableDataBrowser(QTableWidget):
                 if (self.database.scanHasTag(scan, tag_name)):
                     cell = self.database.getValue(scan, tag_name) # Value object of the cell
                     modified_values.append([scan, tag_name, cell.current_value, cell.raw_value]) # For history
-                    self.database.resetTag(scan, tag_name)
+                    if not self.database.resetTag(scan, tag_name):
+                        has_unreset_values = True
                     self.item(row, col).setText(cell.raw_value)
                     if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
                         color = QColor()
@@ -739,6 +756,18 @@ class TableDataBrowser(QTableWidget):
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
 
+        # Warning message if unreset values
+        if has_unreset_values:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Some values do not have a raw value")
+            msg.setInformativeText(
+                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
     def reset_row(self):
 
         # For history
@@ -747,6 +776,8 @@ class TableDataBrowser(QTableWidget):
         modified_values = []
 
         points = self.selectedIndexes()
+
+        has_unreset_values = False  # To know if some values do not have raw values (user tags)
 
         # For each selected cell
         for point in points:
@@ -760,7 +791,8 @@ class TableDataBrowser(QTableWidget):
                     # We reset the value only if it exists
                     cell = self.database.getValue(scan_name, tag) # Value object of the cell
                     modified_values.append([scan_name, tag, cell.current_value, cell.raw_value]) # For history
-                    self.database.resetTag(scan_name, tag)
+                    if not self.database.resetTag(scan_name, tag):
+                        has_unreset_values = True
                     self.item(row, column).setText(cell.raw_value)
                     if(self.database.getTagOrigin(tag) == TAG_ORIGIN_RAW):
                         color = QColor()
@@ -775,6 +807,18 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append(modified_values)
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
+
+        # Warning message if unreset values
+        if has_unreset_values:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Some values do not have a raw value")
+            msg.setInformativeText(
+                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
     def reset_cells_with_item(self, items_in):
 
