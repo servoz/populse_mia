@@ -2,9 +2,6 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
-from functools import partial
-
-
 
 class Ui_Visualized_Tags(QWidget):
     """
@@ -47,7 +44,7 @@ class Ui_Visualized_Tags(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, database))
+        self.search_bar.textChanged.connect(self.search_str)
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
@@ -84,6 +81,7 @@ class Ui_Visualized_Tags(QWidget):
             if tag.visible == False:
                 self.list_widget_tags.addItem(item)
                 item.setText(tag.tag)
+        self.list_widget_tags.sortItems()
 
     def search_str(self, database, str_search):
         return_list = []
@@ -101,6 +99,7 @@ class Ui_Visualized_Tags(QWidget):
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
             item.setText(tag_name)
+        self.list_widget_tags.sortItems()
 
     def click_select_tag(self):
         # Put the selected tags in the "selected tag" table
@@ -110,6 +109,7 @@ class Ui_Visualized_Tags(QWidget):
             # assuming the other listWidget is called listWidget_2
             self.list_widget_selected_tags.addItem(self.list_widget_tags.takeItem(row))
 
+
     def click_unselect_tag(self):
         # Remove the unselected tags from the "selected tag" table
         rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],
@@ -117,3 +117,5 @@ class Ui_Visualized_Tags(QWidget):
         for row in rows:
             if (self.list_widget_selected_tags.item(row).text() != "FileName"):
                 self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
+
+        self.list_widget_tags.sortItems()
