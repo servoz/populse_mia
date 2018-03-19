@@ -317,9 +317,9 @@ class MiniViewer(QWidget):
             self.scroll_area.setWidget(self.frame)
 
             self.h_box_check_box = QHBoxLayout()
-            self.h_box_check_box.addStretch(1)
 
             if self.check_box_slices.isChecked():
+                self.h_box_check_box.addStretch(1)
                 self.label_nb_slices.setHidden(False)
                 self.line_edit_nb_slices.setHidden(False)
                 self.h_box_check_box.addWidget(self.label_nb_slices)
@@ -328,6 +328,7 @@ class MiniViewer(QWidget):
             else:
                 self.check_box_cursors.setHidden(False)
                 self.h_box_check_box.addWidget(self.check_box_cursors)
+                self.h_box_check_box.addStretch(1)
                 self.label_nb_slices.setHidden(True)
                 self.line_edit_nb_slices.setHidden(True)
 
