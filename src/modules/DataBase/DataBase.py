@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, cast, VARCHAR
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.interfaces import PoolListener
 from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
@@ -7,6 +8,13 @@ import yaml
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
 import pickle
+
+class ForeignKeysListener(PoolListener):
+    """
+    Class to activate the pragma case_sensitive_like, that makes the like and contains functions case sensitive
+    """
+    def connect(self, dbapi_con, con_record):
+        db_cursor = dbapi_con.execute('pragma case_sensitive_like=ON')
 
 class DataBase:
 
@@ -44,7 +52,7 @@ class DataBase:
         if(new_project):
             createDatabase(self.folder)
         # We open the database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
@@ -459,6 +467,9 @@ class DataBase:
         if(tag.raw_value != None):
             tag.current_value = tag.raw_value
             self.unsavedModifications = True
+            return True
+        else:
+            return False
 
     def removeScan(self, scan):
         """
