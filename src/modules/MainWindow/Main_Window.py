@@ -22,6 +22,7 @@ from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
+from PopUps.Ui_Dialog_Export_Current_Filter import Ui_Dialog_Export_Current_Filter
 
 import ProjectManager.controller as controller
 import shutil
@@ -93,6 +94,8 @@ class Main_Window(QMainWindow):
         self.action_save_as = QAction('Save project as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
 
+        self.action_save_current_filter = QAction('Export current filter', self)
+
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
@@ -121,6 +124,7 @@ class Main_Window(QMainWindow):
         self.action_exit.triggered.connect(self.close)
         self.action_save.triggered.connect(self.saveChoice)
         self.action_save_as.triggered.connect(self.save_project_as)
+        self.action_save_current_filter.triggered.connect(self.save_current_filter)
         self.action_import.triggered.connect(self.import_data)
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
@@ -146,6 +150,8 @@ class Main_Window(QMainWindow):
         self.menu_file.addAction(self.action_save)
         self.menu_file.addAction(self.action_save_as)
         self.menu_file.addSeparator()
+        self.menu_file.addAction(self.action_save_current_filter)
+        self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
         self.menu_file.addMenu(self.menu_saved_projects)
@@ -167,6 +173,23 @@ class Main_Window(QMainWindow):
         # Actions in the "Help" menu
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
+
+    def save_current_filter(self):
+        """
+        To save the current filter as a .json file
+        """
+        # Opens a pop-up when the 'Save current filter' action is clicked
+        self.exPopup = Ui_Dialog_Export_Current_Filter()
+
+        if self.exPopup.exec_() == QDialog.Accepted:
+
+            # Getting the path
+            file_name = self.exPopup.selectedFiles()
+            self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+            file_name = self.exPopup.relative_path
+
+            # Getting the current filter
+
 
     def undo(self):
         """

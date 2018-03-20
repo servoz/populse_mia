@@ -217,8 +217,8 @@ class DataBase:
         :return: The Scan object of the scan
         """
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
-        #TODO return error if len(scans) != 1
-        return scans[0]
+        if len(scans) == 1:
+            return scans[0]
 
     def getValuesGivenTag(self, tag):
         """
@@ -246,8 +246,8 @@ class DataBase:
         :return: The Value object of the cell
         """
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
-        #TODO return error if len(values) != 1
-        return values[0]
+        if len(values) == 1:
+            return values[0]
 
     def scanHasTag(self, scan, tag):
         """
@@ -348,8 +348,8 @@ class DataBase:
         :return: The Tag object associated to the tag
         """
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        return tags[0]
+        if len(tags) == 1:
+            return tags[0]
 
     def getUserTags(self):
         """
@@ -459,10 +459,9 @@ class DataBase:
             self.session.delete(tag)
         # The scan is removed from the list of scans
         scans = self.session.query(Scan).filter(Scan.scan == scan).all()
-        # TODO return error if len(scans) != 1
-        # TODO remove tag if only used for this scan
-        self.session.delete(scans[0])
-        self.unsavedModifications = True
+        if len(scans) == 1:
+            self.session.delete(scans[0])
+            self.unsavedModifications = True
 
     def removeTag(self, tag):
         """
@@ -646,7 +645,7 @@ class DataBase:
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
                     self.addTag(tagToReput.tag, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit, tagToReput.default, tagToReput.description)
-                    i = i + 1
+                    i += 1
                 valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
             if (action == "add_scans"):
@@ -657,7 +656,7 @@ class DataBase:
                     # We remove each scan added
                     scanToRemove = scansAdded[i][0]
                     self.removeScan(scanToRemove)
-                    i = i + 1
+                    i += 1
             if(action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
                 scansRemoved = toUndo[1] # The second element is the list of removed scans (Scan class)
@@ -666,7 +665,7 @@ class DataBase:
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
                     self.addScan(scanToReput.scan, scanToReput.checksum)
-                    i = i + 1
+                    i += 1
                 valuesRemoved = toUndo[2] # The third element is the list of removed values (Value class)
                 self.reput_values(valuesRemoved)
 
@@ -686,7 +685,7 @@ class DataBase:
                     else:
                         # If the cell was there before, we just set it to the old value
                         self.setTagValue(scan, tag, str(old_value))
-                    i = i + 1
+                    i += 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
                 visibles = toUndo[1] # List of the tags visibles before the modification (Tag objects)
@@ -698,8 +697,7 @@ class DataBase:
                 # To revert a sort change
                 old_sorted_tag = toUndo[1]
                 old_sort_order = toUndo[2]
-                self.setSortedTag(old_sorted_tag)
-                self.setSortOrder(old_sort_order)
+                self.update_sort(old_sorted_tag, old_sort_order)
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
 
@@ -715,6 +713,10 @@ class DataBase:
         => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
         """
 
+    def update_sort(self, tag, order):
+        self.setSortedTag(tag)
+        self.setSortOrder(order)
+
     def reput_values(self, values):
         """
         To reput the Value objects in the database
@@ -725,7 +727,7 @@ class DataBase:
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
             self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
-            i = i + 1
+            i += 1
 
     def redo(self):
         """
@@ -758,7 +760,7 @@ class DataBase:
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToRemove = tagsRemoved[i].tag
                     self.removeTag(tagToRemove)
-                    i = i + 1
+                    i += 1
             if (action == "add_scans"):
                 # To add the scans, we need the FileNames and the values associated to the scans
                 scansAdded = toRedo[1]  # The second element is a list of the scans to add
@@ -768,14 +770,14 @@ class DataBase:
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
                     self.addScan(scanToAdd[0], scanToAdd[1])
-                    i = i + 1
+                    i += 1
                 # We add all the values
                 i = 0
                 valuesAdded = toRedo[2] # The third element is a list of the values to add
                 while i < len(valuesAdded):
                     valueToAdd = valuesAdded[i]
                     self.addValue(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
-                    i = i + 1
+                    i += 1
             if(action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Scan class)
@@ -784,7 +786,7 @@ class DataBase:
                     # We reput each scan, keeping the same values
                     scanToRemove = scansRemoved[i].scan
                     self.removeScan(scanToRemove)
-                    i = i + 1
+                    i += 1
             if (action == "modified_values"):
                 # To modily the values, we need the cells, and the updated values
                 modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -797,7 +799,7 @@ class DataBase:
                     # valueToRestore[2] is the old value of the cell
                     new_value = valueToRestore[3]
                     self.setTagValue(scan, tag, new_value)
-                    i = i + 1
+                    i += 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
                 visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
@@ -810,7 +812,6 @@ class DataBase:
                 # toUndo[1] and toUndo[2] are old values
                 new_sorted_tag = toRedo[3]
                 new_sort_order = toRedo[4]
-                self.setSortedTag(new_sorted_tag)
-                self.setSortOrder(new_sort_order)
+                self.update_sort(new_sorted_tag, new_sort_order)
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits

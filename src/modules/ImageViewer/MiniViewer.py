@@ -25,10 +25,6 @@ class MiniViewer(QWidget):
     """ MiniViewer that allows to rapidly visualize scans either with a single image per scan
     with cursors to move in five dimensions or with all images of the greater dimension of the scan.
     """
-    # TODO: IF THE CHECKBOX TO SHOW ALL SLICES IS CHECKED OR UNCHECKED IN THE PREFERENCES POP-UP, IT DOES NOT UPDATE THE
-    # TODO: CHECKBOX OF THE MINIVIEWER : EVEN WITH SIGNALS IT DOES NOT WORK BECAUSE WE NEED TO CREATE TWO SEVERAL OBJECTS
-
-    # TODO: HANDLE THE MULTI SELECTION
 
     def __init__(self, database):
         """ Method to initialize the MiniViewer class. """
