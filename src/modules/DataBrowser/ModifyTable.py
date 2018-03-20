@@ -109,7 +109,6 @@ class ModifyTable(QDialog):
 
                 # Error dialog if invalid cell
                 valid = False
-                # Dialog that says that it is not possible
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText("Invalid value")
