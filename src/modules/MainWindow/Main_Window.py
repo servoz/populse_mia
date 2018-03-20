@@ -189,7 +189,23 @@ class Main_Window(QMainWindow):
             file_name = self.exPopup.relative_path
 
             # Getting the current filter
+            search_bar_text = self.data_browser.search_bar.text()
+            advanced_search = self.data_browser.advanced_search
+            (fields, conditions, values, links, nots) = advanced_search.get_filters()
 
+            # Filter dictionary
+            data = {
+                "search_bar_text": search_bar_text,
+                "fields": fields,
+                "conditions": conditions,
+                "values": values,
+                "links": links,
+                "nots": nots
+            }
+
+            # Json filter file written
+            with open(file_name, 'w') as outfile:
+                json.dump(data, outfile)
 
     def undo(self):
         """

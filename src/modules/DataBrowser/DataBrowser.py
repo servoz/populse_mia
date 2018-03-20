@@ -798,6 +798,9 @@ class TableDataBrowser(QTableWidget):
             self.display_unreset_values()
 
     def display_unreset_values(self):
+        """
+        Error message when trying to reset user tags
+        """
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setText("Some values do not have a raw value")

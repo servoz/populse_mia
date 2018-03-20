@@ -16,11 +16,12 @@ class Ui_Dialog_Export_Current_Filter(QFileDialog):
 
     def __init__(self):
         super().__init__()
+        self.setDefaultSuffix(".json")
         self.setLabelText(QFileDialog.Accept, "Create")
         self.setAcceptMode(QFileDialog.AcceptSave)
 
-        # Setting the projects directory as default
-        utils.set_projects_directory_as_default(self)
+        # Setting the filters directory as default
+        utils.set_filters_directory_as_default(self)
 
     def retranslateUi(self, file_name):
         file_name = file_name[0]

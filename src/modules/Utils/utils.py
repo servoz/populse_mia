@@ -96,3 +96,10 @@ def set_projects_directory_as_default(dialog):
         os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
     dialog.setDirectory(
         os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
+
+def set_filters_directory_as_default(dialog):
+    # Setting the filters directory as default (Json files)
+    if not (os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'filters'))):
+        os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'filters'))
+    dialog.setDirectory(
+        os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'filters')))
