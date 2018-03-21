@@ -26,5 +26,5 @@ database:
     - apk add git rsync openssh python python-dev py-pip build-base
     - pip install docker-compose
   script:
-    - python3 tests.py test_database
+    - python tests.py test_database
 
