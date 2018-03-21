@@ -5,7 +5,7 @@ from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox, QPushButton
 import os
-from ProjectManager.controller import save_project
+from ProjectManager.Controller import save_project
 
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
@@ -115,11 +115,10 @@ class DataBrowser(QWidget):
         self.table_data.database = database
         self.viewer.database = database
         self.advanced_search.database = database
+        # Update count table database?
 
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
-
-        #TODO update count table Database???
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")

@@ -23,7 +23,7 @@ from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
 
-import ProjectManager.controller as controller
+import ProjectManager.Controller as controller
 import shutil
 from Database.Database import Database
 
@@ -220,8 +220,6 @@ class Main_Window(QMainWindow):
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
-        # TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
-        # TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM STOPS, IT'S NOT LIKE CANCEL
         else:
             can_exit = True
 
@@ -260,7 +258,6 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
         if (self.database.isTempProject and len(self.database.getScans()) > 0):
             return 1
         if (self.database.isTempProject):

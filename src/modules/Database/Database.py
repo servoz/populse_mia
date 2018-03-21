@@ -490,9 +490,9 @@ class Database:
             self.session.delete(value)
         # Tag removed
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        self.session.delete(tags[0])
-        self.unsavedModifications = True
+        if len(tags) == 1:
+            self.session.delete(tags[0])
+            self.unsavedModifications = True
 
     def removeValue(self, scan, tag):
         """

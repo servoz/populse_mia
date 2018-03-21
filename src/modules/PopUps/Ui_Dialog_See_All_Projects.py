@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTreeWidg
     QVBoxLayout, QMessageBox, QHeaderView
 from PyQt5.QtGui import QIcon
 import os
-from ProjectManager import controller
+from ProjectManager import Controller
 from Database.Database import Database
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 

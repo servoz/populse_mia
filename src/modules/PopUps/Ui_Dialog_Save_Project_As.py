@@ -2,7 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
-from ProjectManager import controller
+from ProjectManager import Controller
 import Utils.Utils as utils
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
@@ -40,7 +40,7 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
                 self.relative_subpath = os.path.relpath(self.path)
 
                 if not os.path.exists(self.relative_path) and self.name is not '':
-                    controller.createProject(self.name, '~', self.relative_subpath)
+                    Controller.createProject(self.name, '~', self.relative_subpath)
                     self.close()
                     # A signal is emitted to tell that the project has been created
                     self.signal_saved_project.emit()

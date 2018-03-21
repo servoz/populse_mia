@@ -2,7 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
-import ProjectManager.controller as controller
+import ProjectManager.Controller as controller
 import Utils.Utils as utils
 from Database.DatabaseModel import createDatabase
 
