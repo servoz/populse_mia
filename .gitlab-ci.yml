@@ -23,9 +23,9 @@ database:
     - docker info
     - apk update
     - apk upgrade
-    - apk add git rsync openssh python python-dev py-pip build-base
+    - apk add git rsync openssh python3 python3-dev py-pip3 build-base
     - pip install docker-compose
     - pip install --upgrade pip
   script:
-    - python tests.py
+    - python3 tests.py
 
