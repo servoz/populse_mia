@@ -141,17 +141,22 @@ class DataBrowser(QWidget):
         """
         To open a project filter saved before
         """
+        oldFilter = self.database.currentFilter
+
         self.popUp = Ui_Select_Filter(self.database)
         if self.popUp.exec_() == QDialog.Accepted:
             pass
 
         filterToApply = self.database.currentFilter
-        self.search_bar.setText(filterToApply.search_bar)
 
-        # We open the advanced search
-        self.frame_advanced_search.setHidden(False)
-        self.advanced_search.show_search()
-        self.advanced_search.apply_filter(filterToApply)
+        if oldFilter != filterToApply:
+
+            self.search_bar.setText(filterToApply.search_bar)
+
+            # We open the advanced search
+            self.frame_advanced_search.setHidden(False)
+            self.advanced_search.show_search()
+            self.advanced_search.apply_filter(filterToApply)
 
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
@@ -248,8 +253,7 @@ class DataBrowser(QWidget):
             return_list = self.database.getScansSimpleSearch(str_search)
         # Otherwise, we take every scan
         else:
-            for scan in self.database.getScans():
-                return_list.append(scan.scan)
+            return_list = self.database.getScansNames()
 
         self.table_data.scans_to_visualize = return_list
         self.table_data.update_table()
@@ -307,6 +311,7 @@ class DataBrowser(QWidget):
         else:
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
+            self.advanced_search.rows = []
             # We reput all the scans in the databrowser
             return_list = []
             for scan in self.database.getScans():

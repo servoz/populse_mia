@@ -206,6 +206,17 @@ class DataBase:
         scans = self.session.query(Scan).filter().all()
         return scans
 
+    def getScansNames(self):
+        """
+        To get all Scan names
+        :return: All Scan names
+        """
+        result = []
+        scans = self.session.query(Scan).filter().all()
+        for scan in scans:
+            result.append(scan.scan)
+        return result
+
     def getValues(self):
         """
         To get all values
