@@ -2,7 +2,7 @@ import os
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-from Database.Database import Database
+from src.modules.Database.Database import Database
 
 def test_database_creation():
     pass
