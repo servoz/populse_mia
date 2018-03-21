@@ -22,8 +22,10 @@ database:
   before_script:
     - docker info
     - apk update
-    - apk add -y python3-pip python3-dev
-    - pip3 install -q -r requirements.txt
+    - apk upgrade
+    - apk add git rsync openssh python python-dev py-pip build-base
+    - pip install docker-compose
+    - pip install -q -r requirements.txt
   script:
     - python3 tests.py test_database
 
