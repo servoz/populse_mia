@@ -17,7 +17,7 @@ class Filter:
 
         # Filter dictionary
         data = {
-            "search_bar_text": self.name,
+            "name": self.name,
             "search_bar_text": self.search_bar,
             "fields": self.fields,
             "conditions": self.conditions,
