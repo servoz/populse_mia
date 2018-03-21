@@ -29,5 +29,9 @@ database:
     - pip3 install sqlalchemy
 
   script:
+    - export PYTHONPATH="${PYTHONPATH}:/home/lucie/Documents/MIA2/src/modules"
+    - export PATH="${PATH}:/home/lucie/Documents/MIA2/src/modules"
+    - export PYTHONPATH="${PYTHONPATH}:/home/david/MIA2/src/modules"
+    - export PATH="${PATH}:/home/david/MIA2/src/modules"
     - python3 tests.py
 
