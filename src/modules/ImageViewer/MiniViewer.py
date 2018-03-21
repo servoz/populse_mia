@@ -374,17 +374,18 @@ class MiniViewer(QWidget):
         # Looking for the tag value to display as a legend of the thumbnail
         for scan in self.database.getScans():
             if scan.scan == file_path_base_name:
-                for tag in self.database.getTags():
-                    if tag.tag == self.config.getThumbnailTag():
-                        if self.database.scanHasTag(scan.scan, tag.tag):
-                            self.label_description[idx].setText \
-                                (database_to_table(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
-                        else:
-                            self.label_description[idx].setText \
-                                (DataBrowser.DataBrowser.not_defined_value[
-                                 :self.nb_char_max])
-                        self.label_description[idx].setToolTip \
-                            (os.path.basename(self.config.getThumbnailTag()))
+                if self.database.hasTag(self.config.getThumbnailTag()):
+                    if self.database.scanHasTag(scan.scan, self.config.getThumbnailTag()):
+                        self.label_description[idx].setText \
+                            (database_to_table(self.database.getValue(scan.scan, self.config.getThumbnailTag()).current_value)[:self.nb_char_max])
+                    else:
+                        self.label_description[idx].setText \
+                            (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                else:
+                    self.label_description[idx].setText(DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
+
+
 
     def clearLayouts(self):
         """ Method that clears the final layout.
