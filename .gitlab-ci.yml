@@ -27,7 +27,6 @@ database:
     - pip install docker-compose
     - pip install --upgrade pip
     - export PYTHONPATH="${PYTHONPATH}:/home/lucie/Documents/MIA2/src/modules"
-    - source
   script:
     - python tests.py
 
