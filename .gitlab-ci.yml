@@ -14,8 +14,10 @@ codequality:
     paths: [codeclimate.json]
 
 database:
-  script:
+  image: docker:latest
+  before_script:
     - apt install python3-dev python3-pip
     - pip3 install -q -r requirements.txt
+  script:
     - python3 tests.py test_database
 
