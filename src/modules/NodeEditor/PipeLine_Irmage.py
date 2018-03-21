@@ -10,7 +10,8 @@ from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, QGraphicsView, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QListView, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QLabel, QLineEdit, \
+    QGroupBox
 from matplotlib.backends.qt_compat import QtWidgets
 import sip
 import os
@@ -19,7 +20,7 @@ from capsul.pipeline import pipeline_tools
 from capsul.api import get_process_instance
 
 from NodeEditor.callStudent import callStudent
-from capsul.qt_gui.widgets import PipelineDevelopperView
+from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 from .Processes.processes import AvailableProcesses
 
 if sys.version_info[0] >= 3:
@@ -30,6 +31,209 @@ else:
     def values(d):
         return d.values()
 
+
+class ProjectEditor(QWidget):
+    def __init__(self, textInfo):
+        global textedit, tagEditor, editor, textInf
+
+        editor = self
+        textInf = textInfo
+
+        QWidget.__init__(self)
+        self.setWindowTitle("Diagram editor")
+
+        # menub = MenuBar(self)
+        menub = ToolBar(self)
+
+        self.verticalLayout = QVBoxLayout(self)
+
+        self.libraryBrowserView = QListView(self)
+        self.libraryModel = LibraryModel(self)
+        self.libraryModel.setColumnCount(1)
+
+        pxm = LibItem(self)
+
+        self.libItems = []
+        for classProcess in AvailableProcesses():
+            self.libItems.append(QStandardItem(classProcess.__name__))
+        '''self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 1 (1,2)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 2 (3,3)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Display (1,0)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Student (3,2)') )
+        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )'''
+
+        for i in self.libItems:
+            self.libraryModel.appendRow(i)
+        self.libraryBrowserView.setModel(self.libraryModel)
+        self.libraryBrowserView.setViewMode(self.libraryBrowserView.IconMode)
+        self.libraryBrowserView.setDragDropMode(self.libraryBrowserView.DragOnly)
+
+        self.diagramScene = DiagramScene(self)
+        self.diagramView = EditorGraphicsView(self.diagramScene, self)
+        self.diagramView.node_clicked.connect(self.displayNodeParameters)
+
+        self.textedit = TextEditor(self)
+        self.textedit.setStyleSheet("background-color : lightgray")
+        redText = "<span style=\" font-size:12pt; font-weight:600; color:#ff0000;\" >"
+        redText = redText + ("Code of the box")
+        redText = redText + ("</span>")
+        self.textedit.append(redText)
+
+        self.node_controller = NodeController()
+
+        self.loadButton = QPushButton('Load pipeline', self)
+        self.loadButton.clicked.connect(self.loadPipeline)
+
+        self.saveButton = QPushButton('Save pipeline', self)
+        self.saveButton.clicked.connect(self.savePipeline)
+
+        self.runButton = QPushButton('Run pipeline', self)
+        self.runButton.clicked.connect(self.runPipeline)
+
+        self.hLayout = QHBoxLayout()
+        self.hLayout.addWidget(menub)
+        self.hLayout.addWidget(self.saveButton)
+        self.hLayout.addWidget(self.loadButton)
+        self.hLayout.addWidget(self.runButton)
+        self.hLayout.addStretch(1)
+
+        self.splitter0 = QSplitter(Qt.Horizontal)
+        self.splitter0.addWidget(self.diagramView)
+        self.splitter0.addWidget(self.node_controller)
+
+        self.splitter1 = QSplitter(Qt.Horizontal)
+        self.splitter1.addWidget(self.libraryBrowserView)
+        self.splitter1.addWidget(self.diagramView)
+        self.splitter1.addWidget(self.node_controller)
+        self.splitter1.setSizes([100, 400, 200])
+
+        self.splitter2 = QSplitter(Qt.Vertical)
+        self.splitter2.addWidget(self.splitter1)
+        self.splitter2.addWidget(self.textedit)
+        self.splitter2.setSizes([400, 200])
+
+        self.verticalLayout.addLayout(self.hLayout)
+        self.verticalLayout.addWidget(self.splitter2)
+
+        self.startedConnection = None
+
+    def loadPipeline(self):
+        self.diagramView.load_pipeline()
+
+    def savePipeline(self):
+        self.diagramView.save_pipeline()
+
+    def runPipeline(self):
+        pipeline = get_process_instance(self.diagramView.scene.pipeline)
+        with open('/tmp/tmp_pipeline.txt', 'w') as f:
+            sys.stdout = f
+            f.write('Pipeline execution\n...\n\n')
+            pipeline()
+
+        with open('/tmp/tmp_pipeline.txt', 'r') as f:
+            self.textedit.setText(f.read())
+
+    def displayNodeParameters(self, node_name, process):
+        self.node_controller.display_parameters(node_name, process)
+
+    def startConnection(self, port):
+        self.startedConnection = Connection(port, None)
+
+    def sceneMouseMoveEvent(self, event):
+        if self.startedConnection:
+            pos = event.scenePos()
+            self.startedConnection.setEndPos(pos)
+
+    def sceneMouseReleaseEvent(self, event):
+        # Clear the actual connection:
+        if self.startedConnection:
+            pos = event.scenePos()
+            items = self.diagramScene.items(pos)
+            for item in items:
+                if type(item) is PortItem:
+                    self.startedConnection.setToPort(item)
+            if self.startedConnection.toPort == None:
+                self.startedConnection.delete()
+            self.startedConnection = None
+
+class NodeController(QWidget):
+    def __init__(self, parent=None):
+        super(NodeController, self).__init__(parent)
+        self.v_box_final = QVBoxLayout()
+        self.h_box_node_name = QHBoxLayout()
+
+    def display_parameters(self, node_name, process):
+        if len(self.children()) > 0:
+            self.clearLayout(self)
+
+        self.v_box_final = QVBoxLayout()
+
+        # Node name
+        label_node_name = QLabel()
+        label_node_name.setText('Node name:')
+
+        line_edit_node_name = QLineEdit()
+        line_edit_node_name.setText(node_name)
+
+        self.h_box_node_name = QHBoxLayout()
+        self.h_box_node_name.addWidget(label_node_name)
+        self.h_box_node_name.addWidget(line_edit_node_name)
+
+        # Inputs
+        self.button_group_inputs = QGroupBox('Inputs')
+        self.v_box_inputs = QVBoxLayout()
+        for name, value in process.get_inputs().items():
+            label_input = QLabel()
+            label_input.setText(str(name))
+
+            line_edit_input = QLineEdit()
+            line_edit_input.setText(str(value))
+
+            h_box = QHBoxLayout()
+            h_box.addWidget(label_input)
+            h_box.addWidget(line_edit_input)
+
+            self.v_box_inputs.addLayout(h_box)
+
+        self.button_group_inputs.setLayout(self.v_box_inputs)
+
+        # Inputs
+        self.button_group_outputs = QGroupBox('Outputs')
+        self.v_box_outputs = QVBoxLayout()
+        for name, value in process.get_outputs().items():
+            label_output = QLabel()
+            label_output.setText(str(name))
+
+            line_edit_output = QLineEdit()
+            line_edit_output.setText(str(value))
+
+            h_box = QHBoxLayout()
+            h_box.addWidget(label_output)
+            h_box.addWidget(line_edit_output)
+
+            self.v_box_outputs.addLayout(h_box)
+
+        self.button_group_outputs.setLayout(self.v_box_outputs)
+
+        self.v_box_final.addLayout(self.h_box_node_name)
+        self.v_box_final.addWidget(self.button_group_inputs)
+        self.v_box_final.addWidget(self.button_group_outputs)
+
+        self.setLayout(self.v_box_final)
+
+    def clearLayout(self, layout):
+        for i in reversed(range(len(layout.children()))):
+            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
+                layout.layout().itemAt(i).widget().setParent(None)
+            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout or type(
+                    layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
+                layout.layout().itemAt(i).deleteLater()
+                for j in reversed(range(len(layout.layout().itemAt(i)))):
+                    layout.layout().itemAt(i).itemAt(j).widget().setParent(None)
+
+        if layout.layout() is not None:
+            sip.delete(layout.layout())
 
 
 class MenuBar(QMenuBar):
@@ -112,6 +316,7 @@ class LibraryModel(QStandardItemModel):
                 mimedata.setData('component/name', QByteArray(txt.encode()))
         return mimedata
 
+
 class LibItem(QPixmap):
     def __init__(self, parent=None):
         QPixmap.__init__(self, 110,100)
@@ -188,7 +393,7 @@ class EditorGraphicsView(PipelineDevelopperView):
             i += 1
             node_name = class_name.lower() + str(i)
 
-        process_to_use = class_process(node_name)
+        process_to_use = class_process()
 
         try:
             process = get_process_instance(
@@ -198,15 +403,12 @@ class EditorGraphicsView(PipelineDevelopperView):
             return
         pipeline.add_process(node_name, process)
 
+        # CAPSUL UPDATE
         node = pipeline.nodes[node_name]
         gnode = self.scene.add_node(node_name, node)
         gnode.setPos(self.mapToScene(self.mapFromGlobal(self.click_pos)))
 
 
-    #============================================================================
-    # def mousePressEvent(self, event):
-    #     print(event)      
-    #============================================================================
 class TextEditor(QTextEdit):
     def __init__(self,parent=None):
         super(TextEditor,self).__init__(parent)
@@ -445,123 +647,6 @@ class ParameterDialog(QDialog):
     def getWidget(self):
         return self.layout() 
 
-class ProjectEditor(QWidget):
-    def __init__(self,textInfo):
-        global textedit, tagEditor, editor, textInf
-        
-        editor=self
-        textInf=textInfo
-        
-        QWidget.__init__(self)
-        self.setWindowTitle("Diagram editor")
-        
-        #menub = MenuBar(self)
-        menub = ToolBar(self)
-       
-        self.verticalLayout = QVBoxLayout(self)
-             
-        self.libraryBrowserView = QListView(self)
-        self.libraryModel = LibraryModel(self)
-        self.libraryModel.setColumnCount(1)
-    
-        pxm = LibItem(self)
-    
-        self.libItems = []
-        for classProcess in AvailableProcesses():
-            self.libItems.append(QStandardItem(classProcess.__name__))
-        '''self.libItems.append( QStandardItem(QIcon(pxm), 'Source (0,2)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 1 (1,2)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Unit 2 (3,3)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Display (1,0)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Student (3,2)') )
-        self.libItems.append( QStandardItem(QIcon(pxm), 'Study (2,2)') )'''
-    
-        for i in self.libItems:
-            self.libraryModel.appendRow(i)
-        self.libraryBrowserView.setModel(self.libraryModel)
-        self.libraryBrowserView.setViewMode(self.libraryBrowserView.IconMode)
-        self.libraryBrowserView.setDragDropMode(self.libraryBrowserView.DragOnly)
-    
-        self.diagramScene = DiagramScene(self)
-        self.diagramView = EditorGraphicsView(self.diagramScene, self)
-
-        self.textedit = TextEditor(self)
-        self.textedit.setStyleSheet("background-color : lightgray")
-        redText = "<span style=\" font-size:12pt; font-weight:600; color:#ff0000;\" >"
-        redText = redText + ("Code of the box")
-        redText = redText + ("</span>")
-        self.textedit.append(redText)
-        
-        tagEditor = QWidget(self)
-
-        self.runButton = QPushButton('Run pipeline', self)
-        self.runButton.clicked.connect(self.runPipeline)
-
-        self.hLayout = QHBoxLayout()
-        self.hLayout.addWidget(menub)
-        self.hLayout.addWidget(self.runButton)
-        self.hLayout.addStretch(1)
-    
-        self.splitter0 = QSplitter(Qt.Horizontal)
-        self.splitter0.addWidget(self.diagramView)
-        self.splitter0.addWidget(tagEditor)
-        
-        self.splitter1 = QSplitter(Qt.Horizontal)
-        self.splitter1.addWidget(self.libraryBrowserView)
-        self.splitter1.addWidget(self.diagramView)
-        self.splitter1.addWidget(tagEditor)
-        self.splitter1.setSizes([100,400,200])
-    
-        self.splitter2 = QSplitter(Qt.Vertical)
-        self.splitter2.addWidget(self.splitter1)
-        self.splitter2.addWidget(self.textedit)
-        self.splitter2.setSizes([400,200])
-           
-        self.verticalLayout.addLayout(self.hLayout)
-        self.verticalLayout.addWidget(self.splitter2)
-    
-        self.startedConnection = None
-
-    def runPipeline(self):
-        '''# Saving the pipeline
-        pipeline = self.diagramView.scene.pipeline
-        filename = '/tmp/pipeline.py'
-        posdict = dict([(key, (value.x(), value.y())) \
-                        for key, value in six.iteritems(self.scene.pos)])
-        old_pos = pipeline.node_position
-        pipeline.node_position = posdict
-        pipeline_tools.save_pipeline(pipeline, filename)
-        self._pipeline_filename = unicode(filename)
-        pipeline.node_position = old_pos'''
-
-        pipeline = get_process_instance(self.diagramView.scene.pipeline)
-        with open('/tmp/tmp_pipeline.txt', 'w') as f:
-            sys.stdout = f
-            f.write('Pipeline execution\n...\n\n')
-            pipeline()
-
-        with open('/tmp/tmp_pipeline.txt', 'r') as f:
-            self.textedit.setText(f.read())
-
-    def startConnection(self, port):
-        self.startedConnection = Connection(port, None)
-     
-    def sceneMouseMoveEvent(self, event):
-        if self.startedConnection:
-            pos = event.scenePos()
-            self.startedConnection.setEndPos(pos)
-     
-    def sceneMouseReleaseEvent(self, event):
-        # Clear the actual connection:
-        if self.startedConnection:
-            pos = event.scenePos()
-            items = self.diagramScene.items(pos)
-            for item in items:
-                if type(item) is PortItem:
-                    self.startedConnection.setToPort(item)
-            if self.startedConnection.toPort == None:
-                self.startedConnection.delete()
-            self.startedConnection = None
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
