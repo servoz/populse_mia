@@ -18,7 +18,7 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
-from Utils.utils import database_to_table
+from Utils.Utils import database_to_table
 
 
 class MiniViewer(QWidget):
@@ -144,7 +144,7 @@ class MiniViewer(QWidget):
             self.setHidden(False)
             self.first_time = False
 
-        # If the user has willingly hidden the MiniViewer, the processes are not made
+        # If the user has willingly hidden the MiniViewer, the Processes are not made
         if self.isHidden():
             pass
         else:
@@ -374,17 +374,18 @@ class MiniViewer(QWidget):
         # Looking for the tag value to display as a legend of the thumbnail
         for scan in self.database.getScans():
             if scan.scan == file_path_base_name:
-                for tag in self.database.getTags():
-                    if tag.tag == self.config.getThumbnailTag():
-                        if self.database.scanHasTag(scan.scan, tag.tag):
-                            self.label_description[idx].setText \
-                                (database_to_table(self.database.getValue(scan.scan, tag.tag).current_value)[:self.nb_char_max])
-                        else:
-                            self.label_description[idx].setText \
-                                (DataBrowser.DataBrowser.not_defined_value[
-                                 :self.nb_char_max])
-                        self.label_description[idx].setToolTip \
-                            (os.path.basename(self.config.getThumbnailTag()))
+                if self.database.hasTag(self.config.getThumbnailTag()):
+                    if self.database.scanHasTag(scan.scan, self.config.getThumbnailTag()):
+                        self.label_description[idx].setText \
+                            (database_to_table(self.database.getValue(scan.scan, self.config.getThumbnailTag()).current_value)[:self.nb_char_max])
+                    else:
+                        self.label_description[idx].setText \
+                            (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                else:
+                    self.label_description[idx].setText(DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
+
+
 
     def clearLayouts(self):
         """ Method that clears the final layout.

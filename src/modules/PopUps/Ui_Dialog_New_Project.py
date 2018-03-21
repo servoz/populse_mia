@@ -2,9 +2,9 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
-import ProjectManager.controller as controller
-import Utils.utils as utils
-from DataBase.DataBaseModel import createDatabase
+import ProjectManager.Controller as controller
+import Utils.Utils as utils
+from Database.DatabaseModel import createDatabase
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
@@ -26,7 +26,7 @@ class Ui_Dialog_New_Project(QFileDialog):
     def retranslateUi(self, file_name):
         # file_name = self.selectedFiles()
         file_name = file_name[0]
-        #file_name = utils.remove_accents(file_name.replace(" ", "_"))
+        #file_name = Utils.remove_accents(file_name.replace(" ", "_"))
         if file_name:
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)

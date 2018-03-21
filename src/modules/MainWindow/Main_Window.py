@@ -9,7 +9,7 @@ import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
-    QMainWindow, QDialog, QMessageBox, QMenu
+    QMainWindow, QDialog, QMessageBox, QMenu, QInputDialog
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
@@ -22,13 +22,10 @@ from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
-from PopUps.Ui_Dialog_Export_Current_Filter import Ui_Dialog_Export_Current_Filter
 
-import ProjectManager.controller as controller
+import ProjectManager.Controller as controller
 import shutil
-import Utils.utils as utils
-import json
-from DataBase.DataBase import DataBase
+from Database.Database import Database
 
 class Main_Window(QMainWindow):
     """
@@ -94,7 +91,7 @@ class Main_Window(QMainWindow):
         self.action_save_as = QAction('Save project as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
 
-        self.action_save_current_filter = QAction('Export current filter', self)
+        self.action_save_current_filter = QAction('Save current filter', self)
 
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
@@ -124,7 +121,7 @@ class Main_Window(QMainWindow):
         self.action_exit.triggered.connect(self.close)
         self.action_save.triggered.connect(self.saveChoice)
         self.action_save_as.triggered.connect(self.save_project_as)
-        self.action_save_current_filter.triggered.connect(self.save_current_filter)
+        self.action_save_current_filter.triggered.connect(lambda : self.data_browser.save_current_filter())
         self.action_import.triggered.connect(self.import_data)
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
@@ -174,44 +171,11 @@ class Main_Window(QMainWindow):
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
 
-    def save_current_filter(self):
-        """
-        To save the current filter as a .json file
-        """
-        # Opens a pop-up when the 'Save current filter' action is clicked
-        self.exPopup = Ui_Dialog_Export_Current_Filter()
-
-        if self.exPopup.exec_() == QDialog.Accepted:
-
-            # Getting the path
-            file_name = self.exPopup.selectedFiles()
-            self.exPopup.retranslateUi(self.exPopup.selectedFiles())
-            file_name = self.exPopup.relative_path
-
-            # Getting the current filter
-            search_bar_text = self.data_browser.search_bar.text()
-            advanced_search = self.data_browser.advanced_search
-            (fields, conditions, values, links, nots) = advanced_search.get_filters()
-
-            # Filter dictionary
-            data = {
-                "search_bar_text": search_bar_text,
-                "fields": fields,
-                "conditions": conditions,
-                "values": values,
-                "links": links,
-                "nots": nots
-            }
-
-            # Json filter file written
-            with open(file_name, 'w') as outfile:
-                json.dump(data, outfile)
-
     def undo(self):
         """
         To undo the last action done by the user
         """
-        self.database.undo() # Action reverted in the database
+        self.database.undo() # Action reverted in the Database
 
         # Gui refreshed
         scan_names_list = []
@@ -231,7 +195,7 @@ class Main_Window(QMainWindow):
         """
         To redo the last action made by the user
         """
-        self.database.redo() # Action remade in the database
+        self.database.redo() # Action remade in the Database
 
         # Gui refreshed
         scan_names_list = []
@@ -256,8 +220,6 @@ class Main_Window(QMainWindow):
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
 
-        # TODO: ADD THE CASE WHEN THE PROJECT IS NAMED BUT NOT WITH THE CURRENT VERSION
-        # TODO: IF THE FILE DIALOG (SAVE PROJECT AS) IS CLOSED, THE PROGRAM STOPS, IT'S NOT LIKE CANCEL
         else:
             can_exit = True
 
@@ -296,7 +258,6 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        # TODO DO THE CHECK WITH THE DATABASE STRUCTURE
         if (self.database.isTempProject and len(self.database.getScans()) > 0):
             return 1
         if (self.database.isTempProject):
@@ -358,7 +319,7 @@ class Main_Window(QMainWindow):
             old_folder = self.database.folder
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
-            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
+            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'Database')
 
             # List of projects updated
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
@@ -371,32 +332,32 @@ class Main_Window(QMainWindow):
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
-            # First we register the database before commiting the last pending modifications
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
+            # First we register the Database before commiting the last pending modifications
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'Database', 'mia2_before_commit.db'))
 
             # We commit the last pending modifications
             self.database.saveModifications()
 
-            # We copy the database with all the modifications commited in the new project
-            if os.path.exists(os.path.join(old_folder, 'database')):
+            # We copy the Database with all the modifications commited in the new project
+            if os.path.exists(os.path.join(old_folder, 'Database')):
                 os.mkdir(os.path.relpath(database_path))
-                shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
+                shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'), os.path.relpath(database_path))
 
-            # We remove the database with all the modifications saved in the old project
-            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+            # We remove the Database with all the modifications saved in the old project
+            os.remove(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'))
 
-            # We reput the database without the last modifications in the old project
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+            # We reput the Database without the last modifications in the old project
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'))
 
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
             # Project updated everywhere
-            self.database = DataBase(exPopup.relative_path, False)
+            self.database = Database(exPopup.relative_path, False)
 
             self.update_project(file_name) # Project updated everywhere
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
-            # Which will be connected to the modify_ui method that controls the following processes
+            # Which will be connected to the modify_ui method that controls the following Processes
             exPopup.signal_saved_project.connect(self.modify_ui)
 
     def create_project_pop_up(self):
@@ -415,7 +376,7 @@ class Main_Window(QMainWindow):
             self.exPopup = Ui_Dialog_New_Project()
 
             # Once the user has selected his project, the 'signal_create_project" signal is emitted
-            # Which will be connected to the modify_ui method that controls the following processes
+            # Which will be connected to the modify_ui method that controls the following Processes
             self.exPopup.signal_create_project.connect(self.modify_ui)
 
             if self.exPopup.exec_() == QDialog.Accepted:
@@ -426,7 +387,7 @@ class Main_Window(QMainWindow):
                 self.exPopup.retranslateUi(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
 
-                self.database = DataBase(self.exPopup.relative_path, True)
+                self.database = Database(self.exPopup.relative_path, True)
 
                 self.update_project(file_name) # Project updated everywhere
 
@@ -481,7 +442,7 @@ class Main_Window(QMainWindow):
             if can_switch:
 
                 # We check for invalid scans in the project
-                tempDatabase = DataBase(path, False)
+                tempDatabase = Database(path, False)
                 problem_list = controller.verify_scans(tempDatabase, path)
 
                 # Message if invalid files
@@ -504,7 +465,7 @@ class Main_Window(QMainWindow):
                 else:
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
 
-                    self.database = tempDatabase  # New database
+                    self.database = tempDatabase  # New Database
 
                     self.update_project(file_name) # Project updated everywhere
 
@@ -525,11 +486,11 @@ class Main_Window(QMainWindow):
 
     def update_project(self, file_name):
         """
-        Updates the project once the database has been updated
+        Updates the project once the Database has been updated
         :param file_name: File name of the new project
         """
 
-        self.data_browser.update_database(self.database)  # Database update databrowser
+        self.data_browser.update_database(self.database)  # Database update DataBrowser
 
         # We reset the headers
         self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())

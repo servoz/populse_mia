@@ -2,8 +2,8 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
-from ProjectManager import controller
-import Utils.utils as utils
+from ProjectManager import Controller
+import Utils.Utils as utils
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
     """
@@ -29,7 +29,7 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
         file_name = self.selectedFiles()
         if len(file_name) > 0:
             file_name = file_name[0]
-            #file_name = utils.remove_accents(file_name.replace(" ", "_"))
+            #file_name = Utils.remove_accents(file_name.replace(" ", "_"))
             projects_folder = os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')
             projects_folder = os.path.abspath(projects_folder)
             if file_name and file_name != projects_folder:
@@ -40,7 +40,7 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
                 self.relative_subpath = os.path.relpath(self.path)
 
                 if not os.path.exists(self.relative_path) and self.name is not '':
-                    controller.createProject(self.name, '~', self.relative_subpath)
+                    Controller.createProject(self.name, '~', self.relative_subpath)
                     self.close()
                     # A signal is emitted to tell that the project has been created
                     self.signal_saved_project.emit()

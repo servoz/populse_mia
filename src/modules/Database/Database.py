@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine, cast, VARCHAR
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.interfaces import PoolListener
-from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
+from Database.DatabaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Database.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Database.Filter import Filter
 import pickle
 
 class ForeignKeysListener(PoolListener):
@@ -16,7 +17,7 @@ class ForeignKeysListener(PoolListener):
     def connect(self, dbapi_con, con_record):
         db_cursor = dbapi_con.execute('pragma case_sensitive_like=ON')
 
-class DataBase:
+class Database:
 
     def __init__(self, project_root_folder, new_project):
         """ Database constructor
@@ -24,7 +25,7 @@ class DataBase:
             :param project_root_folder: projet root folder
                    If None, a temporary folder will be created
 
-            :param new_project: Boolean to know if we have to create the database
+            :param new_project: Boolean to know if we have to create the Database
                                 True when New Project pop up or at the beginning for unnamed project
                                 False when Open Project or Save as pop up
 
@@ -34,8 +35,10 @@ class DataBase:
             self.unsavedModifications: To know if there are unsaved modifications
             self.undos: Stack of undo actions we can do
             self.redos: Stack of redo actions we can do
+            self.currentFilter: Current filter in the DataBrowser
+            self.filters = List of filters of the project
 
-            Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
+            Memory approximation: the Database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
 
         """
 
@@ -48,11 +51,11 @@ class DataBase:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
-        # We create the database if it does not exists yet (for Unnamed project and New project)
+        # We create the Database if it does not exists yet (for Unnamed project and New project)
         if(new_project):
             createDatabase(self.folder)
-        # We open the database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        # We open the Database
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'Database', 'mia2.db'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
@@ -64,6 +67,7 @@ class DataBase:
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
+        self.initFilters()
 
     """ FROM properties/properties.yml """
 
@@ -184,7 +188,7 @@ class DataBase:
 
     def addValue(self, scan, tag, current_value, raw_value):
         """
-        To add a new value (a new cell in the databrowser)
+        To add a new value (a new cell in the DataBrowser)
         :param scan: FileName of the scan
         :param tag: Tag name
         :param current_value: Current value displayed in the DataBrowser (Raw_value for raw tags and default_value for user tags)
@@ -201,6 +205,17 @@ class DataBase:
         """
         scans = self.session.query(Scan).filter().all()
         return scans
+
+    def getScansNames(self):
+        """
+        To get all Scan names
+        :return: All Scan names
+        """
+        result = []
+        scans = self.session.query(Scan).filter().all()
+        for scan in scans:
+            result.append(scan.scan)
+        return result
 
     def getValues(self):
         """
@@ -449,7 +464,7 @@ class DataBase:
 
     def removeScan(self, scan):
         """
-        Removes a scan from the project (corresponds to a row in the databrowser)
+        Removes a scan from the project (corresponds to a row in the DataBrowser)
         Removes the scan from the list of scans (Scan table), and all the values corresponding to this scan (Value table)
         :param scan: FileName of the scan to remove
         """
@@ -465,7 +480,7 @@ class DataBase:
 
     def removeTag(self, tag):
         """
-        Removes a tag from the project (corresponds to a column in the databrowser)
+        Removes a tag from the project (corresponds to a column in the DataBrowser)
         We can only remove user tags from the software
         :param tag: Name of the tag to remove
         """
@@ -475,13 +490,13 @@ class DataBase:
             self.session.delete(value)
         # Tag removed
         tags = self.session.query(Tag).filter(Tag.tag == tag).all()
-        # TODO return error if len(tags) != 1
-        self.session.delete(tags[0])
-        self.unsavedModifications = True
+        if len(tags) == 1:
+            self.session.delete(tags[0])
+            self.unsavedModifications = True
 
     def removeValue(self, scan, tag):
         """
-        Removes the value of the tuple <scan, tag> (corresponds to a cell in the databrowser)
+        Removes the value of the tuple <scan, tag> (corresponds to a cell in the DataBrowser)
         :param scan: FileName of the scan
         :param tag: Name of the tag
         """
@@ -516,6 +531,102 @@ class DataBase:
                 if not self.scanHasTag(scan.scan, tag.tag) and not scan.scan in return_list:
                     return_list.append(scan.scan)
         return return_list
+
+    def initFilters(self):
+        """
+        Init of the filters at project opening
+        """
+
+        import json
+        import glob
+
+        self.currentFilter = Filter(None, [], [], [], [], [], "")
+        self.filters = []
+
+        filters_folder = os.path.join(self.folder, "filters")
+
+        for filename in glob.glob(os.path.join(filters_folder, '*')):
+            filter, extension = os.path.splitext(os.path.basename(filename))
+            data = json.load(open(filename))
+            filterObject = Filter(filter, data["nots"], data["values"], data["fields"], data["links"], data["conditions"], data["search_bar_text"])
+            self.filters.append(filterObject)
+
+    def setCurrentFilter(self, filter):
+        """
+        To set the current filter of the project
+        :param filter: new Filter object
+        """
+
+        self.currentFilter = filter
+
+    def getFilter(self, filter):
+        """
+        To get a Filter object
+        :param filter: Filter name
+        :return: Filter object
+        """
+        for filterObject in self.filters:
+            if filterObject.name == filter:
+                return filterObject
+
+    def save_current_filter(self, advancedFilters):
+        """
+        To save the current filter
+        :return:
+        """
+
+        from PyQt5.QtWidgets import QMessageBox
+        import json
+
+        (fields, conditions, values, links, nots) = advancedFilters
+        self.currentFilter.fields = fields
+        self.currentFilter.conditions = conditions
+        self.currentFilter.values = values
+        self.currentFilter.links = links
+        self.currentFilter.nots = nots
+
+        # Getting the path
+        filters_path = os.path.join(self.folder, "filters")
+
+        # Filters folder created if it does not already exists
+        if not os.path.exists(filters_path):
+            os.mkdir(filters_path)
+
+        filter_name = self.getFilterName()
+
+        # We save the filter only if we have a filter name from the popup
+        if filter_name != None:
+            file_path = os.path.join(filters_path, filter_name + ".json")
+
+            if os.path.exists(file_path):
+                # Filter already exists
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The filter already exists in the project")
+                msg.setInformativeText("The project already has a filter named " + filter_name)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            else:
+                # Json filter file written
+                with open(file_path, 'w') as outfile:
+                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values, self.currentFilter.fields, self.currentFilter.links, self.currentFilter.conditions, self.currentFilter.search_bar)
+                    json.dump(new_filter.json_format(), outfile)
+                    self.filters.append(new_filter)
+
+    def getFilterName(self):
+        """
+        Input box to get the name of the filter to save
+        """
+
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+
+        text, okPressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
 
     def getScansSimpleSearch(self, search):
         """
@@ -710,7 +821,7 @@ class DataBase:
         - Removing 10 scans: 200000 bits
         - Removing 1 tag: From 300 bits to 4000 bits => Depends on the number of values defined
         - Adding 1 tag: 40 bits
-        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
+        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole Database after each action
         """
 
     def update_sort(self, tag, order):
@@ -719,7 +830,7 @@ class DataBase:
 
     def reput_values(self, values):
         """
-        To reput the Value objects in the database
+        To reput the Value objects in the Database
         :param values: List of Value objects
         """
         i = 0

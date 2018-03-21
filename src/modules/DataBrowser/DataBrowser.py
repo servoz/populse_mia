@@ -5,12 +5,13 @@ from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
     QMessageBox, QPushButton
 import os
-from ProjectManager.controller import save_project
+from ProjectManager.Controller import save_project
 
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from PopUps.Ui_Select_Filter import Ui_Select_Filter
 from DataBrowser.CountTable import CountTable
 
 from SoftwareProperties import Config
@@ -18,11 +19,13 @@ from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from Database.DatabaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.ModifyTable import ModifyTable
 
-from Utils.utils import database_to_table, table_to_database, check_value_type
+from Utils.Utils import database_to_table, table_to_database, check_value_type
+
+import json
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
@@ -104,7 +107,7 @@ class DataBrowser(QWidget):
     def update_database(self, database):
         """
         Called when switching project (new, open, and save as)
-        :param database: New instance of database
+        :param database: New instance of Database
         :return:
         """
         # Database updated everywhere
@@ -112,11 +115,10 @@ class DataBrowser(QWidget):
         self.table_data.database = database
         self.viewer.database = database
         self.advanced_search.database = database
+        # Update count table database?
 
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
-
-        #TODO update count table database???
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -127,6 +129,33 @@ class DataBrowser(QWidget):
 
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
+
+        self.save_filter_action = QAction("Save current filter", self, shortcut="Ctrl+S")
+        self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter(self.advanced_search.get_filters()))
+
+        self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
+        self.open_filter_action.triggered.connect(self.open_filter)
+
+    def open_filter(self):
+        """
+        To open a project filter saved before
+        """
+        oldFilter = self.database.currentFilter
+
+        self.popUp = Ui_Select_Filter(self.database)
+        if self.popUp.exec_() == QDialog.Accepted:
+            pass
+
+        filterToApply = self.database.currentFilter
+
+        if oldFilter != filterToApply:
+
+            self.search_bar.setText(filterToApply.search_bar)
+
+            # We open the advanced search
+            self.frame_advanced_search.setHidden(False)
+            self.advanced_search.show_search()
+            self.advanced_search.apply_filter(filterToApply)
 
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
@@ -161,6 +190,14 @@ class DataBrowser(QWidget):
         tags_menu.addAction(self.remove_tag_action)
         tags_tool_button.setMenu(tags_menu)
 
+        filters_tool_button = QToolButton()
+        filters_tool_button.setText('Filters')
+        filters_tool_button.setPopupMode(QToolButton.MenuButtonPopup)
+        filters_menu = QMenu()
+        filters_menu.addAction(self.save_filter_action)
+        filters_menu.addAction(self.open_filter_action)
+        filters_tool_button.setMenu(filters_menu)
+
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character, *Not Defined* for the scans with missing value(s)")
@@ -193,6 +230,8 @@ class DataBrowser(QWidget):
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
+        self.menu_toolbar.addWidget(filters_tool_button)
+        self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.frame_test)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(advanced_search_button)
@@ -213,11 +252,12 @@ class DataBrowser(QWidget):
             return_list = self.database.getScansSimpleSearch(str_search)
         # Otherwise, we take every scan
         else:
-            for scan in self.database.getScans():
-                return_list.append(scan.scan)
+            return_list = self.database.getScansNames()
 
         self.table_data.scans_to_visualize = return_list
         self.table_data.update_table()
+
+        self.database.currentFilter.search_bar = str_search
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -229,7 +269,7 @@ class DataBrowser(QWidget):
             self.viewer.setHidden(False)
         else:
             self.viewer.setHidden(True)
-            path_name = os.path.relpath(self.database.folder)
+            path_name = os.path.relpath(self.Database.folder)
             items = self.table_data.selectedItems()
             full_names = []
             for item in items:
@@ -270,7 +310,8 @@ class DataBrowser(QWidget):
         else:
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
-            # We reput all the scans in the databrowser
+            self.advanced_search.rows = []
+            # We reput all the scans in the DataBrowser
             return_list = []
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
@@ -292,7 +333,7 @@ class DataBrowser(QWidget):
 
             database_value = table_to_database(new_default_value, tag_type)
 
-            # We add the tag and a value for each scan in the database
+            # We add the tag and a value for each scan in the Database
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, database_value, new_tag_description)
             for scan in self.database.getScans():
                 self.database.addValue(scan.scan, new_tag_name, database_value, None)
@@ -331,10 +372,10 @@ class DataBrowser(QWidget):
 
             values = []
 
-            # We add the new tag in the database
+            # We add the new tag in the Database
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
             for scan in self.database.getScans():
-                # If the tag to clone has a value, we add this value with the new tag name in the database
+                # If the tag to clone has a value, we add this value with the new tag name in the Database
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
                     toCloneValue = self.database.getValue(scan.scan, tag_to_clone)
                     self.database.addValue(scan.scan, new_tag_name, toCloneValue.current_value, toCloneValue.raw_value)
@@ -392,7 +433,7 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Tags removed from the database
+            # Tags removed from the Database
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
 
@@ -437,7 +478,7 @@ class TableDataBrowser(QTableWidget):
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
-        Called when the columns of the databrowser are moved
+        Called when the columns of the DataBrowser are moved
         We have to ensure FileName column stays at index 0
         :param logicalIndex:
         :param oldVisualIndex: From index

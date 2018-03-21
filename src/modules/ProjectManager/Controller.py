@@ -1,9 +1,9 @@
 import glob
 import os.path
 import json
-import Utils.utils as utils
+import Utils.Utils as utils
 import hashlib # To generate the md5 of each scan
-from DataBase.DataBaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
+from Database.DatabaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
 from SoftwareProperties.Config import Config
 import datetime
 import yaml
@@ -93,7 +93,7 @@ def read_log(database):
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
 
-            database.addScan(file_name, original_md5) # Scan added to the database
+            database.addScan(file_name, original_md5) # Scan added to the Database
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
@@ -135,7 +135,7 @@ def read_log(database):
 
                     # We only accept the value if it's not empty or null
                     if value is not None and utils.database_to_table(value) is not "":
-                        database.addValue(file_name, tag[0], value, value) # Value added to the database
+                        database.addValue(file_name, tag[0], value, value) # Value added to the Database
                         values_added.append([file_name, tag[0], value]) # Value added to history
 
                         if not tag[0] in import_tags_names:
@@ -144,12 +144,12 @@ def read_log(database):
 
             #print("Loop --- %s seconds ---" % (time() - start_time))
 
-    # Tags added to the database
+    # Tags added to the Database
     for tag in import_tags:
 
         #start_time = time()
 
-        # Default tags are already in the database with user origin
+        # Default tags are already in the Database with user origin
         tag_name = tag[0]
         tag_type = tag[1]
         tag_unit = tag[2]

@@ -1,10 +1,9 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
-from SoftwareProperties.Config import Config
 
-class Ui_Tag_Selection(QDialog):
+class Ui_Filter_Selection(QDialog):
     """
-    Is called when the user wants to update the tags that are visualized in the data browser
+    Is called when the user wants to open a filter saved before
     """
 
     def __init__(self, database):
@@ -13,23 +12,22 @@ class Ui_Tag_Selection(QDialog):
 
         _translate = QtCore.QCoreApplication.translate
 
-        # The "Tag list" label
-        self.label_tag_list = QtWidgets.QLabel(self)
-        self.label_tag_list.setTextFormat(QtCore.Qt.AutoText)
-        self.label_tag_list.setObjectName("label_tag_list")
-        self.label_tag_list.setText(_translate("MainWindow", "Available tags:"))
+        # The "Filter list" label
+        self.label_filter_list = QtWidgets.QLabel(self)
+        self.label_filter_list.setTextFormat(QtCore.Qt.AutoText)
+        self.label_filter_list.setObjectName("label_filter_list")
+        self.label_filter_list.setText(_translate("MainWindow", "Available filters:"))
 
-        # The search bar to search in the list of tags
+        # The search bar to search in the list of filters
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
         self.search_bar.textChanged.connect(self.search_str)
 
-        # The list of tags
-        self.list_widget_tags = QtWidgets.QListWidget(self)
-        self.list_widget_tags.setObjectName("listWidget_tags")
-        self.list_widget_tags.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.list_widget_tags.itemClicked.connect(self.item_clicked)
+        # The list of filters
+        self.list_widget_filters = QtWidgets.QListWidget(self)
+        self.list_widget_filters.setObjectName("listWidget_tags")
+        self.list_widget_filters.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
 
         self.push_button_ok = QtWidgets.QPushButton(self)
         self.push_button_ok.setObjectName("pushButton_ok")
@@ -42,12 +40,12 @@ class Ui_Tag_Selection(QDialog):
         self.push_button_cancel.clicked.connect(self.cancel_clicked)
 
         hbox_top_left = QHBoxLayout()
-        hbox_top_left.addWidget(self.label_tag_list)
+        hbox_top_left.addWidget(self.label_filter_list)
         hbox_top_left.addWidget(self.search_bar)
 
         vbox_top_left = QVBoxLayout()
         vbox_top_left.addLayout(hbox_top_left)
-        vbox_top_left.addWidget(self.list_widget_tags)
+        vbox_top_left.addWidget(self.list_widget_filters)
 
         hbox_buttons = QHBoxLayout()
         hbox_buttons.addStretch(1)
@@ -63,30 +61,22 @@ class Ui_Tag_Selection(QDialog):
     def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for tag in self.database.getTags():
-                if str_search.upper() in tag.tag.upper():
-                    return_list.append(tag.tag)
+            for filter in self.database.filters:
+                if str_search.upper() in filter.name.upper():
+                    return_list.append(filter.name)
         else:
-            for tag in self.database.getTags():
-                return_list.append(tag.tag)
+            for filter in self.database.filters:
+                return_list.append(filter.name)
 
-        for idx in range(self.list_widget_tags.count()):
-            item = self.list_widget_tags.item(idx)
+        for idx in range(self.list_widget_filters.count()):
+            item = self.list_widget_filters.item(idx)
             if item.text() in return_list:
                 item.setHidden(False)
             else:
                 item.setHidden(True)
 
-    def item_clicked(self, item):
-        for idx in range(self.list_widget_tags.count()):
-            itm = self.list_widget_tags.item(idx)
-            if itm == item:
-                itm.setCheckState(QtCore.Qt.Checked)
-            else:
-                itm.setCheckState(QtCore.Qt.Unchecked)
-
     def ok_clicked(self):
-        # Has to be override in the Ui_Select_Tag* classes
+        # Has to be override in the Ui_Select_Filter* classes
         pass
 
     def cancel_clicked(self):

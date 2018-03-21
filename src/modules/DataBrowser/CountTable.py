@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.utils import database_to_table, table_to_database
+from Utils.Utils import database_to_table, table_to_database
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
@@ -246,7 +246,7 @@ class CountTable(QDialog):
         for col in range(self.idx_last_tag + 1, self.nb_col):
             nb_scans_ok = 0
             # Creating a tag_list that will contain couples tag_name/tag_value that
-            # will then querying the database
+            # will then querying the Database
             for row in range(self.nb_row):
                 tag_list = []
                 for idx_first_columns in range(self.idx_last_tag + 1):

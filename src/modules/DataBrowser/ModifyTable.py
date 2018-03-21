@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
-from Utils.utils import check_value_type
-from DataBase.DataBaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from Utils.Utils import check_value_type
+from Database.DatabaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 
 class ModifyTable(QDialog):
     """
@@ -10,7 +10,7 @@ class ModifyTable(QDialog):
     def __init__(self, database, list_value, types, scans, tags):
         """
         ModifyTable init
-        :param database: Instance of database
+        :param database: Instance of Database
         :param list_value: List of values of the cell
         :param types: Value types
         :param scans: Scans of the rows
@@ -87,7 +87,7 @@ class ModifyTable(QDialog):
 
     def update_table_values(self):
         """
-        To update the table in the database after Ok is clicked
+        To update the table in the Database after Ok is clicked
         """
         valid = True
 
