@@ -1,2 +1,6 @@
 def test_database():
-    print("tests to fill")
+    print("test database")
+    assert True == False
+
+print("tests to fill")
+test_database()
