@@ -558,7 +558,7 @@ class DataBase:
             if filterObject.name == filter:
                 return filterObject
 
-    def save_current_filter(self):
+    def save_current_filter(self, advancedFilters):
         """
         To save the current filter
         :return:
@@ -566,6 +566,13 @@ class DataBase:
 
         from PyQt5.QtWidgets import QMessageBox
         import json
+
+        (fields, conditions, values, links, nots) = advancedFilters
+        self.currentFilter.fields = fields
+        self.currentFilter.conditions = conditions
+        self.currentFilter.values = values
+        self.currentFilter.links = links
+        self.currentFilter.nots = nots
 
         # Getting the path
         filters_path = os.path.join(self.folder, "filters")

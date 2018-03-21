@@ -117,6 +117,9 @@ class AdvancedSearch(QWidget):
         Called to refresh the advanced search
         """
 
+        # Old values stored
+        (fields, conditions, values, links, nots) = self.get_filters()
+
         # We remove the old layout
         self.clearLayout(self.layout())
         QObjectCleanupHandler().add(self.layout())
@@ -125,7 +128,7 @@ class AdvancedSearch(QWidget):
         self.rows_borders_removed()
 
         # Links and add rows reput in the good rows
-        self.rows_borders_added()
+        self.rows_borders_added(links)
 
         master_layout = QVBoxLayout()
         main_layout = QGridLayout()
@@ -175,9 +178,10 @@ class AdvancedSearch(QWidget):
                 self.rows[i][0] = None
             i = i + 1
 
-    def rows_borders_added(self):
+    def rows_borders_added(self, links):
         """
         Adds the links and the add row to the good rows
+        :param links: Old links to reput
         """
 
         # Plus added to the last row
@@ -197,6 +201,8 @@ class AdvancedSearch(QWidget):
             linkChoice.setObjectName('link')
             linkChoice.addItem("AND")
             linkChoice.addItem("OR")
+            if len(links) >= i:
+                linkChoice.setCurrentText(links[i - 1])
             row[0] = linkChoice
             i = i + 1
 
@@ -267,3 +273,36 @@ class AdvancedSearch(QWidget):
                     elif (childName == 'not'):
                         nots.append(child.currentText())
         return fields, conditions, values, links, nots
+
+    def apply_filter(self, filter):
+        """
+        To apply an open filter
+        :param filter: Filter object opened to apply
+        :return:
+        """
+        self.rows = []
+
+        # Data
+        nots = filter.nots
+        values = filter.values
+        conditions = filter.conditions
+        links = filter.links
+        fields = filter.fields
+
+        i = 0
+        while i < len(nots):
+            self.add_row()
+            row = self.rows[i]
+            if i > 0:
+                row[0].setCurrentText(links[i - 1])
+            row[1].setCurrentText(nots[i])
+            row[2].setCurrentText(fields[i])
+            row[3].setCurrentText(conditions[i])
+            row[4].setText(values[i])
+            i += 1
+
+        # Result gotten
+        result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
+        # DataBrowser updated with the new selection
+        self.dataBrowser.table_data.scans_to_visualize = result
+        self.dataBrowser.table_data.update_table()

@@ -132,7 +132,7 @@ class DataBrowser(QWidget):
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
         self.save_filter_action = QAction("Save current filter", self, shortcut="Ctrl+S")
-        self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter())
+        self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter(self.advanced_search.get_filters()))
 
         self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
         self.open_filter_action.triggered.connect(self.open_filter)
@@ -147,6 +147,11 @@ class DataBrowser(QWidget):
 
         filterToApply = self.database.currentFilter
         self.search_bar.setText(filterToApply.search_bar)
+
+        # We open the advanced search
+        self.frame_advanced_search.setHidden(False)
+        self.advanced_search.show_search()
+        self.advanced_search.apply_filter(filterToApply)
 
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
