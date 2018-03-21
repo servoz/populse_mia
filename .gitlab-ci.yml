@@ -25,6 +25,7 @@ database:
     - apk upgrade
     - apk add git rsync openssh python python-dev py-pip build-base
     - pip install docker-compose
+    - pip install --upgrade pip
   script:
-    - python tests.py test_database
+    - python tests.py
 
