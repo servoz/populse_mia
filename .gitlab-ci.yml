@@ -26,7 +26,6 @@ database:
     - apk add git rsync openssh python python-dev py-pip build-base
     - pip install docker-compose
     - pip install --upgrade pip
-    - export PYTHONPATH="${PYTHONPATH}:/home/lucie/Documents/MIA2/src/modules"
   script:
     - python tests.py
 
