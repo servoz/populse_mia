@@ -7,6 +7,7 @@ import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from DataBase.Filter import Filter
 import pickle
 
 class ForeignKeysListener(PoolListener):
@@ -34,6 +35,8 @@ class DataBase:
             self.unsavedModifications: To know if there are unsaved modifications
             self.undos: Stack of undo actions we can do
             self.redos: Stack of redo actions we can do
+            self.currentFilter: Current filter in the databrowser
+            self.filters = List of filters of the project
 
             Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
 
@@ -64,6 +67,7 @@ class DataBase:
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
+        self.initFilters()
 
     """ FROM properties/properties.yml """
 
@@ -516,6 +520,95 @@ class DataBase:
                 if not self.scanHasTag(scan.scan, tag.tag) and not scan.scan in return_list:
                     return_list.append(scan.scan)
         return return_list
+
+    def initFilters(self):
+        """
+        Init of the filters at project opening
+        """
+
+        import json
+        import glob
+
+        self.currentFilter = Filter(None, [], [], [], [], [], "")
+        self.filters = []
+
+        filters_folder = os.path.join(self.folder, "filters")
+
+        for filename in glob.glob(os.path.join(filters_folder, '*')):
+            filter, extension = os.path.splitext(os.path.basename(filename))
+            data = json.load(open(filename))
+            filterObject = Filter(filter, data["nots"], data["values"], data["fields"], data["links"], data["conditions"], data["search_bar_text"])
+            self.filters.append(filterObject)
+
+    def setCurrentFilter(self, filter):
+        """
+        To set the current filter of the project
+        :param filter: new Filter object
+        """
+
+        self.currentFilter = filter
+
+    def getFilter(self, filter):
+        """
+        To get a Filter object
+        :param filter: Filter name
+        :return: Filter object
+        """
+        for filterObject in self.filters:
+            if filterObject.name == filter:
+                return filterObject
+
+    def save_current_filter(self):
+        """
+        To save the current filter
+        :return:
+        """
+
+        from PyQt5.QtWidgets import QMessageBox
+        import json
+
+        # Getting the path
+        filters_path = os.path.join(self.folder, "filters")
+
+        # Filters folder created if it does not already exists
+        if not os.path.exists(filters_path):
+            os.mkdir(filters_path)
+
+        filter_name = self.getFilterName()
+
+        # We save the filter only if we have a filter name from the popup
+        if filter_name != None:
+            file_path = os.path.join(filters_path, filter_name + ".json")
+
+            if os.path.exists(file_path):
+                # Filter already exists
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The filter already exists in the project")
+                msg.setInformativeText("The project already has a filter named " + filter_name)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            else:
+                # Json filter file written
+                with open(file_path, 'w') as outfile:
+                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values, self.currentFilter.fields, self.currentFilter.links, self.currentFilter.conditions, self.currentFilter.search_bar)
+                    json.dump(new_filter.json_format(), outfile)
+                    self.filters.append(new_filter)
+
+    def getFilterName(self):
+        """
+        Input box to get the name of the filter to save
+        """
+
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+
+        text, okPressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
 
     def getScansSimpleSearch(self, search):
         """

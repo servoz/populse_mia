@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLa
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QPushButton
+    QMessageBox, QPushButton, QInputDialog, QLineEdit
 import os
 from ProjectManager.controller import save_project
 
@@ -11,6 +11,7 @@ from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from PopUps.Ui_Select_Filter import Ui_Select_Filter
 from DataBrowser.CountTable import CountTable
 
 from SoftwareProperties import Config
@@ -23,6 +24,8 @@ from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.utils import database_to_table, table_to_database, check_value_type
+
+import json
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
@@ -128,6 +131,23 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
+        self.save_filter_action = QAction("Save current filter", self, shortcut="Ctrl+S")
+        self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter())
+
+        self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
+        self.open_filter_action.triggered.connect(self.open_filter)
+
+    def open_filter(self):
+        """
+        To open a project filter saved before
+        """
+        self.popUp = Ui_Select_Filter(self.database)
+        if self.popUp.exec_() == QDialog.Accepted:
+            pass
+
+        filterToApply = self.database.currentFilter
+        self.search_bar.setText(filterToApply.search_bar)
+
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
@@ -161,6 +181,14 @@ class DataBrowser(QWidget):
         tags_menu.addAction(self.remove_tag_action)
         tags_tool_button.setMenu(tags_menu)
 
+        filters_tool_button = QToolButton()
+        filters_tool_button.setText('Filters')
+        filters_tool_button.setPopupMode(QToolButton.MenuButtonPopup)
+        filters_menu = QMenu()
+        filters_menu.addAction(self.save_filter_action)
+        filters_menu.addAction(self.open_filter_action)
+        filters_tool_button.setMenu(filters_menu)
+
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character, *Not Defined* for the scans with missing value(s)")
@@ -193,6 +221,8 @@ class DataBrowser(QWidget):
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
+        self.menu_toolbar.addWidget(filters_tool_button)
+        self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.frame_test)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(advanced_search_button)
@@ -218,6 +248,8 @@ class DataBrowser(QWidget):
 
         self.table_data.scans_to_visualize = return_list
         self.table_data.update_table()
+
+        self.database.currentFilter.search_bar = str_search
 
     def reset_search_bar(self):
         self.search_bar.setText("")
