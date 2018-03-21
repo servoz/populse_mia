@@ -72,29 +72,31 @@ class Ui_Visualized_Tags(QWidget):
 
         self.setLayout(hbox_tags)
 
-        for tag in database.getVisualizedTags():
-            item = QtWidgets.QListWidgetItem()
-            self.list_widget_selected_tags.addItem(item)
-            item.setText(tag.tag)
+        self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
         for tag in database.getTags():
             item = QtWidgets.QListWidgetItem()
             if tag.visible == False:
+                # Tag not visible: left side
                 self.list_widget_tags.addItem(item)
-                item.setText(tag.tag)
+                self.left_tags.append(tag.tag)
+            else:
+                # Tag visible: right side
+                self.list_widget_selected_tags.addItem(item)
+            item.setText(tag.tag)
         self.list_widget_tags.sortItems()
 
     def search_str(self, database, str_search):
         return_list = []
         if str_search != "":
-            for tag in database.getTags():
-                if str_search.upper() in tag.tag.upper():
-                    if tag.visible == False:
-                        return_list.append(tag.tag)
+            for tag in self.left_tags:
+                if str_search.upper() in tag.upper():
+                    return_list.append(tag)
         else:
-            for tag in database.getTags():
-                if tag.visible == False:
-                    return_list.append(tag.tag)
+            for tag in self.left_tags:
+                return_list.append(tag)
+
+        # Selection updated
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()
@@ -108,6 +110,7 @@ class Ui_Visualized_Tags(QWidget):
                       reverse=True)
         for row in rows:
             # assuming the other listWidget is called listWidget_2
+            self.left_tags.remove(self.list_widget_tags.item(row).text())
             self.list_widget_selected_tags.addItem(self.list_widget_tags.takeItem(row))
 
 
@@ -117,6 +120,7 @@ class Ui_Visualized_Tags(QWidget):
                       reverse=True)
         for row in rows:
             if (self.list_widget_selected_tags.item(row).text() != "FileName"):
+                self.left_tags.append(self.list_widget_selected_tags.item(row).text())
                 self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
 
         self.list_widget_tags.sortItems()
