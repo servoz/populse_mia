@@ -290,7 +290,7 @@ class DataBrowser(QWidget):
 
             values = []
 
-            database_value = table_to_database(new_default_value)
+            database_value = table_to_database(new_default_value, tag_type)
 
             # We add the tag and a value for each scan in the database
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, database_value, new_tag_description)
@@ -302,7 +302,7 @@ class DataBrowser(QWidget):
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(type)
+            historyMaker.append(tag_type)
             historyMaker.append(new_tag_unit)
             historyMaker.append(database_value)
             historyMaker.append(new_tag_description)
@@ -709,14 +709,7 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText("Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
 
     def reset_column(self):
 
@@ -758,15 +751,7 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText(
-                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
 
     def reset_row(self):
 
@@ -810,15 +795,21 @@ class TableDataBrowser(QTableWidget):
 
         # Warning message if unreset values
         if has_unreset_values:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Some values do not have a raw value")
-            msg.setInformativeText(
-                "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.display_unreset_values()
+
+    def display_unreset_values(self):
+        """
+        Error message when trying to reset user tags
+        """
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("Some values do not have a raw value")
+        msg.setInformativeText(
+            "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.buttonClicked.connect(msg.close)
+        msg.exec()
 
     def reset_cells_with_item(self, items_in):
 
@@ -956,7 +947,6 @@ class TableDataBrowser(QTableWidget):
         """
 
         import ast
-        import sys
 
         super(TableDataBrowser, self).mouseReleaseEvent(e)
 
@@ -1158,7 +1148,7 @@ class TableDataBrowser(QTableWidget):
 
                 color = QColor()
 
-                value_database = table_to_database(text_value)
+                value_database = table_to_database(text_value, self.database.getTagType(tag_name))
 
                 # The scan already have a value for the tag: we update it
                 if(self.database.scanHasTag(scan_path, tag_name)):
@@ -1192,7 +1182,7 @@ class TableDataBrowser(QTableWidget):
                     item.setData(Qt.BackgroundRole, QVariant(color))
                     item.setText(text_value)
 
-                    # Font reseted in case it was a not defined cell
+                    # Font reset in case it was a not defined cell
                     font = item.font()
                     font.setItalic(False)
                     font.setBold(False)

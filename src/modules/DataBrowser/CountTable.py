@@ -3,10 +3,9 @@ from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWid
     QVBoxLayout, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 import os
-from ProjectManager import controller
-from DataBase.DataBase import DataBase
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
+from Utils.utils import database_to_table, table_to_database
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
@@ -121,8 +120,8 @@ class CountTable(QDialog):
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for value in values:
-            if value.current_value not in self.values_list[idx]:
-                self.values_list[idx].append(value.current_value)
+            if database_to_table(value.current_value) not in self.values_list[idx]:
+                self.values_list[idx].append(database_to_table(value.current_value))
 
     def count_scans(self):
         """ Method that counts the number of scans depending on the
@@ -217,28 +216,9 @@ class CountTable(QDialog):
             flag_up = False
             while col_checked >= 0:
                 if flag_up:
-                    # In this case, the value of the right column has reach its last value
-                    # This value has been reset to the first value
-                    if cell_text[col_checked] == self.values_list[col_checked][-1]:
-                        # If the value that has been displayed is the last one, the flag
-                        # stays the same, the value of the column on the left has to be changed
-                        cell_text[col_checked] = self.values_list[col_checked][0]
-                    else:
-                        # Else we iterate on the next value
-                        idx = self.values_list[col_checked].index(cell_text[col_checked])
-                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
-                        flag_up = False
+                    self.fill_column(cell_text, col_checked)
 
-                if cell_text[col_checked] == self.values_list[col_checked][-1]:
-                    # If the value that has been displayed is the last one, the flag
-                    # is set to True, the value of the column on the left has to be changed
-                    cell_text[col_checked] = self.values_list[col_checked][0]
-                    flag_up = True
-                else:
-                    # Else we iterate on the next value and reset the flag
-                    idx = self.values_list[col_checked].index(cell_text[col_checked])
-                    cell_text[col_checked] = self.values_list[col_checked][idx + 1]
-                    flag_up = False
+                self.fill_column(cell_text, col_checked)
 
                 if not flag_up:
                     # If there is nothing to do, we quit the loop
@@ -246,8 +226,22 @@ class CountTable(QDialog):
 
                 col_checked -= 1
 
+    def fill_column(self, cell_text, col_checked):
+        # In this case, the value of the right column has reach its last value
+        # This value has been reset to the first value
+        if cell_text[col_checked] == self.values_list[col_checked][-1]:
+            # If the value that has been displayed is the last one, the flag
+            # stays the same, the value of the column on the left has to be changed
+            cell_text[col_checked] = self.values_list[col_checked][0]
+        else:
+            # Else we iterate on the next value
+            idx = self.values_list[col_checked].index(cell_text[col_checked])
+            cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+            flag_up = False
+
     def fill_last_tag(self):
         """ Method that fills the cells corresponding to the last selected tag. """
+
         # Cells of the last tag
         for col in range(self.idx_last_tag + 1, self.nb_col):
             nb_scans_ok = 0
@@ -258,10 +252,10 @@ class CountTable(QDialog):
                 for idx_first_columns in range(self.idx_last_tag + 1):
                     value = self.table.item(row, idx_first_columns).text()
                     tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
-                    tag_list.append([tag_name, value])
+                    tag_list.append([tag_name, table_to_database(value, self.database.getTagType(tag_name))])
                 value_last_columns = self.table.horizontalHeaderItem(col).text()
                 tag_last_columns = self.push_buttons[-1].text()
-                tag_list.append([tag_last_columns, value_last_columns])
+                tag_list.append([tag_last_columns, table_to_database(value_last_columns, self.database.getTagType(tag_last_columns))])
 
                 item = QTableWidgetItem()
                 item.setFlags(QtCore.Qt.ItemIsEnabled)

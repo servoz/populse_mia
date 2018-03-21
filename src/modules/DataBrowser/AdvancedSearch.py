@@ -231,6 +231,20 @@ class AdvancedSearch(QWidget):
         Called to start the search
         """
 
+        (fields, conditions, values, links, nots) = self.get_filters() # Filters gotten
+
+        # Result gotten
+        result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
+        # DataBrowser updated with the new selection
+        self.dataBrowser.table_data.scans_to_visualize = result
+        self.dataBrowser.table_data.update_table()
+
+    def get_filters(self):
+        """
+        To get the filters in list form
+        :return: Lists of filters
+        """
+
         # Lists to get all the data of the search
         fields = []
         conditions = []
@@ -242,9 +256,9 @@ class AdvancedSearch(QWidget):
                 if widget != None:
                     child = widget
                     childName = child.objectName()
-                    if(childName == 'link'):
+                    if (childName == 'link'):
                         links.append(child.currentText())
-                    elif(childName == 'condition'):
+                    elif (childName == 'condition'):
                         conditions.append(child.currentText())
                     elif (childName == 'field'):
                         fields.append(child.currentText())
@@ -252,9 +266,4 @@ class AdvancedSearch(QWidget):
                         values.append(child.displayText())
                     elif (childName == 'not'):
                         nots.append(child.currentText())
-
-        # Result gotten
-        result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
-        # DataBrowser updated with the new selection
-        self.dataBrowser.table_data.scans_to_visualize = result
-        self.dataBrowser.table_data.update_table()
+        return fields, conditions, values, links, nots

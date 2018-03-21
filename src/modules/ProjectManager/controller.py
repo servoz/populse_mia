@@ -97,8 +97,8 @@ def read_log(database):
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
-            database.addValue(file_name, "FileName", utils.table_to_database(file_name), None) # FileName tag added
-            values_added.append([file_name, "FileName", utils.table_to_database(file_name)])
+            database.addValue(file_name, "FileName", utils.table_to_database(file_name, TAG_TYPE_STRING), None) # FileName tag added
+            values_added.append([file_name, "FileName", utils.table_to_database(file_name, TAG_TYPE_STRING)])
 
             #start_time = time()
 
