@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 from SoftwareProperties.Config import Config
 
-
 class Ui_Tag_Selection(QDialog):
     """
     Is called when the user wants to update the tags that are visualized in the data browser

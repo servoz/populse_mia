@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLa
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QPushButton, QInputDialog, QLineEdit
+    QMessageBox, QPushButton
 import os
 from ProjectManager.controller import save_project
 
@@ -19,11 +19,11 @@ from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from Database.DatabaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.ModifyTable import ModifyTable
 
-from Utils.utils import database_to_table, table_to_database, check_value_type
+from Utils.Utils import database_to_table, table_to_database, check_value_type
 
 import json
 
@@ -107,7 +107,7 @@ class DataBrowser(QWidget):
     def update_database(self, database):
         """
         Called when switching project (new, open, and save as)
-        :param database: New instance of database
+        :param database: New instance of Database
         :return:
         """
         # Database updated everywhere
@@ -119,7 +119,7 @@ class DataBrowser(QWidget):
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
 
-        #TODO update count table database???
+        #TODO update count table Database???
 
     def create_actions(self):
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
@@ -270,7 +270,7 @@ class DataBrowser(QWidget):
             self.viewer.setHidden(False)
         else:
             self.viewer.setHidden(True)
-            path_name = os.path.relpath(self.database.folder)
+            path_name = os.path.relpath(self.Database.folder)
             items = self.table_data.selectedItems()
             full_names = []
             for item in items:
@@ -312,7 +312,7 @@ class DataBrowser(QWidget):
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
-            # We reput all the scans in the databrowser
+            # We reput all the scans in the DataBrowser
             return_list = []
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
@@ -334,7 +334,7 @@ class DataBrowser(QWidget):
 
             database_value = table_to_database(new_default_value, tag_type)
 
-            # We add the tag and a value for each scan in the database
+            # We add the tag and a value for each scan in the Database
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, database_value, new_tag_description)
             for scan in self.database.getScans():
                 self.database.addValue(scan.scan, new_tag_name, database_value, None)
@@ -373,10 +373,10 @@ class DataBrowser(QWidget):
 
             values = []
 
-            # We add the new tag in the database
+            # We add the new tag in the Database
             self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
             for scan in self.database.getScans():
-                # If the tag to clone has a value, we add this value with the new tag name in the database
+                # If the tag to clone has a value, we add this value with the new tag name in the Database
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
                     toCloneValue = self.database.getValue(scan.scan, tag_to_clone)
                     self.database.addValue(scan.scan, new_tag_name, toCloneValue.current_value, toCloneValue.raw_value)
@@ -434,7 +434,7 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Tags removed from the database
+            # Tags removed from the Database
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
 
@@ -479,7 +479,7 @@ class TableDataBrowser(QTableWidget):
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
-        Called when the columns of the databrowser are moved
+        Called when the columns of the DataBrowser are moved
         We have to ensure FileName column stays at index 0
         :param logicalIndex:
         :param oldVisualIndex: From index

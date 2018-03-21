@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 def database_to_table(value):
     """
-    Converts a value from the database to the databrowser
+    Converts a value from the Database to the DataBrowser
     :param value: Value to convert
     :return: The value converted for the table
     """
@@ -26,13 +26,13 @@ def database_to_table(value):
 
 def table_to_database(value, type):
     """
-    Converts a value from the table (str) to the database
+    Converts a value from the table (str) to the Database
     :param value: Value to convert
     :param type: Type of tag value
-    :return: The value converted for the database (list)
+    :return: The value converted for the Database (list)
     """
     import ast
-    from DataBase.DataBaseModel import TAG_TYPE_STRING
+    from Database.DatabaseModel import TAG_TYPE_STRING
     try:
         list_value = ast.literal_eval(value)
         if isinstance(list_value, list):
@@ -58,7 +58,7 @@ def check_value_type(value, type):
     :param type: Type expected
     :return: True if the value is valid to replace the old one, False otherwise
     """
-    from DataBase.DataBaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_STRING
+    from Database.DatabaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_STRING
 
     if type == TAG_TYPE_INTEGER:
         try:

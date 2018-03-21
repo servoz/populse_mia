@@ -5,8 +5,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
-from DataBase.DataBase import DataBase
-from NodeEditor.Processes.processes import *
+from Database.Database import Database
 from SoftwareProperties.Config import Config
 
 if __name__ == '__main__':
@@ -22,7 +21,7 @@ if __name__ == '__main__':
         tags.insert(0, "FileName")
         config.setDefaultTags(tags)
 
-    database = DataBase(None, True)
+    database = Database(None, True)
 
     imageViewer = Main_Window(database)
     imageViewer.show()

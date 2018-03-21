@@ -18,7 +18,7 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
-from Utils.utils import database_to_table
+from Utils.Utils import database_to_table
 
 
 class MiniViewer(QWidget):
@@ -144,7 +144,7 @@ class MiniViewer(QWidget):
             self.setHidden(False)
             self.first_time = False
 
-        # If the user has willingly hidden the MiniViewer, the processes are not made
+        # If the user has willingly hidden the MiniViewer, the Processes are not made
         if self.isHidden():
             pass
         else:

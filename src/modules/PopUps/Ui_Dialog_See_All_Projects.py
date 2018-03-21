@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTreeWidg
 from PyQt5.QtGui import QIcon
 import os
 from ProjectManager import controller
-from DataBase.DataBase import DataBase
+from Database.Database import Database
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 
 class Ui_Dialog_See_All_Projects(QDialog):

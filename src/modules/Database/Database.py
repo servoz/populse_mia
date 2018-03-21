@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine, cast, VARCHAR
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.interfaces import PoolListener
-from DataBase.DataBaseModel import Tag, Scan, Value, Base, createDatabase
+from Database.DatabaseModel import Tag, Scan, Value, Base, createDatabase
 import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from DataBase.DataBaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
-from DataBase.Filter import Filter
+from Database.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Database.Filter import Filter
 import pickle
 
 class ForeignKeysListener(PoolListener):
@@ -17,7 +17,7 @@ class ForeignKeysListener(PoolListener):
     def connect(self, dbapi_con, con_record):
         db_cursor = dbapi_con.execute('pragma case_sensitive_like=ON')
 
-class DataBase:
+class Database:
 
     def __init__(self, project_root_folder, new_project):
         """ Database constructor
@@ -25,7 +25,7 @@ class DataBase:
             :param project_root_folder: projet root folder
                    If None, a temporary folder will be created
 
-            :param new_project: Boolean to know if we have to create the database
+            :param new_project: Boolean to know if we have to create the Database
                                 True when New Project pop up or at the beginning for unnamed project
                                 False when Open Project or Save as pop up
 
@@ -35,10 +35,10 @@ class DataBase:
             self.unsavedModifications: To know if there are unsaved modifications
             self.undos: Stack of undo actions we can do
             self.redos: Stack of redo actions we can do
-            self.currentFilter: Current filter in the databrowser
+            self.currentFilter: Current filter in the DataBrowser
             self.filters = List of filters of the project
 
-            Memory approximation: the database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
+            Memory approximation: the Database file takes approximately 26 000 octets (1 bytes, 8 bits) per scan
 
         """
 
@@ -51,11 +51,11 @@ class DataBase:
             self.isTempProject = False
             self.folder = project_root_folder
             self.properties = self.loadProperties()
-        # We create the database if it does not exists yet (for Unnamed project and New project)
+        # We create the Database if it does not exists yet (for Unnamed project and New project)
         if(new_project):
             createDatabase(self.folder)
-        # We open the database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        # We open the Database
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'Database', 'mia2.db'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
@@ -188,7 +188,7 @@ class DataBase:
 
     def addValue(self, scan, tag, current_value, raw_value):
         """
-        To add a new value (a new cell in the databrowser)
+        To add a new value (a new cell in the DataBrowser)
         :param scan: FileName of the scan
         :param tag: Tag name
         :param current_value: Current value displayed in the DataBrowser (Raw_value for raw tags and default_value for user tags)
@@ -464,7 +464,7 @@ class DataBase:
 
     def removeScan(self, scan):
         """
-        Removes a scan from the project (corresponds to a row in the databrowser)
+        Removes a scan from the project (corresponds to a row in the DataBrowser)
         Removes the scan from the list of scans (Scan table), and all the values corresponding to this scan (Value table)
         :param scan: FileName of the scan to remove
         """
@@ -480,7 +480,7 @@ class DataBase:
 
     def removeTag(self, tag):
         """
-        Removes a tag from the project (corresponds to a column in the databrowser)
+        Removes a tag from the project (corresponds to a column in the DataBrowser)
         We can only remove user tags from the software
         :param tag: Name of the tag to remove
         """
@@ -496,7 +496,7 @@ class DataBase:
 
     def removeValue(self, scan, tag):
         """
-        Removes the value of the tuple <scan, tag> (corresponds to a cell in the databrowser)
+        Removes the value of the tuple <scan, tag> (corresponds to a cell in the DataBrowser)
         :param scan: FileName of the scan
         :param tag: Name of the tag
         """
@@ -821,7 +821,7 @@ class DataBase:
         - Removing 10 scans: 200000 bits
         - Removing 1 tag: From 300 bits to 4000 bits => Depends on the number of values defined
         - Adding 1 tag: 40 bits
-        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole database after each action
+        => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole Database after each action
         """
 
     def update_sort(self, tag, order):
@@ -830,7 +830,7 @@ class DataBase:
 
     def reput_values(self, values):
         """
-        To reput the Value objects in the database
+        To reput the Value objects in the Database
         :param values: List of Value objects
         """
         i = 0

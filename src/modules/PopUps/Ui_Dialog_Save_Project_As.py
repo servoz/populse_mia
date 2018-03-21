@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
 import os
 from ProjectManager import controller
-import Utils.utils as utils
+import Utils.Utils as utils
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
     """
@@ -29,7 +29,7 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
         file_name = self.selectedFiles()
         if len(file_name) > 0:
             file_name = file_name[0]
-            #file_name = utils.remove_accents(file_name.replace(" ", "_"))
+            #file_name = Utils.remove_accents(file_name.replace(" ", "_"))
             projects_folder = os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')
             projects_folder = os.path.abspath(projects_folder)
             if file_name and file_name != projects_folder:

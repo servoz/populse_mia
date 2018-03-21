@@ -71,7 +71,7 @@ class Ui_Dialog_Settings(QDialog):
         historyMaker.append(new_visibilities)
         database.undos.append(historyMaker)
         database.redos.clear()
-        #database.setName(self.tab_infos.name_value.text())
+        #Database.setName(self.tab_infos.name_value.text())
         self.accept()
         self.close()
 

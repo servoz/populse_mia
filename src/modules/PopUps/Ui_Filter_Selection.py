@@ -1,7 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
-from SoftwareProperties.Config import Config
-
 
 class Ui_Filter_Selection(QDialog):
     """

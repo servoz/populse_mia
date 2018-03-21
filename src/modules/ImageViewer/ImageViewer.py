@@ -16,11 +16,9 @@ from PyQt5.QtGui import QPalette, QPixmap, QImage, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QSplitter, \
     QTreeView, QFileSystemModel, QLabel, QSizePolicy, QScrollArea, \
     QLineEdit, QGroupBox, QGridLayout, QPushButton, QSlider, QHBoxLayout, QMenu, \
-    QAction, QTextEdit, QTableWidget, QTableWidgetItem, QToolBar, QToolButton, \
-    QFrame, QAbstractScrollArea
+    QAction, QTextEdit, QTableWidget, QTableWidgetItem, QToolBar, QToolButton, QAbstractScrollArea
 from scipy.ndimage import rotate  # to work with NumPy arrays
 
-# from About import AboutSoft
 from SoftwareProperties.Config import Config
 
 import nibabel as nib  # to read nifti file

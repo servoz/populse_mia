@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QCheckBox, QMenu, QComboBox, QListWidget, QInputDial
 from functools import partial
 from SoftwareProperties.Config import Config
 
-
 class Ui_Dialog_Preferences(QDialog):
     """
     Is called when the user wants to change the software preferences
