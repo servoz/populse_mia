@@ -1,8 +1,8 @@
 import os
 
-print(os.path.curdir)
+print(os.getcwd())
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-print(os.path.curdir)
+print(os.getcwd())
 
 from Database.Database import Database
 
