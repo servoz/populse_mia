@@ -63,6 +63,7 @@ class Database:
         #self.session = DBSession()
         # If it's a new project, we refresh the list of tags, in case of changes in MIA2 preferences
         if new_project:
+            pass
             #self.refreshTags()
         # Initialisation
         self.unsavedModifications = False
