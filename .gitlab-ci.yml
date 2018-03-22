@@ -32,7 +32,7 @@ database:
     - pip3 install sqlalchemy
     - pip3 install pyqt5-installer
     - install_pyqt5.py
-    - python3 /usr/bin/install_pyqt5.py
+    - find / -iname PyQt5
 
   script:
     - python3 -u tests.py
