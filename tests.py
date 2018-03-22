@@ -23,7 +23,7 @@ def test_database_creation_new_project():
     Tests the creation of the database file at new project
     """
     project_folder = os.path.relpath(tempfile.mkdtemp())
-    controller.createProject("test", project_folder, project_folder)
+    controller.createProject("test", project_folder, project_folder) # Project creation
     database = Database(project_folder, True)
     folder = database.folder
     database_folder = os.path.join(folder, "database", "mia2.db")
