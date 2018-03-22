@@ -1,8 +1,7 @@
 import os
 
-print(os.getcwd())
 os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "src", "scripts"))
-print(os.getcwd())
+print("current directory:" + str(os.getcwd()))
 
 from Database.Database import Database
 
@@ -12,9 +11,7 @@ def test_database_creation():
     """
     database = Database(None, True)
     folder = database.folder
-    print(folder)
     database_folder = os.path.join(folder, "database", "mia2.db")
-    print(database_folder)
     assert os.path.exists(database_folder) == True
 
 total_tests = 0

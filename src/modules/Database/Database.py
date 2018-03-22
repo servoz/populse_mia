@@ -53,7 +53,7 @@ class Database:
             self.properties = self.loadProperties()
         # We create the Database if it does not exists yet (for Unnamed project and New project)
         if(new_project):
-            createDatabase(self.folder)
+            #createDatabase(self.folder)
         # We open the Database
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
