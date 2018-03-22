@@ -33,6 +33,7 @@ database:
     - echo $PYTHONPATH
     - export PYTHONPATH="${PYTHONPATH}:/home/lucie/Documents/MIA2/src/modules"
     - export PYTHONPATH="${PYTHONPATH}:/home/david/MIA2/src/modules"
+    - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - echo $PYTHONPATH
     - python3 tests.py
 
