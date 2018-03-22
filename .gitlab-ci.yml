@@ -35,7 +35,7 @@ database:
     #- find / -iname PyQt5
     - docker pull pypi/pyqt5
     - pip3 search pyqt5
-    - pip3 install pyqt5
+    - pip3 install pyqt5:latest
     - find / -iname PyQt5
 
   script:
