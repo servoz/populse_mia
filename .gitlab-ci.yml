@@ -22,6 +22,7 @@ database:
   before_script:
     - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
+    - echo $PYTHONPATH
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
     - apk update
@@ -34,7 +35,7 @@ database:
     #- find / -iname PyQt5
     - docker pull pypi/pyqt5
     - pip3 search pyqt5
-    - pip3 install pyqt5
+    #- pip3 install pyqt5
     - find / -iname PyQt5
 
   script:
