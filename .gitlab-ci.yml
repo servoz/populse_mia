@@ -24,7 +24,7 @@ database:
     - apk update
     - apk upgrade
     - apk add git rsync openssh python3 python3-dev py-pip build-base
-    - sudo apt-get install python3-pyqt5
+    - apt-get install python3-pyqt5
     - pip3 install --upgrade pip
     - pip3 install docker-compose
     - pip3 install sqlalchemy
