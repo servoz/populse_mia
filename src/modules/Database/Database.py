@@ -53,18 +53,16 @@ class Database:
             self.properties = self.loadProperties()
         # We create the Database if it does not exists yet (for Unnamed project and New project)
         if(new_project):
-            #createDatabase(self.folder)
-            pass
+            createDatabase(self.folder)
         # We open the Database
-        #engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
-        #Base.metadata.bind = engine
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        Base.metadata.bind = engine
         # We create a session
-        #DBSession = sessionmaker(bind=engine)
-        #self.session = DBSession()
+        DBSession = sessionmaker(bind=engine)
+        self.session = DBSession()
         # If it's a new project, we refresh the list of tags, in case of changes in MIA2 preferences
         if new_project:
-            pass
-            #self.refreshTags()
+            self.refreshTags()
         # Initialisation
         self.unsavedModifications = False
         self.undos = []
