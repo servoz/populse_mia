@@ -22,7 +22,7 @@ database:
   before_script:
     - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
-    - echo $PYTHONPATH
+    - export PYTHONPATH="${PYTHONPATH}:/usr/lib/python3/dist-packages/PyQt5"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
     - apk update
