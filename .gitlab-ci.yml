@@ -18,12 +18,12 @@ database:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
-    - apk update
-    - apk upgrade
-    - apk search make
-    - apk search gcc
-    - apk search sip
-    - apk add python3 python3-dev python3-tkinter python3-idle boost-python3 python3-dbg uwsgi-python3 python3-wininst libpeas-python3 gcc make py-sip
+    #- apk update
+    #- apk upgrade
+    #- apk search make
+    #- apk search gcc
+    #- apk search sip
+    #- apk add python3 python3-dev python3-tkinter python3-idle boost-python3 python3-dbg uwsgi-python3 python3-wininst libpeas-python3 gcc make py-sip
     #- wget http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.5/sip-4.16.5.tar.gz
     #- tar xzf sip-4.16.5.tar.gz
     #- cd sip-4.16.5
@@ -32,10 +32,13 @@ database:
     #- make install
     #- cd ..
     #- rm -r sip-4.16.5*
+    - apt-get python3
+    - apt-get python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - pip3 install SIP
-    - pip3 install PyQt5
+    #- pip3 install SIP
+    #- pip3 install PyQt5
+    - wget https://pypi.python.org/packages/34/a7/ed3a2e7f74a7fcc112c1669968ca1be552f34d123bb4515a97520d69e8f3/PyQt5-5.6-cp35-cp35m-manylinux1_x86_64.whl#md5=787c331fb9b462a16f8526c964023c58
 
   script:
     - python3 -u tests.py
