@@ -21,6 +21,7 @@ database:
     - apk update
     - apk upgrade
     - apk add python3 python3-dev python3-setuptools
+    - easy_install3 pip
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
     - pip3 install PyQt5
