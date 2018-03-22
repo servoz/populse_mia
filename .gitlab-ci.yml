@@ -15,7 +15,6 @@ codequality:
 
 database:
   before_script:
-    - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
