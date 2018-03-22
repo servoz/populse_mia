@@ -33,7 +33,7 @@ database:
     #- pip3 install pyqt5-installer
     #- find / -iname PyQt5
     - docker pull pypi/pyqt5
-    - pypi install pyqt5
+    - find / -iname PyQt5
 
   script:
     - python3 -u tests.py
