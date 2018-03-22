@@ -31,8 +31,8 @@ database:
     - pip3 install docker-compose
     - pip3 install sqlalchemy
     - pip3 install pyqt5-installer
-    - install_pyqt5.py
-    - find / -iname PyQt5
+    #- find / -iname PyQt5
+    - pip3 install pyqt5
 
   script:
     - python3 -u tests.py
