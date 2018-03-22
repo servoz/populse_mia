@@ -22,12 +22,11 @@ database:
     - apk upgrade
     - apk search python
     - apk search python3
-    - apk add python3=3.5.0 python3-dev
+    - apk add python3 python3-dev
     - pip3 install --upgrade pip
-    - python3.5 easy_install.py pip
-    - pip3 --version
     - pip3 install sqlalchemy
-    - pip3.5 install PyQt5
+    - python3 -m pip install PyQt5 --user
+    - pip3 install PyQt5
 
   script:
     - python3 -u tests.py
