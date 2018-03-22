@@ -30,7 +30,8 @@ database:
     - pip3 install --upgrade pip
     - pip3 install docker-compose
     - pip3 install sqlalchemy
-    - pip3 install pyqt5-tools
+    - pip3 install pyqt5-installer
+    - pip3 install PyQt5
 
   script:
     - python3 -u tests.py
