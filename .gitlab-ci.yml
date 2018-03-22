@@ -14,11 +14,6 @@ codequality:
     paths: [codeclimate.json]
 
 database:
-  image: docker:latest
-  variables:
-    DOCKER_DRIVER: overlay
-  services:
-    - docker:dind
   before_script:
     - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
@@ -29,7 +24,6 @@ database:
     - apk add python3 python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - ping www.google.com
     - pip3 install PyQt5
 
   script:
