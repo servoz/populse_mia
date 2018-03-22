@@ -1,6 +1,7 @@
 import os
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
+print(os.path.curdir)
 
 from Database.Database import Database
 
@@ -10,7 +11,9 @@ def test_database_creation():
     """
     database = Database(None, True)
     folder = database.folder
+    print(folder)
     database_folder = os.path.join(folder, "database", "mia2.db")
+    print(database_folder)
     assert os.path.exists(database_folder) == True
 
 total_tests = 0
@@ -20,7 +23,7 @@ try:
     total_tests += 1
     test_database_creation()
 except Exception as e:
-    print(e)
+    print("database_creation" + str(e))
     failed_tests.append("database_creation")
 
 if len(failed_tests) > 0:
