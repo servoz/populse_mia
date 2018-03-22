@@ -34,7 +34,7 @@ database:
     #- rm -r sip-4.16.5*
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - pip3 search sip
+    - pip3 install SIP
 
   script:
     - python3 -u tests.py
