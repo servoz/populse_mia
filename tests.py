@@ -33,14 +33,16 @@ failed_tests = []
 try:
     total_tests += 1
     test_database_creation_software_opening()
-except Exception:
+except Exception as e:
+    print(e)
     failed_tests.append("database_creation_software_opening")
 
 # Second test
 try:
     total_tests += 1
     test_database_creation_new_project()
-except Exception:
+except Exception as e:
+    print(e)
     failed_tests.append("database_creation_new_project")
 
 # Printing if failed tests
