@@ -27,6 +27,7 @@ database:
     - apk update
     - apk upgrade
     - apk add python3 python3-dev
+    - pip3 install --upgrade pip
     - pip3 install sqlalchemy
     - find / -iname pyqt5
     - cd /usr/lib/python3.6/site-packages/
