@@ -1,7 +1,7 @@
 import os
 
 os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "src", "scripts"))
-print("current directory:" + str(os.getcwd()))
+print("current directory: " + str(os.getcwd()))
 
 from Database.Database import Database
 
