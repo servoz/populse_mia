@@ -37,7 +37,8 @@ database:
     - pip3 search pyqt5
     - find / -iname PyQt5
     - find / -iname sqlalchemy
-    - pip3 install python-qt5
+    #- pip3 install python-qt5
+    - pip3 install vext.pyqt5
     - find / -iname PyQt5
 
   script:
