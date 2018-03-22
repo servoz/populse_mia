@@ -42,7 +42,7 @@ database:
     - find / -iname pyqt5
     - find / -iname vext.pyqt5
     - cd
-    - cd /usr/lib/python3.6/site-packages/
+    - cd /usr/lib/
     - ls
 
   script:
