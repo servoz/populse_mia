@@ -21,6 +21,8 @@ database:
     - docker:dind
   before_script:
     - docker info
+    - which apt
+    - which apt-get
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PATH="${PATH}:/usr/bin/"
     - export PATH="${PATH}:/bin/"
