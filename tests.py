@@ -5,8 +5,13 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 from Database.Database import Database
 
 def test_database_creation():
-    # pass
-    raise Exception("test")
+    """
+    Tests the creation of the database file at software opening
+    """
+    database = Database(None, True)
+    folder = database.folder
+    database_folder = os.path.join(folder, "database", "mia2.db")
+    assert os.path.exists(database_folder) == True
 
 total_tests = 0
 failed_tests = []
