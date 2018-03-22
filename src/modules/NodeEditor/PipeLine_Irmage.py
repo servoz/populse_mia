@@ -166,6 +166,13 @@ class NodeController(QWidget):
         self.h_box_node_name = QHBoxLayout()
 
     def display_parameters(self, node_name, process, pipeline):
+        if node_name in ('inputs', 'outputs'):
+            node_name = ''
+            process = pipeline.nodes[node_name]
+            print(process)
+        print("#############")
+        print(process)
+        print(pipeline.nodes[node_name])
         self.line_edit_input = []
         self.line_edit_output = []
         if len(self.children()) > 0:
