@@ -166,13 +166,7 @@ class NodeController(QWidget):
         self.h_box_node_name = QHBoxLayout()
 
     def display_parameters(self, node_name, process, pipeline):
-        if node_name in ('inputs', 'outputs'):
-            node_name = ''
-            process = pipeline.nodes[node_name]
-            print(process)
-        print("#############")
-        print(process)
-        print(pipeline.nodes[node_name])
+
         self.line_edit_input = []
         self.line_edit_output = []
         if len(self.children()) > 0:
@@ -185,7 +179,11 @@ class NodeController(QWidget):
         label_node_name.setText('Node name:')
 
         line_edit_node_name = QLineEdit()
-        line_edit_node_name.setText(node_name)
+        if node_name not in ('inputs', 'outputs'):
+            line_edit_node_name.setText(node_name)
+        else:
+            line_edit_node_name.setText('Pipeline inputs/outputs')
+            line_edit_node_name.setReadOnly(True)
 
         self.h_box_node_name = QHBoxLayout()
         self.h_box_node_name.addWidget(label_node_name)
@@ -197,6 +195,8 @@ class NodeController(QWidget):
         idx = 0
 
         for name, trait in process.user_traits().items():
+            if name == 'nodes_activation':
+                continue
             if not trait.output:
                 label_input = QLabel()
                 label_input.setText(str(name))
