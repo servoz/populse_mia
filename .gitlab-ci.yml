@@ -27,7 +27,7 @@ database:
     - pip3 install --upgrade pip
     - pip3 install docker-compose
     - pip3 install sqlalchemy
-    - pip3 install PyQt5
+    - pip3 install pyqt5
 
   script:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
