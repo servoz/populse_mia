@@ -35,6 +35,8 @@ database:
     #- find / -iname PyQt5
     - docker pull pypi/pyqt5
     - pip3 search pyqt5
+    - find / -iname PyQt5
+    - find / -iname sqlalchemy
     - pip3 install pyqt5:latest
     - find / -iname PyQt5
 
