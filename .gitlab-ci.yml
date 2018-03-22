@@ -23,8 +23,8 @@ database:
     - apk add python3 python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - python3 -m pip3 install PyQt5 --user
-    - pip3 install PyQt5
+    - python3 -m pip install PyQt5
+    #- pip3 install PyQt5
 
   script:
     - python3 -u tests.py
