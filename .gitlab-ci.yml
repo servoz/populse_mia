@@ -29,8 +29,9 @@ database:
     - apk add python3 python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - pip3 install sip
-    - pip install PyQt5
+    - python3 --version
+    - pip3 install SIP
+    #- pip install PyQt5
 
   script:
     - python3 -u tests.py
