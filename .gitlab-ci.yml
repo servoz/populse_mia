@@ -26,13 +26,13 @@ database:
     - tar xzf sip-4.16.5.tar.gz
     - cd sip-4.16.5
     - python3 configure.py
-    - make
-    - make install
-    - cd ..
-    - rm -r sip-4.16.5*
+    #- make
+    #- make install
+    #- cd ..
+    #- rm -r sip-4.16.5*
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - pip3 install pyqt5
+    - pip3 install sip
 
   script:
     - python3 -u tests.py
