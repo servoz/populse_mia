@@ -22,7 +22,7 @@ database:
   before_script:
     - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
-    - export PYTHONPATH="${PYTHONPATH}:/usr/lib/python3/dist-packages/PyQt5"
+    #- export PYTHONPATH="${PYTHONPATH}:/usr/lib/python3/dist-packages/PyQt5"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
     - apk update
@@ -37,7 +37,7 @@ database:
     - pip3 search pyqt5
     - find / -iname PyQt5
     - find / -iname sqlalchemy
-    - pip3 install pyqt5:latest
+    - pip3 install PyQt5==5.5.1
     - find / -iname PyQt5
 
   script:
