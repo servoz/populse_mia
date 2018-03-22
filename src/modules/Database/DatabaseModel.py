@@ -20,8 +20,8 @@ TAG_UNIT_MHZ = "MHz"
 Base = declarative_base()
 
 def createDatabase(project_root_folder):
-    os.mkdir(os.path.join(project_root_folder, 'Database'))
-    engine = create_engine('sqlite:///' + os.path.join(project_root_folder, 'Database', 'mia2.db'))
+    os.mkdir(os.path.join(project_root_folder, 'database'))
+    engine = create_engine('sqlite:///' + os.path.join(project_root_folder, 'database', 'mia2.db'))
     Base.metadata.create_all(engine)
 
 class Scan(Base):

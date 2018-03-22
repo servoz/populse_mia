@@ -55,7 +55,7 @@ class Database:
         if(new_project):
             createDatabase(self.folder)
         # We open the Database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'Database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
