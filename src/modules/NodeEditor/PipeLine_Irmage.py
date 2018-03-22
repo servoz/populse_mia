@@ -11,14 +11,16 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, QGraphicsView
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QListView, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QLabel, QLineEdit, \
-    QGroupBox
+    QGroupBox, QFileDialog
 from matplotlib.backends.qt_compat import QtWidgets
+from functools import partial
 import sip
 import os
 import six
 from capsul.pipeline import pipeline_tools
 from capsul.api import get_process_instance
 
+from soma.controller import trait_ids
 from NodeEditor.callStudent import callStudent
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 from .Processes.processes import AvailableProcesses
@@ -135,7 +137,7 @@ class ProjectEditor(QWidget):
             self.textedit.setText(f.read())
 
     def displayNodeParameters(self, node_name, process):
-        self.node_controller.display_parameters(node_name, process)
+        self.node_controller.display_parameters(node_name, process, self.diagramView.scene.pipeline)
 
     def startConnection(self, port):
         self.startedConnection = Connection(port, None)
@@ -163,7 +165,9 @@ class NodeController(QWidget):
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
 
-    def display_parameters(self, node_name, process):
+    def display_parameters(self, node_name, process, pipeline):
+        self.line_edit_input = []
+        self.line_edit_output = []
         if len(self.children()) > 0:
             self.clearLayout(self)
 
@@ -183,36 +187,67 @@ class NodeController(QWidget):
         # Inputs
         self.button_group_inputs = QGroupBox('Inputs')
         self.v_box_inputs = QVBoxLayout()
-        for name, value in process.get_inputs().items():
-            label_input = QLabel()
-            label_input.setText(str(name))
+        idx = 0
 
-            line_edit_input = QLineEdit()
-            line_edit_input.setText(str(value))
+        for name, trait in process.user_traits().items():
+            if not trait.output:
+                label_input = QLabel()
+                label_input.setText(str(name))
 
-            h_box = QHBoxLayout()
-            h_box.addWidget(label_input)
-            h_box.addWidget(line_edit_input)
+                value = getattr(process, name)
+                trait_type = trait_ids(process.trait(name))
 
-            self.v_box_inputs.addLayout(h_box)
+                self.line_edit_input.insert(idx, QLineEdit())
+                self.line_edit_input[idx].setText(str(value))
+                self.line_edit_input[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'in',
+                                                                        node_name, name, pipeline, type(value)))
+
+                h_box = QHBoxLayout()
+                h_box.addWidget(label_input)
+                h_box.addWidget(self.line_edit_input[idx])
+
+                if trait_type[0] == 'File':
+                    push_button = QPushButton('Browse')
+                    push_button.clicked.connect(partial(self.browse_file, idx, 'in', node_name,
+                                                        name, pipeline, type(value)))
+                    h_box.addWidget(push_button)
+
+                self.v_box_inputs.addLayout(h_box)
+
+                idx += 1
 
         self.button_group_inputs.setLayout(self.v_box_inputs)
 
-        # Inputs
+        # Outputs
         self.button_group_outputs = QGroupBox('Outputs')
         self.v_box_outputs = QVBoxLayout()
-        for name, value in process.get_outputs().items():
+        idx = 0
+
+        for name, trait in process.traits(output=True).items():
             label_output = QLabel()
             label_output.setText(str(name))
 
-            line_edit_output = QLineEdit()
-            line_edit_output.setText(str(value))
+            value = getattr(process, name)
+            trait_type = trait_ids(process.trait(name))
+
+            self.line_edit_output.insert(idx, QLineEdit())
+            self.line_edit_output[idx].setText(str(value))
+            self.line_edit_output[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'out',
+                                                                    node_name, name, pipeline, type(value)))
 
             h_box = QHBoxLayout()
             h_box.addWidget(label_output)
-            h_box.addWidget(line_edit_output)
+            h_box.addWidget(self.line_edit_output[idx])
+
+            if trait_type[0] == 'File':
+                push_button = QPushButton('Browse')
+                push_button.clicked.connect(partial(self.browse_file, idx, 'out', node_name,
+                                                    name, pipeline, type(value)))
+                h_box.addWidget(push_button)
 
             self.v_box_outputs.addLayout(h_box)
+
+            idx += 1
 
         self.button_group_outputs.setLayout(self.v_box_outputs)
 
@@ -221,6 +256,33 @@ class NodeController(QWidget):
         self.v_box_final.addWidget(self.button_group_outputs)
 
         self.setLayout(self.v_box_final)
+
+    def update_plug_value(self, index, in_or_out, node_name, plug_name, pipeline, value_type):
+        if in_or_out == 'in':
+            new_value = self.line_edit_input[index].text()
+        elif in_or_out == 'out':
+            new_value = self.line_edit_output[index].text()
+        else:
+            new_value = None
+            #TODO: RAISE ERROR
+            pass
+        pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
+
+    def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
+        file_dialog = QFileDialog()
+        # TODO: TO CHANGE WITH OUR OWN QFILEDIALOG
+        if in_or_out == 'in':
+            file_name = file_dialog.getOpenFileName()
+            file_name = file_name[0]
+            self.line_edit_input[idx].setText(file_name)
+        elif in_or_out == 'out':
+            file_name = file_dialog.getSaveFileName()
+            file_name = file_name[0]
+            self.line_edit_output[idx].setText(file_name)
+        else:
+            # TODO: RAISE ERROR
+            pass
+        self.update_plug_value(idx, in_or_out, node_name, plug_name, pipeline, value_type)
 
     def clearLayout(self, layout):
         for i in reversed(range(len(layout.children()))):
