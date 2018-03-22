@@ -5,8 +5,8 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 from Database.Database import Database
 
 def test_database_creation():
-    pass
-    # raise Exception("test")
+    # pass
+    raise Exception("test")
 
 total_tests = 0
 failed_tests = []
