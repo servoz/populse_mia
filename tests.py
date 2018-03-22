@@ -19,7 +19,8 @@ failed_tests = []
 try:
     total_tests += 1
     test_database_creation()
-except Exception:
+except Exception as e:
+    print(e)
     failed_tests.append("database_creation")
 
 if len(failed_tests) > 0:
