@@ -22,27 +22,16 @@ database:
   before_script:
     - docker info
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
-    #- export PYTHONPATH="${PYTHONPATH}:/usr/lib/python3/dist-packages/PyQt5"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
     - apk update
     - apk upgrade
-    - apk add git rsync openssh python3 python3-dev build-base
+    - apk add git rsync openssh python3 python3-dev build-base python python-dev
     - pip3 install --upgrade pip
     - pip3 install docker-compose
     - pip3 install sqlalchemy
-    #- pip3 install pyqt5-installer
-    #- find / -iname PyQt5
-    #- docker pull pypi/pyqt5
-    #- pip3 search pyqt5
-    #- find / -iname pyqt5
-    - find / -iname sqlalchemy
-    #- pip3 install python-qt5
-    #- pip3 install vext.pyqt5
-    #- find / -iname pyqt5
-    #- find / -iname vext.pyqt5
-    - cd
-    - cd /usr/lib/python3.6
+    - find / -iname pyqt5
+    - cd /usr/lib/
     - ls
 
   script:
