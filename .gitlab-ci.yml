@@ -1,4 +1,6 @@
 codequality:
+  tags:
+    - codequality
   image: docker:latest
   variables:
     DOCKER_DRIVER: overlay
@@ -12,6 +14,8 @@ codequality:
     paths: [codeclimate.json]
 
 database:
+  tags:
+    - test
   image: ubuntu:latest
   before_script:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
