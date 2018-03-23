@@ -167,6 +167,9 @@ class DataBrowser(QWidget):
         """
         To open a project filter saved before
         """
+
+        self.table_data.itemSelectionChanged.disconnect()
+
         oldFilter = self.database.currentFilter
 
         self.popUp = Ui_Select_Filter(self.database)
@@ -183,6 +186,11 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
             self.advanced_search.apply_filter(filterToApply)
+
+        # Selection updated
+        self.update_selection()
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
     def visualized_tags_pop_up(self):
         self.pop_up = Ui_Dialog_Settings(self.database)
