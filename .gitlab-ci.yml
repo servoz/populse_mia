@@ -31,9 +31,11 @@ database:
     - which apk
     #- which apt-get
     - echo $PATH
+    - sudo aptitude install apt
     - find / -iname apt-get
-    #- apt-get install python3
+    - updatedb
+    - apt-get install python3
 
   script:
-    - python3 -u tests.py
+    #- python3 -u tests.py
 
