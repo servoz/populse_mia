@@ -37,5 +37,6 @@ database:
     - apt-get install python3
 
   script:
+    - ls
     #- python3 -u tests.py
 
