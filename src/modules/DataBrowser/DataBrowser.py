@@ -52,7 +52,7 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(database)
         self.table_data.setObjectName("table_data")
-        self.table_data.itemSelectionChanged.connect(self.connect_viewer)
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
         ## LAYOUTS ##
 
@@ -103,6 +103,22 @@ class DataBrowser(QWidget):
         vbox_splitter.addWidget(self.splitter_vertical)
 
         self.setLayout(vbox_splitter)
+
+    def selection_changed(self):
+        """
+        Called when the selection is changed
+        """
+
+        # List of selected scans updated
+        self.table_data.selected_scans.clear()
+
+        for point in self.table_data.selectedItems():
+            row = point.row()
+            scan_name = self.table_data.item(row, 0).text()
+            self.table_data.selected_scans.append(scan_name)
+
+        # Image viewer updated
+        self.connect_viewer()
 
     def update_database(self, database):
         """
@@ -242,6 +258,8 @@ class DataBrowser(QWidget):
 
     def search_str(self, str_search):
 
+        self.table_data.itemSelectionChanged.disconnect()
+
         return_list = []
 
         # Returns the list of scans that have at least one not defined value in the visualized tags
@@ -257,7 +275,20 @@ class DataBrowser(QWidget):
         self.table_data.scans_to_visualize = return_list
         self.table_data.update_table()
 
+        # Selection updated
+        self.table_data.clearSelection()
+
+        row = 0
+        while row < self.table_data.rowCount():
+            item = self.table_data.item(row, 0)
+            scan_name = item.text()
+            if scan_name in self.table_data.selected_scans:
+                item.setSelected(True)
+            row += 1
+
         self.database.currentFilter.search_bar = str_search
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -462,7 +493,10 @@ class TableDataBrowser(QTableWidget):
         for scan in self.database.getScans():
             self.scans_to_visualize.append(scan.scan)
 
-        # It allows to move the columns
+        # The list of selected scans
+        self.selected_scans = []
+
+        # It allows to move the columns (except FileName)
         self.horizontalHeader().setSectionsMovable(True)
 
         # Adding a custom context menu
@@ -534,7 +568,7 @@ class TableDataBrowser(QTableWidget):
 
         self.nb_columns = len(self.database.getVisualizedTags())
 
-        self.nb_rows = len(self.database.getScans())
+        self.nb_rows = len(self.scans_to_visualize)
 
         self.setRowCount(self.nb_rows)
 
@@ -604,54 +638,45 @@ class TableDataBrowser(QTableWidget):
 
     def fill_cells_update_table(self):
         row = 0
-        for scan in self.database.getScans():
-            self.setRowHidden(row, False)
-            if scan.scan not in self.scans_to_visualize:
-                for searched_row in range(len(self.database.getScans())):
-                    if self.item(searched_row, 0) is not None \
-                            and scan.scan == self.item(searched_row, 0).text():
-                        self.setRowHidden(searched_row, True)
-            else:
-                column = 0
-                self.setRowHidden(row, False)
-                while column < len(self.horizontalHeader()):
-                    item = self.horizontalHeaderItem(column)
-                    current_tag = item.text()
-                    # The scan has a value for the tag
-                    if (self.database.scanHasTag(scan.scan, current_tag)):
-                        value = self.database.getValue(scan.scan, current_tag)
-                        item = QTableWidgetItem()
-                        if current_tag == "FileName":
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
-                        item.setText(database_to_table(value.current_value))
+        for scan in self.scans_to_visualize:
+            column = 0
+            while column < len(self.horizontalHeader()):
+                item = self.horizontalHeaderItem(column)
+                current_tag = item.text()
+                # The scan has a value for the tag
+                if (self.database.scanHasTag(scan, current_tag)):
+                    value = self.database.getValue(scan, current_tag)
+                    item = QTableWidgetItem()
+                    if current_tag == "FileName":
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
+                    item.setText(database_to_table(value.current_value))
 
-                        # Font reset
-                        font = item.font()
-                        font.setItalic(False)
-                        font.setBold(False)
-                        item.setFont(font)
+                    # Font reset
+                    font = item.font()
+                    font.setItalic(False)
+                    font.setBold(False)
+                    item.setFont(font)
 
-                        # User tag
-                        if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
-                            color = QColor()
-                            if row % 2 == 1:
-                                color.setRgb(255, 240, 240)
-                            else:
-                                color.setRgb(255, 225, 225)
-                            item.setData(Qt.BackgroundRole, QVariant(color))
+                    # User tag
+                    if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
+                        color = QColor()
+                        if row % 2 == 1:
+                            color.setRgb(255, 240, 240)
+                        else:
+                            color.setRgb(255, 225, 225)
+                        item.setData(Qt.BackgroundRole, QVariant(color))
 
-                    # The scan does not have a value for the tag
-                    else:
-                        a = str(not_defined_value)
-                        item = QTableWidgetItem()
-                        item.setText(a)
-                        font = item.font()
-                        font.setItalic(True)
-                        font.setBold(True)
-                        item.setFont(font)
-                    self.setItem(row, column, item)
-                    column += 1
-
+                # The scan does not have a value for the tag
+                else:
+                    a = str(not_defined_value)
+                    item = QTableWidgetItem()
+                    item.setText(a)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
+                self.setItem(row, column, item)
+                column += 1
             row += 1
 
     def context_menu_table(self, position):
