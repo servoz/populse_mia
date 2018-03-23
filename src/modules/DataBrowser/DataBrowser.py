@@ -157,7 +157,7 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
-        self.save_filter_action = QAction("Save current filter", self, shortcut="Ctrl+S")
+        self.save_filter_action = QAction("Save current filter", self)
         self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter(self.advanced_search.get_filters()))
 
         self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
@@ -200,8 +200,7 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
+            self.table_data.setColumnCount(len(self.database.getVisualizedTags()))
             self.table_data.initialize_headers()
             self.table_data.fill_headers()
             self.table_data.update_table()
@@ -292,7 +291,10 @@ class DataBrowser(QWidget):
             return_list = self.database.getScansNames()
 
         self.table_data.scans_to_visualize = return_list
-        self.table_data.update_table()
+
+        self.table_data.setRowCount(len(self.table_data.scans_to_visualize))
+        self.table_data.initialize_cells()
+        self.table_data.fill_cells_update_table()
 
         # Selection updated
         self.update_selection()
@@ -361,8 +363,10 @@ class DataBrowser(QWidget):
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
             self.table_data.scans_to_visualize = return_list
-            # The table must be updated
-            self.table_data.update_table()
+
+            self.table_data.setRowCount(len(self.table_data.scans_to_visualize))
+            self.table_data.initialize_cells()
+            self.table_data.fill_cells_update_table()
 
         # Selection updated
         self.update_selection()
@@ -423,14 +427,18 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
-
-            # Updating the table
-            self.table_data.update_table()
+            # Adding the column to the table
+            column = self.table_data.columnCount()
+            self.table_data.insertColumn(column)
+            item = QtWidgets.QTableWidgetItem()
+            self.table_data.setHorizontalHeaderItem(column, item)
+            item.setText(new_tag_name)
+            row = 0
+            while row < self.table_data.rowCount():
+                item = QtWidgets.QTableWidgetItem()
+                self.table_data.setItem(row, column, item)
+                item.setText(database_to_table(database_value))
+                row += 1
 
     def clone_tag_pop_up(self):
 
@@ -465,14 +473,19 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
-
-            # Updating the table
-            self.table_data.update_table()
+            # Adding the column to the table
+            column = self.table_data.columnCount()
+            self.table_data.insertColumn(column)
+            item = QtWidgets.QTableWidgetItem()
+            self.table_data.setHorizontalHeaderItem(column, item)
+            item.setText(new_tag_name)
+            row = 0
+            while row < self.table_data.rowCount():
+                item = QtWidgets.QTableWidgetItem()
+                self.table_data.setItem(row, column, item)
+                scan = self.table_data.item(row, 0).text()
+                item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
+                row += 1
 
     def remove_tag_pop_up(self):
 
@@ -505,18 +518,26 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Tags removed from the Database
+            # Tags removed from the Database and table
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
+                self.table_data.removeColumn(self.get_tag_column(tag))
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
+    def get_tag_column(self, tag):
+        """
+        Returns the column index of the tag
+        :param tag:tag name
+        :return:index of the column of the tag
+        """
 
-            # Table updated
-            self.table_data.update_table()
+        column = 0
+        while column < self.table_data.columnCount():
+            item = self.table_data.horizontalHeaderItem(column)
+            tag_name = item.text()
+            if tag_name == tag:
+                return column
+            column += 1
+
 
 class TableDataBrowser(QTableWidget):
 
@@ -607,13 +628,9 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        self.nb_columns = len(self.database.getVisualizedTags())
+        self.setRowCount(len(self.scans_to_visualize))
 
-        self.nb_rows = len(self.scans_to_visualize)
-
-        self.setRowCount(self.nb_rows)
-
-        self.setColumnCount(self.nb_columns)
+        self.setColumnCount(len(self.database.getVisualizedTags()))
 
         self.setAlternatingRowColors(True)
         self.setStyleSheet("alternate-background-color:rgb(255, 255, 255); background-color:rgb(250, 250, 250);")
@@ -645,7 +662,7 @@ class TableDataBrowser(QTableWidget):
         # Initializing the headers for each row and each column
         item = QtWidgets.QTableWidgetItem()
         i = 0
-        while i <= self.nb_columns:
+        while i <= self.columnCount():
             self.setHorizontalHeaderItem(i, item)
             item = QtWidgets.QTableWidgetItem()
             i += 1
@@ -654,10 +671,10 @@ class TableDataBrowser(QTableWidget):
         # Initializing each cell of the table
         row = (-1)
 
-        while row < self.nb_rows:
+        while row < len(self.scans_to_visualize):
             row += 1
             column = 0
-            while column <= self.nb_columns:
+            while column <= self.columnCount():
                 item = QtWidgets.QTableWidgetItem()
                 self.setItem(row, column, item)
                 column += 1
@@ -966,6 +983,7 @@ class TableDataBrowser(QTableWidget):
 
             self.scans_to_visualize.remove(scan_path)
             self.database.removeScan(scan_path)
+            self.removeRow(row)
 
         historyMaker.append(scans_removed)
         historyMaker.append(values_removed)
@@ -1042,8 +1060,7 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.nb_columns = len(self.database.getVisualizedTags())
-            self.setColumnCount(self.nb_columns)
+            self.setColumnCount(len(self.database.getVisualizedTags()))
             self.initialize_headers()
             self.fill_headers()
 
@@ -1168,7 +1185,6 @@ class TableDataBrowser(QTableWidget):
         """
         The background color of the table will change when the user changes an item
         Handles the multi-selection case
-        :return:
         """
 
         import ast

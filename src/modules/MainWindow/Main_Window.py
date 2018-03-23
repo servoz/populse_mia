@@ -183,13 +183,15 @@ class Main_Window(QMainWindow):
             scan_names_list.append(scan.scan)
         self.data_browser.table_data.scans_to_visualize = scan_names_list
 
-        # Reset of headers
-        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
-        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
+        # Reset of table
+        self.data_browser.table_data.setColumnCount(len(self.database.getVisualizedTags()))
+        self.data_browser.table_data.setRowCount(len(self.data_browser.table_data.scans_to_visualize))
         self.data_browser.table_data.initialize_headers()
+        self.data_browser.table_data.initialize_cells()
         self.data_browser.table_data.fill_headers()
+        self.data_browser.table_data.fill_cells_update_table()
 
-        self.data_browser.table_data.update_table()
+        #self.data_browser.table_data.update_table()
 
     def redo(self):
         """
@@ -203,13 +205,13 @@ class Main_Window(QMainWindow):
             scan_names_list.append(scan.scan)
         self.data_browser.table_data.scans_to_visualize = scan_names_list
 
-        # Reset of headers
-        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
-        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
+        # Reset of table
+        self.data_browser.table_data.setColumnCount(len(self.database.getVisualizedTags()))
+        self.data_browser.table_data.setRowCount(len(self.data_browser.table_data.scans_to_visualize))
         self.data_browser.table_data.initialize_headers()
+        self.data_browser.table_data.initialize_cells()
         self.data_browser.table_data.fill_headers()
-
-        self.data_browser.table_data.update_table()
+        self.data_browser.table_data.fill_cells_update_table()
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
@@ -319,7 +321,7 @@ class Main_Window(QMainWindow):
             old_folder = self.database.folder
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
-            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'Database')
+            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
 
             # List of projects updated
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
@@ -333,21 +335,21 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
 
             # First we register the Database before commiting the last pending modifications
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'Database', 'mia2_before_commit.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
 
             # We commit the last pending modifications
             self.database.saveModifications()
 
             # We copy the Database with all the modifications commited in the new project
-            if os.path.exists(os.path.join(old_folder, 'Database')):
+            if os.path.exists(os.path.join(old_folder, 'database')):
                 os.mkdir(os.path.relpath(database_path))
-                shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'), os.path.relpath(database_path))
+                shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
 
             # We remove the Database with all the modifications saved in the old project
-            os.remove(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'))
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
 
             # We reput the Database without the last modifications in the old project
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'Database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'Database', 'mia2.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
 
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
