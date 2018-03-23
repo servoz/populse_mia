@@ -1,5 +1,5 @@
 codequality:
-  image: docker:latest
+  image: ubuntu:latest
   variables:
     DOCKER_DRIVER: overlay
   services:
@@ -14,30 +14,12 @@ codequality:
     paths: [codeclimate.json]
 
 database:
+  image: ubuntu:latest
   before_script:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
-    - apk update
-    - apk upgrade
-    - apk add python3 python3-dev
-    - pip3 install --upgrade pip
-    - pip3 install sqlalchemy
-    #- pip3 install pyqt5
-    #- ls
-    #- wget https://pypi.python.org/packages/40/f9/0be162881f4bdb6e828ee6db871310140a5278b4538e65716eae8b2d3dbd/PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
-    #- ls
-    #- pip3 install PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
-    - uname -a
-    - which apk
-    #- which apt-get
-    - echo $PATH
-    #- sudo aptitude install apt
-    #- find / -iname apt-get
-    #- updatedb
-    #- apt-get install python3
 
   script:
-    - ls
-    #- python3 -u tests.py
+    - python3 -u tests.py
 
