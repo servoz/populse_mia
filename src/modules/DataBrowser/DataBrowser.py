@@ -114,8 +114,19 @@ class DataBrowser(QWidget):
 
         for point in self.table_data.selectedItems():
             row = point.row()
+            column = point.column()
             scan_name = self.table_data.item(row, 0).text()
-            self.table_data.selected_scans.append(scan_name)
+            scan_already_in_list = False
+            for scan in self.table_data.selected_scans:
+                if scan[0] == scan_name:
+                    # Scan already in the list, we append the column
+                    scan[1].append(column)
+                    scan_already_in_list = True
+                    break
+
+            if not scan_already_in_list:
+                # Scan not in the list, we add it
+                self.table_data.selected_scans.append([scan_name, [column]])
 
         # Image viewer updated
         self.connect_viewer()
@@ -276,15 +287,7 @@ class DataBrowser(QWidget):
         self.table_data.update_table()
 
         # Selection updated
-        self.table_data.clearSelection()
-
-        row = 0
-        while row < self.table_data.rowCount():
-            item = self.table_data.item(row, 0)
-            scan_name = item.text()
-            if scan_name in self.table_data.selected_scans:
-                item.setSelected(True)
-            row += 1
+        self.update_selection()
 
         self.database.currentFilter.search_bar = str_search
 
@@ -334,6 +337,9 @@ class DataBrowser(QWidget):
         """
         Called when the button advanced search is called
         """
+
+        self.table_data.itemSelectionChanged.disconnect()
+
         if(self.frame_advanced_search.isHidden()):
             # If the advanced search is hidden, we reset it and display it
             self.frame_advanced_search.setHidden(False)
@@ -349,6 +355,33 @@ class DataBrowser(QWidget):
             self.table_data.scans_to_visualize = return_list
             # The table must be updated
             self.table_data.update_table()
+
+        # Selection updated
+        self.update_selection()
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+
+    def update_selection(self):
+        """
+        Called after searches to update the selection
+        """
+
+        # Selection updated
+        self.table_data.clearSelection()
+
+        row = 0
+        while row < self.table_data.rowCount():
+            item = self.table_data.item(row, 0)
+            scan_name = item.text()
+            for scan in self.table_data.selected_scans:
+                scan_selected = scan[0]
+                if scan_name == scan_selected:
+                    # We select the columns of the row if it was selected
+                    columns = scan[1]
+                    for column in columns:
+                        item_to_select = self.table_data.item(row, column)
+                        item_to_select.setSelected(True)
+            row += 1
 
     def add_tag_pop_up(self):
 
