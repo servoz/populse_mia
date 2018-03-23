@@ -1,5 +1,5 @@
 codequality:
-  image: ubuntu:latest
+  image: docker:latest
   variables:
     DOCKER_DRIVER: overlay
   services:
