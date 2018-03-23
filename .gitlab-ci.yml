@@ -24,9 +24,9 @@ database:
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
     #- ls
-    - wget https://pypi.python.org/packages/f3/4d/8ef2d9db0a0450de985dfe04d64d09762ab2205179914aa3cc41f44af377/PyQt5-5.6-cp35-none-win_amd64.whl
+    - wget https://pypi.python.org/packages/40/f9/0be162881f4bdb6e828ee6db871310140a5278b4538e65716eae8b2d3dbd/PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
     #- ls
-    - pip3 install PyQt5-5.6-cp35-none-win_amd64.whl
+    - pip3 install PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
 
   script:
     - python3 -u tests.py
