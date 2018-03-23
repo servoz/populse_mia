@@ -21,6 +21,7 @@ database:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
+    - apt-get python3
 
   script:
     - python3 -u tests.py
