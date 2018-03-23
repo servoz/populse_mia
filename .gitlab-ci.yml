@@ -31,7 +31,7 @@ database:
     - which apk
     #- which apt-get
     - echo $PATH
-    - locate apt-get
+    - find / -iname apt-get
     #- apt-get install python3
 
   script:
