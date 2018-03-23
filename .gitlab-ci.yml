@@ -28,7 +28,10 @@ database:
     #- ls
     #- pip3 install PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
     - uname -a
-    - apt-get install python3
+    - which apt-get
+    - which apk
+    - echo $PATH
+    #- apt-get install python3
 
   script:
     - python3 -u tests.py
