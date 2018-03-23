@@ -23,7 +23,7 @@ database:
     - apk add python3 python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
-    - pip3 install pyqt5
+    #- pip3 install pyqt5
     #- ls
     #- wget https://pypi.python.org/packages/40/f9/0be162881f4bdb6e828ee6db871310140a5278b4538e65716eae8b2d3dbd/PyQt5-5.6-cp35-cp35m-macosx_10_6_intel.whl
     #- ls
