@@ -16,12 +16,17 @@ codequality:
 database:
   tags:
     - test
-  image: ubuntu:latest
+  image: docker:latest
   before_script:
     - export PYTHONPATH="${PYTHONPATH}:/builds/irmdataprocess/MIA2/src/modules"
     - export PYTHONIOENCODING=utf-8
     - PYTHONUNBUFFERED=0
-    - apt-get python3
+    - apk update
+    - apk upgrade
+    - apk add python3 python3-dev
+    - pip3 install --upgrade pip
+    - pip3 install sqlalchemy
+    - apk add py3-qt5
 
   script:
     - python3 -u tests.py
