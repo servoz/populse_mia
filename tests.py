@@ -23,11 +23,12 @@ def test_database_creation_new_project():
     """
     Tests the creation of the database file at new project
     """
-    project_folder = os.path.join(".", "test")
-    controller.createProject("test", project_folder, project_folder) # Project creation
-    database = Database(project_folder, True)
-    folder = database.folder
-    database_folder = os.path.join(folder, "database", "mia2.db")
+    entire_path = os.path.relpath(os.path.join(".", "test"))
+    path, name = os.path.split(entire_path)
+    relative_subpath = os.path.relpath(path)
+    controller.createProject(name, relative_subpath, relative_subpath)
+    database = Database(entire_path, True)
+    database_folder = os.path.join(entire_path, "database", "mia2.db")
     assert os.path.exists(database_folder) == True
 
 total_tests = 0
