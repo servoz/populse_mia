@@ -276,6 +276,8 @@ class DataBrowser(QWidget):
 
         self.table_data.itemSelectionChanged.disconnect()
 
+        old_scan_list = self.table_data.scans_to_visualize
+
         return_list = []
 
         # Returns the list of scans that have at least one not defined value in the visualized tags
@@ -290,9 +292,8 @@ class DataBrowser(QWidget):
 
         self.table_data.scans_to_visualize = return_list
 
-        self.table_data.setRowCount(len(self.table_data.scans_to_visualize))
-        self.table_data.initialize_cells()
-        self.table_data.fill_cells_update_table()
+        # Rows updated
+        self.table_data.update_visualized_rows(old_scan_list)
 
         # Selection updated
         self.update_selection()
@@ -353,6 +354,8 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
         else:
+
+            old_scans_list = self.table_data.scans_to_visualize
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
@@ -362,9 +365,7 @@ class DataBrowser(QWidget):
                 return_list.append(scan.scan)
             self.table_data.scans_to_visualize = return_list
 
-            self.table_data.setRowCount(len(self.table_data.scans_to_visualize))
-            self.table_data.initialize_cells()
-            self.table_data.fill_cells_update_table()
+            self.table_data.update_visualized_rows(old_scans_list)
 
         # Selection updated
         self.update_selection()
@@ -1069,6 +1070,46 @@ class TableDataBrowser(QTableWidget):
 
         if self.pop_up.exec_() == QDialog.Accepted:
             self.update_visualized_columns(old_tags) # Columns updated
+
+    def update_visualized_rows(self, old_scans):
+        """
+        Called after a search to update the list of scans in the table
+        :param old_scans: Old list of scans
+        """
+
+        # Scans that are not visible anymore are removed
+        for scan in old_scans:
+            if not scan in self.scans_to_visualize:
+                self.removeRow(self.get_scan_row(scan))
+
+        # Scans that became visible must be created
+        for scan in self.scans_to_visualize:
+
+            row = self.get_scan_row(scan)
+
+            # We add the row if the index is not found (not in the table)
+            if row == None:
+                rowCount = self.rowCount()
+                self.insertRow(rowCount)
+
+                # Coumns filled for the row being added
+                column = 0
+                while column < self.columnCount():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(rowCount, column, item)
+                    tag = self.horizontalHeaderItem(column).text()
+                    if self.database.scanHasTag(scan, tag):
+                        item.setText(database_to_table(self.database.getValue(scan, tag).current_value))
+                    else:
+                        a = str(not_defined_value)
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    column += 1
+
+        self.resizeColumnsToContents() # Columns resized
 
     def update_visualized_columns(self, old_tags):
         """

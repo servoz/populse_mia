@@ -241,13 +241,13 @@ class AdvancedSearch(QWidget):
 
         (fields, conditions, values, links, nots) = self.get_filters() # Filters gotten
 
+        old_scans_list = self.dataBrowser.table_data.scans_to_visualize
+
         # Result gotten
         result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
-        self.dataBrowser.table_data.setRowCount(len(self.dataBrowser.table_data.scans_to_visualize))
-        self.dataBrowser.table_data.initialize_cells()
-        self.dataBrowser.table_data.fill_cells_update_table()
+        self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
         # Selection updated
         self.dataBrowser.update_selection()
