@@ -597,6 +597,7 @@ class TableDataBrowser(QTableWidget):
     def update_table(self):
         """
         This method will fill the tables in the 'Table' tab with the project data
+        Only called when switching project to completely reset the table
         """
 
         # The list of scans to visualize
@@ -632,10 +633,6 @@ class TableDataBrowser(QTableWidget):
 
         _translate = QtCore.QCoreApplication.translate
 
-        # Table initialization
-        self.initialize_headers()
-        self.initialize_cells()
-
         # Sort visual management
         self.fill_headers()
 
@@ -653,32 +650,16 @@ class TableDataBrowser(QTableWidget):
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(self.database)
 
-    def initialize_headers(self):
-        # Initializing the headers for each column
-        item = QtWidgets.QTableWidgetItem()
-        column = 0
-        while column <= self.columnCount():
-            self.setHorizontalHeaderItem(column, item)
-            item = QtWidgets.QTableWidgetItem()
-            column += 1
-
-    def initialize_cells(self):
-        # Initializing each cell of the table
-        row = (-1)
-
-        while row < len(self.scans_to_visualize):
-            row += 1
-            column = 0
-            while column <= self.columnCount():
-                item = QtWidgets.QTableWidgetItem()
-                self.setItem(row, column, item)
-                column += 1
-
     def fill_headers(self):
+        """
+        To initialize and fill the headers of the table
+        """
+
         column = 0
         for element in self.database.getTags():
             tag_name = element.tag
-            item = self.horizontalHeaderItem(column)
+            item = QtWidgets.QTableWidgetItem()
+            self.setHorizontalHeaderItem(column, item)
             if tag_name == self.database.getSortedTag():
                 if self.database.getSortOrder() == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
@@ -691,18 +672,22 @@ class TableDataBrowser(QTableWidget):
                 self.setColumnHidden(column, True)
             column += 1
 
-
     def fill_cells_update_table(self):
+        """
+        To initialize and fill the cells of the table
+        """
+
         row = 0
         for scan in self.scans_to_visualize:
             column = 0
             while column < len(self.horizontalHeader()):
                 item = self.horizontalHeaderItem(column)
                 current_tag = item.text()
+
+                item = QTableWidgetItem()
                 # The scan has a value for the tag
                 if (self.database.scanHasTag(scan, current_tag)):
                     value = self.database.getValue(scan, current_tag)
-                    item = QTableWidgetItem()
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
                     item.setText(database_to_table(value.current_value))
@@ -725,7 +710,6 @@ class TableDataBrowser(QTableWidget):
                 # The scan does not have a value for the tag
                 else:
                     a = str(not_defined_value)
-                    item = QTableWidgetItem()
                     item.setText(a)
                     font = item.font()
                     font.setItalic(True)
@@ -1110,11 +1094,12 @@ class TableDataBrowser(QTableWidget):
 
         for scan in rows:
 
+            # Scan added only if it's not already in the table
             if self.get_scan_row(scan) == None:
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 
-                # Coumns filled for the row being added
+                # Columns filled for the row being added
                 column = 0
                 while column < self.columnCount():
                     item = QtWidgets.QTableWidgetItem()
@@ -1130,6 +1115,44 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(True)
                         item.setFont(font)
                     column += 1
+
+    def add_columns(self):
+        """
+        To add the new tags
+        """
+
+        for tag in self.database.getTags():
+
+            # Tag added only if it's not already in the table
+            if self.get_tag_column(tag.tag) == None:
+                columnCount = self.columnCount()
+                self.insertColumn(columnCount)
+
+                item = QtWidgets.QTableWidgetItem()
+                self.setHorizontalHeaderItem(columnCount, item)
+                item.setText(tag.tag)
+                item.setToolTip("Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(tag.type))
+
+                # Rows filled for the column being added
+                row = 0
+                while row < self.rowCount():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(row, columnCount, item)
+                    scan = self.item(row, 0).text()
+                    if self.database.scanHasTag(scan, tag.tag):
+                        item.setText(database_to_table(self.database.getValue(scan, tag.tag).current_value))
+                    else:
+                        a = str(not_defined_value)
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    row += 1
+
+                if tag.visible == False:
+                    self.setColumnHidden(columnCount, True)
+
 
     def mouseReleaseEvent(self, e):
         """

@@ -552,6 +552,7 @@ class Main_Window(QMainWindow):
 
             # Table updated
             self.data_browser.table_data.scans_to_visualize = self.database.getScansNames()
+            self.data_browser.table_data.add_columns()
             self.data_browser.table_data.add_rows(self.database.getScansNames())
 
         else:
