@@ -433,12 +433,15 @@ class DataBrowser(QWidget):
             item = QtWidgets.QTableWidgetItem()
             self.table_data.setHorizontalHeaderItem(column, item)
             item.setText(new_tag_name)
+            item.setToolTip("Description: " + str(new_tag_description) + "\nUnit: " + str(new_tag_unit) + "\nType: " + str(tag_type))
             row = 0
             while row < self.table_data.rowCount():
                 item = QtWidgets.QTableWidgetItem()
                 self.table_data.setItem(row, column, item)
                 item.setText(database_to_table(database_value))
                 row += 1
+
+            self.table_data.resizeColumnsToContents() # New column resized
 
     def clone_tag_pop_up(self):
 
@@ -453,7 +456,8 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
+            tagCloned = self.database.getTag(tag_to_clone)
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default, tagCloned.description)
             for scan in self.database.getScans():
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
@@ -465,10 +469,10 @@ class DataBrowser(QWidget):
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(self.database.getTagType(tag_to_clone))
-            historyMaker.append(self.database.getTagUnit(tag_to_clone))
-            historyMaker.append(self.database.getTagDefault(tag_to_clone))
-            historyMaker.append(self.database.getTagDescription(tag_to_clone))
+            historyMaker.append(tagCloned.type)
+            historyMaker.append(tagCloned.unit)
+            historyMaker.append(tagCloned.default)
+            historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
@@ -479,6 +483,7 @@ class DataBrowser(QWidget):
             item = QtWidgets.QTableWidgetItem()
             self.table_data.setHorizontalHeaderItem(column, item)
             item.setText(new_tag_name)
+            item.setToolTip("Description: " + str(tagCloned.description) + "\nUnit: " + str(tagCloned.unit) + "\nType: " + str(tagCloned.type))
             row = 0
             while row < self.table_data.rowCount():
                 item = QtWidgets.QTableWidgetItem()
@@ -486,6 +491,8 @@ class DataBrowser(QWidget):
                 scan = self.table_data.item(row, 0).text()
                 item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
                 row += 1
+
+            self.table_data.resizeColumnsToContents() # New column resized
 
     def remove_tag_pop_up(self):
 
@@ -787,8 +794,8 @@ class TableDataBrowser(QTableWidget):
         """
 
         column = 0
-        while column < self.table_data.columnCount():
-            item = self.table_data.horizontalHeaderItem(column)
+        while column < self.columnCount():
+            item = self.horizontalHeaderItem(column)
             tag_name = item.text()
             if tag_name == tag:
                 return column
