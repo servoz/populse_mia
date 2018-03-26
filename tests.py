@@ -24,9 +24,13 @@ def test_database_creation_new_project():
     """
     Tests the creation of the database file at new project
     """
-    entire_path = os.path.relpath(tempfile.mkdtemp())
+    entire_path = os.path.relpath(os.path.join("..", "..", "..", "..", "test"))
     path, name = os.path.split(entire_path)
     relative_subpath = os.path.relpath(path)
+    print("entire_path: " + entire_path)
+    print("path: " + path)
+    print("name: " + name)
+    print("relative_subpath: " + relative_subpath)
     controller.createProject(name, relative_subpath, relative_subpath)
     for filename in glob.glob(os.path.join(os.path.relpath(entire_path), '*')):
         print(filename)
