@@ -52,7 +52,7 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(database)
         self.table_data.setObjectName("table_data")
-        self.table_data.itemSelectionChanged.connect(self.connect_viewer)
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
         ## LAYOUTS ##
 
@@ -104,6 +104,33 @@ class DataBrowser(QWidget):
 
         self.setLayout(vbox_splitter)
 
+    def selection_changed(self):
+        """
+        Called when the selection is changed
+        """
+
+        # List of selected scans updated
+        self.table_data.selected_scans.clear()
+
+        for point in self.table_data.selectedItems():
+            row = point.row()
+            column = point.column()
+            scan_name = self.table_data.item(row, 0).text()
+            scan_already_in_list = False
+            for scan in self.table_data.selected_scans:
+                if scan[0] == scan_name:
+                    # Scan already in the list, we append the column
+                    scan[1].append(column)
+                    scan_already_in_list = True
+                    break
+
+            if not scan_already_in_list:
+                # Scan not in the list, we add it
+                self.table_data.selected_scans.append([scan_name, [column]])
+
+        # Image viewer updated
+        self.connect_viewer()
+
     def update_database(self, database):
         """
         Called when switching project (new, open, and save as)
@@ -130,7 +157,7 @@ class DataBrowser(QWidget):
         self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
 
-        self.save_filter_action = QAction("Save current filter", self, shortcut="Ctrl+S")
+        self.save_filter_action = QAction("Save current filter", self)
         self.save_filter_action.triggered.connect(lambda : self.database.save_current_filter(self.advanced_search.get_filters()))
 
         self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
@@ -140,6 +167,9 @@ class DataBrowser(QWidget):
         """
         To open a project filter saved before
         """
+
+        self.table_data.itemSelectionChanged.disconnect()
+
         oldFilter = self.database.currentFilter
 
         self.popUp = Ui_Select_Filter(self.database)
@@ -157,7 +187,13 @@ class DataBrowser(QWidget):
             self.advanced_search.show_search()
             self.advanced_search.apply_filter(filterToApply)
 
+        # Selection updated
+        self.update_selection()
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+
     def visualized_tags_pop_up(self):
+        old_tags = self.database.getVisualizedTags() # Old list of tags
         self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
@@ -165,11 +201,7 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
-            self.table_data.update_table()
+            self.table_data.update_visualized_columns(old_tags) # Columns updated
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
@@ -242,6 +274,10 @@ class DataBrowser(QWidget):
 
     def search_str(self, str_search):
 
+        self.table_data.itemSelectionChanged.disconnect()
+
+        old_scan_list = self.table_data.scans_to_visualize
+
         return_list = []
 
         # Returns the list of scans that have at least one not defined value in the visualized tags
@@ -255,9 +291,16 @@ class DataBrowser(QWidget):
             return_list = self.database.getScansNames()
 
         self.table_data.scans_to_visualize = return_list
-        self.table_data.update_table()
+
+        # Rows updated
+        self.table_data.update_visualized_rows(old_scan_list)
+
+        # Selection updated
+        self.update_selection()
 
         self.database.currentFilter.search_bar = str_search
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -303,11 +346,16 @@ class DataBrowser(QWidget):
         """
         Called when the button advanced search is called
         """
+
+        self.table_data.itemSelectionChanged.disconnect()
+
         if(self.frame_advanced_search.isHidden()):
             # If the advanced search is hidden, we reset it and display it
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
         else:
+
+            old_scans_list = self.table_data.scans_to_visualize
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
@@ -316,8 +364,35 @@ class DataBrowser(QWidget):
             for scan in self.database.getScans():
                 return_list.append(scan.scan)
             self.table_data.scans_to_visualize = return_list
-            # The table must be updated
-            self.table_data.update_table()
+
+            self.table_data.update_visualized_rows(old_scans_list)
+
+        # Selection updated
+        self.update_selection()
+
+        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+
+    def update_selection(self):
+        """
+        Called after searches to update the selection
+        """
+
+        # Selection updated
+        self.table_data.clearSelection()
+
+        row = 0
+        while row < self.table_data.rowCount():
+            item = self.table_data.item(row, 0)
+            scan_name = item.text()
+            for scan in self.table_data.selected_scans:
+                scan_selected = scan[0]
+                if scan_name == scan_selected:
+                    # We select the columns of the row if it was selected
+                    columns = scan[1]
+                    for column in columns:
+                        item_to_select = self.table_data.item(row, column)
+                        item_to_select.setSelected(True)
+            row += 1
 
     def add_tag_pop_up(self):
 
@@ -351,14 +426,21 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
+            # Adding the column to the table
+            column = self.table_data.columnCount()
+            self.table_data.insertColumn(column)
+            item = QtWidgets.QTableWidgetItem()
+            self.table_data.setHorizontalHeaderItem(column, item)
+            item.setText(new_tag_name)
+            item.setToolTip("Description: " + str(new_tag_description) + "\nUnit: " + str(new_tag_unit) + "\nType: " + str(tag_type))
+            row = 0
+            while row < self.table_data.rowCount():
+                item = QtWidgets.QTableWidgetItem()
+                self.table_data.setItem(row, column, item)
+                item.setText(database_to_table(database_value))
+                row += 1
 
-            # Updating the table
-            self.table_data.update_table()
+            self.table_data.resizeColumnsToContents() # New column resized
 
     def clone_tag_pop_up(self):
 
@@ -373,7 +455,8 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, self.database.getTagType(tag_to_clone), self.database.getTagUnit(tag_to_clone), self.database.getTagDefault(tag_to_clone), self.database.getTagDescription(tag_to_clone))
+            tagCloned = self.database.getTag(tag_to_clone)
+            self.database.addTag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default, tagCloned.description)
             for scan in self.database.getScans():
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
                 if(self.database.scanHasTag(scan.scan, tag_to_clone)):
@@ -385,22 +468,38 @@ class DataBrowser(QWidget):
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(self.database.getTagType(tag_to_clone))
-            historyMaker.append(self.database.getTagUnit(tag_to_clone))
-            historyMaker.append(self.database.getTagDefault(tag_to_clone))
-            historyMaker.append(self.database.getTagDescription(tag_to_clone))
+            historyMaker.append(tagCloned.type)
+            historyMaker.append(tagCloned.unit)
+            historyMaker.append(tagCloned.default)
+            historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
+            # Adding the column to the table
+            column = self.table_data.columnCount()
+            self.table_data.insertColumn(column)
+            item = QtWidgets.QTableWidgetItem()
+            self.table_data.setHorizontalHeaderItem(column, item)
+            item.setText(new_tag_name)
+            item.setToolTip("Description: " + str(tagCloned.description) + "\nUnit: " + str(tagCloned.unit) + "\nType: " + str(tagCloned.type))
+            row = 0
+            while row < self.table_data.rowCount():
+                item = QtWidgets.QTableWidgetItem()
+                self.table_data.setItem(row, column, item)
+                scan = self.table_data.item(row, 0).text()
+                if self.database.scanHasTag(scan, tag_to_clone):
+                    item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
+                else:
+                    a = str(not_defined_value)
+                    item.setText(a)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
+                row += 1
 
-            # Updating the table
-            self.table_data.update_table()
+            self.table_data.resizeColumnsToContents() # New column resized
 
     def remove_tag_pop_up(self):
 
@@ -433,18 +532,11 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Tags removed from the Database
+            # Tags removed from the Database and table
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
+                self.table_data.removeColumn(self.table_data.get_tag_column(tag))
 
-            # Reset of headers
-            self.table_data.nb_columns = len(self.database.getVisualizedTags())
-            self.table_data.setColumnCount(self.table_data.nb_columns)
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
-
-            # Table updated
-            self.table_data.update_table()
 
 class TableDataBrowser(QTableWidget):
 
@@ -462,7 +554,10 @@ class TableDataBrowser(QTableWidget):
         for scan in self.database.getScans():
             self.scans_to_visualize.append(scan.scan)
 
-        # It allows to move the columns
+        # The list of selected scans
+        self.selected_scans = []
+
+        # It allows to move the columns (except FileName)
         self.horizontalHeader().setSectionsMovable(True)
 
         # Adding a custom context menu
@@ -532,13 +627,9 @@ class TableDataBrowser(QTableWidget):
         if self.flag_first_time > 1:
             self.itemChanged.disconnect()
 
-        self.nb_columns = len(self.database.getVisualizedTags())
+        self.setRowCount(len(self.scans_to_visualize))
 
-        self.nb_rows = len(self.database.getScans())
-
-        self.setRowCount(self.nb_rows)
-
-        self.setColumnCount(self.nb_columns)
+        self.setColumnCount(len(self.database.getVisualizedTags()))
 
         self.setAlternatingRowColors(True)
         self.setStyleSheet("alternate-background-color:rgb(255, 255, 255); background-color:rgb(250, 250, 250);")
@@ -570,7 +661,7 @@ class TableDataBrowser(QTableWidget):
         # Initializing the headers for each row and each column
         item = QtWidgets.QTableWidgetItem()
         i = 0
-        while i <= self.nb_columns:
+        while i <= self.columnCount():
             self.setHorizontalHeaderItem(i, item)
             item = QtWidgets.QTableWidgetItem()
             i += 1
@@ -579,10 +670,10 @@ class TableDataBrowser(QTableWidget):
         # Initializing each cell of the table
         row = (-1)
 
-        while row < self.nb_rows:
+        while row < len(self.scans_to_visualize):
             row += 1
             column = 0
-            while column <= self.nb_columns:
+            while column <= self.columnCount():
                 item = QtWidgets.QTableWidgetItem()
                 self.setItem(row, column, item)
                 column += 1
@@ -604,54 +695,45 @@ class TableDataBrowser(QTableWidget):
 
     def fill_cells_update_table(self):
         row = 0
-        for scan in self.database.getScans():
-            self.setRowHidden(row, False)
-            if scan.scan not in self.scans_to_visualize:
-                for searched_row in range(len(self.database.getScans())):
-                    if self.item(searched_row, 0) is not None \
-                            and scan.scan == self.item(searched_row, 0).text():
-                        self.setRowHidden(searched_row, True)
-            else:
-                column = 0
-                self.setRowHidden(row, False)
-                while column < len(self.horizontalHeader()):
-                    item = self.horizontalHeaderItem(column)
-                    current_tag = item.text()
-                    # The scan has a value for the tag
-                    if (self.database.scanHasTag(scan.scan, current_tag)):
-                        value = self.database.getValue(scan.scan, current_tag)
-                        item = QTableWidgetItem()
-                        if current_tag == "FileName":
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
-                        item.setText(database_to_table(value.current_value))
+        for scan in self.scans_to_visualize:
+            column = 0
+            while column < len(self.horizontalHeader()):
+                item = self.horizontalHeaderItem(column)
+                current_tag = item.text()
+                # The scan has a value for the tag
+                if (self.database.scanHasTag(scan, current_tag)):
+                    value = self.database.getValue(scan, current_tag)
+                    item = QTableWidgetItem()
+                    if current_tag == "FileName":
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
+                    item.setText(database_to_table(value.current_value))
 
-                        # Font reset
-                        font = item.font()
-                        font.setItalic(False)
-                        font.setBold(False)
-                        item.setFont(font)
+                    # Font reset
+                    font = item.font()
+                    font.setItalic(False)
+                    font.setBold(False)
+                    item.setFont(font)
 
-                        # User tag
-                        if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
-                            color = QColor()
-                            if row % 2 == 1:
-                                color.setRgb(255, 240, 240)
-                            else:
-                                color.setRgb(255, 225, 225)
-                            item.setData(Qt.BackgroundRole, QVariant(color))
+                    # User tag
+                    if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
+                        color = QColor()
+                        if row % 2 == 1:
+                            color.setRgb(255, 240, 240)
+                        else:
+                            color.setRgb(255, 225, 225)
+                        item.setData(Qt.BackgroundRole, QVariant(color))
 
-                    # The scan does not have a value for the tag
-                    else:
-                        a = str(not_defined_value)
-                        item = QTableWidgetItem()
-                        item.setText(a)
-                        font = item.font()
-                        font.setItalic(True)
-                        font.setBold(True)
-                        item.setFont(font)
-                    self.setItem(row, column, item)
-                    column += 1
-
+                # The scan does not have a value for the tag
+                else:
+                    a = str(not_defined_value)
+                    item = QTableWidgetItem()
+                    item.setText(a)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
+                self.setItem(row, column, item)
+                column += 1
             row += 1
 
     def context_menu_table(self, position):
@@ -709,7 +791,36 @@ class TableDataBrowser(QTableWidget):
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
 
-        self.update_table()
+
+    def get_tag_column(self, tag):
+        """
+        Returns the column index of the tag
+        :param tag:tag name
+        :return:index of the column of the tag
+        """
+
+        column = 0
+        while column < self.columnCount():
+            item = self.horizontalHeaderItem(column)
+            tag_name = item.text()
+            if tag_name == tag:
+                return column
+            column += 1
+
+    def get_scan_row(self, scan):
+        """
+        Returns the row index of the scan
+        :param scan:Scan FileName
+        :return:index of the row of the scan
+        """
+
+        row = 0
+        while row < self.rowCount():
+            item = self.item(row, 0)
+            scan_name = item.text()
+            if scan_name == scan:
+                return row
+            row += 1
 
     def reset_cell(self):
 
@@ -733,15 +844,9 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value]) # For history
                 if not self.database.resetTag(scan_name, tag_name):
                     has_unreset_values = True
-                self.item(row, col).setText(cell.raw_value)
-
-                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
-                    color = QColor()
-                    if row % 2 == 1:
-                        color.setRgb(255, 255, 255)
-                    else:
-                        color.setRgb(250, 250, 250)
-                    self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
+                self.item(row, col).setText(database_to_table(cell.raw_value))
+            else:
+                has_unreset_values = True
 
         # For history
         historyMaker.append(modified_values)
@@ -775,14 +880,9 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan, tag_name):
                         has_unreset_values = True
-                    self.item(row, col).setText(cell.raw_value)
-                    if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW:
-                        color = QColor()
-                        if row % 2 == 1:
-                            color.setRgb(255, 255, 255)
-                        else:
-                            color.setRgb(250, 250, 250)
-                        self.item(row, col).setData(Qt.BackgroundRole, QVariant(color))
+                    self.item(row, col).setText(database_to_table(cell.raw_value))
+                else:
+                    has_unreset_values = True
                 row += 1
 
         # For history
@@ -819,14 +919,9 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan_name, tag, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan_name, tag):
                         has_unreset_values = True
-                    self.item(row, column).setText(cell.raw_value)
-                    if(self.database.getTagOrigin(tag) == TAG_ORIGIN_RAW):
-                        color = QColor()
-                        if row % 2 == 1:
-                            color.setRgb(255, 255, 255)
-                        else:
-                            color.setRgb(250, 250, 250)
-                        self.item(row, column).setData(Qt.BackgroundRole, QVariant(color))
+                    self.item(row, column).setText(database_to_table(cell.raw_value))
+                else:
+                    has_unreset_values = True
                 column += 1
 
         # For history
@@ -846,7 +941,7 @@ class TableDataBrowser(QTableWidget):
         msg.setIcon(QMessageBox.Warning)
         msg.setText("Some values do not have a raw value")
         msg.setInformativeText(
-            "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags.")
+            "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags, FileName and the cells not defined.")
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Ok)
         msg.buttonClicked.connect(msg.close)
@@ -862,13 +957,6 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
 
             item = QTableWidgetItem()
-            if self.database.getTagOrigin(tag_name) == TAG_ORIGIN_USER:
-                color = QColor()
-                if row % 2 == 1:
-                    color.setRgb(255, 240, 240)
-                else:
-                    color.setRgb(255, 225, 225)
-                item.setData(Qt.BackgroundRole, QVariant(color))
             if self.database.scanHasTag(scan_path, tag_name):
                 item.setText(database_to_table(self.database.getValue(scan_path, tag_name).current_value))
             else:
@@ -900,6 +988,10 @@ class TableDataBrowser(QTableWidget):
 
             self.scans_to_visualize.remove(scan_path)
             self.database.removeScan(scan_path)
+
+        for scan in scans_removed:
+            scan_name = scan.scan
+            self.removeRow(self.get_scan_row(scan_name))
 
         historyMaker.append(scans_removed)
         historyMaker.append(values_removed)
@@ -970,20 +1062,102 @@ class TableDataBrowser(QTableWidget):
             self.database.setSortedTag(tag_name)
 
     def visualized_tags_pop_up(self):
+        old_tags = self.database.getVisualizedTags() # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.nb_columns = len(self.database.getVisualizedTags())
-            self.setColumnCount(self.nb_columns)
-            self.initialize_headers()
-            self.fill_headers()
+            self.update_visualized_columns(old_tags) # Columns updated
+
+    def update_visualized_rows(self, old_scans):
+        """
+        Called after a search to update the list of scans in the table
+        :param old_scans: Old list of scans
+        """
+
+        # Scans that are not visible anymore are removed
+        for scan in old_scans:
+            if not scan in self.scans_to_visualize:
+                self.removeRow(self.get_scan_row(scan))
+
+        # Scans that became visible must be created
+        for scan in self.scans_to_visualize:
+
+            row = self.get_scan_row(scan)
+
+            # We add the row if the index is not found (not in the table)
+            if row == None:
+                rowCount = self.rowCount()
+                self.insertRow(rowCount)
+
+                # Coumns filled for the row being added
+                column = 0
+                while column < self.columnCount():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(rowCount, column, item)
+                    tag = self.horizontalHeaderItem(column).text()
+                    if self.database.scanHasTag(scan, tag):
+                        item.setText(database_to_table(self.database.getValue(scan, tag).current_value))
+                    else:
+                        a = str(not_defined_value)
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    column += 1
+
+        self.resizeColumnsToContents() # Columns resized
+
+    def update_visualized_columns(self, old_tags):
+        """
+        Called to set the visualized tags in the table
+        :param old_tags: Old list of visualized tags
+        """
+
+        # Tags that are not visible anymore are removed
+        for tag in old_tags:
+            if not self.database.getTagVisibility(tag.tag):
+                self.removeColumn(self.get_tag_column(tag.tag))
+
+        # Tags that became visible must be created
+        for tag in self.database.getVisualizedTags():
+            column = self.get_tag_column(tag.tag)
+
+            # We add the column if the index is not found (not in the table)
+            if column == None:
+                colCount = self.columnCount()
+                self.insertColumn(colCount)
+                item = QtWidgets.QTableWidgetItem()
+                self.setHorizontalHeaderItem(colCount, item)
+                item.setText(tag.tag)
+                item.setToolTip( "Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(
+                        tag.type))
+
+                # Rows filled for the column being added
+                row = 0
+                while row < self.rowCount():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(row, colCount, item)
+                    scan = self.item(row, 0).text()
+                    if self.database.scanHasTag(scan, tag.tag):
+                        item.setText(database_to_table(self.database.getValue(scan, tag.tag).current_value))
+                    else:
+                        a = str(not_defined_value)
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    row += 1
+
+        self.resizeColumnsToContents() # Columns resized
 
     def mouseReleaseEvent(self, e):
         """
-        Called when clicking released on cells, for table change
+        Called when clicking released on cells, for table changes
         :param e: event
         """
 
@@ -1095,14 +1269,15 @@ class TableDataBrowser(QTableWidget):
             if (config.isAutoSave() == "yes" and not self.database.isTempProject):
                 save_project(self.database)
 
+            self.resizeColumnsToContents()  # Columns resized
+
         except Exception as e:
             self.setMouseTracking(True)
 
     def change_cell_color(self, item_origin):
         """
-        The background color of the table will change when the user changes an item
+        The background color and the value of the cells will change when the user changes an item
         Handles the multi-selection case
-        :return:
         """
 
         import ast
@@ -1187,47 +1362,27 @@ class TableDataBrowser(QTableWidget):
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
 
-                color = QColor()
-
                 value_database = table_to_database(text_value, self.database.getTagType(tag_name))
 
-                # The scan already have a value for the tag: we update it
-                if(self.database.scanHasTag(scan_path, tag_name)):
-                    modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, value_database])
-                    self.database.setTagValue(scan_path, tag_name, value_database)
-                # The scan does not have a value for the tag yet: we add it
-                else:
-                    modified_values.append([scan_path, tag_name, None, value_database])
-                    self.database.addValue(scan_path, tag_name, value_database, value_database)
-
-                #Raw tag
-                if(self.database.getTagOrigin(tag_name) == TAG_ORIGIN_RAW):
-                    if str(text_value) != self.database.getValue(scan_path, tag_name).raw_value:
-                        if row % 2 == 1:
-                            color.setRgb(240, 240, 255)
-                        else:
-                            color.setRgb(225, 225, 255)
-                    else:
-                        if row % 2 == 1:
-                            color.setRgb(255, 255, 255)
-                        else:
-                            color.setRgb(250, 250, 250)
-                else:
-                    if row % 2 == 1:
-                        color.setRgb(255, 240, 240)
-                    else:
-                        color.setRgb(255, 225, 225)
-
                 # We only set the case if it's not the tag FileName
-                if(tag_name != "FileName"):
-                    item.setData(Qt.BackgroundRole, QVariant(color))
-                    item.setText(text_value)
+                if (tag_name != "FileName"):
 
-                    # Font reset in case it was a not defined cell
-                    font = item.font()
-                    font.setItalic(False)
-                    font.setBold(False)
-                    item.setFont(font)
+                    # The scan already has a value for the tag: we update it
+                    if(self.database.scanHasTag(scan_path, tag_name)):
+                        modified_values.append([scan_path, tag_name, self.database.getValue(scan_path, tag_name).current_value, value_database])
+                        self.database.setTagValue(scan_path, tag_name, value_database)
+                    # The scan does not have a value for the tag yet: we add it
+                    else:
+                        modified_values.append([scan_path, tag_name, None, value_database])
+                        self.database.addValue(scan_path, tag_name, value_database, value_database)
+
+                        # Font reset in case it was a not defined cell
+                        font = item.font()
+                        font.setItalic(False)
+                        font.setBold(False)
+                        item.setFont(font)
+
+                    item.setText(text_value)
 
             # For history
             historyMaker.append(modified_values)
@@ -1238,6 +1393,8 @@ class TableDataBrowser(QTableWidget):
             config = Config()
             if (config.isAutoSave() == "yes" and not self.database.isTempProject):
                 save_project(self.database)
+
+            self.resizeColumnsToContents() # Columns resized
 
         self.itemChanged.connect(self.change_cell_color)
 
