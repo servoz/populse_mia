@@ -19,6 +19,7 @@ import os
 import six
 from capsul.pipeline import pipeline_tools
 from capsul.api import get_process_instance
+from traits.api import Undefined
 
 from soma.controller import trait_ids
 from NodeEditor.callStudent import callStudent
@@ -160,12 +161,16 @@ class ProjectEditor(QWidget):
             self.startedConnection = None
 
 class NodeController(QWidget):
+    """ The node controller is displayed on the right of the pipeline editor"""
     def __init__(self, parent=None):
         super(NodeController, self).__init__(parent)
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
 
     def display_parameters(self, node_name, process, pipeline):
+        """ Methods that displays all the parameters of the selected nodes"""
+
+        self.node_name = node_name
 
         self.line_edit_input = []
         self.line_edit_output = []
@@ -178,16 +183,17 @@ class NodeController(QWidget):
         label_node_name = QLabel()
         label_node_name.setText('Node name:')
 
-        line_edit_node_name = QLineEdit()
-        if node_name not in ('inputs', 'outputs'):
-            line_edit_node_name.setText(node_name)
+        self.line_edit_node_name = QLineEdit()
+        if self.node_name not in ('inputs', 'outputs'):
+            self.line_edit_node_name.setText(self.node_name)
+            self.line_edit_node_name.returnPressed.connect(partial(self.update_node_name, pipeline))
         else:
-            line_edit_node_name.setText('Pipeline inputs/outputs')
-            line_edit_node_name.setReadOnly(True)
+            self.line_edit_node_name.setText('Pipeline inputs/outputs')
+            self.line_edit_node_name.setReadOnly(True)
 
         self.h_box_node_name = QHBoxLayout()
         self.h_box_node_name.addWidget(label_node_name)
-        self.h_box_node_name.addWidget(line_edit_node_name)
+        self.h_box_node_name.addWidget(self.line_edit_node_name)
 
         # Inputs
         self.button_group_inputs = QGroupBox('Inputs')
@@ -207,15 +213,16 @@ class NodeController(QWidget):
                 self.line_edit_input.insert(idx, QLineEdit())
                 self.line_edit_input[idx].setText(str(value))
                 self.line_edit_input[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'in',
-                                                                        node_name, name, pipeline, type(value)))
+                                                                        name, pipeline, type(value)))
 
                 h_box = QHBoxLayout()
                 h_box.addWidget(label_input)
                 h_box.addWidget(self.line_edit_input[idx])
 
                 if trait_type[0] == 'File':
+                    # If the trait is a file, adding a 'Browse' button
                     push_button = QPushButton('Browse')
-                    push_button.clicked.connect(partial(self.browse_file, idx, 'in', node_name,
+                    push_button.clicked.connect(partial(self.browse_file, idx, 'in', self.node_name,
                                                         name, pipeline, type(value)))
                     h_box.addWidget(push_button)
 
@@ -240,15 +247,16 @@ class NodeController(QWidget):
             self.line_edit_output.insert(idx, QLineEdit())
             self.line_edit_output[idx].setText(str(value))
             self.line_edit_output[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'out',
-                                                                    node_name, name, pipeline, type(value)))
+                                                                     name, pipeline, type(value)))
 
             h_box = QHBoxLayout()
             h_box.addWidget(label_output)
             h_box.addWidget(self.line_edit_output[idx])
 
             if trait_type[0] == 'File':
+                # If the trait is a file, adding a 'Browse' button
                 push_button = QPushButton('Browse')
-                push_button.clicked.connect(partial(self.browse_file, idx, 'out', node_name,
+                push_button.clicked.connect(partial(self.browse_file, idx, 'out', self.node_name,
                                                     name, pipeline, type(value)))
                 h_box.addWidget(push_button)
 
@@ -264,7 +272,55 @@ class NodeController(QWidget):
 
         self.setLayout(self.v_box_final)
 
-    def update_plug_value(self, index, in_or_out, node_name, plug_name, pipeline, value_type):
+    def update_node_name(self, pipeline):
+        """ Method that allow to change the name of the selected node and update
+        the pipeline. Because the nodes are stored in a dictionary, we have to
+        create a new node that has the same traits as the selected one and create
+        new links that are the same than the selected node."""
+        old_node = pipeline.nodes[self.node_name]
+
+        if self.line_edit_node_name.text() in list(pipeline.nodes.keys()):
+            print("Node name already in pipeline")
+
+        else:
+            # Removing links of the selected node and copy the origin/destination
+            links_to_copy = []
+            for source_parameter, source_plug \
+                    in six.iteritems(old_node.plugs):
+                for (dest_node_name, dest_parameter, dest_node, dest_plug,
+                     weak_link) in source_plug.links_to.copy():
+                    pipeline.remove_link(self.node_name + "." + source_parameter + "->"
+                                      + dest_node_name + "." + dest_parameter)
+                    links_to_copy.append(("to", source_parameter, dest_node_name, dest_parameter))
+
+                for (dest_node_name, dest_parameter, dest_node, dest_plug,
+                     weak_link) in source_plug.links_from.copy():
+                    pipeline.remove_link(dest_node_name + "." + dest_parameter + "->"
+                                      + self.node_name + "." + source_parameter)
+                    links_to_copy.append(("from", source_parameter, dest_node_name, dest_parameter))
+
+            # Creating a new node with the new name and deleting the previous one
+            pipeline.nodes[self.line_edit_node_name.text()] = pipeline.nodes[self.node_name]
+            del pipeline.nodes[self.node_name]
+
+            # Updating the node_name attribute
+            self.node_name = self.line_edit_node_name.text()
+
+            # Setting the same links as the original node
+            for link in links_to_copy:
+
+                if link[0] == "to":
+                    pipeline.add_link(self.node_name + "." + link[1] + "->"
+                                      + link[2] + "." + link[3])
+                elif link[0] == "from":
+                    pipeline.add_link(link[2] + "." + link[3] + "->"
+                                      + self.node_name + "." + link[1])
+
+            # Updating the pipeline
+            pipeline.update_nodes_and_plugs_activation()
+
+    def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type):
+        """ Method that updates in the pipeline the value of a plug """
         if in_or_out == 'in':
             new_value = self.line_edit_input[index].text()
         elif in_or_out == 'out':
@@ -273,9 +329,14 @@ class NodeController(QWidget):
             new_value = None
             #TODO: RAISE ERROR
             pass
-        pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
+        if value_type not in [float, int, str, list]:
+            new_value = None
+            value_type = str
+            #TODO: RAISE ERROR
+        pipeline.nodes[self.node_name].set_plug_value(plug_name, value_type(new_value))
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
+        """ Method that is called to open a browser to select file(s) """
         file_dialog = QFileDialog()
         # TODO: TO CHANGE WITH OUR OWN QFILEDIALOG
         if in_or_out == 'in':
@@ -289,7 +350,7 @@ class NodeController(QWidget):
         else:
             # TODO: RAISE ERROR
             pass
-        self.update_plug_value(idx, in_or_out, node_name, plug_name, pipeline, value_type)
+        self.update_plug_value(idx, in_or_out, plug_name, pipeline, value_type)
 
     def clearLayout(self, layout):
         for i in reversed(range(len(layout.children()))):

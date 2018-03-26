@@ -2535,9 +2535,10 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                         for key, value in six.iteritems(self.scene.pos)])
         pprint(posdict)
 
-    def del_node(self):
+    def del_node(self, node_name=None):
         pipeline = self.scene.pipeline
-        node_name = self.current_node_name
+        if not node_name:
+            node_name = self.current_node_name
         node = pipeline.nodes[node_name]
         # FIXME: should rather be in a method Pipeline.remove_node()
         for plug_name, plug in six.iteritems(node.plugs):
