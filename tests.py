@@ -28,8 +28,6 @@ def test_database_creation_new_project():
     path, name = os.path.split(entire_path)
     relative_subpath = os.path.relpath(path)
     controller.createProject(name, relative_subpath, relative_subpath)
-    for filename in glob.glob(os.path.join(os.path.relpath(entire_path), '*')):
-        print(filename)
     database = Database(entire_path, True)
     database_folder = os.path.join(entire_path, "database", "mia2.db")
     assert os.path.exists(database_folder) == True
