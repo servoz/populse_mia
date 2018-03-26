@@ -26,6 +26,7 @@ database:
     - apk add python3 python3-dev
     - pip3 install --upgrade pip
     - pip3 install sqlalchemy
+    - pip3 install pyyaml
     - apk add py3-qt5
 
   script:
