@@ -1,6 +1,7 @@
 import os
 import tempfile
 import ProjectManager.Controller as controller
+import traceback
 
 os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "src", "scripts"))
 print("current directory: " + str(os.getcwd()))
@@ -37,7 +38,7 @@ try:
     total_tests += 1
     test_database_creation_software_opening()
 except Exception as e:
-    print(e)
+    traceback.print_exc()
     failed_tests.append("database_creation_software_opening")
 
 # Second test
@@ -45,7 +46,7 @@ try:
     total_tests += 1
     test_database_creation_new_project()
 except Exception as e:
-    print(e)
+    traceback.print_exc()
     failed_tests.append("database_creation_new_project")
 
 # Printing if failed tests
