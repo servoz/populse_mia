@@ -315,8 +315,9 @@ class AdvancedSearch(QWidget):
             # Result gotten
             result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
             # DataBrowser updated with the new selection
+            old_rows = self.dataBrowser.table_data.scans_to_visualize
             self.dataBrowser.table_data.scans_to_visualize = result
-            self.dataBrowser.table_data.update_table()
+            self.dataBrowser.table_data.update_visualized_rows(old_rows)
 
         # Otherwise, we reput all the scans
         else:

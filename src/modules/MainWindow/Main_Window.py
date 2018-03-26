@@ -178,20 +178,7 @@ class Main_Window(QMainWindow):
         self.database.undo() # Action reverted in the Database
 
         # Gui refreshed
-        scan_names_list = []
-        for scan in self.database.getScans():
-            scan_names_list.append(scan.scan)
-        self.data_browser.table_data.scans_to_visualize = scan_names_list
-
-        # Reset of table
-        self.data_browser.table_data.setColumnCount(len(self.database.getVisualizedTags()))
-        self.data_browser.table_data.setRowCount(len(self.data_browser.table_data.scans_to_visualize))
-        self.data_browser.table_data.initialize_headers()
-        self.data_browser.table_data.initialize_cells()
-        self.data_browser.table_data.fill_headers()
-        self.data_browser.table_data.fill_cells_update_table()
-
-        #self.data_browser.table_data.update_table()
+        # TODO Reset of table
 
     def redo(self):
         """
@@ -200,18 +187,7 @@ class Main_Window(QMainWindow):
         self.database.redo() # Action remade in the Database
 
         # Gui refreshed
-        scan_names_list = []
-        for scan in self.database.getScans():
-            scan_names_list.append(scan.scan)
-        self.data_browser.table_data.scans_to_visualize = scan_names_list
-
-        # Reset of table
-        self.data_browser.table_data.setColumnCount(len(self.database.getVisualizedTags()))
-        self.data_browser.table_data.setRowCount(len(self.data_browser.table_data.scans_to_visualize))
-        self.data_browser.table_data.initialize_headers()
-        self.data_browser.table_data.initialize_cells()
-        self.data_browser.table_data.fill_headers()
-        self.data_browser.table_data.fill_cells_update_table()
+        # TODO Reset of table
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
@@ -494,19 +470,7 @@ class Main_Window(QMainWindow):
 
         self.data_browser.update_database(self.database)  # Database update DataBrowser
 
-        # We reset the headers
-        self.data_browser.table_data.nb_columns = len(self.database.getVisualizedTags())
-        self.data_browser.table_data.setColumnCount(self.data_browser.table_data.nb_columns)
-        self.data_browser.table_data.initialize_headers()
-        self.data_browser.table_data.fill_headers()
-
-        # List of scans refreshed with all the scans of the project
-        scan_names_list = []
-        for scan in self.database.getScans():
-            scan_names_list.append(scan.scan)
-        self.data_browser.table_data.scans_to_visualize = scan_names_list
-
-        self.data_browser.table_data.update_table()  # Table updated with the new project
+        self.data_browser.table_data.update_table() # Table updated
 
         # Window name updated
         if self.database.isTempProject:
@@ -569,7 +533,7 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.show()
 
         if self.pop_up_preferences.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table()
+            pass
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
@@ -582,17 +546,13 @@ class Main_Window(QMainWindow):
         # 'NoLogExport'if we don't want log export
 
         if code_exit == 0:
+
+            # Database filled
             controller.read_log(self.database)
 
-            scan_names_list = []
-            for scan in self.database.getScans():
-                scan_names_list.append(scan.scan)
-
-            self.data_browser.table_data.scans_to_visualize = scan_names_list
-
-            self.data_browser.table_data.nb_rows = len(scan_names_list)
-            self.data_browser.table_data.setRowCount(self.data_browser.table_data.nb_rows)
-            self.data_browser.table_data.update_table()
+            # Table updated
+            self.data_browser.table_data.scans_to_visualize = self.database.getScansNames()
+            self.data_browser.table_data.add_rows(self.database.getScansNames())
 
         else:
             pass
