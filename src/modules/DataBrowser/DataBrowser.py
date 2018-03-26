@@ -12,6 +12,7 @@ from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
 from PopUps.Ui_Select_Filter import Ui_Select_Filter
+from PopUps.Ui_Dialog_Multiple_Sort import Ui_Dialog_Multiple_Sort
 from DataBrowser.CountTable import CountTable
 
 from SoftwareProperties import Config
@@ -752,6 +753,7 @@ class TableDataBrowser(QTableWidget):
         action_sort_column_descending = menu.addAction("Sort column (descending)")
         action_visualized_tags = menu.addAction("Visualized tags")
         action_select_column = menu.addAction("Select column(s)")
+        action_multiple_sort = menu.addAction("Multiple sort")
 
         action = menu.exec_(self.mapToGlobal(position))
         msg = QMessageBox()
@@ -787,6 +789,8 @@ class TableDataBrowser(QTableWidget):
             self.visualized_tags_pop_up()
         elif action == action_select_column:
             self.selectAllColumns()
+        elif action == action_multiple_sort:
+            self.multiple_sort_pop_up()
 
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
@@ -1070,6 +1074,15 @@ class TableDataBrowser(QTableWidget):
 
         if self.pop_up.exec_() == QDialog.Accepted:
             self.update_visualized_columns(old_tags) # Columns updated
+
+    def multiple_sort_pop_up(self):
+        pop_up = Ui_Dialog_Multiple_Sort(self.database)
+        if pop_up.exec_() == QDialog.Accepted:
+            if self.database.getSortOrder() == "ascending":
+                self.scans_to_visualize = [x for _, x in sorted(zip(pop_up.list_tags, self.scans_to_visualize))]
+            elif self.database.getSortOrder() == "descending":
+                self.scans_to_visualize = [x for _, x in sorted(zip(pop_up.list_tags, self.scans_to_visualize), reverse=True)]
+            # TODO: some kind of self.update_table()
 
     def update_visualized_rows(self, old_scans):
         """

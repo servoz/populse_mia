@@ -7,19 +7,32 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    def __init__(self, database, tag_name_checked=None):
+    def __init__(self, database, tag_name_checked=None, visualized_tags_only=False):
         super(Ui_Select_Tag_Count_Table, self).__init__(database)
 
-        # Filling the list and checking the previous selected tag
-        for tag in self.database.getTags():
-            item = QtWidgets.QListWidgetItem()
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            if tag.tag == tag_name_checked:
-                item.setCheckState(QtCore.Qt.Checked)
-            else:
-                item.setCheckState(QtCore.Qt.Unchecked)
-            self.list_widget_tags.addItem(item)
-            item.setText(tag.tag)
+        if visualized_tags_only:
+            for tag in self.database.getTags():
+                if database.getTagVisibility(tag.tag):
+                    item = QtWidgets.QListWidgetItem()
+                    item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+                    if tag.tag == tag_name_checked:
+                        item.setCheckState(QtCore.Qt.Checked)
+                    else:
+                        item.setCheckState(QtCore.Qt.Unchecked)
+                    self.list_widget_tags.addItem(item)
+                    item.setText(tag.tag)
+
+        else:
+            # Filling the list and checking the previous selected tag
+            for tag in self.database.getTags():
+                item = QtWidgets.QListWidgetItem()
+                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+                if tag.tag == tag_name_checked:
+                    item.setCheckState(QtCore.Qt.Checked)
+                else:
+                    item.setCheckState(QtCore.Qt.Unchecked)
+                self.list_widget_tags.addItem(item)
+                item.setText(tag.tag)
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
