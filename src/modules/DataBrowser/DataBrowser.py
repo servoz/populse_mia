@@ -193,6 +193,7 @@ class DataBrowser(QWidget):
         self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
     def visualized_tags_pop_up(self):
+        old_tags = self.database.getVisualizedTags() # Old list of tags
         self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
@@ -200,10 +201,7 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.table_data.setColumnCount(len(self.database.getVisualizedTags()))
-            self.table_data.initialize_headers()
-            self.table_data.fill_headers()
-            self.table_data.update_table()
+            self.table_data.update_visualized_columns(old_tags) # Columns updated
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
@@ -489,7 +487,15 @@ class DataBrowser(QWidget):
                 item = QtWidgets.QTableWidgetItem()
                 self.table_data.setItem(row, column, item)
                 scan = self.table_data.item(row, 0).text()
-                item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
+                if self.database.scanHasTag(scan, tag_to_clone):
+                    item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
+                else:
+                    a = str(not_defined_value)
+                    item.setText(a)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
                 row += 1
 
             self.table_data.resizeColumnsToContents() # New column resized
@@ -784,7 +790,6 @@ class TableDataBrowser(QTableWidget):
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
 
-        self.update_table()
 
     def get_tag_column(self, tag):
         """
@@ -838,7 +843,7 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value]) # For history
                 if not self.database.resetTag(scan_name, tag_name):
                     has_unreset_values = True
-                self.item(row, col).setText(cell.raw_value)
+                self.item(row, col).setText(database_to_table(cell.raw_value))
             else:
                 has_unreset_values = True
 
@@ -874,7 +879,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan, tag_name):
                         has_unreset_values = True
-                    self.item(row, col).setText(cell.raw_value)
+                    self.item(row, col).setText(database_to_table(cell.raw_value))
                 else:
                     has_unreset_values = True
                 row += 1
@@ -913,7 +918,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan_name, tag, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan_name, tag):
                         has_unreset_values = True
-                    self.item(row, column).setText(cell.raw_value)
+                    self.item(row, column).setText(database_to_table(cell.raw_value))
                 else:
                     has_unreset_values = True
                 column += 1
@@ -1056,15 +1061,58 @@ class TableDataBrowser(QTableWidget):
             self.database.setSortedTag(tag_name)
 
     def visualized_tags_pop_up(self):
+        old_tags = self.database.getVisualizedTags() # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.database)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
-            self.setColumnCount(len(self.database.getVisualizedTags()))
-            self.initialize_headers()
-            self.fill_headers()
+            self.update_visualized_columns(old_tags) # Columns updated
+
+    def update_visualized_columns(self, old_tags):
+        """
+        Called to set the visualized tags in the table
+        :param old_tags: Old list of visualized tags
+        """
+
+        # Tags that are not visible anymore are removed
+        for tag in old_tags:
+            if not self.database.getTagVisibility(tag.tag):
+                self.removeColumn(self.get_tag_column(tag.tag))
+
+        # Tags that became visible must be created
+        for tag in self.database.getVisualizedTags():
+            column = self.get_tag_column(tag.tag)
+
+            # We add the column if the index is not found (not in the table)
+            if column == None:
+                colCount = self.columnCount()
+                self.insertColumn(colCount)
+                item = QtWidgets.QTableWidgetItem()
+                self.setHorizontalHeaderItem(colCount, item)
+                item.setText(tag.tag)
+                item.setToolTip( "Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(
+                        tag.type))
+
+                # Rows filled for the column being added
+                row = 0
+                while row < self.rowCount():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(row, colCount, item)
+                    scan = self.item(row, 0).text()
+                    if self.database.scanHasTag(scan, tag.tag):
+                        item.setText(database_to_table(self.database.getValue(scan, tag.tag).current_value))
+                    else:
+                        a = str(not_defined_value)
+                        item.setText(a)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    row += 1
+
+        self.resizeColumnsToContents() # Columns resized
 
     def mouseReleaseEvent(self, e):
         """
@@ -1179,6 +1227,8 @@ class TableDataBrowser(QTableWidget):
             config = Config()
             if (config.isAutoSave() == "yes" and not self.database.isTempProject):
                 save_project(self.database)
+
+            self.resizeColumnsToContents()  # Columns resized
 
         except Exception as e:
             self.setMouseTracking(True)
@@ -1302,6 +1352,8 @@ class TableDataBrowser(QTableWidget):
             config = Config()
             if (config.isAutoSave() == "yes" and not self.database.isTempProject):
                 save_project(self.database)
+
+            self.resizeColumnsToContents() # Columns resized
 
         self.itemChanged.connect(self.change_cell_color)
 

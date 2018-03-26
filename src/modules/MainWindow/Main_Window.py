@@ -553,12 +553,14 @@ class Main_Window(QMainWindow):
 
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
+
+        old_tags = self.database.getVisualizedTags()
         self.pop_up_settings = Ui_Dialog_Settings(self.database)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_() == QDialog.Accepted:
-            self.data_browser.table_data.update_table()
+            self.data_browser.table_data.update_visualized_columns(old_tags)
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """
