@@ -1092,7 +1092,7 @@ class TableDataBrowser(QTableWidget):
                         tags_value.append(not_defined_value)
                 list_sort.append(tags_value)
 
-            if self.database.getSortOrder() == "descending":
+            if pop_up.order == "Descending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize), reverse=True)]
             else:
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize))]

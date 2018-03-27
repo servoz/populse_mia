@@ -862,9 +862,6 @@ class Database:
         if value is None:
             return True
         else:
-            print("isRawCurrent")
-            print(value.raw_value)
-            print(value.current_value)
             return value.raw_value == value.current_value
 
     def redo(self):

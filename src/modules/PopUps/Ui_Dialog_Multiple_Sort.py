@@ -1,11 +1,9 @@
-import PyQt5.QtCore as QtCore
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QFrame, \
-    QVBoxLayout, QTableWidgetItem
-from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QComboBox, QVBoxLayout
+from PyQt5.QtGui import QPixmap
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.Utils import database_to_table, table_to_database
+from Utils.Utils import database_to_table
 
 class Ui_Dialog_Multiple_Sort(QDialog):
     def __init__(self, database=None):
@@ -46,6 +44,10 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)
 
+        # Combobox to choose if the sort order is ascending or descending
+        self.combo_box = QComboBox()
+        self.combo_box.addItems(["Ascending", "Descending"])
+
         # Push button that is pressed to launch the computations
         self.push_button_sort = QPushButton()
         self.push_button_sort.setText('Sort scans')
@@ -68,6 +70,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
 
         self.h_box_top.addWidget(self.add_tag_label)
         self.h_box_top.addWidget(self.remove_tag_label)
+        self.h_box_top.addWidget(self.combo_box)
         self.h_box_top.addWidget(self.push_button_sort)
         self.h_box_top.addStretch(1)
 
@@ -112,7 +115,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
                 self.values_list[idx].append(database_to_table(value.current_value))
 
     def sort_scans(self):
-
+        self.order = self.combo_box.itemData(self.combo_box.currentIndex())
         for push_button in self.push_buttons:
             self.list_tags.append(push_button.text())
         self.accept()
