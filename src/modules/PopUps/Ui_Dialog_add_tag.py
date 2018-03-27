@@ -328,7 +328,7 @@ class Ui_Dialog_add_tag(QDialog):
         """
         Checkbox isList changed
         """
-        if self.checkbox_isList.checkState() == 0:
+        if not self.checkbox_isList.checkState():
             # Unchecked
             self.text_edit_default_value.isList = False
         else:
@@ -385,7 +385,7 @@ class Ui_Dialog_add_tag(QDialog):
                 wrong_default_value_type = True
 
         # Tag name can't be empty
-        if (self.text_edit_tag_name.text() == ""):
+        if self.text_edit_tag_name.text() == "":
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setText("The tag name cannot be empty")

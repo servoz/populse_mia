@@ -545,7 +545,7 @@ class TableDataBrowser(QTableWidget):
             self.database.setSortOrder(int(order))
             self.database.setSortedTag(self.horizontalHeaderItem(column).text())
 
-            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+            if config.isAutoSave() == "yes" and not self.database.isTempProject:
                 save_project(self.database)
 
     def update_selection(self):

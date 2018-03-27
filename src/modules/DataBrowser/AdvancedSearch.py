@@ -105,9 +105,9 @@ class AdvancedSearch(QWidget):
         :param value:
         :return:
         """
-        if(choice.currentText() == "BETWEEN"):
+        if choice.currentText() == "BETWEEN":
             value.setPlaceholderText("Please separate the two inclusive borders of the range by a comma and a space")
-        elif (choice.currentText() == "IN"):
+        elif choice.currentText() == "IN":
             value.setPlaceholderText("Please separate each list item by a comma and a space")
         else:
             value.setPlaceholderText("")
@@ -139,7 +139,7 @@ class AdvancedSearch(QWidget):
             j = 0
             while j < 7:
                 widget = self.rows[i][j]
-                if(widget != None):
+                if widget != None:
                     main_layout.addWidget(widget, i, j)
                 j = j + 1
             i = i + 1
@@ -167,12 +167,12 @@ class AdvancedSearch(QWidget):
         i = 0
         while i < len(self.rows):
             # Plus removed from every row
-            if (self.rows[i][6] != None):
+            if self.rows[i][6] != None:
                 self.rows[i][6].setParent(None)
                 self.rows[i][6].deleteLater()
                 self.rows[i][6] = None
             # Link removed from every row
-            if (self.rows[i][0] != None):
+            if self.rows[i][0] != None:
                 self.rows[i][0].setParent(None)
                 self.rows[i][0].deleteLater()
                 self.rows[i][0] = None
@@ -271,15 +271,15 @@ class AdvancedSearch(QWidget):
                 if widget != None:
                     child = widget
                     childName = child.objectName()
-                    if (childName == 'link'):
+                    if childName == 'link':
                         links.append(child.currentText())
-                    elif (childName == 'condition'):
+                    elif childName == 'condition':
                         conditions.append(child.currentText())
-                    elif (childName == 'field'):
+                    elif childName == 'field':
                         fields.append(child.currentText())
-                    elif (childName == 'value'):
+                    elif childName == 'value':
                         values.append(child.displayText())
-                    elif (childName == 'not'):
+                    elif childName == 'not':
                         nots.append(child.currentText())
         return fields, conditions, values, links, nots
 
