@@ -519,10 +519,9 @@ class TableDataBrowser(QTableWidget):
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table))
-        self.hh = self.horizontalHeader()
-        self.hh.sortIndicatorChanged.connect(partial(self.sort_updated))
-        #self.hh.sectionDoubleClicked.connect(partial(self.sort))
-        self.hh.sectionMoved.connect(partial(self.section_moved))
+        self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
+        self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
+        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
         self.itemChanged.connect(self.change_cell_color)
         self.itemSelectionChanged.connect(self.selection_changed)
 
@@ -601,15 +600,24 @@ class TableDataBrowser(QTableWidget):
         :param newVisualIndex: To index
         """
 
+        self.itemSelectionChanged.disconnect()
+
         # We need to disconnect the sectionMoved signal, otherwise infinite call to this function
-        self.hh.sectionMoved.disconnect()
+        self.horizontalHeader().sectionMoved.disconnect()
 
         if(oldVisualIndex == 0 or newVisualIndex == 0):
             # FileName column is moved, to revert because it has to stay the first column
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
 
         # We reconnect the signal
-        self.hh.sectionMoved.connect(partial(self.section_moved))
+        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
+
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
+
+        self.update()
 
     def selectAllColumn(self, col):
         """

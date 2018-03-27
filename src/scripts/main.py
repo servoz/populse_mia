@@ -14,12 +14,15 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    # We make sure that FileName is in the default tags
+    # We make sure that FileName is in the default tags and in first position
     config = Config()
     tags = config.getDefaultTags()
-    if not "FileName" in config.getDefaultTags():
+    if not "FileName" in tags:
         tags.insert(0, "FileName")
-        config.setDefaultTags(tags)
+    fileNameIndex = tags.index("FileName")
+    if fileNameIndex != 0:
+        tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
+    config.setDefaultTags(tags)
 
     database = Database(None, True)
 
