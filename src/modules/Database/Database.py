@@ -217,6 +217,17 @@ class Database:
             result.append(scan.scan)
         return result
 
+    def getTagsNames(self):
+        """
+        To get all Tag names
+        :return: All Tag names
+        """
+        result = []
+        tags = self.session.query(Tag).filter().all()
+        for tag in tags:
+            result.append(tag.tag)
+        return result
+
     def getValues(self):
         """
         To get all values

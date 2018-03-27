@@ -696,9 +696,17 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the headers of the table
         """
 
+        # Sorting the tags in alphabetical order, but keeping FileName first
         column = 0
-        for element in self.database.getTags():
-            tag_name = element.tag
+        tags = self.database.getTagsNames()
+        tags = sorted(tags)
+        fileNameIndex = tags.index("FileName")
+        if fileNameIndex != 0:
+            tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
+
+        # Fillinf the headers
+        for tag_name in tags:
+            element = self.database.getTag(tag_name)
             item = QtWidgets.QTableWidgetItem()
             self.setHorizontalHeaderItem(column, item)
             item.setText(tag_name)
@@ -795,7 +803,6 @@ class TableDataBrowser(QTableWidget):
 
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
-
 
     def get_tag_column(self, tag):
         """
