@@ -168,25 +168,6 @@ class DataBrowser(QWidget):
 
         self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
-    def visualized_tags_pop_up(self):
-        old_tags = self.database.getVisualizedTags() # Old list of tags
-        self.pop_up = Ui_Dialog_Settings(self.database)
-        self.pop_up.tab_widget.setCurrentIndex(0)
-
-        self.pop_up.setGeometry(300, 200, 800, 600)
-        self.pop_up.show()
-
-        if self.pop_up.exec_() == QDialog.Accepted:
-
-            self.table_data.itemSelectionChanged.disconnect()
-
-            self.table_data.update_visualized_columns(old_tags) # Columns updated
-
-            # Selection updated
-            self.table_data.update_selection()
-
-            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
-
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
         pop_up.show()
@@ -238,7 +219,7 @@ class DataBrowser(QWidget):
 
         visualized_tags_button = QPushButton()
         visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(self.visualized_tags_pop_up)
+        visualized_tags_button.clicked.connect(lambda : self.table_data.visualized_tags_pop_up())
 
         count_table_button = QPushButton()
         count_table_button.setText('Count table')
@@ -399,7 +380,7 @@ class DataBrowser(QWidget):
             while row < self.table_data.rowCount():
                 item = QtWidgets.QTableWidgetItem()
                 self.table_data.setItem(row, column, item)
-                item.setText(database_to_table(database_value))
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(database_value)))
                 row += 1
 
             self.table_data.resizeColumnsToContents() # New column resized
@@ -451,10 +432,9 @@ class DataBrowser(QWidget):
                 self.table_data.setItem(row, column, item)
                 scan = self.table_data.item(row, 0).text()
                 if self.database.scanHasTag(scan, tag_to_clone):
-                    item.setText(database_to_table(self.database.getValue(scan, tag_to_clone).current_value))
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag_to_clone).current_value)))
                 else:
-                    a = str(not_defined_value)
-                    item.setText(a)
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                     font = item.font()
                     font.setItalic(True)
                     font.setBold(True)
@@ -513,17 +493,37 @@ class TableDataBrowser(QTableWidget):
         # It allows to move the columns (except FileName)
         self.horizontalHeader().setSectionsMovable(True)
 
+        # It allows the automatic sort
+        self.setSortingEnabled(True)
+
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table))
         self.hh = self.horizontalHeader()
-        self.hh.sectionClicked.connect(partial(self.selectAllColumn))
-        self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
+        self.hh.sortIndicatorChanged.connect(partial(self.sort_updated))
+        #self.hh.sectionDoubleClicked.connect(partial(self.sort))
         self.hh.sectionMoved.connect(partial(self.section_moved))
         self.itemChanged.connect(self.change_cell_color)
         self.itemSelectionChanged.connect(self.selection_changed)
 
         self.update_table()
+
+    def sort_updated(self, column, order):
+        """
+        Called when the sort is updated
+        :param column: Column being sorted
+        :param order: New order
+        """
+
+        # Auto-save
+        config = Config()
+
+        self.database.setSortOrder(int(order))
+        self.database.setSortedTag(self.horizontalHeaderItem(column).text())
+
+        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+            save_project(self.database)
+
 
     def update_selection(self):
         """
@@ -592,10 +592,19 @@ class TableDataBrowser(QTableWidget):
         self.hh.sectionMoved.connect(partial(self.section_moved))
 
     def selectAllColumn(self, col):
+        """
+        Called when single clicking on the column header to select the whole column
+        :param col: Column to select
+        """
+
         self.clearSelection()
         self.selectColumn(col)
 
     def selectAllColumns(self):
+        """
+        Called from context menu to select the columns
+        """
+
         self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         points = self.selectedIndexes()
         self.clearSelection()
@@ -618,20 +627,6 @@ class TableDataBrowser(QTableWidget):
         # The list of selected scans
         self.selected_scans = []
 
-        # Scans sorted
-        if(self.database.getSortedTag() != ''):
-            list_tags = []
-            for scan in self.scans_to_visualize:
-                if(self.database.scanHasTag(scan, self.database.getSortedTag())):
-                    list_tags.append(self.database.getValue(scan, self.database.getSortedTag()).current_value)
-                else:
-                    list_tags.append(not_defined_value)
-
-            if self.database.getSortOrder() == "ascending":
-                self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize))]
-            elif self.database.getSortOrder() == "descending":
-                self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize), reverse=True)]
-
         self.itemChanged.disconnect()
 
         self.setRowCount(len(self.scans_to_visualize))
@@ -652,13 +647,16 @@ class TableDataBrowser(QTableWidget):
         # Columns and rows resized
         self.resizeColumnsToContents()
 
+        # Saved sort applied if it exists
+        tag_to_sort = self.database.getSortedTag()
+        column_to_sort = self.get_tag_column(tag_to_sort)
+        sort_order = self.database.getSortOrder()
+
+        if column_to_sort != None:
+            self.horizontalHeader().setSortIndicator(column_to_sort, sort_order)
+
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
-
-        # Auto-save
-        config = Config()
-        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(self.database)
 
     def fill_headers(self):
         """
@@ -670,11 +668,6 @@ class TableDataBrowser(QTableWidget):
             tag_name = element.tag
             item = QtWidgets.QTableWidgetItem()
             self.setHorizontalHeaderItem(column, item)
-            if tag_name == self.database.getSortedTag():
-                if self.database.getSortOrder() == 'ascending':
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-                else:
-                    item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(tag_name)
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(column, item)
@@ -695,32 +688,17 @@ class TableDataBrowser(QTableWidget):
                 current_tag = item.text()
 
                 item = QTableWidgetItem()
+
                 # The scan has a value for the tag
                 if (self.database.scanHasTag(scan, current_tag)):
                     value = self.database.getValue(scan, current_tag)
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
-                    item.setText(database_to_table(value.current_value))
-
-                    # Font reset
-                    font = item.font()
-                    font.setItalic(False)
-                    font.setBold(False)
-                    item.setFont(font)
-
-                    # User tag
-                    if self.database.getTagOrigin(current_tag) == TAG_ORIGIN_USER:
-                        color = QColor()
-                        if row % 2 == 1:
-                            color.setRgb(255, 240, 240)
-                        else:
-                            color.setRgb(255, 225, 225)
-                        item.setData(Qt.BackgroundRole, QVariant(color))
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(value.current_value)))
 
                 # The scan does not have a value for the tag
                 else:
-                    a = str(not_defined_value)
-                    item.setText(a)
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                     font = item.font()
                     font.setItalic(True)
                     font.setBold(True)
@@ -838,7 +816,7 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value]) # For history
                 if not self.database.resetTag(scan_name, tag_name):
                     has_unreset_values = True
-                self.item(row, col).setText(database_to_table(cell.raw_value))
+                self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
             else:
                 has_unreset_values = True
 
@@ -874,7 +852,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan, tag_name):
                         has_unreset_values = True
-                    self.item(row, col).setText(database_to_table(cell.raw_value))
+                    self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
                 else:
                     has_unreset_values = True
                 row += 1
@@ -913,7 +891,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan_name, tag, cell.current_value, cell.raw_value]) # For history
                     if not self.database.resetTag(scan_name, tag):
                         has_unreset_values = True
-                    self.item(row, column).setText(database_to_table(cell.raw_value))
+                    self.item(row, column).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
                 else:
                     has_unreset_values = True
                 column += 1
@@ -952,11 +930,10 @@ class TableDataBrowser(QTableWidget):
 
             item = QTableWidgetItem()
             if self.database.scanHasTag(scan_path, tag_name):
-                item.setText(database_to_table(self.database.getValue(scan_path, tag_name).current_value))
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan_path, tag_name).current_value)))
             else:
-                a = str(not_defined_value)
                 item = QTableWidgetItem()
-                item.setText(a)
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -991,69 +968,6 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append(values_removed)
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
-
-    def sort_items(self, col):
-        """
-        Manages the sort when a column is double clicked
-        :param col: Column clicked to sort
-        :return:
-        """
-
-        self.clearSelection() # Remove the column selection from single click
-        item = self.horizontalHeaderItem(col)
-        tag_name = self.horizontalHeaderItem(col).text()
-
-        # For history
-        historyMaker = []
-        historyMaker.append("modified_sort")
-        # Old values
-        historyMaker.append(self.database.getSortedTag())
-        historyMaker.append(self.database.getSortOrder())
-
-        # Sort values updated
-        if tag_name == self.database.getSortedTag():
-            if self.database.getSortOrder() == 'ascending':
-                self.database.setSortOrder('descending')
-                item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
-            else:
-                self.database.setSortOrder('ascending')
-                item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-        else:
-            self.database.setSortOrder('ascending')
-            item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
-
-        self.database.setSortedTag(tag_name)
-
-        # For history
-        # New values
-        historyMaker.append(self.database.getSortedTag())
-        historyMaker.append(self.database.getSortOrder())
-        self.database.undos.append(historyMaker)
-        self.database.redos.clear()
-
-        # TODO sort
-
-    def sort_column(self):
-        points = self.selectedItems()
-
-        self.database.setSortOrder('ascending')
-        self.database.setSortedTag('')
-
-        for point in points:
-            col = point.column()
-            tag_name = self.horizontalHeaderItem(col).text()
-            self.database.setSortedTag(tag_name)
-
-    def sort_column_descending(self):
-        points = self.selectedItems()
-
-        self.database.setSortOrder('descending')
-        self.database.setSortedTag('')
-
-        for point in points:
-            col = point.column()
-            tag_name = self.horizontalHeaderItem(col).text()
-            self.database.setSortedTag(tag_name)
 
     def visualized_tags_pop_up(self):
         old_tags = self.database.getVisualizedTags() # Old list of columns
@@ -1151,10 +1065,9 @@ class TableDataBrowser(QTableWidget):
                     self.setItem(rowCount, column, item)
                     tag = self.horizontalHeaderItem(column).text()
                     if self.database.scanHasTag(scan, tag):
-                        item.setText(database_to_table(self.database.getValue(scan, tag).current_value))
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag).current_value)))
                     else:
-                        a = str(not_defined_value)
-                        item.setText(a)
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -1185,10 +1098,9 @@ class TableDataBrowser(QTableWidget):
                     self.setItem(row, columnCount, item)
                     scan = self.item(row, 0).text()
                     if self.database.scanHasTag(scan, tag.tag):
-                        item.setText(database_to_table(self.database.getValue(scan, tag.tag).current_value))
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag.tag).current_value)))
                     else:
-                        a = str(not_defined_value)
-                        item.setText(a)
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -1295,7 +1207,7 @@ class TableDataBrowser(QTableWidget):
                     old_value = self.old_values[i]
                     new_value = self.database.getValue(self.table_scans[i], self.table_tags[i])
                     modified_values.append([self.table_scans[i], self.table_tags[i], old_value, new_value.current_value])
-                    new_item.setText(database_to_table(new_value.current_value))
+                    new_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(new_value.current_value)))
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
                     i += 1
 
@@ -1426,7 +1338,7 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(False)
                         item.setFont(font)
 
-                    item.setText(text_value)
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(text_value))
 
             # For history
             historyMaker.append(modified_values)
