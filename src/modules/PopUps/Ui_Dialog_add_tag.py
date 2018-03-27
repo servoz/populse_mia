@@ -193,7 +193,7 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
-            if self.list_creation.exec_() == QDialog.Accepted:
+            if self.list_creation.exec_():
                 pass
 
 

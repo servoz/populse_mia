@@ -604,7 +604,7 @@ class MiniViewer(QWidget):
         """ Method that calls the pop-up to select the legend of the thumbnails.
         """
         self.popUp = Ui_Select_Tag(self.database)
-        if self.popUp.exec_() == QDialog.Accepted:
+        if self.popUp.exec_():
 
             self.verify_slices(self.file_paths)
 

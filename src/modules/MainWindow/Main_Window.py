@@ -192,7 +192,7 @@ class Main_Window(QMainWindow):
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
 
-        if (self.check_unsaved_modifications() == 1):
+        if self.check_unsaved_modifications():
             self.pop_up_close = Ui_Dialog_Quit(self.database)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
@@ -292,7 +292,7 @@ class Main_Window(QMainWindow):
 
         import glob
         exPopup = Ui_Dialog_Save_Project_As()
-        if exPopup.exec_() == QDialog.Accepted:
+        if exPopup.exec_():
 
             old_folder = self.database.folder
             file_name = exPopup.relative_path
@@ -340,7 +340,7 @@ class Main_Window(QMainWindow):
 
     def create_project_pop_up(self):
 
-        if (self.check_unsaved_modifications() == 1):
+        if self.check_unsaved_modifications():
             self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
@@ -357,7 +357,7 @@ class Main_Window(QMainWindow):
             # Which will be connected to the modify_ui method that controls the following Processes
             self.exPopup.signal_create_project.connect(self.modify_ui)
 
-            if self.exPopup.exec_() == QDialog.Accepted:
+            if self.exPopup.exec_():
 
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
@@ -375,7 +375,7 @@ class Main_Window(QMainWindow):
 
         self.exPopup = Ui_Dialog_Open_Project()
         self.exPopup.signal_create_project.connect(self.modify_ui)
-        if self.exPopup.exec_() == QDialog.Accepted:
+        if self.exPopup.exec_():
 
             file_name = self.exPopup.selectedFiles()
             self.exPopup.retranslateUi(file_name)
@@ -405,7 +405,7 @@ class Main_Window(QMainWindow):
         if os.path.exists(os.path.join(path)):
 
             # We check for unsaved modifications
-            if (self.check_unsaved_modifications() == 1):
+            if self.check_unsaved_modifications():
 
                 # If there are unsaved modifications, we ask the user what he wants to do
                 self.pop_up_close = Ui_Dialog_Quit(self.database)
@@ -496,7 +496,7 @@ class Main_Window(QMainWindow):
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
         self.exPopup.signal_create_project.connect(self.modify_ui)
-        if self.exPopup.exec_() == QDialog.Accepted:
+        if self.exPopup.exec_():
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
@@ -523,7 +523,7 @@ class Main_Window(QMainWindow):
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
-        if self.pop_up_settings.exec_() == QDialog.Accepted:
+        if self.pop_up_settings.exec_():
             self.data_browser.table_data.update_visualized_columns(old_tags)
 
     def software_preferences_pop_up(self):
@@ -532,7 +532,7 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
 
-        if self.pop_up_preferences.exec_() == QDialog.Accepted:
+        if self.pop_up_preferences.exec_():
             pass
 
     def import_data(self):

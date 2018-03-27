@@ -75,7 +75,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.tools_layout = QVBoxLayout()
         self.save_checkbox = QCheckBox('Auto Save (only on saved projects, does not work on default unnamed project)', self)
 
-        if(config.isAutoSave() == "yes"):
+        if config.isAutoSave() == "yes":
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
 
@@ -144,21 +144,22 @@ class Ui_Dialog_Preferences(QDialog):
 
     def handleItemClicked(self, pos):
         menu = QMenu(self)
-        actionRemoveTag = menu.addAction("Remove tag")
-        actionAddTag = menu.addAction("Add a new tag")
+        action_remove_tag = menu.addAction("Remove tag")
+        action_add_tag = menu.addAction("Add a new tag")
         # Show the context menu.
         action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
         config = Config()
-        if action == actionRemoveTag:
-            if(self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) != None and self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()).text() != "FileName"):
+        if action == action_remove_tag:
+            if self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) is not None \
+                    and self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()).text() != "FileName":
                 self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
-        elif action == actionAddTag:
+        elif action == action_add_tag:
             res = self.getText()
-            itemsWithText = self.list_default_tags.findItems(res, Qt.MatchExactly)
-            if not res == None and len(itemsWithText) == 0:
+            items_with_text = self.list_default_tags.findItems(res, Qt.MatchExactly)
+            if res is not None and len(items_with_text) == 0:
                 self.list_default_tags.addItem(res)
 
     def getText(self):
-        text, okPressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
-        if okPressed and text != '':
+        text, ok_pressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
+        if ok_pressed and text != '':
             return text

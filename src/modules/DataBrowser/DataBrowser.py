@@ -149,7 +149,7 @@ class DataBrowser(QWidget):
         oldFilter = self.database.currentFilter
 
         self.popUp = Ui_Select_Filter(self.database)
-        if self.popUp.exec_() == QDialog.Accepted:
+        if self.popUp.exec_():
             pass
 
         filterToApply = self.database.currentFilter
@@ -176,7 +176,7 @@ class DataBrowser(QWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
         self.pop_up.show()
 
-        if self.pop_up.exec_() == QDialog.Accepted:
+        if self.pop_up.exec_():
 
             self.table_data.itemSelectionChanged.disconnect()
 
@@ -191,7 +191,7 @@ class DataBrowser(QWidget):
         pop_up = CountTable(self.database)
         pop_up.show()
 
-        if pop_up.exec_() == QDialog.Accepted:
+        if pop_up.exec_():
             pass
 
     def create_toolbar_menus(self):
@@ -363,7 +363,7 @@ class DataBrowser(QWidget):
         self.pop_up_add_tag.show()
 
         # We get the values entered by the user
-        if self.pop_up_add_tag.exec_() == QDialog.Accepted:
+        if self.pop_up_add_tag.exec_():
             (new_tag_name, new_default_value, tag_type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
             values = []
@@ -411,7 +411,7 @@ class DataBrowser(QWidget):
         self.pop_up_clone_tag.show()
 
         # We get the informations given by the user
-        if self.pop_up_clone_tag.exec_() == QDialog.Accepted:
+        if self.pop_up_clone_tag.exec_():
             (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
 
             values = []
@@ -470,7 +470,7 @@ class DataBrowser(QWidget):
         self.pop_up_remove_tag.show()
 
         # We get the tags to remove
-        if self.pop_up_remove_tag.exec_() == QDialog.Accepted:
+        if self.pop_up_remove_tag.exec_():
             tag_names_to_remove = self.pop_up_remove_tag.get_values()
 
             # For history
@@ -1062,7 +1062,7 @@ class TableDataBrowser(QTableWidget):
 
         self.pop_up.setGeometry(300, 200, 800, 600)
 
-        if self.pop_up.exec_() == QDialog.Accepted:
+        if self.pop_up.exec_():
 
             self.itemSelectionChanged.disconnect()
 
@@ -1075,7 +1075,7 @@ class TableDataBrowser(QTableWidget):
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.database)
-        if pop_up.exec_() == QDialog.Accepted:
+        if pop_up.exec_():
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
@@ -1278,7 +1278,7 @@ class TableDataBrowser(QTableWidget):
                 # Window to change table values displayed
                 pop_up = ModifyTable(self.database, list_value, self.table_types, self.table_scans, self.table_tags)
                 pop_up.show()
-                if pop_up.exec_() == QDialog.Accepted:
+                if pop_up.exec_():
                     pass
 
                 # For history
