@@ -537,12 +537,12 @@ class TableDataBrowser(QTableWidget):
         # Auto-save
         config = Config()
 
-        self.database.setSortOrder(int(order))
-        self.database.setSortedTag(self.horizontalHeaderItem(column).text())
+        if column != -1:
+            self.database.setSortOrder(int(order))
+            self.database.setSortedTag(self.horizontalHeaderItem(column).text())
 
-        if (config.isAutoSave() == "yes" and not self.database.isTempProject):
-            save_project(self.database)
-
+            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+                save_project(self.database)
 
     def update_selection(self):
         """
@@ -647,6 +647,8 @@ class TableDataBrowser(QTableWidget):
         Only called when switching project to completely reset the table
         """
 
+        self.setSortingEnabled(False)
+
         # The list of scans to visualize
         self.scans_to_visualize = []
         for scan in self.database.getScans():
@@ -672,16 +674,19 @@ class TableDataBrowser(QTableWidget):
         # Cells filled
         self.fill_cells_update_table()
 
-        # Columns and rows resized
-        self.resizeColumnsToContents()
-
         # Saved sort applied if it exists
+        self.setSortingEnabled(True)
         tag_to_sort = self.database.getSortedTag()
         column_to_sort = self.get_tag_column(tag_to_sort)
         sort_order = self.database.getSortOrder()
 
         if column_to_sort != None:
             self.horizontalHeader().setSortIndicator(column_to_sort, sort_order)
+        else:
+            self.horizontalHeader().setSortIndicator(0, 0)
+
+        # Columns and rows resized
+        self.resizeColumnsToContents()
 
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
@@ -1037,7 +1042,26 @@ class TableDataBrowser(QTableWidget):
             else:
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize))]
 
-            self.update_visualized_rows(self.scans_to_visualize)
+
+            # Table updated
+            self.setSortingEnabled(False)
+            row = 0
+            while row < self.rowCount():
+                scan = self.scans_to_visualize[row]
+                old_row = self.get_scan_row(scan)
+                if old_row != row:
+                    column = 0
+                    while column < self.columnCount():
+                        item_to_move = self.takeItem(old_row, column)
+                        item_wrong_row = self.takeItem(row, column)
+                        self.setItem(row, column, item_to_move)
+                        self.setItem(old_row, column, item_wrong_row)
+                        column += 1
+                row += 1
+            self.horizontalHeader().setSortIndicator(-1, 0)
+            self.setSortingEnabled(True)
+
+            self.resizeColumnsToContents()
 
     def update_visualized_rows(self, old_scans):
         """
@@ -1079,6 +1103,8 @@ class TableDataBrowser(QTableWidget):
         :param rows: List of all scans
         """
 
+        self.setSortingEnabled(False)
+
         for scan in rows:
 
             # Scan added only if it's not already in the table
@@ -1090,7 +1116,6 @@ class TableDataBrowser(QTableWidget):
                 column = 0
                 while column < self.columnCount():
                     item = QtWidgets.QTableWidgetItem()
-                    self.setItem(rowCount, column, item)
                     tag = self.horizontalHeaderItem(column).text()
                     if self.database.scanHasTag(scan, tag):
                         item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag).current_value)))
@@ -1100,7 +1125,10 @@ class TableDataBrowser(QTableWidget):
                         font.setItalic(True)
                         font.setBold(True)
                         item.setFont(font)
+                    self.setItem(rowCount, column, item)
                     column += 1
+
+        self.setSortingEnabled(True)
 
     def add_columns(self):
         """
