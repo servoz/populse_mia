@@ -704,7 +704,7 @@ class TableDataBrowser(QTableWidget):
         if fileNameIndex != 0:
             tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
 
-        # Fillinf the headers
+        # Filling the headers
         for tag_name in tags:
             element = self.database.getTag(tag_name)
             item = QtWidgets.QTableWidgetItem()
@@ -803,6 +803,18 @@ class TableDataBrowser(QTableWidget):
 
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
+
+    def sort_column(self):
+        """
+        Sorts the current column in ascending order
+        """
+        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 0)
+
+    def sort_column_descending(self):
+        """
+        Sorts the current column in descending order
+        """
+        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 1)
 
     def get_tag_column(self, tag):
         """
