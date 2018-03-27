@@ -700,25 +700,19 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the headers of the table
         """
 
-        # Sorting the tags in alphabetical order, but keeping FileName first
         column = 0
-        tags = self.database.getTagsNames()
-        tags = sorted(tags)
-        fileNameIndex = tags.index("FileName")
-        if fileNameIndex != 0:
-            tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
 
-        # Fillinf the headers
-        for tag_name in tags:
+        # Filling the headers
+        for tag_name in self.database.getTagsNames():
             element = self.database.getTag(tag_name)
             item = QtWidgets.QTableWidgetItem()
             self.setHorizontalHeaderItem(column, item)
             item.setText(tag_name)
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(column, item)
-            if not element.visible:
-                self.setColumnHidden(column, True)
             column += 1
+
+        self.put_columns_alphabetical_order() # Columns order
 
     def fill_cells_update_table(self):
         """
@@ -843,6 +837,18 @@ class TableDataBrowser(QTableWidget):
 
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
+
+    def sort_column(self):
+        """
+        Sorts the current column in ascending order
+        """
+        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 0)
+
+    def sort_column_descending(self):
+        """
+        Sorts the current column in descending order
+        """
+        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 1)
 
     def get_tag_column(self, tag):
         """
@@ -1190,6 +1196,7 @@ class TableDataBrowser(QTableWidget):
         To add the new tags
         """
 
+        # Adding missing columns
         for tag in self.database.getTags():
 
             # Tag added only if it's not already in the table
@@ -1218,9 +1225,51 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     row += 1
 
-                if not tag.visible:
-                    self.setColumnHidden(columnCount, True)
+        self.put_columns_alphabetical_order() # Columns order
 
+    def put_columns_alphabetical_order(self):
+        """
+        Puts the columns in alphabetical order, but keeps FileName first
+        """
+
+        self.horizontalHeader().sectionMoved.disconnect()
+
+        # Swapping columns to be in order, using bubble sort
+        changed = True
+        while changed:
+            changed = False
+            column = 0
+            while column < self.columnCount() - 1:
+                tag_name_1 = self.horizontalHeaderItem(column).text()
+                tag_name_2 = self.horizontalHeaderItem(column + 1).text()
+                if tag_name_1 > tag_name_2:
+                    item_1 = self.takeHorizontalHeaderItem(column)
+                    item_2 = self.takeHorizontalHeaderItem(column + 1)
+                    self.setHorizontalHeaderItem(column, item_2)
+                    self.setHorizontalHeaderItem(column + 1, item_1)
+                    row = 0
+                    while row < self.rowCount():
+                        item_1 = self.takeItem(row, column)
+                        item_2 = self.takeItem(row, column + 1)
+                        self.setItem(row, column, item_2)
+                        self.setItem(row, column + 1, item_1)
+                        row += 1
+                    changed = True
+                column += 1
+
+        # FileName put in first column
+        fileNameIndex = self.get_tag_column("FileName")
+        if fileNameIndex != 0:
+            self.horizontalHeader().moveSection(fileNameIndex, 0)
+
+        # Putting columns visibility
+        for tag in self.database.getTags():
+            if tag.visible == False:
+                self.setColumnHidden(self.get_tag_column(tag.tag), True)
+
+        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
+
+        self.update()
 
     def mouseReleaseEvent(self, e):
         """
