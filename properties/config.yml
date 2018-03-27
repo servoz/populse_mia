@@ -3,8 +3,9 @@ background_color: ''
 chain_cursors: 'yes'
 default_tags:
 - FileName
-- PatientName
 - AcquisitionDate
+- PatientName
+- SequenceName
 name: MIA2
 nb_slices_max: '10'
 paths:

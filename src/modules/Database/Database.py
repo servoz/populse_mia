@@ -851,6 +851,22 @@ class Database:
             self.addValue(valueToReput.scan, valueToReput.tag, valueToReput.current_value, valueToReput.raw_value)
             i += 1
 
+    def isRawCurrent(self, scan, tag):
+        """
+        Check if the raw value is the same as the current value
+        :param scan: A scan name
+        :param tag: A tag name
+        :return: True if the values are the same, False if not
+        """
+        value = self.getValue(scan, tag)
+        if value is None:
+            return True
+        else:
+            print("isRawCurrent")
+            print(value.raw_value)
+            print(value.current_value)
+            return value.raw_value == value.current_value
+
     def redo(self):
         """
         Redo the last action made by the user on the project
