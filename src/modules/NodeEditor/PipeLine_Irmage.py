@@ -156,7 +156,7 @@ class ProjectEditor(QWidget):
             for item in items:
                 if type(item) is PortItem:
                     self.startedConnection.setToPort(item)
-            if self.startedConnection.toPort == None:
+            if self.startedConnection.toPort is None:
                 self.startedConnection.delete()
             self.startedConnection = None
 
@@ -591,7 +591,7 @@ class ArrowItem(QGraphicsLineItem):
         self.setFlag(self.ItemIsFocusable, True)
   
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             editor.diagramScene.removeItem(self)
            
     def mousePressEvent(self, event):
@@ -654,9 +654,10 @@ class BlockItem(QGraphicsRectItem):
      
     def clearLayout(self,layout):
         for i in reversed(range(len(layout.children()))):
-            if type(layout.layout().itemAt(i))==QtWidgets.QWidgetItem:
+            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
                 layout.layout().itemAt(i).widget().setParent(None)
-            if type(layout.layout().itemAt(i))==QtWidgets.QHBoxLayout or type(layout.layout().itemAt(i))==QtWidgets.QVBoxLayout:
+            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout \
+                    or type(layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
                 layout.layout().itemAt(i).deleteLater()
                 for j in reversed(range(len(layout.layout().itemAt(i)))):
                     layout.layout().itemAt(i).itemAt(j).widget().setParent(None)
@@ -705,12 +706,12 @@ class BlockItem(QGraphicsRectItem):
         return w, h
   
     def mousePressEvent(self, event):
-        if event.button()==QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton:
             textedit.append(self.name)
             self.editParameters()
 
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             editor.diagramScene.removeItem(self)
  
 class HandleItem(QGraphicsEllipseItem):

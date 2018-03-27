@@ -43,7 +43,7 @@ class Database:
         """
 
         # We don't have a project root folder at the opening of the software (Unnamed project), we generate a temporary folder
-        if(project_root_folder == None):
+        if project_root_folder is None:
             self.isTempProject = True
             self.folder = os.path.relpath(tempfile.mkdtemp())
         # We have a project root folder(New, Open, Save As)
@@ -52,7 +52,7 @@ class Database:
             self.folder = project_root_folder
             self.properties = self.loadProperties()
         # We create the Database if it does not exists yet (for Unnamed project and New project)
-        if(new_project):
+        if new_project:
             createDatabase(self.folder)
         # We open the Database
         engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])

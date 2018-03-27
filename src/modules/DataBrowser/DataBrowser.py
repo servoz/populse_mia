@@ -609,7 +609,7 @@ class TableDataBrowser(QTableWidget):
         # We need to disconnect the sectionMoved signal, otherwise infinite call to this function
         self.horizontalHeader().sectionMoved.disconnect()
 
-        if(oldVisualIndex == 0 or newVisualIndex == 0):
+        if oldVisualIndex == 0 or newVisualIndex == 0:
             # FileName column is moved, to revert because it has to stay the first column
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
 
@@ -716,7 +716,7 @@ class TableDataBrowser(QTableWidget):
             item.setText(tag_name)
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(column, item)
-            if element.visible == False:
+            if not element.visible:
                 self.setColumnHidden(column, True)
             column += 1
 
@@ -1163,7 +1163,7 @@ class TableDataBrowser(QTableWidget):
         for scan in rows:
 
             # Scan added only if it's not already in the table
-            if self.get_scan_row(scan) == None:
+            if self.get_scan_row(scan) is None:
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 
@@ -1193,7 +1193,7 @@ class TableDataBrowser(QTableWidget):
         for tag in self.database.getTags():
 
             # Tag added only if it's not already in the table
-            if self.get_tag_column(tag.tag) == None:
+            if self.get_tag_column(tag.tag) is None:
                 columnCount = self.columnCount()
                 self.insertColumn(columnCount)
 
@@ -1218,7 +1218,7 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     row += 1
 
-                if tag.visible == False:
+                if not tag.visible:
                     self.setColumnHidden(columnCount, True)
 
 
@@ -1333,7 +1333,7 @@ class TableDataBrowser(QTableWidget):
 
             # Auto-save
             config = Config()
-            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+            if config.isAutoSave() == "yes" and not self.database.isTempProject:
                 save_project(self.database)
 
             self.resizeColumnsToContents()  # Columns resized
@@ -1461,7 +1461,7 @@ class TableDataBrowser(QTableWidget):
 
             # Auto-save
             config = Config()
-            if (config.isAutoSave() == "yes" and not self.database.isTempProject):
+            if config.isAutoSave() == "yes" and not self.database.isTempProject:
                 save_project(self.database)
 
             self.resizeColumnsToContents() # Columns resized

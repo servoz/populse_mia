@@ -261,26 +261,26 @@ class ImageViewer(QWidget):
             j+=1
  
     def indexImage(self):
-        sl1=self.a1.value()
-        sl2=self.a2.value()
-        sl3=self.a3.value()
-        if (len(self.img.shape)==3):
-            x = self.img.get_data()[:,:,sl1].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
+        sl1 = self.a1.value()
+        sl2 = self.a2.value()
+        sl3 = self.a3.value()
+        if len(self.img.shape) == 3:
+            x = self.img.get_data()[:, :, sl1].copy()
+            self.a1.setMaximum(self.img.shape[2] - 1)
             self.a2.setMaximum(0)
             self.a3.setMaximum(0)
-        if (len(self.img.shape)==4):
-            x = self.img.get_data()[:,:,sl1,sl2].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
-            self.a2.setMaximum(self.img.shape[3]-1)
+        if len(self.img.shape) == 4:
+            x = self.img.get_data()[:, :, sl1, sl2].copy()
+            self.a1.setMaximum(self.img.shape[2] - 1)
+            self.a2.setMaximum(self.img.shape[3] - 1)
             self.a3.setMaximum(0)
-        if (len(self.img.shape)==5):
-            x = self.img.get_data()[:,:,sl1,sl2,sl3].copy()
-            self.a1.setMaximum(self.img.shape[2]-1)
-            self.a2.setMaximum(self.img.shape[3]-1)
-            self.a3.setMaximum(self.img.shape[4]-1)
-        x = rotate(x,-90,reshape=False)
-        x = np.uint8((x - x.min())/x.ptp()*255.0)
+        if len(self.img.shape) == 5:
+            x = self.img.get_data()[:, :, sl1, sl2, sl3].copy()
+            self.a1.setMaximum(self.img.shape[2] - 1)
+            self.a2.setMaximum(self.img.shape[3] - 1)
+            self.a3.setMaximum(self.img.shape[4] - 1)
+        x = rotate(x, -90, reshape=False)
+        x = np.uint8((x - x.min()) / x.ptp() * 255.0)
         self.x = x
 
 ############################ Slice controls  #########################################
@@ -289,9 +289,9 @@ class ImageViewer(QWidget):
         self.k2 = QLabel('Slider 2')
         self.k3 = QLabel('Slider 3')
 
-        self.a1=self.createSlider(0,0,0)
-        self.a2=self.createSlider(0,0,0)
-        self.a3=self.createSlider(0,0,0)
+        self.a1 = self.createSlider(0, 0, 0)
+        self.a2 = self.createSlider(0, 0, 0)
+        self.a3 = self.createSlider(0, 0, 0)
 
         self.a1.valueChanged.connect(self.changePosValue)
         self.a2.valueChanged.connect(self.changePosValue)
@@ -393,19 +393,19 @@ class ImageViewer(QWidget):
 
         self.transformationGroup = QGroupBox('Transformations')
         gridTransf = QGridLayout()
-        gridTransf.addWidget(self.m1,0,0)
-        gridTransf.addWidget(self.c1,0,1)
-        gridTransf.addWidget(self.txtc1,0,2)
-        gridTransf.addWidget(self.m2,1,0)
-        gridTransf.addWidget(self.c2,1,1)
-        gridTransf.addWidget(self.txtc2,1,2)
-        gridTransf.addWidget(self.m3,2,0)
-        gridTransf.addWidget(self.c3,2,1)
-        gridTransf.addWidget(self.txtc3,2,2)
-        gridTransf.addWidget(self.m4,3,0)
-        gridTransf.addWidget(self.c4,3,1)
-        gridTransf.addWidget(self.txtc4,3,2)
-        gridTransf.addWidget(self.buttonResetTransform,4,2)
+        gridTransf.addWidget(self.m1, 0, 0)
+        gridTransf.addWidget(self.c1, 0, 1)
+        gridTransf.addWidget(self.txtc1, 0, 2)
+        gridTransf.addWidget(self.m2, 1, 0)
+        gridTransf.addWidget(self.c2, 1, 1)
+        gridTransf.addWidget(self.txtc2, 1, 2)
+        gridTransf.addWidget(self.m3, 2, 0)
+        gridTransf.addWidget(self.c3, 2, 1)
+        gridTransf.addWidget(self.txtc3, 2, 2)
+        gridTransf.addWidget(self.m4, 3, 0)
+        gridTransf.addWidget(self.c4, 3, 1)
+        gridTransf.addWidget(self.txtc4, 3, 2)
+        gridTransf.addWidget(self.buttonResetTransform, 4, 2)
         self.transformationGroup.setLayout(gridTransf)
 
 ####################################################################################
@@ -417,7 +417,7 @@ class ImageViewer(QWidget):
         self.layoutSlide = QWidget()
         self.layoutSlide.setLayout(self.layoutSliders)
 
-    def createSlider(self,maxm=0,minm=0,pos=0):
+    def createSlider(self, maxm=0, minm=0, pos=0):
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
         #slider.setTickPosition(QSlider.TicksBothSides)
@@ -725,7 +725,7 @@ class TableDataBrower(QTableWidget):
             deleAction = menu.addAction("Delete")
             renaAction = menu.addAction("Rename")
             action = menu.exec(self.mapToGlobal(pos.pos()))
-            if action ==openAction:
+            if action == openAction:
                 self.openAction(row, column)
 
     def openAction(self, row, column):
