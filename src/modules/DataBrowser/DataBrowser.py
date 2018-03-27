@@ -52,7 +52,6 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(database)
         self.table_data.setObjectName("table_data")
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
         ## LAYOUTS ##
 
@@ -103,30 +102,6 @@ class DataBrowser(QWidget):
         vbox_splitter.addWidget(self.splitter_vertical)
 
         self.setLayout(vbox_splitter)
-
-    def selection_changed(self):
-        """
-        Called when the selection is changed
-        """
-
-        # List of selected scans updated
-        self.table_data.selected_scans.clear()
-
-        for point in self.table_data.selectedItems():
-            row = point.row()
-            column = point.column()
-            scan_name = self.table_data.item(row, 0).text()
-            scan_already_in_list = False
-            for scan in self.table_data.selected_scans:
-                if scan[0] == scan_name:
-                    # Scan already in the list, we append the column
-                    scan[1].append(column)
-                    scan_already_in_list = True
-                    break
-
-            if not scan_already_in_list:
-                # Scan not in the list, we add it
-                self.table_data.selected_scans.append([scan_name, [column]])
 
         # Image viewer updated
         self.connect_viewer()
@@ -188,9 +163,9 @@ class DataBrowser(QWidget):
             self.advanced_search.apply_filter(filterToApply)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def visualized_tags_pop_up(self):
         old_tags = self.database.getVisualizedTags() # Old list of tags
@@ -201,7 +176,15 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
+
+            self.table_data.itemSelectionChanged.disconnect()
+
             self.table_data.update_visualized_columns(old_tags) # Columns updated
+
+            # Selection updated
+            self.table_data.update_selection()
+
+            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
@@ -296,11 +279,11 @@ class DataBrowser(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
         self.database.currentFilter.search_bar = str_search
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -368,31 +351,9 @@ class DataBrowser(QWidget):
             self.table_data.update_visualized_rows(old_scans_list)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
-
-    def update_selection(self):
-        """
-        Called after searches to update the selection
-        """
-
-        # Selection updated
-        self.table_data.clearSelection()
-
-        row = 0
-        while row < self.table_data.rowCount():
-            item = self.table_data.item(row, 0)
-            scan_name = item.text()
-            for scan in self.table_data.selected_scans:
-                scan_selected = scan[0]
-                if scan_name == scan_selected:
-                    # We select the columns of the row if it was selected
-                    columns = scan[1]
-                    for column in columns:
-                        item_to_select = self.table_data.item(row, column)
-                        item_to_select.setSelected(True)
-            row += 1
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def add_tag_pop_up(self):
 
@@ -559,8 +520,56 @@ class TableDataBrowser(QTableWidget):
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
         self.hh.sectionMoved.connect(partial(self.section_moved))
         self.itemChanged.connect(self.change_cell_color)
+        self.itemSelectionChanged.connect(self.selection_changed)
 
         self.update_table()
+
+    def update_selection(self):
+        """
+        Called after searches to update the selection
+        """
+
+        # Selection updated
+        self.clearSelection()
+
+        row = 0
+        while row < self.rowCount():
+            item = self.item(row, 0)
+            scan_name = item.text()
+            for scan in self.selected_scans:
+                scan_selected = scan[0]
+                if scan_name == scan_selected:
+                    # We select the columns of the row if it was selected
+                    tags = scan[1]
+                    for tag in tags:
+                        item_to_select = self.item(row, self.get_tag_column(tag))
+                        item_to_select.setSelected(True)
+            row += 1
+
+    def selection_changed(self):
+        """
+        Called when the selection is changed
+        """
+
+        # List of selected scans updated
+        self.selected_scans.clear()
+
+        for point in self.selectedItems():
+            row = point.row()
+            column = point.column()
+            scan_name = self.item(row, 0).text()
+            tag_name = self.horizontalHeaderItem(column).text()
+            scan_already_in_list = False
+            for scan in self.selected_scans:
+                if scan[0] == scan_name:
+                    # Scan already in the list, we append the column
+                    scan[1].append(tag_name)
+                    scan_already_in_list = True
+                    break
+
+            if not scan_already_in_list:
+                # Scan not in the list, we add it
+                self.selected_scans.append([scan_name, [tag_name]])
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
@@ -1050,7 +1059,15 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
+
+            self.itemSelectionChanged.disconnect()
+
             self.update_visualized_columns(old_tags) # Columns updated
+
+            # Selection updated
+            self.update_selection()
+
+            self.itemSelectionChanged.connect(self.selection_changed)
 
     def update_visualized_rows(self, old_scans):
         """
