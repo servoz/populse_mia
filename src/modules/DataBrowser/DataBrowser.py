@@ -53,7 +53,6 @@ class DataBrowser(QWidget):
         # Main table that will display the tags
         self.table_data = TableDataBrowser(database)
         self.table_data.setObjectName("table_data")
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
 
         ## LAYOUTS ##
 
@@ -104,30 +103,6 @@ class DataBrowser(QWidget):
         vbox_splitter.addWidget(self.splitter_vertical)
 
         self.setLayout(vbox_splitter)
-
-    def selection_changed(self):
-        """
-        Called when the selection is changed
-        """
-
-        # List of selected scans updated
-        self.table_data.selected_scans.clear()
-
-        for point in self.table_data.selectedItems():
-            row = point.row()
-            column = point.column()
-            scan_name = self.table_data.item(row, 0).text()
-            scan_already_in_list = False
-            for scan in self.table_data.selected_scans:
-                if scan[0] == scan_name:
-                    # Scan already in the list, we append the column
-                    scan[1].append(column)
-                    scan_already_in_list = True
-                    break
-
-            if not scan_already_in_list:
-                # Scan not in the list, we add it
-                self.table_data.selected_scans.append([scan_name, [column]])
 
         # Image viewer updated
         self.connect_viewer()
@@ -189,9 +164,9 @@ class DataBrowser(QWidget):
             self.advanced_search.apply_filter(filterToApply)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def visualized_tags_pop_up(self):
         old_tags = self.database.getVisualizedTags() # Old list of tags
@@ -202,7 +177,15 @@ class DataBrowser(QWidget):
         self.pop_up.show()
 
         if self.pop_up.exec_() == QDialog.Accepted:
+
+            self.table_data.itemSelectionChanged.disconnect()
+
             self.table_data.update_visualized_columns(old_tags) # Columns updated
+
+            # Selection updated
+            self.table_data.update_selection()
+
+            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
@@ -297,11 +280,11 @@ class DataBrowser(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
         self.database.currentFilter.search_bar = str_search
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -369,31 +352,9 @@ class DataBrowser(QWidget):
             self.table_data.update_visualized_rows(old_scans_list)
 
         # Selection updated
-        self.update_selection()
+        self.table_data.update_selection()
 
-        self.table_data.itemSelectionChanged.connect(self.selection_changed)
-
-    def update_selection(self):
-        """
-        Called after searches to update the selection
-        """
-
-        # Selection updated
-        self.table_data.clearSelection()
-
-        row = 0
-        while row < self.table_data.rowCount():
-            item = self.table_data.item(row, 0)
-            scan_name = item.text()
-            for scan in self.table_data.selected_scans:
-                scan_selected = scan[0]
-                if scan_name == scan_selected:
-                    # We select the columns of the row if it was selected
-                    columns = scan[1]
-                    for column in columns:
-                        item_to_select = self.table_data.item(row, column)
-                        item_to_select.setSelected(True)
-            row += 1
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def add_tag_pop_up(self):
 
@@ -544,19 +505,10 @@ class TableDataBrowser(QTableWidget):
     def __init__(self, database):
 
         self.database = database
-        self.flag_first_time = 0
 
         super().__init__()
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-
-        # The list of scans to visualize
-        self.scans_to_visualize = []
-        for scan in self.database.getScans():
-            self.scans_to_visualize.append(scan.scan)
-
-        # The list of selected scans
-        self.selected_scans = []
 
         # It allows to move the columns (except FileName)
         self.horizontalHeader().setSectionsMovable(True)
@@ -564,13 +516,61 @@ class TableDataBrowser(QTableWidget):
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table))
-        self.flag_first_time = 0
         self.hh = self.horizontalHeader()
         self.hh.sectionClicked.connect(partial(self.selectAllColumn))
         self.hh.sectionDoubleClicked.connect(partial(self.sort_items))
         self.hh.sectionMoved.connect(partial(self.section_moved))
+        self.itemChanged.connect(self.change_cell_color)
+        self.itemSelectionChanged.connect(self.selection_changed)
 
         self.update_table()
+
+    def update_selection(self):
+        """
+        Called after searches to update the selection
+        """
+
+        # Selection updated
+        self.clearSelection()
+
+        row = 0
+        while row < self.rowCount():
+            item = self.item(row, 0)
+            scan_name = item.text()
+            for scan in self.selected_scans:
+                scan_selected = scan[0]
+                if scan_name == scan_selected:
+                    # We select the columns of the row if it was selected
+                    tags = scan[1]
+                    for tag in tags:
+                        item_to_select = self.item(row, self.get_tag_column(tag))
+                        item_to_select.setSelected(True)
+            row += 1
+
+    def selection_changed(self):
+        """
+        Called when the selection is changed
+        """
+
+        # List of selected scans updated
+        self.selected_scans.clear()
+
+        for point in self.selectedItems():
+            row = point.row()
+            column = point.column()
+            scan_name = self.item(row, 0).text()
+            tag_name = self.horizontalHeaderItem(column).text()
+            scan_already_in_list = False
+            for scan in self.selected_scans:
+                if scan[0] == scan_name:
+                    # Scan already in the list, we append the column
+                    scan[1].append(tag_name)
+                    scan_already_in_list = True
+                    break
+
+            if not scan_already_in_list:
+                # Scan not in the list, we add it
+                self.selected_scans.append([scan_name, [tag_name]])
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
@@ -607,7 +607,16 @@ class TableDataBrowser(QTableWidget):
     def update_table(self):
         """
         This method will fill the tables in the 'Table' tab with the project data
+        Only called when switching project to completely reset the table
         """
+
+        # The list of scans to visualize
+        self.scans_to_visualize = []
+        for scan in self.database.getScans():
+            self.scans_to_visualize.append(scan.scan)
+
+        # The list of selected scans
+        self.selected_scans = []
 
         # Scans sorted
         if(self.database.getSortedTag() != ''):
@@ -623,23 +632,16 @@ class TableDataBrowser(QTableWidget):
             elif self.database.getSortOrder() == "descending":
                 self.scans_to_visualize = [x for _, x in sorted(zip(list_tags, self.scans_to_visualize), reverse=True)]
 
-        self.flag_first_time += 1
-
-        if self.flag_first_time > 1:
-            self.itemChanged.disconnect()
+        self.itemChanged.disconnect()
 
         self.setRowCount(len(self.scans_to_visualize))
 
-        self.setColumnCount(len(self.database.getVisualizedTags()))
+        self.setColumnCount(len(self.database.getTags()))
 
         self.setAlternatingRowColors(True)
         self.setStyleSheet("alternate-background-color:rgb(255, 255, 255); background-color:rgb(250, 250, 250);")
 
         _translate = QtCore.QCoreApplication.translate
-
-        if self.flag_first_time <= 1:
-            self.initialize_headers()
-            self.initialize_cells()
 
         # Sort visual management
         self.fill_headers()
@@ -658,32 +660,16 @@ class TableDataBrowser(QTableWidget):
         if (config.isAutoSave() == "yes" and not self.database.isTempProject):
             save_project(self.database)
 
-    def initialize_headers(self):
-        # Initializing the headers for each row and each column
-        item = QtWidgets.QTableWidgetItem()
-        i = 0
-        while i <= self.columnCount():
-            self.setHorizontalHeaderItem(i, item)
-            item = QtWidgets.QTableWidgetItem()
-            i += 1
-
-    def initialize_cells(self):
-        # Initializing each cell of the table
-        row = (-1)
-
-        while row < len(self.scans_to_visualize):
-            row += 1
-            column = 0
-            while column <= self.columnCount():
-                item = QtWidgets.QTableWidgetItem()
-                self.setItem(row, column, item)
-                column += 1
-
     def fill_headers(self):
-        nb = 0
-        for element in self.database.getVisualizedTags():
+        """
+        To initialize and fill the headers of the table
+        """
+
+        column = 0
+        for element in self.database.getTags():
             tag_name = element.tag
-            item = self.horizontalHeaderItem(nb)
+            item = QtWidgets.QTableWidgetItem()
+            self.setHorizontalHeaderItem(column, item)
             if tag_name == self.database.getSortedTag():
                 if self.database.getSortOrder() == 'ascending':
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'down_arrow.png')))
@@ -691,20 +677,27 @@ class TableDataBrowser(QTableWidget):
                     item.setIcon(QIcon(os.path.join('..', 'sources_images', 'up_arrow.png')))
             item.setText(tag_name)
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
-            self.setHorizontalHeaderItem(nb, item)
-            nb += 1
+            self.setHorizontalHeaderItem(column, item)
+            if element.visible == False:
+                self.setColumnHidden(column, True)
+            column += 1
 
     def fill_cells_update_table(self):
+        """
+        To initialize and fill the cells of the table
+        """
+
         row = 0
         for scan in self.scans_to_visualize:
             column = 0
             while column < len(self.horizontalHeader()):
                 item = self.horizontalHeaderItem(column)
                 current_tag = item.text()
+
+                item = QTableWidgetItem()
                 # The scan has a value for the tag
                 if (self.database.scanHasTag(scan, current_tag)):
                     value = self.database.getValue(scan, current_tag)
-                    item = QTableWidgetItem()
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
                     item.setText(database_to_table(value.current_value))
@@ -727,7 +720,6 @@ class TableDataBrowser(QTableWidget):
                 # The scan does not have a value for the tag
                 else:
                     a = str(not_defined_value)
-                    item = QTableWidgetItem()
                     item.setText(a)
                     font = item.font()
                     font.setItalic(True)
@@ -740,8 +732,6 @@ class TableDataBrowser(QTableWidget):
     def context_menu_table(self, position):
 
         self.itemChanged.disconnect()
-
-        self.flag_first_time += 1
 
         menu = QMenu(self)
 
@@ -1041,7 +1031,7 @@ class TableDataBrowser(QTableWidget):
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
 
-        self.update_table()
+        # TODO sort
 
     def sort_column(self):
         points = self.selectedItems()
@@ -1073,7 +1063,15 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_() == QDialog.Accepted:
+
+            self.itemSelectionChanged.disconnect()
+
             self.update_visualized_columns(old_tags) # Columns updated
+
+            # Selection updated
+            self.update_selection()
+
+            self.itemSelectionChanged.connect(self.selection_changed)
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.database)
@@ -1105,22 +1103,48 @@ class TableDataBrowser(QTableWidget):
         :param old_scans: Old list of scans
         """
 
-        # Scans that are not visible anymore are removed
+        # Scans that are not visible anymore are hidden
         for scan in old_scans:
             if not scan in self.scans_to_visualize:
-                self.removeRow(self.get_scan_row(scan))
+                self.setRowHidden(self.get_scan_row(scan), True)
 
-        # Scans that became visible must be created
+        # Scans that became visible must be visible
         for scan in self.scans_to_visualize:
+            self.setRowHidden(self.get_scan_row(scan), False)
 
-            row = self.get_scan_row(scan)
+        self.resizeColumnsToContents() # Columns resized
 
-            # We add the row if the index is not found (not in the table)
-            if row == None:
+    def update_visualized_columns(self, old_tags):
+        """
+        Called to set the visualized tags in the table
+        :param old_tags: Old list of visualized tags
+        """
+
+        # Tags that are not visible anymore are hidden
+        for tag in old_tags:
+            if not self.database.getTagVisibility(tag.tag):
+                self.setColumnHidden(self.get_tag_column(tag.tag), True)
+
+        # Tags that became visible must be visible
+        for tag in self.database.getVisualizedTags():
+            self.setColumnHidden(self.get_tag_column(tag.tag), False)
+
+        self.resizeColumnsToContents() # Columns resized
+
+    def add_rows(self, rows):
+        """
+        Inserts rows in the table if they are not already in the table
+        :param rows: List of all scans
+        """
+
+        for scan in rows:
+
+            # Scan added only if it's not already in the table
+            if self.get_scan_row(scan) == None:
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 
-                # Coumns filled for the row being added
+                # Columns filled for the row being added
                 column = 0
                 while column < self.columnCount():
                     item = QtWidgets.QTableWidgetItem()
@@ -1137,38 +1161,28 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     column += 1
 
-        self.resizeColumnsToContents() # Columns resized
-
-    def update_visualized_columns(self, old_tags):
+    def add_columns(self):
         """
-        Called to set the visualized tags in the table
-        :param old_tags: Old list of visualized tags
+        To add the new tags
         """
 
-        # Tags that are not visible anymore are removed
-        for tag in old_tags:
-            if not self.database.getTagVisibility(tag.tag):
-                self.removeColumn(self.get_tag_column(tag.tag))
+        for tag in self.database.getTags():
 
-        # Tags that became visible must be created
-        for tag in self.database.getVisualizedTags():
-            column = self.get_tag_column(tag.tag)
+            # Tag added only if it's not already in the table
+            if self.get_tag_column(tag.tag) == None:
+                columnCount = self.columnCount()
+                self.insertColumn(columnCount)
 
-            # We add the column if the index is not found (not in the table)
-            if column == None:
-                colCount = self.columnCount()
-                self.insertColumn(colCount)
                 item = QtWidgets.QTableWidgetItem()
-                self.setHorizontalHeaderItem(colCount, item)
+                self.setHorizontalHeaderItem(columnCount, item)
                 item.setText(tag.tag)
-                item.setToolTip( "Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(
-                        tag.type))
+                item.setToolTip("Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(tag.type))
 
                 # Rows filled for the column being added
                 row = 0
                 while row < self.rowCount():
                     item = QtWidgets.QTableWidgetItem()
-                    self.setItem(row, colCount, item)
+                    self.setItem(row, columnCount, item)
                     scan = self.item(row, 0).text()
                     if self.database.scanHasTag(scan, tag.tag):
                         item.setText(database_to_table(self.database.getValue(scan, tag.tag).current_value))
@@ -1181,7 +1195,9 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     row += 1
 
-        self.resizeColumnsToContents() # Columns resized
+                if tag.visible == False:
+                    self.setColumnHidden(columnCount, True)
+
 
     def mouseReleaseEvent(self, e):
         """

@@ -250,9 +250,9 @@ class AdvancedSearch(QWidget):
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
         # Selection updated
-        self.dataBrowser.update_selection()
+        self.dataBrowser.table_data.update_selection()
 
-        self.dataBrowser.table_data.itemSelectionChanged.connect(self.dataBrowser.selection_changed)
+        self.dataBrowser.table_data.itemSelectionChanged.connect(self.dataBrowser.table_data.selection_changed)
 
     def get_filters(self):
         """
@@ -310,18 +310,18 @@ class AdvancedSearch(QWidget):
             row[4].setText(values[i])
             i += 1
 
+        old_rows = self.dataBrowser.table_data.scans_to_visualize
+
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
             result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
             # DataBrowser updated with the new selection
             self.dataBrowser.table_data.scans_to_visualize = result
-            self.dataBrowser.table_data.update_table()
 
         # Otherwise, we reput all the scans
         else:
             # DataBrowser updated with every scan
             self.dataBrowser.table_data.scans_to_visualize = self.database.getScansNames()
-            self.dataBrowser.table_data.setRowCount(len(self.dataBrowser.table_data.scans_to_visualize))
-            self.dataBrowser.table_data.initialize_cells()
-            self.dataBrowser.table_data.fill_cells_update_table()
+
+        self.dataBrowser.table_data.update_visualized_rows(old_rows)
