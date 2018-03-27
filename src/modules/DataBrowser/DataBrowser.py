@@ -1078,11 +1078,26 @@ class TableDataBrowser(QTableWidget):
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.database)
         if pop_up.exec_() == QDialog.Accepted:
-            if self.database.getSortOrder() == "ascending":
-                self.scans_to_visualize = [x for _, x in sorted(zip(pop_up.list_tags, self.scans_to_visualize))]
-            elif self.database.getSortOrder() == "descending":
-                self.scans_to_visualize = [x for _, x in sorted(zip(pop_up.list_tags, self.scans_to_visualize), reverse=True)]
-            # TODO: some kind of self.update_table()
+            list_tags_name = pop_up.list_tags
+            list_tags = []
+            for tag_name in list_tags_name:
+                list_tags.append(self.database.getTag(tag_name))
+            list_sort = []
+            for scan in self.scans_to_visualize:
+                tags_value = []
+                for tag in list_tags:
+                    if self.database.scanHasTag(scan, tag.tag):
+                        tags_value.append(self.database.getValue(scan, tag.tag).current_value)
+                    else:
+                        tags_value.append(not_defined_value)
+                list_sort.append(tags_value)
+
+            if self.database.getSortOrder() == "descending":
+                self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize), reverse=True)]
+            else:
+                self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize))]
+
+            self.update_visualized_rows(self.scans_to_visualize)
 
     def update_visualized_rows(self, old_scans):
         """
