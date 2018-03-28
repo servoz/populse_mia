@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QTableWidget, QHBoxLa
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QPushButton
+    QMessageBox, QPushButton, QProgressDialog
 import os
 from ProjectManager.Controller import save_project
 
@@ -726,8 +726,20 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
+        # Progressbar
+        len_scans = len(self.scans_to_visualize)
+        ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, len_scans)
+        ui_progressbar.setWindowModality(Qt.WindowModal)
+        ui_progressbar.setWindowTitle("")
+        idx = 0
+
         row = 0
         for scan in self.scans_to_visualize:
+
+            # Progressbar
+            idx += 1
+            ui_progressbar.setValue(idx)
+
             column = 0
             while column < len(self.horizontalHeader()):
                 item = self.horizontalHeaderItem(column)
@@ -755,6 +767,9 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
             row += 1
+
+
+        ui_progressbar.close()
 
     def update_color(self, scan, tag, item, row):
         """ Method that changes the background of a cell depending on
@@ -1175,7 +1190,20 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.disconnect()
 
+        # Progressbar
+        len_rows = len(rows)
+        ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_rows)
+        ui_progressbar.setWindowTitle("")
+        ui_progressbar.setWindowModality(Qt.WindowModal)
+        idx = 0
+
         for scan in rows:
+
+            # Progressbar
+            idx += 1
+            ui_progressbar.setValue(idx)
+            if ui_progressbar.wasCanceled():
+                break
 
             # Scan added only if it's not already in the table
             if self.get_scan_row(scan) is None:
@@ -1197,6 +1225,8 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     self.setItem(rowCount, column, item)
                     column += 1
+
+        ui_progressbar.close()
 
         self.setSortingEnabled(True)
 
