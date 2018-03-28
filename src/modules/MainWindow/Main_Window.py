@@ -175,19 +175,13 @@ class Main_Window(QMainWindow):
         """
         To undo the last action done by the user
         """
-        self.database.undo() # Action reverted in the Database
-
-        # Gui refreshed
-        # TODO Reset of table
+        self.database.undo(self.data_browser.table_data) # Action reverted in the Database
 
     def redo(self):
         """
         To redo the last action made by the user
         """
-        self.database.redo() # Action remade in the Database
-
-        # Gui refreshed
-        # TODO Reset of table
+        self.database.redo(self.data_browser.table_data) # Action remade in the Database
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
@@ -341,7 +335,7 @@ class Main_Window(QMainWindow):
     def create_project_pop_up(self):
 
         if self.check_unsaved_modifications():
-            self.pop_up_close = Ui_Dialog_Quit(self.database.getName())
+            self.pop_up_close = Ui_Dialog_Quit(self.database)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_switch = self.pop_up_close.can_exit()

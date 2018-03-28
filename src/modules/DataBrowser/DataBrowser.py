@@ -26,6 +26,8 @@ from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.Utils import database_to_table, table_to_database, check_value_type
 
+from threading import Thread
+
 import json
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
@@ -495,6 +497,55 @@ class DataBrowser(QWidget):
 
             self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
+class fill_row(Thread):
+
+    def __init__(self, databrowser, row, scan):
+
+        Thread.__init__(self)
+
+        self.row = row
+        self.scan = scan
+        self.databrowser = databrowser
+
+        if row == 0:
+            # Progressbar
+            self.ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, self.databrowser.columnCount())
+            self.ui_progressbar.setWindowModality(Qt.WindowModal)
+            self.ui_progressbar.setWindowTitle("")
+
+    def run(self):
+
+        column = 0
+        while column < self.databrowser.columnCount():
+
+            current_tag = self.databrowser.horizontalHeaderItem(column).text()
+
+            item = QTableWidgetItem()
+
+            # The scan has a value for the tag
+            value = self.databrowser.database.getValue(self.scan, current_tag)
+            if value != None:
+                if current_tag == "FileName":
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
+                else:
+                    self.databrowser.update_color(self.scan, current_tag, item, self.row)
+
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(value.current_value)))
+
+            # The scan does not have a value for the tag
+            else:
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
+                font = item.font()
+                font.setItalic(True)
+                font.setBold(True)
+                item.setFont(font)
+            self.databrowser.setItem(self.row, column, item)
+            column += 1
+            if self.row == 0:
+                self.ui_progressbar.setValue(column)
+
+        if self.row == 0:
+            self.ui_progressbar.close()
 
 class TableDataBrowser(QTableWidget):
 
@@ -549,20 +600,15 @@ class TableDataBrowser(QTableWidget):
         # Selection updated
         self.clearSelection()
 
-        row = 0
-        while row < self.rowCount():
-            item = self.item(row, 0)
-            scan_name = item.text()
-            for scan in self.selected_scans:
-                scan_selected = scan[0]
-                if scan_name == scan_selected:
-                    # We select the columns of the row if it was selected
-                    tags = scan[1]
-                    for tag in tags:
-                        if self.get_tag_column(tag) != None:
-                            item_to_select = self.item(row, self.get_tag_column(tag))
-                            item_to_select.setSelected(True)
-            row += 1
+        for scan in self.selected_scans:
+            scan_selected = scan[0]
+            row = self.get_scan_row(scan_selected)
+            # We select the columns of the row if it was selected
+            tags = scan[1]
+            for tag in tags:
+                if self.get_tag_column(tag) != None:
+                    item_to_select = self.item(row, self.get_tag_column(tag))
+                    item_to_select.setSelected(True)
 
     def selection_changed(self):
         """
@@ -729,50 +775,24 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
-        # Progressbar
-        len_scans = len(self.scans_to_visualize)
-        ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, len_scans)
-        ui_progressbar.setWindowModality(Qt.WindowModal)
-        ui_progressbar.setWindowTitle("")
-        idx = 0
+        threads = [] # List of column threads
 
         row = 0
         for scan in self.scans_to_visualize:
 
-            # Progressbar
-            idx += 1
-            ui_progressbar.setValue(idx)
+            # Launching the row thread
+            if row == 0:
+                thread = fill_row(self, row, scan)
+            else:
+                thread = fill_row(self, row, scan)
+            thread.start()
+            threads.append(thread)
 
-            column = 0
-            while column < len(self.horizontalHeader()):
-                item = self.horizontalHeaderItem(column)
-                current_tag = item.text()
-
-                item = QTableWidgetItem()
-
-                # The scan has a value for the tag
-                if self.database.scanHasTag(scan, current_tag):
-                    value = self.database.getValue(scan, current_tag)
-                    if current_tag == "FileName":
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
-                    else:
-                        self.update_color(scan, current_tag, item, row)
-
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(value.current_value)))
-
-                # The scan does not have a value for the tag
-                else:
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
-                    font = item.font()
-                    font.setItalic(True)
-                    font.setBold(True)
-                    item.setFont(font)
-                self.setItem(row, column, item)
-                column += 1
             row += 1
 
-
-        ui_progressbar.close()
+        # Waiting for the threads to finish
+        for thread in threads:
+            thread.join()
 
     def update_color(self, scan, tag, item, row):
         """ Method that changes the background of a cell depending on
@@ -1218,6 +1238,8 @@ class TableDataBrowser(QTableWidget):
         self.update_selection()
 
         self.itemSelectionChanged.connect(self.selection_changed)
+
+        self.resizeColumnsToContents()
 
     def add_rows(self, rows):
         """

@@ -55,7 +55,7 @@ class Database:
         if new_project:
             createDatabase(self.folder)
         # We open the Database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db?check_same_thread=False'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
@@ -274,6 +274,8 @@ class Database:
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         if len(values) == 1:
             return values[0]
+        else:
+            return None
 
     def scanHasTag(self, scan, tag):
         """
@@ -744,7 +746,7 @@ class Database:
         # If there is a scan, we return True, and False otherwise
         return finalResult
 
-    def undo(self):
+    def undo(self, table):
         """
         Undo the last action made by the user on the project
         """
@@ -759,6 +761,8 @@ class Database:
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
                 self.removeTag(tagToRemove)
+                column_to_remove = table.get_tag_column(tagToRemove)
+                table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
                 # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
                 tagsRemoved = toUndo[1] # The second element is a list of the removed tags (Tag class)
@@ -770,6 +774,7 @@ class Database:
                     i += 1
                 valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
+
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1] # The second element is a list of added scans to remove
@@ -864,7 +869,7 @@ class Database:
         else:
             return value.raw_value == value.current_value
 
-    def redo(self):
+    def redo(self, table):
         """
         Redo the last action made by the user on the project
         """
