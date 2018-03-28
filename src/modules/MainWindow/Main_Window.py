@@ -332,7 +332,7 @@ class Main_Window(QMainWindow):
             # Project updated everywhere
             self.database = Database(exPopup.relative_path, False)
 
-            self.update_project(file_name) # Project updated everywhere
+            self.update_project(file_name, call_update_table=False) # Project updated everywhere
 
             # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
             # Which will be connected to the modify_ui method that controls the following Processes
@@ -462,7 +462,7 @@ class Main_Window(QMainWindow):
             msg.exec()
             return False
 
-    def update_project(self, file_name):
+    def update_project(self, file_name, call_update_table=True):
         """
         Updates the project once the Database has been updated
         :param file_name: File name of the new project
@@ -470,7 +470,8 @@ class Main_Window(QMainWindow):
 
         self.data_browser.update_database(self.database)  # Database update DataBrowser
 
-        self.data_browser.table_data.update_table() # Table updated
+        if call_update_table:
+            self.data_browser.table_data.update_table() # Table updated
 
         # Window name updated
         if self.database.isTempProject:
