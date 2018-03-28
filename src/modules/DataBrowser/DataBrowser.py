@@ -144,8 +144,6 @@ class DataBrowser(QWidget):
         To open a project filter saved before
         """
 
-        self.table_data.itemSelectionChanged.disconnect()
-
         oldFilter = self.database.currentFilter
 
         self.popUp = Ui_Select_Filter(self.database)
@@ -162,31 +160,6 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
             self.advanced_search.apply_filter(filterToApply)
-
-        # Selection updated
-        self.table_data.update_selection()
-
-        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
-
-    def visualized_tags_pop_up(self):
-        old_tags = self.database.getVisualizedTags() # Old list of tags
-        self.pop_up = Ui_Dialog_Settings(self.database)
-        self.pop_up.tab_widget.setCurrentIndex(0)
-
-        self.pop_up.setGeometry(300, 200, 800, 600)
-        self.pop_up.show()
-
-        if self.pop_up.exec_():
-
-            self.table_data.itemSelectionChanged.disconnect()
-
-            self.table_data.update_visualized_columns(old_tags) # Columns updated
-
-            # Selection updated
-            self.table_data.update_selection()
-
-            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
-
 
     def count_table_pop_up(self):
         pop_up = CountTable(self.database)
@@ -259,8 +232,6 @@ class DataBrowser(QWidget):
 
     def search_str(self, str_search):
 
-        self.table_data.itemSelectionChanged.disconnect()
-
         old_scan_list = self.table_data.scans_to_visualize
 
         return_list = []
@@ -280,12 +251,7 @@ class DataBrowser(QWidget):
         # Rows updated
         self.table_data.update_visualized_rows(old_scan_list)
 
-        # Selection updated
-        self.table_data.update_selection()
-
         self.database.currentFilter.search_bar = str_search
-
-        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def reset_search_bar(self):
         self.search_bar.setText("")
@@ -332,8 +298,6 @@ class DataBrowser(QWidget):
         Called when the button advanced search is called
         """
 
-        self.table_data.itemSelectionChanged.disconnect()
-
         if(self.frame_advanced_search.isHidden()):
             # If the advanced search is hidden, we reset it and display it
             self.frame_advanced_search.setHidden(False)
@@ -352,12 +316,10 @@ class DataBrowser(QWidget):
 
             self.table_data.update_visualized_rows(old_scans_list)
 
-        # Selection updated
-        self.table_data.update_selection()
-
-        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
     def add_tag_pop_up(self):
+
+        self.table_data.itemChanged.disconnect()
 
         # We first show the add_tag pop up
         self.pop_up_add_tag = Ui_Dialog_add_tag(self.database)
@@ -365,6 +327,9 @@ class DataBrowser(QWidget):
 
         # We get the values entered by the user
         if self.pop_up_add_tag.exec_():
+
+            self.table_data.itemSelectionChanged.disconnect()
+
             (new_tag_name, new_default_value, tag_type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
             values = []
@@ -408,7 +373,16 @@ class DataBrowser(QWidget):
 
             self.table_data.resizeColumnsToContents() # New column resized
 
+            # Selection updated
+            self.table_data.update_selection()
+
+            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
+
+        self.table_data.itemChanged.connect(lambda : self.table_data.change_cell_color())
+
     def clone_tag_pop_up(self):
+
+        self.table_data.itemChanged.disconnect()
 
         # We first show the clone_tag pop up
         self.pop_up_clone_tag = Ui_Dialog_clone_tag(self.database)
@@ -416,6 +390,9 @@ class DataBrowser(QWidget):
 
         # We get the informations given by the user
         if self.pop_up_clone_tag.exec_():
+
+            self.table_data.itemSelectionChanged.disconnect()
+
             (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
 
             values = []
@@ -467,6 +444,13 @@ class DataBrowser(QWidget):
 
             self.table_data.resizeColumnsToContents() # New column resized
 
+            # Selection updated
+            self.table_data.update_selection()
+
+            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
+
+        self.table_data.itemChanged.connect(lambda : self.table_data.change_cell_color())
+
     def remove_tag_pop_up(self):
 
         # We first open the remove_tag pop up
@@ -475,6 +459,9 @@ class DataBrowser(QWidget):
 
         # We get the tags to remove
         if self.pop_up_remove_tag.exec_():
+
+            self.table_data.itemSelectionChanged.disconnect()
+
             tag_names_to_remove = self.pop_up_remove_tag.get_values()
 
             # For history
@@ -502,6 +489,11 @@ class DataBrowser(QWidget):
             for tag in tag_names_to_remove:
                 self.database.removeTag(tag)
                 self.table_data.removeColumn(self.table_data.get_tag_column(tag))
+
+            # Selection updated
+            self.table_data.update_selection()
+
+            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
 
 class TableDataBrowser(QTableWidget):
@@ -567,8 +559,9 @@ class TableDataBrowser(QTableWidget):
                     # We select the columns of the row if it was selected
                     tags = scan[1]
                     for tag in tags:
-                        item_to_select = self.item(row, self.get_tag_column(tag))
-                        item_to_select.setSelected(True)
+                        if self.get_tag_column(tag) != None:
+                            item_to_select = self.item(row, self.get_tag_column(tag))
+                            item_to_select.setSelected(True)
             row += 1
 
     def selection_changed(self):
@@ -656,6 +649,8 @@ class TableDataBrowser(QTableWidget):
         """
 
         self.setSortingEnabled(False)
+
+        self.clearSelection() # Selection cleared when switching project
 
         # The list of scans to visualize
         self.scans_to_visualize = []
@@ -854,13 +849,29 @@ class TableDataBrowser(QTableWidget):
         """
         Sorts the current column in ascending order
         """
+
+        self.itemSelectionChanged.disconnect()
+
         self.horizontalHeader().setSortIndicator(self.currentItem().column(), 0)
+
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
 
     def sort_column_descending(self):
         """
         Sorts the current column in descending order
         """
+
+        self.itemSelectionChanged.disconnect()
+
         self.horizontalHeader().setSortIndicator(self.currentItem().column(), 1)
+
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
 
     def get_tag_column(self, tag):
         """
@@ -929,6 +940,8 @@ class TableDataBrowser(QTableWidget):
         if has_unreset_values:
             self.display_unreset_values()
 
+        self.resizeColumnsToContents()
+
     def reset_column(self):
 
         # For history
@@ -969,6 +982,8 @@ class TableDataBrowser(QTableWidget):
         # Warning message if unreset values
         if has_unreset_values:
             self.display_unreset_values()
+
+        self.resizeColumnsToContents()
 
     def reset_row(self):
 
@@ -1011,6 +1026,8 @@ class TableDataBrowser(QTableWidget):
         if has_unreset_values:
             self.display_unreset_values()
 
+        self.resizeColumnsToContents()
+
     def display_unreset_values(self):
         """
         Error message when trying to reset user tags
@@ -1047,6 +1064,7 @@ class TableDataBrowser(QTableWidget):
             self.setItem(row, col, item)
 
     def remove_scan(self):
+
         points = self.selectedIndexes()
 
         historyMaker = []
@@ -1075,6 +1093,8 @@ class TableDataBrowser(QTableWidget):
         self.database.undos.append(historyMaker)
         self.database.redos.clear()
 
+        self.resizeColumnsToContents()
+
     def visualized_tags_pop_up(self):
         old_tags = self.database.getVisualizedTags() # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.database)
@@ -1084,18 +1104,14 @@ class TableDataBrowser(QTableWidget):
 
         if self.pop_up.exec_():
 
-            self.itemSelectionChanged.disconnect()
-
             self.update_visualized_columns(old_tags) # Columns updated
-
-            # Selection updated
-            self.update_selection()
-
-            self.itemSelectionChanged.connect(self.selection_changed)
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.database)
         if pop_up.exec_():
+
+            self.itemSelectionChanged.disconnect()
+
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
@@ -1134,13 +1150,18 @@ class TableDataBrowser(QTableWidget):
             self.horizontalHeader().setSortIndicator(-1, 0)
             self.setSortingEnabled(True)
 
-            self.resizeColumnsToContents()
+            # Selection updated
+            self.update_selection()
+
+            self.itemSelectionChanged.connect(self.selection_changed)
 
     def update_visualized_rows(self, old_scans):
         """
         Called after a search to update the list of scans in the table
         :param old_scans: Old list of scans
         """
+
+        self.itemSelectionChanged.disconnect()
 
         # Scans that are not visible anymore are hidden
         for scan in old_scans:
@@ -1153,11 +1174,18 @@ class TableDataBrowser(QTableWidget):
 
         self.resizeColumnsToContents() # Columns resized
 
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
+
     def update_visualized_columns(self, old_tags):
         """
         Called to set the visualized tags in the table
         :param old_tags: Old list of visualized tags
         """
+
+        self.itemSelectionChanged.disconnect()
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
@@ -1168,7 +1196,10 @@ class TableDataBrowser(QTableWidget):
         for tag in self.database.getVisualizedTags():
             self.setColumnHidden(self.get_tag_column(tag.tag), False)
 
-        self.resizeColumnsToContents() # Columns resized
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
 
     def add_rows(self, rows):
         """

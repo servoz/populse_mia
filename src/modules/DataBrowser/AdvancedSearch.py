@@ -237,8 +237,6 @@ class AdvancedSearch(QWidget):
         Called to start the search
         """
 
-        self.dataBrowser.table_data.itemSelectionChanged.disconnect()
-
         (fields, conditions, values, links, nots) = self.get_filters() # Filters gotten
 
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
@@ -248,11 +246,6 @@ class AdvancedSearch(QWidget):
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
-
-        # Selection updated
-        self.dataBrowser.table_data.update_selection()
-
-        self.dataBrowser.table_data.itemSelectionChanged.connect(self.dataBrowser.table_data.selection_changed)
 
     def get_filters(self):
         """
