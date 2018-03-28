@@ -774,7 +774,13 @@ class Database:
                     i += 1
                 valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
-
+                i = 0
+                while i < len(tagsRemoved):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToReput = tagsRemoved[i]
+                    column = table.get_index_insertion(tagToReput.tag)
+                    table.add_column(column, tagToReput.tag)
+                    i += 1
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1] # The second element is a list of added scans to remove
@@ -783,6 +789,7 @@ class Database:
                     # We remove each scan added
                     scanToRemove = scansAdded[i][0]
                     self.removeScan(scanToRemove)
+                    table.removeRow(table.get_scan_row(scanToRemove))
                     i += 1
             if(action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
