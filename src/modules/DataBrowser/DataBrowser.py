@@ -719,6 +719,9 @@ class TableDataBrowser(QTableWidget):
             if element.visible == False:
                 self.setColumnHidden(column, True)
 
+            else:
+                self.setColumnHidden(column, False)
+
             column += 1
 
     def fill_cells_update_table(self):
