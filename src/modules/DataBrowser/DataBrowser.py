@@ -391,7 +391,7 @@ class DataBrowser(QWidget):
 
             # Adding the column to the table
             self.table_data.clearSelection()
-            column = self.table_data.columnCount()
+            column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.insertColumn(column)
             item = QtWidgets.QTableWidgetItem()
             self.table_data.setHorizontalHeaderItem(column, item)
@@ -399,7 +399,6 @@ class DataBrowser(QWidget):
             item.setToolTip("Description: " + str(new_tag_description) + "\nUnit: " + str(new_tag_unit) + "\nType: " + str(tag_type))
             row = 0
             while row < self.table_data.rowCount():
-
                 scan = self.table_data.item(row, 0).text()
                 item = QtWidgets.QTableWidgetItem()
                 self.table_data.update_color(scan, new_tag_name, item, row)
@@ -444,7 +443,7 @@ class DataBrowser(QWidget):
             self.database.redos.clear()
 
             # Adding the column to the table
-            column = self.table_data.columnCount()
+            column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.insertColumn(column)
             item = QtWidgets.QTableWidgetItem()
             self.table_data.setHorizontalHeaderItem(column, item)
@@ -700,19 +699,27 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the headers of the table
         """
 
-        column = 0
+        # Sorting the list of tags in alphabetical order, but keeping FileName first
+        tags = self.database.getTagsNames()
+        tags.remove("FileName")
+        tags = sorted(tags)
+        tags.insert(0, "FileName")
 
+        column = 0
         # Filling the headers
-        for tag_name in self.database.getTagsNames():
+        for tag_name in tags:
             element = self.database.getTag(tag_name)
             item = QtWidgets.QTableWidgetItem()
             self.setHorizontalHeaderItem(column, item)
             item.setText(tag_name)
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(column, item)
-            column += 1
 
-        self.put_columns_alphabetical_order() # Columns order
+            # Hide the column if not visible
+            if element.visible == False:
+                self.setColumnHidden(column, True)
+
+            column += 1
 
     def fill_cells_update_table(self):
         """
@@ -1166,6 +1173,8 @@ class TableDataBrowser(QTableWidget):
 
         self.setSortingEnabled(False)
 
+        self.itemSelectionChanged.disconnect()
+
         for scan in rows:
 
             # Scan added only if it's not already in the table
@@ -1191,21 +1200,45 @@ class TableDataBrowser(QTableWidget):
 
         self.setSortingEnabled(True)
 
+        self.resizeColumnsToContents()
+
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
+
+
+    def get_index_insertion(self, to_insert):
+        """
+        To get index insertion of a new column, since it's already sorted in alphabetical order
+        :param to_insert: tag to insert
+        """
+
+        i = 1
+        while i < len(self.horizontalHeader()):
+            if self.horizontalHeaderItem(i).text() > to_insert:
+                return i
+            i +=1
+        return self.columnCount()
+
     def add_columns(self):
         """
         To add the new tags
         """
+
+        self.itemSelectionChanged.disconnect()
 
         # Adding missing columns
         for tag in self.database.getTags():
 
             # Tag added only if it's not already in the table
             if self.get_tag_column(tag.tag) is None:
-                columnCount = self.columnCount()
-                self.insertColumn(columnCount)
+
+                columnIndex = self.get_index_insertion(tag.tag)
+                self.insertColumn(columnIndex)
 
                 item = QtWidgets.QTableWidgetItem()
-                self.setHorizontalHeaderItem(columnCount, item)
+                self.setHorizontalHeaderItem(columnIndex, item)
                 item.setText(tag.tag)
                 item.setToolTip("Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(tag.type))
 
@@ -1213,7 +1246,7 @@ class TableDataBrowser(QTableWidget):
                 row = 0
                 while row < self.rowCount():
                     item = QtWidgets.QTableWidgetItem()
-                    self.setItem(row, columnCount, item)
+                    self.setItem(row, columnIndex, item)
                     scan = self.item(row, 0).text()
                     if self.database.scanHasTag(scan, tag.tag):
                         item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag.tag).current_value)))
@@ -1225,51 +1258,16 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
                     row += 1
 
-        self.put_columns_alphabetical_order() # Columns order
+                # Hide the column if not visible
+                if tag.visible == False:
+                    self.setColumnHidden(columnIndex, True)
 
-    def put_columns_alphabetical_order(self):
-        """
-        Puts the columns in alphabetical order, but keeps FileName first
-        """
+        self.resizeColumnsToContents()
 
-        self.horizontalHeader().sectionMoved.disconnect()
+        # Selection updated
+        self.update_selection()
 
-        # Swapping columns to be in order, using bubble sort
-        changed = True
-        while changed:
-            changed = False
-            column = 0
-            while column < self.columnCount() - 1:
-                tag_name_1 = self.horizontalHeaderItem(column).text()
-                tag_name_2 = self.horizontalHeaderItem(column + 1).text()
-                if tag_name_1 > tag_name_2:
-                    item_1 = self.takeHorizontalHeaderItem(column)
-                    item_2 = self.takeHorizontalHeaderItem(column + 1)
-                    self.setHorizontalHeaderItem(column, item_2)
-                    self.setHorizontalHeaderItem(column + 1, item_1)
-                    row = 0
-                    while row < self.rowCount():
-                        item_1 = self.takeItem(row, column)
-                        item_2 = self.takeItem(row, column + 1)
-                        self.setItem(row, column, item_2)
-                        self.setItem(row, column + 1, item_1)
-                        row += 1
-                    changed = True
-                column += 1
-
-        # FileName put in first column
-        fileNameIndex = self.get_tag_column("FileName")
-        if fileNameIndex != 0:
-            self.horizontalHeader().moveSection(fileNameIndex, 0)
-
-        # Putting columns visibility
-        for tag in self.database.getTags():
-            if tag.visible == False:
-                self.setColumnHidden(self.get_tag_column(tag.tag), True)
-
-        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
-
-        self.update()
+        self.itemSelectionChanged.connect(self.selection_changed)
 
     def mouseReleaseEvent(self, e):
         """
