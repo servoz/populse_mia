@@ -8,6 +8,8 @@ from SoftwareProperties.Config import Config
 import datetime
 import yaml
 from time import time
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QProgressDialog
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -84,7 +86,19 @@ def read_log(database):
     import_tags_names = []
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
+    # Progressbar
+    len_log = len(list_dict_log)
+    ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_log)
+    ui_progressbar.setWindowModality(Qt.WindowModal)
+    ui_progressbar.setWindowTitle("")
+    idx = 0
     for dict_log in list_dict_log:
+
+        # Progressbar
+        idx += 1
+        ui_progressbar.setValue(idx)
+        if ui_progressbar.wasCanceled():
+            break
 
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
@@ -144,8 +158,23 @@ def read_log(database):
 
             #print("Loop --- %s seconds ---" % (time() - start_time))
 
+    ui_progressbar.close()
+
+    # Progressbar
+    len_tags = len(import_tags)
+    ui_progressbar = QProgressDialog("Importing tags in database", "Cancel", 0, len_tags)
+    ui_progressbar.setWindowModality(Qt.WindowModal)
+    ui_progressbar.setWindowTitle("")
+    idx = 0
+
     # Tags added to the Database
     for tag in import_tags:
+
+        # Progressbar
+        idx += 1
+        ui_progressbar.setValue(idx)
+        if ui_progressbar.wasCanceled():
+            break
 
         #start_time = time()
 
@@ -167,7 +196,7 @@ def read_log(database):
                 database.addTag(tag_name, False, TAG_ORIGIN_RAW, tag_type, tag_unit, None, tag_description)
 
         #print("Tag --- %s seconds ---" % (time() - start_time))
-
+    ui_progressbar.close()
     # start_time = time()
     # Missing values added thanks to default values
     for tag in database.getUserTags():
