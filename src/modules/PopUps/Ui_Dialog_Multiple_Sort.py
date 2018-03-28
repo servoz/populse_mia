@@ -115,7 +115,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
                 self.values_list[idx].append(database_to_table(value.current_value))
 
     def sort_scans(self):
-        self.order = self.combo_box.itemData(self.combo_box.currentIndex())
+        self.order = self.combo_box.itemText(self.combo_box.currentIndex())
         for push_button in self.push_buttons:
             self.list_tags.append(push_button.text())
         self.accept()
