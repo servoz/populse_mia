@@ -439,56 +439,6 @@ class DataBrowser(QWidget):
 
             self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
-class fill_row(Thread):
-
-    def __init__(self, databrowser, row, scan):
-
-        Thread.__init__(self)
-
-        self.row = row
-        self.scan = scan
-        self.databrowser = databrowser
-
-        if row == 0:
-            # Progressbar
-            self.ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, self.databrowser.columnCount())
-            self.ui_progressbar.setWindowModality(Qt.WindowModal)
-            self.ui_progressbar.setWindowTitle("")
-
-    def run(self):
-
-        column = 0
-        while column < self.databrowser.columnCount():
-
-            current_tag = self.databrowser.horizontalHeaderItem(column).text()
-
-            item = QTableWidgetItem()
-
-            # The scan has a value for the tag
-            value = self.databrowser.database.getValue(self.scan, current_tag)
-            if value != None:
-                if current_tag == "FileName":
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
-                else:
-                    self.databrowser.update_color(self.scan, current_tag, item, self.row)
-
-                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(value.current_value)))
-
-            # The scan does not have a value for the tag
-            else:
-                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
-                font = item.font()
-                font.setItalic(True)
-                font.setBold(True)
-                item.setFont(font)
-            self.databrowser.setItem(self.row, column, item)
-            column += 1
-            if self.row == 0:
-                self.ui_progressbar.setValue(column)
-
-        if self.row == 0:
-            self.ui_progressbar.close()
-
 class TableDataBrowser(QTableWidget):
 
     def __init__(self, database, parent):
