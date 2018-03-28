@@ -51,7 +51,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(database)
+        self.table_data = TableDataBrowser(database, self)
         self.table_data.setObjectName("table_data")
 
         ## LAYOUTS ##
@@ -454,6 +454,7 @@ class DataBrowser(QWidget):
                 item = QtWidgets.QTableWidgetItem()
                 self.table_data.setItem(row, column, item)
                 scan = self.table_data.item(row, 0).text()
+                self.table_data.update_color(scan, new_tag_name, item, row)
                 if self.database.scanHasTag(scan, tag_to_clone):
                     item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag_to_clone).current_value)))
                 else:
@@ -505,9 +506,10 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, database):
+    def __init__(self, database, parent):
 
         self.database = database
+        self.parent = parent
 
         super().__init__()
 
@@ -593,6 +595,9 @@ class TableDataBrowser(QTableWidget):
             if not scan_already_in_list:
                 # Scan not in the list, we add it
                 self.selected_scans.append([scan_name, [tag_name]])
+
+        # ImageViewer updated
+        self.parent.connect_viewer()
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
