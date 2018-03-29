@@ -1316,6 +1316,18 @@ class TableDataBrowser(QTableWidget):
                 if tag.visible == False:
                     self.setColumnHidden(columnIndex, True)
 
+        # Removing useless columns
+        column = 0
+        tags_to_remove = []
+        while column < self.columnCount():
+            tag_name = self.horizontalHeaderItem(column).text()
+            if not tag_name in self.database.getTagsNames():
+                tags_to_remove.append(tag_name)
+            column += 1
+
+        for tag in tags_to_remove:
+            self.removeColumn(self.get_tag_column(tag))
+
         self.resizeColumnsToContents()
 
         # Selection updated

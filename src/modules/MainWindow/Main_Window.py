@@ -515,5 +515,3 @@ class Main_Window(QMainWindow):
 
         else:
             pass
-
-

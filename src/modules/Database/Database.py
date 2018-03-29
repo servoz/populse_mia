@@ -88,10 +88,10 @@ class Database:
                 if not self.hasTag(default_tag):
                     # Tags by default set as visible
                     self.addTag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
-                    self.saveModifications()
 
         # FileName as raw tag
         self.setTagOrigin("FileName", TAG_ORIGIN_RAW)
+        self.saveModifications()
 
     def loadProperties(self):
         """ Loads the properties file (Unnamed project does not have this file) """

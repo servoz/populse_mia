@@ -130,6 +130,7 @@ class Ui_Dialog_Preferences(QDialog):
         config.setDefaultTags(list_tags)
         if main.database.isTempProject:
             main.database.refreshTags()
+            main.data_browser.table_data.add_columns()
 
         #Colors
         background_color = self.background_color_combo.currentText()
