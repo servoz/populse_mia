@@ -812,6 +812,7 @@ class Database:
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)
+                table.itemChanged.disconnect()
                 i = 0
                 while i < len(modifiedValues):
                     # Each modified value is a list of 3 elements: scan, tag, and old_value
@@ -834,6 +835,7 @@ class Database:
                         item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(old_value)))
                         table.update_color(scan, tag, item, table.get_scan_row(scan))
                     i += 1
+                table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
                 old_tags = self.getVisualizedTags()  # Old list of columns
@@ -887,6 +889,10 @@ class Database:
         """
         Redo the last action made by the user on the project
         """
+
+        from PyQt5 import QtCore
+        from Utils.Utils import database_to_table
+
         # We can redo if we have an action to make again
         if len(self.redos) > 0:
             toRedo = self.redos.pop()
@@ -906,6 +912,8 @@ class Database:
                 # Adding all the values associated
                 for value in values:
                     self.addValue(value[0], value[1], value[2], value[3])
+                column = table.get_index_insertion(tagToAdd)
+                table.add_column(column, tagToAdd)
             if (action == "remove_tags"):
                 # To remove the tags, we need the names
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
@@ -914,6 +922,8 @@ class Database:
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToRemove = tagsRemoved[i].tag
                     self.removeTag(tagToRemove)
+                    column_to_remove = table.get_tag_column(tagToRemove)
+                    table.removeColumn(column_to_remove)
                     i += 1
             if (action == "add_scans"):
                 # To add the scans, we need the FileNames and the values associated to the scans
@@ -924,6 +934,7 @@ class Database:
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
                     self.addScan(scanToAdd[0], scanToAdd[1])
+                    table.scans_to_visualize.append(scanToAdd[0])
                     i += 1
                 # We add all the values
                 i = 0
@@ -932,6 +943,7 @@ class Database:
                     valueToAdd = valuesAdded[i]
                     self.addValue(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
                     i += 1
+                table.add_rows(self.getScansNames())
             if(action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Scan class)
@@ -940,10 +952,12 @@ class Database:
                     # We reput each scan, keeping the same values
                     scanToRemove = scansRemoved[i].scan
                     self.removeScan(scanToRemove)
+                    table.scans_to_visualize.remove(scanToRemove)
                     i += 1
-            if (action == "modified_values"):
+            if (action == "modified_values"): # Not working
                 # To modily the values, we need the cells, and the updated values
                 modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
+                table.itemChanged.disconnect()
                 i = 0
                 while i < len(modifiedValues):
                     # Each modified value is a list of 3 elements: scan, tag, and old_value
@@ -953,13 +967,19 @@ class Database:
                     # valueToRestore[2] is the old value of the cell
                     new_value = valueToRestore[3]
                     self.setTagValue(scan, tag, new_value)
+                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(new_value)))
+                    table.update_color(scan, tag, item, table.get_scan_row(scan))
                     i += 1
+                table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
+                old_tags = self.getVisualizedTags()  # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
                 self.resetAllVisibilities()  # Reset of the visibilities
                 for visible in visibles:
                     # We reput each new tag visible
                     self.setTagVisibility(visible, True)
+                table.update_visualized_columns(old_tags)  # Columns updated
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits

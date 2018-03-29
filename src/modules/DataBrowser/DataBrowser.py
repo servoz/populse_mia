@@ -1242,6 +1242,8 @@ class TableDataBrowser(QTableWidget):
                         font.setItalic(True)
                         font.setBold(True)
                         item.setFont(font)
+                    if column != 0:
+                        self.update_color(scan, tag, item, rowCount)
                     self.setItem(rowCount, column, item)
                     column += 1
 
