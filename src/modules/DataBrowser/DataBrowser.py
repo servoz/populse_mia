@@ -26,6 +26,8 @@ from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.Utils import database_to_table, table_to_database, check_value_type
 
+from threading import Thread
+
 import json
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
@@ -319,16 +321,12 @@ class DataBrowser(QWidget):
 
     def add_tag_pop_up(self):
 
-        self.table_data.itemChanged.disconnect()
-
         # We first show the add_tag pop up
         self.pop_up_add_tag = Ui_Dialog_add_tag(self.database)
         self.pop_up_add_tag.show()
 
         # We get the values entered by the user
         if self.pop_up_add_tag.exec_():
-
-            self.table_data.itemSelectionChanged.disconnect()
 
             (new_tag_name, new_default_value, tag_type, new_tag_description, new_tag_unit) = self.pop_up_add_tag.get_values()
 
@@ -354,35 +352,11 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Adding the column to the table
-            self.table_data.clearSelection()
+            # New tag added to the table
             column = self.table_data.get_index_insertion(new_tag_name)
-            self.table_data.insertColumn(column)
-            item = QtWidgets.QTableWidgetItem()
-            self.table_data.setHorizontalHeaderItem(column, item)
-            item.setText(new_tag_name)
-            item.setToolTip("Description: " + str(new_tag_description) + "\nUnit: " + str(new_tag_unit) + "\nType: " + str(tag_type))
-            row = 0
-            while row < self.table_data.rowCount():
-                scan = self.table_data.item(row, 0).text()
-                item = QtWidgets.QTableWidgetItem()
-                self.table_data.update_color(scan, new_tag_name, item, row)
-                self.table_data.setItem(row, column, item)
-                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(database_value)))
-                row += 1
-
-            self.table_data.resizeColumnsToContents() # New column resized
-
-            # Selection updated
-            self.table_data.update_selection()
-
-            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
-
-        self.table_data.itemChanged.connect(lambda : self.table_data.change_cell_color())
+            self.table_data.add_column(column, new_tag_name)
 
     def clone_tag_pop_up(self):
-
-        self.table_data.itemChanged.disconnect()
 
         # We first show the clone_tag pop up
         self.pop_up_clone_tag = Ui_Dialog_clone_tag(self.database)
@@ -390,8 +364,6 @@ class DataBrowser(QWidget):
 
         # We get the informations given by the user
         if self.pop_up_clone_tag.exec_():
-
-            self.table_data.itemSelectionChanged.disconnect()
 
             (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
 
@@ -419,37 +391,9 @@ class DataBrowser(QWidget):
             self.database.undos.append(historyMaker)
             self.database.redos.clear()
 
-            # Adding the column to the table
+            # New tag added to the table
             column = self.table_data.get_index_insertion(new_tag_name)
-            self.table_data.insertColumn(column)
-            item = QtWidgets.QTableWidgetItem()
-            self.table_data.setHorizontalHeaderItem(column, item)
-            item.setText(new_tag_name)
-            item.setToolTip("Description: " + str(tagCloned.description) + "\nUnit: " + str(tagCloned.unit) + "\nType: " + str(tagCloned.type))
-            row = 0
-            while row < self.table_data.rowCount():
-                item = QtWidgets.QTableWidgetItem()
-                self.table_data.setItem(row, column, item)
-                scan = self.table_data.item(row, 0).text()
-                self.table_data.update_color(scan, new_tag_name, item, row)
-                if self.database.scanHasTag(scan, tag_to_clone):
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.database.getValue(scan, tag_to_clone).current_value)))
-                else:
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
-                    font = item.font()
-                    font.setItalic(True)
-                    font.setBold(True)
-                    item.setFont(font)
-                row += 1
-
-            self.table_data.resizeColumnsToContents() # New column resized
-
-            # Selection updated
-            self.table_data.update_selection()
-
-            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
-
-        self.table_data.itemChanged.connect(lambda : self.table_data.change_cell_color())
+            self.table_data.add_column(column, new_tag_name)
 
     def remove_tag_pop_up(self):
 
@@ -495,7 +439,6 @@ class DataBrowser(QWidget):
 
             self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
-
 class TableDataBrowser(QTableWidget):
 
     def __init__(self, database, parent):
@@ -524,6 +467,47 @@ class TableDataBrowser(QTableWidget):
 
         self.update_table()
 
+    def add_column(self, column, tag):
+
+        self.itemChanged.disconnect()
+
+        self.itemSelectionChanged.disconnect()
+
+        # Adding the column to the table
+        self.insertColumn(column)
+        item = QtWidgets.QTableWidgetItem()
+        self.setHorizontalHeaderItem(column, item)
+        tag_object = self.database.getTag(tag)
+        item.setText(tag)
+        item.setToolTip(
+            "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
+                tag_object.type))
+        row = 0
+        while row < self.rowCount():
+            item = QtWidgets.QTableWidgetItem()
+            self.setItem(row, column, item)
+            scan = self.item(row, 0).text()
+            self.update_color(scan, tag, item, row)
+            if self.database.scanHasTag(scan, tag):
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(
+                    database_to_table(self.database.getValue(scan, tag).current_value)))
+            else:
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
+                font = item.font()
+                font.setItalic(True)
+                font.setBold(True)
+                item.setFont(font)
+            row += 1
+
+        self.resizeColumnsToContents()  # New column resized
+
+        # Selection updated
+        self.update_selection()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
+
+        self.itemChanged.connect(self.change_cell_color)
+
     def sort_updated(self, column, order):
         """
         Called when the sort is updated
@@ -549,20 +533,15 @@ class TableDataBrowser(QTableWidget):
         # Selection updated
         self.clearSelection()
 
-        row = 0
-        while row < self.rowCount():
-            item = self.item(row, 0)
-            scan_name = item.text()
-            for scan in self.selected_scans:
-                scan_selected = scan[0]
-                if scan_name == scan_selected:
-                    # We select the columns of the row if it was selected
-                    tags = scan[1]
-                    for tag in tags:
-                        if self.get_tag_column(tag) != None:
-                            item_to_select = self.item(row, self.get_tag_column(tag))
-                            item_to_select.setSelected(True)
-            row += 1
+        for scan in self.selected_scans:
+            scan_selected = scan[0]
+            row = self.get_scan_row(scan_selected)
+            # We select the columns of the row if it was selected
+            tags = scan[1]
+            for tag in tags:
+                if self.get_tag_column(tag) != None:
+                    item_to_select = self.item(row, self.get_tag_column(tag))
+                    item_to_select.setSelected(True)
 
     def selection_changed(self):
         """
@@ -719,6 +698,9 @@ class TableDataBrowser(QTableWidget):
             if element.visible == False:
                 self.setColumnHidden(column, True)
 
+            else:
+                self.setColumnHidden(column, False)
+
             column += 1
 
     def fill_cells_update_table(self):
@@ -739,11 +721,10 @@ class TableDataBrowser(QTableWidget):
             # Progressbar
             idx += 1
             ui_progressbar.setValue(idx)
-
             column = 0
+
             while column < len(self.horizontalHeader()):
-                item = self.horizontalHeaderItem(column)
-                current_tag = item.text()
+                current_tag = self.horizontalHeaderItem(column).text()
 
                 item = QTableWidgetItem()
 
@@ -751,11 +732,10 @@ class TableDataBrowser(QTableWidget):
                 if self.database.scanHasTag(scan, current_tag):
                     value = self.database.getValue(scan, current_tag)
                     if current_tag == "FileName":
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable) # FileName not editable
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                     else:
                         self.update_color(scan, current_tag, item, row)
-
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(value.current_value)))
+                    item.setData(QtCore.Qt.EditRole,QtCore.QVariant(database_to_table(value.current_value)))
 
                 # The scan does not have a value for the tag
                 else:
@@ -767,7 +747,6 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
                 column += 1
             row += 1
-
 
         ui_progressbar.close()
 
@@ -1216,6 +1195,8 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
+        self.resizeColumnsToContents()
+
     def add_rows(self, rows):
         """
         Inserts rows in the table if they are not already in the table
@@ -1225,6 +1206,8 @@ class TableDataBrowser(QTableWidget):
         self.setSortingEnabled(False)
 
         self.itemSelectionChanged.disconnect()
+
+        self.itemChanged.disconnect()
 
         # Progressbar
         len_rows = len(rows)
@@ -1273,6 +1256,7 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
+        self.itemChanged.connect(self.change_cell_color)
 
     def get_index_insertion(self, to_insert):
         """
@@ -1291,6 +1275,8 @@ class TableDataBrowser(QTableWidget):
         """
         To add the new tags
         """
+
+        self.itemChanged.disconnect()
 
         self.itemSelectionChanged.disconnect()
 
@@ -1334,6 +1320,8 @@ class TableDataBrowser(QTableWidget):
         self.update_selection()
 
         self.itemSelectionChanged.connect(self.selection_changed)
+
+        self.itemChanged.connect(self.change_cell_color)
 
     def mouseReleaseEvent(self, e):
         """

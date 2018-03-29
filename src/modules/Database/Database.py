@@ -55,7 +55,7 @@ class Database:
         if new_project:
             createDatabase(self.folder)
         # We open the Database
-        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), listeners=[ForeignKeysListener()])
+        engine = create_engine('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db?check_same_thread=False'), listeners=[ForeignKeysListener()])
         Base.metadata.bind = engine
         # We create a session
         DBSession = sessionmaker(bind=engine)
@@ -274,6 +274,8 @@ class Database:
         values = self.session.query(Value).filter(Value.tag == tag).filter(Value.scan == scan).all()
         if len(values) == 1:
             return values[0]
+        else:
+            return None
 
     def scanHasTag(self, scan, tag):
         """
@@ -744,10 +746,14 @@ class Database:
         # If there is a scan, we return True, and False otherwise
         return finalResult
 
-    def undo(self):
+    def undo(self, table):
         """
         Undo the last action made by the user on the project
         """
+
+        from PyQt5 import QtCore
+        from Utils.Utils import database_to_table
+        from DataBrowser.DataBrowser import not_defined_value
 
         # We can undo if we have an action to revert
         if len(self.undos) > 0:
@@ -759,6 +765,8 @@ class Database:
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
                 self.removeTag(tagToRemove)
+                column_to_remove = table.get_tag_column(tagToRemove)
+                table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
                 # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
                 tagsRemoved = toUndo[1] # The second element is a list of the removed tags (Tag class)
@@ -770,6 +778,13 @@ class Database:
                     i += 1
                 valuesRemoved = toUndo[2] # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
+                i = 0
+                while i < len(tagsRemoved):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToReput = tagsRemoved[i]
+                    column = table.get_index_insertion(tagToReput.tag)
+                    table.add_column(column, tagToReput.tag)
+                    i += 1
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1] # The second element is a list of added scans to remove
@@ -778,6 +793,8 @@ class Database:
                     # We remove each scan added
                     scanToRemove = scansAdded[i][0]
                     self.removeScan(scanToRemove)
+                    table.removeRow(table.get_scan_row(scanToRemove))
+                    table.scans_to_visualize.remove(scanToRemove)
                     i += 1
             if(action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
@@ -787,10 +804,11 @@ class Database:
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
                     self.addScan(scanToReput.scan, scanToReput.checksum)
+                    table.scans_to_visualize.append(scanToReput.scan)
                     i += 1
                 valuesRemoved = toUndo[2] # The third element is the list of removed values (Value class)
                 self.reput_values(valuesRemoved)
-
+                table.add_rows(self.getScansNames())
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1] # The second element is a list of modified values (reset, or value changed)
@@ -801,25 +819,30 @@ class Database:
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
                     old_value = valueToRestore[2]
+                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if(old_value == None):
                         # If the cell was not defined before, we reput it
                         self.removeValue(scan, tag)
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
                         self.setTagValue(scan, tag, str(old_value))
+                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(old_value)))
+                        table.update_color(scan, tag, item, table.get_scan_row(scan))
                     i += 1
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
+                old_tags = self.getVisualizedTags()  # Old list of columns
                 visibles = toUndo[1] # List of the tags visibles before the modification (Tag objects)
                 self.resetAllVisibilities() # Reset of the visibilities
                 for visible in visibles:
                     # We reput each old tag visible
                     self.setTagVisibility(visible.tag, True)
-            if (action == "modified_sort"):
-                # To revert a sort change
-                old_sorted_tag = toUndo[1]
-                old_sort_order = toUndo[2]
-                self.update_sort(old_sorted_tag, old_sort_order)
+                table.update_visualized_columns(old_tags)  # Columns updated
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
 
@@ -834,10 +857,6 @@ class Database:
         - Adding 1 tag: 40 bits
         => By storing the minimum of data to be able to revert the actions, we take way less memory than by storing the whole Database after each action
         """
-
-    def update_sort(self, tag, order):
-        self.setSortedTag(tag)
-        self.setSortOrder(order)
 
     def reput_values(self, values):
         """
@@ -864,7 +883,7 @@ class Database:
         else:
             return value.raw_value == value.current_value
 
-    def redo(self):
+    def redo(self, table):
         """
         Redo the last action made by the user on the project
         """
@@ -942,11 +961,5 @@ class Database:
                 for visible in visibles:
                     # We reput each new tag visible
                     self.setTagVisibility(visible, True)
-            if (action == "modified_sort"):
-                # To revert a sort change
-                # toUndo[1] and toUndo[2] are old values
-                new_sorted_tag = toRedo[3]
-                new_sort_order = toRedo[4]
-                self.update_sort(new_sorted_tag, new_sort_order)
 
         #print(len(pickle.dumps(self.history, -1))) # Memory approximation in number of bits
