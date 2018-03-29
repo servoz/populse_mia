@@ -6,7 +6,7 @@ import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
-from Database.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Database.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW, TAG_TYPE_INTEGER
 from Database.Filter import Filter
 import pickle
 
@@ -367,7 +367,9 @@ class Database:
         :param tag: Tag name
         :return: The type of the tag (String, Integer, Float, or List)
         """
-        return self.getTag(tag).type
+        tag = self.getTag(tag)
+        if tag != None:
+            return tag.type
 
     def getTag(self, tag):
         """
@@ -669,6 +671,9 @@ class Database:
         :param nots: list of nots (NOT?)
         :return: list of scans corresponding to those criterias
         """
+
+        from Utils.Utils import table_to_database
+
         result = [] # list of scans to return
         queries = [] # list of scans of each query (row)
         i = 0
@@ -679,24 +684,73 @@ class Database:
                 rowResult = rowResult.filter(Value.tag == fields[i])
             # Filter on the condition on the tag value (condition type + value)
             if(conditions[i] == "="):
-                rowResult = rowResult.filter(Value.current_value == values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value == table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value == table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value == table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif(conditions[i] == "!="):
-                rowResult = rowResult.filter(Value.current_value != values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value != table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value != table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value != table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif(conditions[i] == ">="):
-                rowResult = rowResult.filter(Value.current_value >= values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value >= table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value >= table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value >= table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif (conditions[i] == "<="):
-                rowResult = rowResult.filter(Value.current_value <= values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value <= table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value <= table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value <= table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif (conditions[i] == ">"):
-                rowResult = rowResult.filter(Value.current_value > values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value > table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value > table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value > table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif (conditions[i] == "<"):
-                rowResult = rowResult.filter(Value.current_value < values[i])
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value < table_to_database(values[i], self.getTagType(fields[i])))
+                else:
+                    resultStr = rowResult.filter(Value.current_value < table_to_database(values[i], TAG_TYPE_STRING))
+                    resultInt = rowResult.filter(Value.current_value < table_to_database(values[i], TAG_TYPE_INTEGER))
+                    rowResult = resultStr.union(resultInt)
             elif (conditions[i] == "CONTAINS"):
                 rowResult = rowResult.filter(Value.current_value.contains(values[i]))
             elif (conditions[i] == "IN"):
-                rowResult = rowResult.filter(Value.current_value.in_(values[i].split(', ')))
+                if fields[i] != "All visualized tags":
+                    choices = []
+                    for choice in values[i].split(', '):
+                        choices.append(table_to_database(choice, self.getTagType(fields[i])))
+                    rowResult = rowResult.filter(Value.current_value.in_(choices))
+                else:
+                    choices = []
+                    for choice in values[i].split(', '):
+                        choices.append(table_to_database(choice, TAG_TYPE_STRING))
+                    resultStr = rowResult.filter(Value.current_value.in_(choices))
+                    choices = []
+                    for choice in values[i].split(', '):
+                        choices.append(table_to_database(choice, TAG_TYPE_INTEGER))
+                    resultInt = rowResult.filter(Value.current_value.in_(choices))
+                    rowResult = resultStr.union(resultInt)
             elif (conditions[i] == "BETWEEN"):
                 borders = values[i].split(', ')
-                rowResult = rowResult.filter(Value.current_value.between(borders[0], borders[1]))
+                if fields[i] != "All visualized tags":
+                    rowResult = rowResult.filter(Value.current_value.between(table_to_database(borders[0], self.getTagType(fields[i])), table_to_database(borders[1], self.getTagType(fields[i]))))
+                else:
+                    resultStr = rowResult.filter(Value.current_value.between(table_to_database(borders[0], TAG_TYPE_STRING), table_to_database(borders[1], TAG_TYPE_STRING)))
+                    resultInt = rowResult.filter(Value.current_value.between(table_to_database(borders[0], TAG_TYPE_INTEGER), table_to_database(borders[1], TAG_TYPE_INTEGER)))
+                    rowResult = resultStr.union(resultInt)
             if(nots[i] == "NOT"):
                 # If NOT, we take the opposite: All scans MINUS the result of the query
                 rowResult = self.session.query(Value.scan).except_(rowResult)

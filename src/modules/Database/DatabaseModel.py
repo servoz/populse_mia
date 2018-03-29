@@ -41,6 +41,7 @@ class Tag(Base):
     unit = Column(Enum(TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ), nullable=True)
     default = Column(String, nullable=True)
     description = Column(String, nullable=True)
+
     def __repr__(self):
         return "<Tag(tag='%s', visible='%s', origin='%s', type='%s', unit='%s', default='%s', description='%s')>" % (self.tag, self.visible, self.origin, self.type, self.unit, self.default, self.description)
 
