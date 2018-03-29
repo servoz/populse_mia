@@ -12,9 +12,6 @@ class Ui_Dialog_See_All_Projects(QDialog):
     Is called when the user wants to create a new project
     """
 
-    # Signal that will be emitted at the end to tell that a new project has been opened
-    signal_create_project = pyqtSignal()
-
     def __init__(self, savedProjects, mainWindow):
         super().__init__()
 
@@ -102,10 +99,8 @@ class Ui_Dialog_See_All_Projects(QDialog):
             self.path, self.name = os.path.split(entire_path)
             self.relative_path = os.path.relpath(file_name)
 
-            project_switched = self.mainWindow.switch_project(self.relative_path, file_name, self.name)
+            project_switched = self.mainWindow.switch_project(self.relative_path, self.relative_path, self.name)
 
             if project_switched:
                 self.accept()
                 self.close()
-                # A signal is emitted to tell that the project has been created
-                self.signal_create_project.emit()

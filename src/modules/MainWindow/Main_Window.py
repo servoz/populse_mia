@@ -239,19 +239,6 @@ class Main_Window(QMainWindow):
         else:
             return 0
 
-    @pyqtSlot()
-    def modify_ui(self):
-        """ Each time a project is opened or created, this function refreshes the GUI + the current project from
-         the data base """
-
-        self.create_tabs()
-        self.setCentralWidget(self.centralWindow)
-        if self.database.isTempProject:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
-        else:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
-        self.statusBar().showMessage('')
-
     def create_tabs(self):
         """ Creates the tabs """
         self.config = Config()
@@ -328,10 +315,6 @@ class Main_Window(QMainWindow):
 
             self.update_project(file_name, call_update_table=False) # Project updated everywhere
 
-            # Once the user has selected the new project name, the 'signal_saved_project" signal is emitted
-            # Which will be connected to the modify_ui method that controls the following Processes
-            exPopup.signal_saved_project.connect(self.modify_ui)
-
     def create_project_pop_up(self):
 
         if self.check_unsaved_modifications():
@@ -346,10 +329,6 @@ class Main_Window(QMainWindow):
 
             # Opens a pop-up when the 'New Project' action is clicked and updates the recent projects
             self.exPopup = Ui_Dialog_New_Project()
-
-            # Once the user has selected his project, the 'signal_create_project" signal is emitted
-            # Which will be connected to the modify_ui method that controls the following Processes
-            self.exPopup.signal_create_project.connect(self.modify_ui)
 
             if self.exPopup.exec_():
 
@@ -368,7 +347,6 @@ class Main_Window(QMainWindow):
         # Ui_Dialog() is defined in pop_ups.py
 
         self.exPopup = Ui_Dialog_Open_Project()
-        self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_():
 
             file_name = self.exPopup.selectedFiles()
@@ -490,25 +468,10 @@ class Main_Window(QMainWindow):
         """ Opens a pop-up when the 'See all projects' action is clicked and show the recent projects """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
-        self.exPopup.signal_create_project.connect(self.modify_ui)
         if self.exPopup.exec_():
             file_name = self.exPopup.relative_path
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
-
-            problem_list = controller.verify_scans(self.database, self.exPopup.relative_path)
-            if problem_list != []:
-                str_msg = ""
-                for element in problem_list:
-                    str_msg += element + "\n\n"
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("These files have been modified since they have been converted for the first time:")
-                msg.setInformativeText(str_msg)
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
 
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
