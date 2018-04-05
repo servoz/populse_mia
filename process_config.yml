@@ -2,23 +2,23 @@ Packages:
   nipype:
     interfaces:
       fsl:
-        AR1Image: process_enabled
-        AccuracyTester: process_enabled
-        ApplyMask: process_enabled
-        ApplyTOPUP: process_enabled
-        ApplyWarp: process_enabled
-        ApplyXFM: process_enabled
+        AR1Image: process_disabled
+        AccuracyTester: process_disabled
+        ApplyMask: process_disabled
+        ApplyTOPUP: process_disabled
+        ApplyWarp: process_disabled
+        ApplyXFM: process_disabled
         AvScale: process_enabled
         B0Calc: process_enabled
-        BEDPOSTX: process_enabled
-        BEDPOSTX5: process_enabled
+        BEDPOSTX: process_disabled
+        BEDPOSTX5: process_disabled
         BET: process_enabled
-        BinaryMaths: process_enabled
-        ChangeDataType: process_enabled
-        Classifier: process_enabled
+        BinaryMaths: process_disabled
+        ChangeDataType: process_disabled
+        Classifier: process_disabled
         Cleaner: process_enabled
         Cluster: process_enabled
-        Complex: process_enabled
+        Complex: process_disabled
         ContrastMgr: process_enabled
         ConvertWarp: process_enabled
         ConvertXFM: process_enabled
@@ -27,9 +27,9 @@ Packages:
         DilateImage: process_enabled
         DistanceMap: process_enabled
         EPIDeWarp: process_enabled
-        Eddy: process_enabled
-        EddyCorrect: process_enabled
-        EpiReg: process_enabled
+        Eddy: process_disabled
+        EddyCorrect: process_disabled
+        EpiReg: process_disabled
         ErodeImage: process_enabled
         ExtractROI: process_enabled
         FAST: process_enabled
@@ -37,8 +37,8 @@ Packages:
         FEATModel: process_enabled
         FEATRegister: process_enabled
         FILMGLS: process_enabled
-        FIRST: process_enabled
-        FLAMEO: process_enabled
+        FIRST: process_disabled
+        FLAMEO: process_disabled
         FLIRT: process_enabled
         FNIRT: process_enabled
         FSLCommand: process_enabled
@@ -70,11 +70,11 @@ Packages:
         Overlay: process_enabled
         PRELUDE: process_enabled
         PercentileImage: process_enabled
-        PlotMotionParams: process_enabled
-        PlotTimeSeries: process_enabled
-        PowerSpectrum: process_enabled
-        PrepareFieldmap: process_enabled
-        ProbTrackX: process_enabled
+        PlotMotionParams: process_disabled
+        PlotTimeSeries: process_disabled
+        PowerSpectrum: process_disabled
+        PrepareFieldmap: process_disabled
+        ProbTrackX: process_disabled
         ProbTrackX2: process_enabled
         ProjThresh: process_enabled
         Randomise: process_enabled
@@ -94,9 +94,9 @@ Packages:
         TemporalFilter: process_enabled
         Threshold: process_enabled
         TractSkeleton: process_enabled
-        Training: process_enabled
-        TrainingSetCreator: process_enabled
-        UnaryMaths: process_enabled
+        Training: process_disabled
+        TrainingSetCreator: process_disabled
+        UnaryMaths: process_disabled
         VecReg: process_enabled
         WarpPoints: process_enabled
         WarpPointsFromStd: process_enabled
@@ -105,14 +105,14 @@ Packages:
         XFibres: process_enabled
         XFibres5: process_enabled
       spm:
-        Analyze2nii: process_enabled
-        ApplyInverseDeformation: process_enabled
-        ApplyTransform: process_enabled
-        CalcCoregAffine: process_enabled
-        Coregister: process_enabled
-        CreateWarped: process_enabled
-        DARTEL: process_enabled
-        DARTELNorm2MNI: process_enabled
+        Analyze2nii: process_disabled
+        ApplyInverseDeformation: process_disabled
+        ApplyTransform: process_disabled
+        CalcCoregAffine: process_disabled
+        Coregister: process_disabled
+        CreateWarped: process_disabled
+        DARTEL: process_disabled
+        DARTELNorm2MNI: process_disabled
         DicomImport: process_enabled
         EstimateContrast: process_enabled
         EstimateModel: process_enabled

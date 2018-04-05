@@ -1,4 +1,5 @@
 import sys
+import os
 import yaml
 import inspect
 import pkgutil
@@ -9,8 +10,8 @@ from PyQt5.QtWidgets import QWidget, QTreeWidget, QLabel, QPushButton, \
     QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, QLineEdit, \
     QApplication, QSplitter
 
-# CAPSUL import
-from capsul.api import get_process_instance, StudyConfig
+"""# CAPSUL import
+from capsul.api import get_process_instance, StudyConfig"""
 
 # Soma import
 from soma.path import find_in_path
@@ -93,11 +94,11 @@ class ProcessLibraryWidget(QWidget):
 
     def open_pkg_lib(self):
         self.pkg_library.show()
-        #if self.pkg_library.exec_(): #TODO: EXEC_ OR SHOW ?
-        #    pass
 
     @staticmethod
     def load_config():
+        if not os.path.exists('process_config.yml'):
+            open('process_config.yml', 'a').close()
         with open('process_config.yml', 'r') as stream:
             try:
                 return yaml.load(stream)
