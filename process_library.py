@@ -76,11 +76,11 @@ class ProcessLibraryWidget(QWidget):
                 txt = "Inputs: \n" + str(v.input_spec())
                 txt2 = "\nOutputs: \n" + str(v.output_spec())
                 self.label_test.setText(txt + txt2)
-                print(v)
+                #print(v)
                 obj = v.input_spec
-                for attr in obj.__dict__:
+                """for attr in obj.__dict__:
                     print(type(attr))
-                    print(attr)
+                    print(attr)"""
 
 
     def update_config(self):
