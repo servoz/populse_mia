@@ -8,7 +8,7 @@ import pkgutil
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QTreeWidget, QLabel, QPushButton, \
     QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, QLineEdit, \
-    QApplication, QSplitter
+    QApplication, QSplitter, QFileDialog
 
 """# CAPSUL import
 from capsul.api import get_process_instance, StudyConfig"""
@@ -76,12 +76,25 @@ class ProcessLibraryWidget(QWidget):
                 txt = "Inputs: \n" + str(v.input_spec())
                 txt2 = "\nOutputs: \n" + str(v.output_spec())
                 self.label_test.setText(txt + txt2)
-                #print(v)
-                obj = v.input_spec
-                """for attr in obj.__dict__:
-                    print(type(attr))
-                    print(attr)"""
-
+                print(v)
+                obj = v.input_spec()
+                print(obj)
+                print(list(obj.__dict__.keys()))
+                for attr in list(obj.__dict__.keys()):
+                    print('##########')
+                    print(attr)
+                    real_attr = getattr(obj, attr)
+                    try:
+                        attr.get_value(attr, name='mandatory    ')
+                    except:
+                        pass
+                    else:
+                        print('YOLOOOOOOOOOOOOOOOOOOOOOOOOO0000000000000000000000O')
+                        print(attr.get(name='mandatory'))
+                    if hasattr(real_attr, 'optional'):
+                        print('#############################################################')
+                    print(type(real_attr))
+                    print(real_attr)
 
     def update_config(self):
         self.process_config = self.load_config()
@@ -197,6 +210,10 @@ class PackageLibraryDialog(QDialog):
         self.line_edit = QLineEdit()
         self.line_edit.setPlaceholderText('Type a package')
 
+        push_button_browse = QPushButton()
+        push_button_browse.setText("Browse")
+        push_button_browse.clicked.connect(self.browse_package)
+
         push_button_add_pkg = QPushButton()
         push_button_add_pkg.setText("Add package")
         push_button_add_pkg.clicked.connect(lambda x: self.add_package(self.line_edit.text()))
@@ -209,8 +226,14 @@ class PackageLibraryDialog(QDialog):
         push_button_save.setText("Save changes")
         push_button_save.clicked.connect(self.save)
 
+        # Layout
+
+        h_box_browse = QHBoxLayout()
+        h_box_browse.addWidget(self.line_edit)
+        h_box_browse.addWidget(push_button_browse)
+
         v_box = QVBoxLayout()
-        v_box.addWidget(self.line_edit)
+        v_box.addLayout(h_box_browse)
         v_box.addWidget(push_button_add_pkg)
         v_box.addWidget(push_button_rm_pkg)
         v_box.addWidget(push_button_save)
@@ -240,6 +263,24 @@ class PackageLibraryDialog(QDialog):
         self.process_config["Packages"] = self.packages
         with open('process_config.yml', 'w', encoding='utf8') as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False, allow_unicode=True)
+
+    def browse_package(self):
+        file_dialog = QFileDialog()
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        file_dialog.setFileMode(QFileDialog.Directory)
+
+        python_path = os.environ['PYTHONPATH'].split(os.pathsep)
+        python_path = python_path[0]
+        file_dialog.setDirectory(python_path)
+
+        if file_dialog.exec_():
+            file_name = file_dialog.selectedFiles()[0]
+            file_name = file_name.replace(python_path, '')
+            file_name = file_name.replace('/', '.').replace('\\', '.')
+            if file_name[0] == '.':
+                file_name = file_name[1:]
+
+            self.line_edit.setText(file_name)
 
     def add_package(self, module):
         self.packages = self.package_library.package_tree
