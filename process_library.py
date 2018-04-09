@@ -4,11 +4,13 @@ import yaml
 import inspect
 import pkgutil
 
-# PyQt5 import
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QTreeWidget, QLabel, QPushButton, \
-    QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, QLineEdit, \
-    QApplication, QSplitter, QFileDialog
+# PyQt / PySide import, via soma
+from soma.qt_gui import qt_backend
+#qt_backend.set_qt_backend('PySide', pyqt_api=2, compatible_qt5=True)
+from soma.qt_gui.qt_backend.QtCore import Qt, Signal
+from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
+    QPushButton, QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, \
+    QLineEdit, QApplication, QSplitter, QFileDialog
 
 """# CAPSUL import
 from capsul.api import get_process_instance, StudyConfig"""
@@ -197,7 +199,7 @@ class PackageLibraryDialog(QDialog):
     ''' A dialog that displays a package library.
     '''
 
-    signal_save = pyqtSignal()
+    signal_save = Signal()
 
     def __init__(self):
         """ Generate the library.
@@ -220,11 +222,11 @@ class PackageLibraryDialog(QDialog):
 
         push_button_add_pkg = QPushButton()
         push_button_add_pkg.setText("Add package")
-        push_button_add_pkg.clicked.connect(lambda x: self.add_package(self.line_edit.text()))
+        push_button_add_pkg.clicked.connect(self.add_package_with_text)
 
         push_button_rm_pkg = QPushButton()
         push_button_rm_pkg.setText("Remove package")
-        push_button_rm_pkg.clicked.connect(lambda x: self.remove_package(self.line_edit.text()))
+        push_button_rm_pkg.clicked.connect(self.remove_package_with_text)
 
         push_button_save = QPushButton()
         push_button_save.setText("Save changes")
@@ -281,10 +283,13 @@ class PackageLibraryDialog(QDialog):
             file_name = file_dialog.selectedFiles()[0]
             file_name = file_name.replace(python_path, '')
             file_name = file_name.replace('/', '.').replace('\\', '.')
-            if file_name[0] == '.':
+            if len(file_name) != 0 and file_name[0] == '.':
                 file_name = file_name[1:]
 
             self.line_edit.setText(file_name)
+
+    def add_package_with_text(self):
+        self.add_package(self.line_edit.text())
 
     def add_package(self, module):
         self.packages = self.package_library.package_tree
@@ -319,6 +324,9 @@ class PackageLibraryDialog(QDialog):
 
             self.package_library.package_tree = self.packages
             self.package_library.generate_tree()
+
+    def remove_package_with_text(self):
+        self.remove_package(self.line_edit.text())
 
     def remove_package(self, module):
         self.packages = self.package_library.package_tree
@@ -474,6 +482,7 @@ class ProcessHelp(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    print('using Qt backend:', qt_backend.get_qt_backend())
     plw = ProcessLibraryWidget()
     plw.show()
     sys.exit(app.exec_())
