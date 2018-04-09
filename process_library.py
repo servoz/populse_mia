@@ -73,8 +73,12 @@ class ProcessLibraryWidget(QWidget):
 
         for k, v in sorted(list(pkg.__dict__.items())):
             if k == process_name:
-                txt = "Inputs: \n" + str(v.input_spec())
-                txt2 = "\nOutputs: \n" + str(v.output_spec())
+                txt = "Inputs: \n"
+                if v.input_spec is not None:
+                    txt += str(v.input_spec())
+                txt2 = "\nOutputs: \n"
+                if v.output_spec is not None:
+                    txt2 += str(v.output_spec())
                 self.label_test.setText(txt + txt2)
                 print(v)
                 obj = v.input_spec()
