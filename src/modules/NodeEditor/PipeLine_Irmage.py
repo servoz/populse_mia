@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, QGraphicsView
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QListView, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QLabel, QLineEdit, \
-    QGroupBox, QFileDialog
+    QGroupBox, QFileDialog, QFrame, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
 import sip
@@ -20,6 +20,7 @@ import six
 from capsul.pipeline import pipeline_tools
 from capsul.api import get_process_instance
 from traits.api import Undefined
+from .process_library import ProcessLibraryWidget
 
 from soma.controller import trait_ids
 from NodeEditor.callStudent import callStudent
@@ -50,7 +51,7 @@ class ProjectEditor(QWidget):
 
         self.verticalLayout = QVBoxLayout(self)
 
-        self.libraryBrowserView = QListView(self)
+        """self.libraryBrowserView = QListView(self)
         self.libraryModel = LibraryModel(self)
         self.libraryModel.setColumnCount(1)
 
@@ -70,7 +71,9 @@ class ProjectEditor(QWidget):
             self.libraryModel.appendRow(i)
         self.libraryBrowserView.setModel(self.libraryModel)
         self.libraryBrowserView.setViewMode(self.libraryBrowserView.IconMode)
-        self.libraryBrowserView.setDragDropMode(self.libraryBrowserView.DragOnly)
+        self.libraryBrowserView.setDragDropMode(self.libraryBrowserView.DragOnly)"""
+
+        self.processLibrary = ProcessLibraryWidget()
 
         self.diagramScene = DiagramScene(self)
         self.diagramView = EditorGraphicsView(self.diagramScene, self)
@@ -83,7 +86,10 @@ class ProjectEditor(QWidget):
         redText = redText + ("</span>")
         self.textedit.append(redText)
 
-        self.node_controller = NodeController()
+        self.nodeController = NodeController()
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setWidget(self.nodeController)
 
         self.loadButton = QPushButton('Load pipeline', self)
         self.loadButton.clicked.connect(self.loadPipeline)
@@ -103,12 +109,15 @@ class ProjectEditor(QWidget):
 
         self.splitter0 = QSplitter(Qt.Horizontal)
         self.splitter0.addWidget(self.diagramView)
-        self.splitter0.addWidget(self.node_controller)
+        #self.splitter0.addWidget(self.nodeController)
+        self.splitter0.addWidget(self.scrollArea)
 
         self.splitter1 = QSplitter(Qt.Horizontal)
-        self.splitter1.addWidget(self.libraryBrowserView)
+        #self.splitter1.addWidget(self.libraryBrowserView)
+        self.splitter1.addWidget(self.processLibrary)
         self.splitter1.addWidget(self.diagramView)
-        self.splitter1.addWidget(self.node_controller)
+        #self.splitter1.addWidget(self.nodeController)
+        self.splitter1.addWidget(self.scrollArea)
         self.splitter1.setSizes([100, 400, 200])
 
         self.splitter2 = QSplitter(Qt.Vertical)
@@ -138,7 +147,8 @@ class ProjectEditor(QWidget):
             self.textedit.setText(f.read())
 
     def displayNodeParameters(self, node_name, process):
-        self.node_controller.display_parameters(node_name, process, self.diagramView.scene.pipeline)
+        self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
+        self.scrollArea.setWidget(self.nodeController)
 
     def startConnection(self, port):
         self.startedConnection = Connection(port, None)
@@ -508,11 +518,32 @@ class EditorGraphicsView(PipelineDevelopperView):
     def dropEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             self.click_pos = QtGui.QCursor.pos()
-            classNameByte = bytes(event.mimeData().data('component/name'))
+
+            path = bytes(event.mimeData().data('component/name'))
+            self.find_process(path.decode('utf8'))
+
+            """classNameByte = bytes(event.mimeData().data('component/name'))
             className = classNameByte.decode('utf8')
+
             for classProcess in AvailableProcesses():
                 if className == classProcess.__name__:
-                    self.add_process(classProcess)
+                    self.add_process(classProcess)"""
+
+    def find_process(self, path):
+        package_name, process_name = os.path.splitext(path)
+        process_name = process_name[1:]
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, instance in sorted(list(pkg.__dict__.items())):
+            if name == process_name:
+                try:
+                    process = get_process_instance(instance)
+                except Exception as e:
+                    print(e)
+                    return
+                else:
+                    print(process.get_inputs())
+                    self.add_process(instance)
 
     def add_process(self, class_process):
         class_name = class_process.__name__

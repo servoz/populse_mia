@@ -1,6 +1,6 @@
 auto_save: 'no'
 background_color: ''
-chain_cursors: 'yes'
+chain_cursors: 'no'
 default_tags:
 - FileName
 - AcquisitionDate
