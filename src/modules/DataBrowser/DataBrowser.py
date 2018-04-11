@@ -756,7 +756,7 @@ class TableDataBrowser(QTableWidget):
         color = QColor()
         # Raw tag
         if self.project.database.get_tag(tag).origin == TAG_ORIGIN_RAW:
-            if not self.project.database.is_value_modified(scan, tag):
+            if self.project.database.is_value_modified(scan, tag):
                 if row % 2 == 1:
                     color.setRgb(240, 240, 255)
                 else:
@@ -913,14 +913,14 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             scan_name = self.item(row, 0).text() # We get the FileName of the scan from the first row
 
-            if self.project.scanHasTag(scan_name, tag_name)\
-                    and self.project.getValue(scan_name, tag_name).raw_value is not None:
-                cell = self.project.getValue(scan_name, tag_name)
-                modified_values.append([scan_name, tag_name, cell.current_value, cell.raw_value]) # For history
-                if not self.project.resetTag(scan_name, tag_name):
-                    has_unreset_values = True
+            current_value = self.project.database.get_current_value(scan_name, tag_name)
+            initial_value = self.project.database.get_initial_value(scan_name, tag_name)
+            if initial_value is not None:
+                modified_values.append([scan_name, tag_name, current_value, initial_value]) # For history
+                self.project.database.reset_value(scan_name, tag_name)
+                # has_unreset_values = True TODO if value not reset
                 self.update_color(scan_name, tag_name, self.item(row, col), row)
-                self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
+                self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(str(initial_value)))
             else:
                 has_unreset_values = True
 
@@ -955,13 +955,13 @@ class TableDataBrowser(QTableWidget):
             row = 0
             while row < len(self.scans_to_visualize):
                 scan = self.item(row, 0).text() # We get the FileName of the scan from the first column
-                if self.project.scanHasTag(scan, tag_name)\
-                        and self.project.getValue(scan, tag_name).raw_value is not None:
-                    cell = self.project.getValue(scan, tag_name) # Value object of the cell
-                    modified_values.append([scan, tag_name, cell.current_value, cell.raw_value]) # For history
-                    if not self.project.resetTag(scan, tag_name):
-                        has_unreset_values = True
-                    self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
+                initial_value = self.project.database.get_initial_value(scan, tag_name)
+                current_value = self.project.database.get_current_value(scan, tag_name)
+                if initial_value is not None:
+                    modified_values.append([scan, tag_name, current_value, initial_value]) # For history
+                    self.project.database.reset_value(scan, tag_name)
+                    # has_unreset_values = True TODO if not reset
+                    self.item(row, col).setData(QtCore.Qt.EditRole, QtCore.QVariant(str(initial_value)))
                     self.update_color(scan, tag_name, self.item(row, col), row)
                 else:
                     has_unreset_values = True
@@ -997,14 +997,14 @@ class TableDataBrowser(QTableWidget):
             column = 0
             while column < len(self.horizontalHeader()):
                 tag = self.horizontalHeaderItem(column).text() # We get the tag name from the header
-                if self.project.scanHasTag(scan_name, tag) \
-                        and self.project.getValue(scan_name, tag).raw_value is not None:
+                current_value = self.project.database.get_initial_value(scan_name, tag)
+                initial_value = self.project.database.get_current_value(scan_name, tag)
+                if initial_value is not None:
                     # We reset the value only if it exists
-                    cell = self.project.getValue(scan_name, tag) # Value object of the cell
-                    modified_values.append([scan_name, tag, cell.current_value, cell.raw_value]) # For history
-                    if not self.project.resetTag(scan_name, tag):
-                        has_unreset_values = True
-                    self.item(row, column).setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(cell.raw_value)))
+                    modified_values.append([scan_name, tag, current_value, initial_value]) # For history
+                    self.project.database.reset_value(scan_name, tag)
+                    #has_unreset_values = True TODO if not reset
+                    self.item(row, column).setData(QtCore.Qt.EditRole, QtCore.QVariant(str(initial_value)))
                     self.update_color(scan_name, tag, self.item(row, column), row)
                 else:
                     has_unreset_values = True
@@ -1045,8 +1045,9 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
 
             item = QTableWidgetItem()
-            if self.project.scanHasTag(scan_path, tag_name):
-                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(database_to_table(self.project.getValue(scan_path, tag_name).current_value)))
+            value = self.project.database.get_current_value(scan_path, tag_name)
+            if value is not None:
+                item.setData(QtCore.Qt.EditRole, QtCore.QVariant(str(value)))
             else:
                 item = QTableWidgetItem()
                 item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
@@ -1477,7 +1478,7 @@ class TableDataBrowser(QTableWidget):
             color = QColor()
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-            type = self.project.getTagType(tag_name)
+            type = self.project.database.get_tag(tag_name).type
             old_value = item.text()
 
             # Type check
@@ -1544,19 +1545,18 @@ class TableDataBrowser(QTableWidget):
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
 
-                value_database = table_to_database(text_value, self.project.getTagType(tag_name))
-
                 # We only set the case if it's not the tag FileName
                 if (tag_name != "FileName"):
 
+                    old_value = self.project.database.get_current_value(scan_path, tag_name)
                     # The scan already has a value for the tag: we update it
-                    if(self.project.scanHasTag(scan_path, tag_name)):
-                        modified_values.append([scan_path, tag_name, self.project.getValue(scan_path, tag_name).current_value, value_database])
-                        self.project.setTagValue(scan_path, tag_name, value_database)
+                    if old_value is not  None:
+                        modified_values.append([scan_path, tag_name, old_value, text_value])
+                        self.project.database.set_value(scan_path, tag_name, text_value)
                     # The scan does not have a value for the tag yet: we add it
                     else:
-                        modified_values.append([scan_path, tag_name, None, value_database])
-                        self.project.addValue(scan_path, tag_name, value_database, value_database)
+                        modified_values.append([scan_path, tag_name, None, text_value])
+                        self.project.database.add_value(scan_path, tag_name, text_value, text_value)
 
                         # Font reset in case it was a not defined cell
                         font = item.font()
@@ -1566,7 +1566,7 @@ class TableDataBrowser(QTableWidget):
 
                     self.update_color(scan_path, tag_name, item, row)
 
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(text_value))
+                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(str(text_value)))
 
             # For history
             historyMaker.append(modified_values)
