@@ -183,10 +183,6 @@ class Main_Window(QMainWindow):
         """
         self.project.redo(self.data_browser.table_data) # Action remade in the Database
 
-        # FileName as raw tag
-        self.project.set_tag_origin("FileName", TAG_ORIGIN_RAW)
-        self.project.save_modifications()
-
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
 
