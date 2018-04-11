@@ -121,7 +121,7 @@ class DataBrowser(QWidget):
         self.table_data.project = database
         self.viewer.project = database
         self.advanced_search.database = database
-        # Update count table database?
+        # TODO update count table database?
 
         # We hide the advanced search when switching project
         self.frame_advanced_search.setHidden(True)
@@ -244,10 +244,10 @@ class DataBrowser(QWidget):
         # Returns the list of scans that have a match with the search in their visible tag values
             return_list = self.project.getScansMissingTags()
         elif str_search != "":
-            return_list = self.project.getScansSimpleSearch(str_search)
+            return_list = self.project.database.get_scans_matching_search(str_search)
         # Otherwise, we take every scan
         else:
-            return_list = self.project.getScansNames()
+            return_list = self.project.database.get_scans_names()
 
         self.table_data.scans_to_visualize = return_list
 
@@ -262,21 +262,6 @@ class DataBrowser(QWidget):
     def move_splitter(self):
         if self.splitter_vertical.sizes()[1] != self.splitter_vertical.minimumHeight():
             self.connect_viewer()
-            """
-            self.viewer.setHidden(False)
-        else:
-            self.viewer.setHidden(True)
-            path_name = os.path.relpath(self.Database.folder)
-            items = self.table_data.selectedItems()
-            full_names = []
-            for item in items:
-                row = item.row()
-                file_name = self.table_data.item(row, 0).text() + ".nii"
-                full_name = path_name + '/data/raw_data/' + file_name
-                if not full_name in full_names:
-                    full_names.append(full_name)
-
-            self.viewer.show_slices(full_names)"""
 
     def connect_viewer(self):
 
@@ -997,8 +982,8 @@ class TableDataBrowser(QTableWidget):
             column = 0
             while column < len(self.horizontalHeader()):
                 tag = self.horizontalHeaderItem(column).text() # We get the tag name from the header
-                current_value = self.project.database.get_initial_value(scan_name, tag)
-                initial_value = self.project.database.get_current_value(scan_name, tag)
+                current_value = self.project.database.get_current_value(scan_name, tag)
+                initial_value = self.project.database.get_initial_value(scan_name, tag)
                 if initial_value is not None:
                     # We reset the value only if it exists
                     modified_values.append([scan_name, tag, current_value, initial_value]) # For history

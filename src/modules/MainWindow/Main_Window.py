@@ -238,7 +238,7 @@ class Main_Window(QMainWindow):
             return 1
         if (self.project.isTempProject):
             return 0
-        if (self.project.unsavedModifications):
+        if (self.project.hasUnsavedModifications()):
             return 1
         else:
             return 0

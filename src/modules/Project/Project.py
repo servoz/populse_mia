@@ -138,3 +138,11 @@ class Project:
         if not self.isTempProject:
             self.saveConfig()
         self.unsavedModifications = False
+
+    def hasUnsavedModifications(self):
+        """
+        Knowing if the project has unsaved modifications or not
+        :return: True if the project has pending modifications, False otherwise
+        """
+
+        return self.unsavedModifications or self.database.has_unsaved_modifications()
