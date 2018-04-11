@@ -128,3 +128,13 @@ class Project:
                     self.database.add_tag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
 
         self.database.set_tag_origin("FileName", TAG_ORIGIN_RAW)
+
+    def saveModifications(self):
+        """
+        Saves the pending operations of the project (actions still not saved)
+        """
+
+        self.database.save_modifications()
+        if not self.isTempProject:
+            self.saveConfig()
+        self.unsavedModifications = False

@@ -728,13 +728,13 @@ class TableDataBrowser(QTableWidget):
                 item = QTableWidgetItem()
 
                 # The scan has a value for the tag
-                if self.project.scanHasTag(scan, current_tag):
-                    value = self.project.getValue(scan, current_tag)
+                current_value = self.project.database.get_current_value(scan, current_tag)
+                if current_value is not None:
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                     else:
                         self.update_color(scan, current_tag, item, row)
-                    item.setData(QtCore.Qt.EditRole,QtCore.QVariant(database_to_table(value.current_value)))
+                    item.setData(QtCore.Qt.EditRole,QtCore.QVariant(str(current_value)))
 
                 # The scan does not have a value for the tag
                 else:

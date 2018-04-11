@@ -50,7 +50,7 @@ def createProject(name, path, parent_folder):
         os.mkdir(os.path.join(new_path, 'properties'))
         properties = dict(
             name=name,
-            date=datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+            date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             sorted_tag='',
             sort_order=''
         )
@@ -207,12 +207,12 @@ def read_log(project):
     project.undos.append(historyMaker)
     project.redos.clear()
 
-def verify_scans(database, path):
+def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in database.getScans():
+    for scan in project.database.get_scans():
 
-        file_name = scan.scan
+        file_name = scan.name
         path_name = os.path.relpath(os.path.join(path, 'data', 'raw_data'))
 
         if os.path.exists(os.path.join(path_name, file_name) + ".nii"):
