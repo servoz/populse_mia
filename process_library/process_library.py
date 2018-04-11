@@ -34,7 +34,7 @@ class ProcessLibraryWidget(QWidget):
         self.update_config()
 
         # Process Library
-        self.process_library = DictionaryTreeWidget(self.packages)
+        self.process_library = ProcessLibrary(self.packages)
         self.process_library.setDragDropMode(self.process_library.DragOnly)
         self.process_library.setAcceptDrops(False)
         self.process_library.setDragEnabled(True)
@@ -403,7 +403,7 @@ def node_structure_from_dict(datadict, parent=None, root_node=None):
 
     return root_node
 
-class DictionaryTreeWidget(QTreeView):
+class ProcessLibrary(QTreeView):
     """returns an object containing the tree of the given dictionary d.
     example:
     tree = DictionaryTree(d)
@@ -414,7 +414,7 @@ class DictionaryTreeWidget(QTreeView):
     """
 
     def __init__(self, d):
-        super(DictionaryTreeWidget, self).__init__()
+        super(ProcessLibrary, self).__init__()
         self.load_dictionary(d)
 
     def load_dictionary(self,d):
