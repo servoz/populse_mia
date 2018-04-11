@@ -1,8 +1,12 @@
 import sys
 import os
+from glob import glob
 import yaml
 import inspect
 import pkgutil
+
+# PyQt5 import # TO REMOVE
+from PyQt5.QtCore import QSortFilterProxyModel
 
 # PyQt / PySide import, via soma
 from soma.qt_gui import qt_backend
@@ -262,6 +266,7 @@ class Node(object):
     def resource(self):
         return None
 
+
 class DictionaryTreeModel(QAbstractItemModel):
     """Data model providing a tree of an arbitrary dictionary"""
 
@@ -443,6 +448,9 @@ class PackageLibraryDialog(QDialog):
 
         self.setWindowTitle("Package Library")
 
+        # True if the path specified in the line edit is a path with '/'
+        self.is_path = False
+
         self.process_config = self.load_config()
         self.load_packages()
 
@@ -508,34 +516,43 @@ class PackageLibraryDialog(QDialog):
     def browse_package(self):
         file_dialog = QFileDialog()
         file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-        file_dialog.setFileMode(QFileDialog.Directory)
 
-        python_path = os.environ['PYTHONPATH'].split(os.pathsep)
-        python_path = python_path[0]
-        file_dialog.setDirectory(python_path)
+        # To select files or directories, we should use a proxy model
+        # but mine is not working yet...
+        #file_dialog.setProxyModel(FileFilterProxyModel())
+        file_dialog.setFileMode(QFileDialog.Directory)
+        #file_dialog.setFileMode(QFileDialog.Directory | QFileDialog.ExistingFile)
+        #file_dialog.setFilter("Processes (*.py *.xml)")
 
         if file_dialog.exec_():
             file_name = file_dialog.selectedFiles()[0]
-            file_name = file_name.replace(python_path, '')
-            file_name = file_name.replace('/', '.').replace('\\', '.')
-            if len(file_name) != 0 and file_name[0] == '.':
-                file_name = file_name[1:]
-
+            file_name = os.path.abspath(file_name)
+            self.is_path = True
             self.line_edit.setText(file_name)
 
     def add_package_with_text(self):
-        self.add_package(self.line_edit.text())
+        if self.is_path:
+            path, package = os.path.split(self.line_edit.text())
+            # Adding the module path to the system path
+            sys.path.append(path)
+            self.add_package(package)
 
-    def add_package(self, module):
+        else:
+            self.add_package(self.line_edit.text())
+
+    def add_package(self, module_name):
         self.packages = self.package_library.package_tree
-        if module:
-            __import__(module)
-            pkg = sys.modules[module]
+        if module_name:
+            __import__(module_name)
+            pkg = sys.modules[module_name]
+
+            # Checking if there are subpackages
             for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
                 if ispkg:
-                    self.add_package(str(module + '.' + modname))
-                #else:
+                    self.add_package(str(module_name + '.' + modname))
+
             for k, v in sorted(list(pkg.__dict__.items())):
+                # Checking each class of in the package
                 if inspect.isclass(v):
                     try:
                         find_in_path(k)
@@ -544,7 +561,8 @@ class PackageLibraryDialog(QDialog):
                         #TODO: WHICH TYPE OF EXCEPTION?
                         pass
                     else:
-                        path_list = module.split('.')
+                        # Updating the tree's dictionnary
+                        path_list = module_name.split('.')
                         path_list.append(k)
                         pkg_iter = self.packages
                         for element in path_list:
@@ -594,6 +612,58 @@ class PackageLibraryDialog(QDialog):
         with open('process_config.yml', 'w', encoding='utf8') as configfile:
             yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()
+
+
+def import_file(full_name, path):
+    """Import a python module from a path. 3.4+ only.
+
+    Does not call sys.modules[full_name] = path
+    """
+    from importlib import util
+
+    spec = util.spec_from_file_location(full_name, path)
+    mod = util.module_from_spec(spec)
+
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class FileFilterProxyModel(QSortFilterProxyModel):
+    """ Just a test for the moment. Should be useful to use in the file dialog. """
+    def __init__(self):
+        super(FileFilterProxyModel, self).__init__()
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        source_model = self.sourceModel()
+        index0 = source_model.index(source_row, 0, source_parent)
+        # Always show directories
+        if source_model.isDir(index0):
+            return True
+        # filter files
+        filename = source_model.fileName(index0)
+        #       filename=self.sourceModel().index(row,0,parent).data().lower()
+        #return True
+        if filename.count(".py") + filename.count(".xml") == 0:
+            return False
+        else:
+            return True
+
+    """def flags(self, index):
+        flags = super(FileFilterProxyModel, self).flags(index)
+        source_model = self.sourceModel()
+        if source_model.isDir(index):
+            flags |= Qt.ItemIsSelectable
+            return flags
+
+        # filter files
+        filename = source_model.fileName(index)
+
+        if filename.count(".py") + filename.count(".xml") == 0:
+            flags &= ~Qt.ItemIsSelectable
+            return flags
+        else:
+            flags |= Qt.ItemIsSelectable
+            return flags"""
 
 
 class PackageLibrary(QTreeWidget):
@@ -650,8 +720,8 @@ class PackageLibrary(QTreeWidget):
             self.recursive_checks(parent.child(i))
 
     def recursive_checks_from_child(self, child):
-
-        if child is not self.topLevelItem(0):
+        """ If a child is checked, his parents has to be checked """
+        if child.parent():
             parent = child.parent()
             if parent.checkState(0) == Qt.Unchecked:
                 parent.setCheckState(0, Qt.Checked)
