@@ -242,7 +242,10 @@ class DataBrowser(QWidget):
         # Returns the list of scans that have at least one not defined value in the visualized tags
         if str_search == "*Not Defined*":
         # Returns the list of scans that have a match with the search in their visible tag values
-            return_list = self.project.getScansMissingTags()
+            for scan in self.project.database.get_scans():
+                for tag in self.project.database.get_visualized_tags():
+                    if self.project.database.get_current_value(scan.name, tag) is None and not scan.name in return_list:
+                        return_list.append(scan.name)
         elif str_search != "":
             return_list = self.project.database.get_scans_matching_search(str_search)
         # Otherwise, we take every scan
