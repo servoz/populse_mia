@@ -10,6 +10,7 @@ import yaml
 from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
+from datetime import datetime
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -118,7 +119,7 @@ def read_log(project):
                     properties = tag[1]
                     unit = None
                     format = ''
-                    type = TAG_TYPE_STRING
+                    tag_type = TAG_TYPE_STRING
                     description = None
                     if isinstance(properties, dict):
                         value = properties['value']
@@ -126,9 +127,9 @@ def read_log(project):
                         if unit == "":
                             unit = None
                         format = properties['format']
-                        type = properties['type']
-                        if type == "":
-                            type = TAG_TYPE_STRING
+                        tag_type = properties['type']
+                        if tag_type == "":
+                            tag_type = TAG_TYPE_STRING
                         description = properties['description']
                         if description == "":
                             description = None
@@ -137,31 +138,56 @@ def read_log(project):
 
                     tag_name = tag[0]
 
+                    # Creating date types
+                    if format is not None and format != "":
+                        if format == "yyyy-MM-dd HH:mm:ss":
+                            tag_type = TAG_TYPE_DATETIME
+                        elif format == "HH:mm:ss.SSS":
+                            tag_type = TAG_TYPE_TIME
+
                     if tag_name != "Json_Version":
                         # Preparing value and type
                         if len(value) is 1:
                             value = value[0]
                         else:
-                            if type == TAG_TYPE_STRING:
-                                type = TAG_TYPE_LIST_STRING
-                            elif type == TAG_TYPE_INTEGER:
-                                type = TAG_TYPE_LIST_INTEGER
-                            elif type == TAG_TYPE_FLOAT:
-                                type = TAG_TYPE_LIST_FLOAT
+                            if tag_type == TAG_TYPE_STRING:
+                                tag_type = TAG_TYPE_LIST_STRING
+                            elif tag_type == TAG_TYPE_INTEGER:
+                                tag_type = TAG_TYPE_LIST_INTEGER
+                            elif tag_type == TAG_TYPE_FLOAT:
+                                tag_type = TAG_TYPE_LIST_FLOAT
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
                             value = value_prepared
 
-                    # Adding tag
-                    if tag_name in default_tags:
-                        project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, type, unit, None,
-                                                 description)
-                    else:
-                        project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, type, unit, None,
-                                                 description)
+                    if tag_type == TAG_TYPE_DATETIME and value is not None and value != "":
+                        value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
 
-                    # We only accept the value if it's not empty or null
+                    # Tags updated at first scan
+                    # TODO problem if tag not in all scans
+                    if idx == 1:
+                        database_tag = project.database.get_tag(tag_name)
+                        if database_tag is None:
+                            # Adding the tag as it's not in the database yet
+                            if tag_name in default_tags:
+                                project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, tag_type, unit, None,
+                                                         description)
+                            else:
+                                project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, tag_type, unit, None,
+                                                         description)
+                        else:
+                            # The tag is updated as it's already in the database
+                            project.database.set_tag_origin(tag_name, TAG_ORIGIN_RAW)
+                            if tag_name in default_tags:
+                                project.database.set_tag_visibility(tag_name, True)
+                            else:
+                                project.database.set_tag_origin(tag_name, False)
+                            project.database.set_tag_description(tag_name, description)
+                            project.database.set_tag_type(tag_name, tag_type)
+                            project.database.set_tag_unit(tag_name, unit)
+
+                    # The value is accepted if it's not empty or null
                     if value is not None and value != "":
                         project.database.add_value(file_name, tag_name, value, value) # Value added to the Database
                         values_added.append([file_name, tag_name, value]) # Value added to history
