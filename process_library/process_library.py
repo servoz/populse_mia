@@ -279,7 +279,6 @@ class DictionaryTreeModel(QAbstractItemModel):
                 node = idx.internalPointer()
                 txt = node.data(idx.column())
                 mimedata.setData('component/name', QByteArray(txt.encode()))
-                print(txt)
         return mimedata
 
     def rowCount(self, parent):

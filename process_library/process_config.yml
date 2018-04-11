@@ -4,7 +4,7 @@ Packages:
       fsl:
         AR1Image: process_disabled
         AccuracyTester: process_disabled
-        ApplyMask: process_disabled
+        ApplyMask: process_enabled
         ApplyTOPUP: process_disabled
         ApplyWarp: process_disabled
         ApplyXFM: process_disabled
