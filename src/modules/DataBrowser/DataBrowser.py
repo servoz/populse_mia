@@ -333,13 +333,11 @@ class DataBrowser(QWidget):
 
             values = []
 
-            database_value = table_to_database(new_default_value, tag_type)
-
             # We add the tag and a value for each scan in the Database
-            self.project.addTag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, database_value, new_tag_description)
-            for scan in self.project.getScans():
-                self.project.addValue(scan.scan, new_tag_name, database_value, None)
-                values.append([scan.scan, new_tag_name, database_value, None]) # For history
+            self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
+            for scan in self.project.database.get_scans():
+                self.project.database.add_value(scan.name, new_tag_name, new_default_value, None)
+                values.append([scan.name, new_tag_name, new_default_value, None]) # For history
 
             # For history
             historyMaker = []
@@ -347,7 +345,7 @@ class DataBrowser(QWidget):
             historyMaker.append(new_tag_name)
             historyMaker.append(tag_type)
             historyMaker.append(new_tag_unit)
-            historyMaker.append(database_value)
+            historyMaker.append(new_default_value)
             historyMaker.append(new_tag_description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
@@ -371,14 +369,15 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            tagCloned = self.project.getTag(tag_to_clone)
-            self.project.addTag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default, tagCloned.description)
-            for scan in self.project.getScans():
+            tagCloned = self.project.database.get_tag(tag_to_clone)
+            self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default_value, tagCloned.description)
+            for scan in self.project.database.get_scans():
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
-                if(self.project.scanHasTag(scan.scan, tag_to_clone)):
-                    toCloneValue = self.project.getValue(scan.scan, tag_to_clone)
-                    self.project.addValue(scan.scan, new_tag_name, toCloneValue.current_value, toCloneValue.raw_value)
-                    values.append([scan.scan, new_tag_name, toCloneValue.current_value, toCloneValue.raw_value])  # For history
+                cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
+                cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
+                if cloned_cur_value is not None or cloned_init_value is not None:
+                    self.project.database.add_value(scan.name, new_tag_name, cloned_cur_value, cloned_init_value)
+                    values.append([scan.name, new_tag_name, cloned_cur_value, cloned_init_value])  # For history
 
             # For history
             historyMaker = []
@@ -386,7 +385,7 @@ class DataBrowser(QWidget):
             historyMaker.append(new_tag_name)
             historyMaker.append(tagCloned.type)
             historyMaker.append(tagCloned.unit)
-            historyMaker.append(tagCloned.default)
+            historyMaker.append(tagCloned.default_value)
             historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
@@ -423,8 +422,8 @@ class DataBrowser(QWidget):
             # Each Value objects of the tags to remove are stored in the history
             values_removed = []
             for tag in tag_names_to_remove:
-                for value in self.project.getValuesGivenTag(tag):
-                    values_removed.append(value)
+                # TODO add tag values to values_removed
+                pass
             historyMaker.append(values_removed)
 
             self.project.undos.append(historyMaker)
@@ -432,7 +431,7 @@ class DataBrowser(QWidget):
 
             # Tags removed from the Database and table
             for tag in tag_names_to_remove:
-                self.project.removeTag(tag)
+                self.project.database.remove_tag(tag)
                 self.table_data.removeColumn(self.table_data.get_tag_column(tag))
 
             # Selection updated
@@ -478,7 +477,7 @@ class TableDataBrowser(QTableWidget):
         self.insertColumn(column)
         item = QtWidgets.QTableWidgetItem()
         self.setHorizontalHeaderItem(column, item)
-        tag_object = self.project.getTag(tag)
+        tag_object = self.project.database.get_tag(tag)
         item.setText(tag)
         item.setToolTip(
             "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
@@ -489,9 +488,10 @@ class TableDataBrowser(QTableWidget):
             self.setItem(row, column, item)
             scan = self.item(row, 0).text()
             self.update_color(scan, tag, item, row)
-            if self.project.scanHasTag(scan, tag):
+            cur_value = self.project.database.get_current_value(scan, tag)
+            if cur_value is not None:
                 item.setData(QtCore.Qt.EditRole, QtCore.QVariant(
-                    database_to_table(self.project.getValue(scan, tag).current_value)))
+                    str(cur_value)))
             else:
                 item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                 font = item.font()
@@ -1070,16 +1070,14 @@ class TableDataBrowser(QTableWidget):
             row = point.row()
             scan_path = self.item(row, 0).text()
 
-            scan_object = self.project.getScan(scan_path)
+            scan_object = self.project.database.get_scan(scan_path)
             scans_removed.append(scan_object)
-            for value in self.project.getValuesGivenScan(scan_path):
-                values_removed.append(value)
 
             self.scans_to_visualize.remove(scan_path)
-            self.project.removeScan(scan_path)
+            self.project.database.remove_scan(scan_path)
 
         for scan in scans_removed:
-            scan_name = scan.scan
+            scan_name = scan.name
             self.removeRow(self.get_scan_row(scan_name))
 
         historyMaker.append(scans_removed)
