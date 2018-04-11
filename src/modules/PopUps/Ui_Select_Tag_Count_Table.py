@@ -11,7 +11,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
         super(Ui_Select_Tag_Count_Table, self).__init__(database)
 
         if visualized_tags_only:
-            for tag in self.database.getTags():
+            for tag in self.project.getTags():
                 if database.getTagVisibility(tag.tag):
                     item = QtWidgets.QListWidgetItem()
                     item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
@@ -24,7 +24,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
 
         else:
             # Filling the list and checking the previous selected tag
-            for tag in self.database.getTags():
+            for tag in self.project.getTags():
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
                 if tag.tag == tag_name_checked:

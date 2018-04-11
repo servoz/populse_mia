@@ -1,3 +1,4 @@
+"""
 import os
 import tempfile
 import ProjectManager.Controller as controller
@@ -11,9 +12,9 @@ from Database.Database import Database
 
 # First test
 def test_database_creation_software_opening():
-    """
+    ""
     Tests the creation of the database file at software opening
-    """
+    ""
     database = Database(None, True)
     folder = database.folder
     database_folder = os.path.join(folder, "database", "mia2.db")
@@ -21,9 +22,9 @@ def test_database_creation_software_opening():
 
 # Second test
 def test_database_creation_new_project():
-    """
+    ""
     Tests the creation of the database file at new project
-    """
+    ""
     entire_path = os.path.relpath(os.path.join("..", "..", "..", "..", "test"))
     path, name = os.path.split(entire_path)
     relative_subpath = os.path.relpath(path)
@@ -59,3 +60,4 @@ if len(failed_tests) > 0:
     for failed in failed_tests:
         errorMessage += "\t" + failed + "\n"
     raise Exception(errorMessage)
+"""

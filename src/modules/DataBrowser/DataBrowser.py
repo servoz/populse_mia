@@ -119,7 +119,7 @@ class DataBrowser(QWidget):
         # Database updated everywhere
         self.project = database
         self.table_data.project = database
-        self.viewer.database = database
+        self.viewer.project = database
         self.advanced_search.database = database
         # Update count table database?
 

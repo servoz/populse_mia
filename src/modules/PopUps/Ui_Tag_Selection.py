@@ -9,7 +9,7 @@ class Ui_Tag_Selection(QDialog):
 
     def __init__(self, database):
         super().__init__()
-        self.database = database
+        self.project = database
 
         _translate = QtCore.QCoreApplication.translate
 
@@ -63,11 +63,11 @@ class Ui_Tag_Selection(QDialog):
     def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for tag in self.database.getTags():
+            for tag in self.project.getTags():
                 if str_search.upper() in tag.tag.upper():
                     return_list.append(tag.tag)
         else:
-            for tag in self.database.getTags():
+            for tag in self.project.getTags():
                 return_list.append(tag.tag)
 
         for idx in range(self.list_widget_tags.count()):
