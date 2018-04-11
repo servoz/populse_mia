@@ -3,7 +3,7 @@ import os.path
 import json
 import Utils.Utils as utils
 import hashlib # To generate the md5 of each scan
-from Database.DatabaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER
+from populse_db.DatabaseModel import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_FLOAT, TAG_TYPE_TIME, TAG_TYPE_FLOAT, TAG_TYPE_DATE, TAG_TYPE_DATETIME, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING
 from SoftwareProperties.Config import Config
 import datetime
 import yaml
@@ -57,14 +57,12 @@ def createProject(name, path, parent_folder):
             yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
 
-def read_log(database):
-
-    start_func = time()
+def read_log(project):
 
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
-    raw_data_folder = os.path.relpath(os.path.join(database.folder, 'data', 'raw_data'))
+    raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
 
     # Checking all the export logs from MRIManager and taking the most recent
     list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
@@ -82,8 +80,6 @@ def read_log(database):
     # Default tags stored
     config = Config()
     default_tags = config.getDefaultTags()
-    import_tags = []
-    import_tags_names = []
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
     # Progressbar
@@ -107,14 +103,12 @@ def read_log(database):
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
 
-            database.addScan(file_name, original_md5) # Scan added to the Database
+            project.database.add_scan(file_name, original_md5) # Scan added to the Database
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
-            database.addValue(file_name, "FileName", utils.table_to_database(file_name, TAG_TYPE_STRING), None) # FileName tag added
-            values_added.append([file_name, "FileName", utils.table_to_database(file_name, TAG_TYPE_STRING)])
-
-            #start_time = time()
+            project.database.add_value(file_name, "FileName", file_name, None) # FileName tag added
+            values_added.append([file_name, "FileName", file_name, TAG_TYPE_STRING])
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -141,79 +135,51 @@ def read_log(database):
                     else:
                         value = properties[0]
 
-                    value = str(value) # Value list converted in str
+                    tag_name = tag[0]
 
-                    # We have to put Json_Version tag value to list
-                    if tag[0] == "Json_Version":
-                        value = "['" + value + "']"
+                    if tag_name != "Json_Version":
+                        # Preparing value and type
+                        if len(value) is 1:
+                            value = value[0]
+                        else:
+                            if type == TAG_TYPE_STRING:
+                                type = TAG_TYPE_LIST_STRING
+                            elif type == TAG_TYPE_INTEGER:
+                                type = TAG_TYPE_LIST_INTEGER
+                            elif type == TAG_TYPE_FLOAT:
+                                type = TAG_TYPE_LIST_FLOAT
+                            value_prepared = []
+                            for value_single in value:
+                                value_prepared.append(value_single[0])
+                            value = value_prepared
+
+                    # Adding tag
+                    if tag_name in default_tags:
+                        project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, type, unit, None,
+                                                 description)
+                    else:
+                        project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, type, unit, None,
+                                                 description)
 
                     # We only accept the value if it's not empty or null
-                    if value is not None and utils.database_to_table(value) is not "":
-                        database.addValue(file_name, tag[0], value, value) # Value added to the Database
-                        values_added.append([file_name, tag[0], value]) # Value added to history
-
-                        if not tag[0] in import_tags_names:
-                            import_tags.append([tag[0], type, unit, description])
-                            import_tags_names.append(tag[0])
-
-            #print("Loop --- %s seconds ---" % (time() - start_time))
+                    if value is not None and value != "":
+                        project.database.add_value(file_name, tag_name, value, value) # Value added to the Database
+                        values_added.append([file_name, tag_name, value]) # Value added to history
 
     ui_progressbar.close()
 
-    # Progressbar
-    len_tags = len(import_tags)
-    ui_progressbar = QProgressDialog("Importing tags in database", "Cancel", 0, len_tags)
-    ui_progressbar.setWindowModality(Qt.WindowModal)
-    ui_progressbar.setWindowTitle("")
-    idx = 0
-
-    # Tags added to the Database
-    for tag in import_tags:
-
-        # Progressbar
-        idx += 1
-        ui_progressbar.setValue(idx)
-        if ui_progressbar.wasCanceled():
-            break
-
-        #start_time = time()
-
-        # Default tags are already in the Database with user origin
-        tag_name = tag[0]
-        tag_type = tag[1]
-        tag_unit = tag[2]
-        tag_description = tag[3]
-        if database.hasTag(tag_name):
-            tag_object = database.getTag(tag_name)
-            tag_object.origin = TAG_ORIGIN_RAW
-            tag_object.description = tag_description
-            tag_object.unit = tag_unit
-            tag_object.type = tag_type
-        else:
-            if tag_name in default_tags:
-                database.addTag(tag_name, True, TAG_ORIGIN_RAW, tag_type, tag_unit, None, tag_description)
-            else:
-                database.addTag(tag_name, False, TAG_ORIGIN_RAW, tag_type, tag_unit, None, tag_description)
-
-        #print("Tag --- %s seconds ---" % (time() - start_time))
-    ui_progressbar.close()
-    # start_time = time()
     # Missing values added thanks to default values
-    for tag in database.getUserTags():
-        for scan in scans_added:
-            #loop_time = time()
-            if tag.default is not None and not database.scanHasTag(scan[0], tag.tag):
-                database.addValue(scan[0], tag.tag, tag.default, None)
-            #print("Value added --- %s seconds ---" % (time() - loop_time))
-    #print("Values added --- %s seconds ---" % (time() - start_time))
+    for tag in project.database.get_tags():
+        if tag.origin == TAG_ORIGIN_USER:
+            for scan in scans_added:
+                if tag.default_value is not None and project.database.get_value(scan[0], tag.tag) is None:
+                    project.database.add_value(scan[0], tag.tag, tag.default_value, None)
 
     # For history
     historyMaker.append(scans_added)
     historyMaker.append(values_added)
-    database.undos.append(historyMaker)
-    database.redos.clear()
-
-    #print("total --- %s seconds ---" % (time() - start_func))
+    project.undos.append(historyMaker)
+    project.redos.clear()
 
 def verify_scans(database, path):
     # Returning the files that are problematic

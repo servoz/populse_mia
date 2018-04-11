@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from Database.DatabaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 
 class ModifyTable(QDialog):
     """

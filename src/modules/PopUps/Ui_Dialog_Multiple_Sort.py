@@ -3,7 +3,6 @@ from PyQt5.QtGui import QPixmap
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.Utils import database_to_table
 
 class Ui_Dialog_Multiple_Sort(QDialog):
     def __init__(self, database=None):

@@ -25,7 +25,7 @@ from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
 
 import ProjectManager.Controller as controller
 import shutil
-from Database.Database import Database
+from Project.Project import Project
 
 class Main_Window(QMainWindow):
     """
@@ -40,12 +40,12 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self, database):
+    def __init__(self, project):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
-        self.database = database
+        self.project = project
 
         ############### initial setting ############################################################
         config = Config()
@@ -175,19 +175,23 @@ class Main_Window(QMainWindow):
         """
         To undo the last action done by the user
         """
-        self.database.undo(self.data_browser.table_data) # Action reverted in the Database
+        self.project.undo(self.data_browser.table_data) # Action reverted in the Database
 
     def redo(self):
         """
         To redo the last action made by the user
         """
-        self.database.redo(self.data_browser.table_data) # Action remade in the Database
+        self.project.redo(self.data_browser.table_data) # Action remade in the Database
+
+        # FileName as raw tag
+        self.project.set_tag_origin("FileName", TAG_ORIGIN_RAW)
+        self.project.save_modifications()
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
 
         if self.check_unsaved_modifications():
-            self.pop_up_close = Ui_Dialog_Quit(self.database)
+            self.pop_up_close = Ui_Dialog_Quit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
@@ -208,33 +212,33 @@ class Main_Window(QMainWindow):
         import glob
 
         # If it's unnamed project, we can remove the whole project
-        if self.database.isTempProject:
-            shutil.rmtree(self.database.folder)
+        if self.project.isTempProject:
+            shutil.rmtree(self.project.folder)
         else:
-            for filename in glob.glob(os.path.join(os.path.relpath(self.database.folder), 'data', 'raw_data', '*')):
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan, extension = os.path.splitext(os.path.basename(filename))
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if not self.database.hasScan(scan) and "logExport" not in scan:
+                if not self.project.hasScan(scan) and "logExport" not in scan:
                     os.remove(filename)
 
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as or just saved """
-        if (self.database.isTempProject):
+        if (self.project.isTempProject):
             self.save_project_as()
         else:
-            controller.save_project(self.database)
+            controller.save_project(self.project)
 
     def check_unsaved_modifications(self):
         """ Check if there are differences between the current project and the data base
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        if (self.database.isTempProject and len(self.database.getScans()) > 0):
+        if (self.project.isTempProject and len(self.project.database.get_scans_names()) > 0):
             return 1
-        if (self.database.isTempProject):
+        if (self.project.isTempProject):
             return 0
-        if (self.database.unsavedModifications):
+        if (self.project.unsavedModifications):
             return 1
         else:
             return 0
@@ -253,7 +257,7 @@ class Main_Window(QMainWindow):
         self.textInfo.resize(500, 40)
         self.textInfo.setText('Welcome to Irmage')
 
-        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.database)
+        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer(self.textInfo)
@@ -275,7 +279,7 @@ class Main_Window(QMainWindow):
         exPopup = Ui_Dialog_Save_Project_As()
         if exPopup.exec_():
 
-            old_folder = self.database.folder
+            old_folder = self.project.folder
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
             database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
@@ -295,7 +299,7 @@ class Main_Window(QMainWindow):
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
 
             # We commit the last pending modifications
-            self.database.saveModifications()
+            self.project.saveModifications()
 
             # We copy the Database with all the modifications commited in the new project
             if os.path.exists(os.path.join(old_folder, 'database')):
@@ -311,14 +315,14 @@ class Main_Window(QMainWindow):
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
             # Project updated everywhere
-            self.database = Database(exPopup.relative_path, False)
+            self.project = Project(exPopup.relative_path, False)
 
             self.update_project(file_name, call_update_table=False) # Project updated everywhere
 
     def create_project_pop_up(self):
 
         if self.check_unsaved_modifications():
-            self.pop_up_close = Ui_Dialog_Quit(self.database)
+            self.pop_up_close = Ui_Dialog_Quit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_switch = self.pop_up_close.can_exit()
@@ -338,7 +342,7 @@ class Main_Window(QMainWindow):
                 self.exPopup.retranslateUi(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
 
-                self.database = Database(self.exPopup.relative_path, True)
+                self.project = Project(self.exPopup.relative_path, True)
 
                 self.update_project(file_name) # Project updated everywhere
 
@@ -380,7 +384,7 @@ class Main_Window(QMainWindow):
             if self.check_unsaved_modifications():
 
                 # If there are unsaved modifications, we ask the user what he wants to do
-                self.pop_up_close = Ui_Dialog_Quit(self.database)
+                self.pop_up_close = Ui_Dialog_Quit(self.project)
                 self.pop_up_close.save_as_signal.connect(self.saveChoice)
                 self.pop_up_close.exec()
                 can_switch = self.pop_up_close.can_exit()
@@ -392,7 +396,7 @@ class Main_Window(QMainWindow):
             if can_switch:
 
                 # We check for invalid scans in the project
-                tempDatabase = Database(path, False)
+                tempDatabase = Project(path, False)
                 problem_list = controller.verify_scans(tempDatabase, path)
 
                 # Message if invalid files
@@ -415,7 +419,7 @@ class Main_Window(QMainWindow):
                 else:
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
 
-                    self.database = tempDatabase  # New Database
+                    self.project = tempDatabase  # New Database
 
                     self.update_project(file_name) # Project updated everywhere
 
@@ -440,16 +444,16 @@ class Main_Window(QMainWindow):
         :param file_name: File name of the new project
         """
 
-        self.data_browser.update_database(self.database)  # Database update DataBrowser
+        self.data_browser.update_database(self.project)  # Database update DataBrowser
 
         if call_update_table:
             self.data_browser.table_data.update_table() # Table updated
 
         # Window name updated
-        if self.database.isTempProject:
+        if self.project.isTempProject:
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
         else:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.database.getName())
+            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.getName())
 
         # List of project updated
         self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
@@ -476,8 +480,8 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.database.getVisualizedTags()
-        self.pop_up_settings = Ui_Dialog_Settings(self.database)
+        old_tags = self.project.getVisualizedTags()
+        self.pop_up_settings = Ui_Dialog_Settings(self.project)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
@@ -498,7 +502,7 @@ class Main_Window(QMainWindow):
          data base """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'MRI_File_Manager', 'MRIManager.jar'),
-                         '[ExportNifti] ' + os.path.join(self.database.folder, 'data', 'raw_data'),
+                         '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
                          'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
@@ -506,12 +510,12 @@ class Main_Window(QMainWindow):
         if code_exit == 0:
 
             # Database filled
-            controller.read_log(self.database)
+            controller.read_log(self.project)
 
             # Table updated
-            self.data_browser.table_data.scans_to_visualize = self.database.getScansNames()
+            self.data_browser.table_data.scans_to_visualize = self.project.database.get_scans_names()
             self.data_browser.table_data.add_columns()
-            self.data_browser.table_data.add_rows(self.database.getScansNames())
+            self.data_browser.table_data.add_rows(self.project.database.get_scans_names())
 
         else:
             pass

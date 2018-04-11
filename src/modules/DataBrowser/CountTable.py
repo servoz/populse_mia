@@ -5,7 +5,6 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.Utils import database_to_table, table_to_database
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator

@@ -18,8 +18,6 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
-from Utils.Utils import database_to_table
-
 
 class MiniViewer(QWidget):
     """ MiniViewer that allows to rapidly visualize scans either with a single image per scan

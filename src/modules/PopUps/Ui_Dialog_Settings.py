@@ -13,10 +13,10 @@ class Ui_Dialog_Settings(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_settings_change = pyqtSignal()
 
-    def __init__(self, database):
+    def __init__(self, project):
         super().__init__()
-        self.pop_up(database)
-        self.old_visibles_tags = database.getVisualizedTags()
+        self.pop_up(project)
+        self.old_visibles_tags = project.database.get_visualized_tags()
 
     def pop_up(self, database):
         _translate = QtCore.QCoreApplication.translate
@@ -58,19 +58,19 @@ class Ui_Dialog_Settings(QDialog):
 
         self.setLayout(vbox)
 
-    def ok_clicked(self, database):
+    def ok_clicked(self, project):
         historyMaker = []
         historyMaker.append("modified_visibilities")
         historyMaker.append(self.old_visibles_tags)
         new_visibilities = []
-        database.resetAllVisibilities()
+        project.database.reset_all_visibilities()
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
-            database.setTagVisibility(visible_tag, True)
+            project.database.set_tag_visibility(visible_tag, True)
             new_visibilities.append(visible_tag)
         historyMaker.append(new_visibilities)
-        database.undos.append(historyMaker)
-        database.redos.clear()
+        project.undos.append(historyMaker)
+        project.redos.clear()
         #Database.setName(self.tab_infos.name_value.text())
         self.accept()
         self.close()

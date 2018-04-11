@@ -16,7 +16,7 @@ class Ui_Visualized_Tags(QWidget):
         super().__init__()
         self.retranslate_Ui(database)
 
-    def retranslate_Ui(self, database):
+    def retranslate_Ui(self, project):
         _translate = QtCore.QCoreApplication.translate
 
         # Two buttons to select or unselect tags
@@ -45,7 +45,7 @@ class Ui_Visualized_Tags(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, database))
+        self.search_bar.textChanged.connect(partial(self.search_str, project))
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
@@ -74,16 +74,16 @@ class Ui_Visualized_Tags(QWidget):
 
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
-        for tag in database.getTags():
+        for tag in project.database.get_tags():
             item = QtWidgets.QListWidgetItem()
             if tag.visible == False:
                 # Tag not visible: left side
                 self.list_widget_tags.addItem(item)
-                self.left_tags.append(tag.tag)
+                self.left_tags.append(tag.name)
             else:
                 # Tag visible: right side
                 self.list_widget_selected_tags.addItem(item)
-            item.setText(tag.tag)
+            item.setText(tag.name)
         self.list_widget_tags.sortItems()
 
     def search_str(self, database, str_search):

@@ -5,7 +5,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
-from Database.Database import Database
+from Project.Project import Project
 from SoftwareProperties.Config import Config
 
 if __name__ == '__main__':
@@ -24,9 +24,9 @@ if __name__ == '__main__':
         tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
     config.setDefaultTags(tags)
 
-    database = Database(None, True)
+    project = Project(None, True)
 
-    imageViewer = Main_Window(database)
+    imageViewer = Main_Window(project)
     imageViewer.show()
 
     sys.exit(app.exec_())
