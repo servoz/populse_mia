@@ -410,8 +410,11 @@ class DataBrowser(QWidget):
             # Each Value objects of the tags to remove are stored in the history
             values_removed = []
             for tag in tag_names_to_remove:
-                # TODO add tag values to values_removed
-                pass
+                for scan in self.project.database.get_scans_names():
+                    current_value = self.project.database.get_current_value(scan, tag)
+                    initial_value = self.project.database.get_initial_value(scan, tag)
+                    if current_value is not None or initial_value is not None:
+                        values_removed.append([scan, tag, current_value, initial_value])
             historyMaker.append(values_removed)
 
             self.project.undos.append(historyMaker)
@@ -1060,6 +1063,13 @@ class TableDataBrowser(QTableWidget):
 
             scan_object = self.project.database.get_scan(scan_path)
             scans_removed.append(scan_object)
+
+            # Adding removed values to history
+            for tag in self.project.database.get_tags_names():
+                current_value = self.project.database.get_current_value(scan_path, tag)
+                initial_value = self.project.database.get_initial_value(scan_path, tag)
+                if current_value is not None or initial_value is not None:
+                    values_removed.append([scan_path, tag, current_value, initial_value])
 
             self.scans_to_visualize.remove(scan_path)
             self.project.database.remove_scan(scan_path)
