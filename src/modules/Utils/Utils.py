@@ -1,22 +1,36 @@
 import os
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import Qt, QVariant
 
-def check_value_type(value, type):
+def set_item_data(item, value):
+    """
+    Sets the item data
+    :param item: item to set
+    :param value: new item value
+    """
+
+    if isinstance(value, list):
+        item.setData(Qt.EditRole, QVariant(str(value)))
+    else:
+        item.setData(Qt.EditRole, QVariant(value))
+
+def check_value_type(value, type, is_subvalue=False):
     """
     Checks the type of the new value
     :param value: Value of the cell, str
     :param type: Type expected
+    :param is_subvalue: To know if the value is a subvalue of a list
     :return: True if the value is valid to replace the old one, False otherwise
     """
-    from populse_db.DatabaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_STRING
+    from populse_db.DatabaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT
 
-    if type == TAG_TYPE_INTEGER:
+    if type == TAG_TYPE_INTEGER or type == TAG_TYPE_LIST_INTEGER and is_subvalue:
         try:
             int(value)
             return True
         except ValueError:
             return False
-    elif type == TAG_TYPE_FLOAT:
+    elif type == TAG_TYPE_FLOAT or type == TAG_TYPE_LIST_FLOAT and is_subvalue:
         try:
             float(value)
             return True
@@ -29,6 +43,7 @@ def check_value_type(value, type):
             return True
         except ValueError:
             return False
+    # TODO add other types
 
 def message_already_exists():
     msg = QMessageBox()

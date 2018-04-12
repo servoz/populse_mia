@@ -74,19 +74,24 @@ class Ui_Dialog_remove_tag(QDialog):
         self.push_button_ok.clicked.connect(self.ok_action)
 
     def search_str(self, str_search):
+
+        from populse_db.DatabaseModel import TAG_ORIGIN_USER
+
         _translate = QtCore.QCoreApplication.translate
 
         if str_search != "":
             return_list = []
-            for tag in self.project.getUserTags():
-                tag_name = tag.tag
-                if str_search.upper() in tag_name.upper():
-                    return_list.append(tag_name)
+            for tag in self.project.database.get_tags():
+                if tag.origin == TAG_ORIGIN_USER:
+                    tag_name = tag.name
+                    if str_search.upper() in tag_name.upper():
+                        return_list.append(tag_name)
         else:
             return_list = []
-            for tag in self.project.getUserTags():
-                tag_name = tag.tag
-                return_list.append(tag_name)
+            for tag in self.project.database.get_tags():
+                if tag.origin == TAG_ORIGIN_USER:
+                    tag_name = tag.name
+                    return_list.append(tag_name)
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()

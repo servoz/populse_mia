@@ -25,6 +25,8 @@ class Project:
         self.redos = []
         self.initFilters()
 
+    """ FILTERS """
+
     def initFilters(self):
         """
         Init of the filters at project opening
@@ -44,6 +46,87 @@ class Project:
             filterObject = Filter(filter, data["nots"], data["values"], data["fields"], data["links"],
                                   data["conditions"], data["search_bar_text"])
             self.filters.append(filterObject)
+
+    def setCurrentFilter(self, filter):
+        """
+        To set the current filter of the project
+        :param filter: new Filter object
+        """
+
+        self.currentFilter = filter
+
+    def getFilter(self, filter):
+        """
+        To get a Filter object
+        :param filter: Filter name
+        :return: Filter object
+        """
+        for filterObject in self.filters:
+            if filterObject.name == filter:
+                return filterObject
+
+    def save_current_filter(self, advancedFilters):
+        """
+        To save the current filter
+        :return:
+        """
+
+        from PyQt5.QtWidgets import QMessageBox
+        import json
+
+        (fields, conditions, values, links, nots) = advancedFilters
+        self.currentFilter.fields = fields
+        self.currentFilter.conditions = conditions
+        self.currentFilter.values = values
+        self.currentFilter.links = links
+        self.currentFilter.nots = nots
+
+        # Getting the path
+        filters_path = os.path.join(self.folder, "filters")
+
+        # Filters folder created if it does not already exists
+        if not os.path.exists(filters_path):
+            os.mkdir(filters_path)
+
+        filter_name = self.getFilterName()
+
+        # We save the filter only if we have a filter name from the popup
+        if filter_name != None:
+            file_path = os.path.join(filters_path, filter_name + ".json")
+
+            if os.path.exists(file_path):
+                # Filter already exists
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The filter already exists in the project")
+                msg.setInformativeText("The project already has a filter named " + filter_name)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            else:
+                # Json filter file written
+                with open(file_path, 'w') as outfile:
+                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values,
+                                        self.currentFilter.fields, self.currentFilter.links,
+                                        self.currentFilter.conditions, self.currentFilter.search_bar)
+                    json.dump(new_filter.json_format(), outfile)
+                    self.filters.append(new_filter)
+
+    def getFilterName(self):
+        """
+        Input box to get the name of the filter to save
+        """
+
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+
+        text, okPressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
+
+    """ PROPERTIES """
 
     def loadProperties(self):
         """ Loads the properties file (Unnamed project does not have this file) """
@@ -110,6 +193,8 @@ class Project:
             self.properties["sort_order"] = order
             self.unsavedModifications = True
 
+    """ UTILS """
+
     def refreshTags(self):
         """
         Refreshes the tags
@@ -129,6 +214,8 @@ class Project:
 
         self.database.set_tag_origin("FileName", TAG_ORIGIN_RAW)
 
+    """ MODIFICATIONS """
+
     def saveModifications(self):
         """
         Saves the pending operations of the project (actions still not saved)
@@ -146,6 +233,8 @@ class Project:
         """
 
         return self.unsavedModifications or self.database.has_unsaved_modifications()
+
+    """ UNDO/REDO """
 
     def undo(self, table):
         """
@@ -224,7 +313,7 @@ class Project:
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
-                        self.removeValue(scan, tag)
+                        self.database.remove_value(scan, tag)
                         item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
                         font = item.font()
                         font.setItalic(True)
@@ -355,4 +444,3 @@ class Project:
                     # We reput each new tag visible
                     self.database.set_tag_visibility(visible, True)
                 table.update_visualized_columns(old_tags)  # Columns updated
-

@@ -198,8 +198,8 @@ def read_log(project):
     for tag in project.database.get_tags():
         if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
-                if tag.default_value is not None and project.database.get_value(scan[0], tag.tag) is None:
-                    project.database.add_value(scan[0], tag.tag, tag.default_value, None)
+                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
+                    project.database.add_value(scan[0], tag.name, tag.default_value, None)
 
     # For history
     historyMaker.append(scans_added)

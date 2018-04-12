@@ -1,16 +1,16 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from populse_db.DatabaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 
 class ModifyTable(QDialog):
     """
     Is called when the user wants to verify precisely the scans of the project.
     """
 
-    def __init__(self, database, list_value, types, scans, tags):
+    def __init__(self, project, list_value, types, scans, tags):
         """
         ModifyTable init
-        :param database: Instance of Database
+        :param project: Instance of Project
         :param list_value: List of values of the cell
         :param types: Value types
         :param scans: Scans of the rows
@@ -22,7 +22,7 @@ class ModifyTable(QDialog):
         self.types = types
         self.scans = scans
         self.tags = tags
-        self.database = database
+        self.project = project
         self.value = list_value
 
         # The table that will be filled
@@ -63,10 +63,9 @@ class ModifyTable(QDialog):
         i = 0
         while i < self.table.columnCount():
             column_elem = self.value[i]
-            if len(column_elem) == 1:
-                item = QTableWidgetItem()
-                item.setText(str(column_elem[0]))
-                self.table.setItem(0, i, item)
+            item = QTableWidgetItem()
+            item.setText(str(column_elem))
+            self.table.setItem(0, i, item)
             i += 1
 
         # Resize
@@ -99,7 +98,7 @@ class ModifyTable(QDialog):
 
             valid_type = True
             for type in self.types:
-                if not check_value_type(text, type):
+                if not check_value_type(text, type, True):
                     valid_type = False
                     type_problem = type
                     break
@@ -128,7 +127,7 @@ class ModifyTable(QDialog):
             while cell < len(self.scans):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
-                type = self.database.getTagType(tag)
+                type = self.project.database.get_tag_type(tag)
 
                 database_value = []
 
@@ -138,16 +137,17 @@ class ModifyTable(QDialog):
                     item = self.table.item(0, i)
                     text = item.text()
 
-                    if type == TAG_TYPE_INTEGER:
-                        database_value.append([int(text)])
-                    elif type == TAG_TYPE_FLOAT:
-                        database_value.append([float(text)])
+                    if type == TAG_TYPE_LIST_INTEGER:
+                        database_value.append(int(text))
+                    elif type == TAG_TYPE_LIST_FLOAT:
+                        database_value.append(float(text))
                     else:
-                        database_value.append([str(text)])
+                        database_value.append(str(text))
+                    # TODO add other types
                     i += 1
 
                 # Database updated for every cell
-                self.database.setTagValue(scan, tag, str(database_value))
+                self.project.database.set_value(scan, tag, database_value)
 
                 cell += 1
 

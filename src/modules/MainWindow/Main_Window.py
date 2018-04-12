@@ -91,8 +91,6 @@ class Main_Window(QMainWindow):
         self.action_save_as = QAction('Save project as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
 
-        self.action_save_current_filter = QAction('Save current filter', self)
-
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
@@ -121,7 +119,6 @@ class Main_Window(QMainWindow):
         self.action_exit.triggered.connect(self.close)
         self.action_save.triggered.connect(self.saveChoice)
         self.action_save_as.triggered.connect(self.save_project_as)
-        self.action_save_current_filter.triggered.connect(lambda : self.data_browser.save_current_filter())
         self.action_import.triggered.connect(self.import_data)
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
@@ -146,8 +143,6 @@ class Main_Window(QMainWindow):
         self.menu_file.addAction(self.action_open)
         self.menu_file.addAction(self.action_save)
         self.menu_file.addAction(self.action_save_as)
-        self.menu_file.addSeparator()
-        self.menu_file.addAction(self.action_save_current_filter)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
