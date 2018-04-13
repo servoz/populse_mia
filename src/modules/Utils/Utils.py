@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt, QVariant
+from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from datetime import datetime, date, time
 
 def set_item_data(item, value):
@@ -10,8 +10,17 @@ def set_item_data(item, value):
     :param value: new item value
     """
 
-    if isinstance(value, list) or isinstance(value, datetime) or isinstance(value, time) or isinstance(value, date):
+    if isinstance(value, list):
         item.setData(Qt.EditRole, QVariant(str(value)))
+    elif isinstance(value, datetime):
+        value_date = QDateTime(value)
+        item.setData(Qt.EditRole, QVariant(value_date))
+    elif isinstance(value, date):
+        value_date = QDate(value)
+        item.setData(Qt.EditRole, QVariant(value_date))
+    elif isinstance(value, time):
+        value_date = QTime(value)
+        item.setData(Qt.EditRole, QVariant(value_date))
     else:
         item.setData(Qt.EditRole, QVariant(value))
 

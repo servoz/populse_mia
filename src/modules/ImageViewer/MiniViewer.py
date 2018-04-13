@@ -375,7 +375,7 @@ class MiniViewer(QWidget):
                 value = self.project.database.get_current_value(scan.name, self.config.getThumbnailTag())
                 if value is not None:
                     self.label_description[idx].setText \
-                        (value[:self.nb_char_max])
+                        (str(value)[:self.nb_char_max])
                 else:
                     self.label_description[idx].setText \
                         (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])

@@ -896,8 +896,8 @@ class TableDataBrowser(QTableWidget):
             initial_value = self.project.database.get_initial_value(scan_name, tag_name)
             if initial_value is not None:
                 modified_values.append([scan_name, tag_name, current_value, initial_value]) # For history
-                self.project.database.reset_value(scan_name, tag_name)
-                # has_unreset_values = True TODO if value not reset
+                if not self.project.database.reset_value(scan_name, tag_name):
+                    has_unreset_values = True
                 self.update_color(scan_name, tag_name, self.item(row, col), row)
                 set_item_data(self.item(row, col), initial_value)
             else:
@@ -938,8 +938,8 @@ class TableDataBrowser(QTableWidget):
                 current_value = self.project.database.get_current_value(scan, tag_name)
                 if initial_value is not None:
                     modified_values.append([scan, tag_name, current_value, initial_value]) # For history
-                    self.project.database.reset_value(scan, tag_name)
-                    # has_unreset_values = True TODO if not reset
+                    if not self.project.database.reset_value(scan_name, tag_name):
+                        has_unreset_values = True
                     set_item_data(self.item(row, col), initial_value)
                     self.update_color(scan, tag_name, self.item(row, col), row)
                 else:
@@ -981,7 +981,8 @@ class TableDataBrowser(QTableWidget):
                     # We reset the value only if it exists
                     modified_values.append([scan_name, tag, current_value, initial_value]) # For history
                     self.project.database.reset_value(scan_name, tag)
-                    #has_unreset_values = True TODO if not reset
+                    if not self.project.database.reset_value(scan_name, tag_name):
+                        has_unreset_values = True
                     set_item_data(self.item(row, column), initial_value)
                     self.update_color(scan_name, tag, self.item(row, column), row)
                 else:
@@ -1166,7 +1167,7 @@ class TableDataBrowser(QTableWidget):
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
-            tag_object = self.project.database.get_tag(tag)
+            tag_object = self.project.database.get_tag(tag.name)
             if tag_object is not None and not tag_object.visible:
                 self.setColumnHidden(self.get_tag_column(tag.name), True)
 
@@ -1464,7 +1465,7 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-            type = self.project.database.get_tag(tag_name).type
+            tag_type = self.project.database.get_tag(tag_name).type
             old_value = item.text()
 
             # Type check
@@ -1474,11 +1475,11 @@ class TableDataBrowser(QTableWidget):
                     if not "table" in cells_types:
                         cells_types.append("table")
                 else:
-                    if not type in cells_types:
-                        cells_types.append(type)
+                    if not tag_type in cells_types:
+                        cells_types.append(tag_type)
             except:
-                if not type in cells_types:
-                    cells_types.append(type)
+                if not tag_type in cells_types:
+                    cells_types.append(tag_type)
 
         # Error if table with other types
         if "table" in cells_types and len(cells_types) > 1:
