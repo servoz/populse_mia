@@ -5,6 +5,7 @@ import yaml
 from SoftwareProperties.Config import Config
 from Project.Filter import Filter
 from populse_db.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Utils.Utils import set_item_data
 
 class Project:
 
@@ -259,43 +260,35 @@ class Project:
             if (action == "remove_tags"):
                 # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
                 tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
-                i = 0
-                while i < len(tagsRemoved):
+                for i in range (0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
                     self.database.add_tag(tagToReput.name, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit,
                                 tagToReput.default_value, tagToReput.description)
-                    i += 1
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
-                i = 0
-                while i < len(tagsRemoved):
+                for i in range (0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
                     column = table.get_index_insertion(tagToReput.name)
                     table.add_column(column, tagToReput.name)
-                    i += 1
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1]  # The second element is a list of added scans to remove
-                i = 0
-                while i < len(scansAdded):
+                for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToRemove = scansAdded[i][0]
                     self.database.remove_scan(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
-                    i += 1
             if (action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
                 scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
-                i = 0
-                while i < len(scansRemoved):
+                for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
                     self.database.add_scan(scanToReput.name, scanToReput.checksum)
                     table.scans_to_visualize.append(scanToReput.name)
-                    i += 1
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
                 table.add_rows(self.database.get_scans_names())
@@ -303,8 +296,7 @@ class Project:
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
                 table.itemChanged.disconnect()
-                i = 0
-                while i < len(modifiedValues):
+                for i in range (0, len(modifiedValues)):
                     # Each modified value is a list of 3 elements: scan, tag, and old_value
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
@@ -314,7 +306,7 @@ class Project:
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
                         self.database.remove_value(scan, tag)
-                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(not_defined_value))
+                        set_item_data(item, not_defined_value)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -322,9 +314,8 @@ class Project:
                     else:
                         # If the cell was there before, we just set it to the old value
                         self.database.set_value(scan, tag, str(old_value))
-                        item.setData(QtCore.Qt.EditRole, QtCore.QVariant(str(old_value)))
+                        set_item_data(item, old_value)
                         table.update_color(scan, tag, item, table.get_scan_row(scan))
-                    i += 1
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
@@ -341,19 +332,16 @@ class Project:
         To reput the Value objects in the Database
         :param values: List of Value objects
         """
-        i = 0
-        while i < len(values):
+
+        for i in range (0, len(values)):
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
             self.database.add_value(valueToReput[0], valueToReput[1], valueToReput[2], valueToReput[3])
-            i += 1
 
     def redo(self, table):
         """
         Redo the last action made by the user on the project
         """
-
-        from PyQt5 import QtCore
 
         # We can redo if we have an action to make again
         if len(self.redos) > 0:
@@ -379,50 +367,41 @@ class Project:
             if (action == "remove_tags"):
                 # To remove the tags, we need the names
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
-                i = 0
-                while i < len(tagsRemoved):
+                for i in range (0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToRemove = tagsRemoved[i].name
                     self.database.remove_tag(tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
                     table.removeColumn(column_to_remove)
-                    i += 1
             if (action == "add_scans"):
                 # To add the scans, we need the FileNames and the values associated to the scans
                 scansAdded = toRedo[1]  # The second element is a list of the scans to add
                 # We add all the scans
-                i = 0
-                while i < len(scansAdded):
+                for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
                     self.database.add_scan(scanToAdd[0], scanToAdd[1])
                     table.scans_to_visualize.append(scanToAdd[0])
-                    i += 1
                 # We add all the values
-                i = 0
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
-                while i < len(valuesAdded):
+                for i in range (0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
                     self.database.add_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
-                    i += 1
                 table.add_rows(self.database.get_scans_names())
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
-                i = 0
-                while i < len(scansRemoved):
+                for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToRemove = scansRemoved[i].name
                     self.database.remove_scan(scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
-                    i += 1
             if (action == "modified_values"):  # Not working
                 # To modify the values, we need the cells, and the updated values
                 modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
                 table.itemChanged.disconnect()
-                i = 0
-                while i < len(modifiedValues):
+                for i in range (0, len(modifiedValues)):
                     # Each modified value is a list of 3 elements: scan, tag, and old_value
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
@@ -431,9 +410,8 @@ class Project:
                     new_value = valueToRestore[3]
                     self.database.set_value(scan, tag, new_value)
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
-                    item.setData(QtCore.Qt.EditRole, QtCore.QVariant(str(new_value)))
+                    set_item_data(item, new_value)
                     table.update_color(scan, tag, item, table.get_scan_row(scan))
-                    i += 1
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags

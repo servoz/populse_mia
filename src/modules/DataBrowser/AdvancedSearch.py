@@ -106,9 +106,9 @@ class AdvancedSearch(QWidget):
         :return:
         """
         if choice.currentText() == "BETWEEN":
-            value.setPlaceholderText("Please separate the two inclusive borders of the range by a comma and a space")
+            value.setPlaceholderText("Please separate the two inclusive borders of the range by a semicolon and a space")
         elif choice.currentText() == "IN":
-            value.setPlaceholderText("Please separate each list item by a comma and a space")
+            value.setPlaceholderText("Please separate each list item by a semicolon and a space")
         else:
             value.setPlaceholderText("")
 
@@ -274,6 +274,12 @@ class AdvancedSearch(QWidget):
                         values.append(child.displayText())
                     elif childName == 'not':
                         nots.append(child.currentText())
+
+        # Converting BETWEEN and IN values into lists
+        for i in range(0, len(conditions)):
+            if conditions[i] == "BETWEEN" or conditions[i] == "IN":
+                values[i] = values[i].split("; ")
+
         return fields, conditions, values, links, nots
 
     def apply_filter(self, filter):

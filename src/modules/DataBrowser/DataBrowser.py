@@ -188,7 +188,7 @@ class DataBrowser(QWidget):
 
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
-        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character, *Not Defined* for the scans with missing value(s)")
+        self.search_bar.setPlaceholderText("Rapid search, enter % to replace any string (for simple values), _ to replace any character (for simple values), *Not Defined* for the scans with missing value(s)")
         self.search_bar.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()

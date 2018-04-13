@@ -140,9 +140,18 @@ def read_log(project):
 
                     # Creating date types
                     if format is not None and format != "":
-                        if format == "yyyy-MM-dd HH:mm:ss":
+                        format = format.replace("yyyy", "%Y")
+                        format = format.replace("MM", "%m")
+                        format = format.replace("dd", "%d")
+                        format = format.replace("HH", "%H")
+                        format = format.replace("mm", "%M")
+                        format = format.replace("ss", "%S")
+                        format = format.replace("SSS", "%f")
+                        if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
                             tag_type = TAG_TYPE_DATETIME
-                        elif format == "HH:mm:ss.SSS":
+                        elif "%Y" in format and "%m" in format and "%d" in format:
+                            tag_type = TAG_TYPE_DATE
+                        elif "%H" in format and "%M" in format and "%S" in format:
                             tag_type = TAG_TYPE_TIME
 
                     if tag_name != "Json_Version":
@@ -156,36 +165,48 @@ def read_log(project):
                                 tag_type = TAG_TYPE_LIST_INTEGER
                             elif tag_type == TAG_TYPE_FLOAT:
                                 tag_type = TAG_TYPE_LIST_FLOAT
+                            elif tag_type == TAG_TYPE_DATE:
+                                tag_type = TAG_TYPE_LIST_DATE
+                            elif tag_type == TAG_TYPE_DATETIME:
+                                tag_type = TAG_TYPE_LIST_DATETIME
+                            elif tag_type == TAG_TYPE_TIME:
+                                tag_type = TAG_TYPE_LIST_TIME
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
                             value = value_prepared
 
-                    if tag_type == TAG_TYPE_DATETIME and value is not None and value != "":
-                        value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                    if tag_type == TAG_TYPE_DATETIME or tag_type == TAG_TYPE_DATE or tag_type == TAG_TYPE_TIME:
+                        if value is not None and value != "":
+                            value = datetime.strptime(value, format)
+                            if tag_type == TAG_TYPE_TIME:
+                                value = value.time()
+                            elif tag_type == TAG_TYPE_DATE:
+                                value = value.date()
 
-                    # Tags updated at first scan
-                    # TODO problem if tag not in all scans
-                    if idx == 1:
-                        database_tag = project.database.get_tag(tag_name)
-                        if database_tag is None:
-                            # Adding the tag as it's not in the database yet
-                            if tag_name in default_tags:
-                                project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, tag_type, unit, None,
-                                                         description)
-                            else:
-                                project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, tag_type, unit, None,
-                                                         description)
+                    # TODO time lists
+
+                    # Tag updated in database
+                    database_tag = project.database.get_tag(tag_name)
+                    if database_tag is None:
+                        # Adding the tag as it's not in the database yet
+                        if tag_name in default_tags:
+                            project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, tag_type, unit, None,
+                                                     description)
                         else:
-                            # The tag is updated as it's already in the database
-                            project.database.set_tag_origin(tag_name, TAG_ORIGIN_RAW)
-                            if tag_name in default_tags:
-                                project.database.set_tag_visibility(tag_name, True)
-                            else:
-                                project.database.set_tag_origin(tag_name, False)
-                            project.database.set_tag_description(tag_name, description)
+                            project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, tag_type, unit, None,
+                                                     description)
+                    else:
+                        # The tag is updated as it's already in the database
+                        project.database.set_tag_origin(tag_name, TAG_ORIGIN_RAW)
+                        if tag_name in default_tags:
+                            project.database.set_tag_visibility(tag_name, True)
+                        else:
+                            project.database.set_tag_visibility(tag_name, False)
+                        project.database.set_tag_description(tag_name, description)
+                        if project.database.get_tag(tag_name).type != tag_type:
                             project.database.set_tag_type(tag_name, tag_type)
-                            project.database.set_tag_unit(tag_name, unit)
+                        project.database.set_tag_unit(tag_name, unit)
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":

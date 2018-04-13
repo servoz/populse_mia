@@ -265,7 +265,7 @@ class CountTable(QDialog):
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                list_scans = self.project.database.check_count_table(tag_list)
+                list_scans = self.project.database.get_scans_matching_tag_value_couples(tag_list)
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
@@ -276,7 +276,7 @@ class CountTable(QDialog):
                     tool_tip = ''
                     # Setting as tooltip all the corresponding scans
                     for tpl in list_scans:
-                        tool_tip += (tpl.name + '\n')
+                        tool_tip += (tpl + '\n')
                     tool_tip = tool_tip[:-1]
                     item.setToolTip(tool_tip)
                 else:
