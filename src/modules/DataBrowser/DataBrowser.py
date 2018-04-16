@@ -317,8 +317,8 @@ class DataBrowser(QWidget):
             # We add the tag and a value for each scan in the Database
             self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.project.database.get_scans():
-                self.project.database.add_value(scan.name, new_tag_name, new_default_value, None)
-                values.append([scan.name, new_tag_name, new_default_value, None]) # For history
+                self.project.database.add_value(scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None)
+                values.append([scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None]) # For history
 
             # For history
             historyMaker = []
@@ -1400,7 +1400,7 @@ class TableDataBrowser(QTableWidget):
                     old_value = self.old_values[i]
                     new_cur_value = self.project.database.get_current_value(self.scans[i], self.tags[i])
                     modified_values.append([self.scans[i], self.tags[i], old_value, new_cur_value])
-                    set_item_data(new_item, new_cur_value)
+                    set_item_data(new_item, new_cur_value, self.project.database.get_tag(self.tags[i]).type)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
                     self.update_color(self.scans[i], self.tags[i], new_item, self.coordinates[i][0])
 

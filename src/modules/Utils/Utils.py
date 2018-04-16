@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from datetime import datetime, date, time
 from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT
+import ast
 
 def set_item_data(item, value, value_type):
     """
@@ -11,8 +12,6 @@ def set_item_data(item, value, value_type):
     :param value: new item value
     :param value_type: new value type
     """
-
-    import ast
 
     if value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT]:
         if isinstance(value, str):
@@ -75,6 +74,15 @@ def check_value_type(value, value_type, is_subvalue=False):
             return True
         except ValueError:
             return False
+    elif value_type in [TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT] and not is_subvalue:
+        if isinstance(value, str):
+            value = ast.literal_eval(value)
+        is_valid_value = True
+        for subvalue in value:
+            if not check_value_type(subvalue, value_type, True):
+                is_valid_value = False
+                break
+        return  is_valid_value
     elif value_type == TAG_TYPE_DATE or value_type == TAG_TYPE_LIST_DATE and is_subvalue:
         return isinstance(value, QDate)
     elif value_type == TAG_TYPE_DATETIME or value_type == TAG_TYPE_LIST_DATETIME and is_subvalue:
@@ -105,8 +113,9 @@ def table_to_database(value, value_type):
     elif value_type == TAG_TYPE_TIME:
         if isinstance(value, QTime):
             return value.toPyTime()
-
-    # TODO list types
+    elif value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING,
+                        TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT]:
+        return ast.literal_eval(value)
 
 def message_already_exists():
     msg = QMessageBox()
