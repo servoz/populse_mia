@@ -91,11 +91,11 @@ def table_to_database(value, value_type):
     """
 
     if value_type == TAG_TYPE_FLOAT:
-        return float(value_type)
+        return float(value)
     elif value_type == TAG_TYPE_STRING:
-        return str(value_type)
+        return str(value)
     elif value_type == TAG_TYPE_INTEGER:
-        return int(value_type)
+        return int(value)
     elif value_type == TAG_TYPE_DATETIME:
         if isinstance(value, QDateTime):
             return value.toPyDateTime()
