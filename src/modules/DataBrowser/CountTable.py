@@ -5,7 +5,6 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.Utils import database_to_table, table_to_database
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
@@ -16,10 +15,10 @@ class CountTable(QDialog):
     Is called when the user wants to verify precisely the scans of the project.
     """
 
-    def __init__(self, database=None):
+    def __init__(self, project=None):
         super().__init__()
 
-        self.database = database
+        self.project = project
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
@@ -105,7 +104,7 @@ class CountTable(QDialog):
 
     def select_tag(self, idx):
         """ Method that calls a pop-up to choose a tag. """
-        popUp = Ui_Select_Tag_Count_Table(self.database, self.push_buttons[idx].text())
+        popUp = Ui_Select_Tag_Count_Table(self.project, self.push_buttons[idx].text())
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
@@ -114,14 +113,19 @@ class CountTable(QDialog):
         """ Method that fills the values list when a tag is added
         or removed. """
         tag_name = self.push_buttons[idx].text()
-        values = self.database.getValuesGivenTag(tag_name)
+        values = []
+        for scan in self.project.database.get_scans_names():
+            current_value = self.project.database.get_current_value(scan, tag_name)
+            initial_value = self.project.database.get_initial_value(scan, tag_name)
+            if current_value is not None or initial_value is not None:
+                values.append([scan, tag_name, current_value, initial_value])
         if len(self.values_list) <= idx:
             self.values_list.insert(idx, [])
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for value in values:
-            if database_to_table(value.current_value) not in self.values_list[idx]:
-                self.values_list[idx].append(database_to_table(value.current_value))
+            if str(value[3]) not in self.values_list[idx]:
+                self.values_list[idx].append(str(value[3]))
 
     def count_scans(self):
         """ Method that counts the number of scans depending on the
@@ -252,16 +256,16 @@ class CountTable(QDialog):
                 for idx_first_columns in range(self.idx_last_tag + 1):
                     value = self.table.item(row, idx_first_columns).text()
                     tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
-                    tag_list.append([tag_name, table_to_database(value, self.database.getTagType(tag_name))])
+                    tag_list.append([tag_name, value])
                 value_last_columns = self.table.horizontalHeaderItem(col).text()
                 tag_last_columns = self.push_buttons[-1].text()
-                tag_list.append([tag_last_columns, table_to_database(value_last_columns, self.database.getTagType(tag_last_columns))])
+                tag_list.append([tag_last_columns, value_last_columns])
 
                 item = QTableWidgetItem()
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                list_scans = self.database.check_count_table(tag_list)
+                list_scans = self.project.database.get_scans_matching_tag_value_couples(tag_list)
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
@@ -272,7 +276,7 @@ class CountTable(QDialog):
                     tool_tip = ''
                     # Setting as tooltip all the corresponding scans
                     for tpl in list_scans:
-                        tool_tip += (tpl.scan + '\n')
+                        tool_tip += (tpl + '\n')
                     tool_tip = tool_tip[:-1]
                     item.setToolTip(tool_tip)
                 else:

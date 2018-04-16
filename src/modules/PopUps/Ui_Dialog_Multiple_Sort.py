@@ -3,12 +3,11 @@ from PyQt5.QtGui import QPixmap
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
-from Utils.Utils import database_to_table
 
 class Ui_Dialog_Multiple_Sort(QDialog):
-    def __init__(self, database=None):
+    def __init__(self, project=None):
         super().__init__()
-        self.database = database
+        self.project = project
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
@@ -96,7 +95,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
 
     def select_tag(self, idx):
         """ Method that calls a pop-up to choose a tag. """
-        popUp = Ui_Select_Tag_Count_Table(self.database, self.push_buttons[idx].text(), visualized_tags_only=True)
+        popUp = Ui_Select_Tag_Count_Table(self.project, self.push_buttons[idx].text(), visualized_tags_only=True)
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
@@ -105,14 +104,14 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         """ Method that fills the values list when a tag is added
         or removed. """
         tag_name = self.push_buttons[idx].text()
-        values = self.database.getValuesGivenTag(tag_name)
         if len(self.values_list) <= idx:
             self.values_list.insert(idx, [])
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
-        for value in values:
-            if database_to_table(value.current_value) not in self.values_list[idx]:
-                self.values_list[idx].append(database_to_table(value.current_value))
+        for scan in self.project.database.get_tags_names():
+            current_value = self.project.database.get_current_value(scan, tag_name)
+            if current_value not in self.values_list[idx]:
+                self.values_list[idx].append(current_value)
 
     def sort_scans(self):
         self.order = self.combo_box.itemText(self.combo_box.currentIndex())

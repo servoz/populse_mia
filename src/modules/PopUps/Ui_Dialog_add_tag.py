@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from Database.DatabaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER
 from Utils.Tools import ClickableLabel
 import os
 import ast
@@ -205,9 +205,9 @@ class Ui_Dialog_add_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_add_tag = pyqtSignal()
 
-    def __init__(self, database):
+    def __init__(self, project):
         super().__init__()
-        self.database = database
+        self.project = project
         self.type = TAG_TYPE_STRING # Type is string by default
         self.pop_up()
 
@@ -351,8 +351,8 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Tag name checked
         name_already_exists = False
-        for tag in self.database.getTags():
-            if tag.tag == self.text_edit_tag_name.text():
+        for tag in self.project.database.get_tags():
+            if tag.name == self.text_edit_tag_name.text():
                 name_already_exists = True
         wrong_default_value_type = False
 

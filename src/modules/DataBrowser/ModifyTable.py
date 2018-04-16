@@ -1,17 +1,17 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from Database.DatabaseModel import TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
 
 class ModifyTable(QDialog):
     """
     Is called when the user wants to verify precisely the scans of the project.
     """
 
-    def __init__(self, database, list_value, types, scans, tags):
+    def __init__(self, project, value, types, scans, tags):
         """
         ModifyTable init
-        :param database: Instance of Database
-        :param list_value: List of values of the cell
+        :param project: Instance of Project
+        :param value: List of values of the cell
         :param types: Value types
         :param scans: Scans of the rows
         :param tags: Tags of the columns
@@ -22,13 +22,13 @@ class ModifyTable(QDialog):
         self.types = types
         self.scans = scans
         self.tags = tags
-        self.database = database
-        self.value = list_value
+        self.project = project
+        self.value = value
 
         # The table that will be filled
         self.table = QTableWidget()
 
-        # Fill the table
+        # Filling the table
         self.fill_table()
 
         # Ok button
@@ -60,14 +60,11 @@ class ModifyTable(QDialog):
         self.table.setRowCount(1)
 
         # Values filled
-        i = 0
-        while i < self.table.columnCount():
+        for i in range (0, self.table.columnCount()):
             column_elem = self.value[i]
-            if len(column_elem) == 1:
-                item = QTableWidgetItem()
-                item.setText(str(column_elem[0]))
-                self.table.setItem(0, i, item)
-            i += 1
+            item = QTableWidgetItem()
+            item.setText(str(column_elem))
+            self.table.setItem(0, i, item)
 
         # Resize
         self.table.resizeColumnsToContents()
@@ -92,16 +89,15 @@ class ModifyTable(QDialog):
         valid = True
 
         # For each value, type checked
-        i = 0
-        while i < self.table.columnCount():
+        for i in range (0, self.table.columnCount()):
             item = self.table.item(0, i)
             text = item.text()
 
             valid_type = True
-            for type in self.types:
-                if not check_value_type(text, type):
+            for tag_type in self.types:
+                if not check_value_type(text, tag_type, True):
                     valid_type = False
-                    type_problem = type
+                    type_problem = tag_type
                     break
 
             # Type checked
@@ -119,36 +115,32 @@ class ModifyTable(QDialog):
                 msg.exec()
                 break
 
-            i += 1
-
         if valid:
             # Database updated only if valid type for every cell
 
-            cell = 0
-            while cell < len(self.scans):
+            for cell in range (0, len(self.scans)):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
-                type = self.database.getTagType(tag)
+                tag_object = self.project.database.get_tag(tag)
+                tag_type = tag_object.type
 
                 database_value = []
 
                 # For each value
-                i = 0
-                while i < self.table.columnCount():
+                for i in range (0, self.table.columnCount()):
                     item = self.table.item(0, i)
                     text = item.text()
 
-                    if type == TAG_TYPE_INTEGER:
-                        database_value.append([int(text)])
-                    elif type == TAG_TYPE_FLOAT:
-                        database_value.append([float(text)])
+                    if tag_type == TAG_TYPE_LIST_INTEGER:
+                        database_value.append(int(text))
+                    elif tag_type == TAG_TYPE_LIST_FLOAT:
+                        database_value.append(float(text))
                     else:
-                        database_value.append([str(text)])
-                    i += 1
+                        database_value.append(str(text))
+
+                    # TODO add date list types
 
                 # Database updated for every cell
-                self.database.setTagValue(scan, tag, str(database_value))
-
-                cell += 1
+                self.project.database.set_value(scan, tag, database_value)
 
             self.close()

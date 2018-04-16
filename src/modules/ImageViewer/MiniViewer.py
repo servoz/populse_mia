@@ -18,20 +18,18 @@ from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
-from Utils.Utils import database_to_table
-
 
 class MiniViewer(QWidget):
     """ MiniViewer that allows to rapidly visualize scans either with a single image per scan
     with cursors to move in five dimensions or with all images of the greater dimension of the scan.
     """
 
-    def __init__(self, database):
+    def __init__(self, project):
         """ Method to initialize the MiniViewer class. """
 
         super().__init__()
 
-        self.database = database
+        self.project = project
         self.first_time = True
 
         # The MiniViewer is set hidden to give more space to the DataBrowser
@@ -372,17 +370,15 @@ class MiniViewer(QWidget):
 
     def setThumbnail(self, file_path_base_name, idx):
         # Looking for the tag value to display as a legend of the thumbnail
-        for scan in self.database.getScans():
-            if scan.scan == file_path_base_name:
-                if self.database.hasTag(self.config.getThumbnailTag()):
-                    if self.database.scanHasTag(scan.scan, self.config.getThumbnailTag()):
-                        self.label_description[idx].setText \
-                            (database_to_table(self.database.getValue(scan.scan, self.config.getThumbnailTag()).current_value)[:self.nb_char_max])
-                    else:
-                        self.label_description[idx].setText \
-                            (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+        for scan in self.project.database.get_scans():
+            if scan.name == file_path_base_name:
+                value = self.project.database.get_current_value(scan.name, self.config.getThumbnailTag())
+                if value is not None:
+                    self.label_description[idx].setText \
+                        (str(value)[:self.nb_char_max])
                 else:
-                    self.label_description[idx].setText(DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                    self.label_description[idx].setText \
+                        (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
                 self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
 
@@ -603,7 +599,7 @@ class MiniViewer(QWidget):
     def openTagsPopUp(self):
         """ Method that calls the pop-up to select the legend of the thumbnails.
         """
-        self.popUp = Ui_Select_Tag(self.database)
+        self.popUp = Ui_Select_Tag(self.project)
         if self.popUp.exec_():
 
             self.verify_slices(self.file_paths)

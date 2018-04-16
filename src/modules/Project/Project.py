@@ -1,0 +1,424 @@
+from populse_db.Database import Database
+import os
+import tempfile
+import yaml
+from SoftwareProperties.Config import Config
+from Project.Filter import Filter
+from populse_db.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from Utils.Utils import set_item_data
+
+class Project:
+
+    def __init__(self, project_root_folder, new_project):
+
+        if project_root_folder is None:
+            self.isTempProject = True
+            self.folder = os.path.relpath(tempfile.mkdtemp())
+        else:
+            self.isTempProject = False
+            self.folder = project_root_folder
+            self.properties = self.loadProperties()
+        self.database = Database(os.path.join(self.folder, 'database', 'mia2.db'))
+        if new_project:
+            self.refreshTags()
+        self.unsavedModifications = False
+        self.undos = []
+        self.redos = []
+        self.initFilters()
+
+    """ FILTERS """
+
+    def initFilters(self):
+        """
+        Init of the filters at project opening
+        """
+
+        import json
+        import glob
+
+        self.currentFilter = Filter(None, [], [], [], [], [], "")
+        self.filters = []
+
+        filters_folder = os.path.join(self.folder, "filters")
+
+        for filename in glob.glob(os.path.join(filters_folder, '*')):
+            filter, extension = os.path.splitext(os.path.basename(filename))
+            data = json.load(open(filename))
+            filterObject = Filter(filter, data["nots"], data["values"], data["fields"], data["links"],
+                                  data["conditions"], data["search_bar_text"])
+            self.filters.append(filterObject)
+
+    def setCurrentFilter(self, filter):
+        """
+        To set the current filter of the project
+        :param filter: new Filter object
+        """
+
+        self.currentFilter = filter
+
+    def getFilter(self, filter):
+        """
+        To get a Filter object
+        :param filter: Filter name
+        :return: Filter object
+        """
+        for filterObject in self.filters:
+            if filterObject.name == filter:
+                return filterObject
+
+    def save_current_filter(self, advancedFilters):
+        """
+        To save the current filter
+        :return:
+        """
+
+        from PyQt5.QtWidgets import QMessageBox
+        import json
+
+        (fields, conditions, values, links, nots) = advancedFilters
+        self.currentFilter.fields = fields
+        self.currentFilter.conditions = conditions
+        self.currentFilter.values = values
+        self.currentFilter.links = links
+        self.currentFilter.nots = nots
+
+        # Getting the path
+        filters_path = os.path.join(self.folder, "filters")
+
+        # Filters folder created if it does not already exists
+        if not os.path.exists(filters_path):
+            os.mkdir(filters_path)
+
+        filter_name = self.getFilterName()
+
+        # We save the filter only if we have a filter name from the popup
+        if filter_name != None:
+            file_path = os.path.join(filters_path, filter_name + ".json")
+
+            if os.path.exists(file_path):
+                # Filter already exists
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The filter already exists in the project")
+                msg.setInformativeText("The project already has a filter named " + filter_name)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            else:
+                # Json filter file written
+                with open(file_path, 'w') as outfile:
+                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values,
+                                        self.currentFilter.fields, self.currentFilter.links,
+                                        self.currentFilter.conditions, self.currentFilter.search_bar)
+                    json.dump(new_filter.json_format(), outfile)
+                    self.filters.append(new_filter)
+
+    def getFilterName(self):
+        """
+        Input box to get the name of the filter to save
+        """
+
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+
+        text, okPressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
+
+
+    """ PROPERTIES """
+
+    def loadProperties(self):
+        """ Loads the properties file (Unnamed project does not have this file) """
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
+            try:
+                return yaml.load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+
+    def getName(self):
+        """ Returns the name of the project if it's not Unnamed project, otherwise empty string """
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["name"]
+
+    def setName(self, name):
+        """ Sets the name of the project if it's not Unnamed project, otherwise does nothing
+            :param name: new name of the project
+        """
+        if not self.isTempProject:
+            self.properties["name"] = name
+            self.saveConfig()
+
+    def saveConfig(self):
+        """ Save the changes in the properties file """
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
+
+    def getDate(self):
+        """ Returns the date of creation of the project if it's not Unnamed project, otherwise empty string """
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["date"]
+
+    def getSortedTag(self):
+        """ Returns the sorted tag of the project if it's not Unnamed project, otherwise empty string """
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["sorted_tag"]
+
+    def setSortedTag(self, tag):
+        """ Sets the sorted tag of the project if it's not Unnamed project, otherwise does nothing
+            :param tag: new sorted tag of the project
+        """
+        if not self.isTempProject:
+            self.properties["sorted_tag"] = tag
+            self.unsavedModifications = True
+
+    def getSortOrder(self):
+        """ Returns the sort order of the project if it's not Unnamed project, otherwise empty string """
+        if (self.isTempProject):
+            return ""
+        else:
+            return self.properties["sort_order"]
+
+    def setSortOrder(self, order):
+        """ Sets the sort order of the project if it's not Unnamed project, otherwise does nothing
+            :param order: new sort order of the project (ascending or descending)
+        """
+        if not self.isTempProject:
+            self.properties["sort_order"] = order
+            self.unsavedModifications = True
+
+    """ UTILS """
+
+    def refreshTags(self):
+        """
+        Refreshes the tags
+        """
+
+        # Tags cleared
+        for tag in self.database.get_tags_names():
+            self.database.remove_tag(tag)
+
+        # New tags added
+        config = Config()
+        if config.getDefaultTags() != None:
+            for default_tag in config.getDefaultTags():
+                if self.database.get_tag(default_tag) is None:
+                    # Tags by default set as visible
+                    self.database.add_tag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
+
+        self.database.set_tag_origin("FileName", TAG_ORIGIN_RAW)
+
+    """ MODIFICATIONS """
+
+    def saveModifications(self):
+        """
+        Saves the pending operations of the project (actions still not saved)
+        """
+
+        self.database.save_modifications()
+        if not self.isTempProject:
+            self.saveConfig()
+        self.unsavedModifications = False
+
+    def hasUnsavedModifications(self):
+        """
+        Knowing if the project has unsaved modifications or not
+        :return: True if the project has pending modifications, False otherwise
+        """
+
+        return self.unsavedModifications or self.database.has_unsaved_modifications()
+
+    """ UNDO/REDO """
+
+    def undo(self, table):
+        """
+        Undo the last action made by the user on the project
+        """
+
+        from PyQt5 import QtCore
+        from DataBrowser.DataBrowser import not_defined_value
+
+        # We can undo if we have an action to revert
+        if len(self.undos) > 0:
+            toUndo = self.undos.pop()
+            self.redos.append(toUndo)  # We pop the undo action in the redo stack
+            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
+            action = toUndo[0]
+            if (action == "add_tag"):
+                # For removing the tag added, we just have to memorize the tag name, and remove it
+                tagToRemove = toUndo[1]
+                self.database.remove_tag(tagToRemove)
+                column_to_remove = table.get_tag_column(tagToRemove)
+                table.removeColumn(column_to_remove)
+            if (action == "remove_tags"):
+                # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
+                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
+                for i in range (0, len(tagsRemoved)):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToReput = tagsRemoved[i]
+                    self.database.add_tag(tagToReput.name, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit,
+                                tagToReput.default_value, tagToReput.description)
+                valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
+                self.reput_values(valuesRemoved)
+                for i in range (0, len(tagsRemoved)):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToReput = tagsRemoved[i]
+                    column = table.get_index_insertion(tagToReput.name)
+                    table.add_column(column, tagToReput.name)
+            if (action == "add_scans"):
+                # To remove added scans, we just need their file name
+                scansAdded = toUndo[1]  # The second element is a list of added scans to remove
+                for i in range (0, len(scansAdded)):
+                    # We remove each scan added
+                    scanToRemove = scansAdded[i][0]
+                    self.database.remove_scan(scanToRemove)
+                    table.removeRow(table.get_scan_row(scanToRemove))
+                    table.scans_to_visualize.remove(scanToRemove)
+            if (action == "remove_scans"):
+                # To reput a removed scan, we need the scans names, and all the values associated
+                scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
+                for i in range (0, len(scansRemoved)):
+                    # We reput each scan, keeping the same values
+                    scanToReput = scansRemoved[i]
+                    self.database.add_scan(scanToReput.name, scanToReput.checksum)
+                    table.scans_to_visualize.append(scanToReput.name)
+                valuesRemoved = toUndo[2]  # The third element is the list of removed values
+                self.reput_values(valuesRemoved)
+                table.add_rows(self.database.get_scans_names())
+            if (action == "modified_values"):
+                # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
+                modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
+                table.itemChanged.disconnect()
+                for i in range (0, len(modifiedValues)):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
+                    valueToRestore = modifiedValues[i]
+                    scan = valueToRestore[0]
+                    tag = valueToRestore[1]
+                    old_value = valueToRestore[2]
+                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
+                    if (old_value == None):
+                        # If the cell was not defined before, we reput it
+                        self.database.remove_value(scan, tag)
+                        set_item_data(item, not_defined_value)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    else:
+                        # If the cell was there before, we just set it to the old value
+                        self.database.set_value(scan, tag, str(old_value))
+                        set_item_data(item, old_value, self.database.get_tag(tag).type)
+                        table.update_color(scan, tag, item, table.get_scan_row(scan))
+                table.itemChanged.connect(table.change_cell_color)
+            if (action == "modified_visibilities"):
+                # To revert the modifications of the visualized tags
+                old_tags = self.database.get_visualized_tags() # Old list of columns
+                visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
+                self.database.reset_all_visibilities() # Reset of the visibilities
+                for visible in visibles:
+                    # We reput each old tag visible
+                    self.database.set_tag_visibility(visible, True)
+                table.update_visualized_columns(old_tags)  # Columns updated
+
+    def reput_values(self, values):
+        """
+        To reput the Value objects in the Database
+        :param values: List of Value objects
+        """
+
+        for i in range (0, len(values)):
+            # We reput each value, exactly the same as it was before
+            valueToReput = values[i]
+            self.database.add_value(valueToReput[0], valueToReput[1], valueToReput[2], valueToReput[3])
+
+    def redo(self, table):
+        """
+        Redo the last action made by the user on the project
+        """
+
+        # We can redo if we have an action to make again
+        if len(self.redos) > 0:
+            toRedo = self.redos.pop()
+            self.undos.append(toRedo)  # We pop the redo action in the undo stack
+            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
+            action = toRedo[0]
+            if (action == "add_tag"):
+                # For adding the tag, we need the tag name, and all its attributes
+                tagToAdd = toRedo[1]
+                tagType = toRedo[2]
+                tagUnit = toRedo[3]
+                tagDefaultValue = toRedo[4]
+                tagDescription = toRedo[5]
+                values = toRedo[6]  # List of values stored
+                # Adding the tag
+                self.database.add_tag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
+                # Adding all the values associated
+                for value in values:
+                    self.database.add_value(value[0], value[1], value[2], value[3])
+                column = table.get_index_insertion(tagToAdd)
+                table.add_column(column, tagToAdd)
+            if (action == "remove_tags"):
+                # To remove the tags, we need the names
+                tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
+                for i in range (0, len(tagsRemoved)):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tagToRemove = tagsRemoved[i].name
+                    self.database.remove_tag(tagToRemove)
+                    column_to_remove = table.get_tag_column(tagToRemove)
+                    table.removeColumn(column_to_remove)
+            if (action == "add_scans"):
+                # To add the scans, we need the FileNames and the values associated to the scans
+                scansAdded = toRedo[1]  # The second element is a list of the scans to add
+                # We add all the scans
+                for i in range (0, len(scansAdded)):
+                    # We remove each scan added
+                    scanToAdd = scansAdded[i]
+                    self.database.add_scan(scanToAdd[0], scanToAdd[1])
+                    table.scans_to_visualize.append(scanToAdd[0])
+                # We add all the values
+                valuesAdded = toRedo[2]  # The third element is a list of the values to add
+                for i in range (0, len(valuesAdded)):
+                    valueToAdd = valuesAdded[i]
+                    self.database.add_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
+                table.add_rows(self.database.get_scans_names())
+            if (action == "remove_scans"):
+                # To remove a scan, we only need the FileName of the scan
+                scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
+                for i in range (0, len(scansRemoved)):
+                    # We reput each scan, keeping the same values
+                    scanToRemove = scansRemoved[i].name
+                    self.database.remove_scan(scanToRemove)
+                    table.scans_to_visualize.remove(scanToRemove)
+                    table.removeRow(table.get_scan_row(scanToRemove))
+            if (action == "modified_values"):  # Not working
+                # To modify the values, we need the cells, and the updated values
+                modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
+                table.itemChanged.disconnect()
+                for i in range (0, len(modifiedValues)):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
+                    valueToRestore = modifiedValues[i]
+                    scan = valueToRestore[0]
+                    tag = valueToRestore[1]
+                    # valueToRestore[2] is the old value of the cell
+                    new_value = valueToRestore[3]
+                    self.database.set_value(scan, tag, new_value)
+                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
+                    set_item_data(item, new_value, self.database.get_tag(tag).type)
+                    table.update_color(scan, tag, item, table.get_scan_row(scan))
+                table.itemChanged.connect(table.change_cell_color)
+            if (action == "modified_visibilities"):
+                # To revert the modifications of the visualized tags
+                old_tags = self.database.get_visualized_tags() # Old list of columns
+                visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
+                self.database.reset_all_visibilities() # Reset of the visibilities
+                for visible in visibles:
+                    # We reput each new tag visible
+                    self.database.set_tag_visibility(visible, True)
+                table.update_visualized_columns(old_tags)  # Columns updated

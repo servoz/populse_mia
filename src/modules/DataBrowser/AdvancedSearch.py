@@ -6,14 +6,14 @@ from Utils.Tools import ClickableLabel
 
 class AdvancedSearch(QWidget):
 
-    def __init__(self, database, dataBrowser):
+    def __init__(self, project, dataBrowser):
         """
         Class that manages the widget of the advanced search
         """
 
         super().__init__()
 
-        self.database = database
+        self.project = project
         self.dataBrowser = dataBrowser
         self.rows = []
 
@@ -53,8 +53,8 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        for tag in self.database.getVisualizedTags():
-            fieldChoice.addItem(tag.tag)
+        for tag in self.project.database.get_visualized_tags():
+            fieldChoice.addItem(tag.name)
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
@@ -106,9 +106,9 @@ class AdvancedSearch(QWidget):
         :return:
         """
         if choice.currentText() == "BETWEEN":
-            value.setPlaceholderText("Please separate the two inclusive borders of the range by a comma and a space")
+            value.setPlaceholderText("Please separate the two inclusive borders of the range by a semicolon and a space")
         elif choice.currentText() == "IN":
-            value.setPlaceholderText("Please separate each list item by a comma and a space")
+            value.setPlaceholderText("Please separate each list item by a semicolon and a space")
         else:
             value.setPlaceholderText("")
 
@@ -242,7 +242,7 @@ class AdvancedSearch(QWidget):
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
+        result = self.project.database.get_scans_matching_advanced_search(links, fields, conditions, values, nots)
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
@@ -274,6 +274,12 @@ class AdvancedSearch(QWidget):
                         values.append(child.displayText())
                     elif childName == 'not':
                         nots.append(child.currentText())
+
+        # Converting BETWEEN and IN values into lists
+        for i in range(0, len(conditions)):
+            if conditions[i] == "BETWEEN" or conditions[i] == "IN":
+                values[i] = values[i].split("; ")
+
         return fields, conditions, values, links, nots
 
     def apply_filter(self, filter):
@@ -308,13 +314,13 @@ class AdvancedSearch(QWidget):
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
-            result = self.database.getScansAdvancedSearch(links, fields, conditions, values, nots)
+            result = self.project.database.get_scans_matching_advanced_search(links, fields, conditions, values, nots)
             # DataBrowser updated with the new selection
             self.dataBrowser.table_data.scans_to_visualize = result
 
         # Otherwise, we reput all the scans
         else:
             # DataBrowser updated with every scan
-            self.dataBrowser.table_data.scans_to_visualize = self.database.getScansNames()
+            self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_scans_names()
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)

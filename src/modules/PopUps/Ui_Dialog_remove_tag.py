@@ -11,12 +11,15 @@ class Ui_Dialog_remove_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_remove_tag = pyqtSignal()
 
-    def __init__(self, database):
+    def __init__(self, project):
         super().__init__()
-        self.database = database
+        self.project = project
         self.pop_up()
 
     def pop_up(self):
+
+        from populse_db.DatabaseModel import TAG_ORIGIN_USER
+
         _translate = QtCore.QCoreApplication.translate
         self.setObjectName("Remove a tag")
 
@@ -59,17 +62,11 @@ class Ui_Dialog_remove_tag(QDialog):
         self.setLayout(vbox)
 
         #DATABASE
-        for tag in self.database.getUserTags():
-            item = QtWidgets.QListWidgetItem()
-            self.list_widget_tags.addItem(item)
-            item.setText(_translate("Dialog", tag.tag))
-
-        #PROJECT
-        """for tag in self.project.user_tags:
-            tag_name = tag['name']
-            item = QtWidgets.QListWidgetItem()
-            self.list_widget_tags.addItem(item)
-            item.setText(_translate("Dialog", tag_name))"""
+        for tag in self.project.database.get_tags():
+            if tag.origin == TAG_ORIGIN_USER:
+                item = QtWidgets.QListWidgetItem()
+                self.list_widget_tags.addItem(item)
+                item.setText(_translate("Dialog", tag.name))
 
         self.setLayout(vbox)
 
@@ -77,19 +74,24 @@ class Ui_Dialog_remove_tag(QDialog):
         self.push_button_ok.clicked.connect(self.ok_action)
 
     def search_str(self, str_search):
+
+        from populse_db.DatabaseModel import TAG_ORIGIN_USER
+
         _translate = QtCore.QCoreApplication.translate
 
         if str_search != "":
             return_list = []
-            for tag in self.database.getUserTags():
-                tag_name = tag.tag
-                if str_search.upper() in tag_name.upper():
-                    return_list.append(tag_name)
+            for tag in self.project.database.get_tags():
+                if tag.origin == TAG_ORIGIN_USER:
+                    tag_name = tag.name
+                    if str_search.upper() in tag_name.upper():
+                        return_list.append(tag_name)
         else:
             return_list = []
-            for tag in self.database.getUserTags():
-                tag_name = tag.tag
-                return_list.append(tag_name)
+            for tag in self.project.database.get_tags():
+                if tag.origin == TAG_ORIGIN_USER:
+                    tag_name = tag.name
+                    return_list.append(tag_name)
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()

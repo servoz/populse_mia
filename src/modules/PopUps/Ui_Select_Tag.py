@@ -7,21 +7,21 @@ class Ui_Select_Tag(Ui_Tag_Selection):
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    def __init__(self, database):
-        super(Ui_Select_Tag, self).__init__(database)
-        self.database = database
+    def __init__(self, project):
+        super(Ui_Select_Tag, self).__init__(project)
+        self.project = project
         self.config = Config()
 
         # Filling the list and checking the thumbnail tag
-        for tag in self.database.getTags():
+        for tag in self.project.database.get_tags():
             item = QtWidgets.QListWidgetItem()
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            if tag.tag == self.config.getThumbnailTag():
+            if tag.name == self.config.getThumbnailTag():
                 item.setCheckState(QtCore.Qt.Checked)
             else:
                 item.setCheckState(QtCore.Qt.Unchecked)
             self.list_widget_tags.addItem(item)
-            item.setText(tag.tag)
+            item.setText(tag.name)
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
