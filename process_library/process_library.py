@@ -129,10 +129,23 @@ class ProcessLibraryWidget(QWidget):
         except TypeError:
             self.packages = {}
 
+        try:
+            self.paths = self.process_config["Paths"]
+        except KeyError:
+            self.paths = []
+        except TypeError:
+            self.paths = []
+
+        for path in self.paths:
+            # Adding the module path to the system path
+            sys.path.append(path)
+
     def save_config(self):
         self.process_config["Packages"] = self.packages
+        self.process_config["Paths"] = self.paths
         with open('process_config.yml', 'w', encoding='utf8') as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False, allow_unicode=True)
+
 
 class Node(object):
 
@@ -454,7 +467,7 @@ class PackageLibraryDialog(QDialog):
         self.process_config = self.load_config()
         self.load_packages()
 
-        self.package_library = PackageLibrary(self.packages)
+        self.package_library = PackageLibrary(self.packages, self.paths)
 
         self.line_edit = QLineEdit()
         self.line_edit.setPlaceholderText('Type a package')
@@ -508,8 +521,16 @@ class PackageLibraryDialog(QDialog):
         except TypeError:
             self.packages = {}
 
+        try:
+            self.paths = self.process_config["Paths"]
+        except KeyError:
+            self.paths = []
+        except TypeError:
+            self.paths = []
+
     def save_config(self):
         self.process_config["Packages"] = self.packages
+        self.process_config["Paths"] = self.paths
         with open('process_config.yml', 'w', encoding='utf8') as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False, allow_unicode=True)
 
@@ -536,7 +557,7 @@ class PackageLibraryDialog(QDialog):
             # Adding the module path to the system path
             sys.path.append(path)
             self.add_package(package)
-
+            self.paths.append(path)
         else:
             self.add_package(self.line_edit.text())
 
@@ -601,14 +622,18 @@ class PackageLibraryDialog(QDialog):
         self.package_library.generate_tree()
 
     def save(self):
-        # Updating the packages according to the package library tree
+        # Updating the packages and the paths according to the package library tree
         self.packages = self.package_library.package_tree
+        self.paths = self.package_library.paths
         if self.process_config:
             if self.process_config.get("Packages"):
                 del self.process_config["Packages"]
+            if self.process_config.get("Paths"):
+                del self.process_config["Paths"]
         else:
             self.process_config = {}
         self.process_config["Packages"] = self.packages
+        self.process_config["Paths"] = self.paths
         with open('process_config.yml', 'w', encoding='utf8') as configfile:
             yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()
@@ -669,13 +694,14 @@ class FileFilterProxyModel(QSortFilterProxyModel):
 class PackageLibrary(QTreeWidget):
     ''' A library that displays all the available package.
     '''
-    def __init__(self, package_tree):
+    def __init__(self, package_tree, paths):
         """ Generate the library.
         """
         super(PackageLibrary, self).__init__()
 
         self.itemChanged.connect(self.update_checks)
         self.package_tree = package_tree
+        self.paths = paths
         self.generate_tree()
         self.setAlternatingRowColors(True)
         self.setHeaderLabel("Packages")
