@@ -314,7 +314,7 @@ class Project:
                     else:
                         # If the cell was there before, we just set it to the old value
                         self.database.set_value(scan, tag, str(old_value))
-                        set_item_data(item, old_value)
+                        set_item_data(item, old_value, self.database.get_tag(tag).type)
                         table.update_color(scan, tag, item, table.get_scan_row(scan))
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -410,7 +410,7 @@ class Project:
                     new_value = valueToRestore[3]
                     self.database.set_value(scan, tag, new_value)
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
-                    set_item_data(item, new_value)
+                    set_item_data(item, new_value, self.database.get_tag(tag).type)
                     table.update_color(scan, tag, item, table.get_scan_row(scan))
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):

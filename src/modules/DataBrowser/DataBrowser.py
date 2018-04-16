@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
@@ -20,11 +20,11 @@ from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
 from SoftwareProperties.Config import Config
-from populse_db.DatabaseModel import TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from populse_db.DatabaseModel import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_RAW, TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.ModifyTable import ModifyTable
 
-from Utils.Utils import check_value_type, set_item_data
+from Utils.Utils import check_value_type, set_item_data, table_to_database
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
@@ -517,7 +517,7 @@ class TableDataBrowser(QTableWidget):
         # Selection updated
         self.clearSelection()
 
-        for scan in self.selected_scans:
+        for scan in self.scans:
             scan_selected = scan[0]
             row = self.get_scan_row(scan_selected)
             # We select the columns of the row if it was selected
@@ -533,7 +533,7 @@ class TableDataBrowser(QTableWidget):
         """
 
         # List of selected scans updated
-        self.selected_scans.clear()
+        self.scans.clear()
 
         for point in self.selectedItems():
             row = point.row()
@@ -541,7 +541,7 @@ class TableDataBrowser(QTableWidget):
             scan_name = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(column).text()
             scan_already_in_list = False
-            for scan in self.selected_scans:
+            for scan in self.scans:
                 if scan[0] == scan_name:
                     # Scan already in the list, we append the column
                     scan[1].append(tag_name)
@@ -550,7 +550,7 @@ class TableDataBrowser(QTableWidget):
 
             if not scan_already_in_list:
                 # Scan not in the list, we add it
-                self.selected_scans.append([scan_name, [tag_name]])
+                self.scans.append([scan_name, [tag_name]])
 
         # ImageViewer updated
         self.parent.connect_viewer()
@@ -619,7 +619,7 @@ class TableDataBrowser(QTableWidget):
         self.scans_to_visualize = self.project.database.get_scans_names()
 
         # The list of selected scans
-        self.selected_scans = []
+        self.scans = []
 
         self.itemChanged.disconnect()
 
@@ -717,11 +717,11 @@ class TableDataBrowser(QTableWidget):
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                     else:
                         self.update_color(scan, current_tag, item, row)
-                    set_item_data(item, current_value)
+                    set_item_data(item, current_value, self.project.database.get_tag(current_tag).type)
 
                 # The scan does not have a value for the tag
                 else:
-                    set_item_data(item, not_defined_value)
+                    set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                     font = item.font()
                     font.setItalic(True)
                     font.setBold(True)
@@ -899,7 +899,7 @@ class TableDataBrowser(QTableWidget):
                 if not self.project.database.reset_value(scan_name, tag_name):
                     has_unreset_values = True
                 self.update_color(scan_name, tag_name, self.item(row, col), row)
-                set_item_data(self.item(row, col), initial_value)
+                set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
             else:
                 has_unreset_values = True
 
@@ -927,24 +927,20 @@ class TableDataBrowser(QTableWidget):
 
         for point in points:
             col = point.column()
-            row = point.row()
             tag_name = self.horizontalHeaderItem(col).text()
-            scan_name = self.item(row, 0).text()  # We get the FileName of the scan from the first row
 
-            row = 0
-            while row < len(self.scans_to_visualize):
-                scan = self.item(row, 0).text() # We get the FileName of the scan from the first column
+            for row_iter in range (0, len(self.scans_to_visualize)):
+                scan = self.item(row_iter, 0).text() # We get the FileName of the scan from the first column
                 initial_value = self.project.database.get_initial_value(scan, tag_name)
                 current_value = self.project.database.get_current_value(scan, tag_name)
                 if initial_value is not None:
                     modified_values.append([scan, tag_name, current_value, initial_value]) # For history
-                    if not self.project.database.reset_value(scan_name, tag_name):
+                    if not self.project.database.reset_value(scan, tag_name):
                         has_unreset_values = True
-                    set_item_data(self.item(row, col), initial_value)
-                    self.update_color(scan, tag_name, self.item(row, col), row)
+                    self.update_color(scan, tag_name, self.item(row_iter, col), row_iter)
+                    set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
                 else:
                     has_unreset_values = True
-                row += 1
 
         # For history
         historyMaker.append(modified_values)
@@ -981,9 +977,9 @@ class TableDataBrowser(QTableWidget):
                     # We reset the value only if it exists
                     modified_values.append([scan_name, tag, current_value, initial_value]) # For history
                     self.project.database.reset_value(scan_name, tag)
-                    if not self.project.database.reset_value(scan_name, tag_name):
+                    if not self.project.database.reset_value(scan_name, tag):
                         has_unreset_values = True
-                    set_item_data(self.item(row, column), initial_value)
+                    set_item_data(self.item(row, column), initial_value, self.project.database.get_tag(tag).type)
                     self.update_color(scan_name, tag, self.item(row, column), row)
                 else:
                     has_unreset_values = True
@@ -1025,10 +1021,10 @@ class TableDataBrowser(QTableWidget):
             item = QTableWidgetItem()
             value = self.project.database.get_current_value(scan_path, tag_name)
             if value is not None:
-                set_item_data(item, value)
+                set_item_data(item, value, self.project.database.get_tag(tag_name).type)
             else:
                 item = QTableWidgetItem()
-                set_item_data(item, not_defined_value)
+                set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -1221,9 +1217,9 @@ class TableDataBrowser(QTableWidget):
                     tag = self.horizontalHeaderItem(column).text()
                     cur_value = self.project.database.get_current_value(scan, tag)
                     if cur_value is not None:
-                        set_item_data(item, cur_value)
+                        set_item_data(item, cur_value, self.project.database.get_tag(tag).type)
                     else:
-                        set_item_data(item, not_defined_value)
+                        set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -1338,10 +1334,10 @@ class TableDataBrowser(QTableWidget):
 
         self.coordinates = [] # Coordinates of selected cells stored
         self.old_values = [] # Old values stored
-        self.table_types = []  # List of types
-        self.table_sizes = []  # List of lengths
-        self.table_scans = []  # List of table scans
-        self.table_tags = []  # List of table tags
+        self.types = []  # List of types
+        self.lengths = []  # List of lengths
+        self.scans = []  # List of table scans
+        self.tags = []  # List of table tags
 
         try:
 
@@ -1350,39 +1346,40 @@ class TableDataBrowser(QTableWidget):
                 row = item.row()
                 self.coordinates.append([row, column])
                 tag_name = self.horizontalHeaderItem(column).text()
-                tag_type = self.project.database.get_tag_type(tag_name)
+                tag_object = self.project.database.get_tag(tag_name)
+                tag_type = tag_object.type
                 scan_name = self.item(row, 0).text()
 
                 # Scan and tag added
-                self.table_tags.append(tag_name)
-                self.table_scans.append(scan_name)
+                self.tags.append(tag_name)
+                self.scans.append(scan_name)
 
                 # Type checked
-                if not tag_type in self.table_types:
-                    self.table_types.append(tag_type)
+                if not tag_type in self.types:
+                    self.types.append(tag_type)
 
                 # Length checked
                 text = item.text()
 
-                list_value = ast.literal_eval(text)
-                if isinstance(list_value, list):
+                if self.project.database.is_tag_list(tag_name):
 
-                    self.old_values.append(list_value)
+                    text = ast.literal_eval(text)
+                    self.old_values.append(text)
 
-                    size = len(list_value)
-                    if size not in self.table_sizes:
-                        self.table_sizes.append(size)
+                    size = len(text)
+                    if size not in self.lengths:
+                        self.lengths.append(size)
 
                 else:
                     self.setMouseTracking(True)
                     return
 
-            # Error if tables of different sizes
-            if len(self.table_sizes) > 1:
+            # Error if lists of different lengths
+            if len(self.lengths) > 1:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
-                msg.setText("Incompatible table sizes")
-                msg.setInformativeText("The tables can't have different sizes")
+                msg.setText("Incompatible list lengths")
+                msg.setInformativeText("The lists can't have several lengths")
                 msg.setWindowTitle("Warning")
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
@@ -1393,16 +1390,14 @@ class TableDataBrowser(QTableWidget):
             elif len(self.old_values) > 0:
 
                 if len(self.coordinates) > 1:
-                    list_value = []
-                    i = 0
-                    while i < self.table_sizes[0]:
-                        list_value.append([0])
-                        i += 1
+                    value = []
+                    for i in range (0, self.lengths[0]):
+                        value.append(0)
                 else:
-                    list_value = self.old_values[0]
+                    value = self.old_values[0]
 
-                # Window to change table values displayed
-                pop_up = ModifyTable(self.project, list_value, self.table_types, self.table_scans, self.table_tags)
+                # Window to change list values displayed
+                pop_up = ModifyTable(self.project, value, self.types, self.scans, self.tags)
                 pop_up.show()
                 if pop_up.exec_():
                     pass
@@ -1414,13 +1409,13 @@ class TableDataBrowser(QTableWidget):
 
                 self.itemChanged.disconnect()
 
-                # Tables updated
+                # Lists updated
                 i = 0
                 while i < len(self.coordinates):
                     new_item = QTableWidgetItem()
                     old_value = self.old_values[i]
-                    new_cur_value = self.project.database.get_current_value(self.table_scans[i], self.table_tags[i])
-                    modified_values.append([self.table_scans[i], self.table_tags[i], old_value, new_cur_value])
+                    new_cur_value = self.project.database.get_current_value(self.scans[i], self.tags[i])
+                    modified_values.append([self.scans[i], self.tags[i], old_value, new_cur_value])
                     set_item_data(new_item, new_cur_value)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
                     i += 1
@@ -1442,6 +1437,7 @@ class TableDataBrowser(QTableWidget):
             self.resizeColumnsToContents()  # Columns resized
 
         except Exception as e:
+            print(e)
             self.setMouseTracking(True)
 
     def change_cell_color(self, item_origin):
@@ -1450,10 +1446,8 @@ class TableDataBrowser(QTableWidget):
         Handles the multi-selection case
         """
 
-        import ast
-
         self.itemChanged.disconnect()
-        text_value = item_origin.text()
+        new_value = item_origin.data(Qt.EditRole)
 
         cells_types = [] # Will contain the type list of the selection
 
@@ -1463,26 +1457,16 @@ class TableDataBrowser(QTableWidget):
         for item in self.selectedItems():
             row = item.row()
             col = item.column()
-            scan_path = self.item(row, 0).text()
             tag_name = self.horizontalHeaderItem(col).text()
-            tag_type = self.project.database.get_tag(tag_name).type
-            old_value = item.text()
+            tag_object = self.project.database.get_tag(tag_name)
+            tag_type = tag_object.type
 
-            # Type check
-            try:
-                list_value = ast.literal_eval(old_value)
-                if isinstance(list_value, list):
-                    if not "table" in cells_types:
-                        cells_types.append("table")
-                else:
-                    if not tag_type in cells_types:
-                        cells_types.append(tag_type)
-            except:
-                if not tag_type in cells_types:
-                    cells_types.append(tag_type)
+            # Type added to types list
+            if not tag_type in cells_types:
+                cells_types.append(tag_type)
 
-        # Error if table with other types
-        if "table" in cells_types and len(cells_types) > 1:
+        # Error if list with other types
+        if TAG_TYPE_LIST_DATE in cells_types or TAG_TYPE_LIST_DATETIME in cells_types or TAG_TYPE_LIST_TIME in cells_types or TAG_TYPE_LIST_INTEGER in cells_types or TAG_TYPE_LIST_STRING in cells_types or TAG_TYPE_LIST_FLOAT in cells_types and len(cells_types) > 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("Incompatible types")
@@ -1494,15 +1478,15 @@ class TableDataBrowser(QTableWidget):
             self.itemChanged.connect(self.change_cell_color)
             return
 
-        # Nothing to do if table
-        if "table" in cells_types:
+        # Nothing to do if list
+        if TAG_TYPE_LIST_DATE in cells_types or TAG_TYPE_LIST_DATETIME in cells_types or TAG_TYPE_LIST_TIME in cells_types or TAG_TYPE_LIST_INTEGER in cells_types or TAG_TYPE_LIST_STRING in cells_types or TAG_TYPE_LIST_FLOAT in cells_types:
             self.itemChanged.connect(self.change_cell_color)
             return
 
         # We check that the value is compatible with all the types
         types_compatibles = True
         for cell_type in cells_types:
-            if not check_value_type(text_value, cell_type):
+            if not check_value_type(new_value, cell_type):
                 types_compatibles = False
                 type_problem = cell_type
                 break
@@ -1512,7 +1496,7 @@ class TableDataBrowser(QTableWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("Invalid value")
-            msg.setInformativeText("The value " + text_value + " is invalid with the type " + type_problem)
+            msg.setInformativeText("The value " + new_value + " is invalid with the type " + type_problem)
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
@@ -1531,6 +1515,7 @@ class TableDataBrowser(QTableWidget):
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
+                tag_type = self.project.database.get_tag(tag_name).type
 
                 # We only set the case if it's not the tag FileName
                 if (tag_name != "FileName"):
@@ -1538,12 +1523,12 @@ class TableDataBrowser(QTableWidget):
                     old_value = self.project.database.get_current_value(scan_path, tag_name)
                     # The scan already has a value for the tag: we update it
                     if old_value is not  None:
-                        modified_values.append([scan_path, tag_name, old_value, text_value])
-                        self.project.database.set_value(scan_path, tag_name, text_value)
+                        modified_values.append([scan_path, tag_name, old_value, new_value])
+                        self.project.database.set_value(scan_path, tag_name, table_to_database(new_value, tag_type))
                     # The scan does not have a value for the tag yet: we add it
                     else:
-                        modified_values.append([scan_path, tag_name, None, text_value])
-                        self.project.database.add_value(scan_path, tag_name, text_value, text_value)
+                        modified_values.append([scan_path, tag_name, None, new_value])
+                        self.project.database.add_value(scan_path, tag_name, table_to_database(new_value, tag_type), table_to_database(new_value, tag_type))
 
                         # Font reset in case it was a not defined cell
                         font = item.font()
@@ -1553,7 +1538,7 @@ class TableDataBrowser(QTableWidget):
 
                     self.update_color(scan_path, tag_name, item, row)
 
-                    set_item_data(item, text_value)
+                    set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
 
             # For history
             historyMaker.append(modified_values)
