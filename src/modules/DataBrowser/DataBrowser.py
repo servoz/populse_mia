@@ -1513,7 +1513,7 @@ class TableDataBrowser(QTableWidget):
                     # The scan does not have a value for the tag yet: we add it
                     else:
                         modified_values.append([scan_path, tag_name, None, database_value])
-                        self.project.database.add_value(scan_path, tag_name, database_value, database_value)
+                        self.project.database.add_value(scan_path, tag_name, database_value, None)
 
                         # Font reset in case it was a not defined cell
                         font = item.font()

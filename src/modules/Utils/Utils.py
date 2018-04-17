@@ -23,18 +23,27 @@ def set_item_data(item, value, value_type):
             value_prepared = QDateTime(value)
         elif isinstance(value, QDateTime):
             value_prepared = value
+        elif isinstance(value, str):
+            format = "%d/%m/%Y %H:%M"
+            value_prepared = QDateTime(datetime.strptime(value, format))
         item.setData(Qt.EditRole, QVariant(value_prepared))
     elif value_type == TAG_TYPE_DATE:
         if isinstance(value, date):
             value_prepared = QDate(value)
         elif isinstance(value, QDate):
             value_prepared = value
+        elif isinstance(value, str):
+            format = "%d/%m/%Y"
+            value_prepared = QDate(datetime.strptime(value, format).date())
         item.setData(Qt.EditRole, QVariant(value_prepared))
     elif value_type == TAG_TYPE_TIME:
         if isinstance(value, time):
             value_prepared = QTime(value)
         elif isinstance(value, QTime):
             value_prepared = value
+        elif isinstance(value, str):
+            format = "%H:%M"
+            value_prepared = QTime(datetime.strptime(value, format).time())
         item.setData(Qt.EditRole, QVariant(value_prepared))
     elif value_type == TAG_TYPE_FLOAT:
         value_prepared = float(value)
@@ -84,11 +93,35 @@ def check_value_type(value, value_type, is_subvalue=False):
                 break
         return  is_valid_value
     elif value_type == TAG_TYPE_DATE or value_type == TAG_TYPE_LIST_DATE and is_subvalue:
-        return isinstance(value, QDate)
+        if isinstance(value, QDate):
+            return True
+        elif isinstance(value, str):
+            try:
+                format = "%d/%m/%Y"
+                datetime.strptime(value, format).date()
+                return True
+            except ValueError as e:
+                return False
     elif value_type == TAG_TYPE_DATETIME or value_type == TAG_TYPE_LIST_DATETIME and is_subvalue:
-        return isinstance(value, QDateTime)
+        if isinstance(value, QDateTime):
+            return True
+        elif isinstance(value, str):
+            try:
+                format = "%d/%m/%Y %H:%M"
+                datetime.strptime(value, format)
+                return True
+            except ValueError as e:
+                return False
     elif value_type == TAG_TYPE_TIME or value_type == TAG_TYPE_LIST_TIME and is_subvalue:
-        return isinstance(value, QTime)
+        if isinstance(value, QTime):
+            return True
+        elif isinstance(value, str):
+            try:
+                format = "%H:%M"
+                datetime.strptime(value, format).time()
+                return True
+            except ValueError as e:
+                return False
 
 def table_to_database(value, value_type):
     """
@@ -107,12 +140,21 @@ def table_to_database(value, value_type):
     elif value_type == TAG_TYPE_DATETIME:
         if isinstance(value, QDateTime):
             return value.toPyDateTime()
+        elif isinstance(value, str):
+            format = "%d/%m/%Y %H:%M"
+            return datetime.strptime(value, format)
     elif value_type == TAG_TYPE_DATE:
         if isinstance(value, QDate):
             return value.toPyDate()
+        elif isinstance(value, str):
+            format = "%d/%m/%Y"
+            return datetime.strptime(value, format).date()
     elif value_type == TAG_TYPE_TIME:
         if isinstance(value, QTime):
             return value.toPyTime()
+        elif isinstance(value, str):
+            format = "%H:%M"
+            return datetime.strptime(value, format).time()
     elif value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING,
                         TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT]:
         return ast.literal_eval(value)
