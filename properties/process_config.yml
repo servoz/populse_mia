@@ -1,6 +1,96 @@
 Packages:
+  Processes:
+    Addition: process_enabled
+    FSL_Smooth: process_enabled
+    SPM_Smooth: process_enabled
+    Substraction: process_enabled
   nipype:
     interfaces:
+      freesurfer:
+        AddXFormToHeader: process_enabled
+        Aparc2Aseg: process_enabled
+        Apas2Aseg: process_disabled
+        ApplyMask: process_enabled
+        ApplyVolTransform: process_disabled
+        BBRegister: process_enabled
+        Binarize: process_disabled
+        CALabel: process_disabled
+        CANormalize: process_enabled
+        CARegister: process_enabled
+        CheckTalairachAlignment: process_enabled
+        Concatenate: process_enabled
+        ConcatenateLTA: process_enabled
+        Contrast: process_enabled
+        Curvature: process_enabled
+        CurvatureStats: process_enabled
+        DICOMConvert: process_enabled
+        EMRegister: process_enabled
+        EditWMwithAseg: process_enabled
+        EulerNumber: process_enabled
+        ExtractMainComponent: process_enabled
+        FSCommand: process_enabled
+        FitMSParams: process_enabled
+        FixTopology: process_enabled
+        FuseSegmentations: process_enabled
+        GLMFit: process_enabled
+        Info: process_enabled
+        Jacobian: process_enabled
+        Label2Annot: process_enabled
+        Label2Label: process_enabled
+        Label2Vol: process_enabled
+        MNIBiasCorrection: process_enabled
+        MPRtoMNI305: process_enabled
+        MRIConvert: process_enabled
+        MRICoreg: process_enabled
+        MRIFill: process_enabled
+        MRIMarchingCubes: process_enabled
+        MRIPretess: process_enabled
+        MRISPreproc: process_enabled
+        MRISPreprocReconAll: process_enabled
+        MRITessellate: process_enabled
+        MRIsCALabel: process_enabled
+        MRIsCalc: process_enabled
+        MRIsCombine: process_enabled
+        MRIsConvert: process_enabled
+        MRIsExpand: process_enabled
+        MRIsInflate: process_enabled
+        MS_LDA: process_enabled
+        MakeAverageSubject: process_enabled
+        MakeSurfaces: process_enabled
+        Normalize: process_enabled
+        OneSampleTTest: process_enabled
+        Paint: process_enabled
+        ParcellationStats: process_enabled
+        ParseDICOMDir: process_enabled
+        ReconAll: process_enabled
+        Register: process_enabled
+        RegisterAVItoTalairach: process_enabled
+        RelabelHypointensities: process_enabled
+        RemoveIntersection: process_enabled
+        RemoveNeck: process_enabled
+        Resample: process_enabled
+        RobustRegister: process_enabled
+        RobustTemplate: process_enabled
+        SampleToSurface: process_enabled
+        SegStats: process_enabled
+        SegStatsReconAll: process_enabled
+        SegmentCC: process_enabled
+        SegmentWM: process_enabled
+        Smooth: process_enabled
+        SmoothTessellation: process_enabled
+        Sphere: process_enabled
+        SphericalAverage: process_enabled
+        Surface2VolTransform: process_enabled
+        SurfaceSmooth: process_enabled
+        SurfaceSnapshots: process_enabled
+        SurfaceTransform: process_enabled
+        SynthesizeFLASH: process_enabled
+        TalairachAVI: process_enabled
+        TalairachQC: process_enabled
+        Tkregister2: process_enabled
+        UnpackSDICOMDir: process_enabled
+        VolumeMask: process_enabled
+        WatershedSkullStrip: process_enabled
       fsl:
         AR1Image: process_enabled
         AccuracyTester: process_disabled
@@ -135,4 +225,5 @@ Packages:
         Threshold: process_enabled
         TwoSampleTTestDesign: process_enabled
         VBMSegment: process_enabled
-
+Paths:
+- /home/david/MIA2/src/modules/PipelineManager

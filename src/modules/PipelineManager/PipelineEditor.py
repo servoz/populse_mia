@@ -116,7 +116,7 @@ class PipelineEditor(PipelineDevelopperView):
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
 
     def add_link(self, source, dest, active, weak):
-        PipelineDevelopperView.add_link(self, source, dest, active, weak)
+        PipelineDevelopperView.scene.add_link(self, source, dest, active, weak)
 
         # For history
         history_maker = []
@@ -129,7 +129,7 @@ class PipelineEditor(PipelineDevelopperView):
         self.redos.clear()
 
     def _del_link(self):
-        PipelineDevelopperView._del_link(self)
+        PipelineDevelopperView.scene._del_link(self)
         link_def = self._current_link
         # For history
         history_maker = []

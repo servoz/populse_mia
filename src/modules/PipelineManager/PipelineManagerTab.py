@@ -143,6 +143,15 @@ class PipelineManagerTab(QWidget):
 
     def redo(self):
         #TODO
+
+        # We can redo if we have an action to make again
+        if len(self.diagramView.redos) > 0:
+            to_redo = self.diagramView.redos.pop()
+            self.undos.append(to_redo)  # We pop the redo action in the undo stack
+            # The first element of the list is the type of action made by the user
+            action = to_redo[0]
+            if action == "add_process":
+                pass
         pass
 
     def controller_value_changed(self, signal_list):
