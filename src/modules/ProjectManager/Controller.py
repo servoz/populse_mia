@@ -63,6 +63,8 @@ def read_log(project):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
+    begin = time()
+
     raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
 
     # Checking all the export logs from MRIManager and taking the most recent
@@ -77,6 +79,7 @@ def read_log(project):
     historyMaker.append("add_scans")
     scans_added = []
     values_added = []
+    tags_set = []
 
     # Default tags stored
     config = Config()
@@ -109,7 +112,7 @@ def read_log(project):
 
             # We create the tag FileName
             project.database.add_value(file_name, "FileName", file_name, None) # FileName tag added
-            values_added.append([file_name, "FileName", file_name, TAG_TYPE_STRING])
+            values_added.append([file_name, "FileName", file_name, None])
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -196,7 +199,8 @@ def read_log(project):
                         else:
                             project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, tag_type, unit, None,
                                                      description)
-                    else:
+                    elif tag_name not in tags_set:
+                        tags_set.append(tag_name)
                         # The tag is updated as it's already in the database
                         project.database.set_tag_origin(tag_name, TAG_ORIGIN_RAW)
                         if tag_name in default_tags:
@@ -204,14 +208,13 @@ def read_log(project):
                         else:
                             project.database.set_tag_visibility(tag_name, False)
                         project.database.set_tag_description(tag_name, description)
-                        if project.database.get_tag(tag_name).type != tag_type:
-                            project.database.set_tag_type(tag_name, tag_type)
+                        project.database.set_tag_type(tag_name, tag_type)
                         project.database.set_tag_unit(tag_name, unit)
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
                         project.database.add_value(file_name, tag_name, value, value) # Value added to the Database
-                        values_added.append([file_name, tag_name, value]) # Value added to history
+                        values_added.append([file_name, tag_name, value, value]) # Value added to history
 
     ui_progressbar.close()
 
@@ -221,12 +224,15 @@ def read_log(project):
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
                     project.database.add_value(scan[0], tag.name, tag.default_value, None)
+                    values_added.append([scan[0], tag.namee, tag.default_value, None])  # Value added to history
 
     # For history
     historyMaker.append(scans_added)
     historyMaker.append(values_added)
     project.undos.append(historyMaker)
     project.redos.clear()
+
+    print("read_log time: " + str(time() - begin))
 
 def verify_scans(project, path):
     # Returning the files that are problematic
