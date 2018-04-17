@@ -249,7 +249,8 @@ class Project:
         if len(self.undos) > 0:
             toUndo = self.undos.pop()
             self.redos.append(toUndo)  # We pop the undo action in the redo stack
-            # The first element of the list is the type of action made by the user (add_tag, remove_tags, add_scans, remove_scans, or modified_values)
+            # The first element of the list is the type of action made by the user (add_tag,
+            # remove_tags, add_scans, remove_scans, or modified_values)
             action = toUndo[0]
             if (action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it

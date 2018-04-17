@@ -4,7 +4,7 @@ import sys
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize
+    QRectF, QSize, pyqtSignal
 from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
     QCursor, QBrush, QStandardItem, QIcon
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, QGraphicsView, \
@@ -130,6 +130,45 @@ class ProjectEditor(QWidget):
 
         self.startedConnection = None
 
+        # To undo/redo
+        self.nodeController.value_changed.connect(self.controller_value_changed)
+
+    def undo(self):
+        #TODO
+        print(self.diagramView.undos)
+        # We can undo if we have an action to revert
+        if len(self.undos) > 0:
+            to_undo = self.undos.pop()
+            self.redos.append(to_undo)  # We pop the undo action in the redo stack
+            # The first element of the list is the type of action made by the user
+            action = to_undo[0]
+            if action == "add_process":
+                # TODO: LIST ALL ACTION
+                pass
+
+    def redo(self):
+        #TODO
+        pass
+
+    def controller_value_changed(self, signal_list):
+        case = signal_list.pop(0)
+
+        # For history
+        history_maker = []
+
+        if case == "node_name":
+            history_maker.append("update_node_name")
+            for element in signal_list:
+                history_maker.append(element)
+
+        elif case == "plug_value":
+            history_maker.append("update_plug_value")
+            for element in signal_list:
+                history_maker.append(element)
+
+        self.diagramView.undos.append(history_maker)
+        self.diagramView.redos.clear()
+
     def loadPipeline(self):
         self.diagramView.load_pipeline()
 
@@ -170,8 +209,12 @@ class ProjectEditor(QWidget):
                 self.startedConnection.delete()
             self.startedConnection = None
 
+
 class NodeController(QWidget):
     """ The node controller is displayed on the right of the pipeline editor"""
+
+    value_changed = pyqtSignal(list)
+
     def __init__(self, parent=None):
         super(NodeController, self).__init__(parent)
         self.v_box_final = QVBoxLayout()
@@ -288,6 +331,7 @@ class NodeController(QWidget):
         create a new node that has the same traits as the selected one and create
         new links that are the same than the selected node."""
         old_node = pipeline.nodes[self.node_name]
+        old_node_name = self.node_name
 
         if self.line_edit_node_name.text() in list(pipeline.nodes.keys()):
             print("Node name already in pipeline")
@@ -329,21 +373,32 @@ class NodeController(QWidget):
             # Updating the pipeline
             pipeline.update_nodes_and_plugs_activation()
 
+            # To undo/redo
+            self.value_changed.emit(["node_name", old_node_name, self.node_name])
+
     def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type):
         """ Method that updates in the pipeline the value of a plug """
+
         if in_or_out == 'in':
+            old_value = self.line_edit_input[index].text()
             new_value = self.line_edit_input[index].text()
         elif in_or_out == 'out':
+            old_value = self.line_edit_output[index].text()
             new_value = self.line_edit_output[index].text()
         else:
+            old_value = None
             new_value = None
             #TODO: RAISE ERROR
             pass
         if value_type not in [float, int, str, list]:
+            old_value = None
             new_value = None
             value_type = str
             #TODO: RAISE ERROR
         pipeline.nodes[self.node_name].set_plug_value(plug_name, value_type(new_value))
+
+        # To undo/redo
+        self.value_changed.emit(["plug_value", self.node_name, index, value_type(old_value), in_or_out, plug_name, pipeline, value_type])
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
@@ -507,6 +562,10 @@ class EditorGraphicsView(PipelineDevelopperView):
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
                                         show_sub_pipelines=True, enable_edition=True)
 
+        # Undo/Redo
+        self.undos = []
+        self.redos = []
+
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             event.accept()
@@ -568,6 +627,59 @@ class EditorGraphicsView(PipelineDevelopperView):
         node = pipeline.nodes[node_name]
         gnode = self.scene.add_node(node_name, node)
         gnode.setPos(self.mapToScene(self.mapFromGlobal(self.click_pos)))
+
+        # For history
+        history_maker = []
+        history_maker.append("add_process")
+        history_maker.append(node_name)
+        self.undos.append(history_maker)
+        self.redos.clear()
+
+    def del_node(self, node_name=None):
+        PipelineDevelopperView.del_node(self, node_name)
+
+        # For history
+        history_maker = []
+        history_maker.append("delete_process")
+        history_maker.append(node_name)
+        self.undos.append(history_maker)
+        self.redos.clear()
+        # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
+
+    def add_link(self, source, dest, active, weak):
+        PipelineDevelopperView.add_link(self, source, dest, active, weak)
+
+        # For history
+        history_maker = []
+        history_maker.append("add_link")
+        history_maker.append(source)
+        history_maker.append(dest)
+        history_maker.append(active)
+        history_maker.append(weak)
+        self.undos.append(history_maker)
+        self.redos.clear()
+
+    def _del_link(self):
+        PipelineDevelopperView._del_link(self)
+        link_def = self._current_link
+        # For history
+        history_maker = []
+        history_maker.append("delete_link")
+        history_maker.append(link_def)
+        self.undos.append(history_maker)
+        self.redos.clear()
+
+    def export_plugs(self, inputs=True, outputs=True, optional=False):
+        # TODO: TO IMPROVE
+        # For history
+        history_maker = []
+        history_maker.append("delete_link")
+
+        for node_name in self.scene.pipeline.nodes:
+            if node_name != "":
+                history_maker.append(node_name)
+
+        PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)
 
 
 class TextEditor(QTextEdit):

@@ -131,7 +131,7 @@ class Main_Window(QMainWindow):
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
-        self.menu_edition = self.menuBar().addMenu('Edition')
+        self.menu_edition = self.menuBar().addMenu('Edit')
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
 
@@ -170,13 +170,23 @@ class Main_Window(QMainWindow):
         """
         To undo the last action done by the user
         """
-        self.project.undo(self.data_browser.table_data) # Action reverted in the Database
+        if self.tabs.currentIndex() == 0:
+            # In Data Browser
+            self.project.undo(self.data_browser.table_data) # Action reverted in the Database
+        elif self.tabs.currentIndex() == 2:
+            # In Pipeline Manager
+            self.pipeline_manager.undo()
 
     def redo(self):
         """
         To redo the last action made by the user
         """
-        self.project.redo(self.data_browser.table_data) # Action remade in the Database
+        if self.tabs.currentIndex() == 0:
+            # In Data Browser
+            self.project.redo(self.data_browser.table_data) # Action remade in the Database
+        elif self.tabs.currentIndex() == 2:
+            # In Pipeline Manager
+            self.pipeline_manager.redo()
 
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
