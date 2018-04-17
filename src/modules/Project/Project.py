@@ -282,6 +282,8 @@ class Project:
                     self.database.remove_scan(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
+                    table.update_colors()
+                table.update_colors()
             if (action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
                 scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
@@ -316,7 +318,7 @@ class Project:
                         # If the cell was there before, we just set it to the old value
                         self.database.set_value(scan, tag, old_value)
                         set_item_data(item, old_value, self.database.get_tag(tag).type)
-                    table.update_color(scan, tag, item, table.get_scan_row(scan))
+                table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
@@ -398,6 +400,7 @@ class Project:
                     self.database.remove_scan(scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
+                table.update_colors()
             if (action == "modified_values"):  # Not working
                 # To modify the values, we need the cells, and the updated values
                 modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -418,7 +421,7 @@ class Project:
                         font.setBold(False)
                         item.setFont(font)
                     set_item_data(item, new_value, self.database.get_tag(tag).type)
-                    table.update_color(scan, tag, item, table.get_scan_row(scan))
+                table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
