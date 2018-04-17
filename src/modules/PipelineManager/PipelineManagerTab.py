@@ -107,6 +107,8 @@ class PipelineManagerTab(QWidget):
         if len(self.diagramView.undos) > 0:
             to_undo = self.diagramView.undos.pop()
             self.diagramView.redos.append(to_undo)  # We pop the undo action in the redo stack
+            print("REDOOO")
+            print(self.diagramView.redos)
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
             if action == "add_process":
@@ -140,9 +142,13 @@ class PipelineManagerTab(QWidget):
             elif action == "delete_link":
                 pass
             # TODO: ADD "MOVE PROCESS ?"
+        print("YOLO")
+        print(self.diagramView.redos)
 
     def redo(self):
         #TODO
+        print("REDO")
+        print(self.diagramView.redos)
 
         # We can redo if we have an action to make again
         if len(self.diagramView.redos) > 0:
@@ -151,8 +157,37 @@ class PipelineManagerTab(QWidget):
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
             if action == "add_process":
+                node_name = to_redo[0]
+                class_process = to_redo[1]
+                self.diagramView.add_process(class_process, node_name)
+                self.diagramView.undos.pop()
+            elif action == "delete_process":
+                node_name = to_redo[1]
+                self.diagramView.del_node(node_name)
+                self.diagramView.undos.pop()
                 pass
-        pass
+            elif action == "export_plugs":
+                pass
+            elif action == "update_node_name":
+                node = to_redo[1]
+                new_node_name = to_redo[2]
+                old_node_name = to_redo[3]
+                self.diagramView.update_node_name(node, new_node_name, old_node_name)
+                self.diagramView.undos.pop()
+                pass
+            elif action == "update_plug_value":
+                node_name = to_redo[1]
+                old_value = to_redo[2]
+                plug_name = to_redo[3]
+                value_type = to_redo[4]
+                new_value = to_redo[5]
+                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type)
+                self.diagramView.undos.pop()
+            elif action == "add_link":
+                pass
+            elif action == "delete_link":
+                pass
+            # TODO: ADD "MOVE PROCESS ?"
 
     def controller_value_changed(self, signal_list):
         case = signal_list.pop(0)

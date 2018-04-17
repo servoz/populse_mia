@@ -94,6 +94,7 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = []
         history_maker.append("add_process")
         history_maker.append(node_name)
+        history_maker.append(class_process)
         self.undos.append(history_maker)
         self.redos.clear()
 

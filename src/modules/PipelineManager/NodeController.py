@@ -211,7 +211,7 @@ class NodeController(QWidget):
         pipeline.nodes[self.node_name].set_plug_value(plug_name, value_type(new_value))
 
         # To undo/redo
-        self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type])
+        self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
