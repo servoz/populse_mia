@@ -16,6 +16,21 @@ def set_item_data(item, value, value_type):
     if value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT]:
         if isinstance(value, str):
             value = ast.literal_eval(value)
+        if value_type == TAG_TYPE_LIST_DATE:
+            new_list = []
+            for subvalue in value:
+                new_list.append(subvalue.strftime('%d/%m/%Y'))
+            value = new_list
+        elif value_type == TAG_TYPE_LIST_DATETIME:
+            new_list = []
+            for subvalue in value:
+                new_list.append(subvalue.strftime('%d/%m/%Y %H:%M'))
+            value = new_list
+        elif value_type == TAG_TYPE_LIST_TIME:
+            new_list = []
+            for subvalue in value:
+                new_list.append(subvalue.strftime('%H:%M'))
+            value = new_list
         value_prepared = str(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
     elif value_type == TAG_TYPE_DATETIME:
@@ -157,7 +172,11 @@ def table_to_database(value, value_type):
             return datetime.strptime(value, format).time()
     elif value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING,
                         TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT]:
-        return ast.literal_eval(value)
+        old_list = ast.literal_eval(value)
+        list_to_return = []
+        for old_element in old_list:
+            list_to_return.append(table_to_database(old_element, value_type.replace("list_", "")))
+        return list_to_return
 
 def message_already_exists():
     msg = QMessageBox()

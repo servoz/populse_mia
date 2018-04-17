@@ -26,6 +26,8 @@ from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.Utils import check_value_type, set_item_data, table_to_database
 
+import ast
+
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
 class DataBrowser(QWidget):
@@ -1233,11 +1235,9 @@ class TableDataBrowser(QTableWidget):
         :param to_insert: tag to insert
         """
 
-        i = 1
-        while i < len(self.horizontalHeader()):
-            if self.horizontalHeaderItem(i).text() > to_insert:
-                return i
-            i +=1
+        for column in range(1, len(self.horizontalHeader())):
+            if self.horizontalHeaderItem(column).text() > to_insert:
+                return column
         return self.columnCount()
 
     def add_columns(self):
@@ -1285,13 +1285,11 @@ class TableDataBrowser(QTableWidget):
                     self.setColumnHidden(columnIndex, True)
 
         # Removing useless columns
-        column = 0
         tags_to_remove = []
-        while column < self.columnCount():
+        for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
             if not tag_name in self.project.database.get_tags_names():
                 tags_to_remove.append(tag_name)
-            column += 1
 
         for tag in tags_to_remove:
             self.removeColumn(self.get_tag_column(tag))
@@ -1311,14 +1309,13 @@ class TableDataBrowser(QTableWidget):
         :param e: event
         """
 
-        import ast
-
         super(TableDataBrowser, self).mouseReleaseEvent(e)
 
         self.setMouseTracking(False)
 
         self.coordinates = [] # Coordinates of selected cells stored
-        self.old_values = [] # Old values stored
+        self.old_database_values = [] # Old database values stored
+        self.old_table_values = []  # Old table values stored
         self.types = []  # List of types
         self.lengths = []  # List of lengths
         self.scans = []  # List of table scans
@@ -1343,15 +1340,16 @@ class TableDataBrowser(QTableWidget):
                 if not tag_type in self.types:
                     self.types.append(tag_type)
 
-                # Length checked
-                text = item.text()
-
                 if self.project.database.is_tag_list(tag_name):
 
-                    text = ast.literal_eval(text)
-                    self.old_values.append(text)
+                    database_value = self.project.database.get_current_value(scan_name, tag_name)
+                    self.old_database_values.append(database_value)
 
-                    size = len(text)
+                    table_value = item.data(Qt.EditRole)
+                    table_value = ast.literal_eval(table_value)
+                    self.old_table_values.append(table_value)
+
+                    size = len(database_value)
                     if size not in self.lengths:
                         self.lengths.append(size)
 
@@ -1372,14 +1370,14 @@ class TableDataBrowser(QTableWidget):
 
             # Ok
 
-            elif len(self.old_values) > 0:
+            elif len(self.old_table_values) > 0:
 
                 if len(self.coordinates) > 1:
                     value = []
                     for i in range (0, self.lengths[0]):
                         value.append(0)
                 else:
-                    value = self.old_values[0]
+                    value = self.old_table_values[0]
 
                 # Window to change list values displayed
                 pop_up = ModifyTable(self.project, value, self.types, self.scans, self.tags)
@@ -1397,7 +1395,7 @@ class TableDataBrowser(QTableWidget):
                 # Lists updated
                 for i in range (0, len(self.coordinates)):
                     new_item = QTableWidgetItem()
-                    old_value = self.old_values[i]
+                    old_value = self.old_database_values[i]
                     new_cur_value = self.project.database.get_current_value(self.scans[i], self.tags[i])
                     modified_values.append([self.scans[i], self.tags[i], old_value, new_cur_value])
                     set_item_data(new_item, new_cur_value, self.project.database.get_tag(self.tags[i]).type)

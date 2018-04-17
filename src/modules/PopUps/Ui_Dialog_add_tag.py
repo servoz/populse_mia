@@ -6,6 +6,7 @@ from Utils.Tools import ClickableLabel
 from Utils.Utils import table_to_database, check_value_type
 import os
 import ast
+from datetime import datetime, date, time
 
 class Default_value_list_creation(QDialog):
 
@@ -113,9 +114,21 @@ class Default_value_list_creation(QDialog):
                     database_value.append(int(text))
                 elif self.type == TAG_TYPE_LIST_FLOAT:
                     database_value.append(float(text))
-                else:
+                elif self.type == TAG_TYPE_LIST_STRING:
                     database_value.append(str(text))
-                # TODO add other types
+                elif self.type == TAG_TYPE_LIST_DATE:
+                    format = "%d/%m/%Y"
+                    datetime.strptime(text, format).date()
+                    database_value.append(text)
+                elif self.type == TAG_TYPE_LIST_DATETIME:
+                    format = "%d/%m/%Y %H:%M"
+                    datetime.strptime(text, format)
+                    database_value.append(text)
+                elif self.type == TAG_TYPE_LIST_TIME:
+                    format = "%H:%M"
+                    datetime.strptime(text, format).time()
+                    database_value.append(text)
+
             except Exception:
                 # Error if invalid value
                 valid_values = False
@@ -207,6 +220,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.project = project
         self.type = TAG_TYPE_STRING # Type is string by default
         self.pop_up()
+        self.setMinimumWidth(700)
 
     def pop_up(self):
         self.setObjectName("Add a tag")
@@ -332,14 +346,19 @@ class Ui_Dialog_add_tag(QDialog):
             self.type = TAG_TYPE_STRING
         elif text == "Integer":
             self.type = TAG_TYPE_INTEGER
+            self.text_edit_default_value.setPlaceholderText("Please enter an integer")
         elif text == "Float":
             self.type = TAG_TYPE_FLOAT
+            self.text_edit_default_value.setPlaceholderText("Please enter a float")
         elif text == "Date":
             self.type = TAG_TYPE_DATE
+            self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
         elif text == "Datetime":
             self.type = TAG_TYPE_DATETIME
+            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm")
         elif text == "Time":
             self.type = TAG_TYPE_TIME
+            self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm")
         elif text == "String List":
             self.type = TAG_TYPE_LIST_STRING
         elif text == "Integer List":

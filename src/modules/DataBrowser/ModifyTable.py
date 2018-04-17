@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING
+from datetime import datetime, date, time
 
 class ModifyTable(QDialog):
     """
@@ -135,10 +136,20 @@ class ModifyTable(QDialog):
                         database_value.append(int(text))
                     elif tag_type == TAG_TYPE_LIST_FLOAT:
                         database_value.append(float(text))
-                    else:
+                    elif tag_type == TAG_TYPE_LIST_STRING:
                         database_value.append(str(text))
-
-                    # TODO add date list types
+                    elif tag_type == TAG_TYPE_LIST_DATE:
+                        format = "%d/%m/%Y"
+                        subvalue = datetime.strptime(text, format).date()
+                        database_value.append(subvalue)
+                    elif tag_type == TAG_TYPE_LIST_DATETIME:
+                        format = "%d/%m/%Y %H:%M"
+                        subvalue = datetime.strptime(text, format)
+                        database_value.append(subvalue)
+                    elif tag_type == TAG_TYPE_LIST_TIME:
+                        format = "%H:%M"
+                        subvalue = datetime.strptime(text, format).time()
+                        database_value.append(subvalue)
 
                 # Database updated for every cell
                 self.project.database.set_value(scan, tag, database_value)
