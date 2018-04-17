@@ -242,7 +242,6 @@ class Project:
         Undo the last action made by the user on the project
         """
 
-        from PyQt5 import QtCore
         from DataBrowser.DataBrowser import not_defined_value
 
         # We can undo if we have an action to revert
@@ -282,7 +281,6 @@ class Project:
                     self.database.remove_scan(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
-                    table.update_colors()
                 table.update_colors()
             if (action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
@@ -389,7 +387,7 @@ class Project:
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range (0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
-                    self.database.add_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[2])
+                    self.database.add_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[3])
                 table.add_rows(self.database.get_scans_names())
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
