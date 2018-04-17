@@ -445,11 +445,11 @@ class TableDataBrowser(QTableWidget):
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table))
+        self.itemChanged.connect(self.change_cell_color)
+        self.itemSelectionChanged.connect(self.selection_changed)
         self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
         self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
-        self.itemChanged.connect(self.change_cell_color)
-        self.itemSelectionChanged.connect(self.selection_changed)
 
         self.update_table()
 
@@ -481,12 +481,13 @@ class TableDataBrowser(QTableWidget):
                 font.setItalic(True)
                 font.setBold(True)
                 item.setFont(font)
-            self.update_color(scan, tag, item, row)
 
         self.resizeColumnsToContents()  # New column resized
 
         # Selection updated
         self.update_selection()
+
+        self.update_colors()
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
@@ -508,6 +509,10 @@ class TableDataBrowser(QTableWidget):
 
             if config.isAutoSave() == "yes" and not self.project.isTempProject:
                 save_project(self.project)
+
+            self.sortItems(column, order)
+
+            self.update_colors()
 
     def update_selection(self):
         """
@@ -627,9 +632,6 @@ class TableDataBrowser(QTableWidget):
 
         self.setColumnCount(len(self.project.database.get_tags_names()))
 
-        self.setAlternatingRowColors(True)
-        self.setStyleSheet("alternate-background-color:rgb(255, 255, 255); background-color:rgb(250, 250, 250);")
-
         _translate = QtCore.QCoreApplication.translate
 
         # Sort visual management
@@ -651,6 +653,8 @@ class TableDataBrowser(QTableWidget):
 
         # Columns and rows resized
         self.resizeColumnsToContents()
+
+        self.update_colors()
 
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
@@ -724,38 +728,56 @@ class TableDataBrowser(QTableWidget):
                     font.setBold(True)
                     item.setFont(font)
                 self.setItem(row, column, item)
-                if column != 0:
-                    self.update_color(scan, current_tag, item, row)
             row += 1
 
         ui_progressbar.close()
 
-    def update_color(self, scan, tag, item, row):
-        """ Method that changes the background of a cell depending on
-        its row and its tag value. """
+    def update_colors(self):
+        """ Method that changes the background of all the cells """
 
-        color = QColor()
-        # Raw tag
-        if self.project.database.get_tag(tag).origin == TAG_ORIGIN_RAW:
-            if self.project.database.is_value_modified(scan, tag):
-                if row % 2 == 1:
-                    color.setRgb(200, 230, 245) # Cyan
-                else:
-                    color.setRgb(150, 215, 230) # Blue
-            else:
-                color.setRgb(255, 255, 255) # White
+        # itemChanged signal is always disconnected when calling this method
 
-        # User tag
-        elif self.project.database.get_tag(tag).origin == TAG_ORIGIN_USER:
-            if row % 2 == 1:
-                color.setRgb(245, 215, 215) # Pink
-            else:
-                color.setRgb(245, 175, 175) # Red
+        for column in range(0, self.columnCount()):
+            if not self.isColumnHidden(column):
+                tag = self.horizontalHeaderItem(column).text()
+                row_number = 0
+                for row in range(0, self.rowCount()):
+                    if not self.isRowHidden(row):
+                        scan = self.item(row, 0).text()
 
-        else:
-            color.setRgb(255, 255, 255) # White
+                        item = self.item(row, column)
 
-        item.setData(Qt.BackgroundRole, QtCore.QVariant(color))
+                        color = QColor()
+
+                        if tag == "FileName":
+                            if row_number % 2 == 0:
+                                color.setRgb(255, 255, 255) # White
+                            else:
+                                color.setRgb(230, 230, 230) # Grey
+
+                        # Raw tag
+                        elif self.project.database.get_tag(tag).origin == TAG_ORIGIN_RAW:
+                            if self.project.database.is_value_modified(scan, tag):
+                                if row_number % 2 == 0:
+                                    color.setRgb(200, 230, 245) # Cyan
+                                else:
+                                    color.setRgb(150, 215, 230) # Blue
+                            else:
+                                if row_number % 2 == 0:
+                                    color.setRgb(255, 255, 255) # White
+                                else:
+                                    color.setRgb(230, 230, 230) # Grey
+
+                        # User tag
+                        else:
+                            if row_number % 2 == 0:
+                                color.setRgb(245, 215, 215) # Pink
+                            else:
+                                color.setRgb(245, 175, 175) # Red
+
+                        row_number += 1
+
+                        item.setData(Qt.BackgroundRole, QtCore.QVariant(color))
 
     def context_menu_table(self, position):
 
@@ -809,6 +831,8 @@ class TableDataBrowser(QTableWidget):
             self.selectAllColumns()
         elif action == action_multiple_sort:
             self.multiple_sort_pop_up()
+
+        self.update_colors()
 
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
@@ -891,7 +915,6 @@ class TableDataBrowser(QTableWidget):
                 if not self.project.database.reset_value(scan_name, tag_name):
                     has_unreset_values = True
                 set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
-                self.update_color(scan_name, tag_name, self.item(row, col), row)
             else:
                 has_unreset_values = True
 
@@ -930,7 +953,6 @@ class TableDataBrowser(QTableWidget):
                     if not self.project.database.reset_value(scan, tag_name):
                         has_unreset_values = True
                     set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
-                    self.update_color(scan, tag_name, self.item(row_iter, col), row_iter)
                 else:
                     has_unreset_values = True
 
@@ -972,7 +994,6 @@ class TableDataBrowser(QTableWidget):
                     if not self.project.database.reset_value(scan_name, tag):
                         has_unreset_values = True
                     set_item_data(self.item(row, column), initial_value, self.project.database.get_tag(tag).type)
-                    self.update_color(scan_name, tag, self.item(row, column), row)
                 else:
                     has_unreset_values = True
 
@@ -1022,7 +1043,6 @@ class TableDataBrowser(QTableWidget):
                 font.setBold(True)
                 item.setFont(font)
             self.setItem(row, col, item)
-            self.update_color(scan_path, tag_name, item, row)
 
     def remove_scan(self):
 
@@ -1032,23 +1052,26 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append("remove_scans")
         scans_removed = []
         values_removed = []
+        scans_names = []
 
         for point in points:
             row = point.row()
             scan_path = self.item(row, 0).text()
 
             scan_object = self.project.database.get_scan(scan_path)
-            scans_removed.append(scan_object)
 
-            # Adding removed values to history
-            for tag in self.project.database.get_tags_names():
-                current_value = self.project.database.get_current_value(scan_path, tag)
-                initial_value = self.project.database.get_initial_value(scan_path, tag)
-                if current_value is not None or initial_value is not None:
-                    values_removed.append([scan_path, tag, current_value, initial_value])
+            if scan_object is not None:
+                scans_removed.append(scan_object)
 
-            self.scans_to_visualize.remove(scan_path)
-            self.project.database.remove_scan(scan_path)
+                # Adding removed values to history
+                for tag in self.project.database.get_tags_names():
+                    current_value = self.project.database.get_current_value(scan_path, tag)
+                    initial_value = self.project.database.get_initial_value(scan_path, tag)
+                    if current_value is not None or initial_value is not None:
+                        values_removed.append([scan_path, tag, current_value, initial_value])
+
+                self.scans_to_visualize.remove(scan_path)
+                self.project.database.remove_scan(scan_path)
 
         for scan in scans_removed:
             scan_name = scan.name
@@ -1213,8 +1236,6 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(True)
                         item.setFont(font)
                     self.setItem(rowCount, column, item)
-                    if column != 0:
-                        self.update_color(scan, tag, item, rowCount)
 
         ui_progressbar.close()
 
@@ -1224,6 +1245,8 @@ class TableDataBrowser(QTableWidget):
 
         # Selection updated
         self.update_selection()
+
+        self.update_colors()
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
@@ -1278,8 +1301,6 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(True)
                         item.setFont(font)
 
-                    self.update_color(scan, tag.name, item, row)
-
                 # Hide the column if not visible
                 if tag.visible == False:
                     self.setColumnHidden(columnIndex, True)
@@ -1298,6 +1319,8 @@ class TableDataBrowser(QTableWidget):
 
         # Selection updated
         self.update_selection()
+
+        self.update_colors()
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
@@ -1400,7 +1423,6 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([self.scans_list[i], self.tags[i], old_value, new_cur_value])
                     set_item_data(new_item, new_cur_value, self.project.database.get_tag(self.tags[i]).type)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
-                    self.update_color(self.scans_list[i], self.tags[i], new_item, self.coordinates[i][0])
 
                 # For history
                 historyMaker.append(modified_values)
@@ -1419,7 +1441,6 @@ class TableDataBrowser(QTableWidget):
             self.resizeColumnsToContents()  # Columns resized
 
         except Exception as e:
-            print(e)
             self.setMouseTracking(True)
 
     def change_cell_color(self, item_origin):
@@ -1520,7 +1541,6 @@ class TableDataBrowser(QTableWidget):
                         item.setFont(font)
 
                     set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
-                    self.update_color(scan_path, tag_name, item, row)
 
             # For history
             historyMaker.append(modified_values)
@@ -1533,5 +1553,7 @@ class TableDataBrowser(QTableWidget):
                 save_project(self.project)
 
             self.resizeColumnsToContents() # Columns resized
+
+        self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
