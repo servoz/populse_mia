@@ -14,7 +14,7 @@ from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
-from NodeEditor.PipeLine_Irmage import ProjectEditor
+from PipelineManager.PipelineManagerTab import PipelineManagerTab
 from PopUps.Ui_Dialog_New_Project import Ui_Dialog_New_Project
 from PopUps.Ui_Dialog_Open_Project import Ui_Dialog_Open_Project
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
@@ -264,7 +264,7 @@ class Main_Window(QMainWindow):
         self.image_viewer = ImageViewer(self.textInfo)
         self.tabs.addTab(self.image_viewer, "Image Viewer")
 
-        self.pipeline_manager = ProjectEditor(self.textInfo)
+        self.pipeline_manager = PipelineManagerTab(self.textInfo)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         verticalLayout = QVBoxLayout()
