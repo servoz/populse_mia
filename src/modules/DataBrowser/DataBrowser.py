@@ -739,18 +739,18 @@ class TableDataBrowser(QTableWidget):
         if self.project.database.get_tag(tag).origin == TAG_ORIGIN_RAW:
             if self.project.database.is_value_modified(scan, tag):
                 if row % 2 == 1:
-                    color.setRgb(153, 204, 255) # Cyan
+                    color.setRgb(200, 230, 245) # Cyan
                 else:
-                    color.setRgb(51, 153, 255) # Blue
+                    color.setRgb(150, 215, 230) # Blue
             else:
                 color.setRgb(255, 255, 255) # White
 
         # User tag
         elif self.project.database.get_tag(tag).origin == TAG_ORIGIN_USER:
             if row % 2 == 1:
-                color.setRgb(255, 153, 153) # Pink
+                color.setRgb(245, 215, 215) # Pink
             else:
-                color.setRgb(255, 51, 51) # Red
+                color.setRgb(245, 175, 175) # Red
 
         else:
             color.setRgb(255, 255, 255) # White
@@ -1318,7 +1318,7 @@ class TableDataBrowser(QTableWidget):
         self.old_table_values = []  # Old table values stored
         self.types = []  # List of types
         self.lengths = []  # List of lengths
-        self.scans = []  # List of table scans
+        self.scans_list = []  # List of table scans
         self.tags = []  # List of table tags
 
         try:
@@ -1334,7 +1334,7 @@ class TableDataBrowser(QTableWidget):
 
                 # Scan and tag added
                 self.tags.append(tag_name)
-                self.scans.append(scan_name)
+                self.scans_list.append(scan_name)
 
                 # Type checked
                 if not tag_type in self.types:
@@ -1380,7 +1380,7 @@ class TableDataBrowser(QTableWidget):
                     value = self.old_table_values[0]
 
                 # Window to change list values displayed
-                pop_up = ModifyTable(self.project, value, self.types, self.scans, self.tags)
+                pop_up = ModifyTable(self.project, value, self.types, self.scans_list, self.tags)
                 pop_up.show()
                 if pop_up.exec_():
                     pass
@@ -1396,11 +1396,11 @@ class TableDataBrowser(QTableWidget):
                 for i in range (0, len(self.coordinates)):
                     new_item = QTableWidgetItem()
                     old_value = self.old_database_values[i]
-                    new_cur_value = self.project.database.get_current_value(self.scans[i], self.tags[i])
-                    modified_values.append([self.scans[i], self.tags[i], old_value, new_cur_value])
+                    new_cur_value = self.project.database.get_current_value(self.scans_list[i], self.tags[i])
+                    modified_values.append([self.scans_list[i], self.tags[i], old_value, new_cur_value])
                     set_item_data(new_item, new_cur_value, self.project.database.get_tag(self.tags[i]).type)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
-                    self.update_color(self.scans[i], self.tags[i], new_item, self.coordinates[i][0])
+                    self.update_color(self.scans_list[i], self.tags[i], new_item, self.coordinates[i][0])
 
                 # For history
                 historyMaker.append(modified_values)
@@ -1535,5 +1535,3 @@ class TableDataBrowser(QTableWidget):
             self.resizeColumnsToContents() # Columns resized
 
         self.itemChanged.connect(self.change_cell_color)
-
-
