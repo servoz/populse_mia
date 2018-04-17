@@ -137,14 +137,42 @@ class ProjectEditor(QWidget):
         #TODO
         print(self.diagramView.undos)
         # We can undo if we have an action to revert
-        if len(self.undos) > 0:
-            to_undo = self.undos.pop()
-            self.redos.append(to_undo)  # We pop the undo action in the redo stack
+        if len(self.diagramView.undos) > 0:
+            to_undo = self.diagramView.undos.pop()
+            self.diagramView.redos.append(to_undo)  # We pop the undo action in the redo stack
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
             if action == "add_process":
-                # TODO: LIST ALL ACTION
+                node_name = to_undo[1]
+                self.diagramView.del_node(node_name)
+                self.diagramView.undos.pop()
+            elif action == "delete_process":
+                node_name = to_undo[1]
+                class_name = to_undo[2]
+                self.diagramView.add_process(class_name, node_name)
+                self.diagramView.undos.pop()
                 pass
+            elif action == "export_plugs":
+                pass
+            elif action == "update_node_name":
+                node = to_undo[1]
+                new_node_name = to_undo[2]
+                old_node_name = to_undo[3]
+                self.diagramView.update_node_name(node, new_node_name, old_node_name)
+                self.diagramView.undos.pop()
+                pass
+            elif action == "update_plug_value":
+                node_name = to_undo[1]
+                old_value = to_undo[2]
+                plug_name = to_undo[3]
+                value_type = to_undo[4]
+                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type)
+                self.diagramView.undos.pop()
+            elif action == "add_link":
+                pass
+            elif action == "delete_link":
+                pass
+            # TODO: ADD "MOVE PROCESS ?"
 
     def redo(self):
         #TODO
@@ -325,7 +353,7 @@ class NodeController(QWidget):
 
         self.setLayout(self.v_box_final)
 
-    def update_node_name(self, pipeline):
+    def update_node_name(self, pipeline, new_node_name=None):
         """ Method that allow to change the name of the selected node and update
         the pipeline. Because the nodes are stored in a dictionary, we have to
         create a new node that has the same traits as the selected one and create
@@ -333,7 +361,10 @@ class NodeController(QWidget):
         old_node = pipeline.nodes[self.node_name]
         old_node_name = self.node_name
 
-        if self.line_edit_node_name.text() in list(pipeline.nodes.keys()):
+        if not new_node_name:
+            new_node_name = self.line_edit_node_name.text()
+
+        if new_node_name in list(pipeline.nodes.keys()):
             print("Node name already in pipeline")
 
         else:
@@ -354,11 +385,11 @@ class NodeController(QWidget):
                     links_to_copy.append(("from", source_parameter, dest_node_name, dest_parameter))
 
             # Creating a new node with the new name and deleting the previous one
-            pipeline.nodes[self.line_edit_node_name.text()] = pipeline.nodes[self.node_name]
+            pipeline.nodes[new_node_name] = pipeline.nodes[self.node_name]
             del pipeline.nodes[self.node_name]
 
             # Updating the node_name attribute
-            self.node_name = self.line_edit_node_name.text()
+            self.node_name = new_node_name
 
             # Setting the same links as the original node
             for link in links_to_copy:
@@ -374,31 +405,29 @@ class NodeController(QWidget):
             pipeline.update_nodes_and_plugs_activation()
 
             # To undo/redo
-            self.value_changed.emit(["node_name", old_node_name, self.node_name])
+            self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
     def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type):
         """ Method that updates in the pipeline the value of a plug """
 
         if in_or_out == 'in':
-            old_value = self.line_edit_input[index].text()
             new_value = self.line_edit_input[index].text()
         elif in_or_out == 'out':
-            old_value = self.line_edit_output[index].text()
             new_value = self.line_edit_output[index].text()
         else:
-            old_value = None
             new_value = None
             #TODO: RAISE ERROR
             pass
         if value_type not in [float, int, str, list]:
-            old_value = None
             new_value = None
             value_type = str
             #TODO: RAISE ERROR
+
+        old_value = pipeline.nodes[self.node_name].get_plug_value(plug_name)
         pipeline.nodes[self.node_name].set_plug_value(plug_name, value_type(new_value))
 
         # To undo/redo
-        self.value_changed.emit(["plug_value", self.node_name, index, value_type(old_value), in_or_out, plug_name, pipeline, value_type])
+        self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type])
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
@@ -466,6 +495,7 @@ class MenuBar(QMenuBar):
     def actionsMenu32(self):
         print('stop project')
 
+
 class ToolBar(QToolBar):
     def __init__(self, parent=None):
         QToolBar.__init__(self, parent)
@@ -524,6 +554,7 @@ class LibItem(QPixmap):
         painter.setBrush(Qt.green)
         painter.drawRect(0, 40, 20, 20)
         painter.end()
+
 
 class DiagramScene(QGraphicsScene):
     def __init__(self, parent=None):
@@ -604,16 +635,23 @@ class EditorGraphicsView(PipelineDevelopperView):
                     print(process.get_inputs())
                     self.add_process(instance)
 
-    def add_process(self, class_process):
-        class_name = class_process.__name__
+    def add_process(self, class_process, node_name=None):
+
         pipeline = self.scene.pipeline
-        i = 1
-        node_name = class_name.lower() + str(i)
-        while node_name in pipeline.nodes and i < 100:
-            i += 1
+        if not node_name:
+            class_name = class_process.__name__
+            i = 1
+
             node_name = class_name.lower() + str(i)
 
-        process_to_use = class_process()
+            while node_name in pipeline.nodes and i < 100:
+                i += 1
+                node_name = class_name.lower() + str(i)
+
+            process_to_use = class_process()
+
+        else:
+            process_to_use = class_process
 
         try:
             process = get_process_instance(
@@ -621,6 +659,7 @@ class EditorGraphicsView(PipelineDevelopperView):
         except Exception as e:
             print(e)
             return
+        print(process)
         pipeline.add_process(node_name, process)
 
         # CAPSUL UPDATE
@@ -636,12 +675,19 @@ class EditorGraphicsView(PipelineDevelopperView):
         self.redos.clear()
 
     def del_node(self, node_name=None):
+
+        pipeline = self.scene.pipeline
+        if not node_name:
+            node_name = self.current_node_name
+        node = pipeline.nodes[node_name]
+
         PipelineDevelopperView.del_node(self, node_name)
 
         # For history
         history_maker = []
         history_maker.append("delete_process")
         history_maker.append(node_name)
+        history_maker.append(node.process)
         self.undos.append(history_maker)
         self.redos.clear()
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
@@ -673,13 +719,67 @@ class EditorGraphicsView(PipelineDevelopperView):
         # TODO: TO IMPROVE
         # For history
         history_maker = []
-        history_maker.append("delete_link")
+        history_maker.append("export_plugs")
 
         for node_name in self.scene.pipeline.nodes:
             if node_name != "":
                 history_maker.append(node_name)
 
         PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)
+
+    def update_node_name(self, old_node, old_node_name, new_node_name):
+        pipeline = self.scene.pipeline
+        # Removing links of the selected node and copy the origin/destination
+        links_to_copy = []
+        for source_parameter, source_plug \
+                in six.iteritems(old_node.plugs):
+            for (dest_node_name, dest_parameter, dest_node, dest_plug,
+                 weak_link) in source_plug.links_to.copy():
+                pipeline.remove_link(old_node_name + "." + source_parameter + "->"
+                                     + dest_node_name + "." + dest_parameter)
+                links_to_copy.append(("to", source_parameter, dest_node_name, dest_parameter))
+
+            for (dest_node_name, dest_parameter, dest_node, dest_plug,
+                 weak_link) in source_plug.links_from.copy():
+                pipeline.remove_link(dest_node_name + "." + dest_parameter + "->"
+                                     + old_node_name + "." + source_parameter)
+                links_to_copy.append(("from", source_parameter, dest_node_name, dest_parameter))
+
+        # Creating a new node with the new name and deleting the previous one
+        pipeline.nodes[new_node_name] = pipeline.nodes[old_node_name]
+        del pipeline.nodes[old_node_name]
+
+        # Setting the same links as the original node
+        for link in links_to_copy:
+
+            if link[0] == "to":
+                pipeline.add_link(new_node_name + "." + link[1] + "->"
+                                  + link[2] + "." + link[3])
+            elif link[0] == "from":
+                pipeline.add_link(link[2] + "." + link[3] + "->"
+                                  + new_node_name + "." + link[1])
+
+        # Updating the pipeline
+        pipeline.update_nodes_and_plugs_activation()
+
+        # For history
+        history_maker = []
+        history_maker.append("node_name")
+        history_maker.append(pipeline.nodes[new_node_name])
+        history_maker.append(new_node_name)
+        history_maker.append(old_node_name)
+
+    def update_plug_value(self, node_name, new_value, plug_name, value_type):
+        old_value = self.scene.pipeline.nodes[node_name].get_plug_value(plug_name)
+        self.scene.pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
+
+        # For history
+        history_maker = []
+        history_maker.append("plug_value")
+        history_maker.append(node_name)
+        history_maker.append(old_value)
+        history_maker.append(plug_name)
+        history_maker.append(value_type)
 
 
 class TextEditor(QTextEdit):
