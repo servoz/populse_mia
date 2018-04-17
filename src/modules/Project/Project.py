@@ -307,16 +307,16 @@ class Project:
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
                         self.database.remove_value(scan, tag)
-                        set_item_data(item, not_defined_value)
+                        set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_value(scan, tag, str(old_value))
+                        self.database.set_value(scan, tag, old_value)
                         set_item_data(item, old_value, self.database.get_tag(tag).type)
-                        table.update_color(scan, tag, item, table.get_scan_row(scan))
+                    table.update_color(scan, tag, item, table.get_scan_row(scan))
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
@@ -325,7 +325,7 @@ class Project:
                 self.database.reset_all_visibilities() # Reset of the visibilities
                 for visible in visibles:
                     # We reput each old tag visible
-                    self.database.set_tag_visibility(visible, True)
+                    self.database.set_tag_visibility(visible.name, True)
                 table.update_visualized_columns(old_tags)  # Columns updated
 
     def reput_values(self, values):
@@ -407,10 +407,16 @@ class Project:
                     valueToRestore = modifiedValues[i]
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
-                    # valueToRestore[2] is the old value of the cell
+                    old_value = valueToRestore[2]
                     new_value = valueToRestore[3]
                     self.database.set_value(scan, tag, new_value)
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
+                    if old_value == None:
+                        # Font reput to normal in case it was a not defined cell
+                        font = item.font()
+                        font.setItalic(False)
+                        font.setBold(False)
+                        item.setFont(font)
                     set_item_data(item, new_value, self.database.get_tag(tag).type)
                     table.update_color(scan, tag, item, table.get_scan_row(scan))
                 table.itemChanged.connect(table.change_cell_color)

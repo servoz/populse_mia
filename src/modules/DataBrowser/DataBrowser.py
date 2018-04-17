@@ -26,6 +26,8 @@ from DataBrowser.ModifyTable import ModifyTable
 
 from Utils.Utils import check_value_type, set_item_data, table_to_database
 
+import ast
+
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
 
 class DataBrowser(QWidget):
@@ -317,8 +319,8 @@ class DataBrowser(QWidget):
             # We add the tag and a value for each scan in the Database
             self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.project.database.get_scans():
-                self.project.database.add_value(scan.name, new_tag_name, new_default_value, None)
-                values.append([scan.name, new_tag_name, new_default_value, None]) # For history
+                self.project.database.add_value(scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None)
+                values.append([scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None]) # For history
 
             # For history
             historyMaker = []
@@ -466,22 +468,20 @@ class TableDataBrowser(QTableWidget):
         item.setToolTip(
             "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
                 tag_object.type))
-        row = 0
-        while row < self.rowCount():
+        for row in range(0, self.rowCount()):
             item = QtWidgets.QTableWidgetItem()
             self.setItem(row, column, item)
             scan = self.item(row, 0).text()
-            self.update_color(scan, tag, item, row)
             cur_value = self.project.database.get_current_value(scan, tag)
             if cur_value is not None:
-                set_item_data(item, cur_value)
+                set_item_data(item, cur_value, tag_object.type)
             else:
-                set_item_data(item, not_defined_value)
+                set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
                 item.setFont(font)
-            row += 1
+            self.update_color(scan, tag, item, row)
 
         self.resizeColumnsToContents()  # New column resized
 
@@ -703,9 +703,8 @@ class TableDataBrowser(QTableWidget):
             # Progressbar
             idx += 1
             ui_progressbar.setValue(idx)
-            column = 0
 
-            while column < len(self.horizontalHeader()):
+            for column in range(0, len(self.horizontalHeader())):
                 current_tag = self.horizontalHeaderItem(column).text()
 
                 item = QTableWidgetItem()
@@ -715,8 +714,6 @@ class TableDataBrowser(QTableWidget):
                 if current_value is not None:
                     if current_tag == "FileName":
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
-                    else:
-                        self.update_color(scan, current_tag, item, row)
                     set_item_data(item, current_value, self.project.database.get_tag(current_tag).type)
 
                 # The scan does not have a value for the tag
@@ -727,7 +724,8 @@ class TableDataBrowser(QTableWidget):
                     font.setBold(True)
                     item.setFont(font)
                 self.setItem(row, column, item)
-                column += 1
+                if column != 0:
+                    self.update_color(scan, current_tag, item, row)
             row += 1
 
         ui_progressbar.close()
@@ -741,27 +739,21 @@ class TableDataBrowser(QTableWidget):
         if self.project.database.get_tag(tag).origin == TAG_ORIGIN_RAW:
             if self.project.database.is_value_modified(scan, tag):
                 if row % 2 == 1:
-                    color.setRgb(240, 240, 255)
+                    color.setRgb(200, 230, 245) # Cyan
                 else:
-                    color.setRgb(225, 225, 255)
+                    color.setRgb(150, 215, 230) # Blue
             else:
-                if row % 2 == 1:
-                    color.setRgb(255, 255, 255)
-                else:
-                    color.setRgb(250, 250, 250)
+                color.setRgb(255, 255, 255) # White
 
         # User tag
         elif self.project.database.get_tag(tag).origin == TAG_ORIGIN_USER:
             if row % 2 == 1:
-                color.setRgb(255, 240, 240)
+                color.setRgb(245, 215, 215) # Pink
             else:
-                color.setRgb(255, 225, 225)
+                color.setRgb(245, 175, 175) # Red
 
         else:
-            if row % 2 == 1:
-                color.setRgb(255, 255, 255)
-            else:
-                color.setRgb(250, 250, 250)
+            color.setRgb(255, 255, 255) # White
 
         item.setData(Qt.BackgroundRole, QtCore.QVariant(color))
 
@@ -898,8 +890,8 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, current_value, initial_value]) # For history
                 if not self.project.database.reset_value(scan_name, tag_name):
                     has_unreset_values = True
-                self.update_color(scan_name, tag_name, self.item(row, col), row)
                 set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
+                self.update_color(scan_name, tag_name, self.item(row, col), row)
             else:
                 has_unreset_values = True
 
@@ -937,8 +929,8 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, current_value, initial_value]) # For history
                     if not self.project.database.reset_value(scan, tag_name):
                         has_unreset_values = True
-                    self.update_color(scan, tag_name, self.item(row_iter, col), row_iter)
                     set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
+                    self.update_color(scan, tag_name, self.item(row_iter, col), row_iter)
                 else:
                     has_unreset_values = True
 
@@ -1030,6 +1022,7 @@ class TableDataBrowser(QTableWidget):
                 font.setBold(True)
                 item.setFont(font)
             self.setItem(row, col, item)
+            self.update_color(scan_path, tag_name, item, row)
 
     def remove_scan(self):
 
@@ -1108,19 +1101,15 @@ class TableDataBrowser(QTableWidget):
 
             # Table updated
             self.setSortingEnabled(False)
-            row = 0
-            while row < self.rowCount():
+            for row in range(0, self.rowCount()):
                 scan = self.scans_to_visualize[row]
                 old_row = self.get_scan_row(scan)
                 if old_row != row:
-                    column = 0
-                    while column < self.columnCount():
+                    for column in range(0, self.columnCount()):
                         item_to_move = self.takeItem(old_row, column)
                         item_wrong_row = self.takeItem(row, column)
                         self.setItem(row, column, item_to_move)
                         self.setItem(old_row, column, item_wrong_row)
-                        column += 1
-                row += 1
             self.horizontalHeader().setSortIndicator(-1, 0)
             self.setSortingEnabled(True)
 
@@ -1211,8 +1200,7 @@ class TableDataBrowser(QTableWidget):
                 self.insertRow(rowCount)
 
                 # Columns filled for the row being added
-                column = 0
-                while column < self.columnCount():
+                for column in range(0, self.columnCount()):
                     item = QtWidgets.QTableWidgetItem()
                     tag = self.horizontalHeaderItem(column).text()
                     cur_value = self.project.database.get_current_value(scan, tag)
@@ -1224,10 +1212,9 @@ class TableDataBrowser(QTableWidget):
                         font.setItalic(True)
                         font.setBold(True)
                         item.setFont(font)
+                    self.setItem(rowCount, column, item)
                     if column != 0:
                         self.update_color(scan, tag, item, rowCount)
-                    self.setItem(rowCount, column, item)
-                    column += 1
 
         ui_progressbar.close()
 
@@ -1248,11 +1235,9 @@ class TableDataBrowser(QTableWidget):
         :param to_insert: tag to insert
         """
 
-        i = 1
-        while i < len(self.horizontalHeader()):
-            if self.horizontalHeaderItem(i).text() > to_insert:
-                return i
-            i +=1
+        for column in range(1, len(self.horizontalHeader())):
+            if self.horizontalHeaderItem(column).text() > to_insert:
+                return column
         return self.columnCount()
 
     def add_columns(self):
@@ -1279,8 +1264,7 @@ class TableDataBrowser(QTableWidget):
                 item.setToolTip("Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(tag.type))
 
                 # Rows filled for the column being added
-                row = 0
-                while row < self.rowCount():
+                for row in range (0, self.rowCount()):
                     item = QtWidgets.QTableWidgetItem()
                     self.setItem(row, columnIndex, item)
                     scan = self.item(row, 0).text()
@@ -1293,20 +1277,19 @@ class TableDataBrowser(QTableWidget):
                         font.setItalic(True)
                         font.setBold(True)
                         item.setFont(font)
-                    row += 1
+
+                    self.update_color(scan, tag.name, item, row)
 
                 # Hide the column if not visible
                 if tag.visible == False:
                     self.setColumnHidden(columnIndex, True)
 
         # Removing useless columns
-        column = 0
         tags_to_remove = []
-        while column < self.columnCount():
+        for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
             if not tag_name in self.project.database.get_tags_names():
                 tags_to_remove.append(tag_name)
-            column += 1
 
         for tag in tags_to_remove:
             self.removeColumn(self.get_tag_column(tag))
@@ -1326,17 +1309,16 @@ class TableDataBrowser(QTableWidget):
         :param e: event
         """
 
-        import ast
-
         super(TableDataBrowser, self).mouseReleaseEvent(e)
 
         self.setMouseTracking(False)
 
         self.coordinates = [] # Coordinates of selected cells stored
-        self.old_values = [] # Old values stored
+        self.old_database_values = [] # Old database values stored
+        self.old_table_values = []  # Old table values stored
         self.types = []  # List of types
         self.lengths = []  # List of lengths
-        self.scans = []  # List of table scans
+        self.scans_list = []  # List of table scans
         self.tags = []  # List of table tags
 
         try:
@@ -1352,21 +1334,22 @@ class TableDataBrowser(QTableWidget):
 
                 # Scan and tag added
                 self.tags.append(tag_name)
-                self.scans.append(scan_name)
+                self.scans_list.append(scan_name)
 
                 # Type checked
                 if not tag_type in self.types:
                     self.types.append(tag_type)
 
-                # Length checked
-                text = item.text()
-
                 if self.project.database.is_tag_list(tag_name):
 
-                    text = ast.literal_eval(text)
-                    self.old_values.append(text)
+                    database_value = self.project.database.get_current_value(scan_name, tag_name)
+                    self.old_database_values.append(database_value)
 
-                    size = len(text)
+                    table_value = item.data(Qt.EditRole)
+                    table_value = ast.literal_eval(table_value)
+                    self.old_table_values.append(table_value)
+
+                    size = len(database_value)
                     if size not in self.lengths:
                         self.lengths.append(size)
 
@@ -1387,17 +1370,17 @@ class TableDataBrowser(QTableWidget):
 
             # Ok
 
-            elif len(self.old_values) > 0:
+            elif len(self.old_table_values) > 0:
 
                 if len(self.coordinates) > 1:
                     value = []
                     for i in range (0, self.lengths[0]):
                         value.append(0)
                 else:
-                    value = self.old_values[0]
+                    value = self.old_table_values[0]
 
                 # Window to change list values displayed
-                pop_up = ModifyTable(self.project, value, self.types, self.scans, self.tags)
+                pop_up = ModifyTable(self.project, value, self.types, self.scans_list, self.tags)
                 pop_up.show()
                 if pop_up.exec_():
                     pass
@@ -1410,15 +1393,14 @@ class TableDataBrowser(QTableWidget):
                 self.itemChanged.disconnect()
 
                 # Lists updated
-                i = 0
-                while i < len(self.coordinates):
+                for i in range (0, len(self.coordinates)):
                     new_item = QTableWidgetItem()
-                    old_value = self.old_values[i]
-                    new_cur_value = self.project.database.get_current_value(self.scans[i], self.tags[i])
-                    modified_values.append([self.scans[i], self.tags[i], old_value, new_cur_value])
-                    set_item_data(new_item, new_cur_value)
+                    old_value = self.old_database_values[i]
+                    new_cur_value = self.project.database.get_current_value(self.scans_list[i], self.tags[i])
+                    modified_values.append([self.scans_list[i], self.tags[i], old_value, new_cur_value])
+                    set_item_data(new_item, new_cur_value, self.project.database.get_tag(self.tags[i]).type)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
-                    i += 1
+                    self.update_color(self.scans_list[i], self.tags[i], new_item, self.coordinates[i][0])
 
                 # For history
                 historyMaker.append(modified_values)
@@ -1516,6 +1498,7 @@ class TableDataBrowser(QTableWidget):
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
                 tag_type = self.project.database.get_tag(tag_name).type
+                database_value = table_to_database(new_value, tag_type)
 
                 # We only set the case if it's not the tag FileName
                 if (tag_name != "FileName"):
@@ -1523,12 +1506,12 @@ class TableDataBrowser(QTableWidget):
                     old_value = self.project.database.get_current_value(scan_path, tag_name)
                     # The scan already has a value for the tag: we update it
                     if old_value is not  None:
-                        modified_values.append([scan_path, tag_name, old_value, new_value])
-                        self.project.database.set_value(scan_path, tag_name, table_to_database(new_value, tag_type))
+                        modified_values.append([scan_path, tag_name, old_value, database_value])
+                        self.project.database.set_value(scan_path, tag_name, database_value)
                     # The scan does not have a value for the tag yet: we add it
                     else:
-                        modified_values.append([scan_path, tag_name, None, new_value])
-                        self.project.database.add_value(scan_path, tag_name, table_to_database(new_value, tag_type), table_to_database(new_value, tag_type))
+                        modified_values.append([scan_path, tag_name, None, database_value])
+                        self.project.database.add_value(scan_path, tag_name, database_value, None)
 
                         # Font reset in case it was a not defined cell
                         font = item.font()
@@ -1536,9 +1519,8 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(False)
                         item.setFont(font)
 
-                    self.update_color(scan_path, tag_name, item, row)
-
                     set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
+                    self.update_color(scan_path, tag_name, item, row)
 
             # For history
             historyMaker.append(modified_values)
@@ -1553,5 +1535,3 @@ class TableDataBrowser(QTableWidget):
             self.resizeColumnsToContents() # Columns resized
 
         self.itemChanged.connect(self.change_cell_color)
-
-

@@ -1,10 +1,12 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from populse_db.DatabaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER
+from populse_db.DatabaseModel import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT
 from Utils.Tools import ClickableLabel
+from Utils.Utils import table_to_database, check_value_type
 import os
 import ast
+from datetime import datetime, date, time
 
 class Default_value_list_creation(QDialog):
 
@@ -31,12 +33,10 @@ class Default_value_list_creation(QDialog):
 
                     self.table.setColumnCount(len(list_value))
 
-                    i = 0
-                    while i < self.table.columnCount():
+                    for i in range(0, self.table.columnCount()):
                         item = QtWidgets.QTableWidgetItem()
-                        item.setText(str(list_value[i][0]))
+                        item.setText(str(list_value[i]))
                         self.table.setItem(0, i, item)
-                        i += 1
 
                 else:
                     self.default_init_table()
@@ -105,18 +105,30 @@ class Default_value_list_creation(QDialog):
         valid_values = True
 
         # For each value
-        i = 0
-        while i < self.table.columnCount():
+        for i in range(0, self.table.columnCount()):
             item = self.table.item(0, i)
             text = item.text()
 
             try:
-                if self.type == TAG_TYPE_INTEGER:
-                    database_value.append([int(text)])
-                elif self.type == TAG_TYPE_FLOAT:
-                    database_value.append([float(text)])
-                else:
-                    database_value.append([str(text)])
+                if self.type == TAG_TYPE_LIST_INTEGER:
+                    database_value.append(int(text))
+                elif self.type == TAG_TYPE_LIST_FLOAT:
+                    database_value.append(float(text))
+                elif self.type == TAG_TYPE_LIST_STRING:
+                    database_value.append(str(text))
+                elif self.type == TAG_TYPE_LIST_DATE:
+                    format = "%d/%m/%Y"
+                    datetime.strptime(text, format).date()
+                    database_value.append(text)
+                elif self.type == TAG_TYPE_LIST_DATETIME:
+                    format = "%d/%m/%Y %H:%M"
+                    datetime.strptime(text, format)
+                    database_value.append(text)
+                elif self.type == TAG_TYPE_LIST_TIME:
+                    format = "%H:%M"
+                    datetime.strptime(text, format).time()
+                    database_value.append(text)
+
             except Exception:
                 # Error if invalid value
                 valid_values = False
@@ -129,8 +141,6 @@ class Default_value_list_creation(QDialog):
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
                 break
-
-            i += 1
 
         if valid_values:
             self.parent.setText(str(database_value))
@@ -189,7 +199,7 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
         :param event:
         """
 
-        if self.isList:
+        if self.parent.type in [TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME]:
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
@@ -210,6 +220,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.project = project
         self.type = TAG_TYPE_STRING # Type is string by default
         self.pop_up()
+        self.setMinimumWidth(700)
 
     def pop_up(self):
         self.setObjectName("Add a tag")
@@ -235,12 +246,6 @@ class Ui_Dialog_add_tag(QDialog):
         # The 'Default value' text edit
         self.text_edit_default_value = Default_Value_QLine_Edit(self)
         self.text_edit_default_value.setObjectName("textEdit_default_value")
-        self.text_edit_default_value.isList = False
-
-        # The 'Default value' isList checkbox
-        self.checkbox_isList = QtWidgets.QCheckBox(self)
-        self.checkbox_isList.setText("List")
-        self.checkbox_isList.stateChanged.connect(self.is_list_changed)
 
         # The 'Description value' label
         self.label_description_value = QtWidgets.QLabel(self)
@@ -277,6 +282,15 @@ class Ui_Dialog_add_tag(QDialog):
         self.combo_box_type.addItem("String")
         self.combo_box_type.addItem("Integer")
         self.combo_box_type.addItem("Float")
+        self.combo_box_type.addItem("Date")
+        self.combo_box_type.addItem("Datetime")
+        self.combo_box_type.addItem("Time")
+        self.combo_box_type.addItem("String List")
+        self.combo_box_type.addItem("Integer List")
+        self.combo_box_type.addItem("Float List")
+        self.combo_box_type.addItem("Date List")
+        self.combo_box_type.addItem("Datetime List")
+        self.combo_box_type.addItem("Time List")
         self.combo_box_type.activated[str].connect(self.on_activated)
 
         # Layouts
@@ -291,7 +305,6 @@ class Ui_Dialog_add_tag(QDialog):
         v_box_edits.addWidget(self.text_edit_tag_name)
         default_layout = QHBoxLayout()
         default_layout.addWidget(self.text_edit_default_value)
-        default_layout.addWidget(self.checkbox_isList)
         v_box_edits.addLayout(default_layout)
         v_box_edits.addWidget(self.text_edit_description_value)
         v_box_edits.addWidget(self.combo_box_unit)
@@ -324,17 +337,6 @@ class Ui_Dialog_add_tag(QDialog):
         # Connecting the OK push button
         self.push_button_ok.clicked.connect(self.ok_action)
 
-    def is_list_changed(self):
-        """
-        Checkbox isList changed
-        """
-        if not self.checkbox_isList.checkState():
-            # Unchecked
-            self.text_edit_default_value.isList = False
-        else:
-            # Checked
-            self.text_edit_default_value.isList = True
-
     def on_activated(self, text):
         """
         Type updated
@@ -344,8 +346,31 @@ class Ui_Dialog_add_tag(QDialog):
             self.type = TAG_TYPE_STRING
         elif text == "Integer":
             self.type = TAG_TYPE_INTEGER
-        else:
+            self.text_edit_default_value.setPlaceholderText("Please enter an integer")
+        elif text == "Float":
             self.type = TAG_TYPE_FLOAT
+            self.text_edit_default_value.setPlaceholderText("Please enter a float")
+        elif text == "Date":
+            self.type = TAG_TYPE_DATE
+            self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
+        elif text == "Datetime":
+            self.type = TAG_TYPE_DATETIME
+            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm")
+        elif text == "Time":
+            self.type = TAG_TYPE_TIME
+            self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm")
+        elif text == "String List":
+            self.type = TAG_TYPE_LIST_STRING
+        elif text == "Integer List":
+            self.type = TAG_TYPE_LIST_INTEGER
+        elif text == "Float List":
+            self.type = TAG_TYPE_LIST_FLOAT
+        elif text == "Date List":
+            self.type = TAG_TYPE_LIST_DATE
+        elif text == "Datetime List":
+            self.type = TAG_TYPE_LIST_DATETIME
+        elif text == "Time List":
+            self.type = TAG_TYPE_LIST_TIME
 
     def ok_action(self):
 
@@ -354,35 +379,10 @@ class Ui_Dialog_add_tag(QDialog):
         for tag in self.project.database.get_tags():
             if tag.name == self.text_edit_tag_name.text():
                 name_already_exists = True
-        wrong_default_value_type = False
 
         # Default value checked
         default_value = self.text_edit_default_value.text()
-        if not self.text_edit_default_value.isList:
-            if self.type == TAG_TYPE_INTEGER:
-                try:
-                    int(default_value)
-                except ValueError:
-                    wrong_default_value_type = True
-            if self.type == TAG_TYPE_FLOAT:
-                try:
-                    float(default_value)
-                except ValueError:
-                    wrong_default_value_type = True
-            # Otherwise string
-            else:
-                try:
-                    str(default_value)
-                except ValueError:
-                    wrong_default_value_type = True
-        else:
-            try:
-                list_value = ast.literal_eval(default_value)
-                if not isinstance(list_value, list):
-                    wrong_default_value_type = True
-
-            except ValueError:
-                wrong_default_value_type = True
+        wrong_default_value_type = not check_value_type(default_value, self.type, False)
 
         # Tag name can't be empty
         if self.text_edit_tag_name.text() == "":
@@ -411,7 +411,7 @@ class Ui_Dialog_add_tag(QDialog):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setText("Invalid default value")
-            msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type + ".\nMake sure the value is a list if List is checked.")
+            msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type + ".")
             msg.setWindowTitle("Error")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
