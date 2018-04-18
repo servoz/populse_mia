@@ -21,18 +21,18 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                 'Topic :: Utilities']
 
 # Project descriptions
-NAME = 'sandbox_db'
-DESCRIPTION = 'sandbox_db'
+NAME = 'populse_sandbox'
+DESCRIPTION = 'populse sandbox'
 LONG_DESCRIPTION = '''
-==========
-sandbox_db 
-==========
+===============
+populse_sandbox
+===============
 
 Python modules not yet ready for distribution.
 '''
 # BrainVISA project
 PROJECT = 'populse'
-BRAINVISA_BUILD_MODEL = 'pure_python'
+brainvisa_build_model = 'pure_python'
 
 # Other values used in setup.py
 ORGANISATION = 'populse'
