@@ -63,7 +63,7 @@ class Ui_Dialog_Settings(QDialog):
         historyMaker.append("modified_visibilities")
         historyMaker.append(self.old_visibles_tags)
         new_visibilities = []
-        project.database.reset_all_visibilities()
+        project.database.reset_tag_visibilities()
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             project.database.set_tag_visibility(visible_tag, True)

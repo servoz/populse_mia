@@ -4,7 +4,7 @@ import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from Project.Filter import Filter
-from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
 from Utils.Utils import set_item_data
 
 class Project:
@@ -213,7 +213,7 @@ class Project:
                     # Tags by default set as visible
                     self.database.add_tag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
 
-        self.database.set_tag_origin("FileName", TAG_ORIGIN_RAW)
+        self.database.set_tag_origin("FileName", TAG_ORIGIN_BUILTIN)
 
     """ MODIFICATIONS """
 
@@ -278,7 +278,7 @@ class Project:
                 for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToRemove = scansAdded[i][0]
-                    self.database.remove_scan(scanToRemove)
+                    self.database.remove_path(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
                 table.update_colors()
@@ -288,11 +288,11 @@ class Project:
                 for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_scan(scanToReput.name, scanToReput.checksum)
+                    self.database.add_path(scanToReput.name, scanToReput.checksum)
                     table.scans_to_visualize.append(scanToReput.name)
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
-                table.add_rows(self.database.get_scans_names())
+                table.add_rows(self.database.get_paths_names())
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -314,7 +314,7 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_value(scan, tag, old_value)
+                        self.database.set_current_value(scan, tag, old_value)
                         set_item_data(item, old_value, self.database.get_tag(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
@@ -322,7 +322,7 @@ class Project:
                 # To revert the modifications of the visualized tags
                 old_tags = self.database.get_visualized_tags() # Old list of columns
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
-                self.database.reset_all_visibilities() # Reset of the visibilities
+                self.database.reset_tag_visibilities() # Reset of the visibilities
                 for visible in visibles:
                     # We reput each old tag visible
                     self.database.set_tag_visibility(visible.name, True)
@@ -337,7 +337,7 @@ class Project:
         for i in range (0, len(values)):
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
-            self.database.add_value(valueToReput[0], valueToReput[1], valueToReput[2], valueToReput[3])
+            self.database.new_value(valueToReput[0], valueToReput[1], valueToReput[2], valueToReput[3])
 
     def redo(self, table):
         """
@@ -362,7 +362,7 @@ class Project:
                 self.database.add_tag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
                 # Adding all the values associated
                 for value in values:
-                    self.database.add_value(value[0], value[1], value[2], value[3])
+                    self.database.new_value(value[0], value[1], value[2], value[3])
                 column = table.get_index_insertion(tagToAdd)
                 table.add_column(column, tagToAdd)
             if (action == "remove_tags"):
@@ -381,21 +381,21 @@ class Project:
                 for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_scan(scanToAdd[0], scanToAdd[1])
+                    self.database.add_path(scanToAdd[0], scanToAdd[1])
                     table.scans_to_visualize.append(scanToAdd[0])
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range (0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
-                    self.database.add_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[3])
-                table.add_rows(self.database.get_scans_names())
+                    self.database.new_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[3])
+                table.add_rows(self.database.get_paths_names())
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
                 for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToRemove = scansRemoved[i].name
-                    self.database.remove_scan(scanToRemove)
+                    self.database.remove_path(scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                 table.update_colors()
@@ -410,7 +410,7 @@ class Project:
                     tag = valueToRestore[1]
                     old_value = valueToRestore[2]
                     new_value = valueToRestore[3]
-                    self.database.set_value(scan, tag, new_value)
+                    self.database.set_current_value(scan, tag, new_value)
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if old_value == None:
                         # Font reput to normal in case it was a not defined cell
@@ -425,7 +425,7 @@ class Project:
                 # To revert the modifications of the visualized tags
                 old_tags = self.database.get_visualized_tags() # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
-                self.database.reset_all_visibilities() # Reset of the visibilities
+                self.database.reset_tag_visibilities() # Reset of the visibilities
                 for visible in visibles:
                     # We reput each new tag visible
                     self.database.set_tag_visibility(visible, True)

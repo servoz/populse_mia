@@ -1,9 +1,8 @@
 import glob
 import os.path
 import json
-import Utils.Utils as utils
 import hashlib # To generate the md5 of each scan
-from populse_db.database_model import TAG_ORIGIN_RAW, TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_FLOAT, TAG_TYPE_TIME, TAG_TYPE_FLOAT, TAG_TYPE_DATE, TAG_TYPE_DATETIME, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING
+from populse_db.database_model import TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_FLOAT, TAG_TYPE_TIME, TAG_TYPE_FLOAT, TAG_TYPE_DATE, TAG_TYPE_DATETIME, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING
 from SoftwareProperties.Config import Config
 import datetime
 import yaml
@@ -107,11 +106,11 @@ def read_log(project):
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
 
-            project.database.add_scan(file_name, original_md5) # Scan added to the Database
+            project.database.add_path(file_name, original_md5) # Scan added to the Database
             scans_added.append([file_name, original_md5]) # Scan added to history
 
             # We create the tag FileName
-            project.database.add_value(file_name, "FileName", file_name, None) # FileName tag added
+            project.database.new_value(file_name, "FileName", file_name, None) # FileName tag added
             values_added.append([file_name, "FileName", file_name, None])
 
             # For each tag in each scan
@@ -194,15 +193,15 @@ def read_log(project):
                     if database_tag is None:
                         # Adding the tag as it's not in the database yet
                         if tag_name in default_tags:
-                            project.database.add_tag(tag_name, True, TAG_ORIGIN_RAW, tag_type, unit, None,
+                            project.database.add_tag(tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
                                                      description)
                         else:
-                            project.database.add_tag(tag_name, False, TAG_ORIGIN_RAW, tag_type, unit, None,
+                            project.database.add_tag(tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
                                                      description)
                     elif tag_name not in tags_set:
                         tags_set.append(tag_name)
                         # The tag is updated as it's already in the database
-                        project.database.set_tag_origin(tag_name, TAG_ORIGIN_RAW)
+                        project.database.set_tag_origin(tag_name, TAG_ORIGIN_BUILTIN)
                         if tag_name in default_tags:
                             project.database.set_tag_visibility(tag_name, True)
                         else:
@@ -213,7 +212,7 @@ def read_log(project):
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
-                        project.database.add_value(file_name, tag_name, value, value) # Value added to the Database
+                        project.database.new_value(file_name, tag_name, value, value) # Value added to the Database
                         values_added.append([file_name, tag_name, value, value]) # Value added to history
 
     ui_progressbar.close()
@@ -223,7 +222,7 @@ def read_log(project):
         if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
-                    project.database.add_value(scan[0], tag.name, tag.default_value, None)
+                    project.database.new_value(scan[0], tag.name, tag.default_value, None)
                     values_added.append([scan[0], tag.namee, tag.default_value, None])  # Value added to history
 
     # For history
@@ -237,7 +236,7 @@ def read_log(project):
 def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in project.database.get_scans():
+    for scan in project.database.get_paths():
 
         file_name = scan.name
         path_name = os.path.relpath(os.path.join(path, 'data', 'raw_data'))

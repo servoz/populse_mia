@@ -370,7 +370,7 @@ class MiniViewer(QWidget):
 
     def setThumbnail(self, file_path_base_name, idx):
         # Looking for the tag value to display as a legend of the thumbnail
-        for scan in self.project.database.get_scans():
+        for scan in self.project.database.get_paths():
             if scan.name == file_path_base_name:
                 value = self.project.database.get_current_value(scan.name, self.config.getThumbnailTag())
                 if value is not None:

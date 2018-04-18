@@ -152,6 +152,6 @@ class ModifyTable(QDialog):
                         database_value.append(subvalue)
 
                 # Database updated for every cell
-                self.project.database.set_value(scan, tag, database_value)
+                self.project.database.set_current_value(scan, tag, database_value)
 
             self.close()
