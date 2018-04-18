@@ -37,6 +37,7 @@ class NumberFormatDelegate(QItemDelegate):
         editor = QDoubleSpinBox(parent)
         data = index.data(Qt.EditRole)
         decimals_number = str(data)[::-1].find('.')
+        editor.setMaximum(10**10)
         editor.setDecimals(decimals_number)
         return editor
 

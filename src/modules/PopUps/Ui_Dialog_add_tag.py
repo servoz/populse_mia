@@ -121,11 +121,11 @@ class Default_value_list_creation(QDialog):
                     datetime.strptime(text, format).date()
                     database_value.append(text)
                 elif self.type == TAG_TYPE_LIST_DATETIME:
-                    format = "%d/%m/%Y %H:%M"
+                    format = "%d/%m/%Y %H:%M:%S.%f"
                     datetime.strptime(text, format)
                     database_value.append(text)
                 elif self.type == TAG_TYPE_LIST_TIME:
-                    format = "%H:%M"
+                    format = "%H:%M:%S.%f"
                     datetime.strptime(text, format).time()
                     database_value.append(text)
 
@@ -355,10 +355,10 @@ class Ui_Dialog_add_tag(QDialog):
             self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
         elif text == "Datetime":
             self.type = TAG_TYPE_DATETIME
-            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm")
+            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm:ss.zzz")
         elif text == "Time":
             self.type = TAG_TYPE_TIME
-            self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm")
+            self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm:ss.zzz")
         elif text == "String List":
             self.type = TAG_TYPE_LIST_STRING
         elif text == "Integer List":
