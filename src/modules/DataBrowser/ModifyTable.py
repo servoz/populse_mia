@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING
+from populse_db.database_model import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING
 from datetime import datetime, date, time
 
 class ModifyTable(QDialog):

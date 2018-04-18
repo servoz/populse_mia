@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 import ProjectManager.Controller as controller
 import Utils.Utils as utils
-from populse_db.DatabaseModel import createDatabase
 
 class Ui_Dialog_New_Project(QFileDialog):
     """

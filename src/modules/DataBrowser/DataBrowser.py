@@ -2,8 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QColor, QIcon
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,\
-    QMessageBox, QPushButton, QProgressDialog
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
 import os
 from ProjectManager.Controller import save_project
 
@@ -20,7 +19,7 @@ from ImageViewer.MiniViewer import MiniViewer
 
 from functools import partial
 from SoftwareProperties.Config import Config
-from populse_db.DatabaseModel import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_RAW, TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE
+from populse_db.database_model import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_RAW, TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.ModifyTable import ModifyTable
 
@@ -29,6 +28,44 @@ from Utils.Utils import check_value_type, set_item_data, table_to_database
 import ast
 
 not_defined_value = "*Not Defined*" # Variable shown everywhere when no value for the tag
+
+class NumberFormatDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        editor = QDoubleSpinBox(parent)
+        data = index.data(Qt.EditRole)
+        decimals_number = str(data)[::-1].find('.')
+        editor.setDecimals(decimals_number)
+        return editor
+
+class DateTimeFormatDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        editor = QDateTimeEdit(parent)
+        editor.setDisplayFormat("dd/MM/yyyy hh:mm:ss.zzz")
+        return editor
+
+class DateFormatDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        editor = QDateEdit(parent)
+        editor.setDisplayFormat("dd/MM/yyyy")
+        return editor
+
+class TimeFormatDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        editor = QTimeEdit(parent)
+        editor.setDisplayFormat("hh:mm:ss.zzz")
+        return editor
 
 class DataBrowser(QWidget):
 
@@ -680,6 +717,16 @@ class TableDataBrowser(QTableWidget):
             item.setToolTip("Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(element.type))
             self.setHorizontalHeaderItem(column, item)
 
+            # Set column type
+            if element.type == TAG_TYPE_FLOAT:
+                self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
+            elif element.type == TAG_TYPE_DATETIME:
+                self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
+            elif element.type == TAG_TYPE_DATE:
+                self.setItemDelegateForColumn(column, DateFormatDelegate(self))
+            elif element.type == TAG_TYPE_TIME:
+                self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
+
             # Hide the column if not visible
             if element.visible == False:
                 self.setColumnHidden(column, True)
@@ -1285,6 +1332,16 @@ class TableDataBrowser(QTableWidget):
                 self.setHorizontalHeaderItem(columnIndex, item)
                 item.setText(tag.name)
                 item.setToolTip("Description: " + str(tag.description) + "\nUnit: " + str(tag.unit) + "\nType: " + str(tag.type))
+
+                # Set column type
+                if tag.type == TAG_TYPE_FLOAT:
+                    self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
+                elif tag.type == TAG_TYPE_DATETIME:
+                    self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
+                elif tag.type == TAG_TYPE_DATE:
+                    self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
+                elif tag.type == TAG_TYPE_TIME:
+                    self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
 
                 # Rows filled for the column being added
                 for row in range (0, self.rowCount()):

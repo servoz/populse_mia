@@ -1,10 +1,10 @@
-from populse_db.Database import Database
+from populse_db.database import Database
 import os
 import tempfile
 import yaml
 from SoftwareProperties.Config import Config
 from Project.Filter import Filter
-from populse_db.DatabaseModel import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
+from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_RAW
 from Utils.Utils import set_item_data
 
 class Project:

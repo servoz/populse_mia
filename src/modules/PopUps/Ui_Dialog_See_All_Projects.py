@@ -1,11 +1,7 @@
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTreeWidget, QTreeWidgetItem, \
     QVBoxLayout, QMessageBox, QHeaderView
 from PyQt5.QtGui import QIcon
 import os
-from ProjectManager import Controller
-from populse_db.Database import Database
-from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 
 class Ui_Dialog_See_All_Projects(QDialog):
     """

@@ -2,7 +2,7 @@ import os
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from datetime import datetime, date, time
-from populse_db.DatabaseModel import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT
+from populse_db.database_model import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT
 import ast
 
 def set_item_data(item, value, value_type):
@@ -78,7 +78,7 @@ def check_value_type(value, value_type, is_subvalue=False):
     :param is_subvalue: To know if the value is a subvalue of a list
     :return: True if the value is valid to replace the old one, False otherwise
     """
-    from populse_db.DatabaseModel import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT
+    from populse_db.database_model import TAG_TYPE_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT
 
     if value_type == TAG_TYPE_INTEGER or value_type == TAG_TYPE_LIST_INTEGER and is_subvalue:
         try:
