@@ -14,16 +14,6 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    # We make sure that FileName is in the default tags and in first position
-    config = Config()
-    tags = config.getDefaultTags()
-    if not "FileName" in tags:
-        tags.insert(0, "FileName")
-    fileNameIndex = tags.index("FileName")
-    if fileNameIndex != 0:
-        tags[0], tags[fileNameIndex] = tags[fileNameIndex], tags[0]
-    config.setDefaultTags(tags)
-
     project = Project(None, True)
 
     imageViewer = Main_Window(project)

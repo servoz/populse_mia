@@ -20,7 +20,8 @@ class Project:
             self.properties = self.loadProperties()
         self.database = Database(os.path.join(self.folder, 'database', 'mia2.db'))
         if new_project:
-            self.refreshTags()
+            # Refresh tags
+            pass
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
@@ -175,12 +176,16 @@ class Project:
         """ Sets the sorted tag of the project if it's not Unnamed project, otherwise does nothing
             :param tag: new sorted tag of the project
         """
+
         if not self.isTempProject:
+            old_tag = self.properties["sorted_tag"]
             self.properties["sorted_tag"] = tag
-            self.unsavedModifications = True
+            if old_tag != tag:
+                self.unsavedModifications = True
 
     def getSortOrder(self):
         """ Returns the sort order of the project if it's not Unnamed project, otherwise empty string """
+
         if (self.isTempProject):
             return ""
         else:
@@ -191,29 +196,12 @@ class Project:
             :param order: new sort order of the project (ascending or descending)
         """
         if not self.isTempProject:
+            old_order = self.properties["sort_order"]
             self.properties["sort_order"] = order
-            self.unsavedModifications = True
+            if old_order != order:
+                self.unsavedModifications = True
 
     """ UTILS """
-
-    def refreshTags(self):
-        """
-        Refreshes the tags
-        """
-
-        # Tags cleared
-        for tag in self.database.get_tags_names():
-            self.database.remove_tag(tag)
-
-        # New tags added
-        config = Config()
-        if config.getDefaultTags() != None:
-            for default_tag in config.getDefaultTags():
-                if self.database.get_tag(default_tag) is None:
-                    # Tags by default set as visible
-                    self.database.add_tag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
-
-        self.database.set_tag_origin("FileName", TAG_ORIGIN_BUILTIN)
 
     """ MODIFICATIONS """
 
@@ -225,6 +213,10 @@ class Project:
         self.database.save_modifications()
         if not self.isTempProject:
             self.saveConfig()
+        self.unsavedModifications = False
+
+    def unsaveModifications(self):
+        self.database.unsave_modifications()
         self.unsavedModifications = False
 
     def hasUnsavedModifications(self):

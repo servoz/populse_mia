@@ -78,7 +78,9 @@ def read_log(project):
     historyMaker.append("add_scans")
     scans_added = []
     values_added = []
-    tags_set = []
+    tags_added = []
+    tags_infos = []
+    values_infos = {}
 
     # Default tags stored
     config = Config()
@@ -109,9 +111,7 @@ def read_log(project):
             project.database.add_path(file_name, original_md5) # Scan added to the Database
             scans_added.append([file_name, original_md5]) # Scan added to history
 
-            # We create the tag FileName
-            project.database.new_value(file_name, "FileName", file_name, None) # FileName tag added
-            values_added.append([file_name, "FileName", file_name, None])
+            values_infos[file_name] = []
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -188,34 +188,33 @@ def read_log(project):
 
                     # TODO time lists
 
-                    # Tag updated in database
-                    database_tag = project.database.get_tag(tag_name)
-                    if database_tag is None:
+                    tag_object = project.database.get_tag(tag_name)
+                    if tag_name not in tags_added and tag_object is None:
+                        tags_added.append(tag_name)
                         # Adding the tag as it's not in the database yet
                         if tag_name in default_tags:
-                            project.database.add_tag(tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                                     description)
+                            tags_infos.append([tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                                                     description])
                         else:
-                            project.database.add_tag(tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                                     description)
-                    elif tag_name not in tags_set:
-                        tags_set.append(tag_name)
-                        # The tag is updated as it's already in the database
-                        project.database.set_tag_origin(tag_name, TAG_ORIGIN_BUILTIN)
-                        if tag_name in default_tags:
-                            project.database.set_tag_visibility(tag_name, True)
-                        else:
-                            project.database.set_tag_visibility(tag_name, False)
-                        project.database.set_tag_description(tag_name, description)
-                        project.database.set_tag_type(tag_name, tag_type)
-                        project.database.set_tag_unit(tag_name, unit)
+                            tags_infos.append([tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                                               description])
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
-                        project.database.new_value(file_name, tag_name, value, value) # Value added to the Database
                         values_added.append([file_name, tag_name, value, value]) # Value added to history
+                        values_infos[file_name].append([tag_name, value, value])
 
     ui_progressbar.close()
+
+    begin_tags = time()
+    project.database.add_tags(tags_infos)
+    print("add tags : " + str(time() - begin_tags))
+
+    begin_values = time()
+    for value in values_infos:
+        begin_value = time()
+        project.database.new_path_values(value, values_infos[value])
+    print("add values : " + str(time() - begin_values))
 
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
@@ -223,7 +222,7 @@ def read_log(project):
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
                     project.database.new_value(scan[0], tag.name, tag.default_value, None)
-                    values_added.append([scan[0], tag.namee, tag.default_value, None])  # Value added to history
+                    values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
     # For history
     historyMaker.append(scans_added)
@@ -255,7 +254,6 @@ def verify_scans(project, path):
             return_list.append(file_name)
 
     return return_list
-
 
 def save_project(database):
     database.saveModifications()

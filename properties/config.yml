@@ -2,10 +2,10 @@ auto_save: 'no'
 background_color: ''
 chain_cursors: 'yes'
 default_tags:
-- FileName
 - AcquisitionDate
 - PatientName
 - SequenceName
+- BandWidth
 name: MIA2
 nb_slices_max: '10'
 paths:
