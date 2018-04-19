@@ -128,8 +128,7 @@ class Ui_Dialog_Preferences(QDialog):
             list_tags.append(self.list_default_tags.item(i).text())
             i = i + 1
         config.setDefaultTags(list_tags)
-        if main.database.isTempProject:
-            main.database.refreshTags()
+        if main.project.isTempProject:
             main.data_browser.table_data.add_columns()
 
         #Colors
@@ -151,8 +150,7 @@ class Ui_Dialog_Preferences(QDialog):
         action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
         config = Config()
         if action == action_remove_tag:
-            if self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) is not None \
-                    and self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()).text() != "FileName":
+            if self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) is not None:
                 self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
         elif action == action_add_tag:
             res = self.getText()

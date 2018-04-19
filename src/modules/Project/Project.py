@@ -20,7 +20,8 @@ class Project:
             self.properties = self.loadProperties()
         self.database = Database(os.path.join(self.folder, 'database', 'mia2.db'))
         if new_project:
-            self.refreshTags()
+            # Refresh tags
+            pass
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
@@ -201,25 +202,6 @@ class Project:
                 self.unsavedModifications = True
 
     """ UTILS """
-
-    def refreshTags(self):
-        """
-        Refreshes the tags
-        """
-
-        # Tags cleared
-        for tag in self.database.get_tags_names():
-            self.database.remove_tag(tag)
-
-        # New tags added
-        config = Config()
-        if config.getDefaultTags() != None:
-            for default_tag in config.getDefaultTags():
-                if self.database.get_tag(default_tag) is None:
-                    # Tags by default set as visible
-                    self.database.add_tag(default_tag, True, TAG_ORIGIN_USER, TAG_TYPE_STRING, None, None, None)
-
-        self.database.set_tag_origin("FileName", TAG_ORIGIN_BUILTIN)
 
     """ MODIFICATIONS """
 

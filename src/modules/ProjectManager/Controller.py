@@ -78,7 +78,6 @@ def read_log(project):
     historyMaker.append("add_scans")
     scans_added = []
     values_added = []
-    tags_set = []
 
     # Default tags stored
     config = Config()
@@ -108,10 +107,6 @@ def read_log(project):
 
             project.database.add_path(file_name, original_md5) # Scan added to the Database
             scans_added.append([file_name, original_md5]) # Scan added to history
-
-            # We create the tag FileName
-            project.database.new_value(file_name, "FileName", file_name, None) # FileName tag added
-            values_added.append([file_name, "FileName", file_name, None])
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -198,17 +193,6 @@ def read_log(project):
                         else:
                             project.database.add_tag(tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
                                                      description)
-                    elif tag_name not in tags_set:
-                        tags_set.append(tag_name)
-                        # The tag is updated as it's already in the database
-                        project.database.set_tag_origin(tag_name, TAG_ORIGIN_BUILTIN)
-                        if tag_name in default_tags:
-                            project.database.set_tag_visibility(tag_name, True)
-                        else:
-                            project.database.set_tag_visibility(tag_name, False)
-                        project.database.set_tag_description(tag_name, description)
-                        project.database.set_tag_type(tag_name, tag_type)
-                        project.database.set_tag_unit(tag_name, unit)
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":

@@ -314,7 +314,7 @@ class AdvancedSearch(QWidget):
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
-            result = self.project.database.get_scans_matching_advanced_search(links, fields, conditions, values, nots)
+            result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots)
             # DataBrowser updated with the new selection
             self.dataBrowser.table_data.scans_to_visualize = result
 
