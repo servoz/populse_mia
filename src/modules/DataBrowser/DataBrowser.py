@@ -48,7 +48,6 @@ class DateTimeFormatDelegate(QItemDelegate):
     def createEditor(self, parent, option, index):
         editor = QDateTimeEdit(parent)
         editor.setDisplayFormat("dd/MM/yyyy hh:mm:ss.zzz")
-        print(editor.displayedSections())
         return editor
 
 class DateFormatDelegate(QItemDelegate):
@@ -283,10 +282,10 @@ class DataBrowser(QWidget):
                     if self.project.database.get_current_value(scan.name, tag) is None and not scan.name in return_list:
                         return_list.append(scan.name)
         elif str_search != "":
-            return_list = self.project.database.get_scans_matching_search(str_search)
+            return_list = self.project.database.get_paths_matching_search(str_search)
         # Otherwise, we take every scan
         else:
-            return_list = self.project.database.get_scans_names()
+            return_list = self.project.database.get_paths_names()
 
         self.table_data.scans_to_visualize = return_list
 
@@ -336,7 +335,7 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
             # We reput all the scans in the DataBrowser
-            return_list = self.project.database.get_scans_names()
+            return_list = self.project.database.get_paths_names()
             self.table_data.scans_to_visualize = return_list
 
             self.table_data.update_visualized_rows(old_scans_list)
@@ -357,7 +356,7 @@ class DataBrowser(QWidget):
 
             # We add the tag and a value for each scan in the Database
             self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
-            for scan in self.project.database.get_scans():
+            for scan in self.project.database.get_paths():
                 self.project.database.new_value(scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None)
                 values.append([scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None]) # For history
 
@@ -1238,6 +1237,8 @@ class TableDataBrowser(QTableWidget):
         self.itemSelectionChanged.connect(self.selection_changed)
 
         self.resizeColumnsToContents()
+
+        self.update_colors()
 
     def add_rows(self, rows):
         """

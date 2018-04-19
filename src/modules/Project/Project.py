@@ -175,12 +175,16 @@ class Project:
         """ Sets the sorted tag of the project if it's not Unnamed project, otherwise does nothing
             :param tag: new sorted tag of the project
         """
+
         if not self.isTempProject:
+            old_tag = self.properties["sorted_tag"]
             self.properties["sorted_tag"] = tag
-            self.unsavedModifications = True
+            if old_tag != tag:
+                self.unsavedModifications = True
 
     def getSortOrder(self):
         """ Returns the sort order of the project if it's not Unnamed project, otherwise empty string """
+
         if (self.isTempProject):
             return ""
         else:
@@ -191,8 +195,10 @@ class Project:
             :param order: new sort order of the project (ascending or descending)
         """
         if not self.isTempProject:
+            old_order = self.properties["sort_order"]
             self.properties["sort_order"] = order
-            self.unsavedModifications = True
+            if old_order != order:
+                self.unsavedModifications = True
 
     """ UTILS """
 
@@ -225,6 +231,10 @@ class Project:
         self.database.save_modifications()
         if not self.isTempProject:
             self.saveConfig()
+        self.unsavedModifications = False
+
+    def unsaveModifications(self):
+        self.database.unsave_modifications()
         self.unsavedModifications = False
 
     def hasUnsavedModifications(self):

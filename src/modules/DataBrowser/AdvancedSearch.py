@@ -242,7 +242,7 @@ class AdvancedSearch(QWidget):
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        result = self.project.database.get_scans_matching_advanced_search(links, fields, conditions, values, nots)
+        result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots)
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
