@@ -55,10 +55,9 @@ class PipelineEditor(PipelineDevelopperView):
                     print(e)
                     return
                 else:
-                    print(process.get_inputs())
                     self.add_process(instance)
 
-    def add_process(self, class_process, node_name=None):
+    def add_process(self, class_process, node_name=None, redo=False):
 
         pipeline = self.scene.pipeline
         if not node_name:
@@ -96,9 +95,10 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(node_name)
         history_maker.append(class_process)
         self.undos.append(history_maker)
-        self.redos.clear()
+        if not redo:
+            self.redos.clear()
 
-    def del_node(self, node_name=None):
+    def del_node(self, node_name=None, redo=False):
 
         pipeline = self.scene.pipeline
         if not node_name:
@@ -113,7 +113,8 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(node_name)
         history_maker.append(node.process)
         self.undos.append(history_maker)
-        self.redos.clear()
+        if not redo:
+            self.redos.clear()
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
 
     def add_link(self, source, dest, active, weak):
@@ -154,7 +155,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)
 
-    def update_node_name(self, old_node, old_node_name, new_node_name):
+    def update_node_name(self, old_node, old_node_name, new_node_name, redo=False):
         pipeline = self.scene.pipeline
         # Removing links of the selected node and copy the origin/destination
         links_to_copy = []
@@ -197,9 +198,10 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(old_node_name)
 
         self.undos.append(history_maker)
-        self.redos.clear()
+        if not redo:
+            self.redos.clear()
 
-    def update_plug_value(self, node_name, new_value, plug_name, value_type):
+    def update_plug_value(self, node_name, new_value, plug_name, value_type, redo=False):
         old_value = self.scene.pipeline.nodes[node_name].get_plug_value(plug_name)
         self.scene.pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
 
@@ -212,4 +214,5 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(value_type)
 
         self.undos.append(history_maker)
-        self.redos.clear()
+        if not redo:
+            self.redos.clear()

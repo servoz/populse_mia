@@ -113,12 +113,12 @@ class PipelineManagerTab(QWidget):
             action = to_undo[0]
             if action == "add_process":
                 node_name = to_undo[1]
-                self.diagramView.del_node(node_name)
+                self.diagramView.del_node(node_name, redo=True)
                 self.diagramView.undos.pop()
             elif action == "delete_process":
                 node_name = to_undo[1]
                 class_name = to_undo[2]
-                self.diagramView.add_process(class_name, node_name)
+                self.diagramView.add_process(class_name, node_name, redo=True)
                 self.diagramView.undos.pop()
                 pass
             elif action == "export_plugs":
@@ -127,7 +127,7 @@ class PipelineManagerTab(QWidget):
                 node = to_undo[1]
                 new_node_name = to_undo[2]
                 old_node_name = to_undo[3]
-                self.diagramView.update_node_name(node, new_node_name, old_node_name)
+                self.diagramView.update_node_name(node, new_node_name, old_node_name, redo=True)
                 self.diagramView.undos.pop()
                 pass
             elif action == "update_plug_value":
@@ -135,7 +135,7 @@ class PipelineManagerTab(QWidget):
                 old_value = to_undo[2]
                 plug_name = to_undo[3]
                 value_type = to_undo[4]
-                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type)
+                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type, redo=True)
                 self.diagramView.undos.pop()
             elif action == "add_link":
                 pass
@@ -153,17 +153,17 @@ class PipelineManagerTab(QWidget):
         # We can redo if we have an action to make again
         if len(self.diagramView.redos) > 0:
             to_redo = self.diagramView.redos.pop()
-            self.undos.append(to_redo)  # We pop the redo action in the undo stack
+            self.diagramView.undos.append(to_redo)  # We pop the redo action in the undo stack
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
             if action == "add_process":
                 node_name = to_redo[0]
                 class_process = to_redo[1]
-                self.diagramView.add_process(class_process, node_name)
+                self.diagramView.add_process(class_process, node_name, redo=True)
                 self.diagramView.undos.pop()
             elif action == "delete_process":
                 node_name = to_redo[1]
-                self.diagramView.del_node(node_name)
+                self.diagramView.del_node(node_name, redo=True)
                 self.diagramView.undos.pop()
                 pass
             elif action == "export_plugs":
@@ -172,16 +172,15 @@ class PipelineManagerTab(QWidget):
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.diagramView.update_node_name(node, new_node_name, old_node_name)
+                self.diagramView.update_node_name(node, old_node_name, new_node_name, redo=True)
                 self.diagramView.undos.pop()
                 pass
             elif action == "update_plug_value":
                 node_name = to_redo[1]
-                old_value = to_redo[2]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
                 new_value = to_redo[5]
-                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type)
+                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, redo=True)
                 self.diagramView.undos.pop()
             elif action == "add_link":
                 pass
@@ -435,7 +434,8 @@ class ArrowItem(QGraphicsLineItem):
            
     def mousePressEvent(self, event):
         print()
-      
+
+
 class ArrowItem2(QPainter):
     def __init__(self, name='Untitled'):
         super(ArrowItem2,self).__init__(None)
@@ -448,6 +448,7 @@ class ArrowItem2(QPainter):
         path.moveTo(30, 30)
         path.cubicTo(30, 30, 200, 350, 350, 30)
         qp.drawPath(path)
+
 
 class BlockItem(QGraphicsRectItem):
     def __init__(self, name='Untitled', *inout, parent=None):

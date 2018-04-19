@@ -2,6 +2,7 @@ Packages:
   Processes:
     Addition: process_enabled
     FSL_Smooth: process_enabled
+    FSL_Smooth_Real: process_enabled
     SPM_Smooth: process_enabled
     Substraction: process_enabled
   nipype:
@@ -226,4 +227,6 @@ Packages:
         TwoSampleTTestDesign: process_enabled
         VBMSegment: process_enabled
 Paths:
+- /home/david/MIA2/src/modules/PipelineManager
+- /home/david/MIA2/src/modules/PipelineManager
 - /home/david/MIA2/src/modules/PipelineManager
