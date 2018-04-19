@@ -146,6 +146,7 @@ class Plug(QtGui.QGraphicsPolygonItem):
             self.scene().plug_right_clicked.emit(self.name)
             event.accept()
 
+
 class EmbeddedSubPipelineItem(QtGui.QGraphicsProxyWidget):
     '''
     QGraphicsItem containing a sub-pipeline view
@@ -169,7 +170,8 @@ class NodeGWidget(QtGui.QGraphicsItem):
     def __init__(self, name, parameters, pipeline,
                  parent=None, process=None, sub_pipeline=None,
                  colored_parameters=True,
-                 logical_view=False, labels=[]):
+                 logical_view=False, labels=[],
+                 show_opt_inputs=False, show_opt_outputs=True):
         super(NodeGWidget, self).__init__(parent)
         self.style = 'default'
         self.name = name
@@ -187,6 +189,10 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.colored_parameters = colored_parameters
         self.logical_view = logical_view
         self.pipeline = pipeline
+
+        # ADDED FOR MIA2
+        self.show_opt_inputs = show_opt_inputs
+        self.show_opt_outputs = show_opt_outputs
 
         self.labels = []
         self.scene_labels = labels
@@ -351,7 +357,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         for in_param, pipeline_plug in six.iteritems(self.parameters):
             output = (not pipeline_plug.output if self.name in (
                 'inputs', 'outputs') else pipeline_plug.output)
-            if output:
+            if output or (not self.show_opt_inputs and pipeline_plug.optional):
                 continue
             param_text = self._parameter_text(in_param)
             param_name = QtGui.QGraphicsTextItem(self)
@@ -374,7 +380,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         for out_param, pipeline_plug in six.iteritems(self.parameters):
             output = (not pipeline_plug.output if self.name in (
                 'inputs', 'outputs') else pipeline_plug.output)
-            if not output:
+            if not output or (not self.show_opt_outputs and pipeline_plug.optional):
                 continue
             param_text = self._parameter_text(out_param)
             if out_param in selections:
@@ -398,6 +404,12 @@ class NodeGWidget(QtGui.QGraphicsItem):
             self.out_plugs[out_param] = plug
             self.out_params[out_param] = param_name
             pos = pos + param_name.boundingRect().size().height()
+
+    def change_input_view(self):
+        self.show_opt_inputs = not self.show_opt_inputs
+
+    def change_output_view(self):
+        self.show_opt_outputs = not self.show_opt_outputs
 
     def _build_logical_view_plugs(self):
         margin = 5
@@ -598,15 +610,23 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 output = (not pipeline_plug.output if self.name in (
                     'inputs', 'outputs') else pipeline_plug.output)
                 if output:
-                    params = self.out_params
-                    plugs = self.out_plugs
-                    npos = no + len(self.in_params)
-                    no += 1
+                    # ADDED FOR MIA2
+                    if not pipeline_plug.optional or (self.show_opt_outputs and pipeline_plug.optional):
+                        params = self.out_params
+                        plugs = self.out_plugs
+                        npos = no + len(self.in_params)
+                        no += 1
+                    else:
+                        continue
                 else:
-                    params = self.in_params
-                    plugs = self.in_plugs
-                    npos = ni
-                    ni += 1
+                    # ADDED FOR MIA2
+                    if not pipeline_plug.optional or (self.show_opt_inputs and pipeline_plug.optional):
+                        params = self.in_params
+                        plugs = self.in_plugs
+                        npos = ni
+                        ni += 1
+                    else:
+                        continue
                 pos = margin * 2 + self.title.boundingRect().size().height() \
                     + param_item.boundingRect().size().height() * npos
                 new_param_item = params.get(param_name)
@@ -671,13 +691,13 @@ class NodeGWidget(QtGui.QGraphicsItem):
         return param_text
 
     def update_node(self):
-        # print('update_node', self.name)
         self._set_brush()
         self.box_title.setBrush(self.title_brush)
         self.box.setBrush(self.bg_brush)
         for param, pipeline_plug in six.iteritems(self.parameters):
             output = (not pipeline_plug.output if self.name in (
                 'inputs', 'outputs') else pipeline_plug.output)
+
             if output:
                 plugs = self.out_plugs
                 params = self.out_params
@@ -688,6 +708,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 params = self.in_params
                 if self.logical_view:
                     param = 'inputs'
+
             gplug = plugs.get(param)
             if gplug is None: # new parameter ?
                 self._create_parameter(param, pipeline_plug)
@@ -706,6 +727,18 @@ class NodeGWidget(QtGui.QGraphicsItem):
         if not self.logical_view:
             # check removed params
             to_remove = []
+
+            # ADDED FOR MIA2
+            for param, pipeline_plug in six.iteritems(self.parameters):
+                output = (not pipeline_plug.output if self.name in (
+                    'inputs', 'outputs') else pipeline_plug.output)
+                if output:
+                    if pipeline_plug.optional and not self.show_opt_outputs:
+                        to_remove.append(param)
+                else:
+                    if pipeline_plug.optional and not self.show_opt_inputs:
+                        to_remove.append(param)
+
             for param in self.in_params:
                 if param not in self.parameters:
                     to_remove.append(param)
@@ -2241,9 +2274,43 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             export_all_outputs.triggered.connect(
                 self.export_node_all_unconnected_outputs)
 
+        # ADDED FOR MIA2
+        gnode = self.scene.gnodes[self.current_node_name]
+
+        menu.addSeparator()
+        show_opt_inputs = menu.addAction(
+            'Show optional inputs')
+        show_opt_inputs.setCheckable(True)
+        show_opt_inputs.triggered.connect(
+            self.show_optional_inputs
+        )
+        if gnode.show_opt_inputs:
+            show_opt_inputs.setChecked(True)
+
+        show_opt_outputs = menu.addAction(
+            'Show optional outputs')
+        show_opt_outputs.setCheckable(True)
+        show_opt_outputs.triggered.connect(
+            self.show_optional_outputs
+        )
+        if gnode.show_opt_outputs:
+            show_opt_outputs.setChecked(True)
+
         menu.exec_(QtGui.QCursor.pos())
         del self.current_node_name
         del self.current_process
+
+    # ADDED FOR MIA2
+    def show_optional_inputs(self):
+        gnode = self.scene.gnodes[self.current_node_name]
+        gnode.change_input_view()
+        self.scene.update_pipeline()
+
+    # ADDED FOR MIA2
+    def show_optional_outputs(self):
+        gnode = self.scene.gnodes[self.current_node_name]
+        gnode.change_output_view()
+        self.scene.update_pipeline()
 
     def open_background_menu(self):
         '''
