@@ -190,7 +190,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.logical_view = logical_view
         self.pipeline = pipeline
 
-        # ADDED FOR MIA2
+        # Added to choose to visualize optional parameters
         self.show_opt_inputs = show_opt_inputs
         self.show_opt_outputs = show_opt_outputs
 
@@ -610,7 +610,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 output = (not pipeline_plug.output if self.name in (
                     'inputs', 'outputs') else pipeline_plug.output)
                 if output:
-                    # ADDED FOR MIA2
+                    # Added to choose to visualize optional parameters
                     if not pipeline_plug.optional or (self.show_opt_outputs and pipeline_plug.optional):
                         params = self.out_params
                         plugs = self.out_plugs
@@ -619,7 +619,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
                     else:
                         continue
                 else:
-                    # ADDED FOR MIA2
+                    # Added to choose to visualize optional parameters
                     if not pipeline_plug.optional or (self.show_opt_inputs and pipeline_plug.optional):
                         params = self.in_params
                         plugs = self.in_plugs
@@ -728,7 +728,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
             # check removed params
             to_remove = []
 
-            # ADDED FOR MIA2
+            # Added to choose to visualize optional parameters
             for param, pipeline_plug in six.iteritems(self.parameters):
                 output = (not pipeline_plug.output if self.name in (
                     'inputs', 'outputs') else pipeline_plug.output)
@@ -2274,7 +2274,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             export_all_outputs.triggered.connect(
                 self.export_node_all_unconnected_outputs)
 
-        # ADDED FOR MIA2
+        # Added to choose to visualize optional parameters
         gnode = self.scene.gnodes[self.current_node_name]
 
         menu.addSeparator()
@@ -2300,14 +2300,18 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         del self.current_node_name
         del self.current_process
 
-    # ADDED FOR MIA2
     def show_optional_inputs(self):
+        '''
+        Added to choose to visualize optional inputs.
+        '''
         gnode = self.scene.gnodes[self.current_node_name]
         gnode.change_input_view()
         self.scene.update_pipeline()
 
-    # ADDED FOR MIA2
     def show_optional_outputs(self):
+        '''
+        Added to choose to visualize optional outputs.
+        '''
         gnode = self.scene.gnodes[self.current_node_name]
         gnode.change_output_view()
         self.scene.update_pipeline()
