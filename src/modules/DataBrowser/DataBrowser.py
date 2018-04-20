@@ -1097,16 +1097,20 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
 
             item = QTableWidgetItem()
-            value = self.project.database.get_current_value(scan_path, tag_name)
-            if value is not None:
-                set_item_data(item, value, self.project.database.get_tag(tag_name).type)
+            if tag_name == "FileName":
+                value = scan_path
+                set_item_data(item, value, TAG_TYPE_STRING)
             else:
-                item = QTableWidgetItem()
-                set_item_data(item, not_defined_value, TAG_TYPE_STRING)
-                font = item.font()
-                font.setItalic(True)
-                font.setBold(True)
-                item.setFont(font)
+                value = self.project.database.get_current_value(scan_path, tag_name)
+                if value is not None:
+                    set_item_data(item, value, self.project.database.get_tag(tag_name).type)
+                else:
+                    item = QTableWidgetItem()
+                    set_item_data(item, not_defined_value, TAG_TYPE_STRING)
+                    font = item.font()
+                    font.setItalic(True)
+                    font.setBold(True)
+                    item.setFont(font)
             self.setItem(row, col, item)
 
     def remove_scan(self):
@@ -1526,6 +1530,8 @@ class TableDataBrowser(QTableWidget):
                 self.project.undos.append(historyMaker)
                 self.project.redos.clear()
 
+                self.update_colors()
+
                 self.itemChanged.connect(self.change_cell_color)
 
             self.setMouseTracking(True)
@@ -1559,7 +1565,10 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             tag_name = self.horizontalHeaderItem(col).text()
             tag_object = self.project.database.get_tag(tag_name)
-            tag_type = tag_object.type
+            if tag_name == "FileName":
+                tag_type = TAG_TYPE_STRING
+            else:
+                tag_type = tag_object.type
 
             # Type added to types list
             if not tag_type in cells_types:
