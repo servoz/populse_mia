@@ -210,6 +210,14 @@ def read_log(project):
 
     ui_progressbar.close()
 
+    # Missing values added thanks to default values
+    for tag in project.database.get_tags():
+        if tag.origin == TAG_ORIGIN_USER:
+            for scan in scans_added:
+                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
+                    values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
+                    values_infos[scan[0]].append([tag.name, tag.default_value, None])
+
     begin_scans = time()
     project.database.add_paths(scans_added)
     print("add scans : " + str(time() - begin_scans))
@@ -221,14 +229,6 @@ def read_log(project):
     begin_values = time()
     project.database.new_values(values_infos)
     print("add values : " + str(time() - begin_values))
-
-    # Missing values added thanks to default values
-    for tag in project.database.get_tags():
-        if tag.origin == TAG_ORIGIN_USER:
-            for scan in scans_added:
-                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
-                    project.database.new_value(scan[0], tag.name, tag.default_value, None)
-                    values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
     # For history
     historyMaker.append(scans_added)

@@ -1298,6 +1298,7 @@ class TableDataBrowser(QTableWidget):
 
                     if column == 0:
                         # FileName tag
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                         set_item_data(item, scan, TAG_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
