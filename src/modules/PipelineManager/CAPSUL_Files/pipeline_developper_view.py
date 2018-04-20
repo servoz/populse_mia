@@ -23,6 +23,7 @@ import six
 
 # Capsul import
 from soma.qt_gui.qt_backend import QtCore, QtGui, Qt
+from soma.qt_gui.qt_backend.Qt import QMessageBox
 from soma.sorted_dictionary import SortedDictionary
 from capsul.api import Switch, PipelineNode, OptionalOutputSwitch
 from capsul.pipeline import pipeline_tools
@@ -697,7 +698,6 @@ class NodeGWidget(QtGui.QGraphicsItem):
         for param, pipeline_plug in six.iteritems(self.parameters):
             output = (not pipeline_plug.output if self.name in (
                 'inputs', 'outputs') else pipeline_plug.output)
-
             if output:
                 plugs = self.out_plugs
                 params = self.out_params
@@ -708,7 +708,6 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 params = self.in_params
                 if self.logical_view:
                     param = 'inputs'
-
             gplug = plugs.get(param)
             if gplug is None: # new parameter ?
                 self._create_parameter(param, pipeline_plug)
@@ -1948,7 +1947,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self.scene.subpipeline_clicked.connect(self.subpipeline_clicked)
         self.scene.subpipeline_clicked.connect(self.onLoadSubPipelineClicked)
         self.scene.node_clicked.connect(self.node_clicked)
-        #self.scene.node_clicked.connect(self.displayNodeParameters)
         self.scene.node_right_clicked.connect(self.node_right_clicked)
         self.scene.node_right_clicked.connect(self.onOpenProcessController)
         self.scene.plug_clicked.connect(self.plug_clicked)
@@ -2137,12 +2135,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         if self._allow_open_controller:
             self.open_node_menu(node_name, process)
 
-    '''def displayNodeParameters(self, node_name, process):
-        """ Event to open a sub-process/sub-pipeline controller
-        """
-        if self._allow_open_controller:
-            self.open_node_menu(node_name, process)'''
-
     def openProcessController(self):
         sub_view = QtGui.QScrollArea()
         node_name = self.current_node_name
@@ -2304,7 +2296,37 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         '''
         Added to choose to visualize optional inputs.
         '''
+
         gnode = self.scene.gnodes[self.current_node_name]
+        connected_plugs = []
+
+        # The show_opt_inputs attribute is not changed yet
+        if gnode.show_opt_inputs:
+            # Verifying that the plugs are not connected to another node
+            for param, pipeline_plug in six.iteritems(gnode.parameters):
+                output = (not pipeline_plug.output if gnode.name in (
+                    'inputs', 'outputs') else pipeline_plug.output)
+                if not output:
+                    if pipeline_plug.optional and pipeline_plug.links_from and gnode.show_opt_inputs:
+                        connected_plugs.append(param)
+            if connected_plugs:
+                if len(connected_plugs) == 1:
+                    text = "Please remove links from this plug:\n"
+                else:
+                    text = "Please remove links from these plugs:\n"
+                for plug_name in connected_plugs:
+                    text += plug_name + ", "
+                text = text[:-2] + '.'
+
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText(text)
+                msg.setWindowTitle("Error while changing the view of the node")
+                msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                msg.exec_()
+                return
+
+        # Changing the show_opt_outputs attribute
         gnode.change_input_view()
         self.scene.update_pipeline()
 
@@ -2312,7 +2334,37 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         '''
         Added to choose to visualize optional outputs.
         '''
+
         gnode = self.scene.gnodes[self.current_node_name]
+        connected_plugs = []
+
+        # The show_opt_outputs attribute is not changed yet
+        if gnode.show_opt_outputs:
+            # Verifying that the plugs are not connected to another node
+            for param, pipeline_plug in six.iteritems(gnode.parameters):
+                output = (not pipeline_plug.output if gnode.name in (
+                    'inputs', 'outputs') else pipeline_plug.output)
+                if output:
+                    if pipeline_plug.optional and pipeline_plug.links_to and gnode.show_opt_outputs:
+                        connected_plugs.append(param)
+            if connected_plugs:
+                if len(connected_plugs) == 1:
+                    text = "Please remove links from this plug:\n"
+                else:
+                    text = "Please remove links from these plugs:\n"
+                for plug_name in connected_plugs:
+                    text += plug_name + ", "
+                text = text[:-2] + '.'
+
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText(text)
+                msg.setWindowTitle("Error while changing the view of the node")
+                msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                msg.exec_()
+                return
+
+        # Changing the show_opt_outputs attribute
         gnode.change_output_view()
         self.scene.update_pipeline()
 
@@ -3245,6 +3297,3 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             pipeline_tools.save_pipeline(pipeline, filename)
             self._pipeline_filename = unicode(filename)
             pipeline.node_position = old_pos
-
-
-

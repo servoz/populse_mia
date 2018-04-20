@@ -131,7 +131,7 @@ class PipelineEditor(PipelineDevelopperView):
         self.redos.clear()
 
     def _del_link(self):
-        PipelineDevelopperView.scene._del_link(self)
+        PipelineDevelopperView._del_link(self)
         link_def = self._current_link
         # For history
         history_maker = []
