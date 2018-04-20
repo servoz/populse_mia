@@ -62,175 +62,182 @@ def read_log(project):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
-    begin = time()
+    import pprofile
+    prof = pprofile.Profile()
+    with prof():
 
-    raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
+        begin = time()
 
-    # Checking all the export logs from MRIManager and taking the most recent
-    list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
-    log_to_read = max(list_logs, key=os.path.getctime)
+        raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
 
-    with open(log_to_read, "r", encoding="utf-8") as file:
-        list_dict_log = json.load(file)
+        # Checking all the export logs from MRIManager and taking the most recent
+        list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
+        log_to_read = max(list_logs, key=os.path.getctime)
 
-    # For history
-    historyMaker = []
-    historyMaker.append("add_scans")
-    scans_added = []
-    values_added = []
-    tags_added = []
-    tags_infos = []
-    values_infos = {}
+        with open(log_to_read, "r", encoding="utf-8") as file:
+            list_dict_log = json.load(file)
 
-    # Default tags stored
-    config = Config()
-    default_tags = config.getDefaultTags()
-    tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
+        # For history
+        historyMaker = []
+        historyMaker.append("add_scans")
+        scans_added = []
+        values_added = []
+        tags_added = []
+        tags_infos = []
+        values_infos = {}
 
-    # Progressbar
-    len_log = len(list_dict_log)
-    ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_log)
-    ui_progressbar.setWindowModality(Qt.WindowModal)
-    ui_progressbar.setWindowTitle("")
-    idx = 0
-    for dict_log in list_dict_log:
+        # Default tags stored
+        config = Config()
+        default_tags = config.getDefaultTags()
+        tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
         # Progressbar
-        idx += 1
-        ui_progressbar.setValue(idx)
-        if ui_progressbar.wasCanceled():
-            break
+        len_log = len(list_dict_log)
+        ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_log)
+        ui_progressbar.setWindowModality(Qt.WindowModal)
+        ui_progressbar.setWindowTitle("")
+        idx = 0
+        for dict_log in list_dict_log:
 
-        if dict_log['StatusExport'] == "Export ok":
-            file_name = dict_log['NameFile']
-            path_name = raw_data_folder
-            with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
-                data = scan_file.read()
-                original_md5 = hashlib.md5(data).hexdigest()
+            # Progressbar
+            idx += 1
+            ui_progressbar.setValue(idx)
+            if ui_progressbar.wasCanceled():
+                break
 
-            project.database.add_path(file_name, original_md5) # Scan added to the Database
-            scans_added.append([file_name, original_md5]) # Scan added to history
+            if dict_log['StatusExport'] == "Export ok":
+                file_name = dict_log['NameFile']
+                path_name = raw_data_folder
+                with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
+                    data = scan_file.read()
+                    original_md5 = hashlib.md5(data).hexdigest()
 
-            values_infos[file_name] = []
+                scans_added.append([file_name, original_md5]) # Scan added to history
 
-            # For each tag in each scan
-            for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
+                values_infos[file_name] = []
 
-                # We do the tag only if it's not in the tags to remove
-                if tag[0] not in tags_to_remove:
-                    properties = tag[1]
-                    unit = None
-                    format = ''
-                    tag_type = TAG_TYPE_STRING
-                    description = None
-                    if isinstance(properties, dict):
-                        value = properties['value']
-                        unit = properties['units']
-                        if unit == "":
-                            unit = None
-                        format = properties['format']
-                        tag_type = properties['type']
-                        if tag_type == "":
-                            tag_type = TAG_TYPE_STRING
-                        description = properties['description']
-                        if description == "":
-                            description = None
-                    else:
-                        value = properties[0]
+                # For each tag in each scan
+                for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
 
-                    tag_name = tag[0]
-
-                    # Creating date types
-                    if format is not None and format != "":
-                        format = format.replace("yyyy", "%Y")
-                        format = format.replace("MM", "%m")
-                        format = format.replace("dd", "%d")
-                        format = format.replace("HH", "%H")
-                        format = format.replace("mm", "%M")
-                        format = format.replace("ss", "%S")
-                        format = format.replace("SSS", "%f")
-                        if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = TAG_TYPE_DATETIME
-                        elif "%Y" in format and "%m" in format and "%d" in format:
-                            tag_type = TAG_TYPE_DATE
-                        elif "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = TAG_TYPE_TIME
-
-                    if tag_name != "Json_Version":
-                        # Preparing value and type
-                        if len(value) is 1:
-                            value = value[0]
+                    # We do the tag only if it's not in the tags to remove
+                    if tag[0] not in tags_to_remove:
+                        properties = tag[1]
+                        unit = None
+                        format = ''
+                        tag_type = TAG_TYPE_STRING
+                        description = None
+                        if isinstance(properties, dict):
+                            value = properties['value']
+                            unit = properties['units']
+                            if unit == "":
+                                unit = None
+                            format = properties['format']
+                            tag_type = properties['type']
+                            if tag_type == "":
+                                tag_type = TAG_TYPE_STRING
+                            description = properties['description']
+                            if description == "":
+                                description = None
                         else:
-                            if tag_type == TAG_TYPE_STRING:
-                                tag_type = TAG_TYPE_LIST_STRING
-                            elif tag_type == TAG_TYPE_INTEGER:
-                                tag_type = TAG_TYPE_LIST_INTEGER
-                            elif tag_type == TAG_TYPE_FLOAT:
-                                tag_type = TAG_TYPE_LIST_FLOAT
-                            elif tag_type == TAG_TYPE_DATE:
-                                tag_type = TAG_TYPE_LIST_DATE
-                            elif tag_type == TAG_TYPE_DATETIME:
-                                tag_type = TAG_TYPE_LIST_DATETIME
-                            elif tag_type == TAG_TYPE_TIME:
-                                tag_type = TAG_TYPE_LIST_TIME
-                            value_prepared = []
-                            for value_single in value:
-                                value_prepared.append(value_single[0])
-                            value = value_prepared
+                            value = properties[0]
 
-                    if tag_type == TAG_TYPE_DATETIME or tag_type == TAG_TYPE_DATE or tag_type == TAG_TYPE_TIME:
+                        tag_name = tag[0]
+
+                        # Creating date types
+                        if format is not None and format != "":
+                            format = format.replace("yyyy", "%Y")
+                            format = format.replace("MM", "%m")
+                            format = format.replace("dd", "%d")
+                            format = format.replace("HH", "%H")
+                            format = format.replace("mm", "%M")
+                            format = format.replace("ss", "%S")
+                            format = format.replace("SSS", "%f")
+                            if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
+                                tag_type = TAG_TYPE_DATETIME
+                            elif "%Y" in format and "%m" in format and "%d" in format:
+                                tag_type = TAG_TYPE_DATE
+                            elif "%H" in format and "%M" in format and "%S" in format:
+                                tag_type = TAG_TYPE_TIME
+
+                        if tag_name != "Json_Version":
+                            # Preparing value and type
+                            if len(value) is 1:
+                                value = value[0]
+                            else:
+                                if tag_type == TAG_TYPE_STRING:
+                                    tag_type = TAG_TYPE_LIST_STRING
+                                elif tag_type == TAG_TYPE_INTEGER:
+                                    tag_type = TAG_TYPE_LIST_INTEGER
+                                elif tag_type == TAG_TYPE_FLOAT:
+                                    tag_type = TAG_TYPE_LIST_FLOAT
+                                elif tag_type == TAG_TYPE_DATE:
+                                    tag_type = TAG_TYPE_LIST_DATE
+                                elif tag_type == TAG_TYPE_DATETIME:
+                                    tag_type = TAG_TYPE_LIST_DATETIME
+                                elif tag_type == TAG_TYPE_TIME:
+                                    tag_type = TAG_TYPE_LIST_TIME
+                                value_prepared = []
+                                for value_single in value:
+                                    value_prepared.append(value_single[0])
+                                value = value_prepared
+
+                        if tag_type == TAG_TYPE_DATETIME or tag_type == TAG_TYPE_DATE or tag_type == TAG_TYPE_TIME:
+                            if value is not None and value != "":
+                                value = datetime.strptime(value, format)
+                                if tag_type == TAG_TYPE_TIME:
+                                    value = value.time()
+                                elif tag_type == TAG_TYPE_DATE:
+                                    value = value.date()
+
+                        # TODO time lists
+
+                        tag_object = project.database.get_tag(tag_name)
+                        if tag_name not in tags_added and tag_object is None:
+                            tags_added.append(tag_name)
+                            # Adding the tag as it's not in the database yet
+                            if tag_name in default_tags:
+                                tags_infos.append([tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                                                         description])
+                            else:
+                                tags_infos.append([tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                                                   description])
+
+                        # The value is accepted if it's not empty or null
                         if value is not None and value != "":
-                            value = datetime.strptime(value, format)
-                            if tag_type == TAG_TYPE_TIME:
-                                value = value.time()
-                            elif tag_type == TAG_TYPE_DATE:
-                                value = value.date()
+                            values_added.append([file_name, tag_name, value, value]) # Value added to history
+                            values_infos[file_name].append([tag_name, value, value])
 
-                    # TODO time lists
+        ui_progressbar.close()
 
-                    tag_object = project.database.get_tag(tag_name)
-                    if tag_name not in tags_added and tag_object is None:
-                        tags_added.append(tag_name)
-                        # Adding the tag as it's not in the database yet
-                        if tag_name in default_tags:
-                            tags_infos.append([tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                                     description])
-                        else:
-                            tags_infos.append([tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                               description])
+        begin_scans = time()
+        project.database.add_paths(scans_added)
+        print("add scans : " + str(time() - begin_scans))
 
-                    # The value is accepted if it's not empty or null
-                    if value is not None and value != "":
-                        values_added.append([file_name, tag_name, value, value]) # Value added to history
-                        values_infos[file_name].append([tag_name, value, value])
+        begin_tags = time()
+        project.database.add_tags(tags_infos)
+        print("add tags : " + str(time() - begin_tags))
 
-    ui_progressbar.close()
+        begin_values = time()
+        project.database.new_values(values_infos)
+        print("add values : " + str(time() - begin_values))
 
-    begin_tags = time()
-    project.database.add_tags(tags_infos)
-    print("add tags : " + str(time() - begin_tags))
+        # Missing values added thanks to default values
+        for tag in project.database.get_tags():
+            if tag.origin == TAG_ORIGIN_USER:
+                for scan in scans_added:
+                    if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
+                        project.database.new_value(scan[0], tag.name, tag.default_value, None)
+                        values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
-    begin_values = time()
-    for value in values_infos:
-        begin_value = time()
-        project.database.new_path_values(value, values_infos[value])
-    print("add values : " + str(time() - begin_values))
+        # For history
+        historyMaker.append(scans_added)
+        historyMaker.append(values_added)
+        project.undos.append(historyMaker)
+        project.redos.clear()
 
-    # Missing values added thanks to default values
-    for tag in project.database.get_tags():
-        if tag.origin == TAG_ORIGIN_USER:
-            for scan in scans_added:
-                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
-                    project.database.new_value(scan[0], tag.name, tag.default_value, None)
-                    values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
+        print("read_log time: " + str(time() - begin))
 
-    # For history
-    historyMaker.append(scans_added)
-    historyMaker.append(values_added)
-    project.undos.append(historyMaker)
-    project.redos.clear()
-
-    print("read_log time: " + str(time() - begin))
+    prof.print_stats()
 
 def verify_scans(project, path):
     # Returning the files that are problematic
