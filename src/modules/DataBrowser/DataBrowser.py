@@ -1526,6 +1526,8 @@ class TableDataBrowser(QTableWidget):
                 self.project.undos.append(historyMaker)
                 self.project.redos.clear()
 
+                self.update_colors()
+
                 self.itemChanged.connect(self.change_cell_color)
 
             self.setMouseTracking(True)
