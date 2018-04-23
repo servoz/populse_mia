@@ -114,7 +114,7 @@ class CountTable(QDialog):
         or removed. """
         tag_name = self.push_buttons[idx].text()
         values = []
-        for scan in self.project.database.get_scans_names():
+        for scan in self.project.database.get_paths_names():
             current_value = self.project.database.get_current_value(scan, tag_name)
             initial_value = self.project.database.get_initial_value(scan, tag_name)
             if current_value is not None or initial_value is not None:
@@ -265,7 +265,7 @@ class CountTable(QDialog):
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                list_scans = self.project.database.get_scans_matching_tag_value_couples(tag_list)
+                list_scans = self.project.database.get_paths_matching_tag_value_couples(tag_list)
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
