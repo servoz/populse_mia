@@ -392,7 +392,7 @@ class DataBrowser(QWidget):
             # We add the new tag in the Database
             tagCloned = self.project.database.get_tag(tag_to_clone)
             self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default_value, tagCloned.description)
-            for scan in self.project.database.get_scans():
+            for scan in self.project.database.get_paths():
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
                 cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
                 cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
@@ -443,7 +443,7 @@ class DataBrowser(QWidget):
             # Each Value objects of the tags to remove are stored in the history
             values_removed = []
             for tag in tag_names_to_remove:
-                for scan in self.project.database.get_scans_names():
+                for scan in self.project.database.get_paths_names():
                     current_value = self.project.database.get_current_value(scan, tag)
                     initial_value = self.project.database.get_initial_value(scan, tag)
                     if current_value is not None or initial_value is not None:

@@ -18,7 +18,7 @@ class Ui_Dialog_remove_tag(QDialog):
 
     def pop_up(self):
 
-        from populse_db.DatabaseModel import TAG_ORIGIN_USER
+        from populse_db.database_model import TAG_ORIGIN_USER
 
         _translate = QtCore.QCoreApplication.translate
         self.setObjectName("Remove a tag")
