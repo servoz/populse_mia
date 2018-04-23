@@ -226,9 +226,6 @@ def read_log(project):
     project.database.add_tags(tags_infos)
     print("add tags : " + str(time() - begin_tags))
 
-    project.database.save_modifications()
-    project.database.update_table_classes()
-
     begin_values = time()
     project.database.new_values(values_infos)
     print("add values : " + str(time() - begin_values))
