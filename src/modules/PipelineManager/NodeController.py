@@ -203,12 +203,16 @@ class NodeController(QWidget):
             #TODO: RAISE ERROR
             pass
         if value_type not in [float, int, str, list]:
-            new_value = None
             value_type = str
             #TODO: RAISE ERROR
 
-        old_value = pipeline.nodes[self.node_name].get_plug_value(plug_name)
-        pipeline.nodes[self.node_name].set_plug_value(plug_name, value_type(new_value))
+        if self.node_name in ['inputs', 'outputs']:
+            node_name = ''
+        else:
+            node_name = self.node_name
+
+        old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
+        pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
