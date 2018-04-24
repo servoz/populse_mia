@@ -117,28 +117,53 @@ class PipelineEditor(PipelineDevelopperView):
             self.redos.clear()
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
 
-    def add_link(self, source, dest, active, weak):
-        PipelineDevelopperView.scene.add_link(self, source, dest, active, weak)
+    def add_link(self, source, dest, active, weak, redo=False):
+        self.scene.add_link(source, dest, active, weak)
+
+        # Writing a string to represent the link
+        source_parameters = ".".join(source)
+        dest_parameters = ".".join(dest)
+        link = "->".join((source_parameters, dest_parameters))
 
         # For history
         history_maker = []
         history_maker.append("add_link")
-        history_maker.append(source)
-        history_maker.append(dest)
-        history_maker.append(active)
-        history_maker.append(weak)
+        history_maker.append(link)
         self.undos.append(history_maker)
-        self.redos.clear()
 
-    def _del_link(self):
+        print("add_link link :", link)
+
+        if not redo:
+            self.redos.clear()
+
+    def _del_link(self, link=False, redo=False):
+        if not link:
+            link = self._current_link
+
+        print("LINK: ", link)
+
+        (source_node_name, source_plug_name, source_node,
+         source_plug, dest_node_name, dest_plug_name, dest_node,
+         dest_plug) = self.scene.pipeline.parse_link(link)
+
+        (dest_node_name, dest_parameter, dest_node, dest_plug,
+         weak_link) = list(source_plug.links_to)[0]
+
+        active = source_plug.activated and dest_plug.activated
+
         PipelineDevelopperView._del_link(self)
-        link_def = self._current_link
+
         # For history
         history_maker = []
         history_maker.append("delete_link")
-        history_maker.append(link_def)
+        history_maker.append((source_node_name, source_plug_name))
+        history_maker.append((dest_node_name, dest_plug_name))
+        history_maker.append(active)
+        history_maker.append(weak_link)
         self.undos.append(history_maker)
-        self.redos.clear()
+
+        if not redo:
+            self.redos.clear()
 
     def export_plugs(self, inputs=True, outputs=True, optional=False):
         # TODO: TO IMPROVE

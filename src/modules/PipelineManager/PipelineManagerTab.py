@@ -138,9 +138,16 @@ class PipelineManagerTab(QWidget):
                 self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type, redo=True)
                 self.diagramView.undos.pop()
             elif action == "add_link":
-                pass
+                link = to_undo[1]
+                self.diagramView._del_link(link, redo=True)
+                self.diagramView.undos.pop()
             elif action == "delete_link":
-                pass
+                source = to_undo[1]
+                dest = to_undo[2]
+                active = to_undo[3]
+                weak = to_undo[4]
+                self.diagramView.add_link(source, dest, active, weak, redo=True)
+                self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
         print("YOLO")
         print(self.diagramView.redos)
@@ -183,9 +190,17 @@ class PipelineManagerTab(QWidget):
                 self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, redo=True)
                 self.diagramView.undos.pop()
             elif action == "add_link":
-                pass
+                source = to_redo[1]
+                dest = to_redo[2]
+                active = to_redo[3]
+                weak = to_redo[4]
+                self.diagramView.add_link(source, dest, active, weak, redo=True)
+                self.diagramView.undos.pop()
             elif action == "delete_link":
-                pass
+                print("to_redo: ", to_redo)
+                link = to_redo[1]
+                self.diagramView._del_link(link, redo=True)
+                self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
 
     def controller_value_changed(self, signal_list):
