@@ -6,6 +6,7 @@ from SoftwareProperties.Config import Config
 from Project.Filter import Filter
 from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
 from Utils.Utils import set_item_data
+from datetime import datetime
 
 class Project:
 
@@ -17,11 +18,32 @@ class Project:
         else:
             self.isTempProject = False
             self.folder = project_root_folder
-            self.properties = self.loadProperties()
         self.database = Database(os.path.join(self.folder, 'database', 'mia2.db'))
         if new_project:
-            # Refresh tags
-            pass
+
+            if not os.path.exists(self.folder):
+                os.makedirs(self.folder)
+
+            if not os.path.exists(os.path.join(self.folder, "database")):
+                os.makedirs(os.path.join(self.folder, "database"))
+
+            # Properties file created
+            os.mkdir(os.path.join(self.folder, 'properties'))
+            if self.isTempProject:
+                name = "Unnamed project"
+            else:
+                name = os.path.basename(self.folder)
+            config = Config()
+            properties = dict(
+               name=name,
+               date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+               sorted_tag='',
+               sort_order='',
+               visibles=config.getDefaultTags()
+            )
+            with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
+                yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
+        self.properties = self.loadProperties()
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
@@ -131,7 +153,7 @@ class Project:
     """ PROPERTIES """
 
     def loadProperties(self):
-        """ Loads the properties file (Unnamed project does not have this file) """
+        """ Loads the properties file """
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
@@ -140,66 +162,74 @@ class Project:
 
     def getName(self):
         """ Returns the name of the project if it's not Unnamed project, otherwise empty string """
-        if (self.isTempProject):
-            return ""
-        else:
-            return self.properties["name"]
+
+        return self.properties["name"]
 
     def setName(self, name):
         """ Sets the name of the project if it's not Unnamed project, otherwise does nothing
             :param name: new name of the project
         """
-        if not self.isTempProject:
-            self.properties["name"] = name
-            self.saveConfig()
+
+        self.properties["name"] = name
 
     def saveConfig(self):
         """ Save the changes in the properties file """
+
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
 
     def getDate(self):
         """ Returns the date of creation of the project if it's not Unnamed project, otherwise empty string """
-        if (self.isTempProject):
-            return ""
-        else:
-            return self.properties["date"]
+
+        return self.properties["date"]
+
+    def setDate(self, date):
+        """ Sets the date of the project
+            :param date: new date of the project
+        """
+
+        self.properties["date"] = date
 
     def getSortedTag(self):
         """ Returns the sorted tag of the project if it's not Unnamed project, otherwise empty string """
-        if (self.isTempProject):
-            return ""
-        else:
-            return self.properties["sorted_tag"]
+
+        return self.properties["sorted_tag"]
 
     def setSortedTag(self, tag):
-        """ Sets the sorted tag of the project if it's not Unnamed project, otherwise does nothing
+        """ Sets the sorted tag of the project
             :param tag: new sorted tag of the project
         """
 
-        if not self.isTempProject:
-            old_tag = self.properties["sorted_tag"]
-            self.properties["sorted_tag"] = tag
-            if old_tag != tag:
-                self.unsavedModifications = True
+        old_tag = self.properties["sorted_tag"]
+        self.properties["sorted_tag"] = tag
+        if old_tag != tag:
+            self.unsavedModifications = True
 
     def getSortOrder(self):
         """ Returns the sort order of the project if it's not Unnamed project, otherwise empty string """
 
-        if (self.isTempProject):
-            return ""
-        else:
-            return self.properties["sort_order"]
+        return self.properties["sort_order"]
 
     def setSortOrder(self, order):
         """ Sets the sort order of the project if it's not Unnamed project, otherwise does nothing
             :param order: new sort order of the project (ascending or descending)
         """
-        if not self.isTempProject:
-            old_order = self.properties["sort_order"]
-            self.properties["sort_order"] = order
-            if old_order != order:
-                self.unsavedModifications = True
+
+        old_order = self.properties["sort_order"]
+        self.properties["sort_order"] = order
+        if old_order != order:
+            self.unsavedModifications = True
+
+    def getVisibles(self):
+        """ Returns the visible tags """
+
+        return self.properties["visibles"]
+
+    def setVisibles(self, visibles):
+        """ Sets the list of visible tags """
+
+        self.properties["visibles"] = visibles
+        self.unsavedModifications = True
 
     """ UTILS """
 
@@ -211,8 +241,7 @@ class Project:
         """
 
         self.database.save_modifications()
-        if not self.isTempProject:
-            self.saveConfig()
+        self.saveConfig()
         self.unsavedModifications = False
 
     def unsaveModifications(self):
@@ -255,7 +284,7 @@ class Project:
                 for i in range (0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i]
-                    self.database.add_tag(tagToReput.name, tagToReput.visible, tagToReput.origin, tagToReput.type, tagToReput.unit,
+                    self.database.add_tag(tagToReput.name, tagToReput.origin, tagToReput.type, tagToReput.unit,
                                 tagToReput.default_value, tagToReput.description)
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
@@ -312,12 +341,9 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.database.get_visualized_tags() # Old list of columns
+                old_tags = self.getVisibles() # Old list of columns
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
-                self.database.reset_tag_visibilities() # Reset of the visibilities
-                for visible in visibles:
-                    # We reput each old tag visible
-                    self.database.set_tag_visibility(visible.name, True)
+                self.setVisibles(visibles)
                 table.update_visualized_columns(old_tags)  # Columns updated
 
     def reput_values(self, values):
@@ -351,7 +377,7 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_tag(tagToAdd, True, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
+                self.database.add_tag(tagToAdd, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
                 # Adding all the values associated
                 for value in values:
                     self.database.new_value(value[0], value[1], value[2], value[3])
@@ -415,10 +441,7 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.database.get_visualized_tags() # Old list of columns
+                old_tags = self.getVisibles() # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
-                self.database.reset_tag_visibilities() # Reset of the visibilities
-                for visible in visibles:
-                    # We reput each new tag visible
-                    self.database.set_tag_visibility(visible, True)
+                self.setVisibles(visibles)
                 table.update_visualized_columns(old_tags)  # Columns updated

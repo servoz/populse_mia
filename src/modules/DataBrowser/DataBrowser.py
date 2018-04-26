@@ -278,11 +278,11 @@ class DataBrowser(QWidget):
         if str_search == "*Not Defined*":
         # Returns the list of scans that have a match with the search in their visible tag values
             for scan in self.project.database.get_paths():
-                for tag in self.project.database.get_visualized_tags():
-                    if self.project.database.get_current_value(scan.name, tag.name) is None and not scan.name in return_list:
+                for tag in self.project.getVisibles():
+                    if self.project.database.get_current_value(scan.name, tag) is None and not scan.name in return_list:
                         return_list.append(scan.name)
         elif str_search != "":
-            return_list = self.project.database.get_paths_matching_search(str_search)
+            return_list = self.project.database.get_paths_matching_search(str_search, self.project.getVisibles())
         # Otherwise, we take every scan
         else:
             return_list = self.project.database.get_paths_names()
@@ -538,6 +538,8 @@ class TableDataBrowser(QTableWidget):
         :param order: New order
         """
 
+        self.itemChanged.disconnect()
+
         # Auto-save
         config = Config()
 
@@ -551,6 +553,8 @@ class TableDataBrowser(QTableWidget):
             self.sortItems(column, order)
 
             self.update_colors()
+
+        self.itemChanged.connect(self.change_cell_color)
 
     def update_selection(self):
         """
@@ -682,10 +686,14 @@ class TableDataBrowser(QTableWidget):
         column_to_sort = self.get_tag_column(tag_to_sort)
         sort_order = self.project.getSortOrder()
 
+        self.itemChanged.connect(self.change_cell_color)
+
         if column_to_sort != None:
             self.horizontalHeader().setSortIndicator(column_to_sort, sort_order)
         else:
             self.horizontalHeader().setSortIndicator(0, 0)
+
+        self.itemChanged.disconnect()
 
         # Columns and rows resized
         self.resizeColumnsToContents()
@@ -740,7 +748,7 @@ class TableDataBrowser(QTableWidget):
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
-                if element.visible == False:
+                if tag_name not in self.project.getVisibles():
                     self.setColumnHidden(column, True)
 
                 else:
@@ -1154,7 +1162,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def visualized_tags_pop_up(self):
-        old_tags = self.project.database.get_visualized_tags() # Old list of columns
+        old_tags = self.project.getVisibles() # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.project)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
@@ -1216,6 +1224,8 @@ class TableDataBrowser(QTableWidget):
         :param old_scans: Old list of scans
         """
 
+        self.itemChanged.disconnect()
+
         self.itemSelectionChanged.disconnect()
 
         # Scans that are not visible anymore are hidden
@@ -1236,6 +1246,8 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.connect(self.selection_changed)
 
+        self.itemChanged.connect(self.change_cell_color)
+
     def update_visualized_columns(self, old_tags):
         """
         Called to set the visualized tags in the table
@@ -1246,13 +1258,12 @@ class TableDataBrowser(QTableWidget):
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
-            tag_object = self.project.database.get_tag(tag.name)
-            if tag_object is not None and not tag_object.visible:
-                self.setColumnHidden(self.get_tag_column(tag.name), True)
+            if tag not in self.project.getVisibles():
+                self.setColumnHidden(self.get_tag_column(tag), True)
 
         # Tags that became visible must be visible
-        for tag in self.project.database.get_visualized_tags():
-            self.setColumnHidden(self.get_tag_column(tag.name), False)
+        for tag in self.project.getVisibles():
+            self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Selection updated
         self.update_selection()

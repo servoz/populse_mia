@@ -16,7 +16,7 @@ class Ui_Dialog_Settings(QDialog):
     def __init__(self, project):
         super().__init__()
         self.pop_up(project)
-        self.old_visibles_tags = project.database.get_visualized_tags()
+        self.old_visibles_tags = project.getVisibles()
 
     def pop_up(self, database):
         _translate = QtCore.QCoreApplication.translate
@@ -63,12 +63,11 @@ class Ui_Dialog_Settings(QDialog):
         historyMaker.append("modified_visibilities")
         historyMaker.append(self.old_visibles_tags)
         new_visibilities = []
-        project.database.reset_tag_visibilities()
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
-            project.database.set_tag_visibility(visible_tag, True)
             new_visibilities.append(visible_tag)
         historyMaker.append(new_visibilities)
+        project.setVisibles(new_visibilities)
         project.undos.append(historyMaker)
         project.redos.clear()
         #Database.setName(self.tab_infos.name_value.text())

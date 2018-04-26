@@ -76,7 +76,7 @@ class Ui_Visualized_Tags(QWidget):
 
         for tag in project.database.get_tags():
             item = QtWidgets.QListWidgetItem()
-            if tag.visible == False:
+            if tag.name not in project.getVisibles():
                 # Tag not visible: left side
                 self.list_widget_tags.addItem(item)
                 self.left_tags.append(tag.name)

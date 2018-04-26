@@ -27,6 +27,8 @@ import ProjectManager.Controller as controller
 import shutil
 from Project.Project import Project
 
+from datetime import datetime
+
 class Main_Window(QMainWindow):
     """
     Primary master class
@@ -284,10 +286,20 @@ class Main_Window(QMainWindow):
             file_name = exPopup.relative_path
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
             database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
+            properties_path = os.path.join(os.path.relpath(exPopup.relative_path), 'properties')
+            data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
+            raw_data_path = os.path.join(data_path, 'raw_data')
+            derived_data_path = os.path.join(data_path, 'derived_data')
 
             # List of projects updated
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
+
+            os.makedirs(exPopup.relative_path)
+
+            os.mkdir(data_path)
+            os.mkdir(raw_data_path)
+            os.mkdir(derived_data_path)
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
@@ -302,10 +314,12 @@ class Main_Window(QMainWindow):
             # We commit the last pending modifications
             self.project.saveModifications()
 
+            os.mkdir(properties_path)
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'properties', 'properties.yml'), os.path.relpath(properties_path))
+
             # We copy the Database with all the modifications commited in the new project
-            if os.path.exists(os.path.join(old_folder, 'database')):
-                os.mkdir(os.path.relpath(database_path))
-                shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
+            os.mkdir(os.path.relpath(database_path))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
 
             # We remove the Database with all the modifications saved in the old project
             os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
@@ -317,6 +331,9 @@ class Main_Window(QMainWindow):
 
             # Project updated everywhere
             self.project = Project(exPopup.relative_path, False)
+            self.project.setName(os.path.basename(exPopup.relative_path))
+            self.project.setDate(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))
+            self.project.saveModifications()
 
             self.update_project(file_name, call_update_table=False) # Project updated everywhere
 
@@ -481,7 +498,8 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.project.database.get_visualized_tags()
+        old_tags = self.project.getVisibles()
+        print(self.project.getName())
         self.pop_up_settings = Ui_Dialog_Settings(self.project)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()

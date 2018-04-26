@@ -23,40 +23,6 @@ def getJsonTagsFromFile(file_path, path):
             json_tags.append([name, value])
    return json_tags
 
-
-def createProject(name, path, parent_folder):
-    """
-    Creates a new project
-    :param name: project name
-    :param path: project path
-    :param parent_folder: project folder
-    :return: the project object
-    """
-
-    # Formating the name to remove spaces et strange characters -> folder name
-    recorded_path = os.path.relpath(parent_folder)
-    new_path = os.path.join(recorded_path, name)
-
-    # Creating the folder with the folder name that has been formatted
-    if not os.path.exists(new_path):
-        project_parent_folder = os.makedirs(new_path)
-        data_folder = os.makedirs(os.path.join(new_path, 'data'))
-        project_path = os.path.join(new_path, name)
-        raw_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'raw_data'))
-        derived_data_folder = os.makedirs(os.path.join(os.path.join(new_path, 'data'), 'derived_data'))
-
-        #Properties
-        os.mkdir(os.path.join(new_path, 'properties'))
-        properties = dict(
-            name=name,
-            date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
-            sorted_tag='',
-            sort_order=''
-        )
-        with open(os.path.join(new_path, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
-            yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
-
-
 def read_log(project):
 
     """ From the log export file of the import software, the data base (here the current project) is loaded with
@@ -196,12 +162,8 @@ def read_log(project):
                     if tag_name not in tags_added and tag_object is None:
                         tags_added.append(tag_name)
                         # Adding the tag as it's not in the database yet
-                        if tag_name in default_tags:
-                            tags_infos.append([tag_name, True, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                        tags_infos.append([tag_name, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
                                                      description])
-                        else:
-                            tags_infos.append([tag_name, False, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                               description])
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":

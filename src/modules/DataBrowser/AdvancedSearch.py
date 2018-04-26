@@ -53,8 +53,8 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        for tag in self.project.database.get_visualized_tags():
-            fieldChoice.addItem(tag.name)
+        for tag in self.project.getVisibles():
+            fieldChoice.addItem(tag)
         fieldChoice.addItem("All visualized tags")
 
         # Value choice

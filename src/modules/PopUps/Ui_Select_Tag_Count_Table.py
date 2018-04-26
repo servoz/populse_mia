@@ -11,7 +11,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
         super(Ui_Select_Tag_Count_Table, self).__init__(project)
 
         if visualized_tags_only:
-            for tag in self.project.database.get_visualized_tags():
+            for tag in self.project.getVisibles():
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
                 if tag == tag_name_checked:
