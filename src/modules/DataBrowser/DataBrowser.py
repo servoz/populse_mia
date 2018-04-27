@@ -355,7 +355,7 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the tag and a value for each scan in the Database
-            self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
+            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value, new_tag_description)
             for scan in self.project.database.get_paths():
                 self.project.database.new_value(scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None)
                 values.append([scan.name, new_tag_name, table_to_database(new_default_value, tag_type), None]) # For history
@@ -391,7 +391,7 @@ class DataBrowser(QWidget):
 
             # We add the new tag in the Database
             tagCloned = self.project.database.get_tag(tag_to_clone)
-            self.project.database.add_tag(new_tag_name, True, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default_value, tagCloned.description)
+            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit, tagCloned.default_value, tagCloned.description)
             for scan in self.project.database.get_paths():
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
                 cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
