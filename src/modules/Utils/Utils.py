@@ -84,19 +84,19 @@ def check_value_type(value, value_type, is_subvalue=False):
         try:
             int(value)
             return True
-        except ValueError:
+        except Exception:
             return False
     elif value_type == TAG_TYPE_FLOAT or value_type == TAG_TYPE_LIST_FLOAT and is_subvalue:
         try:
             float(value)
             return True
-        except ValueError:
+        except Exception:
             return False
     elif value_type == TAG_TYPE_STRING or value_type == TAG_TYPE_LIST_STRING and is_subvalue:
         try:
             str(value)
             return True
-        except ValueError:
+        except Exception:
             return False
     elif value_type in [TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT] and not is_subvalue:
         if isinstance(value, str):
@@ -115,7 +115,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 format = "%d/%m/%Y"
                 datetime.strptime(value, format).date()
                 return True
-            except ValueError as e:
+            except Exception:
                 return False
     elif value_type == TAG_TYPE_DATETIME or value_type == TAG_TYPE_LIST_DATETIME and is_subvalue:
         if isinstance(value, QDateTime):
@@ -125,7 +125,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 format = "%d/%m/%Y %H:%M:%S.%f"
                 datetime.strptime(value, format)
                 return True
-            except ValueError as e:
+            except Exception:
                 return False
     elif value_type == TAG_TYPE_TIME or value_type == TAG_TYPE_LIST_TIME and is_subvalue:
         if isinstance(value, QTime):
@@ -135,7 +135,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 format = "%H:%M:%S.%f"
                 datetime.strptime(value, format).time()
                 return True
-            except ValueError as e:
+            except Exception:
                 return False
 
 def table_to_database(value, value_type):

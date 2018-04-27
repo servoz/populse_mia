@@ -985,7 +985,7 @@ class TableDataBrowser(QTableWidget):
             initial_value = self.project.database.get_initial_value(scan_name, tag_name)
             if initial_value is not None:
                 modified_values.append([scan_name, tag_name, current_value, initial_value]) # For history
-                if not self.project.database.reset_current_value(scan_name, tag_name):
+                if self.project.database.reset_current_value(scan_name, tag_name) != 0:
                     has_unreset_values = True
                 set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
             else:
@@ -1023,7 +1023,7 @@ class TableDataBrowser(QTableWidget):
                 current_value = self.project.database.get_current_value(scan, tag_name)
                 if initial_value is not None:
                     modified_values.append([scan, tag_name, current_value, initial_value]) # For history
-                    if not self.project.database.reset_current_value(scan, tag_name):
+                    if self.project.database.reset_current_value(scan, tag_name) != 0:
                         has_unreset_values = True
                     set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
                 else:
@@ -1064,7 +1064,7 @@ class TableDataBrowser(QTableWidget):
                     # We reset the value only if it exists
                     modified_values.append([scan_name, tag, current_value, initial_value]) # For history
                     self.project.database.reset_current_value(scan_name, tag)
-                    if not self.project.database.reset_current_value(scan_name, tag):
+                    if self.project.database.reset_current_value(scan_name, tag) != 0:
                         has_unreset_values = True
                     set_item_data(self.item(row, column), initial_value, self.project.database.get_tag(tag).type)
                 else:
@@ -1616,7 +1616,7 @@ class TableDataBrowser(QTableWidget):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("Invalid value")
-            msg.setInformativeText("The value " + new_value + " is invalid with the type " + type_problem)
+            msg.setInformativeText("The value " + str(new_value) + " is invalid with the type " + type_problem)
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
