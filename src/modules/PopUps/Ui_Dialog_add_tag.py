@@ -376,9 +376,8 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Tag name checked
         name_already_exists = False
-        for tag in self.project.database.get_tags():
-            if tag.name == self.text_edit_tag_name.text():
-                name_already_exists = True
+        if self.text_edit_tag_name.text() in self.project.database.get_tags_names():
+            name_already_exists = True
 
         # Default value checked
         default_value = self.text_edit_default_value.text()
