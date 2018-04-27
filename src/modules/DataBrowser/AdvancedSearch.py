@@ -55,6 +55,7 @@ class AdvancedSearch(QWidget):
         fieldChoice.setObjectName('field')
         for tag in self.project.getVisibles():
             fieldChoice.addItem(tag)
+        fieldChoice.addItem("FileName")
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
