@@ -270,7 +270,10 @@ class AdvancedSearch(QWidget):
                     elif childName == 'condition':
                         conditions.append(child.currentText())
                     elif childName == 'field':
-                        fields.append(child.currentText())
+                        if child.currentText() != "All visualized tags":
+                            fields.append(child.currentText())
+                        else:
+                            fields.append(self.project.getVisibles())
                     elif childName == 'value':
                         values.append(child.displayText())
                     elif childName == 'not':
@@ -305,7 +308,10 @@ class AdvancedSearch(QWidget):
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
             row[1].setCurrentText(nots[i])
-            row[2].setCurrentText(fields[i])
+            if isinstance(fields[i], list):
+                row[2].setCurrentText("All visualized tags")
+            else:
+                row[2].setCurrentText(fields[i])
             row[3].setCurrentText(conditions[i])
             row[4].setText(values[i])
             i += 1
