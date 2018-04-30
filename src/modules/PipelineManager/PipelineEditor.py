@@ -57,7 +57,16 @@ class PipelineEditor(PipelineDevelopperView):
                 else:
                     self.add_process(instance)
 
-    def add_process(self, class_process, node_name=None, redo=False):
+    def update_history(self, history_maker, from_undo, from_redo):
+        if from_undo:
+            self.redos.append(history_maker)
+        else:
+            self.undos.append(history_maker)
+            if not from_redo:
+                print("CLEARING")
+                self.redos.clear()
+
+    def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False):
 
         pipeline = self.scene.pipeline
         if not node_name:
@@ -92,13 +101,18 @@ class PipelineEditor(PipelineDevelopperView):
         # For history
         history_maker = []
         history_maker.append("add_process")
-        history_maker.append(node_name)
-        history_maker.append(class_process)
-        self.undos.append(history_maker)
-        if not redo:
-            self.redos.clear()
 
-    def del_node(self, node_name=None, redo=False):
+        if from_undo:
+            # Adding the arguments to make the redo correctly
+            history_maker.append(node_name)
+        else:
+            # Adding the arguments to make the undo correctly
+            history_maker.append(node_name)
+            history_maker.append(class_process)
+
+        self.update_history(history_maker, from_undo, from_redo)
+
+    def del_node(self, node_name=None, from_undo=False, from_redo=False):
 
         pipeline = self.scene.pipeline
         if not node_name:
@@ -110,37 +124,61 @@ class PipelineEditor(PipelineDevelopperView):
         # For history
         history_maker = []
         history_maker.append("delete_process")
-        history_maker.append(node_name)
-        history_maker.append(node.process)
-        self.undos.append(history_maker)
-        if not redo:
-            self.redos.clear()
+
+        if from_undo:
+            # Adding the arguments to make the redo correctly
+            history_maker.append(node_name)
+            history_maker.append(node.process)
+        else:
+            history_maker.append(node_name)
+
+
+        self.update_history(history_maker, from_undo, from_redo)
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
 
-    def add_link(self, source, dest, active, weak):
-        PipelineDevelopperView.scene.add_link(self, source, dest, active, weak)
+    def add_link(self, source, dest, active, weak, from_undo=False, from_redo=False):
+        self.scene.add_link(source, dest, active, weak)
+
+        # Writing a string to represent the link
+        source_parameters = ".".join(source)
+        dest_parameters = ".".join(dest)
+        link = "->".join((source_parameters, dest_parameters))
 
         # For history
         history_maker = []
         history_maker.append("add_link")
-        history_maker.append(source)
-        history_maker.append(dest)
-        history_maker.append(active)
-        history_maker.append(weak)
-        self.undos.append(history_maker)
-        self.redos.clear()
+        history_maker.append(link)
 
-    def _del_link(self):
+        self.update_history(history_maker, from_undo, from_redo)
+
+    def _del_link(self, link=None, from_undo=False, from_redo=False):
+        if not link:
+            link = self._current_link
+
+        print("LINK: ", link)
+
+        (source_node_name, source_plug_name, source_node,
+         source_plug, dest_node_name, dest_plug_name, dest_node,
+         dest_plug) = self.scene.pipeline.parse_link(link)
+
+        (dest_node_name, dest_parameter, dest_node, dest_plug,
+         weak_link) = list(source_plug.links_to)[0]
+
+        active = source_plug.activated and dest_plug.activated
+
         PipelineDevelopperView._del_link(self)
-        link_def = self._current_link
+
         # For history
         history_maker = []
         history_maker.append("delete_link")
-        history_maker.append(link_def)
-        self.undos.append(history_maker)
-        self.redos.clear()
+        history_maker.append((source_node_name, source_plug_name))
+        history_maker.append((dest_node_name, dest_plug_name))
+        history_maker.append(active)
+        history_maker.append(weak_link)
 
-    def export_plugs(self, inputs=True, outputs=True, optional=False):
+        self.update_history(history_maker, from_undo, from_redo)
+
+    def export_plugs(self, inputs=True, outputs=True, optional=False, from_undo=False, from_redo=False):
         # TODO: TO IMPROVE
         # For history
         history_maker = []
@@ -150,12 +188,11 @@ class PipelineEditor(PipelineDevelopperView):
             if node_name != "":
                 history_maker.append(node_name)
 
-        self.undos.append(history_maker)
-        self.redos.clear()
+        self.update_history(history_maker, from_undo, from_redo)
 
         PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)
 
-    def update_node_name(self, old_node, old_node_name, new_node_name, redo=False):
+    def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         pipeline = self.scene.pipeline
         # Removing links of the selected node and copy the origin/destination
         links_to_copy = []
@@ -197,11 +234,9 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(new_node_name)
         history_maker.append(old_node_name)
 
-        self.undos.append(history_maker)
-        if not redo:
-            self.redos.clear()
+        self.update_history(history_maker, from_undo, from_redo)
 
-    def update_plug_value(self, node_name, new_value, plug_name, value_type, redo=False):
+    def update_plug_value(self, node_name, new_value, plug_name, value_type, from_undo=False, from_redo=False):
         old_value = self.scene.pipeline.nodes[node_name].get_plug_value(plug_name)
         self.scene.pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
 
@@ -213,6 +248,4 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker.append(plug_name)
         history_maker.append(value_type)
 
-        self.undos.append(history_maker)
-        if not redo:
-            self.redos.clear()
+        self.update_history(history_maker, from_undo, from_redo)

@@ -3,212 +3,28 @@ Packages:
     Addition: process_enabled
     FSL_Smooth: process_enabled
     FSL_Smooth_Real: process_enabled
+    SPM_Coregister: process_enabled
+    SPM_NewSegment: process_enabled
+    SPM_Normalize: process_enabled
+    SPM_Realign: process_enabled
     SPM_Smooth: process_enabled
     Substraction: process_enabled
   nipype:
     interfaces:
-      freesurfer:
-        AddXFormToHeader: process_enabled
-        Aparc2Aseg: process_enabled
-        Apas2Aseg: process_disabled
-        ApplyMask: process_enabled
-        ApplyVolTransform: process_disabled
-        BBRegister: process_enabled
-        Binarize: process_disabled
-        CALabel: process_disabled
-        CANormalize: process_enabled
-        CARegister: process_enabled
-        CheckTalairachAlignment: process_enabled
-        Concatenate: process_enabled
-        ConcatenateLTA: process_enabled
-        Contrast: process_enabled
-        Curvature: process_enabled
-        CurvatureStats: process_enabled
-        DICOMConvert: process_enabled
-        EMRegister: process_enabled
-        EditWMwithAseg: process_enabled
-        EulerNumber: process_enabled
-        ExtractMainComponent: process_enabled
-        FSCommand: process_enabled
-        FitMSParams: process_enabled
-        FixTopology: process_enabled
-        FuseSegmentations: process_enabled
-        GLMFit: process_enabled
-        Info: process_enabled
-        Jacobian: process_enabled
-        Label2Annot: process_enabled
-        Label2Label: process_enabled
-        Label2Vol: process_enabled
-        MNIBiasCorrection: process_enabled
-        MPRtoMNI305: process_enabled
-        MRIConvert: process_enabled
-        MRICoreg: process_enabled
-        MRIFill: process_enabled
-        MRIMarchingCubes: process_enabled
-        MRIPretess: process_enabled
-        MRISPreproc: process_enabled
-        MRISPreprocReconAll: process_enabled
-        MRITessellate: process_enabled
-        MRIsCALabel: process_enabled
-        MRIsCalc: process_enabled
-        MRIsCombine: process_enabled
-        MRIsConvert: process_enabled
-        MRIsExpand: process_enabled
-        MRIsInflate: process_enabled
-        MS_LDA: process_enabled
-        MakeAverageSubject: process_enabled
-        MakeSurfaces: process_enabled
-        Normalize: process_enabled
-        OneSampleTTest: process_enabled
-        Paint: process_enabled
-        ParcellationStats: process_enabled
-        ParseDICOMDir: process_enabled
-        ReconAll: process_enabled
-        Register: process_enabled
-        RegisterAVItoTalairach: process_enabled
-        RelabelHypointensities: process_enabled
-        RemoveIntersection: process_enabled
-        RemoveNeck: process_enabled
-        Resample: process_enabled
-        RobustRegister: process_enabled
-        RobustTemplate: process_enabled
-        SampleToSurface: process_enabled
-        SegStats: process_enabled
-        SegStatsReconAll: process_enabled
-        SegmentCC: process_enabled
-        SegmentWM: process_enabled
-        Smooth: process_enabled
-        SmoothTessellation: process_enabled
-        Sphere: process_enabled
-        SphericalAverage: process_enabled
-        Surface2VolTransform: process_enabled
-        SurfaceSmooth: process_enabled
-        SurfaceSnapshots: process_enabled
-        SurfaceTransform: process_enabled
-        SynthesizeFLASH: process_enabled
-        TalairachAVI: process_enabled
-        TalairachQC: process_enabled
-        Tkregister2: process_enabled
-        UnpackSDICOMDir: process_enabled
-        VolumeMask: process_enabled
-        WatershedSkullStrip: process_enabled
-      fsl:
-        AR1Image: process_enabled
-        AccuracyTester: process_disabled
-        ApplyMask: process_enabled
-        ApplyTOPUP: process_disabled
-        ApplyWarp: process_disabled
-        ApplyXFM: process_disabled
-        AvScale: process_enabled
-        B0Calc: process_enabled
-        BEDPOSTX: process_disabled
-        BEDPOSTX5: process_disabled
-        BET: process_enabled
-        BinaryMaths: process_disabled
-        ChangeDataType: process_disabled
-        Classifier: process_disabled
-        Cleaner: process_enabled
-        Cluster: process_enabled
-        Complex: process_disabled
-        ContrastMgr: process_enabled
-        ConvertWarp: process_enabled
-        ConvertXFM: process_enabled
-        CopyGeom: process_enabled
-        DTIFit: process_enabled
-        DilateImage: process_enabled
-        DistanceMap: process_enabled
-        EPIDeWarp: process_enabled
-        Eddy: process_disabled
-        EddyCorrect: process_disabled
-        EpiReg: process_disabled
-        ErodeImage: process_enabled
-        ExtractROI: process_enabled
-        FAST: process_enabled
-        FEAT: process_enabled
-        FEATModel: process_enabled
-        FEATRegister: process_enabled
-        FILMGLS: process_enabled
-        FIRST: process_disabled
-        FLAMEO: process_disabled
-        FLIRT: process_enabled
-        FNIRT: process_enabled
-        FSLCommand: process_enabled
-        FUGUE: process_enabled
-        FeatureExtractor: process_enabled
-        FilterRegressor: process_enabled
-        FindTheBiggest: process_enabled
-        GLM: process_enabled
-        ICA_AROMA: process_enabled
-        ImageMaths: process_enabled
-        ImageMeants: process_enabled
-        ImageStats: process_enabled
-        Info: process_enabled
-        InvWarp: process_enabled
-        IsotropicSmooth: process_enabled
-        L2Model: process_enabled
-        Level1Design: process_enabled
-        MCFLIRT: process_enabled
-        MELODIC: process_enabled
-        MakeDyadicVectors: process_enabled
-        MaxnImage: process_enabled
-        MeanImage: process_enabled
-        MedianImage: process_enabled
-        Merge: process_enabled
-        MinImage: process_enabled
-        MotionOutliers: process_enabled
-        MultiImageMaths: process_enabled
-        MultipleRegressDesign: process_enabled
-        Overlay: process_enabled
-        PRELUDE: process_enabled
-        PercentileImage: process_enabled
-        PlotMotionParams: process_disabled
-        PlotTimeSeries: process_disabled
-        PowerSpectrum: process_disabled
-        PrepareFieldmap: process_disabled
-        ProbTrackX: process_disabled
-        ProbTrackX2: process_enabled
-        ProjThresh: process_enabled
-        Randomise: process_enabled
-        Reorient2Std: process_enabled
-        RobustFOV: process_enabled
-        SMM: process_enabled
-        SUSAN: process_enabled
-        SigLoss: process_enabled
-        SliceTimer: process_enabled
-        Slicer: process_enabled
-        Smooth: process_enabled
-        SmoothEstimate: process_enabled
-        SpatialFilter: process_enabled
-        Split: process_enabled
-        SwapDimensions: process_enabled
-        TOPUP: process_enabled
-        TemporalFilter: process_enabled
-        Threshold: process_enabled
-        TractSkeleton: process_enabled
-        Training: process_disabled
-        TrainingSetCreator: process_disabled
-        UnaryMaths: process_disabled
-        VecReg: process_enabled
-        WarpPoints: process_enabled
-        WarpPointsFromStd: process_enabled
-        WarpPointsToStd: process_enabled
-        WarpUtils: process_enabled
-        XFibres: process_enabled
-        XFibres5: process_enabled
       spm:
-        Analyze2nii: process_disabled
-        ApplyInverseDeformation: process_disabled
-        ApplyTransform: process_disabled
-        CalcCoregAffine: process_disabled
-        Coregister: process_disabled
-        CreateWarped: process_disabled
-        DARTEL: process_disabled
-        DARTELNorm2MNI: process_disabled
+        Analyze2nii: process_enabled
+        ApplyInverseDeformation: process_enabled
+        ApplyTransform: process_enabled
+        CalcCoregAffine: process_enabled
+        Coregister: process_enabled
+        CreateWarped: process_enabled
+        DARTEL: process_enabled
+        DARTELNorm2MNI: process_enabled
         DicomImport: process_enabled
         EstimateContrast: process_enabled
         EstimateModel: process_enabled
         FieldMap: process_enabled
-        Info: process_disabled
+        Info: process_enabled
         Level1Design: process_enabled
         MultipleRegressionDesign: process_enabled
         NewSegment: process_enabled
@@ -227,6 +43,7 @@ Packages:
         TwoSampleTTestDesign: process_enabled
         VBMSegment: process_enabled
 Paths:
+- /home/david/MIA2/src/modules/PipelineManager
 - /home/david/MIA2/src/modules/PipelineManager
 - /home/david/MIA2/src/modules/PipelineManager
 - /home/david/MIA2/src/modules/PipelineManager
