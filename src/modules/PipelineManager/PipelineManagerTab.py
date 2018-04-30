@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
 from matplotlib.backends.qt_compat import QtWidgets
 
 
-from capsul.api import get_process_instance
+from capsul.api import get_process_instance, StudyConfig
 from .process_library import ProcessLibraryWidget
 
 from PipelineManager.callStudent import callStudent
@@ -102,105 +102,111 @@ class PipelineManagerTab(QWidget):
 
     def undo(self):
         #TODO: it is not totally finished
-        print(self.diagramView.undos)
         # We can undo if we have an action to revert
         if len(self.diagramView.undos) > 0:
             to_undo = self.diagramView.undos.pop()
-            self.diagramView.redos.append(to_undo)  # We pop the undo action in the redo stack
+            #self.diagramView.redos.append(to_undo)  # We pop the undo action in the redo stack
             print("REDOOO")
             print(self.diagramView.redos)
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
             if action == "add_process":
                 node_name = to_undo[1]
-                self.diagramView.del_node(node_name, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView.del_node(node_name, from_undo=True)
+                #self.diagramView.undos.pop()
             elif action == "delete_process":
                 node_name = to_undo[1]
                 class_name = to_undo[2]
-                self.diagramView.add_process(class_name, node_name, redo=True)
-                self.diagramView.undos.pop()
-                pass
+                self.diagramView.add_process(class_name, node_name, from_undo=True)
+                #self.diagramView.undos.pop()
+                #pass
             elif action == "export_plugs":
                 pass
             elif action == "update_node_name":
                 node = to_undo[1]
                 new_node_name = to_undo[2]
                 old_node_name = to_undo[3]
-                self.diagramView.update_node_name(node, new_node_name, old_node_name, redo=True)
-                self.diagramView.undos.pop()
-                pass
+                self.diagramView.update_node_name(node, new_node_name, old_node_name, from_undo=True)
+                #self.diagramView.undos.pop()
+                #pass
             elif action == "update_plug_value":
                 node_name = to_undo[1]
                 old_value = to_undo[2]
                 plug_name = to_undo[3]
                 value_type = to_undo[4]
-                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
+                #self.diagramView.undos.pop()
             elif action == "add_link":
                 link = to_undo[1]
-                self.diagramView._del_link(link, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView._del_link(link, from_undo=True)
+                #self.diagramView.undos.pop()
             elif action == "delete_link":
                 source = to_undo[1]
                 dest = to_undo[2]
                 active = to_undo[3]
                 weak = to_undo[4]
-                self.diagramView.add_link(source, dest, active, weak, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView.add_link(source, dest, active, weak, from_undo=True)
+                #self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
-        print("YOLO")
+        print("REDOS IN UNDO")
         print(self.diagramView.redos)
+        print("UNDOS IN UNDO")
+        print(self.diagramView.undos)
 
     def redo(self):
         #TODO
-        print("REDO")
+        print("REDO IN REDO")
         print(self.diagramView.redos)
+        print("UNDO IN REDO")
+        print(self.diagramView.undos)
 
         # We can redo if we have an action to make again
         if len(self.diagramView.redos) > 0:
             to_redo = self.diagramView.redos.pop()
-            self.diagramView.undos.append(to_redo)  # We pop the redo action in the undo stack
+            #self.diagramView.undos.append(to_redo)  # We pop the redo action in the undo stack
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
-            if action == "add_process":
-                node_name = to_redo[0]
-                class_process = to_redo[1]
-                self.diagramView.add_process(class_process, node_name, redo=True)
-                self.diagramView.undos.pop()
-            elif action == "delete_process":
+            if action == "delete_process":
+                print(to_redo)
                 node_name = to_redo[1]
-                self.diagramView.del_node(node_name, redo=True)
-                self.diagramView.undos.pop()
-                pass
+                class_process = to_redo[2]
+                print(class_process)
+                print(node_name)
+                self.diagramView.add_process(class_process, node_name, from_redo=True)
+                #self.diagramView.undos.pop()
+            elif action == "add_process":
+                node_name = to_redo[1]
+                self.diagramView.del_node(node_name, from_redo=True)
+                #self.diagramView.undos.pop()
+                #pass
             elif action == "export_plugs":
                 pass
             elif action == "update_node_name":
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.diagramView.update_node_name(node, old_node_name, new_node_name, redo=True)
-                self.diagramView.undos.pop()
-                pass
+                self.diagramView.update_node_name(node, old_node_name, new_node_name, from_redo=True)
+                #self.diagramView.undos.pop()
+                #pass
             elif action == "update_plug_value":
                 node_name = to_redo[1]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
                 new_value = to_redo[5]
-                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
+                #self.diagramView.undos.pop()
             elif action == "add_link":
                 source = to_redo[1]
                 dest = to_redo[2]
                 active = to_redo[3]
                 weak = to_redo[4]
-                self.diagramView.add_link(source, dest, active, weak, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView.add_link(source, dest, active, weak, from_redo=True)
+                #self.diagramView.undos.pop()
             elif action == "delete_link":
                 print("to_redo: ", to_redo)
                 link = to_redo[1]
-                self.diagramView._del_link(link, redo=True)
-                self.diagramView.undos.pop()
+                self.diagramView._del_link(link, from_redo=True)
+                #self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
 
     def controller_value_changed(self, signal_list):
@@ -230,10 +236,30 @@ class PipelineManagerTab(QWidget):
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
+        # Now
+        study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+
+        # Modifying the study_config to use SPM 12 Standalone
+        setattr(study_config, 'spm_standalone', True)
+        setattr(study_config, 'spm_directory', '/home/david/spm12')
+        setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
+        setattr(study_config, 'use_spm', True)
+        setattr(study_config, 'spm_version', '12')
+        setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')
+
+        # inspect config options
+        for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
+
         with open('/tmp/tmp_pipeline.txt', 'w') as f:
             sys.stdout = f
             f.write('Pipeline execution\n...\n\n')
-            pipeline()
+            # Before
+            #pipeline()
+
+
+            study_config.reset_process_counter()
+            study_config.run(pipeline, verbose=1)
+
 
         with open('/tmp/tmp_pipeline.txt', 'r') as f:
             self.textedit.setText(f.read())
