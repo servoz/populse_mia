@@ -18,7 +18,7 @@ class Project:
         else:
             self.isTempProject = False
             self.folder = project_root_folder
-        self.database = Database(os.path.join(self.folder, 'database', 'mia2.db'))
+        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         if new_project:
 
             if not os.path.exists(self.folder):
