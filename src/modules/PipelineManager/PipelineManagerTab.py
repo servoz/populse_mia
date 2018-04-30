@@ -34,11 +34,12 @@ else:
 
 
 class PipelineManagerTab(QWidget):
-    def __init__(self, textInfo):
-        global textedit, tagEditor, editor, textInf
+    def __init__(self, project, scan_list):
+        global textedit, tagEditor, editor
 
         editor = self
-        textInf = textInfo
+        self.project = project
+        self.scan_list = scan_list
 
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
@@ -56,7 +57,9 @@ class PipelineManagerTab(QWidget):
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
 
-        self.nodeController = NodeController()
+        self.nodeController = NodeController(self.project)
+        #TODO: ADD SELF.SCAN_LIST TO THE NODE CONTROLLER
+
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.nodeController)
@@ -239,10 +242,13 @@ class PipelineManagerTab(QWidget):
         # Now
         study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
 
+        from traits.api import File
+
         # Modifying the study_config to use SPM 12 Standalone
+        setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
+        print(study_config.spm_exec)
         setattr(study_config, 'spm_standalone', True)
         setattr(study_config, 'spm_directory', '/home/david/spm12')
-        setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
         setattr(study_config, 'use_spm', True)
         setattr(study_config, 'spm_version', '12')
         setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')
@@ -351,10 +357,7 @@ class ToolBar(QToolBar):
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
 
         self.addActions((projAct,sep,toolAct,protAct,creatAct,openAct,plotAct,prefAct))
-        self.actionTriggered[QAction].connect(self.btnPressed)
-        
-    def btnPressed(self,act):
-        textInf.setText(act.text())
+        #self.actionTriggered[QAction].connect(self.btnPressed)
 
 
 class LibraryModel(QStandardItemModel):
