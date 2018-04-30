@@ -13,6 +13,8 @@ from functools import partial
 
 from soma.controller import trait_ids
 
+from DataBrowser.AdvancedSearch import AdvancedSearch
+
 if sys.version_info[0] >= 3:
     unicode = str
     def values(d):
@@ -27,15 +29,19 @@ class NodeController(QWidget):
 
     value_changed = pyqtSignal(list)
 
-    def __init__(self, parent=None):
+    def __init__(self, project, parent=None):
         super(NodeController, self).__init__(parent)
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
+        self.project = project
 
     def display_parameters(self, node_name, process, pipeline):
         """ Methods that displays all the parameters of the selected nodes"""
 
         self.node_name = node_name
+
+        """self.advanced_search = AdvancedSearch(self.project, self)
+        self.advanced_search.show_search()"""
 
         self.line_edit_input = []
         self.line_edit_output = []
@@ -84,12 +90,24 @@ class NodeController(QWidget):
                 h_box.addWidget(label_input)
                 h_box.addWidget(self.line_edit_input[idx])
 
-                if trait_type[0] == 'File':
+                if trait_type[0] in ['File', 'ImageFileSPM', 'List_ImageFileSPM']:
                     # If the trait is a file, adding a 'Browse' button
                     push_button = QPushButton('Browse')
                     push_button.clicked.connect(partial(self.browse_file, idx, 'in', self.node_name,
                                                         name, pipeline, type(value)))
                     h_box.addWidget(push_button)
+
+                if hasattr(trait, 'optional'):
+                    if not trait.optional:
+                        push_button = QPushButton('Filter')
+                        push_button.clicked.connect(self.display_filter)
+                        h_box.addWidget(push_button)
+                    else:
+                        if hasattr(trait, 'mandatory'):
+                            if trait.mandatory:
+                                push_button = QPushButton('Filter')
+                                push_button.clicked.connect(self.display_filter)
+                                h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
 
@@ -118,7 +136,7 @@ class NodeController(QWidget):
             h_box.addWidget(label_output)
             h_box.addWidget(self.line_edit_output[idx])
 
-            if trait_type[0] == 'File':
+            if trait_type[0] in ['File', 'ImageFileSPM', 'List_ImageFileSPM']:
                 # If the trait is a file, adding a 'Browse' button
                 push_button = QPushButton('Browse')
                 push_button.clicked.connect(partial(self.browse_file, idx, 'out', self.node_name,
@@ -132,6 +150,7 @@ class NodeController(QWidget):
         self.button_group_outputs.setLayout(self.v_box_outputs)
 
         self.v_box_final.addLayout(self.h_box_node_name)
+        #self.v_box_final.addWidget(self.advanced_search)
         self.v_box_final.addWidget(self.button_group_inputs)
         self.v_box_final.addWidget(self.button_group_outputs)
 
@@ -227,6 +246,19 @@ class NodeController(QWidget):
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
+
+    def display_filter(self):
+        pop_up = QWidget()
+        layout = QHBoxLayout()
+        advanced_search = AdvancedSearch(self.project, pop_up)
+        advanced_search.show_search()
+        push_button_ok = QPushButton("OK")
+        push_button_ok.clicked.connect(pop_up.close)
+        layout.addWidget(advanced_search)
+        layout.addWidget(push_button_ok)
+        pop_up.setLayout(layout)
+
+        pop_up.show()
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """

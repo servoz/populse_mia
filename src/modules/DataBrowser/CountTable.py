@@ -225,28 +225,34 @@ class CountTable(QDialog):
             flag_up = False
             while col_checked >= 0:
                 if flag_up:
-                    self.fill_column(cell_text, col_checked)
+                    # In this case, the value of the right column has reach its last value
+                    # This value has been reset to the first value
+                    if cell_text[col_checked] == self.values_list[col_checked][-1]:
+                        # If the value that has been displayed is the last one, the flag
+                        # stays the same, the value of the column on the left has to be changed
+                        cell_text[col_checked] = self.values_list[col_checked][0]
+                    else:
+                        # Else we iterate on the next value
+                        idx = self.values_list[col_checked].index(cell_text[col_checked])
+                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                        flag_up = False
 
-                self.fill_column(cell_text, col_checked)
+                if cell_text[col_checked] == self.values_list[col_checked][-1]:
+                    # If the value that has been displayed is the last one, the flag
+                    # is set to True, the value of the column on the left has to be changed
+                    cell_text[col_checked] = self.values_list[col_checked][0]
+                    flag_up = True
+                else:
+                    # Else we iterate on the next value and reset the flag
+                    idx = self.values_list[col_checked].index(cell_text[col_checked])
+                    cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                    flag_up = False
 
                 if not flag_up:
                     # If there is nothing to do, we quit the loop
                     break
 
                 col_checked -= 1
-
-    def fill_column(self, cell_text, col_checked):
-        # In this case, the value of the right column has reach its last value
-        # This value has been reset to the first value
-        if cell_text[col_checked] == self.values_list[col_checked][-1]:
-            # If the value that has been displayed is the last one, the flag
-            # stays the same, the value of the column on the left has to be changed
-            cell_text[col_checked] = self.values_list[col_checked][0]
-        else:
-            # Else we iterate on the next value
-            idx = self.values_list[col_checked].index(cell_text[col_checked])
-            cell_text[col_checked] = self.values_list[col_checked][idx + 1]
-            flag_up = False
 
     def fill_last_tag(self):
         """ Method that fills the cells corresponding to the last selected tag. """

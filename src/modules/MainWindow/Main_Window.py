@@ -266,7 +266,7 @@ class Main_Window(QMainWindow):
         self.image_viewer = ImageViewer(self.textInfo)
         self.tabs.addTab(self.image_viewer, "Image Viewer")
 
-        self.pipeline_manager = PipelineManagerTab(self.textInfo)
+        self.pipeline_manager = PipelineManagerTab(self.project, [])
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         verticalLayout = QVBoxLayout()
