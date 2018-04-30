@@ -49,24 +49,18 @@ def read_log(project):
     values_infos = {}
     tag_objects = {}
 
-    # Default tags stored
-    config = Config()
-    default_tags = config.getDefaultTags()
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
     # Progressbar
-    len_log = len(list_dict_log)
-    ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_log)
+    ui_progressbar = QProgressDialog("Importing into the database", "Cancel", 0, 3)
     ui_progressbar.setWindowModality(Qt.WindowModal)
     ui_progressbar.setWindowTitle("")
+    ui_progressbar.setMinimumDuration(0)
+    ui_progressbar.show()
     idx = 0
-    for dict_log in list_dict_log:
+    ui_progressbar.setValue(idx)
 
-        # Progressbar
-        idx += 1
-        ui_progressbar.setValue(idx)
-        if ui_progressbar.wasCanceled():
-            break
+    for dict_log in list_dict_log:
 
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
@@ -170,8 +164,6 @@ def read_log(project):
                         values_added.append([file_name, tag_name, value, value]) # Value added to history
                         values_infos[file_name].append([tag_name, value, value])
 
-    ui_progressbar.close()
-
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
         if tag.origin == TAG_ORIGIN_USER:
@@ -180,13 +172,25 @@ def read_log(project):
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
                     values_infos[scan[0]].append([tag.name, tag.default_value, None])
 
+    # Progressbar
+    idx += 1
+    ui_progressbar.setValue(idx)
+
     begin_scans = time()
     project.database.add_paths(scans_added)
     print("add scans : " + str(time() - begin_scans))
 
+    # Progressbar
+    idx += 1
+    ui_progressbar.setValue(idx)
+
     begin_tags = time()
     project.database.add_tags(tags_infos)
     print("add tags : " + str(time() - begin_tags))
+
+    # Progressbar
+    idx += 1
+    ui_progressbar.setValue(idx)
 
     begin_values = time()
     project.database.new_values(values_infos)
@@ -199,6 +203,8 @@ def read_log(project):
     project.redos.clear()
 
     print("read_log time: " + str(time() - begin))
+
+    ui_progressbar.close()
 
 def verify_scans(project, path):
     # Returning the files that are problematic

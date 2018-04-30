@@ -768,6 +768,8 @@ class TableDataBrowser(QTableWidget):
         ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, len_scans)
         ui_progressbar.setWindowModality(Qt.WindowModal)
         ui_progressbar.setWindowTitle("")
+        ui_progressbar.setMinimumDuration(0)
+        ui_progressbar.show()
         idx = 0
 
         row = 0
@@ -1288,10 +1290,13 @@ class TableDataBrowser(QTableWidget):
 
         # Progressbar
         len_rows = len(rows)
-        ui_progressbar = QProgressDialog("Reading exported files", "Cancel", 0, len_rows)
+        ui_progressbar = QProgressDialog("Adding rows to the table", "Cancel", 0, len_rows)
         ui_progressbar.setWindowTitle("")
         ui_progressbar.setWindowModality(Qt.WindowModal)
+        ui_progressbar.setMinimumDuration(0)
+        ui_progressbar.show()
         idx = 0
+        ui_progressbar.setValue(idx)
 
         for scan in rows:
 
