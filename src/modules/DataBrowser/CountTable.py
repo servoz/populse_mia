@@ -108,6 +108,7 @@ class CountTable(QDialog):
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
+            print("idx: ", idx)
 
     def fill_values(self, idx):
         """ Method that fills the values list when a tag is added
@@ -200,6 +201,7 @@ class CountTable(QDialog):
         """ Method that fills the cells of the table corresponding to
         the (n-1) first selected tags. """
         cell_text = []
+        print(self.values_list)
         for col in range(len(self.values_list) - 1):
             # cell_text will contain the n-1 element to display
             cell_text.append(self.values_list[col][0])
@@ -237,20 +239,21 @@ class CountTable(QDialog):
                         cell_text[col_checked] = self.values_list[col_checked][idx + 1]
                         flag_up = False
 
-                if cell_text[col_checked] == self.values_list[col_checked][-1]:
-                    # If the value that has been displayed is the last one, the flag
-                    # is set to True, the value of the column on the left has to be changed
-                    cell_text[col_checked] = self.values_list[col_checked][0]
-                    flag_up = True
-                else:
-                    # Else we iterate on the next value and reset the flag
-                    idx = self.values_list[col_checked].index(cell_text[col_checked])
-                    cell_text[col_checked] = self.values_list[col_checked][idx + 1]
-                    flag_up = False
+                if col_checked > 0:
+                    if cell_text[col_checked] == self.values_list[col_checked][-1]:
+                        # If the value that has been displayed is the last one, the flag
+                        # is set to True, the value of the column on the left has to be changed
+                        cell_text[col_checked] = self.values_list[col_checked][0]
+                        flag_up = True
+                    else:
+                        # Else we iterate on the next value and reset the flag
+                        idx = self.values_list[col_checked].index(cell_text[col_checked])
+                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                        flag_up = False
 
-                if not flag_up:
-                    # If there is nothing to do, we quit the loop
-                    break
+                    if not flag_up:
+                        # If there is nothing to do, we quit the loop
+                        break
 
                 col_checked -= 1
 
