@@ -131,6 +131,10 @@ class CountTable(QDialog):
         """ Method that counts the number of scans depending on the
         selected tags and displays the result in the table"""
 
+        for tag_values in self.values_list:
+            if len(tag_values) == 0:
+                return
+
         # Clearing the table
         self.table.clear()
 
@@ -212,6 +216,7 @@ class CountTable(QDialog):
             for col in range(len(self.values_list) - 1):
                 item = QTableWidgetItem()
                 item.setText(cell_text[col])
+
                 self.table.setItem(row, col, item)
 
             # Looping from the (n-1)th tag
