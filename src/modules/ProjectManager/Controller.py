@@ -69,9 +69,12 @@ def read_log(project):
                 data = scan_file.read()
                 original_md5 = hashlib.md5(data).hexdigest()
 
-            scans_added.append([file_name, original_md5]) # Scan added to history
+            file_path = os.path.join(raw_data_folder, file_name + ".nii")
+            file_database_path = os.path.relpath(file_path)
 
-            values_infos[file_name] = []
+            scans_added.append([file_database_path, original_md5]) # Scan added to history
+
+            values_infos[file_database_path] = []
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -162,7 +165,7 @@ def read_log(project):
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
                         values_added.append([file_name, tag_name, value, value]) # Value added to history
-                        values_infos[file_name].append([tag_name, value, value])
+                        values_infos[file_database_path].append([tag_name, value, value])
 
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
