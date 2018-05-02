@@ -215,11 +215,11 @@ def verify_scans(project, path):
     for scan in project.database.get_paths():
 
         file_name = scan.name
-        path_name = os.path.relpath(os.path.join(path, 'data', 'raw_data'))
+        file_path = os.path.relpath(os.path.join(project.folder, file_name))
 
-        if os.path.exists(os.path.join(path_name, file_name) + ".nii"):
+        if os.path.exists(file_path):
             # If the file exists, we do the checksum
-            with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
+            with open(file_path, 'rb') as scan_file:
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
