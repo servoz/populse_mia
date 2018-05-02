@@ -72,7 +72,7 @@ def read_log(project):
             file_path = os.path.join(raw_data_folder, file_name + ".nii")
             file_database_path = os.path.relpath(file_path)
 
-            scans_added.append([file_database_path, original_md5]) # Scan added to history
+            scans_added.append([file_database_path, "Scan", original_md5]) # Scan added to history
 
             values_infos[file_database_path] = []
 
