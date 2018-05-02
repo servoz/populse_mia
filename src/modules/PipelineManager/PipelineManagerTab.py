@@ -212,6 +212,10 @@ class PipelineManagerTab(QWidget):
                 #self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
 
+    def update_project(self, project):
+        self.project = project
+        self.nodeController.project = project
+
     def controller_value_changed(self, signal_list):
         case = signal_list.pop(0)
 

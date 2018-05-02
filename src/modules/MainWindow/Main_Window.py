@@ -476,6 +476,7 @@ class Main_Window(QMainWindow):
         """
 
         self.data_browser.update_database(self.project)  # Database update DataBrowser
+        self.pipeline_manager.update_project(self.project)
 
         if call_update_table:
             self.data_browser.table_data.update_table() # Table updated
