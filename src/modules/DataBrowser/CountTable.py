@@ -120,13 +120,11 @@ class CountTable(QDialog):
             initial_value = self.project.database.get_initial_value(scan, tag_name)
             if current_value is not None or initial_value is not None:
                 values.append([scan, tag_name, current_value, initial_value])
+
         idx_to_fill = len(self.values_list)
         while len(self.values_list) <= idx:
             self.values_list.insert(idx_to_fill, [])
             idx_to_fill += 1
-
-        """if len(self.values_list) <= idx:
-            self.values_list.insert(idx, [])"""
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for value in values:
