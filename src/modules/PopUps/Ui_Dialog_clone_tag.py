@@ -15,6 +15,7 @@ class Ui_Dialog_clone_tag(QDialog):
 
     def __init__(self, project):
         super().__init__()
+        self.setWindowTitle("Clone a tag")
         self.pop_up(project)
 
     def pop_up(self, project):

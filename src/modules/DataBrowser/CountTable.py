@@ -9,7 +9,6 @@ from Utils.Tools import ClickableLabel
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
 
-
 class CountTable(QDialog):
     """
     Is called when the user wants to verify precisely the scans of the project.
@@ -116,16 +115,15 @@ class CountTable(QDialog):
         values = []
         for scan in self.project.database.get_paths_names():
             current_value = self.project.database.get_current_value(scan, tag_name)
-            initial_value = self.project.database.get_initial_value(scan, tag_name)
-            if current_value is not None or initial_value is not None:
-                values.append([scan, tag_name, current_value, initial_value])
+            if current_value is not None:
+                values.append(current_value)
         if len(self.values_list) <= idx:
             self.values_list.insert(idx, [])
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for value in values:
-            if str(value[3]) not in self.values_list[idx]:
-                self.values_list[idx].append(str(value[3]))
+            if str(value) not in self.values_list[idx]:
+                self.values_list[idx].append(str(value))
 
     def count_scans(self):
         """ Method that counts the number of scans depending on the

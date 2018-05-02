@@ -221,6 +221,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.type = TAG_TYPE_STRING # Type is string by default
         self.pop_up()
         self.setMinimumWidth(700)
+        self.setWindowTitle("Add a tag")
 
     def pop_up(self):
         self.setObjectName("Add a tag")

@@ -14,6 +14,7 @@ class Ui_Dialog_remove_tag(QDialog):
     def __init__(self, project):
         super().__init__()
         self.project = project
+        self.setWindowTitle("Remove a tag")
         self.pop_up()
 
     def pop_up(self):
