@@ -211,7 +211,7 @@ class Main_Window(QMainWindow):
     def remove_raw_files_useless(self):
         """
         Removes the useless raw files of the current project
-        """git 
+        """
         import glob
 
         # If it's unnamed project, we can remove the whole project

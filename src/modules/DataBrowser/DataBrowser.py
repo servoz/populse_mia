@@ -165,7 +165,7 @@ class DataBrowser(QWidget):
         Green cross clicked to add a path
         """
 
-        self.pop_up_add_path = Ui_Dialog_add_path(self.project)
+        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.table_data)
         self.pop_up_add_path.show()
 
         if self.pop_up_add_path.exec_():
