@@ -3,6 +3,7 @@
 import sys
 import sip
 import six
+import os
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
@@ -366,7 +367,7 @@ class PlugFilter(QWidget):
 
         # TODO: To delete after when debugging FileName
         for i in range(len(path_names)):
-            path_names[i] = path_names[i] + ".nii"
+            path_names[i] = os.path.join(self.project.folder, path_names[i])
         self.plug_value_changed.emit(path_names)
 
     def save_filter(self):
