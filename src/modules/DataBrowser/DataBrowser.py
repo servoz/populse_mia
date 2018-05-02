@@ -334,7 +334,6 @@ class DataBrowser(QWidget):
             self.viewer.setHidden(True)
         else:
             self.viewer.setHidden(False)
-            path_name = os.path.relpath(self.project.folder)
             items = self.table_data.selectedItems()
 
             full_names = []
