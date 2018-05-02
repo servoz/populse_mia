@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from datetime import datetime, date, time
 from populse_db.database_model import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT
 import ast
+import dateutil.parser
 
 def set_item_data(item, value, value_type):
     """
@@ -156,8 +157,13 @@ def table_to_database(value, value_type):
         if isinstance(value, QDateTime):
             return value.toPyDateTime()
         elif isinstance(value, str):
-            format = "%d/%m/%Y %H:%M:%S.%f"
-            return datetime.strptime(value, format)
+            try:
+                format = "%d/%m/%Y %H:%M:%S.%f"
+                date_typed = datetime.strptime(value, format)
+            except Exception:
+                date_typed = dateutil.parser.parse(value)
+            return date_typed
+
     elif value_type == TAG_TYPE_DATE:
         if isinstance(value, QDate):
             return value.toPyDate()

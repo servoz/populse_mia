@@ -3,6 +3,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QObjectCleanupHandler
 import os
 from Utils.Tools import ClickableLabel
+from Utils.Utils import table_to_database
 
 class AdvancedSearch(QWidget):
 
@@ -283,6 +284,14 @@ class AdvancedSearch(QWidget):
         for i in range(0, len(conditions)):
             if conditions[i] == "BETWEEN" or conditions[i] == "IN":
                 values[i] = values[i].split("; ")
+
+        for row in range(0, len(values)):
+            value = values[row]
+            field = fields[row]
+            if not isinstance(field, list) and value != "" and field != "FileName":
+                tag_type = self.project.database.get_tag(field).type
+                database_value = table_to_database(value, tag_type)
+                values[row] = database_value
 
         return fields, conditions, values, links, nots
 
