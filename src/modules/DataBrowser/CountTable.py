@@ -108,7 +108,6 @@ class CountTable(QDialog):
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
-            print("idx: ", idx)
 
     def fill_values(self, idx):
         """ Method that fills the values list when a tag is added
@@ -201,7 +200,6 @@ class CountTable(QDialog):
         """ Method that fills the cells of the table corresponding to
         the (n-1) first selected tags. """
         cell_text = []
-        print(self.values_list)
         for col in range(len(self.values_list) - 1):
             # cell_text will contain the n-1 element to display
             cell_text.append(self.values_list[col][0])

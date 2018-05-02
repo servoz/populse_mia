@@ -555,6 +555,21 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.connect(self.change_cell_color)
 
+    def get_current_filter(self):
+        """
+        Get the current databrowser selection (list of paths)
+        If there is a current selection, the list of selected scans is returned, otherwise the list of the visible paths in the databrowser is returned
+        :return: The list of scans corresponding to the current selection in the databrowser
+        """
+
+        return_list = []
+        if len(self.scans) > 0:
+            for scan in self.scans:
+                return_list.append(scan[0])
+        else:
+            return_list = self.scans_to_visualize
+        return return_list
+
     def update_selection(self):
         """
         Called after searches to update the selection

@@ -269,11 +269,24 @@ class Main_Window(QMainWindow):
         self.pipeline_manager = PipelineManagerTab(self.project, [])
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
+        self.tabs.currentChanged.connect(self.pipeline_manager_opened)
+
         verticalLayout = QVBoxLayout()
         verticalLayout.addWidget(self.tabs)
         verticalLayout.addWidget(self.textInfo)
         self.centralWindow = QWidget()
         self.centralWindow.setLayout(verticalLayout)
+
+    def pipeline_manager_opened(self):
+        """
+        Called when the pipeline manager tab is opened
+        Updates the project and the list of scans currently selected
+        :return:
+        """
+
+        if self.tabs.currentIndex() == 2:
+            self.pipeline_manager.project = self.project
+            self.pipeline_manager.scan_list = self.data_browser.table_data.get_current_filter()
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
