@@ -211,7 +211,7 @@ class Main_Window(QMainWindow):
     def remove_raw_files_useless(self):
         """
         Removes the useless raw files of the current project
-        """
+        """git 
         import glob
 
         # If it's unnamed project, we can remove the whole project
@@ -221,7 +221,7 @@ class Main_Window(QMainWindow):
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan, extension = os.path.splitext(os.path.basename(filename))
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_path(scan) is None and "logExport" not in scan:
+                if self.project.database.get_path(os.path.join("data", "raw_data", scan + ".nii")) is None and "logExport" not in scan:
                     os.remove(filename)
 
 
