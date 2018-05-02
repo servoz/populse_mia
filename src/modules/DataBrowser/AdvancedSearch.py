@@ -328,6 +328,6 @@ class AdvancedSearch(QWidget):
         # Otherwise, we reput all the scans
         else:
             # DataBrowser updated with every scan
-            self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_scans_names()
+            self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_paths_names()
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)

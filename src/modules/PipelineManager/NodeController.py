@@ -15,6 +15,7 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
+from Project.Filter import Filter
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -99,15 +100,16 @@ class NodeController(QWidget):
                     h_box.addWidget(push_button)
 
                 if hasattr(trait, 'optional'):
+                    parameters = (idx, pipeline, type(value))
                     if not trait.optional:
                         push_button = QPushButton('Filter')
-                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name))
+                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
                         h_box.addWidget(push_button)
                     else:
                         if hasattr(trait, 'mandatory'):
                             if trait.mandatory:
                                 push_button = QPushButton('Filter')
-                                push_button.clicked.connect(partial(self.display_filter, self.node_name, name))
+                                push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
                                 h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
@@ -211,46 +213,70 @@ class NodeController(QWidget):
             # To undo/redo
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
-    def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type):
+    def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type, new_value=None):
         """ Method that updates in the pipeline the value of a plug """
 
-        if in_or_out == 'in':
-            new_value = self.line_edit_input[index].text()
-        elif in_or_out == 'out':
-            new_value = self.line_edit_output[index].text()
-        else:
-            new_value = None
-            #TODO: RAISE ERROR
-            pass
+        if not new_value:
 
-        try:
-            new_value = eval(new_value)
-        except:
-            #TODO: RAISE SYNTHAXERROR
-            pass
+            if in_or_out == 'in':
+                new_value = self.line_edit_input[index].text()
+            elif in_or_out == 'out':
+                new_value = self.line_edit_output[index].text()
+            else:
+                new_value = None
+                #TODO: RAISE ERROR
+                pass
 
-        if value_type not in [float, int, str, list]:
-            #new_value = eval(new_value)
-            value_type = str
-            #TODO: RAISE ERROR
+            try:
+                new_value = eval(new_value)
+            except:
+                #TODO: RAISE SYNTHAXERROR
+                pass
+
+            if value_type not in [float, int, str, list]:
+                #new_value = eval(new_value)
+                value_type = str
+                #TODO: RAISE ERROR
 
         if self.node_name in ['inputs', 'outputs']:
             node_name = ''
         else:
             node_name = self.node_name
-
             print(new_value)
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
         #pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
+        print("NEW VALUE: ", new_value)
         pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+
+        self.line_edit_output[index].setText(str(new_value))
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
-    def display_filter(self, node_name="", plug_name=""):
+    def display_filter(self, node_name, plug_name, parameters):
+
         pop_up = PlugFilter(self.project, node_name, plug_name)
         pop_up.show()
+        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
+        """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
+                                                  pipeline, value_type))"""
+
+    def update_plug_value_from_filter(self, plug_name, parameters, path_list):
+
+        index = parameters[0]
+        pipeline = parameters[1]
+        value_type = parameters[2]
+
+        len_list = len(path_list)
+        if len_list == 1:
+            res = path_list[0]
+        elif len_list > 1:
+            res = path_list
+        else:
+            res = []
+        print(parameters)
+        self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
@@ -286,12 +312,13 @@ class NodeController(QWidget):
 class PlugFilter(QWidget):
     """ The plug is displayed to filter a plug of the current pipeline"""
 
-    value_changed = pyqtSignal(list)
+    plug_value_changed = pyqtSignal(list)
 
     def __init__(self, project, node_name="", plug_name="", parent=None):
         super(PlugFilter, self).__init__(parent)
 
         self.project = project
+        filter_to_apply = self.project.currentFilter
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
@@ -299,12 +326,11 @@ class PlugFilter(QWidget):
         self.table_data = TableDataBrowser(self.project, self)
 
         self.advanced_search = AdvancedSearch(self.project, self)
+        self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
 
-        #TODO: ADD DATA_BROWSER
-
         push_button_ok = QPushButton("OK")
-        push_button_ok.clicked.connect(self.save_filter)
+        push_button_ok.clicked.connect(self.ok_clicked)
 
         push_button_cancel = QPushButton("Cancel")
         push_button_cancel.clicked.connect(self.close)
@@ -322,6 +348,27 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
+    def ok_clicked(self):
+
+        """(fields, conditions, values, links, nots) = self.advanced_search.get_filters()
+        filter = Filter(None, nots, values, fields, links, conditions, "")
+        self.advanced_search.apply_filter(filter)"""
+
+        self.set_plug_value()
+        self.save_filter()
+        self.close()
+
+    def set_plug_value(self):
+        """ Emitting a signal to set the file names to the plug value. """
+
+        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
+        path_names = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots)
+
+        # TODO: To delete after when debugging FileName
+        for i in range(len(path_names)):
+            path_names[i] = path_names[i] + ".nii"
+        self.plug_value_changed.emit(path_names)
+
     def save_filter(self):
-        """ Saving the filter et setting to the plug. """
+        """ Saving the filter and setting to the plug. """
         pass
