@@ -336,10 +336,12 @@ class DataBrowser(QWidget):
             self.viewer.setHidden(False)
             path_name = os.path.relpath(self.project.folder)
             items = self.table_data.selectedItems()
+
             full_names = []
             for item in items:
                 row = item.row()
                 full_name = self.table_data.item(row, 0).text()
+                full_name = os.path.relpath(os.path.join(self.project.folder, full_name))
                 if not full_name in full_names:
                     full_names.append(full_name)
 

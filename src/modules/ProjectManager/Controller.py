@@ -70,7 +70,7 @@ def read_log(project):
                 original_md5 = hashlib.md5(data).hexdigest()
 
             file_path = os.path.join(raw_data_folder, file_name + ".nii")
-            file_database_path = os.path.relpath(file_path)
+            file_database_path = os.path.relpath(file_path, project.folder)
 
             scans_added.append([file_database_path, "Scan", original_md5]) # Scan added to history
 
