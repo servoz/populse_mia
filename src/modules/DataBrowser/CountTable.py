@@ -2,9 +2,11 @@ import PyQt5.QtCore as QtCore
 from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QFrame, \
     QVBoxLayout, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtCore import Qt
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
+from Utils.Utils import set_item_data, table_to_database
 
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
@@ -131,8 +133,8 @@ class CountTable(QDialog):
             self.values_list[idx] = []
 
         for value in values:
-            if str(value) not in self.values_list[idx]:
-                self.values_list[idx].append(str(value))
+            if value not in self.values_list[idx]:
+                self.values_list[idx].append(value)
 
     def count_scans(self):
         """ Method that counts the number of scans depending on the
@@ -187,11 +189,12 @@ class CountTable(QDialog):
 
         # idx_last_tag corresponds to the index of the (n-1)th tag
         self.idx_last_tag = idx_end
-
+        last_tag = self.push_buttons[len(self.values_list) - 1].text()
+        last_tag_type = self.project.database.get_tag(last_tag).type
         for header_name in self.values_list[-1]:
             idx_end += 1
             item = QTableWidgetItem()
-            item.setText(header_name)
+            set_item_data(item, header_name, last_tag_type)
             self.table.setHorizontalHeaderItem(idx_end, item)
 
         # Adding a "Total" row and to count the scans
@@ -222,8 +225,9 @@ class CountTable(QDialog):
 
             for col in range(len(self.values_list) - 1):
                 item = QTableWidgetItem()
-                item.setText(cell_text[col])
-
+                tag_name = self.push_buttons[col].text()
+                tag_type = self.project.database.get_tag(tag_name).type
+                set_item_data(item, cell_text[col], tag_type)
                 self.table.setItem(row, col, item)
 
             # Looping from the (n-1)th tag
@@ -273,12 +277,16 @@ class CountTable(QDialog):
             for row in range(self.nb_row):
                 tag_list = []
                 for idx_first_columns in range(self.idx_last_tag + 1):
-                    value = self.table.item(row, idx_first_columns).text()
                     tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
-                    tag_list.append([tag_name, value])
-                value_last_columns = self.table.horizontalHeaderItem(col).text()
+                    tag_type = self.project.database.get_tag(tag_name).type
+                    value_str = self.table.item(row, idx_first_columns).data(Qt.EditRole)
+                    value_database = table_to_database(value_str, tag_type)
+                    tag_list.append([tag_name, value_database])
                 tag_last_columns = self.push_buttons[-1].text()
-                tag_list.append([tag_last_columns, value_last_columns])
+                tag_last_columns_type = self.project.database.get_tag(tag_last_columns).type
+                value_last_columns_str = self.table.horizontalHeaderItem(col).data(Qt.EditRole)
+                value_last_columns_database = table_to_database(value_last_columns_str, tag_last_columns_type)
+                tag_list.append([tag_last_columns, value_last_columns_database])
 
                 item = QTableWidgetItem()
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
