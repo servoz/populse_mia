@@ -11,6 +11,7 @@ class Ui_Select_Filter(Ui_Filter_Selection):
         super(Ui_Select_Filter, self).__init__(database)
         self.database = database
         self.config = Config()
+        self.setWindowTitle("Open a filter")
 
         # Filling the filter list
         for filter in self.database.filters:
