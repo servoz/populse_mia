@@ -86,9 +86,10 @@ class CountTable(QDialog):
 
     def add_tag(self):
         """ Method that adds a push button. """
+        idx = len(self.push_buttons)
         push_button = QPushButton()
         push_button.setText('Tag n°' + str(len(self.push_buttons) + 1))
-        push_button.clicked.connect(lambda: self.select_tag(len(self.push_buttons) - 1))
+        push_button.clicked.connect(lambda: self.select_tag(idx))
         self.push_buttons.insert(len(self.push_buttons), push_button)
         self.refresh_layout()
 
@@ -119,8 +120,13 @@ class CountTable(QDialog):
             initial_value = self.project.database.get_initial_value(scan, tag_name)
             if current_value is not None or initial_value is not None:
                 values.append([scan, tag_name, current_value, initial_value])
-        if len(self.values_list) <= idx:
-            self.values_list.insert(idx, [])
+        idx_to_fill = len(self.values_list)
+        while len(self.values_list) <= idx:
+            self.values_list.insert(idx_to_fill, [])
+            idx_to_fill += 1
+
+        """if len(self.values_list) <= idx:
+            self.values_list.insert(idx, [])"""
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for value in values:
