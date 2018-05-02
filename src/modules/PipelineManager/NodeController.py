@@ -32,11 +32,12 @@ class NodeController(QWidget):
 
     value_changed = pyqtSignal(list)
 
-    def __init__(self, project, parent=None):
+    def __init__(self, project, scan_list, parent=None):
         super(NodeController, self).__init__(parent)
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
         self.project = project
+        self.scan_list = scan_list
 
     def display_parameters(self, node_name, process, pipeline):
         """ Methods that displays all the parameters of the selected nodes"""
@@ -257,9 +258,9 @@ class NodeController(QWidget):
 
     def display_filter(self, node_name, plug_name, parameters):
 
-        pop_up = PlugFilter(self.project, node_name, plug_name)
+        pop_up = PlugFilter(self.project, self.scan_list, node_name, plug_name)
         pop_up.show()
-        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
+        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters, self.scan_list))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
                                                   pipeline, value_type))"""
 
@@ -315,10 +316,11 @@ class PlugFilter(QWidget):
 
     plug_value_changed = pyqtSignal(list)
 
-    def __init__(self, project, node_name="", plug_name="", parent=None):
+    def __init__(self, project, scan_list, node_name="", plug_name="", parent=None):
         super(PlugFilter, self).__init__(parent)
 
         self.project = project
+        self.scan_list = scan_list
         filter_to_apply = self.project.currentFilter
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
@@ -329,6 +331,8 @@ class PlugFilter(QWidget):
         self.advanced_search = AdvancedSearch(self.project, self)
         self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
+        self.table_data.scans_to_visualize = self.scan_list
+        self.table_data.update_visualized_rows(self.project.database.get_paths_names())
 
         push_button_ok = QPushButton("OK")
         push_button_ok.clicked.connect(self.ok_clicked)

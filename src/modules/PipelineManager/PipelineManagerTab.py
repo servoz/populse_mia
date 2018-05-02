@@ -57,8 +57,7 @@ class PipelineManagerTab(QWidget):
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
 
-        self.nodeController = NodeController(self.project)
-        #TODO: ADD SELF.SCAN_LIST TO THE NODE CONTROLLER
+        self.nodeController = NodeController(self.project, self.scan_list)
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)

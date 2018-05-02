@@ -211,7 +211,7 @@ class Main_Window(QMainWindow):
     def remove_raw_files_useless(self):
         """
         Removes the useless raw files of the current project
-        """git 
+        """
         import glob
 
         # If it's unnamed project, we can remove the whole project
@@ -223,7 +223,6 @@ class Main_Window(QMainWindow):
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
                 if self.project.database.get_path(os.path.join("data", "raw_data", scan + ".nii")) is None and "logExport" not in scan:
                     os.remove(filename)
-
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as or just saved """
@@ -286,7 +285,9 @@ class Main_Window(QMainWindow):
 
         if self.tabs.currentIndex() == 2:
             self.pipeline_manager.project = self.project
+            self.pipeline_manager.nodeController.project = self.project
             self.pipeline_manager.scan_list = self.data_browser.table_data.get_current_filter()
+            self.pipeline_manager.nodeController.scan_list = self.data_browser.table_data.get_current_filter()
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
