@@ -14,6 +14,7 @@ from functools import partial
 from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
+from DataBrowser.DataBrowser import TableDataBrowser
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -100,13 +101,13 @@ class NodeController(QWidget):
                 if hasattr(trait, 'optional'):
                     if not trait.optional:
                         push_button = QPushButton('Filter')
-                        push_button.clicked.connect(self.display_filter)
+                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name))
                         h_box.addWidget(push_button)
                     else:
                         if hasattr(trait, 'mandatory'):
                             if trait.mandatory:
                                 push_button = QPushButton('Filter')
-                                push_button.clicked.connect(self.display_filter)
+                                push_button.clicked.connect(partial(self.display_filter, self.node_name, name))
                                 h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
@@ -247,17 +248,8 @@ class NodeController(QWidget):
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
-    def display_filter(self):
-        pop_up = QWidget()
-        layout = QHBoxLayout()
-        advanced_search = AdvancedSearch(self.project, pop_up)
-        advanced_search.show_search()
-        push_button_ok = QPushButton("OK")
-        push_button_ok.clicked.connect(pop_up.close)
-        layout.addWidget(advanced_search)
-        layout.addWidget(push_button_ok)
-        pop_up.setLayout(layout)
-
+    def display_filter(self, node_name="", plug_name=""):
+        pop_up = PlugFilter(self.project, node_name, plug_name)
         pop_up.show()
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
@@ -290,3 +282,46 @@ class NodeController(QWidget):
         if layout.layout() is not None:
             sip.delete(layout.layout())
 
+
+class PlugFilter(QWidget):
+    """ The plug is displayed to filter a plug of the current pipeline"""
+
+    value_changed = pyqtSignal(list)
+
+    def __init__(self, project, node_name="", plug_name="", parent=None):
+        super(PlugFilter, self).__init__(parent)
+
+        self.project = project
+
+        self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
+
+        # Graphical components
+        self.table_data = TableDataBrowser(self.project, self)
+
+        self.advanced_search = AdvancedSearch(self.project, self)
+        self.advanced_search.show_search()
+
+        #TODO: ADD DATA_BROWSER
+
+        push_button_ok = QPushButton("OK")
+        push_button_ok.clicked.connect(self.save_filter)
+
+        push_button_cancel = QPushButton("Cancel")
+        push_button_cancel.clicked.connect(self.close)
+
+        # Layout
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch(1)
+        buttons_layout.addWidget(push_button_ok)
+        buttons_layout.addWidget(push_button_cancel)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.advanced_search)
+        main_layout.addWidget(self.table_data)
+        main_layout.addLayout(buttons_layout)
+
+        self.setLayout(main_layout)
+
+    def save_filter(self):
+        """ Saving the filter et setting to the plug. """
+        pass

@@ -124,9 +124,6 @@ class CountTable(QDialog):
             self.values_list.insert(idx_to_fill, [])
             idx_to_fill += 1
 
-        """if len(self.values_list) <= idx:
-            self.values_list.insert(idx, [])"""
-
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
 
