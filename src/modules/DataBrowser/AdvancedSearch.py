@@ -7,7 +7,7 @@ from Utils.Utils import table_to_database
 
 class AdvancedSearch(QWidget):
 
-    def __init__(self, project, dataBrowser):
+    def __init__(self, project, dataBrowser, scans_list=[]):
         """
         Class that manages the widget of the advanced search
         """
@@ -17,6 +17,7 @@ class AdvancedSearch(QWidget):
         self.project = project
         self.dataBrowser = dataBrowser
         self.rows = []
+        self.scans_list = scans_list
 
     def show_search(self):
         """
@@ -330,13 +331,17 @@ class AdvancedSearch(QWidget):
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
-            result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots)
+            result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions,
+                                                                              values, nots, self.scans_list)
             # DataBrowser updated with the new selection
             self.dataBrowser.table_data.scans_to_visualize = result
 
         # Otherwise, we reput all the scans
         else:
             # DataBrowser updated with every scan
-            self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_paths_names()
+            if self.scans_list:
+                self.dataBrowser.table_data.scans_to_visualize = self.scans_list
+            else:
+                self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_paths_names()
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)

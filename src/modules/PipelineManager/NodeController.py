@@ -328,11 +328,9 @@ class PlugFilter(QWidget):
         # Graphical components
         self.table_data = TableDataBrowser(self.project, self)
 
-        self.advanced_search = AdvancedSearch(self.project, self)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scan_list)
         self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
-        self.table_data.scans_to_visualize = self.scan_list
-        self.table_data.update_visualized_rows(self.project.database.get_paths_names())
 
         push_button_ok = QPushButton("OK")
         push_button_ok.clicked.connect(self.ok_clicked)
