@@ -244,11 +244,8 @@ class NodeController(QWidget):
             node_name = ''
         else:
             node_name = self.node_name
-            print(new_value)
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
-        #pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
-        print("NEW VALUE: ", new_value)
         pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
 
         self.line_edit_output[index].setText(str(new_value))
@@ -260,7 +257,7 @@ class NodeController(QWidget):
 
         pop_up = PlugFilter(self.project, self.scan_list, node_name, plug_name)
         pop_up.show()
-        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters, self.scan_list))
+        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
                                                   pipeline, value_type))"""
 
@@ -277,7 +274,7 @@ class NodeController(QWidget):
             res = path_list
         else:
             res = []
-        print(parameters)
+
         self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
@@ -365,11 +362,12 @@ class PlugFilter(QWidget):
         """ Emitting a signal to set the file names to the plug value. """
 
         (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        path_names = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots)
+        path_names = self.project.database.get_paths_matching_advanced_search(links, fields, conditions,
+                                                                              values, nots, self.scan_list)
 
-        # TODO: To delete after when debugging FileName
         for i in range(len(path_names)):
-            path_names[i] = os.path.join(self.project.folder, path_names[i])
+
+            path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))
         self.plug_value_changed.emit(path_names)
 
     def save_filter(self):
