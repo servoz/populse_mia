@@ -245,7 +245,7 @@ class CountTable(QDialog):
                         cell_text[col_checked] = self.values_list[col_checked][idx + 1]
                         flag_up = False
 
-                if col_checked > 0:
+                if (col_checked > 0 and len(self.values_list) - 1 > 1) or (len(self.values_list) - 1 == 1):
                     if cell_text[col_checked] == self.values_list[col_checked][-1]:
                         # If the value that has been displayed is the last one, the flag
                         # is set to True, the value of the column on the left has to be changed

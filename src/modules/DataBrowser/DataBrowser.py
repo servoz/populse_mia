@@ -165,7 +165,7 @@ class DataBrowser(QWidget):
         Green cross clicked to add a path
         """
 
-        self.pop_up_add_path = Ui_Dialog_add_path(self.project)
+        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.table_data)
         self.pop_up_add_path.show()
 
         if self.pop_up_add_path.exec_():
@@ -340,9 +340,10 @@ class DataBrowser(QWidget):
             for item in items:
                 row = item.row()
                 full_name = self.table_data.item(row, 0).text()
-                full_name = os.path.relpath(os.path.join(self.project.folder, full_name))
-                if not full_name in full_names:
-                    full_names.append(full_name)
+                if full_name.endswith(".nii"):
+                    full_name = os.path.relpath(os.path.join(self.project.folder, full_name))
+                    if not full_name in full_names:
+                        full_names.append(full_name)
 
             self.viewer.verify_slices(full_names)
 
