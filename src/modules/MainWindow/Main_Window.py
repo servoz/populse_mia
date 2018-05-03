@@ -203,6 +203,7 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
+            self.project.database.unsave_modifications()
             self.remove_raw_files_useless() # To remove the useless raw files
             event.accept()
         else:
@@ -219,9 +220,19 @@ class Main_Window(QMainWindow):
             shutil.rmtree(self.project.folder)
         else:
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
-                scan, extension = os.path.splitext(os.path.basename(filename))
+                scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_path(os.path.join("data", "raw_data", scan + ".nii")) is None and "logExport" not in scan:
+                if self.project.database.get_path(os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
+                    os.remove(filename)
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
+                scan = os.path.basename(filename)
+                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                if self.project.database.get_path(os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
+                    os.remove(filename)
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'downloaded_data', '*')):
+                scan = os.path.basename(filename)
+                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                if self.project.database.get_path(os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
 
     def saveChoice(self):
@@ -372,6 +383,7 @@ class Main_Window(QMainWindow):
 
             if self.exPopup.exec_():
 
+                self.project.database.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 file_name = self.exPopup.selectedFiles()
@@ -453,6 +465,7 @@ class Main_Window(QMainWindow):
 
                 # No errors in files, we can open the project
                 else:
+                    self.project.database.unsave_modifications()
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                     self.project = tempDatabase  # New Database
