@@ -69,6 +69,9 @@ class PipelineManagerTab(QWidget):
         self.saveButton = QPushButton('Save pipeline', self)
         self.saveButton.clicked.connect(self.savePipeline)
 
+        self.initButton = QPushButton('Initialize pipeline', self)
+        self.initButton.clicked.connect(self.initPipeline)
+
         self.runButton = QPushButton('Run pipeline', self)
         self.runButton.clicked.connect(self.runPipeline)
 
@@ -76,6 +79,7 @@ class PipelineManagerTab(QWidget):
         self.hLayout.addWidget(menub)
         self.hLayout.addWidget(self.saveButton)
         self.hLayout.addWidget(self.loadButton)
+        self.hLayout.addWidget(self.initButton)
         self.hLayout.addWidget(self.runButton)
         self.hLayout.addStretch(1)
 
@@ -240,12 +244,37 @@ class PipelineManagerTab(QWidget):
     def savePipeline(self):
         self.diagramView.save_pipeline()
 
+    def initPipeline(self):
+        """ Method that generates the output names of each pipeline node. """
+        pipeline_scene = self.diagramView.scene
+        for node_name, gnode in pipeline_scene.gnodes.items():
+            if node_name in ['', 'inputs', 'outputs']:
+                continue
+            process = gnode.process
+            process_outputs = process.list_outputs(self.project.folder)
+            if process_outputs:
+                for plug_name, plug_value in process_outputs.items():
+                    if type(plug_value) is list:
+                        for element in plug_value:
+                            try:
+                                open(element, 'a').close()
+                            except:
+                                # TODO: RAISE EXCEPTION
+                                pass
+                    try:
+                        open(plug_value, 'a').close()
+                    except:
+                        #TODO: RAISE EXCEPTION
+                        pass
+                    pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
+                    pipeline_scene.pipeline.update_nodes_and_plugs_activation()
+
+
+
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
         # Now
         study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
-
-        from traits.api import File
 
         # Modifying the study_config to use SPM 12 Standalone
         setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
@@ -265,10 +294,8 @@ class PipelineManagerTab(QWidget):
             # Before
             #pipeline()
 
-
             study_config.reset_process_counter()
             study_config.run(pipeline, verbose=1)
-
 
         with open('/tmp/tmp_pipeline.txt', 'r') as f:
             self.textedit.setText(f.read())
