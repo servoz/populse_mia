@@ -58,6 +58,7 @@ class AdvancedSearch(QWidget):
         for tag in self.project.getVisibles():
             fieldChoice.addItem(tag)
         fieldChoice.addItem("FileName")
+        fieldChoice.addItem("FileType")
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
@@ -289,7 +290,7 @@ class AdvancedSearch(QWidget):
         for row in range(0, len(values)):
             value = values[row]
             field = fields[row]
-            if not isinstance(field, list) and value != "" and field != "FileName":
+            if not isinstance(field, list) and value != "" and field != "FileName" and field != "FileType":
                 tag_type = self.project.database.get_tag(field).type
                 database_value = table_to_database(value, tag_type)
                 values[row] = database_value
