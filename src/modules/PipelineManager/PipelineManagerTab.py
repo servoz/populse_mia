@@ -251,7 +251,7 @@ class PipelineManagerTab(QWidget):
             if node_name in ['', 'inputs', 'outputs']:
                 continue
             process = gnode.process
-            process_outputs = process.list_outputs(self.project.folder)
+            process_outputs = process.list_outputs()
             if process_outputs:
                 for plug_name, plug_value in process_outputs.items():
                     if type(plug_value) is list:
@@ -268,8 +268,6 @@ class PipelineManagerTab(QWidget):
                         pass
                     pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
-
-
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
