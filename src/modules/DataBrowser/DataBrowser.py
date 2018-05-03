@@ -1632,7 +1632,7 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             tag_name = self.horizontalHeaderItem(col).text()
             tag_object = self.project.database.get_tag(tag_name)
-            if tag_name == "FileName":
+            if tag_name == "FileName" or tag_name == "FileType":
                 tag_type = TAG_TYPE_STRING
             else:
                 tag_type = tag_object.type
@@ -1692,29 +1692,39 @@ class TableDataBrowser(QTableWidget):
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
-                tag_type = self.project.database.get_tag(tag_name).type
-                database_value = table_to_database(new_value, tag_type)
 
-                # We only set the case if it's not the tag FileName
-                if (tag_name != "FileName"):
+                if tag_name == "FileType":
 
-                    old_value = self.project.database.get_current_value(scan_path, tag_name)
-                    # The scan already has a value for the tag: we update it
-                    if old_value is not None:
-                        modified_values.append([scan_path, tag_name, old_value, database_value])
-                        self.project.database.set_current_value(scan_path, tag_name, database_value)
-                    # The scan does not have a value for the tag yet: we add it
-                    else:
-                        modified_values.append([scan_path, tag_name, None, database_value])
-                        self.project.database.new_value(scan_path, tag_name, database_value, None)
+                    scan_row = self.project.database.get_path(scan_path)
+                    database_value = table_to_database(new_value, TAG_TYPE_STRING)
+                    scan_row.type = database_value
+                    set_item_data(item, new_value, TAG_TYPE_STRING)
 
-                        # Font reset in case it was a not defined cell
-                        font = item.font()
-                        font.setItalic(False)
-                        font.setBold(False)
-                        item.setFont(font)
+                else:
 
-                    set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
+                    tag_type = self.project.database.get_tag(tag_name).type
+                    database_value = table_to_database(new_value, tag_type)
+
+                    # We only set the case if it's not the tag FileName
+                    if (tag_name != "FileName"):
+
+                        old_value = self.project.database.get_current_value(scan_path, tag_name)
+                        # The scan already has a value for the tag: we update it
+                        if old_value is not None:
+                            modified_values.append([scan_path, tag_name, old_value, database_value])
+                            self.project.database.set_current_value(scan_path, tag_name, database_value)
+                        # The scan does not have a value for the tag yet: we add it
+                        else:
+                            modified_values.append([scan_path, tag_name, None, database_value])
+                            self.project.database.new_value(scan_path, tag_name, database_value, None)
+
+                            # Font reset in case it was a not defined cell
+                            font = item.font()
+                            font.setItalic(False)
+                            font.setBold(False)
+                            item.setFont(font)
+
+                        set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
 
             # For history
             historyMaker.append(modified_values)
