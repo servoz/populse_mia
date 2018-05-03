@@ -913,7 +913,7 @@ class TableDataBrowser(QTableWidget):
         action_reset_cell = menu.addAction("Reset cell(s)")
         action_reset_column = menu.addAction("Reset column(s)")
         action_reset_row = menu.addAction("Reset row(s)")
-        action_remove_scan = menu.addAction("Remove scan(s)")
+        action_remove_scan = menu.addAction("Remove path(s)")
         action_sort_column = menu.addAction("Sort column")
         action_sort_column_descending = menu.addAction("Sort column (descending)")
         action_visualized_tags = menu.addAction("Visualized tags")
