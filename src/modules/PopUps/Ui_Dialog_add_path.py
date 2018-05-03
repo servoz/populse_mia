@@ -1,4 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog
+import os
+import shutil
+import hashlib
 
 class Ui_Dialog_add_path(QDialog):
     """
@@ -55,7 +58,17 @@ class Ui_Dialog_add_path(QDialog):
     def save_path(self):
 
         path = self.file_line_edit.text()
-        print(self.project.database.add_path(path, self.type_line_edit.text()))
-        self.table.scans_to_visualize.append(path)
-        self.table.add_rows(self.project.database.get_paths_names())
+        path_type = self.type_line_edit.text()
+        if path != "" and os.path.exists(path) and path_type != "":
+            path = os.path.relpath(path)
+            filename = os.path.basename(path)
+            copy_path = os.path.join(self.project.folder, "data", "downloaded_data", filename)
+            shutil.copy(path, copy_path)
+            with open(path, 'rb') as scan_file:
+                data = scan_file.read()
+                checksum = hashlib.md5(data).hexdigest()
+            path = os.path.join("data", "downloaded_data", filename)
+            self.project.database.add_path(path, path_type, checksum)
+            self.table.scans_to_visualize.append(path)
+            self.table.add_rows(self.project.database.get_paths_names())
         self.close()

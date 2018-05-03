@@ -303,6 +303,7 @@ class Main_Window(QMainWindow):
             data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
             raw_data_path = os.path.join(data_path, 'raw_data')
             derived_data_path = os.path.join(data_path, 'derived_data')
+            downloaded_data_path = os.path.join(data_path, 'downloaded_data')
 
             # List of projects updated
             self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
@@ -313,6 +314,7 @@ class Main_Window(QMainWindow):
             os.mkdir(data_path)
             os.mkdir(raw_data_path)
             os.mkdir(derived_data_path)
+            os.mkdir(downloaded_data_path)
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
@@ -320,6 +322,8 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*.*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
 
             # First we register the Database before commiting the last pending modifications
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
