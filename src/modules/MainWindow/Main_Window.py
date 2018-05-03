@@ -330,11 +330,11 @@ class Main_Window(QMainWindow):
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*.*')):
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*.*')):
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*.*')):
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
 
             # First we register the Database before commiting the last pending modifications

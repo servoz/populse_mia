@@ -48,14 +48,6 @@ class Config:
         #Then save the modification
         self.saveConfig()
 
-    def setDefaultTags(self, tags):
-        self.config["default_tags"] = tags
-        # Then save the modification
-        self.saveConfig()
-
-    def getDefaultTags(self):
-        return self.config["default_tags"]
-
     def getBackgroundColor(self):
         return self.config["background_color"]
 

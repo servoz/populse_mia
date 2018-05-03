@@ -2,9 +2,8 @@ from populse_db.database import Database
 import os
 import tempfile
 import yaml
-from SoftwareProperties.Config import Config
 from Project.Filter import Filter
-from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
+from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER
 from Utils.Utils import set_item_data
 from datetime import datetime
 
@@ -45,13 +44,12 @@ class Project:
                 name = "Unnamed project"
             else:
                 name = os.path.basename(self.folder)
-            config = Config()
             properties = dict(
                name=name,
                date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                sorted_tag='',
                sort_order='',
-               visibles=config.getDefaultTags()
+               visibles=[]
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)

@@ -78,17 +78,8 @@ class Ui_Dialog_Preferences(QDialog):
         if config.isAutoSave() == "yes":
             self.save_checkbox.setChecked(1)
         self.tools_layout.addWidget(self.save_checkbox)
+        self.tools_layout.addStretch(1)
 
-        self.label_default_tags = QLabel("Default tags visualized")
-        self.list_default_tags = QListWidget()
-        self.default_tags = config.getDefaultTags()
-        if(config.getDefaultTags() != None):
-            self.list_default_tags.addItems(self.default_tags)
-        self.list_default_tags.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(partial(self.handleItemClicked, self.list_default_tags))
-        self.list_default_tags.customContextMenuRequested.connect(self.handleItemClicked)
-        self.tools_layout.addWidget(self.label_default_tags)
-        self.tools_layout.addWidget(self.list_default_tags)
         self.tab_tools.setLayout(self.tools_layout)
 
         # The 'OK' push button
@@ -121,16 +112,6 @@ class Ui_Dialog_Preferences(QDialog):
         else:
             config.setAutoSave("no")
 
-        #Default tags
-        list_tags = []
-        i = 0
-        while i < len(self.list_default_tags):
-            list_tags.append(self.list_default_tags.item(i).text())
-            i = i + 1
-        config.setDefaultTags(list_tags)
-        if main.project.isTempProject:
-            main.data_browser.table_data.add_columns()
-
         #Colors
         background_color = self.background_color_combo.currentText()
         text_color = self.text_color_combo.currentText()
@@ -141,24 +122,3 @@ class Ui_Dialog_Preferences(QDialog):
         self.signal_preferences_change.emit()
         self.accept()
         self.close()
-
-    def handleItemClicked(self, pos):
-        menu = QMenu(self)
-        action_remove_tag = menu.addAction("Remove tag")
-        action_add_tag = menu.addAction("Add a new tag")
-        # Show the context menu.
-        action = menu.exec_(self.list_default_tags.mapToGlobal(pos))
-        config = Config()
-        if action == action_remove_tag:
-            if self.list_default_tags.item(self.list_default_tags.indexAt(pos).row()) is not None:
-                self.list_default_tags.takeItem(self.list_default_tags.indexAt(pos).row())
-        elif action == action_add_tag:
-            res = self.getText()
-            items_with_text = self.list_default_tags.findItems(res, Qt.MatchExactly)
-            if res is not None and len(items_with_text) == 0:
-                self.list_default_tags.addItem(res)
-
-    def getText(self):
-        text, ok_pressed = QInputDialog.getText(self, "Add a new tag", "Tag name: ", QLineEdit.Normal, "")
-        if ok_pressed and text != '':
-            return text

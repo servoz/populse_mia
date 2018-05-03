@@ -761,12 +761,6 @@ class TableDataBrowser(QTableWidget):
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
 
-        # Default tags added if they are not in the database already
-        config = Config()
-        for tag in config.getDefaultTags():
-            if tag not in tags:
-                tags.append(tag)
-
         tags = sorted(tags)
 
         self.setColumnCount(2 + len(tags))
@@ -1431,12 +1425,6 @@ class TableDataBrowser(QTableWidget):
 
         tags = self.project.database.get_tags_names()
 
-        # Default tags added if they are not in the database already
-        config = Config()
-        for tag in config.getDefaultTags():
-            if tag not in tags:
-                tags.append(tag)
-
         tags = sorted(tags)
 
         # Adding missing columns
@@ -1489,7 +1477,7 @@ class TableDataBrowser(QTableWidget):
         tags_to_remove = []
         for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
-            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName" and tag_name not in config.getDefaultTags() and tag_name != "FileType":
+            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName" and tag_name != "FileType":
                 tags_to_remove.append(tag_name)
 
         for tag in tags_to_remove:
