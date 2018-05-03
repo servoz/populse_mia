@@ -36,6 +36,9 @@ class Project:
             if not os.path.exists(os.path.join(self.folder, "data", "derived_data")):
                 os.makedirs(os.path.join(self.folder, "data", "derived_data"))
 
+            if not os.path.exists(os.path.join(self.folder, "data", "downloaded_data")):
+                os.makedirs(os.path.join(self.folder, "data", "downloaded_data"))
+
             # Properties file created
             os.mkdir(os.path.join(self.folder, 'properties'))
             if self.isTempProject:
