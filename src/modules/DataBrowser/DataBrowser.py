@@ -109,6 +109,7 @@ class DataBrowser(QWidget):
         addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
         addRowPicture = addRowPicture.scaledToHeight(20)
         addRowLabel.setPixmap(addRowPicture)
+        addRowLabel.setFixedWidth(20)
         addRowLabel.clicked.connect(self.add_path)
         vbox_table.addWidget(addRowLabel)
 
@@ -768,14 +769,18 @@ class TableDataBrowser(QTableWidget):
 
         tags = sorted(tags)
 
-        self.setColumnCount(1 + len(tags))
+        self.setColumnCount(2 + len(tags))
 
         # FileName tag in first column
         item = QtWidgets.QTableWidgetItem()
         self.setHorizontalHeaderItem(0, item)
         item.setText("FileName")
 
-        column = 1
+        item = QtWidgets.QTableWidgetItem()
+        self.setHorizontalHeaderItem(1, item)
+        item.setText("FileType")
+
+        column = 2
         # Filling the headers
         for tag_name in tags:
             item = QtWidgets.QTableWidgetItem()
@@ -839,6 +844,10 @@ class TableDataBrowser(QTableWidget):
                     # FileName tag
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                     set_item_data(item, scan, TAG_TYPE_STRING)
+                elif self.horizontalHeaderItem(column).text() == "FileType":
+                    # FileType tag
+                    scan_type = self.project.database.get_path(scan).type
+                    set_item_data(item, scan_type, TAG_TYPE_STRING)
                 else:
                     # Other tags
                     current_value = self.project.database.get_current_value(scan, current_tag)
@@ -875,7 +884,7 @@ class TableDataBrowser(QTableWidget):
 
                         color = QColor()
 
-                        if tag == "FileName":
+                        if tag == "FileName" or tag == "FileType":
                             if row_number % 2 == 0:
                                 color.setRgb(255, 255, 255)  # White
                             else:
@@ -1369,6 +1378,10 @@ class TableDataBrowser(QTableWidget):
                         # FileName tag
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                         set_item_data(item, scan, TAG_TYPE_STRING)
+                    elif self.horizontalHeaderItem(column).text() == "FileType":
+                        # FileType tag
+                        scan_type = self.project.database.get_path(scan).type
+                        set_item_data(item, scan_type, TAG_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
                         if cur_value is not None:
@@ -1476,7 +1489,7 @@ class TableDataBrowser(QTableWidget):
         tags_to_remove = []
         for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
-            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName" and tag_name not in config.getDefaultTags():
+            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName" and tag_name not in config.getDefaultTags() and tag_name != "FileType":
                 tags_to_remove.append(tag_name)
 
         for tag in tags_to_remove:
