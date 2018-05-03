@@ -354,6 +354,7 @@ class DataBrowser(QWidget):
 
         if (self.frame_advanced_search.isHidden()):
             # If the advanced search is hidden, we reset it and display it
+            self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.show_search()
         else:
