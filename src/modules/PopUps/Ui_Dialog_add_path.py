@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
 import os
 import shutil
 import hashlib
@@ -68,7 +68,17 @@ class Ui_Dialog_add_path(QDialog):
                 data = scan_file.read()
                 checksum = hashlib.md5(data).hexdigest()
             path = os.path.join("data", "downloaded_data", filename)
-            self.project.database.add_path(path, path_type, checksum)
-            self.table.scans_to_visualize.append(path)
-            self.table.add_rows(self.project.database.get_paths_names())
+            if len(self.project.database.get_paths_names()) > 0:
+                self.project.database.add_path(path, path_type, checksum)
+                self.table.scans_to_visualize.append(path)
+                self.table.add_rows(self.project.database.get_paths_names())
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Impossible to add paths before importing")
+                msg.setInformativeText("Please import paths before adding your own paths in order to set up the tags")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
         self.close()
