@@ -247,8 +247,11 @@ class NodeController(QWidget):
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
         pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+        if in_or_out == 'in':
+            self.line_edit_input[index].setText(str(new_value))
+        elif in_or_out == 'out':
+            self.line_edit_output[index].setText(str(new_value))
 
-        self.line_edit_output[index].setText(str(new_value))
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
