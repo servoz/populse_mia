@@ -838,16 +838,16 @@ class TableDataBrowser(QTableWidget):
                     # FileName tag
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                     set_item_data(item, scan, TAG_TYPE_STRING)
-                elif self.horizontalHeaderItem(column).text() == "FileType":
-                    # FileType tag
-                    scan_type = self.project.database.get_path(scan).type
-                    set_item_data(item, scan_type, TAG_TYPE_STRING)
                 else:
                     # Other tags
                     current_value = self.project.database.get_current_value(scan, current_tag)
                     # The scan has a value for the tag
                     if current_value is not None:
-                        set_item_data(item, current_value, self.project.database.get_tag(current_tag).type)
+                        if current_tag == "FileType":
+                            tag_type = TAG_TYPE_STRING
+                        else:
+                            tag_type = self.project.database.get_tag(current_tag).type
+                        set_item_data(item, current_value, tag_type)
 
                     # The scan does not have a value for the tag
                     else:
@@ -1041,9 +1041,13 @@ class TableDataBrowser(QTableWidget):
             initial_value = self.project.database.get_initial_value(scan_name, tag_name)
             if initial_value is not None:
                 modified_values.append([scan_name, tag_name, current_value, initial_value])  # For history
-                if self.project.database.reset_current_value(scan_name, tag_name) != 0:
+                if self.project.database.reset_current_value(scan_name, tag_name) != None:
                     has_unreset_values = True
-                set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
+                if tag_name == "FileType":
+                    tag_type = TAG_TYPE_STRING
+                else:
+                    tag_type = self.project.database.get_tag(tag_name).type
+                set_item_data(self.item(row, col), initial_value, tag_type)
             else:
                 has_unreset_values = True
 
@@ -1079,9 +1083,13 @@ class TableDataBrowser(QTableWidget):
                 current_value = self.project.database.get_current_value(scan, tag_name)
                 if initial_value is not None:
                     modified_values.append([scan, tag_name, current_value, initial_value])  # For history
-                    if self.project.database.reset_current_value(scan, tag_name) != 0:
+                    if self.project.database.reset_current_value(scan, tag_name) != None:
                         has_unreset_values = True
-                    set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
+                    if tag_name == "FileType":
+                        tag_type = TAG_TYPE_STRING
+                    else:
+                        tag_type = self.project.database.get_tag(tag_name).type
+                    set_item_data(self.item(row_iter, col), initial_value, tag_type)
                 else:
                     has_unreset_values = True
 
@@ -1120,9 +1128,13 @@ class TableDataBrowser(QTableWidget):
                     # We reset the value only if it exists
                     modified_values.append([scan_name, tag, current_value, initial_value])  # For history
                     self.project.database.reset_current_value(scan_name, tag)
-                    if self.project.database.reset_current_value(scan_name, tag) != 0:
+                    if self.project.database.reset_current_value(scan_name, tag) != None:
                         has_unreset_values = True
-                    set_item_data(self.item(row, column), initial_value, self.project.database.get_tag(tag).type)
+                    if tag == "FileType":
+                        tag_type = TAG_TYPE_STRING
+                    else:
+                        tag_type = self.project.database.get_tag(tag).type
+                    set_item_data(self.item(row, column), initial_value, tag_type)
                 else:
                     has_unreset_values = True
 
@@ -1164,13 +1176,14 @@ class TableDataBrowser(QTableWidget):
             if tag_name == "FileName":
                 value = scan_path
                 set_item_data(item, value, TAG_TYPE_STRING)
-            elif tag_name == "FileType":
-                path_type = self.project.database.get_path(scan_path).type
-                set_item_data(item, path_type, TAG_TYPE_STRING)
             else:
                 value = self.project.database.get_current_value(scan_path, tag_name)
                 if value is not None:
-                    set_item_data(item, value, self.project.database.get_tag(tag_name).type)
+                    if tag_name == "FileType":
+                        tag_type = TAG_TYPE_STRING
+                    else:
+                        tag_type = self.project.database.get_tag(tag_name).type
+                    set_item_data(item, value, tag_type)
                 else:
                     item = QTableWidgetItem()
                     set_item_data(item, not_defined_value, TAG_TYPE_STRING)
@@ -1375,14 +1388,14 @@ class TableDataBrowser(QTableWidget):
                         # FileName tag
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
                         set_item_data(item, scan, TAG_TYPE_STRING)
-                    elif self.horizontalHeaderItem(column).text() == "FileType":
-                        # FileType tag
-                        scan_type = self.project.database.get_path(scan).type
-                        set_item_data(item, scan_type, TAG_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
                         if cur_value is not None:
-                            set_item_data(item, cur_value, self.project.database.get_tag(tag).type)
+                            if tag == "FileType":
+                                tag_type = TAG_TYPE_STRING
+                            else:
+                                tag_type = self.project.database.get_tag(tag).type
+                            set_item_data(item, cur_value, tag_type)
                         else:
                             set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                             font = item.font()
@@ -1695,40 +1708,36 @@ class TableDataBrowser(QTableWidget):
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
-
                 if tag_name == "FileType":
-
-                    scan_row = self.project.database.get_path(scan_path)
-                    database_value = table_to_database(new_value, TAG_TYPE_STRING)
-                    modified_values.append([scan_path, "FileType", scan_row.type, database_value])
-                    scan_row.type = database_value
-                    set_item_data(item, new_value, TAG_TYPE_STRING)
-
+                    tag_type = TAG_TYPE_STRING
                 else:
-
                     tag_type = self.project.database.get_tag(tag_name).type
-                    database_value = table_to_database(new_value, tag_type)
+                database_value = table_to_database(new_value, tag_type)
 
-                    # We only set the case if it's not the tag FileName
-                    if (tag_name != "FileName"):
+                # We only set the case if it's not the tag FileName
+                if (tag_name != "FileName"):
 
-                        old_value = self.project.database.get_current_value(scan_path, tag_name)
-                        # The scan already has a value for the tag: we update it
-                        if old_value is not None:
-                            modified_values.append([scan_path, tag_name, old_value, database_value])
-                            self.project.database.set_current_value(scan_path, tag_name, database_value)
-                        # The scan does not have a value for the tag yet: we add it
-                        else:
-                            modified_values.append([scan_path, tag_name, None, database_value])
-                            self.project.database.new_value(scan_path, tag_name, database_value, None)
+                    old_value = self.project.database.get_current_value(scan_path, tag_name)
+                    # The scan already has a value for the tag: we update it
+                    if old_value is not None:
+                        modified_values.append([scan_path, tag_name, old_value, database_value])
+                        self.project.database.set_current_value(scan_path, tag_name, database_value)
+                    # The scan does not have a value for the tag yet: we add it
+                    else:
+                        modified_values.append([scan_path, tag_name, None, database_value])
+                        self.project.database.new_value(scan_path, tag_name, database_value, None)
 
-                            # Font reset in case it was a not defined cell
-                            font = item.font()
-                            font.setItalic(False)
-                            font.setBold(False)
-                            item.setFont(font)
+                        # Font reset in case it was a not defined cell
+                        font = item.font()
+                        font.setItalic(False)
+                        font.setBold(False)
+                        item.setFont(font)
 
-                        set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
+                    if tag_name == "FileType":
+                        tag_type = TAG_TYPE_STRING
+                    else:
+                        tag_type = self.project.database.get_tag(tag_name).type
+                    set_item_data(item, new_value, tag_type)
 
             # For history
             historyMaker.append(modified_values)
