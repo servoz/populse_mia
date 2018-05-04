@@ -356,6 +356,8 @@ class Main_Window(QMainWindow):
             # We reput the Database without the last modifications in the old project
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
 
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
+
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
             # Project updated everywhere
