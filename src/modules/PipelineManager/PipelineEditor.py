@@ -19,9 +19,11 @@ else:
 
 
 class PipelineEditor(PipelineDevelopperView):
-    def __init__(self, scene, parent=None):
+    def __init__(self, project):
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
                                         show_sub_pipelines=True, enable_edition=True)
+
+        self.project = project
 
         # Undo/Redo
         self.undos = []
@@ -50,7 +52,10 @@ class PipelineEditor(PipelineDevelopperView):
         for name, instance in sorted(list(pkg.__dict__.items())):
             if name == process_name:
                 try:
-                    process = get_process_instance(instance)
+                    if process_name == "Populse_Filter":
+                        process = get_process_instance(instance(self.project.database, []))
+                    else:
+                        process = get_process_instance(instance)
                 except Exception as e:
                     print(e)
                     return
@@ -63,11 +68,9 @@ class PipelineEditor(PipelineDevelopperView):
         else:
             self.undos.append(history_maker)
             if not from_redo:
-                print("CLEARING")
                 self.redos.clear()
 
     def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False):
-
         pipeline = self.scene.pipeline
         if not node_name:
             class_name = class_process.__name__
@@ -78,8 +81,10 @@ class PipelineEditor(PipelineDevelopperView):
             while node_name in pipeline.nodes and i < 100:
                 i += 1
                 node_name = class_name.lower() + str(i)
-
-            process_to_use = class_process()
+            if class_name == "Populse_Filter":
+                process_to_use = class_process(self.project.database, [])
+            else:
+                process_to_use = class_process()
 
         else:
             process_to_use = class_process

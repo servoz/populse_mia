@@ -297,8 +297,10 @@ class Main_Window(QMainWindow):
         if self.tabs.currentIndex() == 2:
             self.pipeline_manager.project = self.project
             self.pipeline_manager.nodeController.project = self.project
+            self.pipeline_manager.diagramView.project = self.project
             self.pipeline_manager.scan_list = self.data_browser.table_data.get_current_filter()
             self.pipeline_manager.nodeController.scan_list = self.data_browser.table_data.get_current_filter()
+            self.pipeline_manager.diagramView.scan_list = self.data_browser.table_data.get_current_filter()
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
