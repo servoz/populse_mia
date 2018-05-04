@@ -319,7 +319,7 @@ class Project:
                 for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_path(scanToReput.name, scanToReput.checksum)
+                    self.database.add_path(scanToReput.name, scanToReput.type, scanToReput.checksum)
                     table.scans_to_visualize.append(scanToReput.name)
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
@@ -414,7 +414,7 @@ class Project:
                 for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_path(scanToAdd[0], scanToAdd[1])
+                    self.database.add_path(scanToAdd[0], scanToAdd[1], scanToAdd[2])
                     table.scans_to_visualize.append(scanToAdd[0])
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add

@@ -1201,7 +1201,6 @@ class TableDataBrowser(QTableWidget):
         historyMaker.append("remove_scans")
         scans_removed = []
         values_removed = []
-        scans_names = []
 
         for point in points:
             row = point.row()
