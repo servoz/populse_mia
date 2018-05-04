@@ -345,8 +345,13 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_current_value(scan, tag, old_value)
-                        set_item_data(item, old_value, self.database.get_tag(tag).type)
+                        if tag == "FileType":
+                            scan_row = self.database.get_path(scan)
+                            scan_row.type = old_value
+                            set_item_data(item, old_value, TAG_TYPE_STRING)
+                        else:
+                            self.database.set_current_value(scan, tag, old_value)
+                            set_item_data(item, old_value, self.database.get_tag(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -438,7 +443,7 @@ class Project:
                     tag = valueToRestore[1]
                     old_value = valueToRestore[2]
                     new_value = valueToRestore[3]
-                    self.database.set_current_value(scan, tag, new_value)
+
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if old_value == None:
                         # Font reput to normal in case it was a not defined cell
@@ -446,7 +451,13 @@ class Project:
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                    set_item_data(item, new_value, self.database.get_tag(tag).type)
+                    if tag == "FileType":
+                        path_row = self.database.get_path(scan)
+                        path_row.type = new_value
+                        set_item_data(item, new_value, TAG_TYPE_STRING)
+                    else:
+                        self.database.set_current_value(scan, tag, new_value)
+                        set_item_data(item, new_value, self.database.get_tag(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):

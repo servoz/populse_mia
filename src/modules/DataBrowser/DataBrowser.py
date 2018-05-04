@@ -1164,6 +1164,9 @@ class TableDataBrowser(QTableWidget):
             if tag_name == "FileName":
                 value = scan_path
                 set_item_data(item, value, TAG_TYPE_STRING)
+            elif tag_name == "FileType":
+                path_type = self.project.database.get_path(scan_path).type
+                set_item_data(item, path_type, TAG_TYPE_STRING)
             else:
                 value = self.project.database.get_current_value(scan_path, tag_name)
                 if value is not None:
@@ -1697,6 +1700,7 @@ class TableDataBrowser(QTableWidget):
 
                     scan_row = self.project.database.get_path(scan_path)
                     database_value = table_to_database(new_value, TAG_TYPE_STRING)
+                    modified_values.append([scan_path, "FileType", scan_row.type, database_value])
                     scan_row.type = database_value
                     set_item_data(item, new_value, TAG_TYPE_STRING)
 
