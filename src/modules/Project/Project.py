@@ -3,7 +3,7 @@ import os
 import tempfile
 import yaml
 from Project.Filter import Filter
-from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER
+from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
 from Utils.Utils import set_item_data
 from datetime import datetime
 
@@ -53,6 +53,11 @@ class Project:
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
+
+            # Tags manually added
+            self.database.add_tag("Checksum", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
+            self.database.add_tag("Type", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
+
         self.properties = self.loadProperties()
         self.unsavedModifications = False
         self.undos = []
@@ -308,7 +313,7 @@ class Project:
                 scansAdded = toUndo[1]  # The second element is a list of added scans to remove
                 for i in range (0, len(scansAdded)):
                     # We remove each scan added
-                    scanToRemove = scansAdded[i][0]
+                    scanToRemove = scansAdded[i]
                     self.database.remove_path(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
@@ -319,7 +324,7 @@ class Project:
                 for i in range (0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_path(scanToReput.name, scanToReput.type, scanToReput.checksum)
+                    self.database.add_path(scanToReput.name)
                     table.scans_to_visualize.append(scanToReput.name)
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
@@ -414,8 +419,8 @@ class Project:
                 for i in range (0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_path(scanToAdd[0], scanToAdd[1], scanToAdd[2])
-                    table.scans_to_visualize.append(scanToAdd[0])
+                    self.database.add_path(scanToAdd)
+                    table.scans_to_visualize.append(scanToAdd)
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range (0, len(valuesAdded)):

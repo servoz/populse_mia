@@ -72,7 +72,7 @@ def read_log(project):
             file_path = os.path.join(raw_data_folder, file_name + ".nii")
             file_database_path = os.path.relpath(file_path, project.folder)
 
-            scans_added.append([file_database_path, "Scan", original_md5]) # Scan added to history
+            scans_added.append(file_database_path) # Scan added to history
 
             values_infos[file_database_path] = []
 
@@ -164,8 +164,14 @@ def read_log(project):
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
-                        values_added.append([file_name, tag_name, value, value]) # Value added to history
+                        values_added.append([file_database_path, tag_name, value, value]) # Value added to history
                         values_infos[file_database_path].append([tag_name, value, value])
+
+            # Tags added manually
+            values_added.append([file_database_path, "Checksum", original_md5, original_md5])  # Value added to history
+            values_infos[file_database_path].append(["Checksum", original_md5, original_md5])
+            values_added.append([file_database_path, "Type", "Scan", "Scan"])  # Value added to history
+            values_infos[file_database_path].append(["Type", "Scan", "Scan"])
 
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
@@ -212,9 +218,9 @@ def read_log(project):
 def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in project.database.get_paths():
+    for scan in project.database.get_paths_names():
 
-        file_name = scan.name
+        file_name = scan
         file_path = os.path.relpath(os.path.join(project.folder, file_name))
 
         if os.path.exists(file_path):
@@ -223,7 +229,7 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            if actual_md5 != scan.checksum:
+            if actual_md5 != project.database.get_current_value(scan, "Checksum"):
                 return_list.append(file_name)
 
         else:

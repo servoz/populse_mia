@@ -760,21 +760,19 @@ class TableDataBrowser(QTableWidget):
 
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
+        tags.remove("Checksum")
+        tags.remove("Type")
 
         tags = sorted(tags)
 
-        self.setColumnCount(2 + len(tags))
+        self.setColumnCount(len(tags) + 1)
 
         # FileName tag in first column
         item = QtWidgets.QTableWidgetItem()
         self.setHorizontalHeaderItem(0, item)
         item.setText("FileName")
 
-        item = QtWidgets.QTableWidgetItem()
-        self.setHorizontalHeaderItem(1, item)
-        item.setText("FileType")
-
-        column = 2
+        column = 1
         # Filling the headers
         for tag_name in tags:
             item = QtWidgets.QTableWidgetItem()
@@ -843,11 +841,7 @@ class TableDataBrowser(QTableWidget):
                     current_value = self.project.database.get_current_value(scan, current_tag)
                     # The scan has a value for the tag
                     if current_value is not None:
-                        if current_tag == "FileType":
-                            tag_type = TAG_TYPE_STRING
-                        else:
-                            tag_type = self.project.database.get_tag(current_tag).type
-                        set_item_data(item, current_value, tag_type)
+                        set_item_data(item, current_value, self.project.database.get_tag(current_tag).type)
 
                     # The scan does not have a value for the tag
                     else:
@@ -878,7 +872,7 @@ class TableDataBrowser(QTableWidget):
 
                         color = QColor()
 
-                        if tag == "FileName" or tag == "FileType":
+                        if tag == "FileName":
                             if row_number % 2 == 0:
                                 color.setRgb(255, 255, 255)  # White
                             else:
@@ -1043,11 +1037,7 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, current_value, initial_value])  # For history
                 if self.project.database.reset_current_value(scan_name, tag_name) != None:
                     has_unreset_values = True
-                if tag_name == "FileType":
-                    tag_type = TAG_TYPE_STRING
-                else:
-                    tag_type = self.project.database.get_tag(tag_name).type
-                set_item_data(self.item(row, col), initial_value, tag_type)
+                set_item_data(self.item(row, col), initial_value, self.project.database.get_tag(tag_name).type)
             else:
                 has_unreset_values = True
 
@@ -1085,11 +1075,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, current_value, initial_value])  # For history
                     if self.project.database.reset_current_value(scan, tag_name) != None:
                         has_unreset_values = True
-                    if tag_name == "FileType":
-                        tag_type = TAG_TYPE_STRING
-                    else:
-                        tag_type = self.project.database.get_tag(tag_name).type
-                    set_item_data(self.item(row_iter, col), initial_value, tag_type)
+                    set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_tag(tag_name).type)
                 else:
                     has_unreset_values = True
 
@@ -1130,11 +1116,7 @@ class TableDataBrowser(QTableWidget):
                     self.project.database.reset_current_value(scan_name, tag)
                     if self.project.database.reset_current_value(scan_name, tag) != None:
                         has_unreset_values = True
-                    if tag == "FileType":
-                        tag_type = TAG_TYPE_STRING
-                    else:
-                        tag_type = self.project.database.get_tag(tag).type
-                    set_item_data(self.item(row, column), initial_value, tag_type)
+                    set_item_data(self.item(row, column), initial_value, self.project.database.get_tag(tag).type)
                 else:
                     has_unreset_values = True
 
@@ -1179,11 +1161,7 @@ class TableDataBrowser(QTableWidget):
             else:
                 value = self.project.database.get_current_value(scan_path, tag_name)
                 if value is not None:
-                    if tag_name == "FileType":
-                        tag_type = TAG_TYPE_STRING
-                    else:
-                        tag_type = self.project.database.get_tag(tag_name).type
-                    set_item_data(item, value, tag_type)
+                    set_item_data(item, value, self.project.database.get_tag(tag_name).type)
                 else:
                     item = QTableWidgetItem()
                     set_item_data(item, not_defined_value, TAG_TYPE_STRING)
@@ -1390,11 +1368,7 @@ class TableDataBrowser(QTableWidget):
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
                         if cur_value is not None:
-                            if tag == "FileType":
-                                tag_type = TAG_TYPE_STRING
-                            else:
-                                tag_type = self.project.database.get_tag(tag).type
-                            set_item_data(item, cur_value, tag_type)
+                            set_item_data(item, cur_value, self.project.database.get_tag(tag).type)
                         else:
                             set_item_data(item, not_defined_value, TAG_TYPE_STRING)
                             font = item.font()
@@ -1439,6 +1413,9 @@ class TableDataBrowser(QTableWidget):
         self.itemSelectionChanged.disconnect()
 
         tags = self.project.database.get_tags_names()
+
+        tags.remove("Checksum")
+        tags.remove("Type")
 
         tags = sorted(tags)
 
@@ -1492,7 +1469,7 @@ class TableDataBrowser(QTableWidget):
         tags_to_remove = []
         for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
-            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName" and tag_name != "FileType":
+            if not tag_name in self.project.database.get_tags_names() and tag_name != "FileName":
                 tags_to_remove.append(tag_name)
 
         for tag in tags_to_remove:
@@ -1647,7 +1624,7 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             tag_name = self.horizontalHeaderItem(col).text()
             tag_object = self.project.database.get_tag(tag_name)
-            if tag_name == "FileName" or tag_name == "FileType":
+            if tag_name == "FileName":
                 tag_type = TAG_TYPE_STRING
             else:
                 tag_type = tag_object.type
@@ -1707,11 +1684,7 @@ class TableDataBrowser(QTableWidget):
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
-                if tag_name == "FileType":
-                    tag_type = TAG_TYPE_STRING
-                else:
-                    tag_type = self.project.database.get_tag(tag_name).type
-                database_value = table_to_database(new_value, tag_type)
+                database_value = table_to_database(new_value, self.project.database.get_tag(tag_name).type)
 
                 # We only set the case if it's not the tag FileName
                 if (tag_name != "FileName"):
@@ -1732,11 +1705,7 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(False)
                         item.setFont(font)
 
-                    if tag_name == "FileType":
-                        tag_type = TAG_TYPE_STRING
-                    else:
-                        tag_type = self.project.database.get_tag(tag_name).type
-                    set_item_data(item, new_value, tag_type)
+                    set_item_data(item, new_value, self.project.database.get_tag(tag_name).type)
 
             # For history
             historyMaker.append(modified_values)
