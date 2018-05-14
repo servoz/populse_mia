@@ -262,11 +262,16 @@ class PipelineManagerTab(QWidget):
                             except:
                                 # TODO: RAISE EXCEPTION
                                 pass
+                            else:
+                                # TODO: ADD THE PATH
                     try:
                         open(plug_value, 'a').close()
                     except:
                         #TODO: RAISE EXCEPTION
                         pass
+                    else:
+                        #TODO: ADD THE PATH
+                    pass
                     pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
@@ -287,7 +292,7 @@ class PipelineManagerTab(QWidget):
         # inspect config options
         for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
 
-        with open('/tmp/tmp_pipeline.txt', 'w') as f:
+        """with open('/tmp/tmp_pipeline.txt', 'w') as f:
             sys.stdout = f
             f.write('Pipeline execution\n...\n\n')
             # Before
@@ -297,7 +302,16 @@ class PipelineManagerTab(QWidget):
             study_config.run(pipeline, verbose=1)
 
         with open('/tmp/tmp_pipeline.txt', 'r') as f:
-            self.textedit.setText(f.read())
+            self.textedit.setText(f.read())"""
+
+        # TEST
+        for node_name, node in pipeline.nodes.items():
+            if node_name in ["spm_smooth1"]:
+                print("IN_FILES SPM SMOOTH: ", node.get_plug_value("in_files"))
+
+        study_config.reset_process_counter()
+        study_config.run(pipeline, verbose=1)
+
 
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)

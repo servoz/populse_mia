@@ -240,11 +240,11 @@ class NodeController(QWidget):
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
         pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+
         if in_or_out == 'in':
             self.line_edit_input[index].setText(str(new_value))
         elif in_or_out == 'out':
             self.line_edit_output[index].setText(str(new_value))
-
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
@@ -264,9 +264,7 @@ class NodeController(QWidget):
         value_type = parameters[2]
 
         len_list = len(path_list)
-        if len_list == 1:
-            res = path_list[0]
-        elif len_list > 1:
+        if len_list >= 1:
             res = path_list
         else:
             res = []
@@ -364,16 +362,17 @@ class PlugFilter(QWidget):
                                                                               values, nots, self.scans_list)
 
         for i in range(len(path_names)):
-
             path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))
+            print("PATH NAMES: ", path_names)
         self.plug_value_changed.emit(path_names)
 
     def set_filter_to_process(self):
+        """ Setting the selected filter to the filter process. """
         (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
         filter = Filter(None, nots, values, fields, links, conditions, "")
         self.process.filter = filter
         self.process.scans_list = self.scans_list
 
     def save_filter(self):
-        """ Saving the filter and setting to the plug. """
+        """ Saving the filter and setting to the plug. Is it necessary? """
         pass

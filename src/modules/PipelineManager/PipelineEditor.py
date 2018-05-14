@@ -53,7 +53,7 @@ class PipelineEditor(PipelineDevelopperView):
             if name == process_name:
                 try:
                     if process_name == "Populse_Filter":
-                        process = get_process_instance(instance(self.project.database, []))
+                        process = get_process_instance(instance(self.project, []))
                     else:
                         process = get_process_instance(instance)
                 except Exception as e:
@@ -82,7 +82,7 @@ class PipelineEditor(PipelineDevelopperView):
                 i += 1
                 node_name = class_name.lower() + str(i)
             if class_name == "Populse_Filter":
-                process_to_use = class_process(self.project.database, [])
+                process_to_use = class_process(self.project, [])
             else:
                 process_to_use = class_process()
 

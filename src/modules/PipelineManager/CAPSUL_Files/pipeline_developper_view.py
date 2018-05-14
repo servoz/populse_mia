@@ -280,10 +280,6 @@ class NodeGWidget(QtGui.QGraphicsItem):
             return
         param_text = self._parameter_text(param_name)
         param_item = self.in_params.get(param_name)
-        print("IN NODEGWIDGET REPAINT")
-        print(self.name)
-        print(self.in_params)
-        print(self.out_params)
         if param_item is None:
             param_item = self.out_params[param_name]
         if isinstance(param_item, QtGui.QGraphicsProxyWidget):
