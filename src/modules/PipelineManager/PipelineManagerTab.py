@@ -51,7 +51,7 @@ class PipelineManagerTab(QWidget):
         self.processLibrary = ProcessLibraryWidget()
 
         self.diagramScene = DiagramScene(self)
-        self.diagramView = PipelineEditor(self.diagramScene, self)
+        self.diagramView = PipelineEditor(self.project)
         self.diagramView.node_clicked.connect(self.displayNodeParameters)
 
         self.textedit = TextEditor(self)
@@ -218,6 +218,7 @@ class PipelineManagerTab(QWidget):
     def update_project(self, project):
         self.project = project
         self.nodeController.project = project
+        self.diagramView.project = project
 
     def controller_value_changed(self, signal_list):
         case = signal_list.pop(0)

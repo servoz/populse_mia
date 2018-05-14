@@ -44,9 +44,6 @@ class NodeController(QWidget):
 
         self.node_name = node_name
 
-        """self.advanced_search = AdvancedSearch(self.project, self)
-        self.advanced_search.show_search()"""
-
         self.line_edit_input = []
         self.line_edit_output = []
         if len(self.children()) > 0:
@@ -101,18 +98,14 @@ class NodeController(QWidget):
                                                         name, pipeline, type(value)))
                     h_box.addWidget(push_button)
 
-                if hasattr(trait, 'optional'):
-                    parameters = (idx, pipeline, type(value))
-                    if not trait.optional:
-                        push_button = QPushButton('Filter')
-                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
-                        h_box.addWidget(push_button)
-                    else:
-                        if hasattr(trait, 'mandatory'):
-                            if trait.mandatory:
-                                push_button = QPushButton('Filter')
-                                push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
-                                h_box.addWidget(push_button)
+                if process.name == "Populse_Filter":
+                    if hasattr(trait, 'optional'):
+                        parameters = (idx, pipeline, type(value))
+                        if not trait.optional:
+                            push_button = QPushButton('Filter')
+                            push_button.clicked.connect(partial(self.display_filter, self.node_name, name,
+                                                                parameters, process))
+                            h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
 
@@ -256,9 +249,9 @@ class NodeController(QWidget):
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
-    def display_filter(self, node_name, plug_name, parameters):
+    def display_filter(self, node_name, plug_name, parameters, process):
 
-        pop_up = PlugFilter(self.project, self.scan_list, node_name, plug_name)
+        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
@@ -316,11 +309,12 @@ class PlugFilter(QWidget):
 
     plug_value_changed = pyqtSignal(list)
 
-    def __init__(self, project, scan_list, node_name="", plug_name="", parent=None):
+    def __init__(self, project, scans_list, process, node_name="", plug_name="", parent=None):
         super(PlugFilter, self).__init__(parent)
 
         self.project = project
-        self.scan_list = scan_list
+        self.scans_list = scans_list
+        self.process = process
         filter_to_apply = self.project.currentFilter
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
@@ -328,7 +322,7 @@ class PlugFilter(QWidget):
         # Graphical components
         self.table_data = TableDataBrowser(self.project, self)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scan_list)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
         self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
 
@@ -358,6 +352,7 @@ class PlugFilter(QWidget):
         self.advanced_search.apply_filter(filter)"""
 
         self.set_plug_value()
+        self.set_filter_to_process()
         self.save_filter()
         self.close()
 
@@ -366,12 +361,18 @@ class PlugFilter(QWidget):
 
         (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
         path_names = self.project.database.get_paths_matching_advanced_search(links, fields, conditions,
-                                                                              values, nots, self.scan_list)
+                                                                              values, nots, self.scans_list)
 
         for i in range(len(path_names)):
 
             path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))
         self.plug_value_changed.emit(path_names)
+
+    def set_filter_to_process(self):
+        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
+        filter = Filter(None, nots, values, fields, links, conditions, "")
+        self.process.filter = filter
+        self.process.scans_list = self.scans_list
 
     def save_filter(self):
         """ Saving the filter and setting to the plug. """
