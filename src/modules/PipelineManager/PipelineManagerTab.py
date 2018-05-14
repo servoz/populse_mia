@@ -271,7 +271,7 @@ class PipelineManagerTab(QWidget):
                         pass
                     else:
                         #TODO: ADD THE PATH
-                    pass
+                        pass
                     pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
