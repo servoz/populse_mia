@@ -45,22 +45,24 @@ def read_log(project):
     scans_added = []
     values_added = []
     tags_added = []
-    tags_infos = []
-    values_infos = {}
-    tag_objects = {}
+    tags_names_added = []
 
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
     # Progressbar
-    ui_progressbar = QProgressDialog("Importing into the database", "Cancel", 0, 3)
+    ui_progressbar = QProgressDialog("Importing into the database", "Cancel", 0, len(list_dict_log))
     ui_progressbar.setWindowModality(Qt.WindowModal)
     ui_progressbar.setWindowTitle("")
-    ui_progressbar.setMinimumDuration(0)
-    ui_progressbar.show()
+    ui_progressbar.setMinimum(0)
     idx = 0
-    ui_progressbar.setValue(idx)
 
     for dict_log in list_dict_log:
+
+        # Progressbar
+        idx += 1
+        ui_progressbar.setValue(idx)
+        if ui_progressbar.wasCanceled():
+            break
 
         if dict_log['StatusExport'] == "Export ok":
             file_name = dict_log['NameFile']
@@ -74,7 +76,7 @@ def read_log(project):
 
             scans_added.append(file_database_path) # Scan added to history
 
-            values_infos[file_database_path] = []
+            project.database.add_path(file_database_path)
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -151,27 +153,20 @@ def read_log(project):
 
                     # TODO time lists
 
-                    if tag_name in tag_objects:
-                        tag_object = tag_objects[tag_name]
-                    else:
-                        tag_object = project.database.get_tag(tag_name)
-                        tag_objects[tag_name] = tag_object
-                    if tag_name not in tags_added and tag_object is None:
-                        tags_added.append(tag_name)
+                    tag_row = project.database.get_tag(tag_name)
+                    if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
-                        tags_infos.append([tag_name, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
+                        tags_added.append([tag_name, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
                                                      description])
+                        tags_names_added.append(tag_name)
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
                         values_added.append([file_database_path, tag_name, value, value]) # Value added to history
-                        values_infos[file_database_path].append([tag_name, value, value])
 
             # Tags added manually
             values_added.append([file_database_path, "Checksum", original_md5, original_md5])  # Value added to history
-            values_infos[file_database_path].append(["Checksum", original_md5, original_md5])
             values_added.append([file_database_path, "Type", "Scan", "Scan"])  # Value added to history
-            values_infos[file_database_path].append(["Type", "Scan", "Scan"])
 
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
@@ -179,31 +174,11 @@ def read_log(project):
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
-                    values_infos[scan[0]].append([tag.name, tag.default_value, None])
 
-    # Progressbar
-    idx += 1
-    ui_progressbar.setValue(idx)
+    project.database.add_tags(tags_added)
 
-    begin_scans = time()
-    project.database.add_paths(scans_added)
-    print("add scans : " + str(time() - begin_scans))
-
-    # Progressbar
-    idx += 1
-    ui_progressbar.setValue(idx)
-
-    begin_tags = time()
-    project.database.add_tags(tags_infos)
-    print("add tags : " + str(time() - begin_tags))
-
-    # Progressbar
-    idx += 1
-    ui_progressbar.setValue(idx)
-
-    begin_values = time()
-    project.database.new_values(values_infos)
-    print("add values : " + str(time() - begin_values))
+    for value in values_added:
+        project.database.new_value(value[0], value[1], value[2], value[3])
 
     # For history
     historyMaker.append(scans_added)
