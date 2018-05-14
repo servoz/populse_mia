@@ -264,6 +264,8 @@ class PipelineManagerTab(QWidget):
                                 pass
                             else:
                                 # TODO: ADD THE PATH
+
+                                self.project.database.add_paths(element)
                     try:
                         open(plug_value, 'a').close()
                     except:
