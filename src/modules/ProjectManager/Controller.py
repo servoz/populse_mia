@@ -204,7 +204,8 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            if actual_md5 != project.database.get_current_value(scan, "Checksum"):
+            initial_checksum = project.database.get_current_value(scan, "Checksum")
+            if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 
         else:

@@ -95,3 +95,11 @@ class Config:
         self.config["chain_cursors"] = chain_cursors
         # Then save the modification
         self.saveConfig()
+
+    def get_opened_projects(self):
+        return self.config["opened_projects"]
+
+    def set_opened_projects(self, new_projects):
+        self.config["opened_projects"] = new_projects
+        # Then save the modification
+        self.saveConfig()

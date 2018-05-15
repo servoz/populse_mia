@@ -5,6 +5,7 @@ import yaml
 from Project.Filter import Filter
 from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
 from Utils.Utils import set_item_data
+from SoftwareProperties.Config import Config
 from datetime import datetime
 
 class Project:
@@ -17,6 +18,18 @@ class Project:
         else:
             self.isTempProject = False
             self.folder = project_root_folder
+
+        # Checks that the projet is not already opened
+        config = Config()
+        opened_projects = config.get_opened_projects()
+        if self.folder not in opened_projects:
+            opened_projects.append(self.folder)
+            print(opened_projects)
+            config.set_opened_projects(opened_projects)
+        else:
+            raise IOError(
+                "The project at " + str(self.folder) + " is already opened in another instance of the software.")
+
         self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
         if new_project:
 

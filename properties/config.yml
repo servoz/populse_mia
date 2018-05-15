@@ -1,17 +1,13 @@
 auto_save: 'no'
 background_color: ''
 chain_cursors: 'yes'
-default_tags:
-- AcquisitionDate
-- PatientName
-- SequenceName
-- BandWidth
 name: MIA2
 nb_slices_max: '10'
+opened_projects: []
 paths:
   data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
   modules: modules
   projects: ..\data
 show_all_slices: 'no'
 text_color: ''
-thumbnail_tag: SequenceName
+thumbnail_tag: Endianness
