@@ -52,10 +52,11 @@ class PipelineEditor(PipelineDevelopperView):
         for name, instance in sorted(list(pkg.__dict__.items())):
             if name == process_name:
                 try:
-                    if process_name == "Populse_Filter":
+                    process = get_process_instance(instance)
+                    """if process_name == "Populse_Filter":
                         process = get_process_instance(instance(self.project, []))
                     else:
-                        process = get_process_instance(instance)
+                        process = get_process_instance(instance)"""
                 except Exception as e:
                     print(e)
                     return
@@ -81,10 +82,12 @@ class PipelineEditor(PipelineDevelopperView):
             while node_name in pipeline.nodes and i < 100:
                 i += 1
                 node_name = class_name.lower() + str(i)
-            if class_name == "Populse_Filter":
+
+            process_to_use = class_process()
+            """if class_name == "Populse_Filter":
                 process_to_use = class_process(self.project, [])
             else:
-                process_to_use = class_process()
+                process_to_use = class_process()"""
 
         else:
             process_to_use = class_process

@@ -91,6 +91,7 @@ class NodeController(QWidget):
                 h_box.addWidget(label_input)
                 h_box.addWidget(self.line_edit_input[idx])
 
+                # Adding the "Browse" push button (has to be remove after)
                 if trait_type[0] in ['File', 'ImageFileSPM', 'List_ImageFileSPM']:
                     # If the trait is a file, adding a 'Browse' button
                     push_button = QPushButton('Browse')
@@ -98,14 +99,20 @@ class NodeController(QWidget):
                                                         name, pipeline, type(value)))
                     h_box.addWidget(push_button)
 
-                if process.name == "Populse_Filter":
-                    if hasattr(trait, 'optional'):
-                        parameters = (idx, pipeline, type(value))
-                        if not trait.optional:
-                            push_button = QPushButton('Filter')
-                            push_button.clicked.connect(partial(self.display_filter, self.node_name, name,
-                                                                parameters, process))
-                            h_box.addWidget(push_button)
+                # Adding the "Filter" push button
+                if hasattr(trait, 'optional'):
+                    parameters = (idx, pipeline, type(value))
+                    if not trait.optional:
+                        push_button = QPushButton('Filter')
+                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
+                        h_box.addWidget(push_button)
+                    else:
+                        if hasattr(trait, 'mandatory'):
+                            if trait.mandatory:
+                                push_button = QPushButton('Filter')
+                                push_button.clicked.connect(
+                                    partial(self.display_filter, self.node_name, name, parameters))
+                                h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
 
@@ -251,7 +258,7 @@ class NodeController(QWidget):
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def display_filter(self, node_name, plug_name, parameters, process):
-        pop_up = PlugFilter(self.project, process.input, process, node_name, plug_name)
+        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
@@ -269,10 +276,10 @@ class NodeController(QWidget):
         else:
             res = []
 
-        #self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
+        self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
 
-        # Changing the output of the filter process
-        self.update_plug_value(index, "out", "output", pipeline, value_type, res)
+        """# Changing the output of the filter process
+        self.update_plug_value(index, "out", "output", pipeline, value_type, res)"""
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
@@ -365,7 +372,7 @@ class PlugFilter(QWidget):
         self.advanced_search.apply_filter(filter)"""
 
         self.set_plug_value()
-        self.set_filter_to_process()
+        #self.set_filter_to_process()
         self.save_filter()
         self.close()
 
