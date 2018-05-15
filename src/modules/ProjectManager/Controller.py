@@ -80,7 +80,9 @@ def read_log(project):
 
             scans_added.append(file_database_path) # Scan added to history
 
-            project.database.add_path(file_database_path)
+            path_row = project.database.get_path(file_database_path)
+            if path_row is None:
+                project.database.add_path(file_database_path)
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
@@ -182,7 +184,9 @@ def read_log(project):
     project.database.add_tags(tags_added)
 
     for value in values_added:
+        project.database.remove_value(value[0], value[1]) # Potential value removed to update it
         project.database.new_value(value[0], value[1], value[2], value[3], False)
+
     project.database.session.flush()
 
     # For history
