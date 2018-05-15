@@ -3,7 +3,8 @@ background_color: ''
 chain_cursors: 'yes'
 name: MIA2
 nb_slices_max: '10'
-opened_projects: []
+opened_projects:
+- ../../../../../tmp/tmpi4u4g94q
 paths:
   data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
   modules: modules

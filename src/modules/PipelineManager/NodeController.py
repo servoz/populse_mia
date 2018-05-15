@@ -240,6 +240,7 @@ class NodeController(QWidget):
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
         pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+        pipeline.update_nodes_and_plugs_activation()
 
         if in_or_out == 'in':
             self.line_edit_input[index].setText(str(new_value))
@@ -250,8 +251,7 @@ class NodeController(QWidget):
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def display_filter(self, node_name, plug_name, parameters, process):
-
-        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name)
+        pop_up = PlugFilter(self.project, process.input, process, node_name, plug_name)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
@@ -269,7 +269,10 @@ class NodeController(QWidget):
         else:
             res = []
 
-        self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
+        #self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
+
+        # Changing the output of the filter process
+        self.update_plug_value(index, "out", "output", pipeline, value_type, res)
 
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
         """ Method that is called to open a browser to select file(s) """
@@ -311,7 +314,19 @@ class PlugFilter(QWidget):
         super(PlugFilter, self).__init__(parent)
 
         self.project = project
-        self.scans_list = scans_list
+
+        if scans_list:
+            scans_list_copy = []
+            for scan in scans_list:
+                scan_no_pfolder = scan.replace(self.project.folder, "")
+                if scan_no_pfolder[0] in ["\\", "/"]:
+                    scan_no_pfolder = scan_no_pfolder[1:]
+                scans_list_copy.append(scan_no_pfolder)
+
+            self.scans_list = scans_list_copy
+        else:
+            self.scans_list = self.project.database.get_paths_names()
+
         self.process = process
         filter_to_apply = self.project.currentFilter
 
@@ -363,7 +378,6 @@ class PlugFilter(QWidget):
 
         for i in range(len(path_names)):
             path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))
-            print("PATH NAMES: ", path_names)
         self.plug_value_changed.emit(path_names)
 
     def set_filter_to_process(self):
