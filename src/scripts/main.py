@@ -9,6 +9,7 @@ from Project.Project import Project
 from SoftwareProperties.Config import Config
 
 if __name__ == '__main__':
+
     # Working from the scripts directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
@@ -19,4 +20,16 @@ if __name__ == '__main__':
     imageViewer = Main_Window(project)
     imageViewer.show()
 
-    sys.exit(app.exec_())
+    sys._excepthook = sys.excepthook
+
+    def exception_hook(exctype, value, traceback):
+        config = Config()
+        opened_projects = config.get_opened_projects()
+        opened_projects.remove(imageViewer.project.folder)
+        config.set_opened_projects(opened_projects)
+        imageViewer.remove_raw_files_useless()
+        sys._excepthook(exctype, value, traceback)
+        sys.exit(1)
+
+    sys.excepthook = exception_hook
+    app.exec()
