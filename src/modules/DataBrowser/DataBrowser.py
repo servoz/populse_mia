@@ -761,7 +761,6 @@ class TableDataBrowser(QTableWidget):
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
         tags.remove("Checksum")
-        tags.remove("Type")
 
         tags = sorted(tags)
 
@@ -1415,7 +1414,6 @@ class TableDataBrowser(QTableWidget):
         tags = self.project.database.get_tags_names()
 
         tags.remove("Checksum")
-        tags.remove("Type")
 
         tags = sorted(tags)
 

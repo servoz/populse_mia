@@ -204,6 +204,13 @@ class Main_Window(QMainWindow):
 
         if can_exit:
             self.project.database.unsave_modifications()
+
+            # Project removed from the opened projects list
+            config = Config()
+            opened_projects = config.get_opened_projects()
+            opened_projects.remove(self.project.folder)
+            config.set_opened_projects(opened_projects)
+
             self.remove_raw_files_useless() # To remove the useless raw files
             event.accept()
         else:
@@ -448,7 +455,21 @@ class Main_Window(QMainWindow):
             if can_switch:
 
                 # We check for invalid scans in the project
-                tempDatabase = Project(path, False)
+
+                try:
+                    tempDatabase = Project(path, False)
+                except IOError:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText(
+                        "Project already opened")
+                    msg.setInformativeText(
+                        "The project at " + str(path) + " is already opened in another instance of the software.")
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+                    return False
                 problem_list = controller.verify_scans(tempDatabase, path)
 
                 # Message if invalid files
@@ -471,6 +492,12 @@ class Main_Window(QMainWindow):
                 else:
                     self.project.database.unsave_modifications()
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
+
+                    # Project removed from the opened projects list
+                    config = Config()
+                    opened_projects = config.get_opened_projects()
+                    opened_projects.remove(self.project.folder)
+                    config.set_opened_projects(opened_projects)
 
                     self.project = tempDatabase  # New Database
 
