@@ -264,8 +264,15 @@ class PipelineManagerTab(QWidget):
                                 pass
                             else:
                                 # TODO: ADD THE PATH
-
-                                pass
+                                element = element.replace(self.project.folder, "")
+                                if element[0] in ["\\", "/"]:
+                                    element = element[1:]
+                                print("ELEMENT: ", element)
+                                if self.project.database.get_path(element):
+                                    # TODO: RAISE EXCEPTION
+                                    print("PATH ", element, " ALREADY IN DATABASE")
+                                else:
+                                    self.project.database.add_path(element)
                     try:
                         open(plug_value, 'a').close()
                     except:
@@ -273,6 +280,15 @@ class PipelineManagerTab(QWidget):
                         pass
                     else:
                         #TODO: ADD THE PATH
+                        plug_value = plug_value.replace(self.project.folder, "")
+                        if plug_value[0] in ["\\", "/"]:
+                            plug_value = plug_value[1:]
+                        print("PLUG_VALUE: ", plug_value)
+                        if self.project.database.get_path(plug_value):
+                            # TODO: RAISE EXCEPTION
+                            print("PATH ", plug_value, " ALREADY IN DATABASE")
+                        else:
+                            self.project.database.add_path(plug_value)
                         pass
                     pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
