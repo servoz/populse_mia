@@ -28,6 +28,10 @@ def read_log(project):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
+    #import pprofile
+    #prof = pprofile.Profile()
+    #with prof():
+
     begin = time()
 
     raw_data_folder = os.path.relpath(os.path.join(project.folder, 'data', 'raw_data'))
@@ -178,7 +182,8 @@ def read_log(project):
     project.database.add_tags(tags_added)
 
     for value in values_added:
-        project.database.new_value(value[0], value[1], value[2], value[3])
+        project.database.new_value(value[0], value[1], value[2], value[3], False)
+    project.database.session.flush()
 
     # For history
     historyMaker.append(scans_added)
@@ -189,6 +194,8 @@ def read_log(project):
     print("read_log time: " + str(time() - begin))
 
     ui_progressbar.close()
+
+    #prof.print_stats()
 
 def verify_scans(project, path):
     # Returning the files that are problematic

@@ -13,7 +13,7 @@ from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Select_Filter import Ui_Select_Filter
 from ProjectManager.Controller import save_project
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
@@ -42,7 +42,6 @@ class NumberFormatDelegate(QItemDelegate):
         editor.setMaximum(10 ** 10)
         editor.setDecimals(decimals_number)
         return editor
-
 
 class DateTimeFormatDelegate(QItemDelegate):
     def __init__(self, parent=None):

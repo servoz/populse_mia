@@ -84,7 +84,7 @@ class Ui_Visualized_Tags(QWidget):
                 else:
                     # Tag visible: right side
                     self.list_widget_selected_tags.addItem(item)
-            item.setText(tag)
+                item.setText(tag)
         self.list_widget_tags.sortItems()
 
     def search_str(self, database, str_search):

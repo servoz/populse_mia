@@ -24,7 +24,6 @@ class Project:
         opened_projects = config.get_opened_projects()
         if self.folder not in opened_projects:
             opened_projects.append(self.folder)
-            print(opened_projects)
             config.set_opened_projects(opened_projects)
         else:
             raise IOError(
