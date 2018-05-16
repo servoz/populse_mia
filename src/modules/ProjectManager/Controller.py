@@ -85,7 +85,7 @@ def read_log(project):
                 project.database.add_path(file_database_path)
 
             # For each tag in each scan
-            for tag in getJsonTagsFromFile(file_name, path_name): # For each tag of the scan
+            for tag in getJsonTagsFromFile(file_name, path_name):
 
                 # We do the tag only if it's not in the tags to remove
                 if tag[0] not in tags_to_remove:
@@ -184,7 +184,7 @@ def read_log(project):
     project.database.add_tags(tags_added)
 
     for value in values_added:
-        project.database.remove_value(value[0], value[1]) # Potential value removed to update it
+        project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
         project.database.new_value(value[0], value[1], value[2], value[3], False)
 
     project.database.session.flush()

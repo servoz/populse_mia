@@ -273,9 +273,11 @@ class AdvancedSearch(QWidget):
                         conditions.append(child.currentText())
                     elif childName == 'field':
                         if child.currentText() != "All visualized tags":
-                            fields.append(child.currentText())
+                            fields.append([child.currentText()])
                         else:
-                            fields.append(self.project.getVisibles())
+                            tags = self.project.getVisibles()
+                            tags.append("FileName")
+                            fields.append(tags)
                     elif childName == 'value':
                         values.append(child.displayText())
                     elif childName == 'not':
@@ -289,8 +291,8 @@ class AdvancedSearch(QWidget):
         for row in range(0, len(values)):
             value = values[row]
             field = fields[row]
-            if not isinstance(field, list) and value != "" and field != "FileName":
-                tag_type = self.project.database.get_tag(field).type
+            if len(field) == 1 and field[0] != "FileName" and value != "":
+                tag_type = self.project.database.get_tag(field[0]).type
                 database_value = table_to_database(value, tag_type)
                 values[row] = database_value
 
@@ -318,12 +320,12 @@ class AdvancedSearch(QWidget):
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
             row[1].setCurrentText(nots[i])
-            if isinstance(fields[i], list):
+            if len(fields[i]) > 1:
                 row[2].setCurrentText("All visualized tags")
             else:
-                row[2].setCurrentText(fields[i])
+                row[2].setCurrentText(fields[i][0])
             row[3].setCurrentText(conditions[i])
-            row[4].setText(values[i])
+            row[4].setText(str(values[i]))
             i += 1
 
         old_rows = self.dataBrowser.table_data.scans_to_visualize

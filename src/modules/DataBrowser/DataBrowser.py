@@ -222,6 +222,7 @@ class DataBrowser(QWidget):
 
             # We open the advanced search
             self.frame_advanced_search.setHidden(False)
+            self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.advanced_search.show_search()
             self.advanced_search.apply_filter(filterToApply)
 
