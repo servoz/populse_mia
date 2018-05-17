@@ -112,8 +112,8 @@ class PipelineManagerTab(QWidget):
         if len(self.diagramView.undos) > 0:
             to_undo = self.diagramView.undos.pop()
             #self.diagramView.redos.append(to_undo)  # We pop the undo action in the redo stack
-            print("REDOOO")
-            print(self.diagramView.redos)
+            print("UNDOOO")
+            print(self.diagramView.undos)
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
             if action == "add_process":
@@ -121,6 +121,7 @@ class PipelineManagerTab(QWidget):
                 self.diagramView.del_node(node_name, from_undo=True)
                 #self.diagramView.undos.pop()
             elif action == "delete_process":
+                print(to_undo)
                 node_name = to_undo[1]
                 class_name = to_undo[2]
                 self.diagramView.add_process(class_name, node_name, from_undo=True)
@@ -144,6 +145,7 @@ class PipelineManagerTab(QWidget):
                 #self.diagramView.undos.pop()
             elif action == "add_link":
                 link = to_undo[1]
+                print(link)
                 self.diagramView._del_link(link, from_undo=True)
                 #self.diagramView.undos.pop()
             elif action == "delete_link":
@@ -154,13 +156,13 @@ class PipelineManagerTab(QWidget):
                 self.diagramView.add_link(source, dest, active, weak, from_undo=True)
                 #self.diagramView.undos.pop()
             # TODO: ADD "MOVE PROCESS ?"
+            self.diagramView.scene.pipeline.update_nodes_and_plugs_activation()
         print("REDOS IN UNDO")
         print(self.diagramView.redos)
         print("UNDOS IN UNDO")
         print(self.diagramView.undos)
 
     def redo(self):
-        #TODO
         print("REDO IN REDO")
         print(self.diagramView.redos)
         print("UNDO IN REDO")
@@ -169,50 +171,39 @@ class PipelineManagerTab(QWidget):
         # We can redo if we have an action to make again
         if len(self.diagramView.redos) > 0:
             to_redo = self.diagramView.redos.pop()
-            #self.diagramView.undos.append(to_redo)  # We pop the redo action in the undo stack
+            # self.diagramView.undos.append(to_redo)  # We pop the redo action in the undo stack
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
             if action == "delete_process":
-                print(to_redo)
                 node_name = to_redo[1]
                 class_process = to_redo[2]
-                print(class_process)
-                print(node_name)
                 self.diagramView.add_process(class_process, node_name, from_redo=True)
-                #self.diagramView.undos.pop()
             elif action == "add_process":
                 node_name = to_redo[1]
                 self.diagramView.del_node(node_name, from_redo=True)
-                #self.diagramView.undos.pop()
-                #pass
             elif action == "export_plugs":
                 pass
             elif action == "update_node_name":
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.diagramView.update_node_name(node, old_node_name, new_node_name, from_redo=True)
-                #self.diagramView.undos.pop()
-                #pass
+                self.diagramView.update_node_name(node, new_node_name, old_node_name, from_redo=True)
             elif action == "update_plug_value":
                 node_name = to_redo[1]
+                new_value = to_redo[2]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
-                new_value = to_redo[5]
                 self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
-                #self.diagramView.undos.pop()
             elif action == "add_link":
+                link = to_redo[1]
+                self.diagramView._del_link(link, from_redo=True)
+            elif action == "delete_link":
                 source = to_redo[1]
                 dest = to_redo[2]
                 active = to_redo[3]
                 weak = to_redo[4]
                 self.diagramView.add_link(source, dest, active, weak, from_redo=True)
-                #self.diagramView.undos.pop()
-            elif action == "delete_link":
-                print("to_redo: ", to_redo)
-                link = to_redo[1]
-                self.diagramView._del_link(link, from_redo=True)
-                #self.diagramView.undos.pop()
+            self.diagramView.scene.pipeline.update_nodes_and_plugs_activation()
             # TODO: ADD "MOVE PROCESS ?"
 
     def update_project(self, project):

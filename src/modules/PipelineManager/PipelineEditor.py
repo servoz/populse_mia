@@ -42,7 +42,14 @@ class PipelineEditor(PipelineDevelopperView):
             self.click_pos = QtGui.QCursor.pos()
 
             path = bytes(event.mimeData().data('component/name'))
+            """import pprofile
+            prof = pprofile.Profile()
+            with prof():"""
             self.find_process(path.decode('utf8'))
+
+            """with open('/home/david/MIA2/profile.txt', 'w') as f:
+                sys.stdout = f
+                prof.print_stats()"""
 
     def find_process(self, path):
         package_name, process_name = os.path.splitext(path)
@@ -139,18 +146,35 @@ class PipelineEditor(PipelineDevelopperView):
             history_maker.append(node.process)
         else:
             history_maker.append(node_name)
-
+            history_maker.append(node.process)
 
         self.update_history(history_maker, from_undo, from_redo)
         # TODO: ADD ALL THE PLUG CONNEXION AND VALUES
 
+    def _release_grab_link(self, event, ret=False):
+        print("In _realease_grab_link")
+        link = PipelineDevelopperView._release_grab_link(self, event, ret=True)
+        print(link)
+
+        # For history
+        history_maker = []
+        history_maker.append("add_link")
+        history_maker.append(link)
+
+        self.update_history(history_maker, from_undo=False, from_redo=False)
+
     def add_link(self, source, dest, active, weak, from_undo=False, from_redo=False):
+        print("In add_link")
         self.scene.add_link(source, dest, active, weak)
 
         # Writing a string to represent the link
         source_parameters = ".".join(source)
         dest_parameters = ".".join(dest)
         link = "->".join((source_parameters, dest_parameters))
+        print(link)
+
+        self.scene.pipeline.add_link(link)
+        self.scene.update_pipeline()
 
         # For history
         history_maker = []
@@ -162,12 +186,20 @@ class PipelineEditor(PipelineDevelopperView):
     def _del_link(self, link=None, from_undo=False, from_redo=False):
         if not link:
             link = self._current_link
+            print("LINK1: ", link)
+        else:
+            self._current_link = link
+            print("LINK2: ", link)
 
         print("LINK: ", link)
 
         (source_node_name, source_plug_name, source_node,
          source_plug, dest_node_name, dest_plug_name, dest_node,
          dest_plug) = self.scene.pipeline.parse_link(link)
+
+        print("SOURCE PLUG: ", source_plug)
+        print("SOURCE NODE NAME: ", source_node_name)
+        print("SOURCE PLUG.LINKS TO: ", source_plug.links_to)
 
         (dest_node_name, dest_parameter, dest_node, dest_plug,
          weak_link) = list(source_plug.links_to)[0]
@@ -237,7 +269,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         # For history
         history_maker = []
-        history_maker.append("node_name")
+        history_maker.append("update_node_name")
         history_maker.append(pipeline.nodes[new_node_name])
         history_maker.append(new_node_name)
         history_maker.append(old_node_name)
@@ -250,7 +282,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         # For history
         history_maker = []
-        history_maker.append("plug_value")
+        history_maker.append("update_plug_value")
         history_maker.append(node_name)
         history_maker.append(old_value)
         history_maker.append(plug_name)
