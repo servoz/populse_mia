@@ -4,6 +4,7 @@ from PyQt5.QtCore import QObjectCleanupHandler
 import os
 from Utils.Tools import ClickableLabel
 from Utils.Utils import table_to_database, check_value_type
+from populse_db.database_model import LIST_TYPES
 
 class AdvancedSearch(QWidget):
 
@@ -293,8 +294,8 @@ class AdvancedSearch(QWidget):
             field = fields[row]
             if len(field) == 1 and field[0] != "FileName" and value != "":
                 tag_type = self.project.database.get_tag(field[0]).type
-                if check_value_type(value, tag_type, True):
-                    database_value = table_to_database(value, tag_type.replace("list_", ""))
+                if check_value_type(value, tag_type, True) and tag_type not in LIST_TYPES:
+                    database_value = table_to_database(value, tag_type)
                     values[row] = database_value
 
         return fields, conditions, values, links, nots

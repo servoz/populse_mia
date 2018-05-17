@@ -26,7 +26,7 @@ from functools import partial
 
 from populse_db.database_model import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_BUILTIN, TAG_TYPE_LIST_FLOAT, \
     TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, \
-    TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME
+    TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME, LIST_TYPES
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
 
@@ -1521,7 +1521,7 @@ class TableDataBrowser(QTableWidget):
                 if not tag_type in self.types:
                     self.types.append(tag_type)
 
-                if self.project.database.is_tag_list(tag_name):
+                if tag_type in LIST_TYPES:
 
                     database_value = self.project.database.get_current_value(scan_name, tag_name)
                     self.old_database_values.append(database_value)
