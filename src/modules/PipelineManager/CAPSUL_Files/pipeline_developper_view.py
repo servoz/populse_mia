@@ -2968,7 +2968,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         pos = self.mapToScene(event.pos())
         self._temp_link.update(self.mapToScene(self._grabpos), pos)
 
-    def _release_grab_link(self, event):
+    def _release_grab_link(self, event, ret=False):
         max_square_dist = 100.
         self._grab_link = False
         # delete the temp link
@@ -3007,7 +3007,11 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 dst = plug[1]
             self.scene.pipeline.add_link('%s->%s' % (src, dst))
             self.scene.update_pipeline()
+            if ret:
+                self._grabbed_plug = None
+                return '%s->%s' % (src, dst)
         self._grabbed_plug = None
+
 
     def _link_clicked(self, src_node, src_plug, dst_node, dst_plug):
         src_node = str(src_node)

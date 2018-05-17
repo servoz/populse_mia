@@ -83,8 +83,15 @@ class ProcessLibraryWidget(QWidget):
         list_path = list(reversed(list_path))
         package_name = '.'.join(list_path)
 
+        print("PACKAGE NAME: ", package_name)
+        import time
+        t = time.time()
         __import__(package_name)
+        t2 = time.time()
+        print("IMPORT TIME: ", t2-t)
         pkg = sys.modules[package_name]
+        t = time.time()
+        print("PACKAGE TIME: ", t - t2)
 
         for k, v in sorted(list(pkg.__dict__.items())):
             if k == process_name:
@@ -138,7 +145,10 @@ class ProcessLibraryWidget(QWidget):
 
         for path in self.paths:
             # Adding the module path to the system path
-            sys.path.append(path)
+            print("ADDING PATH TO SYS: ", path)
+            sys.path.insert(0, os.path.abspath(path))
+            #sys.path.append(path)
+            print("SYS.PATH", sys.path)
 
     def save_config(self):
         self.process_config["Packages"] = self.packages
