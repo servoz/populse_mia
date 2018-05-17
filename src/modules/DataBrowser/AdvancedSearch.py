@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QObjectCleanupHandler
 import os
 from Utils.Tools import ClickableLabel
-from Utils.Utils import table_to_database
+from Utils.Utils import table_to_database, check_value_type
 
 class AdvancedSearch(QWidget):
 
@@ -292,9 +292,10 @@ class AdvancedSearch(QWidget):
             value = values[row]
             field = fields[row]
             if len(field) == 1 and field[0] != "FileName" and value != "":
-                tag_type = self.project.database.get_tag(field[0]).type.replace("list_", "")
-                database_value = table_to_database(value, tag_type)
-                values[row] = database_value
+                tag_type = self.project.database.get_tag(field[0]).type
+                if check_value_type(value, tag_type, True):
+                    database_value = table_to_database(value, tag_type.replace("list_", ""))
+                    values[row] = database_value
 
         return fields, conditions, values, links, nots
 
