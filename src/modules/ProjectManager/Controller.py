@@ -180,10 +180,12 @@ def read_log(project):
     project.database.add_tags(tags_added)
 
     current_paths = project.database.get_paths_names()
+
     for scan in scans_added:
         if scan not in current_paths:
             project.database.add_path(scan, False)
     project.database.session.flush()
+
     for value in values_added:
         if value[0] in current_paths:
             project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
