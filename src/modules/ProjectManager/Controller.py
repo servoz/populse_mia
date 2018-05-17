@@ -183,8 +183,10 @@ def read_log(project):
     for scan in scans_added:
         if scan not in current_paths:
             project.database.add_path(scan, False)
+    project.database.session.flush()
     for value in values_added:
-        project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
+        if value[0] in current_paths:
+            project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
         project.database.new_value(value[0], value[1], value[2], value[3], False)
 
     project.database.session.flush()
