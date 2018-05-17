@@ -292,7 +292,7 @@ class AdvancedSearch(QWidget):
             value = values[row]
             field = fields[row]
             if len(field) == 1 and field[0] != "FileName" and value != "":
-                tag_type = self.project.database.get_tag(field[0]).type
+                tag_type = self.project.database.get_tag(field[0]).type.replace("list_", "")
                 database_value = table_to_database(value, tag_type)
                 values[row] = database_value
 
