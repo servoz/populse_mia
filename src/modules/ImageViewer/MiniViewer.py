@@ -194,7 +194,7 @@ class MiniViewer(QWidget):
                     im_Qt = QImage(self.im_2D[idx].data, w, h, QImage.Format_Indexed8)
                     pixm = QPixmap.fromImage(im_Qt)
 
-                    file_path_base_name = os.path.basename(self.file_paths[idx])[:-4 or None]
+                    file_path_base_name = os.path.basename(self.file_paths[idx])
 
                     # imageLabel is the label where the image is displayed (as a pixmap)
                     self.imageLabel.insert(idx, QLabel(self))
@@ -206,6 +206,7 @@ class MiniViewer(QWidget):
                     self.label_description[idx].clicked.connect(self.openTagsPopUp)
 
                     # Looking for the tag value to display as a legend of the thumbnail
+                    file_path_base_name = os.path.relpath(self.file_paths[idx], self.project.folder)
                     self.setThumbnail(file_path_base_name, idx)
 
                     # Layout that corresponds to the third dimension
@@ -256,7 +257,7 @@ class MiniViewer(QWidget):
 
                 # idx represents the index of the selected image
                 for idx in range(len(self.file_paths)):
-                    file_path_base_name = os.path.basename(self.file_paths[idx])[:-4 or None]
+                    file_path_base_name = os.path.relpath(self.file_paths[idx], self.project.folder)
 
                     self.label_description.insert(idx, ClickableLabel())
                     self.label_description[idx].setFont(font)
@@ -370,9 +371,9 @@ class MiniViewer(QWidget):
 
     def setThumbnail(self, file_path_base_name, idx):
         # Looking for the tag value to display as a legend of the thumbnail
-        for scan in self.project.database.get_paths():
-            if scan.name == file_path_base_name:
-                value = self.project.database.get_current_value(scan.name, self.config.getThumbnailTag())
+        for scan in self.project.database.get_paths_names():
+            if scan == file_path_base_name:
+                value = self.project.database.get_current_value(scan, self.config.getThumbnailTag())
                 if value is not None:
                     self.label_description[idx].setText \
                         (str(value)[:self.nb_char_max])

@@ -13,15 +13,16 @@ class Ui_Select_Tag(Ui_Tag_Selection):
         self.config = Config()
 
         # Filling the list and checking the thumbnail tag
-        for tag in self.project.database.get_tags():
-            item = QtWidgets.QListWidgetItem()
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            if tag.name == self.config.getThumbnailTag():
-                item.setCheckState(QtCore.Qt.Checked)
-            else:
-                item.setCheckState(QtCore.Qt.Unchecked)
-            self.list_widget_tags.addItem(item)
-            item.setText(tag.name)
+        for tag in self.project.database.get_tags_names():
+            if tag != "Checksum":
+                item = QtWidgets.QListWidgetItem()
+                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+                if tag == self.config.getThumbnailTag():
+                    item.setCheckState(QtCore.Qt.Checked)
+                else:
+                    item.setCheckState(QtCore.Qt.Unchecked)
+                self.list_widget_tags.addItem(item)
+                item.setText(tag)
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
