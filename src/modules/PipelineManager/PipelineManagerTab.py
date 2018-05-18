@@ -242,49 +242,71 @@ class PipelineManagerTab(QWidget):
 
     def initPipeline(self):
         """ Method that generates the output names of each pipeline node. """
+
+        def add_plug_value_to_database(p_value):
+            """
+            Adds the plug value to the database.
+            :param p_value: plug value, a file name or a list of file names
+            :return:
+            """
+            try:
+                open(p_value, 'a').close()
+            except IOError:
+                raise IOError('Could not open {0} file.'.format(p_value))
+            else:
+                # Deleting the project's folder in the file name so it can
+                # fit to the database's syntax
+                p_value = p_value.replace(self.project.folder, "")
+                if p_value[0] in ["\\", "/"]:
+                    p_value = p_value[1:]
+
+                # If the file name is already in the database, no exception is raised
+                # but the user is warned
+                if self.project.database.get_path(p_value):
+                    print("Path {0} already in database.".format(p_value))
+                else:
+                    self.project.database.add_path(p_value)
+
         pipeline_scene = self.diagramView.scene
-        for node_name, gnode in pipeline_scene.gnodes.items():
+
+        # nodes_to_check contains the node names that need to be update
+        nodes_to_check = []
+
+        # This list is initialized with all node names
+        for node_name in pipeline_scene.gnodes.keys():
+            nodes_to_check.append(node_name)
+
+        while nodes_to_check:
+            node_name = nodes_to_check.pop()
+
+            # Inputs/Outputs nodes will be automatically updated with
+            # the method update_nodes_and_plugs_activation of the pipeline object
             if node_name in ['', 'inputs', 'outputs']:
                 continue
+
+            gnode = pipeline_scene.gnodes[node_name]
             process = gnode.process
+
+            # Getting the list of the outputs of the node according to its inputs
             process_outputs = process.list_outputs()
+
             if process_outputs:
                 for plug_name, plug_value in process_outputs.items():
                     if type(plug_value) is list:
                         for element in plug_value:
-                            try:
-                                open(element, 'a').close()
-                            except:
-                                # TODO: RAISE EXCEPTION
-                                pass
-                            else:
-                                # TODO: ADD THE PATH
-                                element = element.replace(self.project.folder, "")
-                                if element[0] in ["\\", "/"]:
-                                    element = element[1:]
-                                print("ELEMENT: ", element)
-                                if self.project.database.get_path(element):
-                                    # TODO: RAISE EXCEPTION
-                                    print("PATH ", element, " ALREADY IN DATABASE")
-                                else:
-                                    self.project.database.add_path(element)
-                    try:
-                        open(plug_value, 'a').close()
-                    except:
-                        #TODO: RAISE EXCEPTION
-                        pass
+                            add_plug_value_to_database(element)
                     else:
-                        #TODO: ADD THE PATH
-                        plug_value = plug_value.replace(self.project.folder, "")
-                        if plug_value[0] in ["\\", "/"]:
-                            plug_value = plug_value[1:]
-                        print("PLUG_VALUE: ", plug_value)
-                        if self.project.database.get_path(plug_value):
-                            # TODO: RAISE EXCEPTION
-                            print("PATH ", plug_value, " ALREADY IN DATABASE")
-                        else:
-                            self.project.database.add_path(plug_value)
-                        pass
+                        add_plug_value_to_database(plug_value)
+
+                    node = pipeline_scene.pipeline.nodes[node_name]
+                    list_info_link = list(node.plugs[plug_name].links_to)
+
+                    # If the output is connected to another node,
+                    # the latter is added to nodes_to_check
+                    for info_link in list_info_link:
+                        dest_node_name = info_link[0]
+                        nodes_to_check.append(dest_node_name)
+
                     pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
@@ -295,7 +317,6 @@ class PipelineManagerTab(QWidget):
 
         # Modifying the study_config to use SPM 12 Standalone
         setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
-        print(study_config.spm_exec)
         setattr(study_config, 'spm_standalone', True)
         setattr(study_config, 'spm_directory', '/home/david/spm12')
         setattr(study_config, 'use_spm', True)
@@ -316,11 +337,6 @@ class PipelineManagerTab(QWidget):
 
         with open('/tmp/tmp_pipeline.txt', 'r') as f:
             self.textedit.setText(f.read())"""
-
-        # TEST
-        for node_name, node in pipeline.nodes.items():
-            if node_name in ["spm_smooth1"]:
-                print("IN_FILES SPM SMOOTH: ", node.get_plug_value("in_files"))
 
         study_config.reset_process_counter()
         study_config.run(pipeline, verbose=1)
