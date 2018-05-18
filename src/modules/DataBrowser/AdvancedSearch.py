@@ -3,8 +3,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QObjectCleanupHandler
 import os
 from Utils.Tools import ClickableLabel
-from Utils.Utils import table_to_database, check_value_type
-from populse_db.database_model import LIST_TYPES
 
 class AdvancedSearch(QWidget):
 
@@ -77,6 +75,8 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("BETWEEN")
         conditionChoice.addItem("IN")
         conditionChoice.addItem("CONTAINS")
+        conditionChoice.addItem("HAS VALUE")
+        conditionChoice.addItem("HAS NO VALUE")
         # Signal to update the placeholder text of the value
         conditionChoice.currentTextChanged.connect(lambda : self.displayValueRules(conditionChoice, conditionValue))
 
@@ -110,10 +110,16 @@ class AdvancedSearch(QWidget):
         :return:
         """
         if choice.currentText() == "BETWEEN":
+            value.setDisabled(False)
             value.setPlaceholderText("Please separate the two inclusive borders of the range by a semicolon and a space")
         elif choice.currentText() == "IN":
+            value.setDisabled(False)
             value.setPlaceholderText("Please separate each list item by a semicolon and a space")
+        elif choice.currentText() == "HAS VALUE" or choice.currentText() == "HAS NO VALUE":
+            value.setDisabled(True)
+            value.setPlaceholderText("")
         else:
+            value.setDisabled(False)
             value.setPlaceholderText("")
 
     def refresh_search(self):
