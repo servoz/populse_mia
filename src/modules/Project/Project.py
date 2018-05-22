@@ -29,7 +29,7 @@ class Project:
             raise IOError(
                 "The project at " + str(self.folder) + " is already opened in another instance of the software.")
 
-        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), True)
+        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), True, True)
         if new_project:
 
             if not os.path.exists(self.folder):
