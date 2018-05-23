@@ -7,7 +7,7 @@ import os
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog
+    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox
 
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
@@ -246,7 +246,15 @@ class NodeController(QWidget):
             node_name = self.node_name
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
-        pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+        try:
+            pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+        except:
+            # TODO RAISE EXCEPTION
+            msg = QMessageBox()
+            msg.setText("The value of {0} has to be of type {1}.".format(plug_name, str(value_type)))
+            #msg.setTitle("Type warning")
+            msg.setIcon(QMessageBox.Warning)
+            msg.exec_()
         pipeline.update_nodes_and_plugs_activation()
 
         if in_or_out == 'in':
@@ -397,3 +405,4 @@ class PlugFilter(QWidget):
     def save_filter(self):
         """ Saving the filter and setting to the plug. Is it necessary? """
         pass
+

@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
+from traits.trait_errors import TraitError
 
 
 from capsul.api import get_process_instance, StudyConfig
@@ -292,13 +293,16 @@ class PipelineManagerTab(QWidget):
 
             if process_outputs:
                 for plug_name, plug_value in process_outputs.items():
+                    node = pipeline_scene.pipeline.nodes[node_name]
+                    if plug_name not in node.plugs.keys():
+                        continue
+
                     if type(plug_value) is list:
                         for element in plug_value:
                             add_plug_value_to_database(element)
                     else:
                         add_plug_value_to_database(plug_value)
 
-                    node = pipeline_scene.pipeline.nodes[node_name]
                     list_info_link = list(node.plugs[plug_name].links_to)
 
                     # If the output is connected to another node,
@@ -307,7 +311,15 @@ class PipelineManagerTab(QWidget):
                         dest_node_name = info_link[0]
                         nodes_to_check.append(dest_node_name)
 
-                    pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
+                    try:
+                        pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
+                    except TraitError:
+                        if type(plug_value) is list and len(plug_value) == 1:
+                            try:
+                                pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
+                            except TraitError:
+                                pass
+
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
     def runPipeline(self):
