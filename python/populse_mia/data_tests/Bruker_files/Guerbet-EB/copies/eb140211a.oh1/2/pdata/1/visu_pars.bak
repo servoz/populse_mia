@@ -1,0 +1,142 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 08:07:31 2017 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh1/2/pdata/1/visu_pars
+##$VisuVersion=1
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.3611280983.32740.1392102451.2>
+##$VisuCreator=( 65 )
+<ParaVision>
+##$VisuCreatorVersion=( 65 )
+<5.1>
+##$VisuCreationDate=( 21 )
+<08:05:07 11 Feb 2017>
+$$ @vis= VisuVersion VisuUid VisuCreator VisuCreatorVersion VisuCreationDate
+##$VisuCoreFrameCount=30
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+128 128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+$$ @vis= VisuInstance VisuCoreFrameCount VisuCoreDim VisuCoreSize
+##$VisuCoreExtent=( 2 )
+30 30
+##$VisuCoreFrameThickness=( 1 )
+0.4
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 30, 9 )
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 
+0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 
+0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 
+0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 
+0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1
+$$ @vis= VisuCoreDimDesc VisuCoreExtent VisuCoreFrameThickness VisuCoreUnits
+##$VisuCorePosition=( 30, 3 )
+-15 -15 -5.8 -15 -15 -5.4 -15 -15 -5 -15 -15 -4.6 -15 -15 -4.2 -15 -15 -3.8 
+-15 -15 -3.4 -15 -15 -3 -15 -15 -2.6 -15 -15 -2.2 -15 -15 -1.8 -15 -15 -1.4 
+-15 -15 -1 -15 -15 -0.6 -15 -15 -0.2 -15 -15 0.2 -15 -15 0.6 -15 -15 1 -15 
+-15 1.4 -15 -15 1.8 -15 -15 2.2 -15 -15 2.6 -15 -15 3 -15 -15 3.4 -15 -15 3.8 
+-15 -15 4.2 -15 -15 4.6 -15 -15 5 -15 -15 5.4 -15 -15 5.8
+##$VisuCoreDataMin=( 30 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+##$VisuCoreDataMax=( 30 )
+24821 20864 20262 17255 22911 26365 24535 29813 29498 28089 26545 25019 31619 
+27985 27075 25975 31577 28872 24970 28000 24196 23538 27209 25914 27269 25990 
+23609 22614 26050 32767
+##$VisuCoreDataOffs=( 30 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+$$ @vis= VisuCoreOrientation VisuCorePosition VisuCoreDataMin VisuCoreDataMax
+##$VisuCoreDataSlope=( 30 )
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829 6.95583977561829 6.95583977561829 
+6.95583977561829 6.95583977561829
+##$VisuCoreFrameType=MAGNITUDE_IMAGE
+##$VisuCoreWordType=_16BIT_SGN_INT
+$$ @vis= VisuCoreDataOffs VisuCoreDataSlope VisuCoreFrameType VisuCore
+##$VisuCoreByteOrder=littleEndian
+##$VisuFGOrderDescDim=1
+##$VisuFGOrderDesc=( 1 )
+(30, <FG_SLICE>, <>, 0, 2)
+$$ @vis= VisuCoreWordType VisuCoreByteOrder VisuPixel VisuFGOrderDescDim
+##$VisuGroupDepVals=( 2 )
+(<VisuCoreOrientation>, 0) (<VisuCorePosition>, 0)
+##$VisuSubjectName=( 65 )
+<Guerbet-C6-2017>
+##$VisuSubjectId=( 65 )
+<eb140211a>
+$$ @vis= VisuFGOrderDesc VisuGroupDepVals VisuFrameOrderDesc VisuSubjectName
+##$VisuSubjectBirthDate=( 9 )
+<>
+##$VisuSubjectSex=FEMALE
+##$VisuSubjectComment=( 2048 )
+<>
+$$ @vis= VisuSubjectId VisuSubjectBirthDate VisuSubjectSex VisuSubjectComment
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.3611280983.32251.1392102082.1628>
+##$VisuStudyDate=( 21 )
+<08:01:22 11 Feb 2017>
+##$VisuStudyId=( 65 )
+<Rat-K39-Tube9>
+##$VisuStudyNumber=1
+##$VisuSubjectWeight=5
+$$ @vis= VisuSubject VisuStudyUid VisuStudyDate VisuStudyId VisuStudyNumber
+##$VisuStudyReferringPhysician=( 65 )
+<>
+##$VisuStudyDescription=( 65 )
+<>
+$$ @vis= VisuSubjectWeight VisuStudyReferringPhysician VisuStudyDescription
+##$VisuSeriesNumber=131073
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<ACQ_BRUKER_PVM>
+$$ @vis= VisuStudy VisuSeriesNumber VisuSubjectPosition VisuSeriesTypeId
+##$VisuInstitution=( 65 )
+<PIRMG-GIN>
+##$VisuStation=( 65 )
+<BioSpec 47/40>
+##$VisuAcqDate=( 21 )
+<08:05:07 11 Feb 2017>
+##$VisuAcqEchoTrainLength=9
+$$ @vis= VisuSeries VisuInstitution VisuStation VisuEquipment VisuAcqDate
+##$VisuAcqSequenceName=( 40 )
+<RARE (pvm)>
+##$VisuAcqNumberOfAverages=2
+##$VisuAcqImagingFrequency=200.342210479085
+$$ @vis= VisuAcqEchoTrainLength VisuAcqSequenceName VisuAcqNumberOfAverages
+##$VisuAcqImagedNucleus=( 8 )
+<1H>
+##$VisuAcqRepetitionTime=( 1 )
+5000
+##$VisuAcqPhaseEncSteps=126
+$$ @vis= VisuAcqImagingFrequency VisuAcqImagedNucleus VisuAcqRepetitionTime
+##$VisuAcqPixelBandwidth=390.625
+##$VisuAcqFlipAngle=180
+##$VisuAcqSize=( 2 )
+128 126
+$$ @vis= VisuAcqPhaseEncSteps VisuAcqPixelBandwidth VisuAcqFlipAngle
+##$VisuAcqImageSizeAccellerated=Yes
+##$VisuAcqImagePhaseEncDir=( 30 )
+col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir 
+col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir 
+col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir 
+col_dir col_dir col_dir
+##$VisuAcqEchoTime=( 1 )
+75
+$$ @vis= VisuAcqSize VisuAcqImageSizeAccellerated VisuAcqImagePhaseEncDir
+##$VisuAcquisitionProtocol=( 65 )
+<G1_Guerbet_Anat>
+##$VisuAcqScanTime=140000
+$$ @vis= VisuAcqEchoTime VisuAcquisitionProtocol VisuAcqScanTime
+$$ @vis= VisuAcquisition Visu
+##END=

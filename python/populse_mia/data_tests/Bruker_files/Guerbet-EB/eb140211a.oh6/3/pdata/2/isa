@@ -1,0 +1,57 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 12:41:22 2014 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh6/3/pdata/2/isa
+##$ISA_calc_image=Yes
+##$ISA_first_image=9
+##$ISA_num_images=6
+##$ISA_image_incr=10
+##$ISA_points_number=6
+##$ISA_points_used=6
+##$ISA_points=( 6 )
+(Yes, 5.66696440574014, 23166.6268708752, 23094.2084952329, 0) (Yes, 
+5.66696440574014, 22963.3462899651, 22993.1799603854, 0) (Yes, 
+5.66696440574014, 23003.2297966518, 22956.8962041366, 0) (Yes, 
+829.898284189825, 11642.1300652804, 12302.2572970898, 0) (Yes, 
+833.310538831713, 10986.8539524126, 11603.0922362595, 0) (Yes, 
+833.310538831713, 10373.832129242, 10470.1261332637, 0)
+##$ISA_x_axis=( 80 )
+<B value [sec/mm2]>
+##$ISA_x_values=( 6 )
+5.66696440574014 5.66696440574014 5.66696440574014 829.898284189825 
+833.310538831713 833.310538831713
+##$ISA_scaling=Lin_Scaling
+##$ISA_divisor=1
+##$ISA_func_name=( 32 )
+<dtraceb>
+##$ISA_func_desc=( 80 )
+<Diffusion using trace of B-Matrix>
+##$ISA_force_reinit=No
+##$ISA_bypass_fit=No
+##$ISA_save_fixed=No
+##$ISA_pars_number=3
+##$ISA_pars_variable=2
+##$ISA_pars=( 3 )
+(No, <absolute bias>, 0, 0, 2147483647, 0, 0, 1) (Yes, <signal intensity>, 0, 
+1e-15, 2147483647, 3251.44571940104, 99316523008, 1) (Yes, <diffusion 
+constant [mm2/sec]>, 0, 1e-15, 2147483647, 0.068014578272899, 
+5303037.91666667, 1)
+##$ISA_pars_list=( 3 )
+1 2 0
+##$ISA_tolerance=0.000345266983001244
+##$ISA_max_iter=255
+##$ISA_skip_iter=1
+##$ISA_mat_solv=Gauss
+##$ISA_min_std=1.19209289550781e-07
+##$ISA_use_std=No
+##$ISA_chi_sq=555.5209296673
+##$ISA_chisq_scale=1
+##$ISA_use_art_scale=Yes
+##$ISA_art_scale=0
+##$ISA_orig_dataset=( 256 )
+</opt/PV5.1/data/omontigo/nmr/eb140211a.oh6/3/pdata/1>
+##$ISA_debug=No
+##END=

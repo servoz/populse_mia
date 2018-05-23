@@ -1,0 +1,134 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Thu Feb 13 08:18:21 2008 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140213a.oj1/3/pdata/2/visu_pars
+##$VisuVersion=1
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.3611280983.5722.1392275901.1643>
+##$VisuCreator=( 65 )
+<ParaVision;xtip>
+##$VisuCreatorVersion=( 65 )
+<5.1;5.1>
+##$VisuCreationDate=( 21 )
+<08:18:21 13 Feb 2008>
+$$ @vis= VisuVersion VisuUid VisuCreator VisuCreatorVersion VisuCreationDate
+##$VisuCoreFrameCount=50
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+128 128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+$$ @vis= VisuInstance VisuCoreFrameCount VisuCoreDim VisuCoreSize
+##$VisuCoreExtent=( 2 )
+26 26
+##$VisuCoreFrameThickness=( 1 )
+0.4
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 10, 9 )
+0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 
+0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 
+0 0 0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 
+0.999999995380672 0 0 0 1 0.999999995380672 9.6117930526e-05 0 
+-9.6117930526e-05 0.999999995380672 0 0 0 1 0.999999995380672 
+9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 0 1 
+0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 
+0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 
+0 0 0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 
+0.999999995380672 0 0 0 1 0.999999995380672 9.6117930526e-05 0 
+-9.6117930526e-05 0.999999995380672 0 0 0 1 0.999999995380672 
+9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 0 1
+$$ @vis= VisuCoreDimDesc VisuCoreExtent VisuCoreFrameThickness VisuCoreUnits
+##$VisuCorePosition=( 10, 3 )
+-12.9987504068519 -13.0012494730456 -2.4 -12.9987504068519 -13.0012494730456 
+-2 -12.9987504068519 -13.0012494730456 -1.6 -12.9987504068519 
+-13.0012494730456 -1.2 -12.9987504068519 -13.0012494730456 -0.8 
+-12.9987504068519 -13.0012494730456 -0.4 -12.9987504068519 -13.0012494730456 
+1.11022302462516e-16 -12.9987504068519 -13.0012494730456 0.4 
+-12.9987504068519 -13.0012494730456 0.8 -12.9987504068519 -13.0012494730456 
+1.2
+##$VisuCoreDataMin=( 50 )
+0 0 0 0 9357290 0 0 0 0 16371307 0 0 0 0 4244765 0 0 0 0 15209055 0 0 0 0 
+10633336 0 0 0 0 15103407 0 0 0 0 17585750 0 0 0 0 22337434 0 0 0 0 28119826 
+0 0 0 0 19068786
+##$VisuCoreDataMax=( 50 )
+1134963840 64474392 1974821248 1205723776 1526876672 1808740352 124217544 
+1995619072 1462941056 1134360960 1716048000 147192880 1697775360 1078144000 
+1307911168 1812375424 167470448 1866041344 1095657984 1329773056 1675738112 
+156224816 1824056832 1333688192 1154773120 1899306112 114367592 1074912640 
+671579904 1160328064 2088066304 133524944 1946011008 1324843136 1216201856 
+2029458816 127315696 1766014464 1051086208 1767424640 1943290240 140691552 
+2005705088 1135248640 2066795776 1860352128 127628224 2135252864 1271338496 
+1387261568
+##$VisuCoreDataOffs=( 50 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0
+$$ @vis= VisuCoreOrientation VisuCorePosition VisuCoreDataMin VisuCoreDataMax
+##$VisuCoreDataSlope=( 50 )
+0.0001220703125 0.0001220703125 1.81898940354586e-12 1.81898940354586e-12 
+1.52587890625e-05 6.103515625e-05 6.103515625e-05 1.81898940354586e-12 
+1.81898940354586e-12 1.52587890625e-05 6.103515625e-05 6.103515625e-05 
+1.81898940354586e-12 1.81898940354586e-12 1.52587890625e-05 6.103515625e-05 
+6.103515625e-05 1.81898940354586e-12 1.81898940354586e-12 1.52587890625e-05 
+6.103515625e-05 6.103515625e-05 1.81898940354586e-12 1.81898940354586e-12 
+1.52587890625e-05 6.103515625e-05 6.103515625e-05 3.63797880709171e-12 
+3.63797880709171e-12 1.52587890625e-05 6.103515625e-05 6.103515625e-05 
+1.81898940354586e-12 1.81898940354586e-12 1.52587890625e-05 6.103515625e-05 
+6.103515625e-05 1.81898940354586e-12 1.81898940354586e-12 7.62939453125e-06 
+6.103515625e-05 6.103515625e-05 1.81898940354586e-12 1.81898940354586e-12 
+7.62939453125e-06 6.103515625e-05 6.103515625e-05 1.81898940354586e-12 
+1.81898940354586e-12 1.52587890625e-05
+##$VisuCoreDataUnits=( 5, 65 )
+<> <> <mm2/sec> <mm2/sec> <>
+##$VisuFGElemComment=( 5, 65 )
+<signal intensity> <std dev of signal intensity> <diffusion constant> <std 
+dev of diffusion constant> <std dev of the fit>
+$$ @vis= VisuCoreDataOffs VisuCoreDataSlope VisuCoreDataUnits
+##$VisuCoreWordType=_32BIT_SGN_INT
+##$VisuCoreByteOrder=littleEndian
+$$ @vis= VisuFGElemComment VisuCore VisuCoreWordType VisuCoreByteOrder
+##$VisuFGOrderDescDim=2
+##$VisuFGOrderDesc=( 2 )
+(5, <FG_ISA>, <Diffusion using trace of B-Matrix>, 0, 2) (10, <FG_SLICE>, <>, 
+2, 2)
+##$VisuGroupDepVals=( 4 )
+(<VisuCoreDataUnits>, 0) (<VisuFGElemComment>, 0) (<VisuCoreOrientation>, 0) (
+<VisuCorePosition>, 0)
+$$ @vis= VisuPixel VisuFGOrderDescDim VisuFGOrderDesc VisuGroupDepVals
+##$VisuSubjectName=( 65 )
+<Guerbet-C6-2008>
+##$VisuSubjectId=( 65 )
+<eb140213a>
+##$VisuSubjectBirthDate=( 9 )
+<>
+##$VisuSubjectSex=FEMALE
+$$ @vis= VisuFrameOrderDesc VisuSubjectName VisuSubjectId VisuSubjectBirthDate
+##$VisuSubjectComment=( 2048 )
+<>
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.3611280983.5744.1392274959.1864>
+##$VisuStudyDate=( 21 )
+<08:02:39 13 Feb 2008>
+$$ @vis= VisuSubjectSex VisuSubjectComment VisuSubject VisuStudyUid
+##$VisuStudyId=( 65 )
+<Rat-K50-Tube17>
+##$VisuStudyNumber=1
+##$VisuSubjectWeight=5
+##$VisuStudyReferringPhysician=( 65 )
+<>
+$$ @vis= VisuStudyDate VisuStudyId VisuStudyNumber VisuSubjectWeight
+##$VisuStudyDescription=( 65 )
+<>
+##$VisuSeriesNumber=196610
+$$ @vis= VisuStudyReferringPhysician VisuStudyDescription VisuStudy
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<DERIVED_ISA>
+##$VisuSeriesComment=( 65 )
+<Parametric image for Diffusion using trace of b-matrix produced >
+$$ @vis= VisuSeriesNumber VisuSubjectPosition VisuSeriesTypeId
+$$ @vis= VisuSeriesComment VisuSeries VisuEquipment VisuAcquisition Visu
+##END=

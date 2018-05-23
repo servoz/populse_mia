@@ -1,0 +1,160 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 10:53:22 2002 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh4/7/pdata/1/visu_pars
+##$VisuVersion=1
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.3611280983.3020.1392112402.16>
+##$VisuCreator=( 65 )
+<ParaVision>
+##$VisuCreatorVersion=( 65 )
+<5.1>
+##$VisuCreationDate=( 21 )
+<10:51:12 11 Feb 2002>
+$$ @vis= VisuVersion VisuUid VisuCreator VisuCreatorVersion VisuCreationDate
+##$VisuCoreFrameCount=80
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+128 128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+$$ @vis= VisuInstance VisuCoreFrameCount VisuCoreDim VisuCoreSize
+##$VisuCoreExtent=( 2 )
+26 26
+##$VisuCoreFrameThickness=( 1 )
+0.8
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 5, 9 )
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 
+0 1 0 0 0 1
+$$ @vis= VisuCoreDimDesc VisuCoreExtent VisuCoreFrameThickness VisuCoreUnits
+##$VisuCorePosition=( 5, 3 )
+-13 -13 -0.6 -13 -13 0.2 -13 -13 1 -13 -13 1.8 -13 -13 2.6
+##$VisuCoreDataMin=( 80 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0
+##$VisuCoreDataMax=( 80 )
+14208 15891 16737 17720 24797 13343 14540 16262 16787 22560 13101 14704 15292 
+16702 22690 13256 14710 15012 17622 22461 18121 18050 18104 20686 28070 22909 
+21519 20553 23222 32524 21750 21640 21346 23248 32767 20032 20635 20978 22657 
+32603 21230 20901 20459 22421 31557 19432 20509 20798 22525 32294 20022 20117 
+21615 22513 31407 20348 20029 19615 22291 32373 20922 19289 20094 23056 31679 
+19444 18773 19793 23667 31383 20022 19407 19856 22538 31438 19467 18531 20262 
+23008 31494
+##$VisuCoreDataOffs=( 80 )
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0
+$$ @vis= VisuCoreOrientation VisuCorePosition VisuCoreDataMin VisuCoreDataMax
+##$VisuCoreDataSlope=( 80 )
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769 
+7.26496178766769 7.26496178766769 7.26496178766769 7.26496178766769
+##$VisuCoreFrameType=MAGNITUDE_IMAGE
+##$VisuCoreWordType=_16BIT_SGN_INT
+$$ @vis= VisuCoreDataOffs VisuCoreDataSlope VisuCoreFrameType VisuCore
+##$VisuCoreByteOrder=littleEndian
+##$VisuFGOrderDescDim=2
+##$VisuFGOrderDesc=( 2 )
+(5, <FG_SLICE>, <>, 0, 2) (16, <FG_CYCLE>, <>, 2, 0)
+$$ @vis= VisuCoreWordType VisuCoreByteOrder VisuPixel VisuFGOrderDescDim
+##$VisuGroupDepVals=( 2 )
+(<VisuCoreOrientation>, 0) (<VisuCorePosition>, 0)
+##$VisuSubjectName=( 65 )
+<Guerbet-C6-2002>
+##$VisuSubjectId=( 65 )
+<eb140211a>
+$$ @vis= VisuFGOrderDesc VisuGroupDepVals VisuFrameOrderDesc VisuSubjectName
+##$VisuSubjectBirthDate=( 9 )
+<>
+##$VisuSubjectSex=FEMALE
+##$VisuSubjectComment=( 2048 )
+<>
+$$ @vis= VisuSubjectId VisuSubjectBirthDate VisuSubjectSex VisuSubjectComment
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.3611280983.32251.1392110625.3062>
+##$VisuStudyDate=( 21 )
+<10:23:45 11 Feb 2002>
+##$VisuStudyId=( 65 )
+<Rat-K45-Tube12>
+##$VisuStudyNumber=4
+##$VisuSubjectWeight=5
+$$ @vis= VisuSubject VisuStudyUid VisuStudyDate VisuStudyId VisuStudyNumber
+##$VisuStudyReferringPhysician=( 65 )
+<>
+##$VisuStudyDescription=( 65 )
+<>
+$$ @vis= VisuSubjectWeight VisuStudyReferringPhysician VisuStudyDescription
+##$VisuSeriesNumber=458753
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<ACQ_BRUKER_PVM>
+$$ @vis= VisuStudy VisuSeriesNumber VisuSubjectPosition VisuSeriesTypeId
+##$VisuAcqSoftwareVersion=( 65 )
+<5.1>
+##$VisuInstitution=( 65 )
+<PIRMG-GIN>
+##$VisuStation=( 65 )
+<BioSpec 47/40>
+$$ @vis= VisuSeries VisuAcqSoftwareVersion VisuInstitution VisuStation
+##$VisuAcqDate=( 21 )
+<10:51:12 11 Feb 2002>
+##$VisuAcqEchoTrainLength=1
+##$VisuAcqSequenceName=( 40 )
+<FLASH (pvm)>
+##$VisuAcqNumberOfAverages=1
+$$ @vis= VisuEquipment VisuAcqDate VisuAcqEchoTrainLength VisuAcqSequenceName
+##$VisuAcqImagingFrequency=200.342213089785
+##$VisuAcqImagedNucleus=( 8 )
+<1H>
+##$VisuAcqRepetitionTime=( 1 )
+80
+$$ @vis= VisuAcqNumberOfAverages VisuAcqImagingFrequency VisuAcqImagedNucleus
+##$VisuAcqPhaseEncSteps=98
+##$VisuAcqPixelBandwidth=427.350427350427
+##$VisuAcqFlipAngle=30
+$$ @vis= VisuAcqRepetitionTime VisuAcqPhaseEncSteps VisuAcqPixelBandwidth
+##$VisuAcqSize=( 2 )
+98 117
+##$VisuAcqImageSizeAccellerated=Yes
+##$VisuAcqImagePhaseEncDir=( 80 )
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir 
+row_dir row_dir row_dir row_dir row_dir row_dir row_dir row_dir
+$$ @vis= VisuAcqFlipAngle VisuAcqSize VisuAcqImageSizeAccellerated
+##$VisuAcqEchoTime=( 1 )
+1.75
+##$VisuAcquisitionProtocol=( 65 )
+<G5_Guerbet_SuiviDynamique>
+##$VisuAcqScanTime=125440
+$$ @vis= VisuAcqImagePhaseEncDir VisuAcqEchoTime VisuAcquisitionProtocol
+$$ @vis= VisuAcqScanTime VisuAcquisition Visu
+##END=

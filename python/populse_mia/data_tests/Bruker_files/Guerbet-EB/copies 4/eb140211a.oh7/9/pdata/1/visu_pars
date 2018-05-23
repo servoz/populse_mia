@@ -1,0 +1,139 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 13:48:27 2010 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh7/9/pdata/1/visu_pars
+##$VisuVersion=1
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.3611280983.22323.1392122907.20>
+##$VisuCreator=( 65 )
+<ParaVision>
+##$VisuCreatorVersion=( 65 )
+<5.1>
+##$VisuCreationDate=( 21 )
+<13:46:38 11 Feb 2010>
+$$ @vis= VisuVersion VisuUid VisuCreator VisuCreatorVersion VisuCreationDate
+##$VisuCoreFrameCount=10
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+128 128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+$$ @vis= VisuInstance VisuCoreFrameCount VisuCoreDim VisuCoreSize
+##$VisuCoreExtent=( 2 )
+26 26
+##$VisuCoreFrameThickness=( 1 )
+0.4
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 10, 9 )
+0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 
+0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 
+0 0 0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 
+0.999999995380672 0 0 0 1 0.999999995380672 9.6117930526e-05 0 
+-9.6117930526e-05 0.999999995380672 0 0 0 1 0.999999995380672 
+9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 0 1 
+0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 
+0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 
+0 0 0 1 0.999999995380672 9.6117930526e-05 0 -9.6117930526e-05 
+0.999999995380672 0 0 0 1 0.999999995380672 9.6117930526e-05 0 
+-9.6117930526e-05 0.999999995380672 0 0 0 1 0.999999995380672 
+9.6117930526e-05 0 -9.6117930526e-05 0.999999995380672 0 0 0 1
+$$ @vis= VisuCoreDimDesc VisuCoreExtent VisuCoreFrameThickness VisuCoreUnits
+##$VisuCorePosition=( 10, 3 )
+-12.9987504068519 -13.0012494730456 -0.4 -12.9987504068519 -13.0012494730456 
+-2.22044604925031e-16 -12.9987504068519 -13.0012494730456 0.4 
+-12.9987504068519 -13.0012494730456 0.8 -12.9987504068519 -13.0012494730456 
+1.2 -12.9987504068519 -13.0012494730456 1.6 -12.9987504068519 
+-13.0012494730456 2 -12.9987504068519 -13.0012494730456 2.4 -12.9987504068519 
+-13.0012494730456 2.8 -12.9987504068519 -13.0012494730456 3.2
+##$VisuCoreDataMin=( 10 )
+0 0 0 0 0 0 0 0 0 0
+##$VisuCoreDataMax=( 10 )
+32766 29841 26774 27059 28595 26636 28283 27616 29362 29860
+##$VisuCoreDataOffs=( 10 )
+0 0 0 0 0 0 0 0 0 0
+$$ @vis= VisuCoreOrientation VisuCorePosition VisuCoreDataMin VisuCoreDataMax
+##$VisuCoreDataSlope=( 10 )
+11.2814115132191 11.2814115132191 11.2814115132191 11.2814115132191 
+11.2814115132191 11.2814115132191 11.2814115132191 11.2814115132191 
+11.2814115132191 11.2814115132191
+##$VisuCoreFrameType=MAGNITUDE_IMAGE
+##$VisuCoreWordType=_16BIT_SGN_INT
+$$ @vis= VisuCoreDataOffs VisuCoreDataSlope VisuCoreFrameType VisuCore
+##$VisuCoreByteOrder=littleEndian
+##$VisuFGOrderDescDim=1
+##$VisuFGOrderDesc=( 1 )
+(10, <FG_SLICE>, <>, 0, 2)
+$$ @vis= VisuCoreWordType VisuCoreByteOrder VisuPixel VisuFGOrderDescDim
+##$VisuGroupDepVals=( 2 )
+(<VisuCoreOrientation>, 0) (<VisuCorePosition>, 0)
+##$VisuSubjectName=( 65 )
+<Guerbet-C6-2010>
+##$VisuSubjectId=( 65 )
+<eb140211a>
+$$ @vis= VisuFGOrderDesc VisuGroupDepVals VisuFrameOrderDesc VisuSubjectName
+##$VisuSubjectBirthDate=( 9 )
+<>
+##$VisuSubjectSex=FEMALE
+##$VisuSubjectComment=( 2048 )
+<>
+$$ @vis= VisuSubjectId VisuSubjectBirthDate VisuSubjectSex VisuSubjectComment
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.3611280983.32251.1392120838.4243>
+##$VisuStudyDate=( 21 )
+<13:13:58 11 Feb 2010>
+##$VisuStudyId=( 65 )
+<Rat-K47-Tube15>
+##$VisuStudyNumber=7
+##$VisuSubjectWeight=5
+$$ @vis= VisuSubject VisuStudyUid VisuStudyDate VisuStudyId VisuStudyNumber
+##$VisuStudyReferringPhysician=( 65 )
+<>
+##$VisuStudyDescription=( 65 )
+<>
+$$ @vis= VisuSubjectWeight VisuStudyReferringPhysician VisuStudyDescription
+##$VisuSeriesNumber=589825
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<ACQ_BRUKER_PVM>
+$$ @vis= VisuStudy VisuSeriesNumber VisuSubjectPosition VisuSeriesTypeId
+##$VisuInstitution=( 65 )
+<PIRMG-GIN>
+##$VisuStation=( 65 )
+<BioSpec 47/40>
+##$VisuAcqDate=( 21 )
+<13:46:38 11 Feb 2010>
+##$VisuAcqEchoTrainLength=2
+$$ @vis= VisuSeries VisuInstitution VisuStation VisuEquipment VisuAcqDate
+##$VisuAcqSequenceName=( 40 )
+<RARE (pvm)>
+##$VisuAcqNumberOfAverages=2
+##$VisuAcqImagingFrequency=200.342243766546
+$$ @vis= VisuAcqEchoTrainLength VisuAcqSequenceName VisuAcqNumberOfAverages
+##$VisuAcqImagedNucleus=( 8 )
+<1H>
+##$VisuAcqRepetitionTime=( 1 )
+800
+##$VisuAcqPhaseEncSteps=128
+$$ @vis= VisuAcqImagingFrequency VisuAcqImagedNucleus VisuAcqRepetitionTime
+##$VisuAcqPixelBandwidth=513.980263157895
+##$VisuAcqFlipAngle=180
+##$VisuAcqSize=( 2 )
+128 128
+$$ @vis= VisuAcqPhaseEncSteps VisuAcqPixelBandwidth VisuAcqFlipAngle
+##$VisuAcqImageSizeAccellerated=No
+##$VisuAcqImagePhaseEncDir=( 10 )
+col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir col_dir 
+col_dir
+##$VisuAcqEchoTime=( 1 )
+5
+$$ @vis= VisuAcqSize VisuAcqImageSizeAccellerated VisuAcqImagePhaseEncDir
+##$VisuAcquisitionProtocol=( 65 )
+<G4_Guerbet_T1SE_800>
+##$VisuAcqScanTime=102400
+$$ @vis= VisuAcqEchoTime VisuAcquisitionProtocol VisuAcqScanTime
+$$ @vis= VisuAcquisition Visu
+##END=

@@ -1,0 +1,13 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Thu Feb 13 11:15:58 2010 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140213a.oj5/AdjResult/2.16.756.5.5.100.3611280983.6685.1392286521.49/result.jcamp
+##$ACQ_BF=( 1 )
+(<1H>, 200.342146122926)
+##$PVM_TuneShimFreqOffs=( 1 )
+1.11913484404091
+##$PVM_StudyShim=(0, 651, 0, 0, 0, -1, -407, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+##END=

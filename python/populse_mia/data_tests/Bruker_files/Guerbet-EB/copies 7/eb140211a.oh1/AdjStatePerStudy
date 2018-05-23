@@ -1,0 +1,35 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 08:30:28 2004 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh1/AdjStatePerStudy
+##$AdjStudyStateCompleted=Yes
+##$AdjStudyStateResetNdx=0
+##$AdjStudyStateAdjName=( 3, 128 )
+<FREQ_Standard> <SHIM_Standard> <TRANSM_Standard>
+##$AdjStudyStateCategory=( 3 )
+FREQ SHIM TRANSM
+##$AdjStudyStateAdjustPars=( 3, 1024 )
+<ACQ_BF> <PVM_StudyShim> <PVM_StudyRefAtt>
+##$AdjStudyStateTime=( 3, 21 )
+<08:02:44 11 Feb 2004> <08:03:00 11 Feb 2004> <08:03:28 11 Feb 2004>
+##$AdjStudyStateExpno=( 3 )
+1 1 1
+##$AdjStudyStateState=( 3 )
+adj_successful adj_successful adj_successful
+##$AdjStudyStateResultId=( 3, 65 )
+<> <2.16.756.5.5.100.3611280983.32557.1392102164.46> <
+2.16.756.5.5.100.3611280983.32557.1392102164.47>
+##$AdjStudyStateMethod=( 3, 128 )
+<AdjSf> <AdjShim> <AdjRefG>
+##$AdjStudyStateMethodContext=( 3, 128 )
+<> <> <>
+##$AdjStudyStateHwChainNdxs=( 3 )
+(0, 0) (0, 1) (1, 1)
+##$AdjStudyStateHwChains=( 2 )
+((SHIM_CHAIN, -1), <S116_W3305565_0012.320045>) ((TRANS_CHAIN, -2), <
+HWIDS_T9885V3_0025_T11203V3_0027 -2 2 2 2 1 1 1H  1212501678>)
+##$AdjStudyListConfigTime=1190094339
+##END=

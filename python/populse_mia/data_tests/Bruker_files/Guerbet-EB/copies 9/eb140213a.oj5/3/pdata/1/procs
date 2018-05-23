@@ -1,0 +1,12 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Thu Feb 13 11:25:33 2000 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140213a.oj5/3/pdata/1/procs
+##$OFFSET=0
+##$SF=200.342146122926
+##$YMAX_p=3063
+##$YMIN_p=5
+##END=
