@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
 
-
+from traits.api import TraitListObject
 from capsul.api import get_process_instance, StudyConfig
 from .process_library import ProcessLibraryWidget
 
@@ -250,6 +250,11 @@ class PipelineManagerTab(QWidget):
             :param p_value: plug value, a file name or a list of file names
             :return:
             """
+            if type(p_value) in [list, TraitListObject]:
+                for elt in p_value:
+                    add_plug_value_to_database(elt)
+                return
+
             try:
                 open(p_value, 'a').close()
             except IOError:
@@ -307,12 +312,11 @@ class PipelineManagerTab(QWidget):
                     node = pipeline_scene.pipeline.nodes[node_name]
                     if plug_name not in node.plugs.keys():
                         continue
-
-                    if type(plug_value) is list:
+                    """if type(plug_value) in [list, TraitListObject]:
                         for element in plug_value:
                             add_plug_value_to_database(element)
-                    else:
-                        add_plug_value_to_database(plug_value)
+                    else:"""
+                    add_plug_value_to_database(plug_value)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -321,6 +325,9 @@ class PipelineManagerTab(QWidget):
                     for info_link in list_info_link:
                         dest_node_name = info_link[0]
                         nodes_to_check.append(dest_node_name)
+
+                    if plug_name == "native_class_images":
+                        print("NATIVE CLASS IMAGE VALUE: ", plug_value)
 
                     try:
                         pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
