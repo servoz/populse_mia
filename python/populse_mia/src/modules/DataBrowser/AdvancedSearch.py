@@ -56,7 +56,6 @@ class AdvancedSearch(QWidget):
         fieldChoice.setObjectName('field')
         for tag in self.project.getVisibles():
             fieldChoice.addItem(tag)
-        fieldChoice.addItem("FileName")
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
@@ -118,6 +117,7 @@ class AdvancedSearch(QWidget):
         elif choice.currentText() == "HAS VALUE" or choice.currentText() == "HAS NO VALUE":
             value.setDisabled(True)
             value.setPlaceholderText("")
+            value.setText("")
         else:
             value.setDisabled(False)
             value.setPlaceholderText("")
@@ -283,7 +283,6 @@ class AdvancedSearch(QWidget):
                             fields.append([child.currentText()])
                         else:
                             tags = self.project.getVisibles()
-                            tags.append("FileName")
                             fields.append(tags)
                     elif childName == 'value':
                         values.append(child.displayText())

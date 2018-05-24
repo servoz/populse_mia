@@ -66,6 +66,7 @@ class Ui_Dialog_Settings(QDialog):
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
+        new_visibilities.append("name")
         historyMaker.append(new_visibilities)
         project.setVisibles(new_visibilities)
         project.undos.append(historyMaker)

@@ -75,7 +75,7 @@ class Ui_Visualized_Tags(QWidget):
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
         for tag in project.database.get_tags_names():
-            if tag != "Checksum":
+            if tag != "Checksum" and tag != "name":
                 item = QtWidgets.QListWidgetItem()
                 if tag not in project.getVisibles():
                     # Tag not visible: left side

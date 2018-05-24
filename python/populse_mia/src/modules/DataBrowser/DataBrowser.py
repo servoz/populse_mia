@@ -428,41 +428,26 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            if tag_to_clone == "FileName":
-                tag_type = TAG_TYPE_STRING
-                tag_unit = None
-                tag_default_value = None
-                tag_description = None
-            else:
-                tagCloned = self.project.database.get_tag(tag_to_clone)
-                tag_type = tagCloned.type
-                tag_unit = tagCloned.unit
-                tag_default_value = tagCloned.default_value
-                tag_description = tagCloned.description
-            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tag_type, tag_unit,
-                                          tag_default_value, tag_description)
+            tagCloned = self.project.database.get_tag(tag_to_clone)
+            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit,
+                                          tagCloned.default_value, tagCloned.description)
             for scan in self.project.database.get_paths():
 
-                if tag_to_clone == "FileName":
-                    # The path name is cloned
-                    self.project.database.new_value(scan.name, new_tag_name, scan.name, None)
-                    values.append([scan.name, new_tag_name, scan.name, None])  # For history
-                else:
-                    # If the tag to clone has a value, we add this value with the new tag name in the Database
-                    cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
-                    cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
-                    if cloned_cur_value is not None or cloned_init_value is not None:
-                        self.project.database.new_value(scan.name, new_tag_name, cloned_cur_value, cloned_init_value)
-                        values.append([scan.name, new_tag_name, cloned_cur_value, cloned_init_value])  # For history
+                # If the tag to clone has a value, we add this value with the new tag name in the Database
+                cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
+                cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
+                if cloned_cur_value is not None or cloned_init_value is not None:
+                    self.project.database.new_value(scan.name, new_tag_name, cloned_cur_value, cloned_init_value)
+                    values.append([scan.name, new_tag_name, cloned_cur_value, cloned_init_value])  # For history
 
             # For history
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(tag_type)
-            historyMaker.append(tag_unit)
-            historyMaker.append(tag_default_value)
-            historyMaker.append(tag_description)
+            historyMaker.append(tagCloned.type)
+            historyMaker.append(tagCloned.unit)
+            historyMaker.append(tagCloned.default_value)
+            historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
             self.project.redos.clear()
@@ -535,7 +520,7 @@ class TableDataBrowser(QTableWidget):
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
-        # It allows to move the columns (except FileName)
+        # It allows to move the columns (except the first column name)
         self.horizontalHeader().setSectionsMovable(True)
 
         # It allows the automatic sort
@@ -768,6 +753,7 @@ class TableDataBrowser(QTableWidget):
 
         # Saved sort applied if it exists
         self.setSortingEnabled(True)
+
         tag_to_sort = self.project.getSortedTag()
         column_to_sort = self.get_tag_column(tag_to_sort)
         sort_order = self.project.getSortOrder()
@@ -797,16 +783,13 @@ class TableDataBrowser(QTableWidget):
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
         tags.remove("Checksum")
+        tags.remove("name")
         tags = sorted(tags)
+        tags.insert(0, "name")
 
-        self.setColumnCount(len(tags) + 1)
+        self.setColumnCount(len(tags))
 
-        # FileName tag in first column
-        item = QtWidgets.QTableWidgetItem()
-        self.setHorizontalHeaderItem(0, item)
-        item.setText("FileName")
-
-        column = 1
+        column = 0
         # Filling the headers
         for tag_name in tags:
             item = QtWidgets.QTableWidgetItem()
@@ -862,13 +845,14 @@ class TableDataBrowser(QTableWidget):
             ui_progressbar.setValue(idx)
 
             for column in range(0, len(self.horizontalHeader())):
+
                 current_tag = self.horizontalHeaderItem(column).text()
 
                 item = QTableWidgetItem()
 
                 if column == 0:
-                    # FileName tag
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
+                    # name tag
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
                     set_item_data(item, scan, TAG_TYPE_STRING)
                 else:
                     # Other tags
@@ -1029,8 +1013,7 @@ class TableDataBrowser(QTableWidget):
         :return:index of the column of the tag
         """
 
-        # Starting column 1 to avoid reading first default FileName column
-        for column in range(1, self.columnCount()):
+        for column in range(0, self.columnCount()):
             item = self.horizontalHeaderItem(column)
             tag_name = item.text()
             if tag_name == tag:
@@ -1190,20 +1173,16 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
 
             item = QTableWidgetItem()
-            if tag_name == "FileName":
-                value = scan_path
-                set_item_data(item, value, TAG_TYPE_STRING)
+            value = self.project.database.get_current_value(scan_path, tag_name)
+            if value is not None:
+                set_item_data(item, value, self.project.database.get_tag(tag_name).type)
             else:
-                value = self.project.database.get_current_value(scan_path, tag_name)
-                if value is not None:
-                    set_item_data(item, value, self.project.database.get_tag(tag_name).type)
-                else:
-                    item = QTableWidgetItem()
-                    set_item_data(item, not_defined_value, TAG_TYPE_STRING)
-                    font = item.font()
-                    font.setItalic(True)
-                    font.setBold(True)
-                    item.setFont(font)
+                item = QTableWidgetItem()
+                set_item_data(item, not_defined_value, TAG_TYPE_STRING)
+                font = item.font()
+                font.setItalic(True)
+                font.setBold(True)
+                item.setFont(font)
             self.setItem(row, col, item)
 
     def remove_scan(self):
@@ -1397,8 +1376,8 @@ class TableDataBrowser(QTableWidget):
                     tag = self.horizontalHeaderItem(column).text()
 
                     if column == 0:
-                        # FileName tag
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # FileName not editable
+                        # name tag
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
                         set_item_data(item, scan, TAG_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
@@ -1448,10 +1427,10 @@ class TableDataBrowser(QTableWidget):
         self.itemSelectionChanged.disconnect()
 
         tags = self.project.database.get_tags_names()
-
         tags.remove("Checksum")
-
+        tags.remove("name")
         tags = sorted(tags)
+        tags.insert(0, "name")
 
         # Adding missing columns
         for tag in tags:
@@ -1658,10 +1637,7 @@ class TableDataBrowser(QTableWidget):
             col = item.column()
             tag_name = self.horizontalHeaderItem(col).text()
             tag_object = self.project.database.get_tag(tag_name)
-            if tag_name == "FileName":
-                tag_type = TAG_TYPE_STRING
-            else:
-                tag_type = tag_object.type
+            tag_type = tag_object.type
 
             # Type added to types list
             if not tag_type in cells_types:
@@ -1720,8 +1696,8 @@ class TableDataBrowser(QTableWidget):
                 tag_name = self.horizontalHeaderItem(col).text()
                 database_value = table_to_database(new_value, self.project.database.get_tag(tag_name).type)
 
-                # We only set the case if it's not the tag FileName
-                if (tag_name != "FileName"):
+                # We only set the cell if it's not the tag name
+                if (tag_name != "name"):
 
                     old_value = self.project.database.get_current_value(scan_path, tag_name)
                     # The scan already has a value for the tag: we update it

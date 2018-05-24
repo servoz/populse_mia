@@ -73,7 +73,6 @@ class Ui_Dialog_clone_tag(QDialog):
 
         tags_lists = project.database.get_tags_names()
         tags_lists.remove("Checksum")
-        tags_lists.append("FileName")
         for tag in tags_lists:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
@@ -90,7 +89,6 @@ class Ui_Dialog_clone_tag(QDialog):
         return_list = []
         tags_lists = project.database.get_tags_names()
         tags_lists.remove("Checksum")
-        tags_lists.append("FileName")
         if str_search != "":
             for tag in tags_lists:
                 if str_search.upper() in tag.upper():

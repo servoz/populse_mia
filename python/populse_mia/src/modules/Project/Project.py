@@ -61,7 +61,7 @@ class Project:
                date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                sorted_tag='',
                sort_order='',
-               visibles=[]
+               visibles=["name", "Type"]
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
@@ -362,13 +362,8 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        if tag == "FileType":
-                            scan_row = self.database.get_path(scan)
-                            scan_row.type = old_value
-                            set_item_data(item, old_value, TAG_TYPE_STRING)
-                        else:
-                            self.database.set_current_value(scan, tag, old_value)
-                            set_item_data(item, old_value, self.database.get_tag(tag).type)
+                        self.database.set_current_value(scan, tag, old_value)
+                        set_item_data(item, old_value, self.database.get_tag(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -468,13 +463,8 @@ class Project:
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                    if tag == "FileType":
-                        path_row = self.database.get_path(scan)
-                        path_row.type = new_value
-                        set_item_data(item, new_value, TAG_TYPE_STRING)
-                    else:
-                        self.database.set_current_value(scan, tag, new_value)
-                        set_item_data(item, new_value, self.database.get_tag(tag).type)
+                    self.database.set_current_value(scan, tag, new_value)
+                    set_item_data(item, new_value, self.database.get_tag(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
