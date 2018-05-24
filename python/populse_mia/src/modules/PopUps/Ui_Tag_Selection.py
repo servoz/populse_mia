@@ -64,11 +64,13 @@ class Ui_Tag_Selection(QDialog):
         return_list = []
         if str_search != "":
             for tag in self.project.database.get_tags_names():
-                if str_search.upper() in tag.upper():
-                    return_list.append(tag)
+                if tag != "Checksum":
+                    if str_search.upper() in tag.upper():
+                        return_list.append(tag)
         else:
             for tag in self.project.database.get_tags_names():
-                return_list.append(tag)
+                if tag != "Checksum":
+                    return_list.append(tag)
 
         for idx in range(self.list_widget_tags.count()):
             item = self.list_widget_tags.item(idx)

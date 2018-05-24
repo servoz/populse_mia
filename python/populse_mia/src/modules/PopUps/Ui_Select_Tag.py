@@ -23,6 +23,7 @@ class Ui_Select_Tag(Ui_Tag_Selection):
                     item.setCheckState(QtCore.Qt.Unchecked)
                 self.list_widget_tags.addItem(item)
                 item.setText(tag)
+        self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
