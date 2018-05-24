@@ -278,6 +278,9 @@ class PipelineManagerTab(QWidget):
             nodes_to_check.append(node_name)
 
         while nodes_to_check:
+            # Verifying if any element of nodes_to_check is unique
+            nodes_to_check = list(set(nodes_to_check))
+
             node_name = nodes_to_check.pop()
 
             # Inputs/Outputs nodes will be automatically updated with
@@ -289,7 +292,15 @@ class PipelineManagerTab(QWidget):
             process = gnode.process
 
             # Getting the list of the outputs of the node according to its inputs
-            process_outputs = process.list_outputs()
+            try:
+                process_outputs = process.list_outputs()
+            except TraitError:
+                print("TRAIT ERROR for node {0}".format(node_name))
+                # The node should be checked again but it can lead to an
+                # infinite loop, so this line is commented until a better
+                # solution is found.
+                # nodes_to_check.insert(0, node_name)
+                continue
 
             if process_outputs:
                 for plug_name, plug_value in process_outputs.items():
