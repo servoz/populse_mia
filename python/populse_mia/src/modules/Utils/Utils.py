@@ -159,9 +159,9 @@ def table_to_database(value, value_type):
     elif value_type == TAG_TYPE_INTEGER:
         return int(value)
     elif value_type == TAG_TYPE_BOOLEAN:
-        if value == "True":
+        if value == "True" or value == True:
             return True
-        elif value == "False":
+        elif value == "False" or value == False:
             return False
     elif value_type == TAG_TYPE_DATETIME:
         if isinstance(value, QDateTime):
@@ -186,8 +186,7 @@ def table_to_database(value, value_type):
         elif isinstance(value, str):
             format = "%H:%M:%S.%f"
             return datetime.strptime(value, format).time()
-    elif value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING,
-                        TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_FLOAT]:
+    elif value_type in LIST_TYPES:
         old_list = ast.literal_eval(value)
         list_to_return = []
         for old_element in old_list:

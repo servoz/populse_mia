@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN
+from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN, LIST_TYPES
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type
 import os
@@ -114,6 +114,13 @@ class Default_value_list_creation(QDialog):
                     database_value.append(int(text))
                 elif self.type == TAG_TYPE_LIST_FLOAT:
                     database_value.append(float(text))
+                elif self.type == TAG_TYPE_LIST_BOOLEAN:
+                    if text == "True":
+                        database_value.append(True)
+                    elif text == "False":
+                        database_value.append(False)
+                    else:
+                        raise ValueError("Not a boolean value")
                 elif self.type == TAG_TYPE_LIST_STRING:
                     database_value.append(str(text))
                 elif self.type == TAG_TYPE_LIST_DATE:
@@ -199,7 +206,7 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
         :param event:
         """
 
-        if self.parent.type in [TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME]:
+        if self.parent.type in LIST_TYPES:
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
