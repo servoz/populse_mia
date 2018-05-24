@@ -797,7 +797,6 @@ class TableDataBrowser(QTableWidget):
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
         tags.remove("Checksum")
-
         tags = sorted(tags)
 
         self.setColumnCount(len(tags) + 1)
@@ -907,7 +906,7 @@ class TableDataBrowser(QTableWidget):
 
                         color = QColor()
 
-                        if tag == "FileName":
+                        if column == 0:
                             if row_number % 2 == 0:
                                 color.setRgb(255, 255, 255)  # White
                             else:
@@ -1030,7 +1029,8 @@ class TableDataBrowser(QTableWidget):
         :return:index of the column of the tag
         """
 
-        for column in range(0, self.columnCount()):
+        # Starting column 1 to avoid reading first default FileName column
+        for column in range(1, self.columnCount()):
             item = self.horizontalHeaderItem(column)
             tag_name = item.text()
             if tag_name == tag:
