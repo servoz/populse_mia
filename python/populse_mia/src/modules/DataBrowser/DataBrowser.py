@@ -428,25 +428,41 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            tagCloned = self.project.database.get_tag(tag_to_clone)
-            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit,
-                                          tagCloned.default_value, tagCloned.description)
+            if tag_to_clone == "FileName":
+                tag_type = TAG_TYPE_STRING
+                tag_unit = None
+                tag_default_value = None
+                tag_description = None
+            else:
+                tagCloned = self.project.database.get_tag(tag_to_clone)
+                tag_type = tagCloned.type
+                tag_unit = tagCloned.unit
+                tag_default_value = tagCloned.default_value
+                tag_description = tagCloned.description
+            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tag_type, tag_unit,
+                                          tag_default_value, tag_description)
             for scan in self.project.database.get_paths():
-                # If the tag to clone has a value, we add this value with the new tag name in the Database
-                cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
-                cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
-                if cloned_cur_value is not None or cloned_init_value is not None:
-                    self.project.database.new_value(scan.name, new_tag_name, cloned_cur_value, cloned_init_value)
-                    values.append([scan.name, new_tag_name, cloned_cur_value, cloned_init_value])  # For history
+
+                if tag_to_clone == "FileName":
+                    # The path name is cloned
+                    self.project.database.new_value(scan.name, new_tag_name, scan.name, None)
+                    values.append([scan.name, new_tag_name, scan.name, None])  # For history
+                else:
+                    # If the tag to clone has a value, we add this value with the new tag name in the Database
+                    cloned_cur_value = self.project.database.get_current_value(scan.name, tag_to_clone)
+                    cloned_init_value = self.project.database.get_initial_value(scan.name, tag_to_clone)
+                    if cloned_cur_value is not None or cloned_init_value is not None:
+                        self.project.database.new_value(scan.name, new_tag_name, cloned_cur_value, cloned_init_value)
+                        values.append([scan.name, new_tag_name, cloned_cur_value, cloned_init_value])  # For history
 
             # For history
             historyMaker = []
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
-            historyMaker.append(tagCloned.type)
-            historyMaker.append(tagCloned.unit)
-            historyMaker.append(tagCloned.default_value)
-            historyMaker.append(tagCloned.description)
+            historyMaker.append(tag_type)
+            historyMaker.append(tag_unit)
+            historyMaker.append(tag_default_value)
+            historyMaker.append(tag_description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
             self.project.redos.clear()
@@ -551,6 +567,16 @@ class TableDataBrowser(QTableWidget):
         item.setToolTip(
             "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
                 tag_object.type))
+        # Set column type
+        if tag_object.type == TAG_TYPE_FLOAT:
+            self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
+        elif tag_object.type == TAG_TYPE_DATETIME:
+            self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
+        elif tag_object.type == TAG_TYPE_DATE:
+            self.setItemDelegateForColumn(column, DateFormatDelegate(self))
+        elif tag_object.type == TAG_TYPE_TIME:
+            self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
+
         for row in range(0, self.rowCount()):
             item = QtWidgets.QTableWidgetItem()
             self.setItem(row, column, item)
