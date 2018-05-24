@@ -1205,10 +1205,11 @@ class TableDataBrowser(QTableWidget):
 
                 # Adding removed values to history
                 for tag in self.project.database.get_tags_names():
-                    current_value = self.project.database.get_current_value(scan_path, tag)
-                    initial_value = self.project.database.get_initial_value(scan_path, tag)
-                    if current_value is not None or initial_value is not None:
-                        values_removed.append([scan_path, tag, current_value, initial_value])
+                    if tag != "name":
+                        current_value = self.project.database.get_current_value(scan_path, tag)
+                        initial_value = self.project.database.get_initial_value(scan_path, tag)
+                        if current_value is not None or initial_value is not None:
+                            values_removed.append([scan_path, tag, current_value, initial_value])
 
                 self.scans_to_visualize.remove(scan_path)
                 self.project.database.remove_path(scan_path)
