@@ -71,10 +71,14 @@ class Ui_Dialog_clone_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag in project.database.get_tags():
+        tags_lists = project.database.get_tags_names()
+        tags_lists.remove("Checksum")
+        tags_lists.append("FileName")
+        for tag in tags_lists:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
-            item.setText(_translate("Dialog", tag.name))
+            item.setText(_translate("Dialog", tag))
+        self.list_widget_tags.sortItems()
 
         self.setLayout(vbox)
 
@@ -84,19 +88,23 @@ class Ui_Dialog_clone_tag(QDialog):
     def search_str(self, project, str_search):
         _translate = QtCore.QCoreApplication.translate
         return_list = []
+        tags_lists = project.database.get_tags_names()
+        tags_lists.remove("Checksum")
+        tags_lists.append("FileName")
         if str_search != "":
-            for tag in project.database.get_tags():
-                if str_search.upper() in tag.name.upper():
-                    return_list.append(tag.name)
+            for tag in tags_lists:
+                if str_search.upper() in tag.upper():
+                    return_list.append(tag)
         else:
-            for tag in project.database.get_tags():
-                return_list.append(tag.name)
+            for tag in tags_lists:
+                return_list.append(tag)
 
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
             item.setText(_translate("Dialog", tag_name))
+        self.list_widget_tags.sortItems()
 
     def ok_action(self, project):
         name_already_exists = False

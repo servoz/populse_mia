@@ -409,6 +409,11 @@ class DataBrowser(QWidget):
             column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.add_column(column, new_tag_name)
 
+            # Putting the new tag as visible
+            visibilities = self.project.getVisibles()
+            visibilities.append(new_tag_name)
+            self.project.setVisibles(visibilities)
+
     def clone_tag_pop_up(self):
 
         # We first show the clone_tag pop up
@@ -449,6 +454,11 @@ class DataBrowser(QWidget):
             # New tag added to the table
             column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.add_column(column, new_tag_name)
+
+            # Putting the new tag as visible
+            visibilities = self.project.getVisibles()
+            visibilities.append(new_tag_name)
+            self.project.setVisibles(visibilities)
 
     def remove_tag_pop_up(self):
 

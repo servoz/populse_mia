@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT
+from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN
 from Utils.Tools import ClickableLabel
-from Utils.Utils import table_to_database, check_value_type
+from Utils.Utils import check_value_type
 import os
 import ast
 from datetime import datetime, date, time
@@ -283,12 +283,14 @@ class Ui_Dialog_add_tag(QDialog):
         self.combo_box_type.addItem("String")
         self.combo_box_type.addItem("Integer")
         self.combo_box_type.addItem("Float")
+        self.combo_box_type.addItem("Boolean")
         self.combo_box_type.addItem("Date")
         self.combo_box_type.addItem("Datetime")
         self.combo_box_type.addItem("Time")
         self.combo_box_type.addItem("String List")
         self.combo_box_type.addItem("Integer List")
         self.combo_box_type.addItem("Float List")
+        self.combo_box_type.addItem("Boolean List")
         self.combo_box_type.addItem("Date List")
         self.combo_box_type.addItem("Datetime List")
         self.combo_box_type.addItem("Time List")
@@ -351,6 +353,9 @@ class Ui_Dialog_add_tag(QDialog):
         elif text == "Float":
             self.type = TAG_TYPE_FLOAT
             self.text_edit_default_value.setPlaceholderText("Please enter a float")
+        elif text == "Boolean":
+            self.type = TAG_TYPE_BOOLEAN
+            self.text_edit_default_value.setPlaceholderText("Please enter a boolean (True or False)")
         elif text == "Date":
             self.type = TAG_TYPE_DATE
             self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
@@ -366,6 +371,8 @@ class Ui_Dialog_add_tag(QDialog):
             self.type = TAG_TYPE_LIST_INTEGER
         elif text == "Float List":
             self.type = TAG_TYPE_LIST_FLOAT
+        elif text == "Boolean List":
+            self.type = TAG_TYPE_LIST_BOOLEAN
         elif text == "Date List":
             self.type = TAG_TYPE_LIST_DATE
         elif text == "Datetime List":

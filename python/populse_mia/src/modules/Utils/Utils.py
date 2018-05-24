@@ -2,7 +2,7 @@ import os
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from datetime import datetime, date, time
-from populse_db.database_model import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT
+from populse_db.database_model import LIST_TYPES, TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_FLOAT, TAG_TYPE_LIST_BOOLEAN, TAG_TYPE_BOOLEAN
 import ast
 import dateutil.parser
 
@@ -14,7 +14,7 @@ def set_item_data(item, value, value_type):
     :param value_type: new value type
     """
 
-    if value_type in [TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT]:
+    if value_type in LIST_TYPES:
         if isinstance(value, str):
             value = ast.literal_eval(value)
         if value_type == TAG_TYPE_LIST_DATE:
@@ -67,6 +67,9 @@ def set_item_data(item, value, value_type):
     elif value_type == TAG_TYPE_INTEGER:
         value_prepared = int(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
+    elif value_type == TAG_TYPE_BOOLEAN:
+        value_prepared = value
+        item.setData(Qt.EditRole, QVariant(value_prepared))
     elif value_type == TAG_TYPE_STRING:
         value_prepared = str(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
@@ -93,13 +96,15 @@ def check_value_type(value, value_type, is_subvalue=False):
             return True
         except Exception:
             return False
+    elif value_type == TAG_TYPE_BOOLEAN or value_type == TAG_TYPE_LIST_BOOLEAN and is_subvalue:
+        return value == "True" or value == True or value == "False" or value == False
     elif value_type == TAG_TYPE_STRING or value_type == TAG_TYPE_LIST_STRING and is_subvalue:
         try:
             str(value)
             return True
         except Exception:
             return False
-    elif value_type in [TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT] and not is_subvalue:
+    elif value_type in LIST_TYPES and not is_subvalue:
         if isinstance(value, str):
             value = ast.literal_eval(value)
         is_valid_value = True
@@ -153,6 +158,11 @@ def table_to_database(value, value_type):
         return str(value)
     elif value_type == TAG_TYPE_INTEGER:
         return int(value)
+    elif value_type == TAG_TYPE_BOOLEAN:
+        if value == "True":
+            return True
+        elif value == "False":
+            return False
     elif value_type == TAG_TYPE_DATETIME:
         if isinstance(value, QDateTime):
             return value.toPyDateTime()
