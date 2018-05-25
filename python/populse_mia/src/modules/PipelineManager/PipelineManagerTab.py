@@ -268,10 +268,10 @@ class PipelineManagerTab(QWidget):
 
                 # If the file name is already in the database, no exception is raised
                 # but the user is warned
-                if self.project.database.get_path(p_value):
+                if self.project.database.get_document(p_value):
                     print("Path {0} already in database.".format(p_value))
                 else:
-                    self.project.database.add_path(p_value)
+                    self.project.database.add_document(p_value)
 
         pipeline_scene = self.diagramView.scene
 

@@ -340,7 +340,7 @@ class PlugFilter(QWidget):
 
             self.scans_list = scans_list_copy
         else:
-            self.scans_list = self.project.database.get_paths_names()
+            self.scans_list = self.project.database.get_documents_names()
 
         self.process = process
         filter_to_apply = self.project.currentFilter
@@ -388,8 +388,8 @@ class PlugFilter(QWidget):
         """ Emitting a signal to set the file names to the plug value. """
 
         (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        path_names = self.project.database.get_paths_matching_advanced_search(links, fields, conditions,
-                                                                              values, nots, self.scans_list)
+        path_names = self.project.database.get_documents_matching_advanced_search(links, fields, conditions,
+                                                                                  values, nots, self.scans_list)
 
         for i in range(len(path_names)):
             path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))

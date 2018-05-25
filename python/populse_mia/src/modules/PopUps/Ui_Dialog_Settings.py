@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 from functools import partial
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Informations import Ui_Informations
-from populse_db.database_model import PATH_PRIMARY_KEY
+from populse_db.database_model import DOCUMENT_PRIMARY_KEY
 
 class Ui_Dialog_Settings(QDialog):
     """
@@ -67,7 +67,7 @@ class Ui_Dialog_Settings(QDialog):
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
-        new_visibilities.append(PATH_PRIMARY_KEY)
+        new_visibilities.append(DOCUMENT_PRIMARY_KEY)
         historyMaker.append(new_visibilities)
         project.setVisibles(new_visibilities)
         project.undos.append(historyMaker)
