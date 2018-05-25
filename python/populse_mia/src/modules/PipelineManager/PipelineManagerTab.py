@@ -326,9 +326,6 @@ class PipelineManagerTab(QWidget):
                         dest_node_name = info_link[0]
                         nodes_to_check.append(dest_node_name)
 
-                    if plug_name == "native_class_images":
-                        print("NATIVE CLASS IMAGE VALUE: ", plug_value)
-
                     try:
                         pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     except TraitError:
