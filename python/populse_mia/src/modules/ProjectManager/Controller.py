@@ -1,15 +1,14 @@
 import glob
 import os.path
 import json
-import hashlib # To generate the md5 of each scan
-from populse_db.database_model import TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_FLOAT, TAG_TYPE_TIME, TAG_TYPE_FLOAT, TAG_TYPE_DATE, TAG_TYPE_DATETIME, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING
-from SoftwareProperties.Config import Config
+import hashlib # To generate the md5 of each path
+from populse_db.database_model import TAG_TYPE_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_FLOAT, TAG_TYPE_TIME, TAG_TYPE_FLOAT, TAG_TYPE_DATE, TAG_TYPE_DATETIME, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING
 import datetime
-import yaml
 from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
+from Project.Project import TAG_ORIGIN_BUILTIN
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -158,8 +157,10 @@ def read_log(project):
                     tag_row = project.database.get_tag(tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
-                        tags_added.append([tag_name, TAG_ORIGIN_BUILTIN, tag_type, unit, None,
-                                                     description])
+                        tags_added.append([tag_name, tag_type, description])
+                        project.setOrigin(tag_name, TAG_ORIGIN_BUILTIN)
+                        project.setUnit(tag_name, unit)
+                        project.setDefaultValue(tag_name, None)
                         tags_names_added.append(tag_name)
 
                     # The value is accepted if it's not empty or null
@@ -172,10 +173,12 @@ def read_log(project):
 
     # Missing values added thanks to default values
     for tag in project.database.get_tags():
+        """
         if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
+        """
 
     project.database.add_tags(tags_added)
 

@@ -1,12 +1,13 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN, LIST_TYPES
+from populse_db.database_model import TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN, LIST_TYPES
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type
 import os
 import ast
-from datetime import datetime, date, time
+from datetime import datetime
+from Project.Project import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
 
 class Default_value_list_creation(QDialog):
 

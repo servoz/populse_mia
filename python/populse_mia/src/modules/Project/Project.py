@@ -8,8 +8,21 @@ from Project.Filter import Filter
 from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
 from populse_db.database import Database
-from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
+from populse_db.database_model import TAG_TYPE_STRING, PATH_PRIMARY_KEY
 
+# Tag origin
+TAG_ORIGIN_BUILTIN = "builtin"
+TAG_ORIGIN_USER = "user"
+
+# Tag unit
+TAG_UNIT_MS = "ms"
+TAG_UNIT_MM = "mm"
+TAG_UNIT_DEGREE = "degree"
+TAG_UNIT_HZPIXEL = "Hz/pixel"
+TAG_UNIT_MHZ = "MHz"
+
+ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
+             TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]
 
 class Project:
 
@@ -64,16 +77,34 @@ class Project:
                 date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                 sorted_tag='',
                 sort_order='',
-                visibles=["name", "Type"]
+                visibles=[PATH_PRIMARY_KEY, "Type"],
+                origins={},
+                units={},
+                default_values={}
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
             # Tags manually added
-            self.database.add_tag("Checksum", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
-            self.database.add_tag("Type", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
+            self.database.add_tag("Checksum", TAG_TYPE_STRING, "Path checksum")
+            self.database.add_tag("Type", TAG_TYPE_STRING, "Path type")
 
         self.properties = self.loadProperties()
+
+        if new_project:
+
+            self.setUnit("Checksum", None)
+            self.setDefaultValue("Checksum", None)
+            self.setOrigin("Checksum", TAG_ORIGIN_BUILTIN)
+
+            self.setUnit("Type", None)
+            self.setDefaultValue("Type", None)
+            self.setOrigin("Type", TAG_ORIGIN_BUILTIN)
+
+            self.setUnit(PATH_PRIMARY_KEY, None)
+            self.setDefaultValue(PATH_PRIMARY_KEY, None)
+            self.setOrigin(PATH_PRIMARY_KEY, TAG_ORIGIN_BUILTIN)
+
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
@@ -260,6 +291,84 @@ class Project:
         self.properties["visibles"] = visibles
         self.unsavedModifications = True
 
+    def getOrigin(self, tag):
+        """
+        Returns the tag origin
+        :param tag: Tag name
+        """
+
+        return self.properties["origins"][tag]
+
+    def setOrigin(self, tag, origin):
+        """
+        Sets the tag origin
+        :param tag: Tag name
+        :param origin: New tag origin
+        """
+
+        self.properties["origins"][tag] = origin
+        self.unsavedModifications = True
+
+    def removeOrigin(self, tag):
+        """
+        Removes the tag origin
+        :param tag: Tag name
+        """
+
+        del self.properties["origins"][tag]
+
+    def getUnit(self, tag):
+        """
+        Returns the tag unit
+        :param tag: Tag name
+        """
+
+        return self.properties["units"][tag]
+
+    def setUnit(self, tag, unit):
+        """
+        Sets the tag unit
+        :param tag: Tag name
+        :param unit: New tag unit
+        """
+
+        self.properties["units"][tag] = unit
+        self.unsavedModifications = True
+
+    def removeUnit(self, tag):
+        """
+        Removes the tag unit
+        :param tag: Tag name
+        """
+
+        del self.properties["units"][tag]
+
+    def getDefaultValue(self, tag):
+        """
+        Returns the tag default value
+        :param tag: Tag name
+        """
+
+        return self.properties["default_values"][tag]
+
+    def setDefaultValue(self, tag, default_value):
+        """
+        Sets the tag unit
+        :param tag: Tag name
+        :param default_value: New tag default value
+        """
+
+        self.properties["default_values"][tag] = default_value
+        self.unsavedModifications = True
+
+    def removeDefaultValue(self, tag):
+        """
+        Removes the tag default value
+        :param tag: Tag name
+        """
+
+        del self.properties["default_values"][tag]
+
     """ UTILS """
 
     """ MODIFICATIONS """
@@ -305,21 +414,26 @@ class Project:
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
                 self.database.remove_tag(tagToRemove)
+                self.removeDefaultValue(tagToRemove)
+                self.removeOrigin(tagToRemove)
+                self.removeUnit(tagToRemove)
                 column_to_remove = table.get_tag_column(tagToRemove)
                 table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
                 # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
-                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
+                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags ([Tag row, origin, unit, default_value])
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToReput = tagsRemoved[i]
-                    self.database.add_tag(tagToReput.name, tagToReput.origin, tagToReput.type, tagToReput.unit,
-                                          tagToReput.default_value, tagToReput.description)
+                    tagToReput = tagsRemoved[i][0]
+                    self.database.add_tag(tagToReput.name, tagToReput.type, tagToReput.description)
+                    self.setOrigin(tagToReput.name, tagsRemoved[i][1])
+                    self.setUnit(tagToReput.name, tagsRemoved[i][2])
+                    self.setDefaultValue(tagToReput.name, tagsRemoved[i][3])
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToReput = tagsRemoved[i]
+                    tagToReput = tagsRemoved[i][0]
                     column = table.get_index_insertion(tagToReput.name)
                     table.add_column(column, tagToReput.name)
             if (action == "add_scans"):
@@ -406,7 +520,10 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_tag(tagToAdd, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
+                self.database.add_tag(tagToAdd, tagType, tagDescription)
+                self.setUnit(tagToAdd, tagUnit)
+                self.setOrigin(tagToAdd, TAG_ORIGIN_USER)
+                self.setDefaultValue(tagToAdd, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
                     self.database.new_value(value[0], value[1], value[2], value[3])
@@ -417,8 +534,11 @@ class Project:
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToRemove = tagsRemoved[i].name
+                    tagToRemove = tagsRemoved[i][0].name
                     self.database.remove_tag(tagToRemove)
+                    self.removeDefaultValue(tagToRemove)
+                    self.removeOrigin(tagToRemove)
+                    self.removeUnit(tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
                     table.removeColumn(column_to_remove)
             if (action == "add_scans"):

@@ -25,9 +25,10 @@ from SoftwareProperties import Config
 from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
-from populse_db.database_model import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_BUILTIN, TAG_TYPE_LIST_FLOAT, \
+from populse_db.database_model import TAG_TYPE_STRING, TAG_TYPE_LIST_FLOAT, \
     TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, \
-    TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME, LIST_TYPES
+    TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME, LIST_TYPES, PATH_PRIMARY_KEY
+from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
 
@@ -387,8 +388,10 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the tag and a value for each scan in the Database
-            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tag_type, new_tag_unit, new_default_value,
-                                          new_tag_description)
+            self.project.database.add_tag(new_tag_name, tag_type, new_tag_description)
+            self.project.setUnit(new_tag_name, new_tag_unit)
+            self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
+            self.project.setDefaultValue(new_tag_name, new_default_value)
             for scan in self.project.database.get_paths():
                 self.project.database.new_value(scan.name, new_tag_name, table_to_database(new_default_value, tag_type),
                                                 None)
@@ -431,8 +434,10 @@ class DataBrowser(QWidget):
 
             # We add the new tag in the Database
             tagCloned = self.project.database.get_tag(tag_to_clone)
-            self.project.database.add_tag(new_tag_name, TAG_ORIGIN_USER, tagCloned.type, tagCloned.unit,
-                                          tagCloned.default_value, tagCloned.description)
+            self.project.database.add_tag(new_tag_name, tagCloned.type, tagCloned.description)
+            self.project.setDefaultValue(new_tag_name, self.project.getDefaultValue(tag_to_clone))
+            self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
+            self.project.setUnit(new_tag_name, self.project.getUnit(tag_to_clone))
             for scan in self.project.database.get_paths():
 
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
@@ -447,8 +452,8 @@ class DataBrowser(QWidget):
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
             historyMaker.append(tagCloned.type)
-            historyMaker.append(tagCloned.unit)
-            historyMaker.append(tagCloned.default_value)
+            historyMaker.append(self.project.getUnit(tag_to_clone))
+            historyMaker.append(self.project.getDefaultValue(tag_to_clone))
             historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
@@ -481,13 +486,16 @@ class DataBrowser(QWidget):
             historyMaker.append("remove_tags")
             tags_removed = []
 
-            # Each Tag object to remove is put in the history
+            # Each Tag row to remove is put in the history
             for tag in tag_names_to_remove:
                 tagObject = self.project.database.get_tag(tag)
-                tags_removed.append(tagObject)
+                tag_origin = self.project.getOrigin(tag)
+                tag_unit = self.project.getUnit(tag)
+                tag_default_value = self.project.getDefaultValue(tag)
+                tags_removed.append([tagObject, tag_origin, tag_unit, tag_default_value])
             historyMaker.append(tags_removed)
 
-            # Each Value objects of the tags to remove are stored in the history
+            # Each value of the tags to remove are stored in the history
             values_removed = []
             for tag in tag_names_to_remove:
                 for scan in self.project.database.get_paths_names():
@@ -503,6 +511,9 @@ class DataBrowser(QWidget):
             # Tags removed from the Database and table
             for tag in tag_names_to_remove:
                 self.project.database.remove_tag(tag)
+                self.project.removeDefaultValue(tag)
+                self.project.removeOrigin(tag)
+                self.project.removeUnit(tag)
                 self.table_data.removeColumn(self.table_data.get_tag_column(tag))
 
             # Selection updated
@@ -552,7 +563,7 @@ class TableDataBrowser(QTableWidget):
         tag_object = self.project.database.get_tag(tag)
         item.setText(tag)
         item.setToolTip(
-            "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
+            "Description: " + str(tag_object.description) + "\nUnit: " + str(self.project.getUnit(tag)) + "\nType: " + str(
                 tag_object.type))
         # Set column type
         if tag_object.type == TAG_TYPE_FLOAT:
@@ -785,9 +796,9 @@ class TableDataBrowser(QTableWidget):
         # Sorting the list of tags in alphabetical order, but keeping FileName first
         tags = self.project.database.get_tags_names()
         tags.remove("Checksum")
-        tags.remove("name")
+        tags.remove(PATH_PRIMARY_KEY)
         tags = sorted(tags)
-        tags.insert(0, "name")
+        tags.insert(0, PATH_PRIMARY_KEY)
 
         self.setColumnCount(len(tags))
 
@@ -801,7 +812,7 @@ class TableDataBrowser(QTableWidget):
             element = self.project.database.get_tag(tag_name)
             if element is not None:
                 item.setToolTip(
-                    "Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(
+                    "Description: " + str(element.description) + "\nUnit: " + str(self.project.getUnit(tag_name)) + "\nType: " + str(
                         element.type))
 
                 # Set column type
@@ -899,7 +910,7 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(230, 230, 230)  # Grey
 
                         # Raw tag
-                        elif self.project.database.get_tag(tag).origin == TAG_ORIGIN_BUILTIN:
+                        elif self.project.getOrigin(tag) == TAG_ORIGIN_BUILTIN:
                             if self.project.database.is_value_modified(scan, tag):
                                 if row_number % 2 == 0:
                                     color.setRgb(200, 230, 245)  # Cyan
@@ -1207,7 +1218,7 @@ class TableDataBrowser(QTableWidget):
 
                 # Adding removed values to history
                 for tag in self.project.database.get_tags_names():
-                    if tag != "name":
+                    if tag != PATH_PRIMARY_KEY:
                         current_value = self.project.database.get_current_value(scan_path, tag)
                         initial_value = self.project.database.get_initial_value(scan_path, tag)
                         if current_value is not None or initial_value is not None:
@@ -1431,15 +1442,16 @@ class TableDataBrowser(QTableWidget):
 
         tags = self.project.database.get_tags_names()
         tags.remove("Checksum")
-        tags.remove("name")
+        tags.remove(PATH_PRIMARY_KEY)
         tags = sorted(tags)
-        tags.insert(0, "name")
+        tags.insert(0, PATH_PRIMARY_KEY)
 
         # Adding missing columns
         for tag in tags:
 
             # Tag added only if it's not already in the table
             if self.get_tag_column(tag) is None:
+
 
                 columnIndex = self.get_index_insertion(tag)
                 self.insertColumn(columnIndex)
@@ -1450,7 +1462,9 @@ class TableDataBrowser(QTableWidget):
                 tag_object = self.project.database.get_tag(tag)
                 if tag_object is not None:
                     item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
-                        tag_object.unit) + "\nType: " + str(tag_object.type))
+                        self.project.getUnit(tag)) + "\nType: " + str(tag_object.type))
+                    print(tag)
+                    print(self.project.getUnit(tag))
 
                     # Set column type
                     if tag_object.type == TAG_TYPE_FLOAT:
@@ -1700,7 +1714,7 @@ class TableDataBrowser(QTableWidget):
                 database_value = table_to_database(new_value, self.project.database.get_tag(tag_name).type)
 
                 # We only set the cell if it's not the tag name
-                if (tag_name != "name"):
+                if (tag_name != PATH_PRIMARY_KEY):
 
                     old_value = self.project.database.get_current_value(scan_path, tag_name)
                     # The scan already has a value for the tag: we update it
