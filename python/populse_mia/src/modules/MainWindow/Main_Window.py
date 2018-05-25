@@ -486,24 +486,21 @@ class Main_Window(QMainWindow):
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
-                    return False
 
-                # No errors in files, we can open the project
-                else:
-                    self.project.database.unsave_modifications()
-                    self.remove_raw_files_useless()  # We remove the useless files from the old project
+                self.project.database.unsave_modifications()
+                self.remove_raw_files_useless()  # We remove the useless files from the old project
 
-                    # Project removed from the opened projects list
-                    config = Config()
-                    opened_projects = config.get_opened_projects()
-                    opened_projects.remove(self.project.folder)
-                    config.set_opened_projects(opened_projects)
+                # Project removed from the opened projects list
+                config = Config()
+                opened_projects = config.get_opened_projects()
+                opened_projects.remove(self.project.folder)
+                config.set_opened_projects(opened_projects)
 
-                    self.project = tempDatabase  # New Database
+                self.project = tempDatabase  # New Database
 
-                    self.update_project(file_name) # Project updated everywhere
+                self.update_project(file_name) # Project updated everywhere
 
-                    return True
+                return True
 
         # The project doesn't exist anymore
         else:
