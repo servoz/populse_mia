@@ -1,5 +1,14 @@
 import ast
 import os
+from functools import partial
+
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
+    QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
+
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.CountTable import CountTable
 from DataBrowser.ModifyTable import ModifyTable
@@ -12,18 +21,10 @@ from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Select_Filter import Ui_Select_Filter
 from ProjectManager.Controller import save_project
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QVariant
-from PyQt5.QtGui import QColor, QIcon, QPixmap
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
-    QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
 from SoftwareProperties import Config
 from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
-from functools import partial
-
 from populse_db.database_model import TAG_ORIGIN_USER, TAG_TYPE_STRING, TAG_ORIGIN_BUILTIN, TAG_TYPE_LIST_FLOAT, \
     TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, \
     TAG_TYPE_FLOAT, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_DATETIME, LIST_TYPES
@@ -42,6 +43,7 @@ class NumberFormatDelegate(QItemDelegate):
         editor.setMaximum(10 ** 10)
         editor.setDecimals(decimals_number)
         return editor
+
 
 class DateTimeFormatDelegate(QItemDelegate):
     def __init__(self, parent=None):

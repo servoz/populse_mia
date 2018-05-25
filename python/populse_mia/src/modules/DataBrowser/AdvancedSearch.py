@@ -1,8 +1,11 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QObjectCleanupHandler
 import os
+
+from PyQt5.QtCore import QObjectCleanupHandler
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout
+
 from Utils.Tools import ClickableLabel
+
 
 class AdvancedSearch(QWidget):
 
@@ -32,7 +35,7 @@ class AdvancedSearch(QWidget):
         """
 
         # We remove the row only if there is at least 2 rows, because we always must keep at least one
-        if(len(self.rows) > 1):
+        if (len(self.rows) > 1):
             self.rows.remove(rowLayout)
 
         # We refresh the view
@@ -77,7 +80,7 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("HAS VALUE")
         conditionChoice.addItem("HAS NO VALUE")
         # Signal to update the placeholder text of the value
-        conditionChoice.currentTextChanged.connect(lambda : self.displayValueRules(conditionChoice, conditionValue))
+        conditionChoice.currentTextChanged.connect(lambda: self.displayValueRules(conditionChoice, conditionValue))
 
         # Minus to remove the row
         removeRowLabel = ClickableLabel()
@@ -86,13 +89,13 @@ class AdvancedSearch(QWidget):
         removeRowLabel.setPixmap(removeRowPicture)
 
         # Everything appended to the row
-        rowLayout.append(None) # Link room
+        rowLayout.append(None)  # Link room
         rowLayout.append(notChoice)
         rowLayout.append(fieldChoice)
         rowLayout.append(conditionChoice)
         rowLayout.append(conditionValue)
         rowLayout.append(removeRowLabel)
-        rowLayout.append(None) # Add row room
+        rowLayout.append(None)  # Add row room
 
         # Signal to remove the row
         removeRowLabel.clicked.connect(lambda: self.remove_row(rowLayout))
@@ -110,7 +113,8 @@ class AdvancedSearch(QWidget):
         """
         if choice.currentText() == "BETWEEN":
             value.setDisabled(False)
-            value.setPlaceholderText("Please separate the two inclusive borders of the range by a semicolon and a space")
+            value.setPlaceholderText(
+                "Please separate the two inclusive borders of the range by a semicolon and a space")
         elif choice.currentText() == "IN":
             value.setDisabled(False)
             value.setPlaceholderText("Please separate each list item by a semicolon and a space")
@@ -154,7 +158,7 @@ class AdvancedSearch(QWidget):
                 j = j + 1
             i = i + 1
 
-        #Search button added at the end
+        # Search button added at the end
         searchLayout = QHBoxLayout(None)
         searchLayout.setObjectName("search layout")
         search = QPushButton("Search")
@@ -238,7 +242,7 @@ class AdvancedSearch(QWidget):
         :param widget: Widget to check
         """
         for row in self.rows:
-            if(widget in row):
+            if (widget in row):
                 return True
         return False
 
@@ -247,12 +251,13 @@ class AdvancedSearch(QWidget):
         Called to start the search
         """
 
-        (fields, conditions, values, links, nots) = self.get_filters() # Filters gotten
+        (fields, conditions, values, links, nots) = self.get_filters()  # Filters gotten
 
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots, self.scans_list)
+        result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots,
+                                                                          self.scans_list)
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)

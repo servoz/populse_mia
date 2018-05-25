@@ -3,8 +3,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 from functools import partial
 
-
-
 class Ui_Dialog_clone_tag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
@@ -144,4 +142,3 @@ class Ui_Dialog_clone_tag(QDialog):
         self.tag_to_replace = self.list_widget_tags.selectedItems()[0].text()
         self.new_tag_name = self.line_edit_new_tag_name.text()
         return self.tag_to_replace, self.new_tag_name
-
