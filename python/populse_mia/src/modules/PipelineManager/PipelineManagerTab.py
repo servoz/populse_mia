@@ -18,6 +18,7 @@ from traits.trait_errors import TraitError
 
 from traits.api import TraitListObject
 from capsul.api import get_process_instance, StudyConfig
+from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 from .process_library import ProcessLibraryWidget
 
 from PipelineManager.callStudent import callStudent
@@ -336,6 +337,13 @@ class PipelineManagerTab(QWidget):
                                 pass
 
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
+
+        # THIS IS A TEST
+        # TODO: CONTINUE
+        dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
+        import yaml
+        with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
