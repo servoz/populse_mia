@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from populse_db.database_model import TAG_TYPE_LIST_FLOAT, TAG_TYPE_LIST_INTEGER, TAG_TYPE_FLOAT, TAG_TYPE_INTEGER, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_DATETIME, TAG_TYPE_DATETIME, TAG_TYPE_DATE, TAG_TYPE_TIME, TAG_TYPE_STRING
+from populse_db.database_model import COLUMN_TYPE_LIST_FLOAT, COLUMN_TYPE_LIST_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_INTEGER, COLUMN_TYPE_LIST_DATE, COLUMN_TYPE_LIST_STRING, COLUMN_TYPE_LIST_TIME, COLUMN_TYPE_LIST_DATETIME, COLUMN_TYPE_DATETIME, COLUMN_TYPE_DATE, COLUMN_TYPE_TIME, COLUMN_TYPE_STRING
 from datetime import datetime, date, time
 
 class ModifyTable(QDialog):
@@ -122,7 +122,7 @@ class ModifyTable(QDialog):
             for cell in range (0, len(self.scans)):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
-                tag_object = self.project.database.get_tag(tag)
+                tag_object = self.project.database.get_column(tag)
                 tag_type = tag_object.type
 
                 database_value = []
@@ -132,21 +132,21 @@ class ModifyTable(QDialog):
                     item = self.table.item(0, i)
                     text = item.text()
 
-                    if tag_type == TAG_TYPE_LIST_INTEGER:
+                    if tag_type == COLUMN_TYPE_LIST_INTEGER:
                         database_value.append(int(text))
-                    elif tag_type == TAG_TYPE_LIST_FLOAT:
+                    elif tag_type == COLUMN_TYPE_LIST_FLOAT:
                         database_value.append(float(text))
-                    elif tag_type == TAG_TYPE_LIST_STRING:
+                    elif tag_type == COLUMN_TYPE_LIST_STRING:
                         database_value.append(str(text))
-                    elif tag_type == TAG_TYPE_LIST_DATE:
+                    elif tag_type == COLUMN_TYPE_LIST_DATE:
                         format = "%d/%m/%Y"
                         subvalue = datetime.strptime(text, format).date()
                         database_value.append(subvalue)
-                    elif tag_type == TAG_TYPE_LIST_DATETIME:
+                    elif tag_type == COLUMN_TYPE_LIST_DATETIME:
                         format = "%d/%m/%Y %H:%M"
                         subvalue = datetime.strptime(text, format)
                         database_value.append(subvalue)
-                    elif tag_type == TAG_TYPE_LIST_TIME:
+                    elif tag_type == COLUMN_TYPE_LIST_TIME:
                         format = "%H:%M"
                         subvalue = datetime.strptime(text, format).time()
                         database_value.append(subvalue)

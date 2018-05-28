@@ -1,12 +1,13 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from populse_db.database_model import TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ, TAG_UNIT_MM, TAG_UNIT_MS, TAG_TYPE_FLOAT, TAG_TYPE_STRING, TAG_TYPE_INTEGER, TAG_TYPE_DATETIME, TAG_TYPE_TIME, TAG_TYPE_DATE, TAG_TYPE_LIST_DATETIME, TAG_TYPE_LIST_DATE, TAG_TYPE_LIST_TIME, TAG_TYPE_LIST_INTEGER, TAG_TYPE_LIST_STRING, TAG_TYPE_LIST_FLOAT, TAG_TYPE_BOOLEAN, TAG_TYPE_LIST_BOOLEAN, LIST_TYPES
+from populse_db.database_model import COLUMN_TYPE_FLOAT, COLUMN_TYPE_STRING, COLUMN_TYPE_INTEGER, COLUMN_TYPE_DATETIME, COLUMN_TYPE_TIME, COLUMN_TYPE_DATE, COLUMN_TYPE_LIST_DATETIME, COLUMN_TYPE_LIST_DATE, COLUMN_TYPE_LIST_TIME, COLUMN_TYPE_LIST_INTEGER, COLUMN_TYPE_LIST_STRING, COLUMN_TYPE_LIST_FLOAT, COLUMN_TYPE_BOOLEAN, COLUMN_TYPE_LIST_BOOLEAN, LIST_TYPES
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type
 import os
 import ast
-from datetime import datetime, date, time
+from datetime import datetime
+from Project.Project import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
 
 class Default_value_list_creation(QDialog):
 
@@ -110,28 +111,28 @@ class Default_value_list_creation(QDialog):
             text = item.text()
 
             try:
-                if self.type == TAG_TYPE_LIST_INTEGER:
+                if self.type == COLUMN_TYPE_LIST_INTEGER:
                     database_value.append(int(text))
-                elif self.type == TAG_TYPE_LIST_FLOAT:
+                elif self.type == COLUMN_TYPE_LIST_FLOAT:
                     database_value.append(float(text))
-                elif self.type == TAG_TYPE_LIST_BOOLEAN:
+                elif self.type == COLUMN_TYPE_LIST_BOOLEAN:
                     if text == "True":
                         database_value.append(True)
                     elif text == "False":
                         database_value.append(False)
                     else:
                         raise ValueError("Not a boolean value")
-                elif self.type == TAG_TYPE_LIST_STRING:
+                elif self.type == COLUMN_TYPE_LIST_STRING:
                     database_value.append(str(text))
-                elif self.type == TAG_TYPE_LIST_DATE:
+                elif self.type == COLUMN_TYPE_LIST_DATE:
                     format = "%d/%m/%Y"
                     datetime.strptime(text, format).date()
                     database_value.append(text)
-                elif self.type == TAG_TYPE_LIST_DATETIME:
+                elif self.type == COLUMN_TYPE_LIST_DATETIME:
                     format = "%d/%m/%Y %H:%M:%S.%f"
                     datetime.strptime(text, format)
                     database_value.append(text)
-                elif self.type == TAG_TYPE_LIST_TIME:
+                elif self.type == COLUMN_TYPE_LIST_TIME:
                     format = "%H:%M:%S.%f"
                     datetime.strptime(text, format).time()
                     database_value.append(text)
@@ -225,7 +226,7 @@ class Ui_Dialog_add_tag(QDialog):
     def __init__(self, project):
         super().__init__()
         self.project = project
-        self.type = TAG_TYPE_STRING # Type is string by default
+        self.type = COLUMN_TYPE_STRING # Type is string by default
         self.pop_up()
         self.setMinimumWidth(700)
         self.setWindowTitle("Add a tag")
@@ -353,45 +354,45 @@ class Ui_Dialog_add_tag(QDialog):
         :param text: New type
         """
         if text == "String":
-            self.type = TAG_TYPE_STRING
+            self.type = COLUMN_TYPE_STRING
         elif text == "Integer":
-            self.type = TAG_TYPE_INTEGER
+            self.type = COLUMN_TYPE_INTEGER
             self.text_edit_default_value.setPlaceholderText("Please enter an integer")
         elif text == "Float":
-            self.type = TAG_TYPE_FLOAT
+            self.type = COLUMN_TYPE_FLOAT
             self.text_edit_default_value.setPlaceholderText("Please enter a float")
         elif text == "Boolean":
-            self.type = TAG_TYPE_BOOLEAN
+            self.type = COLUMN_TYPE_BOOLEAN
             self.text_edit_default_value.setPlaceholderText("Please enter a boolean (True or False)")
         elif text == "Date":
-            self.type = TAG_TYPE_DATE
+            self.type = COLUMN_TYPE_DATE
             self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
         elif text == "Datetime":
-            self.type = TAG_TYPE_DATETIME
+            self.type = COLUMN_TYPE_DATETIME
             self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm:ss.zzz")
         elif text == "Time":
-            self.type = TAG_TYPE_TIME
+            self.type = COLUMN_TYPE_TIME
             self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm:ss.zzz")
         elif text == "String List":
-            self.type = TAG_TYPE_LIST_STRING
+            self.type = COLUMN_TYPE_LIST_STRING
         elif text == "Integer List":
-            self.type = TAG_TYPE_LIST_INTEGER
+            self.type = COLUMN_TYPE_LIST_INTEGER
         elif text == "Float List":
-            self.type = TAG_TYPE_LIST_FLOAT
+            self.type = COLUMN_TYPE_LIST_FLOAT
         elif text == "Boolean List":
-            self.type = TAG_TYPE_LIST_BOOLEAN
+            self.type = COLUMN_TYPE_LIST_BOOLEAN
         elif text == "Date List":
-            self.type = TAG_TYPE_LIST_DATE
+            self.type = COLUMN_TYPE_LIST_DATE
         elif text == "Datetime List":
-            self.type = TAG_TYPE_LIST_DATETIME
+            self.type = COLUMN_TYPE_LIST_DATETIME
         elif text == "Time List":
-            self.type = TAG_TYPE_LIST_TIME
+            self.type = COLUMN_TYPE_LIST_TIME
 
     def ok_action(self):
 
         # Tag name checked
         name_already_exists = False
-        if self.text_edit_tag_name.text() in self.project.database.get_tags_names():
+        if self.text_edit_tag_name.text() in self.project.database.get_columns_names():
             name_already_exists = True
 
         # Default value checked

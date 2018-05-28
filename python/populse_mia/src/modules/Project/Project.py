@@ -8,8 +8,21 @@ from Project.Filter import Filter
 from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
 from populse_db.database import Database
-from populse_db.database_model import TAG_TYPE_STRING, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
+from populse_db.database_model import COLUMN_TYPE_STRING, DOCUMENT_PRIMARY_KEY
 
+# Tag origin
+TAG_ORIGIN_BUILTIN = "builtin"
+TAG_ORIGIN_USER = "user"
+
+# Tag unit
+TAG_UNIT_MS = "ms"
+TAG_UNIT_MM = "mm"
+TAG_UNIT_DEGREE = "degree"
+TAG_UNIT_HZPIXEL = "Hz/pixel"
+TAG_UNIT_MHZ = "MHz"
+
+ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
+             TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]
 
 class Project:
 
@@ -64,16 +77,34 @@ class Project:
                 date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                 sorted_tag='',
                 sort_order='',
-                visibles=["name", "Type"]
+                visibles=[DOCUMENT_PRIMARY_KEY, "Type"],
+                origins={},
+                units={},
+                default_values={}
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
             # Tags manually added
-            self.database.add_tag("Checksum", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
-            self.database.add_tag("Type", TAG_ORIGIN_BUILTIN, TAG_TYPE_STRING, None, None, None)
+            self.database.add_column("Checksum", COLUMN_TYPE_STRING, "Path checksum")
+            self.database.add_column("Type", COLUMN_TYPE_STRING, "Path type")
 
         self.properties = self.loadProperties()
+
+        if new_project:
+
+            self.setUnit("Checksum", None)
+            self.setDefaultValue("Checksum", None)
+            self.setOrigin("Checksum", TAG_ORIGIN_BUILTIN)
+
+            self.setUnit("Type", None)
+            self.setDefaultValue("Type", None)
+            self.setOrigin("Type", TAG_ORIGIN_BUILTIN)
+
+            self.setUnit(DOCUMENT_PRIMARY_KEY, None)
+            self.setDefaultValue(DOCUMENT_PRIMARY_KEY, None)
+            self.setOrigin(DOCUMENT_PRIMARY_KEY, TAG_ORIGIN_BUILTIN)
+
         self.unsavedModifications = False
         self.undos = []
         self.redos = []
@@ -260,6 +291,84 @@ class Project:
         self.properties["visibles"] = visibles
         self.unsavedModifications = True
 
+    def getOrigin(self, tag):
+        """
+        Returns the tag origin
+        :param tag: Tag name
+        """
+
+        return self.properties["origins"][tag]
+
+    def setOrigin(self, tag, origin):
+        """
+        Sets the tag origin
+        :param tag: Tag name
+        :param origin: New tag origin
+        """
+
+        self.properties["origins"][tag] = origin
+        self.unsavedModifications = True
+
+    def removeOrigin(self, tag):
+        """
+        Removes the tag origin
+        :param tag: Tag name
+        """
+
+        del self.properties["origins"][tag]
+
+    def getUnit(self, tag):
+        """
+        Returns the tag unit
+        :param tag: Tag name
+        """
+
+        return self.properties["units"][tag]
+
+    def setUnit(self, tag, unit):
+        """
+        Sets the tag unit
+        :param tag: Tag name
+        :param unit: New tag unit
+        """
+
+        self.properties["units"][tag] = unit
+        self.unsavedModifications = True
+
+    def removeUnit(self, tag):
+        """
+        Removes the tag unit
+        :param tag: Tag name
+        """
+
+        del self.properties["units"][tag]
+
+    def getDefaultValue(self, tag):
+        """
+        Returns the tag default value
+        :param tag: Tag name
+        """
+
+        return self.properties["default_values"][tag]
+
+    def setDefaultValue(self, tag, default_value):
+        """
+        Sets the tag unit
+        :param tag: Tag name
+        :param default_value: New tag default value
+        """
+
+        self.properties["default_values"][tag] = default_value
+        self.unsavedModifications = True
+
+    def removeDefaultValue(self, tag):
+        """
+        Removes the tag default value
+        :param tag: Tag name
+        """
+
+        del self.properties["default_values"][tag]
+
     """ UTILS """
 
     """ MODIFICATIONS """
@@ -304,22 +413,27 @@ class Project:
             if (action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
-                self.database.remove_tag(tagToRemove)
+                self.database.remove_column(tagToRemove)
+                self.removeDefaultValue(tagToRemove)
+                self.removeOrigin(tagToRemove)
+                self.removeUnit(tagToRemove)
                 column_to_remove = table.get_tag_column(tagToRemove)
                 table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
                 # To reput the removed tags, we need to reput the tag in the tag list, and all the tags values associated to this tag
-                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags (Tag class)
+                tagsRemoved = toUndo[1]  # The second element is a list of the removed tags ([Tag row, origin, unit, default_value])
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToReput = tagsRemoved[i]
-                    self.database.add_tag(tagToReput.name, tagToReput.origin, tagToReput.type, tagToReput.unit,
-                                          tagToReput.default_value, tagToReput.description)
+                    tagToReput = tagsRemoved[i][0]
+                    self.database.add_column(tagToReput.name, tagToReput.type, tagToReput.description)
+                    self.setOrigin(tagToReput.name, tagsRemoved[i][1])
+                    self.setUnit(tagToReput.name, tagsRemoved[i][2])
+                    self.setDefaultValue(tagToReput.name, tagsRemoved[i][3])
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToReput = tagsRemoved[i]
+                    tagToReput = tagsRemoved[i][0]
                     column = table.get_index_insertion(tagToReput.name)
                     table.add_column(column, tagToReput.name)
             if (action == "add_scans"):
@@ -328,7 +442,7 @@ class Project:
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToRemove = scansAdded[i]
-                    self.database.remove_path(scanToRemove)
+                    self.database.remove_document(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
                 table.update_colors()
@@ -338,11 +452,11 @@ class Project:
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_path(scanToReput.name)
+                    self.database.add_document(scanToReput.name)
                     table.scans_to_visualize.append(scanToReput.name)
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
-                table.add_rows(self.database.get_paths_names())
+                table.add_rows(self.database.get_documents_names())
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -357,7 +471,7 @@ class Project:
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
                         self.database.remove_value(scan, tag)
-                        set_item_data(item, not_defined_value, TAG_TYPE_STRING)
+                        set_item_data(item, not_defined_value, COLUMN_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -365,7 +479,7 @@ class Project:
                     else:
                         # If the cell was there before, we just set it to the old value
                         self.database.set_current_value(scan, tag, old_value)
-                        set_item_data(item, old_value, self.database.get_tag(tag).type)
+                        set_item_data(item, old_value, self.database.get_column(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -406,7 +520,10 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_tag(tagToAdd, TAG_ORIGIN_USER, tagType, tagUnit, tagDefaultValue, tagDescription)
+                self.database.add_column(tagToAdd, tagType, tagDescription)
+                self.setUnit(tagToAdd, tagUnit)
+                self.setOrigin(tagToAdd, TAG_ORIGIN_USER)
+                self.setDefaultValue(tagToAdd, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
                     self.database.new_value(value[0], value[1], value[2], value[3])
@@ -417,8 +534,11 @@ class Project:
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToRemove = tagsRemoved[i].name
-                    self.database.remove_tag(tagToRemove)
+                    tagToRemove = tagsRemoved[i][0].name
+                    self.database.remove_column(tagToRemove)
+                    self.removeDefaultValue(tagToRemove)
+                    self.removeOrigin(tagToRemove)
+                    self.removeUnit(tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
                     table.removeColumn(column_to_remove)
             if (action == "add_scans"):
@@ -428,21 +548,21 @@ class Project:
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_path(scanToAdd)
+                    self.database.add_document(scanToAdd)
                     table.scans_to_visualize.append(scanToAdd)
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range(0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
                     self.database.new_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[3])
-                table.add_rows(self.database.get_paths_names())
+                table.add_rows(self.database.get_documents_names())
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToRemove = scansRemoved[i].name
-                    self.database.remove_path(scanToRemove)
+                    self.database.remove_document(scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                 table.update_colors()
@@ -466,7 +586,7 @@ class Project:
                         font.setBold(False)
                         item.setFont(font)
                     self.database.set_current_value(scan, tag, new_value)
-                    set_item_data(item, new_value, self.database.get_tag(tag).type)
+                    set_item_data(item, new_value, self.database.get_column(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):

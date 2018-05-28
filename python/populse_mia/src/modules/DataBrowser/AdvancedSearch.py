@@ -256,8 +256,8 @@ class AdvancedSearch(QWidget):
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions, values, nots,
-                                                                          self.scans_list)
+        result = self.project.database.get_documents_matching_advanced_search(links, fields, conditions, values, nots,
+                                                                              self.scans_list)
         # DataBrowser updated with the new selection
         self.dataBrowser.table_data.scans_to_visualize = result
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
@@ -336,8 +336,8 @@ class AdvancedSearch(QWidget):
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
-            result = self.project.database.get_paths_matching_advanced_search(links, fields, conditions,
-                                                                              values, nots, self.scans_list)
+            result = self.project.database.get_documents_matching_advanced_search(links, fields, conditions,
+                                                                                  values, nots, self.scans_list)
             # DataBrowser updated with the new selection
             self.dataBrowser.table_data.scans_to_visualize = result
 
@@ -347,6 +347,6 @@ class AdvancedSearch(QWidget):
             if self.scans_list:
                 self.dataBrowser.table_data.scans_to_visualize = self.scans_list
             else:
-                self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_paths_names()
+                self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_documents_names()
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)
