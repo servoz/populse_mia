@@ -341,7 +341,7 @@ class CountTable(QDialog):
 
             and_to_write = True
 
-            query += "(" + tag + " == \"" + str(value) + "\")"
+            query += "({" + tag + "} == \"" + str(value) + "\")"
 
         query = "(" + query + ")"
 

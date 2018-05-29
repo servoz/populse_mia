@@ -23,6 +23,7 @@ if __name__ == '__main__':
     sys._excepthook = sys.excepthook
 
     def exception_hook(exctype, value, traceback):
+        print("exception catched")
         config = Config()
         opened_projects = config.get_opened_projects()
         opened_projects.remove(imageViewer.project.folder)
