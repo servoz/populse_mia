@@ -313,7 +313,12 @@ class DataBrowser(QWidget):
                     if self.project.database.get_current_value(scan.name, tag) is None and not scan.name in return_list:
                         return_list.append(scan.name)
         elif str_search != "":
-            return_list = self.project.database.get_documents_matching_search(str_search, self.project.getVisibles())
+            generator = self.project.database.filter_documents(self.prepare_filter(str_search, self.project.getVisibles()))
+
+            # Creating the list of scans
+            for scan in generator:
+                return_list.append(getattr(scan, DOCUMENT_PRIMARY_KEY))
+
         # Otherwise, we take every scan
         else:
             return_list = self.project.database.get_documents_names()
@@ -324,6 +329,32 @@ class DataBrowser(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
         self.project.currentFilter.search_bar = str_search
+
+    def prepare_filter(self, search, tags):
+        """
+        Prepares the rapid search filter
+        :param search: str search
+        :param tags: list of tags to take into account
+        :return: str filter corresponding to the rapid search
+        """
+
+        query = ""
+
+        or_to_write = False
+
+        for tag in tags:
+
+
+            if or_to_write:
+                query += " OR "
+
+            query += "({\"" + tag + "\"} == \"" + search + "\")"
+
+            or_to_write = True
+
+        query = "(" + query + ")"
+
+        return query
 
     def reset_search_bar(self):
         self.search_bar.setText("")
