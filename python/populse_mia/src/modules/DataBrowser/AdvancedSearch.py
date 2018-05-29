@@ -259,6 +259,7 @@ class AdvancedSearch(QWidget):
 
         # Result gotten
         try:
+
             filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
             result = self.project.database.filter_documents(filter_query)
 
@@ -320,6 +321,8 @@ class AdvancedSearch(QWidget):
                     row_field_query = "({" + row_field + "} != null)"
                 elif row_condition == "HAS NO VALUE":
                     row_field_query = "({" + row_field + "} == null)"
+                elif row_condition == "CONTAINS":
+                    row_field_query = "({" + row_field + "} LIKE \"%" + row_value + "%\")"
                 else:
                     row_field_query = "({" + row_field + "} " + row_condition + " \"" + row_value + "\")"
 
@@ -349,6 +352,8 @@ class AdvancedSearch(QWidget):
         final_query += " AND ({" + DOCUMENT_PRIMARY_KEY + "} IN " + str(scans).replace("'", "\"") + ")"
 
         final_query = "(" + final_query + ")"
+
+        print(final_query)
 
         return final_query
 

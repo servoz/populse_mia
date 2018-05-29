@@ -348,7 +348,7 @@ class DataBrowser(QWidget):
             if or_to_write:
                 query += " OR "
 
-            query += "({" + tag + "} == \"" + search + "\")"
+            query += "({" + tag + "} LIKE \"%" + search + "%\")"
 
             or_to_write = True
 
