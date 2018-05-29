@@ -354,6 +354,8 @@ class DataBrowser(QWidget):
 
         query = "(" + query + ")"
 
+        print(query)
+
         return query
 
     def reset_search_bar(self):

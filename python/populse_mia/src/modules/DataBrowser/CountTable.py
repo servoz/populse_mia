@@ -345,4 +345,6 @@ class CountTable(QDialog):
 
         query = "(" + query + ")"
 
+        print(query)
+
         return query
