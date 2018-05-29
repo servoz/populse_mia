@@ -11,6 +11,8 @@ from Utils.Utils import set_item_data, table_to_database
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
 
+from populse_db.database_model import DOCUMENT_PRIMARY_KEY
+
 class CountTable(QDialog):
     """
     Is called when the user wants to verify precisely the scans of the project.
@@ -289,7 +291,12 @@ class CountTable(QDialog):
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                list_scans = self.project.database.get_documents_matching_field_value_couples(tag_list)
+                generator_scans = self.project.database.filter_documents(self.prepare_filter(tag_list))
+
+                # List of scans created, given the generator
+                list_scans = []
+                for scan in generator_scans:
+                    list_scans.append(getattr(scan, DOCUMENT_PRIMARY_KEY))
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
@@ -312,3 +319,30 @@ class CountTable(QDialog):
             item.setText(str(nb_scans_ok))
             item.setFont(self.font)
             self.table.setItem(self.nb_row, col, item)
+
+    def prepare_filter(self, couples):
+        """
+        Prepares the filter in order to fill the count table
+        :param couples:
+        :return: Str query of the corresponding filter
+        """
+
+        query = ""
+
+        and_to_write= False
+
+        for couple in couples:
+            tag = couple[0]
+            value = couple[1]
+
+            # No AND for the first condition
+            if and_to_write:
+                query += " AND "
+
+            and_to_write = True
+
+            query += "(" + tag + " == \"" + str(value) + "\")"
+
+        query = "(" + query + ")"
+
+        return query
