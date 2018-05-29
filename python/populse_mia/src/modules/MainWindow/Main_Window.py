@@ -6,10 +6,9 @@ Created on 11 janv. 2018
 '''
 import subprocess
 import os
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
-    QMainWindow, QDialog, QMessageBox, QMenu, QInputDialog
+    QMainWindow, QMessageBox, QMenu
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
@@ -205,13 +204,6 @@ class Main_Window(QMainWindow):
         if can_exit:
             self.project.database.unsave_modifications()
 
-            # Project removed from the opened projects list
-            config = Config()
-            opened_projects = config.get_opened_projects()
-            opened_projects.remove(self.project.folder)
-            config.set_opened_projects(opened_projects)
-
-            self.remove_raw_files_useless() # To remove the useless raw files
             event.accept()
         else:
             event.ignore()
