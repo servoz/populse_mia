@@ -348,15 +348,17 @@ class PipelineManagerTab(QWidget):
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
         # Now
-        study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+        #study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+        study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])
 
         # Modifying the study_config to use SPM 12 Standalone
         setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
         setattr(study_config, 'spm_standalone', True)
         setattr(study_config, 'spm_directory', '/home/david/spm12')
-        setattr(study_config, 'use_spm', True)
-        setattr(study_config, 'spm_version', '12')
+        """setattr(study_config, 'use_spm', True)
+        setattr(study_config, 'spm_version', '12')"""
         setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')
+
 
         # inspect config options
         for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
