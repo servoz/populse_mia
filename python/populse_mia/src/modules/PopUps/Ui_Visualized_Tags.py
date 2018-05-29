@@ -74,7 +74,7 @@ class Ui_Visualized_Tags(QWidget):
 
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
-        for tag in project.database.get_columns_names():
+        for tag in project.database.get_fields_names():
             if tag != "Checksum" and tag != DOCUMENT_PRIMARY_KEY:
                 item = QtWidgets.QListWidgetItem()
                 if tag not in project.getVisibles():

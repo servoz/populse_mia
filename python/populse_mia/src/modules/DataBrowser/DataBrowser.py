@@ -25,9 +25,9 @@ from SoftwareProperties import Config
 from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
-from populse_db.database_model import COLUMN_TYPE_STRING, COLUMN_TYPE_LIST_FLOAT, \
-    COLUMN_TYPE_LIST_TIME, COLUMN_TYPE_LIST_STRING, COLUMN_TYPE_LIST_INTEGER, COLUMN_TYPE_LIST_DATETIME, COLUMN_TYPE_LIST_DATE, \
-    COLUMN_TYPE_FLOAT, COLUMN_TYPE_TIME, COLUMN_TYPE_DATE, COLUMN_TYPE_DATETIME, LIST_TYPES, DOCUMENT_PRIMARY_KEY
+from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_FLOAT, \
+    FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, \
+    FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, LIST_TYPES, DOCUMENT_PRIMARY_KEY
 from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
@@ -388,7 +388,7 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the tag and a value for each scan in the Database
-            self.project.database.add_column(new_tag_name, tag_type, new_tag_description)
+            self.project.database.add_field(new_tag_name, tag_type, new_tag_description)
             self.project.setUnit(new_tag_name, new_tag_unit)
             self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
             self.project.setDefaultValue(new_tag_name, new_default_value)
@@ -433,8 +433,8 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the new tag in the Database
-            tagCloned = self.project.database.get_column(tag_to_clone)
-            self.project.database.add_column(new_tag_name, tagCloned.type, tagCloned.description)
+            tagCloned = self.project.database.get_field(tag_to_clone)
+            self.project.database.add_field(new_tag_name, tagCloned.type, tagCloned.description)
             self.project.setDefaultValue(new_tag_name, self.project.getDefaultValue(tag_to_clone))
             self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
             self.project.setUnit(new_tag_name, self.project.getUnit(tag_to_clone))
@@ -488,7 +488,7 @@ class DataBrowser(QWidget):
 
             # Each Tag row to remove is put in the history
             for tag in tag_names_to_remove:
-                tagObject = self.project.database.get_column(tag)
+                tagObject = self.project.database.get_field(tag)
                 tag_origin = self.project.getOrigin(tag)
                 tag_unit = self.project.getUnit(tag)
                 tag_default_value = self.project.getDefaultValue(tag)
@@ -510,7 +510,7 @@ class DataBrowser(QWidget):
 
             # Tags removed from the Database and table
             for tag in tag_names_to_remove:
-                self.project.database.remove_column(tag)
+                self.project.database.remove_field(tag)
                 self.project.removeDefaultValue(tag)
                 self.project.removeOrigin(tag)
                 self.project.removeUnit(tag)
@@ -560,19 +560,19 @@ class TableDataBrowser(QTableWidget):
         self.insertColumn(column)
         item = QtWidgets.QTableWidgetItem()
         self.setHorizontalHeaderItem(column, item)
-        tag_object = self.project.database.get_column(tag)
+        tag_object = self.project.database.get_field(tag)
         item.setText(tag)
         item.setToolTip(
             "Description: " + str(tag_object.description) + "\nUnit: " + str(self.project.getUnit(tag)) + "\nType: " + str(
                 tag_object.type))
         # Set column type
-        if tag_object.type == COLUMN_TYPE_FLOAT:
+        if tag_object.type == FIELD_TYPE_FLOAT:
             self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
-        elif tag_object.type == COLUMN_TYPE_DATETIME:
+        elif tag_object.type == FIELD_TYPE_DATETIME:
             self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
-        elif tag_object.type == COLUMN_TYPE_DATE:
+        elif tag_object.type == FIELD_TYPE_DATE:
             self.setItemDelegateForColumn(column, DateFormatDelegate(self))
-        elif tag_object.type == COLUMN_TYPE_TIME:
+        elif tag_object.type == FIELD_TYPE_TIME:
             self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
         for row in range(0, self.rowCount()):
@@ -583,7 +583,7 @@ class TableDataBrowser(QTableWidget):
             if cur_value is not None:
                 set_item_data(item, cur_value, tag_object.type)
             else:
-                set_item_data(item, not_defined_value, COLUMN_TYPE_STRING)
+                set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -794,7 +794,7 @@ class TableDataBrowser(QTableWidget):
         """
 
         # Sorting the list of tags in alphabetical order, but keeping FileName first
-        tags = self.project.database.get_columns_names()
+        tags = self.project.database.get_fields_names()
         tags.remove("Checksum")
         tags.remove(DOCUMENT_PRIMARY_KEY)
         tags = sorted(tags)
@@ -809,20 +809,20 @@ class TableDataBrowser(QTableWidget):
             self.setHorizontalHeaderItem(column, item)
             item.setText(tag_name)
 
-            element = self.project.database.get_column(tag_name)
+            element = self.project.database.get_field(tag_name)
             if element is not None:
                 item.setToolTip(
                     "Description: " + str(element.description) + "\nUnit: " + str(self.project.getUnit(tag_name)) + "\nType: " + str(
                         element.type))
 
                 # Set column type
-                if element.type == COLUMN_TYPE_FLOAT:
+                if element.type == FIELD_TYPE_FLOAT:
                     self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
-                elif element.type == COLUMN_TYPE_DATETIME:
+                elif element.type == FIELD_TYPE_DATETIME:
                     self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
-                elif element.type == COLUMN_TYPE_DATE:
+                elif element.type == FIELD_TYPE_DATE:
                     self.setItemDelegateForColumn(column, DateFormatDelegate(self))
-                elif element.type == COLUMN_TYPE_TIME:
+                elif element.type == FIELD_TYPE_TIME:
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
@@ -866,17 +866,17 @@ class TableDataBrowser(QTableWidget):
                 if column == 0:
                     # name tag
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                    set_item_data(item, scan, COLUMN_TYPE_STRING)
+                    set_item_data(item, scan, FIELD_TYPE_STRING)
                 else:
                     # Other tags
                     current_value = self.project.database.get_current_value(scan, current_tag)
                     # The scan has a value for the tag
                     if current_value is not None:
-                        set_item_data(item, current_value, self.project.database.get_column(current_tag).type)
+                        set_item_data(item, current_value, self.project.database.get_field(current_tag).type)
 
                     # The scan does not have a value for the tag
                     else:
-                        set_item_data(item, not_defined_value, COLUMN_TYPE_STRING)
+                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -1068,7 +1068,7 @@ class TableDataBrowser(QTableWidget):
                 modified_values.append([scan_name, tag_name, current_value, initial_value])  # For history
                 if self.project.database.reset_current_value(scan_name, tag_name) != None:
                     has_unreset_values = True
-                set_item_data(self.item(row, col), initial_value, self.project.database.get_column(tag_name).type)
+                set_item_data(self.item(row, col), initial_value, self.project.database.get_field(tag_name).type)
             else:
                 has_unreset_values = True
 
@@ -1106,7 +1106,7 @@ class TableDataBrowser(QTableWidget):
                     modified_values.append([scan, tag_name, current_value, initial_value])  # For history
                     if self.project.database.reset_current_value(scan, tag_name) != None:
                         has_unreset_values = True
-                    set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_column(tag_name).type)
+                    set_item_data(self.item(row_iter, col), initial_value, self.project.database.get_field(tag_name).type)
                 else:
                     has_unreset_values = True
 
@@ -1147,7 +1147,7 @@ class TableDataBrowser(QTableWidget):
                     self.project.database.reset_current_value(scan_name, tag)
                     if self.project.database.reset_current_value(scan_name, tag) != None:
                         has_unreset_values = True
-                    set_item_data(self.item(row, column), initial_value, self.project.database.get_column(tag).type)
+                    set_item_data(self.item(row, column), initial_value, self.project.database.get_field(tag).type)
                 else:
                     has_unreset_values = True
 
@@ -1188,10 +1188,10 @@ class TableDataBrowser(QTableWidget):
             item = QTableWidgetItem()
             value = self.project.database.get_current_value(scan_path, tag_name)
             if value is not None:
-                set_item_data(item, value, self.project.database.get_column(tag_name).type)
+                set_item_data(item, value, self.project.database.get_field(tag_name).type)
             else:
                 item = QTableWidgetItem()
-                set_item_data(item, not_defined_value, COLUMN_TYPE_STRING)
+                set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -1217,7 +1217,7 @@ class TableDataBrowser(QTableWidget):
                 scans_removed.append(scan_object)
 
                 # Adding removed values to history
-                for tag in self.project.database.get_columns_names():
+                for tag in self.project.database.get_fields_names():
                     if tag != DOCUMENT_PRIMARY_KEY:
                         current_value = self.project.database.get_current_value(scan_path, tag)
                         initial_value = self.project.database.get_initial_value(scan_path, tag)
@@ -1257,7 +1257,7 @@ class TableDataBrowser(QTableWidget):
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
-                list_tags.append(self.project.database.get_column(tag_name))
+                list_tags.append(self.project.database.get_field(tag_name))
             list_sort = []
             for scan in self.scans_to_visualize:
                 tags_value = []
@@ -1392,13 +1392,13 @@ class TableDataBrowser(QTableWidget):
                     if column == 0:
                         # name tag
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                        set_item_data(item, scan, COLUMN_TYPE_STRING)
+                        set_item_data(item, scan, FIELD_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_current_value(scan, tag)
                         if cur_value is not None:
-                            set_item_data(item, cur_value, self.project.database.get_column(tag).type)
+                            set_item_data(item, cur_value, self.project.database.get_field(tag).type)
                         else:
-                            set_item_data(item, not_defined_value, COLUMN_TYPE_STRING)
+                            set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
                             font = item.font()
                             font.setItalic(True)
                             font.setBold(True)
@@ -1440,7 +1440,7 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.disconnect()
 
-        tags = self.project.database.get_columns_names()
+        tags = self.project.database.get_fields_names()
         tags.remove("Checksum")
         tags.remove(DOCUMENT_PRIMARY_KEY)
         tags = sorted(tags)
@@ -1459,7 +1459,7 @@ class TableDataBrowser(QTableWidget):
                 item = QtWidgets.QTableWidgetItem()
                 self.setHorizontalHeaderItem(columnIndex, item)
                 item.setText(tag)
-                tag_object = self.project.database.get_column(tag)
+                tag_object = self.project.database.get_field(tag)
                 if tag_object is not None:
                     item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
                         self.project.getUnit(tag)) + "\nType: " + str(tag_object.type))
@@ -1467,13 +1467,13 @@ class TableDataBrowser(QTableWidget):
                     print(self.project.getUnit(tag))
 
                     # Set column type
-                    if tag_object.type == COLUMN_TYPE_FLOAT:
+                    if tag_object.type == FIELD_TYPE_FLOAT:
                         self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
-                    elif tag_object.type == COLUMN_TYPE_DATETIME:
+                    elif tag_object.type == FIELD_TYPE_DATETIME:
                         self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
-                    elif tag_object.type == COLUMN_TYPE_DATE:
+                    elif tag_object.type == FIELD_TYPE_DATE:
                         self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
-                    elif tag_object.type == COLUMN_TYPE_TIME:
+                    elif tag_object.type == FIELD_TYPE_TIME:
                         self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
 
                     # Hide the column if not visible
@@ -1499,7 +1499,7 @@ class TableDataBrowser(QTableWidget):
         tags_to_remove = []
         for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
-            if not tag_name in self.project.database.get_columns_names() and tag_name != "FileName":
+            if not tag_name in self.project.database.get_fields_names() and tag_name != "FileName":
                 tags_to_remove.append(tag_name)
 
         for tag in tags_to_remove:
@@ -1541,7 +1541,7 @@ class TableDataBrowser(QTableWidget):
                 row = item.row()
                 self.coordinates.append([row, column])
                 tag_name = self.horizontalHeaderItem(column).text()
-                tag_object = self.project.database.get_column(tag_name)
+                tag_object = self.project.database.get_field(tag_name)
                 tag_type = tag_object.type
                 scan_name = self.item(row, 0).text()
 
@@ -1611,7 +1611,7 @@ class TableDataBrowser(QTableWidget):
                     old_value = self.old_database_values[i]
                     new_cur_value = self.project.database.get_current_value(self.scans_list[i], self.tags[i])
                     modified_values.append([self.scans_list[i], self.tags[i], old_value, new_cur_value])
-                    set_item_data(new_item, new_cur_value, self.project.database.get_column(self.tags[i]).type)
+                    set_item_data(new_item, new_cur_value, self.project.database.get_field(self.tags[i]).type)
                     self.setItem(self.coordinates[i][0], self.coordinates[i][1], new_item)
 
                 # For history
@@ -1653,7 +1653,7 @@ class TableDataBrowser(QTableWidget):
             row = item.row()
             col = item.column()
             tag_name = self.horizontalHeaderItem(col).text()
-            tag_object = self.project.database.get_column(tag_name)
+            tag_object = self.project.database.get_field(tag_name)
             tag_type = tag_object.type
 
             # Type added to types list
@@ -1661,7 +1661,7 @@ class TableDataBrowser(QTableWidget):
                 cells_types.append(tag_type)
 
         # Error if list with other types
-        if COLUMN_TYPE_LIST_DATE in cells_types or COLUMN_TYPE_LIST_DATETIME in cells_types or COLUMN_TYPE_LIST_TIME in cells_types or COLUMN_TYPE_LIST_INTEGER in cells_types or COLUMN_TYPE_LIST_STRING in cells_types or COLUMN_TYPE_LIST_FLOAT in cells_types and len(
+        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types and len(
                 cells_types) > 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
@@ -1675,7 +1675,7 @@ class TableDataBrowser(QTableWidget):
             return
 
         # Nothing to do if list
-        if COLUMN_TYPE_LIST_DATE in cells_types or COLUMN_TYPE_LIST_DATETIME in cells_types or COLUMN_TYPE_LIST_TIME in cells_types or COLUMN_TYPE_LIST_INTEGER in cells_types or COLUMN_TYPE_LIST_STRING in cells_types or COLUMN_TYPE_LIST_FLOAT in cells_types:
+        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types:
             self.itemChanged.connect(self.change_cell_color)
             return
 
@@ -1711,7 +1711,7 @@ class TableDataBrowser(QTableWidget):
                 col = item.column()
                 scan_path = self.item(row, 0).text()
                 tag_name = self.horizontalHeaderItem(col).text()
-                database_value = table_to_database(new_value, self.project.database.get_column(tag_name).type)
+                database_value = table_to_database(new_value, self.project.database.get_field(tag_name).type)
 
                 # We only set the cell if it's not the tag name
                 if (tag_name != DOCUMENT_PRIMARY_KEY):
@@ -1732,7 +1732,7 @@ class TableDataBrowser(QTableWidget):
                         font.setBold(False)
                         item.setFont(font)
 
-                    set_item_data(item, new_value, self.project.database.get_column(tag_name).type)
+                    set_item_data(item, new_value, self.project.database.get_field(tag_name).type)
 
             # For history
             historyMaker.append(modified_values)

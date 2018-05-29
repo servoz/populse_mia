@@ -13,7 +13,7 @@ class Ui_Select_Tag(Ui_Tag_Selection):
         self.config = Config()
 
         # Filling the list and checking the thumbnail tag
-        for tag in self.project.database.get_columns_names():
+        for tag in self.project.database.get_fields_names():
             if tag != "Checksum":
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)

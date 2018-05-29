@@ -60,6 +60,7 @@ class AdvancedSearch(QWidget):
         fieldChoice.setObjectName('field')
         for tag in self.project.getVisibles():
             fieldChoice.addItem(tag)
+        fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
@@ -257,16 +258,19 @@ class AdvancedSearch(QWidget):
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        try:
-            filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-            result = self.project.database.filter_documents(filter_query)
+        #try:
+        filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
+        result = self.project.database.filter_documents(filter_query)
 
-            # DataBrowser updated with the new selection
-            result_names = []
-            for document in result:
-                result_names.append(getattr(document, DOCUMENT_PRIMARY_KEY))
+        # DataBrowser updated with the new selection
+        result_names = []
+        for document in result:
+            result_names.append(getattr(document, DOCUMENT_PRIMARY_KEY))
 
-        except Exception:
+        """
+        except Exception as e:
+
+            print(e)
 
             # Error message if the search can't be done, and visualization of all scans in the databrowser
             msg = QMessageBox()
@@ -280,6 +284,7 @@ class AdvancedSearch(QWidget):
             msg.buttonClicked.connect(msg.close)
             msg.exec()
             result_names = self.scans_list
+        """
 
         self.dataBrowser.table_data.scans_to_visualize = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
@@ -314,6 +319,10 @@ class AdvancedSearch(QWidget):
                     row_field_query = "(" + row_field + " " + row_condition + " " + str(row_value).replace("'", "\"") + ")"
                 elif row_condition == "BETWEEN":
                     row_field_query = "((" + row_field + " >= \"" + row_value[0] + "\") AND (" + row_field + " <= \"" + row_value[1] + "\"))"
+                elif row_condition == "HAS VALUE":
+                    row_field_query = "(" + row_field + " != null)"
+                elif row_condition == "HAS NO VALUE":
+                    row_field_query = "(" + row_field + " == null)"
                 else:
                     row_field_query = "(" + row_field + " " + row_condition + " \"" + row_value + "\")"
 
@@ -343,6 +352,8 @@ class AdvancedSearch(QWidget):
         final_query += " AND (" + DOCUMENT_PRIMARY_KEY + " IN " + str(scans).replace("'", "\"") + ")"
 
         final_query = "(" + final_query + ")"
+
+        print(final_query)
 
         return final_query
 
