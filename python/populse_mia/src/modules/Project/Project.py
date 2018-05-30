@@ -45,7 +45,7 @@ class Project:
             raise IOError(
                 "The project at " + str(self.folder) + " is already opened in another instance of the software.")
 
-        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), True, True)
+        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), True)
         if new_project:
 
             if not os.path.exists(self.folder):
@@ -478,7 +478,7 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_current_value(scan, tag, old_value)
+                        self.database.set_value(scan, tag, old_value)
                         set_item_data(item, old_value, self.database.get_field(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
@@ -585,7 +585,7 @@ class Project:
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                    self.database.set_current_value(scan, tag, new_value)
+                    self.database.set_value(scan, tag, new_value)
                     set_item_data(item, new_value, self.database.get_field(tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)

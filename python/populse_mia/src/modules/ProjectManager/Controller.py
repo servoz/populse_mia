@@ -2,7 +2,7 @@ import glob
 import os.path
 import json
 import hashlib # To generate the md5 of each path
-from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING
+from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, DOCUMENT_PRIMARY_KEY
 import datetime
 from time import time
 from PyQt5.QtCore import Qt
@@ -133,6 +133,8 @@ def read_log(project):
                                 tag_type = FIELD_TYPE_LIST_INTEGER
                             elif tag_type == FIELD_TYPE_FLOAT:
                                 tag_type = FIELD_TYPE_LIST_FLOAT
+                            elif tag_type == FIELD_TYPE_BOOLEAN:
+                                tag_type = FIELD_TYPE_LIST_BOOLEAN
                             elif tag_type == FIELD_TYPE_DATE:
                                 tag_type = FIELD_TYPE_LIST_DATE
                             elif tag_type == FIELD_TYPE_DATETIME:
@@ -142,7 +144,7 @@ def read_log(project):
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
-                            value = value_prepared
+                            value = str(value_prepared)
 
                     if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
                         if value is not None and value != "":
@@ -175,7 +177,7 @@ def read_log(project):
     for tag in project.database.get_fields():
         if project.getOrigin(tag.name) == TAG_ORIGIN_USER:
             for scan in scans_added:
-                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
+                if tag.default_value is not None and project.database.get_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
     project.database.add_fields(tags_added)
@@ -184,13 +186,19 @@ def read_log(project):
 
     for scan in scans_added:
         if scan not in current_paths:
-            project.database.add_document(scan, False)
+            scan_dict = {}
+            scan_dict[DOCUMENT_PRIMARY_KEY] = scan
+            for value in values_added:
+                # The values of the scan are added to the dictionary
+                if value[0] == scan:
+                    scan_dict[value[1]] = value[2]
+            project.database.add_document(scan_dict, False)
     project.database.session.flush()
 
     for value in values_added:
         if value[0] in current_paths:
             project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
-        project.database.new_value(value[0], value[1], value[2], value[3], False)
+            project.database.new_value(value[0], value[1], value[2], value[3], False)
 
     project.database.session.flush()
 
@@ -220,7 +228,7 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            initial_checksum = project.database.get_current_value(scan, "Checksum")
+            initial_checksum = project.database.get_value(scan, "Checksum")
             if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 

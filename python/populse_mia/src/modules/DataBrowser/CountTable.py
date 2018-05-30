@@ -119,7 +119,7 @@ class CountTable(QDialog):
         tag_name = self.push_buttons[idx].text()
         values = []
         for scan in self.project.database.get_documents_names():
-            current_value = self.project.database.get_current_value(scan, tag_name)
+            current_value = self.project.database.get_value(scan, tag_name)
             if current_value is not None:
                 values.append(current_value)
 

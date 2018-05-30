@@ -373,7 +373,7 @@ class MiniViewer(QWidget):
         # Looking for the tag value to display as a legend of the thumbnail
         for scan in self.project.database.get_documents_names():
             if scan == file_path_base_name:
-                value = self.project.database.get_current_value(scan, self.config.getThumbnailTag())
+                value = self.project.database.get_value(scan, self.config.getThumbnailTag())
                 if value is not None:
                     self.label_description[idx].setText \
                         (str(value)[:self.nb_char_max])
