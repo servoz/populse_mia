@@ -2,7 +2,7 @@ import glob
 import os.path
 import json
 import hashlib # To generate the md5 of each path
-from populse_db.database_model import COLUMN_TYPE_STRING, COLUMN_TYPE_LIST_INTEGER, COLUMN_TYPE_LIST_DATE, COLUMN_TYPE_INTEGER, COLUMN_TYPE_LIST_DATETIME, COLUMN_TYPE_LIST_FLOAT, COLUMN_TYPE_TIME, COLUMN_TYPE_FLOAT, COLUMN_TYPE_DATE, COLUMN_TYPE_DATETIME, COLUMN_TYPE_LIST_TIME, COLUMN_TYPE_LIST_STRING
+from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING
 import datetime
 from time import time
 from PyQt5.QtCore import Qt
@@ -87,7 +87,7 @@ def read_log(project):
                     properties = tag[1]
                     unit = None
                     format = ''
-                    tag_type = COLUMN_TYPE_STRING
+                    tag_type = FIELD_TYPE_STRING
                     description = None
                     if isinstance(properties, dict):
                         value = properties['value']
@@ -97,7 +97,7 @@ def read_log(project):
                         format = properties['format']
                         tag_type = properties['type']
                         if tag_type == "":
-                            tag_type = COLUMN_TYPE_STRING
+                            tag_type = FIELD_TYPE_STRING
                         description = properties['description']
                         if description == "":
                             description = None
@@ -116,45 +116,45 @@ def read_log(project):
                         format = format.replace("ss", "%S")
                         format = format.replace("SSS", "%f")
                         if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = COLUMN_TYPE_DATETIME
+                            tag_type = FIELD_TYPE_DATETIME
                         elif "%Y" in format and "%m" in format and "%d" in format:
-                            tag_type = COLUMN_TYPE_DATE
+                            tag_type = FIELD_TYPE_DATE
                         elif "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = COLUMN_TYPE_TIME
+                            tag_type = FIELD_TYPE_TIME
 
                     if tag_name != "Json_Version":
                         # Preparing value and type
                         if len(value) is 1:
                             value = value[0]
                         else:
-                            if tag_type == COLUMN_TYPE_STRING:
-                                tag_type = COLUMN_TYPE_LIST_STRING
-                            elif tag_type == COLUMN_TYPE_INTEGER:
-                                tag_type = COLUMN_TYPE_LIST_INTEGER
-                            elif tag_type == COLUMN_TYPE_FLOAT:
-                                tag_type = COLUMN_TYPE_LIST_FLOAT
-                            elif tag_type == COLUMN_TYPE_DATE:
-                                tag_type = COLUMN_TYPE_LIST_DATE
-                            elif tag_type == COLUMN_TYPE_DATETIME:
-                                tag_type = COLUMN_TYPE_LIST_DATETIME
-                            elif tag_type == COLUMN_TYPE_TIME:
-                                tag_type = COLUMN_TYPE_LIST_TIME
+                            if tag_type == FIELD_TYPE_STRING:
+                                tag_type = FIELD_TYPE_LIST_STRING
+                            elif tag_type == FIELD_TYPE_INTEGER:
+                                tag_type = FIELD_TYPE_LIST_INTEGER
+                            elif tag_type == FIELD_TYPE_FLOAT:
+                                tag_type = FIELD_TYPE_LIST_FLOAT
+                            elif tag_type == FIELD_TYPE_DATE:
+                                tag_type = FIELD_TYPE_LIST_DATE
+                            elif tag_type == FIELD_TYPE_DATETIME:
+                                tag_type = FIELD_TYPE_LIST_DATETIME
+                            elif tag_type == FIELD_TYPE_TIME:
+                                tag_type = FIELD_TYPE_LIST_TIME
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
                             value = value_prepared
 
-                    if tag_type == COLUMN_TYPE_DATETIME or tag_type == COLUMN_TYPE_DATE or tag_type == COLUMN_TYPE_TIME:
+                    if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
                         if value is not None and value != "":
                             value = datetime.strptime(value, format)
-                            if tag_type == COLUMN_TYPE_TIME:
+                            if tag_type == FIELD_TYPE_TIME:
                                 value = value.time()
-                            elif tag_type == COLUMN_TYPE_DATE:
+                            elif tag_type == FIELD_TYPE_DATE:
                                 value = value.date()
 
                     # TODO time lists
 
-                    tag_row = project.database.get_column(tag_name)
+                    tag_row = project.database.get_field(tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
                         tags_added.append([tag_name, tag_type, description])
@@ -172,13 +172,13 @@ def read_log(project):
             values_added.append([file_database_path, "Type", "Scan", "Scan"])  # Value added to history
 
     # Missing values added thanks to default values
-    for tag in project.database.get_columns():
+    for tag in project.database.get_fields():
         if project.getOrigin(tag.name) == TAG_ORIGIN_USER:
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
-    project.database.add_columns(tags_added)
+    project.database.add_fields(tags_added)
 
     current_paths = project.database.get_documents_names()
 

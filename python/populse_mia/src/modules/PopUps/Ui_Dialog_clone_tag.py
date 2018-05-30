@@ -69,7 +69,7 @@ class Ui_Dialog_clone_tag(QDialog):
 
         self.setLayout(vbox)
 
-        tags_lists = project.database.get_columns_names()
+        tags_lists = project.database.get_fields_names()
         tags_lists.remove("Checksum")
         for tag in tags_lists:
             item = QtWidgets.QListWidgetItem()
@@ -85,7 +85,7 @@ class Ui_Dialog_clone_tag(QDialog):
     def search_str(self, project, str_search):
         _translate = QtCore.QCoreApplication.translate
         return_list = []
-        tags_lists = project.database.get_columns_names()
+        tags_lists = project.database.get_fields_names()
         tags_lists.remove("Checksum")
         if str_search != "":
             for tag in tags_lists:
@@ -104,7 +104,7 @@ class Ui_Dialog_clone_tag(QDialog):
 
     def ok_action(self, project):
         name_already_exists = False
-        for tag in project.database.get_columns():
+        for tag in project.database.get_fields():
             if tag.name == self.line_edit_new_tag_name.text():
                 name_already_exists = True
         if name_already_exists:

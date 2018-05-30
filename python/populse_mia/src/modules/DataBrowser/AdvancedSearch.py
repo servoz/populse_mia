@@ -2,10 +2,11 @@ import os
 
 from PyQt5.QtCore import QObjectCleanupHandler
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
 
 from Utils.Tools import ClickableLabel
 
+from populse_db.database_model import DOCUMENT_PRIMARY_KEY
 
 class AdvancedSearch(QWidget):
 
@@ -59,6 +60,7 @@ class AdvancedSearch(QWidget):
         fieldChoice.setObjectName('field')
         for tag in self.project.getVisibles():
             fieldChoice.addItem(tag)
+        fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
 
         # Value choice
@@ -68,7 +70,7 @@ class AdvancedSearch(QWidget):
         # Condition choice
         conditionChoice = QComboBox()
         conditionChoice.setObjectName('condition')
-        conditionChoice.addItem("=")
+        conditionChoice.addItem("==")
         conditionChoice.addItem("!=")
         conditionChoice.addItem(">=")
         conditionChoice.addItem("<=")
@@ -256,11 +258,104 @@ class AdvancedSearch(QWidget):
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
         # Result gotten
-        result = self.project.database.get_documents_matching_advanced_search(links, fields, conditions, values, nots,
-                                                                              self.scans_list)
-        # DataBrowser updated with the new selection
-        self.dataBrowser.table_data.scans_to_visualize = result
+        try:
+
+            filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
+            result = self.project.database.filter_documents(filter_query)
+
+            # DataBrowser updated with the new selection
+            result_names = []
+            for document in result:
+                result_names.append(getattr(document, DOCUMENT_PRIMARY_KEY))
+
+        except Exception as e:
+            print(e)
+
+            # Error message if the search can't be done, and visualization of all scans in the databrowser
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText(
+                "Error in the search")
+            msg.setInformativeText(
+                "The search has encountered a problem, you can correct it and launch it again.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            result_names = self.scans_list
+
+        self.dataBrowser.table_data.scans_to_visualize = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
+
+    def prepare_filters(self, links, fields, conditions, values, nots, scans):
+        """
+        Prepares the str representation of the filter
+        :param links: list of links (AND/OR)
+        :param fields: list of list of fields
+        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+        :param values: list of values
+        :param nots: list of negations ("" or NOT)
+        :param scans: list of scans to search in
+        :return: str representation of the filter
+        """
+
+        row_queries = []
+        final_query = ""
+
+        # For each row of constraint
+        for row in range(0, len(fields)):
+            row_fields = fields[row]
+            row_condition = conditions[row]
+            row_value = values[row]
+            row_not = nots[row]
+
+            row_query = "("
+
+            or_to_write = False
+            for row_field in row_fields:
+                if row_condition == "IN":
+                    row_field_query = "({" + row_field + "} " + row_condition + " " + str(row_value).replace("'", "\"") + ")"
+                elif row_condition == "BETWEEN":
+                    row_field_query = "(({" + row_field + "} >= \"" + row_value[0] + "\") AND (" + row_field + " <= \"" + row_value[1] + "\"))"
+                elif row_condition == "HAS VALUE":
+                    row_field_query = "({" + row_field + "} != null)"
+                elif row_condition == "HAS NO VALUE":
+                    row_field_query = "({" + row_field + "} == null)"
+                elif row_condition == "CONTAINS":
+                    row_field_query = "({" + row_field + "} LIKE \"%" + row_value + "%\")"
+                else:
+                    row_field_query = "({" + row_field + "} " + row_condition + " \"" + row_value + "\")"
+
+                # Putting OR between conditions if several tags to search in
+                if or_to_write:
+                    row_field_query = " OR " + row_field_query
+
+                or_to_write = True
+
+                row_query += row_field_query
+
+            row_query += ")"
+            row_queries.append(row_query)
+
+            # Negation added if needed
+            if row_not == "NOT":
+                row_queries[row]  = "(NOT " + row_queries[row] + ")"
+
+        final_query += row_queries[0]
+
+        # Putting the link between each row
+        for row in range(0, len(links)):
+            link = links[row]
+            final_query += " " + link + " " + row_queries[row + 1]
+
+        # Taking into account the list of scans
+        final_query += " AND ({" + DOCUMENT_PRIMARY_KEY + "} IN " + str(scans).replace("'", "\"") + ")"
+
+        final_query = "(" + final_query + ")"
+
+        print(final_query)
+
+        return final_query
 
     def get_filters(self):
         """

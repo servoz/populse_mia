@@ -23,7 +23,9 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
 
         else:
             # Filling the list and checking the previous selected tag
-            for tag in self.project.database.get_columns_names():
+            tags = self.project.database.get_fields_names()
+            tags.remove("Checksum")
+            for tag in tags:
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
                 if tag == tag_name_checked:
@@ -32,6 +34,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
                     item.setCheckState(QtCore.Qt.Unchecked)
                 self.list_widget_tags.addItem(item)
                 item.setText(tag)
+            self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
