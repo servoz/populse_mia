@@ -321,7 +321,7 @@ class DataBrowser(QWidget):
 
         # Otherwise, we take every scan
         else:
-            return_list = self.project.database.get_documents_names()
+            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         self.table_data.scans_to_visualize = return_list
 
