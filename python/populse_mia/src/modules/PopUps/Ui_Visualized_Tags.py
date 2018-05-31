@@ -2,7 +2,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from functools import partial
-from populse_db.database_model import DOCUMENT_PRIMARY_KEY
+
+from Project.Project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
 
 class Ui_Visualized_Tags(QWidget):
     """
@@ -74,8 +75,8 @@ class Ui_Visualized_Tags(QWidget):
 
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
-        for tag in project.database.get_fields_names():
-            if tag != "Checksum" and tag != DOCUMENT_PRIMARY_KEY:
+        for tag in project.database.get_fields_names(COLLECTION_CURRENT):
+            if tag != TAG_CHECKSUM and tag != TAG_FILENAME:
                 item = QtWidgets.QListWidgetItem()
                 if tag not in project.getVisibles():
                     # Tag not visible: left side

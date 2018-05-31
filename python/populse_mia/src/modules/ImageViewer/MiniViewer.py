@@ -19,6 +19,8 @@ import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
 
+from Project.Project import COLLECTION_CURRENT
+
 class MiniViewer(QWidget):
     """ MiniViewer that allows to rapidly visualize scans either with a single image per scan
     with cursors to move in five dimensions or with all images of the greater dimension of the scan.
@@ -371,9 +373,9 @@ class MiniViewer(QWidget):
 
     def setThumbnail(self, file_path_base_name, idx):
         # Looking for the tag value to display as a legend of the thumbnail
-        for scan in self.project.database.get_documents_names():
+        for scan in self.project.database.get_documents_names(COLLECTION_CURRENT):
             if scan == file_path_base_name:
-                value = self.project.database.get_value(scan, self.config.getThumbnailTag())
+                value = self.project.database.get_value(COLLECTION_CURRENT, scan, self.config.getThumbnailTag())
                 if value is not None:
                     self.label_description[idx].setText \
                         (str(value)[:self.nb_char_max])

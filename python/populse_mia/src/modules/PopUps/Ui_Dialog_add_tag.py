@@ -7,7 +7,7 @@ from Utils.Utils import check_value_type
 import os
 import ast
 from datetime import datetime
-from Project.Project import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
+from Project.Project import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ, COLLECTION_CURRENT
 
 class Default_value_list_creation(QDialog):
 
@@ -392,7 +392,7 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Tag name checked
         name_already_exists = False
-        if self.text_edit_tag_name.text() in self.project.database.get_fields_names():
+        if self.text_edit_tag_name.text() in self.project.database.get_fields_names(COLLECTION_CURRENT):
             name_already_exists = True
 
         # Default value checked

@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
 
+from Project.Project import TAG_CHECKSUM, COLLECTION_CURRENT
 
 class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
     """
@@ -23,8 +24,8 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
 
         else:
             # Filling the list and checking the previous selected tag
-            tags = self.project.database.get_fields_names()
-            tags.remove("Checksum")
+            tags = self.project.database.get_fields_names(COLLECTION_CURRENT)
+            tags.remove(TAG_CHECKSUM)
             for tag in tags:
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)

@@ -3,6 +3,8 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 from functools import partial
 
+from Project.Project import COLLECTION_CURRENT, TAG_CHECKSUM
+
 class Ui_Dialog_clone_tag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
@@ -69,8 +71,8 @@ class Ui_Dialog_clone_tag(QDialog):
 
         self.setLayout(vbox)
 
-        tags_lists = project.database.get_fields_names()
-        tags_lists.remove("Checksum")
+        tags_lists = project.database.get_fields_names(COLLECTION_CURRENT)
+        tags_lists.remove(TAG_CHECKSUM)
         for tag in tags_lists:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_tags.addItem(item)
@@ -85,8 +87,8 @@ class Ui_Dialog_clone_tag(QDialog):
     def search_str(self, project, str_search):
         _translate = QtCore.QCoreApplication.translate
         return_list = []
-        tags_lists = project.database.get_fields_names()
-        tags_lists.remove("Checksum")
+        tags_lists = project.database.get_fields_names(COLLECTION_CURRENT)
+        tags_lists.remove(TAG_CHECKSUM)
         if str_search != "":
             for tag in tags_lists:
                 if str_search.upper() in tag.upper():
@@ -104,7 +106,7 @@ class Ui_Dialog_clone_tag(QDialog):
 
     def ok_action(self, project):
         name_already_exists = False
-        for tag in project.database.get_fields():
+        for tag in project.database.get_fields(COLLECTION_CURRENT):
             if tag.name == self.line_edit_new_tag_name.text():
                 name_already_exists = True
         if name_already_exists:

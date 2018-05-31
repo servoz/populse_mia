@@ -2,13 +2,13 @@ import glob
 import os.path
 import json
 import hashlib # To generate the md5 of each path
-from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, DOCUMENT_PRIMARY_KEY
+from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN
 import datetime
 from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
-from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -144,7 +144,7 @@ def read_log(project):
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
-                            value = str(value_prepared)
+                            value = value_prepared
 
                     if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
                         if value is not None and value != "":
@@ -156,10 +156,11 @@ def read_log(project):
 
                     # TODO time lists
 
-                    tag_row = project.database.get_field(tag_name)
+                    tag_row = project.database.get_field(COLLECTION_CURRENT, tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
-                        tags_added.append([tag_name, tag_type, description])
+                        tags_added.append([COLLECTION_CURRENT, tag_name, tag_type, description])
+                        tags_added.append([COLLECTION_INITIAL, tag_name, tag_type, description])
                         project.setOrigin(tag_name, TAG_ORIGIN_BUILTIN)
                         project.setUnit(tag_name, unit)
                         project.setDefaultValue(tag_name, None)
@@ -170,11 +171,11 @@ def read_log(project):
                         values_added.append([file_database_path, tag_name, value, value]) # Value added to history
 
             # Tags added manually
-            values_added.append([file_database_path, "Checksum", original_md5, original_md5])  # Value added to history
-            values_added.append([file_database_path, "Type", "Scan", "Scan"])  # Value added to history
+            values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
+            values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
 
     # Missing values added thanks to default values
-    for tag in project.database.get_fields():
+    for tag in project.database.get_fields(COLLECTION_CURRENT):
         if project.getOrigin(tag.name) == TAG_ORIGIN_USER:
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_value(scan[0], tag.name) is None:
@@ -182,23 +183,24 @@ def read_log(project):
 
     project.database.add_fields(tags_added)
 
-    current_paths = project.database.get_documents_names()
+    current_paths = project.database.get_documents_names(COLLECTION_CURRENT)
 
     for scan in scans_added:
         if scan not in current_paths:
             scan_dict = {}
-            scan_dict[DOCUMENT_PRIMARY_KEY] = scan
+            scan_dict[TAG_FILENAME] = scan
             for value in values_added:
                 # The values of the scan are added to the dictionary
                 if value[0] == scan:
                     scan_dict[value[1]] = value[2]
-            project.database.add_document(scan_dict, False)
+            project.database.add_document(COLLECTION_CURRENT, scan_dict, False)
+            project.database.add_document(COLLECTION_INITIAL, scan_dict, False)
     project.database.session.flush()
 
     for value in values_added:
         if value[0] in current_paths:
-            project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
-            project.database.new_value(value[0], value[1], value[2], value[3], False)
+            project.database.set_value(COLLECTION_CURRENT, value[0], value[1], value[2], False)
+            project.database.set_value(COLLECTION_INITIAL, value[0], value[1], value[3], False)
 
     project.database.session.flush()
 
@@ -217,7 +219,7 @@ def read_log(project):
 def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in project.database.get_documents_names():
+    for scan in project.database.get_documents_names(COLLECTION_CURRENT):
 
         file_name = scan
         file_path = os.path.relpath(os.path.join(project.folder, file_name))
@@ -228,7 +230,7 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            initial_checksum = project.database.get_value(scan, "Checksum")
+            initial_checksum = project.database.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
             if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 

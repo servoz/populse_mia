@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushBut
 
 from Utils.Tools import ClickableLabel
 
-from populse_db.database_model import DOCUMENT_PRIMARY_KEY
+from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 
 class AdvancedSearch(QWidget):
 
@@ -261,12 +261,12 @@ class AdvancedSearch(QWidget):
         try:
 
             filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-            result = self.project.database.filter_documents(filter_query)
+            result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
 
             # DataBrowser updated with the new selection
             result_names = []
             for document in result:
-                result_names.append(getattr(document, DOCUMENT_PRIMARY_KEY))
+                result_names.append(getattr(document, TAG_FILENAME))
 
         except Exception as e:
             print(e)
@@ -349,7 +349,7 @@ class AdvancedSearch(QWidget):
             final_query += " " + link + " " + row_queries[row + 1]
 
         # Taking into account the list of scans
-        final_query += " AND ({" + DOCUMENT_PRIMARY_KEY + "} IN " + str(scans).replace("'", "\"") + ")"
+        final_query += " AND ({" + TAG_FILENAME + "} IN " + str(scans).replace("'", "\"") + ")"
 
         final_query = "(" + final_query + ")"
 
@@ -431,12 +431,36 @@ class AdvancedSearch(QWidget):
         # Filter applied only if at least one row
         if len(nots) > 0:
             # Result gotten
-            result = self.project.database.get_documents_matching_advanced_search(links, fields, conditions,
-                                                                                  values, nots, self.scans_list)
-            # DataBrowser updated with the new selection
-            self.dataBrowser.table_data.scans_to_visualize = result
+            try:
 
-        # Otherwise, we reput all the scans
+                filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
+                result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+
+                # DataBrowser updated with the new selection
+                result_names = []
+                for document in result:
+                    result_names.append(getattr(document, TAG_FILENAME))
+
+            except Exception as e:
+                print(e)
+
+                # Error message if the search can't be done, and visualization of all scans in the databrowser
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText(
+                    "Error in the search")
+                msg.setInformativeText(
+                    "The search has encountered a problem, you can correct it and launch it again.")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                result_names = self.scans_list
+
+            # DataBrowser updated with the new selection
+            self.dataBrowser.table_data.scans_to_visualize = result_names
+
+        # Otherwise, all the scans are reput
         else:
             # DataBrowser updated with every scan
             if self.scans_list:

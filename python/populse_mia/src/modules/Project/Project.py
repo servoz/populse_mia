@@ -8,7 +8,16 @@ from Project.Filter import Filter
 from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
 from populse_db.database import Database
-from populse_db.database_model import FIELD_TYPE_STRING, DOCUMENT_PRIMARY_KEY
+from populse_db.database_model import FIELD_TYPE_STRING
+
+# MIA collections
+COLLECTION_CURRENT = "current"
+COLLECTION_INITIAL = "initial"
+
+# MIA tags
+TAG_CHECKSUM = "Checksum"
+TAG_TYPE = "Type"
+TAG_FILENAME = "FileName"
 
 # Tag origin
 TAG_ORIGIN_BUILTIN = "builtin"
@@ -77,7 +86,7 @@ class Project:
                 date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                 sorted_tag='',
                 sort_order='',
-                visibles=[DOCUMENT_PRIMARY_KEY, "Type"],
+                visibles=[TAG_FILENAME, TAG_TYPE],
                 origins={},
                 units={},
                 default_values={}
@@ -85,25 +94,31 @@ class Project:
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
+            # Adding current and initial collections
+            self.database.add_collection(COLLECTION_CURRENT, TAG_FILENAME)
+            self.database.add_collection(COLLECTION_INITIAL, TAG_FILENAME)
+
             # Tags manually added
-            self.database.add_field("Checksum", FIELD_TYPE_STRING, "Path checksum")
-            self.database.add_field("Type", FIELD_TYPE_STRING, "Path type")
+            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum")
+            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum") # TODO Maybe remove checksum tag from initial table
+            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, FIELD_TYPE_STRING, "Path type")
+            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, FIELD_TYPE_STRING, "Path type")
 
         self.properties = self.loadProperties()
 
         if new_project:
 
-            self.setUnit("Checksum", None)
-            self.setDefaultValue("Checksum", None)
-            self.setOrigin("Checksum", TAG_ORIGIN_BUILTIN)
+            self.setUnit(TAG_CHECKSUM, None)
+            self.setDefaultValue(TAG_CHECKSUM, None)
+            self.setOrigin(TAG_CHECKSUM, TAG_ORIGIN_BUILTIN)
 
-            self.setUnit("Type", None)
-            self.setDefaultValue("Type", None)
-            self.setOrigin("Type", TAG_ORIGIN_BUILTIN)
+            self.setUnit(TAG_TYPE, None)
+            self.setDefaultValue(TAG_TYPE, None)
+            self.setOrigin(TAG_TYPE, TAG_ORIGIN_BUILTIN)
 
-            self.setUnit(DOCUMENT_PRIMARY_KEY, None)
-            self.setDefaultValue(DOCUMENT_PRIMARY_KEY, None)
-            self.setOrigin(DOCUMENT_PRIMARY_KEY, TAG_ORIGIN_BUILTIN)
+            self.setUnit(TAG_FILENAME, None)
+            self.setDefaultValue(TAG_FILENAME, None)
+            self.setOrigin(TAG_FILENAME, TAG_ORIGIN_BUILTIN)
 
         self.unsavedModifications = False
         self.undos = []
