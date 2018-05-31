@@ -524,7 +524,7 @@ class DataBrowser(QWidget):
 
             # Each Tag row to remove is put in the history
             for tag in tag_names_to_remove:
-                tagObject = self.project.database.get_field(tag)
+                tagObject = self.project.database.get_field(COLLECTION_CURRENT, tag)
                 tag_origin = self.project.getOrigin(tag)
                 tag_unit = self.project.getUnit(tag)
                 tag_default_value = self.project.getDefaultValue(tag)
@@ -534,9 +534,9 @@ class DataBrowser(QWidget):
             # Each value of the tags to remove are stored in the history
             values_removed = []
             for tag in tag_names_to_remove:
-                for scan in self.project.database.get_documents_names():
-                    current_value = self.project.database.get_value(scan, tag)
-                    initial_value = self.project.database.get_initial_value(scan, tag)
+                for scan in self.project.database.get_documents_names(COLLECTION_CURRENT):
+                    current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
+                    initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan, tag)
                     if current_value is not None or initial_value is not None:
                         values_removed.append([scan, tag, current_value, initial_value])
             historyMaker.append(values_removed)
@@ -546,7 +546,8 @@ class DataBrowser(QWidget):
 
             # Tags removed from the Database and table
             for tag in tag_names_to_remove:
-                self.project.database.remove_field(tag)
+                self.project.database.remove_field(COLLECTION_CURRENT, tag)
+                self.project.database.remove_field(COLLECTION_INITIAL, tag)
                 self.project.removeDefaultValue(tag)
                 self.project.removeOrigin(tag)
                 self.project.removeUnit(tag)
@@ -1248,24 +1249,25 @@ class TableDataBrowser(QTableWidget):
             row = point.row()
             scan_path = self.item(row, 0).text()
 
-            scan_object = self.project.database.get_document(scan_path)
+            scan_object = self.project.database.get_document(COLLECTION_CURRENT, scan_path)
 
             if scan_object is not None:
                 scans_removed.append(scan_object)
 
                 # Adding removed values to history
-                for tag in self.project.database.get_fields_names():
-                    if tag != DOCUMENT_PRIMARY_KEY:
-                        current_value = self.project.database.get_value(scan_path, tag)
-                        initial_value = self.project.database.get_initial_value(scan_path, tag)
+                for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+                    if tag != TAG_FILENAME:
+                        current_value = self.project.database.get_value(COLLECTION_CURRENT, scan_path, tag)
+                        initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan_path, tag)
                         if current_value is not None or initial_value is not None:
                             values_removed.append([scan_path, tag, current_value, initial_value])
 
                 self.scans_to_visualize.remove(scan_path)
-                self.project.database.remove_document(scan_path)
+                self.project.database.remove_document(COLLECTION_CURRENT, scan_path)
+                self.project.database.remove_document(COLLECTION_INITIAL, scan_path)
 
         for scan in scans_removed:
-            scan_name = scan.name
+            scan_name = getattr(scan, TAG_FILENAME)
             self.removeRow(self.get_scan_row(scan_name))
 
         historyMaker.append(scans_removed)

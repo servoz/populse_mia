@@ -428,7 +428,8 @@ class Project:
             if (action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
-                self.database.remove_field(tagToRemove)
+                self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
+                self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
                 self.removeDefaultValue(tagToRemove)
                 self.removeOrigin(tagToRemove)
                 self.removeUnit(tagToRemove)
@@ -440,7 +441,8 @@ class Project:
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
-                    self.database.add_field(tagToReput.name, tagToReput.type, tagToReput.description)
+                    self.database.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description)
+                    self.database.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description)
                     self.setOrigin(tagToReput.name, tagsRemoved[i][1])
                     self.setUnit(tagToReput.name, tagsRemoved[i][2])
                     self.setDefaultValue(tagToReput.name, tagsRemoved[i][3])
@@ -450,14 +452,15 @@ class Project:
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
                     column = table.get_index_insertion(tagToReput.name)
-                    table.add_field(column, tagToReput.name)
+                    table.add_column(column, tagToReput.name)
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1]  # The second element is a list of added scans to remove
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToRemove = scansAdded[i]
-                    self.database.remove_document(scanToRemove)
+                    self.database.remove_document(COLLECTION_CURRENT, scanToRemove)
+                    self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
                 table.update_colors()
@@ -467,11 +470,12 @@ class Project:
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_document(scanToReput.name)
-                    table.scans_to_visualize.append(scanToReput.name)
+                    self.database.add_document(COLLECTION_CURRENT, getattr(scanToReput, TAG_FILENAME))
+                    self.database.add_document(COLLECTION_INITIAL, getattr(scanToReput, TAG_FILENAME))
+                    table.scans_to_visualize.append(getattr(scanToReput, TAG_FILENAME))
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
-                table.add_rows(self.database.get_documents_names())
+                table.add_rows(self.database.get_documents_names(COLLECTION_CURRENT))
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -493,8 +497,8 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_value(scan, tag, old_value)
-                        set_item_data(item, old_value, self.database.get_field(tag).type)
+                        self.database.set_value(COLLECTION_CURRENT, scan, tag, old_value)
+                        set_item_data(item, old_value, self.database.get_field(COLLECTION_CURRENT, tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -513,7 +517,8 @@ class Project:
         for i in range(0, len(values)):
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
-            self.database.new_value(valueToReput[0], valueToReput[1], valueToReput[2], valueToReput[3])
+            self.database.new_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
+            self.database.new_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
 
     def redo(self, table):
         """
@@ -535,22 +540,25 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_field(tagToAdd, tagType, tagDescription)
+                self.database.add_field(COLLECTION_CURRENT, tagToAdd, tagType, tagDescription)
+                self.database.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription)
                 self.setUnit(tagToAdd, tagUnit)
                 self.setOrigin(tagToAdd, TAG_ORIGIN_USER)
                 self.setDefaultValue(tagToAdd, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
-                    self.database.new_value(value[0], value[1], value[2], value[3])
+                    self.database.new_value(COLLECTION_CURRENT, value[0], value[1], value[2])
+                    self.database.new_value(COLLECTION_INITIAL, value[0], value[1], value[3])
                 column = table.get_index_insertion(tagToAdd)
-                table.add_field(column, tagToAdd)
+                table.add_column(column, tagToAdd)
             if (action == "remove_tags"):
                 # To remove the tags, we need the names
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToRemove = tagsRemoved[i][0].name
-                    self.database.remove_field(tagToRemove)
+                    self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
+                    self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
                     self.removeDefaultValue(tagToRemove)
                     self.removeOrigin(tagToRemove)
                     self.removeUnit(tagToRemove)
@@ -563,21 +571,24 @@ class Project:
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_document(scanToAdd)
+                    self.database.add_document(COLLECTION_CURRENT, scanToAdd)
+                    self.database.add_document(COLLECTION_INITIAL, scanToAdd)
                     table.scans_to_visualize.append(scanToAdd)
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range(0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
-                    self.database.new_value(valueToAdd[0], valueToAdd[1], valueToAdd[2], valueToAdd[3])
-                table.add_rows(self.database.get_documents_names())
+                    self.database.new_value(COLLECTION_CURRENT, valueToAdd[0], valueToAdd[1], valueToAdd[2])
+                    self.database.new_value(COLLECTION_INITIAL, valueToAdd[0], valueToAdd[1], valueToAdd[3])
+                table.add_rows(self.database.get_documents_names(COLLECTION_CURRENT))
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
-                    scanToRemove = scansRemoved[i].name
-                    self.database.remove_document(scanToRemove)
+                    scanToRemove = getattr(scansRemoved[i], TAG_FILENAME)
+                    self.database.remove_document(COLLECTION_CURRENT, scanToRemove)
+                    self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                 table.update_colors()
@@ -600,8 +611,8 @@ class Project:
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                    self.database.set_value(scan, tag, new_value)
-                    set_item_data(item, new_value, self.database.get_field(tag).type)
+                    self.database.set_value(COLLECTION_CURRENT, scan, tag, new_value)
+                    set_item_data(item, new_value, self.database.get_field(COLLECTION_CURRENT, tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
