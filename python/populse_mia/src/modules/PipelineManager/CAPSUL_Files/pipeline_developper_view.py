@@ -3304,6 +3304,10 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             pipeline.node_position = old_pos
 
     def load_pipeline_parameters(self):
+        """
+        Loading and setting pipeline parameters (inputs and outputs) from a Json file.
+        :return:
+        """
         filename = qt_backend.getOpenFileName(
             None, 'Load the pipeline parameters', '',
             'Compatible files (*.json)')
@@ -3317,11 +3321,16 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
             for trait_name, trait_value in dic["pipeline_parameters"].items():
                 if trait_name not in self.scene.pipeline.user_traits().keys():
+                    # Should we raise an error or just "continue"?
                     raise KeyError('No "{0}" parameter in pipeline.'.format(trait_name))
                 setattr(self.scene.pipeline, trait_name, trait_value)
-                self.scene.pipeline.update_nodes_and_plugs_activation()
+            self.scene.pipeline.update_nodes_and_plugs_activation()
 
     def save_pipeline_parameters(self):
+        """
+        Saving pipeline parameters (inputs and outputs) to a Json file.
+        :return:
+        """
         pipeline = self.scene.pipeline
 
         filename = qt_backend.getSaveFileName(
@@ -3343,7 +3352,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             # In the future, more information may be added to this dictionary
             dic = {}
             dic["pipeline_parameters"] = param_dic
-            print(dic)
 
             # Saving the dictionary in the Json file
             with open(filename, 'w', encoding='utf8') as file:
