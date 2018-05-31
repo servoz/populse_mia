@@ -46,7 +46,7 @@ class PipelineManagerTab(QWidget):
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
 
-        menub = ToolBar(self)
+        # menub = ToolBar(self)
 
         self.verticalLayout = QVBoxLayout(self)
 
@@ -71,6 +71,12 @@ class PipelineManagerTab(QWidget):
         self.saveButton = QPushButton('Save pipeline', self)
         self.saveButton.clicked.connect(self.savePipeline)
 
+        self.loadParametersButton = QPushButton('Load pipeline parameters', self)
+        self.loadParametersButton.clicked.connect(self.loadParameters)
+
+        self.saveParametersButton = QPushButton('Save pipeline parameters', self)
+        self.saveParametersButton.clicked.connect(self.saveParameters)
+
         self.initButton = QPushButton('Initialize pipeline', self)
         self.initButton.clicked.connect(self.initPipeline)
 
@@ -78,9 +84,11 @@ class PipelineManagerTab(QWidget):
         self.runButton.clicked.connect(self.runPipeline)
 
         self.hLayout = QHBoxLayout()
-        self.hLayout.addWidget(menub)
+        # self.hLayout.addWidget(menub)
         self.hLayout.addWidget(self.saveButton)
         self.hLayout.addWidget(self.loadButton)
+        self.hLayout.addWidget(self.saveParametersButton)
+        self.hLayout.addWidget(self.loadParametersButton)
         self.hLayout.addWidget(self.initButton)
         self.hLayout.addWidget(self.runButton)
         self.hLayout.addStretch(1)
@@ -241,6 +249,12 @@ class PipelineManagerTab(QWidget):
 
     def savePipeline(self):
         self.diagramView.save_pipeline()
+
+    def loadParameters(self):
+        self.diagramView.load_pipeline_parameters()
+
+    def saveParameters(self):
+        self.diagramView.save_pipeline_parameters()
 
     def initPipeline(self):
         """ Method that generates the output names of each pipeline node. """
