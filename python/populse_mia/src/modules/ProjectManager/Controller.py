@@ -2,7 +2,7 @@ import glob
 import os.path
 import json
 import hashlib # To generate the md5 of each path
-from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN
+import populse_db
 import datetime
 from time import time
 from PyQt5.QtCore import Qt
@@ -87,7 +87,7 @@ def read_log(project):
                     properties = tag[1]
                     unit = None
                     format = ''
-                    tag_type = FIELD_TYPE_STRING
+                    tag_type = populse_db.database.FIELD_TYPE_STRING
                     description = None
                     if isinstance(properties, dict):
                         value = properties['value']
@@ -97,7 +97,7 @@ def read_log(project):
                         format = properties['format']
                         tag_type = properties['type']
                         if tag_type == "":
-                            tag_type = FIELD_TYPE_STRING
+                            tag_type = populse_db.database.FIELD_TYPE_STRING
                         description = properties['description']
                         if description == "":
                             description = None
@@ -116,42 +116,42 @@ def read_log(project):
                         format = format.replace("ss", "%S")
                         format = format.replace("SSS", "%f")
                         if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = FIELD_TYPE_DATETIME
+                            tag_type = populse_db.database.FIELD_TYPE_DATETIME
                         elif "%Y" in format and "%m" in format and "%d" in format:
-                            tag_type = FIELD_TYPE_DATE
+                            tag_type = populse_db.database.FIELD_TYPE_DATE
                         elif "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = FIELD_TYPE_TIME
+                            tag_type = populse_db.database.FIELD_TYPE_TIME
 
                     if tag_name != "Json_Version":
                         # Preparing value and type
                         if len(value) is 1:
                             value = value[0]
                         else:
-                            if tag_type == FIELD_TYPE_STRING:
-                                tag_type = FIELD_TYPE_LIST_STRING
-                            elif tag_type == FIELD_TYPE_INTEGER:
-                                tag_type = FIELD_TYPE_LIST_INTEGER
-                            elif tag_type == FIELD_TYPE_FLOAT:
-                                tag_type = FIELD_TYPE_LIST_FLOAT
-                            elif tag_type == FIELD_TYPE_BOOLEAN:
-                                tag_type = FIELD_TYPE_LIST_BOOLEAN
-                            elif tag_type == FIELD_TYPE_DATE:
-                                tag_type = FIELD_TYPE_LIST_DATE
-                            elif tag_type == FIELD_TYPE_DATETIME:
-                                tag_type = FIELD_TYPE_LIST_DATETIME
-                            elif tag_type == FIELD_TYPE_TIME:
-                                tag_type = FIELD_TYPE_LIST_TIME
+                            if tag_type == populse_db.database.FIELD_TYPE_STRING:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_STRING
+                            elif tag_type == populse_db.database.FIELD_TYPE_INTEGER:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_INTEGER
+                            elif tag_type == populse_db.database.FIELD_TYPE_FLOAT:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_FLOAT
+                            elif tag_type == populse_db.database.FIELD_TYPE_BOOLEAN:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_BOOLEAN
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATE:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_DATE
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATETIME:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_DATETIME
+                            elif tag_type == populse_db.database.FIELD_TYPE_TIME:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_TIME
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
                             value = value_prepared
 
-                    if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
+                    if tag_type == populse_db.database.FIELD_TYPE_DATETIME or tag_type == populse_db.database.FIELD_TYPE_DATE or tag_type == populse_db.database.FIELD_TYPE_TIME:
                         if value is not None and value != "":
                             value = datetime.strptime(value, format)
-                            if tag_type == FIELD_TYPE_TIME:
+                            if tag_type == populse_db.database.FIELD_TYPE_TIME:
                                 value = value.time()
-                            elif tag_type == FIELD_TYPE_DATE:
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATE:
                                 value = value.date()
 
                     # TODO time lists

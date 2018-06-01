@@ -7,8 +7,9 @@ import yaml
 from Project.Filter import Filter
 from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
-from populse_db.database import Database
-from populse_db.database_model import FIELD_TYPE_STRING
+import populse_db
+
+from Project.database_mia import Database_mia
 
 # MIA collections
 COLLECTION_CURRENT = "current"
@@ -54,7 +55,8 @@ class Project:
             raise IOError(
                 "The project at " + str(self.folder) + " is already opened in another instance of the software.")
 
-        self.database = Database('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'), True)
+        self.database = Database_mia('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+
         if new_project:
 
             if not os.path.exists(self.folder):
@@ -99,10 +101,10 @@ class Project:
             self.database.add_collection(COLLECTION_INITIAL, TAG_FILENAME)
 
             # Tags manually added
-            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum")
-            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum") # TODO Maybe remove checksum tag from initial table
-            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, FIELD_TYPE_STRING, "Path type")
-            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, FIELD_TYPE_STRING, "Path type")
+            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum")
+            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum") # TODO Maybe remove checksum tag from initial table
+            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type")
+            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type")
 
         self.properties = self.loadProperties()
 

@@ -361,6 +361,12 @@ class Main_Window(QMainWindow):
 
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
+            # Removing the old project from the list of currently opened projects
+            config = Config()
+            opened_projects = config.get_opened_projects()
+            opened_projects.remove(self.project.folder)
+            config.set_opened_projects(opened_projects)
+
             # Project updated everywhere
             self.project = Project(exPopup.relative_path, False)
             self.project.setName(os.path.basename(exPopup.relative_path))
@@ -392,6 +398,12 @@ class Main_Window(QMainWindow):
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.retranslateUi(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
+
+                # Removing the old project from the list of currently opened projects
+                config = Config()
+                opened_projects = config.get_opened_projects()
+                opened_projects.remove(self.project.folder)
+                config.set_opened_projects(opened_projects)
 
                 self.project = Project(self.exPopup.relative_path, True)
 

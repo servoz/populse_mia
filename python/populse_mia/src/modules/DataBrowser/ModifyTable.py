@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 from Utils.Utils import check_value_type
-from populse_db.database_model import FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, FIELD_TYPE_TIME, FIELD_TYPE_STRING
+import populse_db
 from datetime import datetime
 
 from Project.Project import COLLECTION_CURRENT

@@ -25,9 +25,7 @@ from SoftwareProperties import Config
 from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
-from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_FLOAT, \
-    FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, \
-    FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, LIST_TYPES
+import populse_db
 from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_FILENAME
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
@@ -602,13 +600,13 @@ class TableDataBrowser(QTableWidget):
             "Description: " + str(tag_object.description) + "\nUnit: " + str(self.project.getUnit(tag)) + "\nType: " + str(
                 tag_object.type))
         # Set column type
-        if tag_object.type == FIELD_TYPE_FLOAT:
+        if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
             self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
-        elif tag_object.type == FIELD_TYPE_DATETIME:
+        elif tag_object.type == populse_db.database.FIELD_TYPE_DATETIME:
             self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
-        elif tag_object.type == FIELD_TYPE_DATE:
+        elif tag_object.type == populse_db.database.FIELD_TYPE_DATE:
             self.setItemDelegateForColumn(column, DateFormatDelegate(self))
-        elif tag_object.type == FIELD_TYPE_TIME:
+        elif tag_object.type == populse_db.database.FIELD_TYPE_TIME:
             self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
         for row in range(0, self.rowCount()):
@@ -619,7 +617,7 @@ class TableDataBrowser(QTableWidget):
             if cur_value is not None:
                 set_item_data(item, cur_value, tag_object.type)
             else:
-                set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -852,13 +850,13 @@ class TableDataBrowser(QTableWidget):
                         element.type))
 
                 # Set column type
-                if element.type == FIELD_TYPE_FLOAT:
+                if element.type == populse_db.database.FIELD_TYPE_FLOAT:
                     self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
-                elif element.type == FIELD_TYPE_DATETIME:
+                elif element.type == populse_db.database.FIELD_TYPE_DATETIME:
                     self.setItemDelegateForColumn(column, DateTimeFormatDelegate(self))
-                elif element.type == FIELD_TYPE_DATE:
+                elif element.type == populse_db.database.FIELD_TYPE_DATE:
                     self.setItemDelegateForColumn(column, DateFormatDelegate(self))
-                elif element.type == FIELD_TYPE_TIME:
+                elif element.type == populse_db.database.FIELD_TYPE_TIME:
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
@@ -902,7 +900,7 @@ class TableDataBrowser(QTableWidget):
                 if column == 0:
                     # name tag
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                    set_item_data(item, scan, FIELD_TYPE_STRING)
+                    set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
                 else:
                     # Other tags
                     current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, current_tag)
@@ -912,7 +910,7 @@ class TableDataBrowser(QTableWidget):
 
                     # The scan does not have a value for the tag
                     else:
-                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                        set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -1430,13 +1428,13 @@ class TableDataBrowser(QTableWidget):
                     if column == 0:
                         # name tag
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                        set_item_data(item, scan, FIELD_TYPE_STRING)
+                        set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
                     else:
                         cur_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
                         if cur_value is not None:
                             set_item_data(item, cur_value, self.project.database.get_field(COLLECTION_CURRENT, tag).type)
                         else:
-                            set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                            set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                             font = item.font()
                             font.setItalic(True)
                             font.setBold(True)
@@ -1505,13 +1503,13 @@ class TableDataBrowser(QTableWidget):
                     print(self.project.getUnit(tag))
 
                     # Set column type
-                    if tag_object.type == FIELD_TYPE_FLOAT:
+                    if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
                         self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
-                    elif tag_object.type == FIELD_TYPE_DATETIME:
+                    elif tag_object.type == populse_db.database.FIELD_TYPE_DATETIME:
                         self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
-                    elif tag_object.type == FIELD_TYPE_DATE:
+                    elif tag_object.type == populse_db.database.FIELD_TYPE_DATE:
                         self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
-                    elif tag_object.type == FIELD_TYPE_TIME:
+                    elif tag_object.type == populse_db.database.FIELD_TYPE_TIME:
                         self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
 
                     # Hide the column if not visible
@@ -1700,7 +1698,7 @@ class TableDataBrowser(QTableWidget):
                 cells_types.append(tag_type)
 
         # Error if list with other types
-        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types and len(
+        if populse_db.database.FIELD_TYPE_LIST_DATE in cells_types or populse_db.database.FIELD_TYPE_LIST_DATETIME in cells_types or populse_db.database.FIELD_TYPE_LIST_TIME in cells_types or populse_db.database.FIELD_TYPE_LIST_INTEGER in cells_types or populse_db.database.FIELD_TYPE_LIST_STRING in cells_types or populse_db.database.FIELD_TYPE_LIST_FLOAT in cells_types or populse_db.database.FIELD_TYPE_LIST_BOOLEAN in cells_types and len(
                 cells_types) > 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
@@ -1714,7 +1712,7 @@ class TableDataBrowser(QTableWidget):
             return
 
         # Nothing to do if list
-        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types:
+        if populse_db.database.FIELD_TYPE_LIST_DATE in cells_types or populse_db.database.FIELD_TYPE_LIST_DATETIME in cells_types or populse_db.database.FIELD_TYPE_LIST_TIME in cells_types or populse_db.database.FIELD_TYPE_LIST_INTEGER in cells_types or populse_db.database.FIELD_TYPE_LIST_STRING in cells_types or populse_db.database.FIELD_TYPE_LIST_FLOAT in cells_types or populse_db.database.FIELD_TYPE_LIST_BOOLEAN in cells_types:
             self.itemChanged.connect(self.change_cell_color)
             return
 
