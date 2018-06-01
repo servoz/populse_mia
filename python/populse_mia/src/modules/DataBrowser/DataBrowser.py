@@ -316,8 +316,7 @@ class DataBrowser(QWidget):
             generator = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(str_search, self.project.getVisibles()))
 
             # Creating the list of scans
-            for scan in generator:
-                return_list.append(getattr(scan, TAG_FILENAME))
+            return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
 
         # Otherwise, we take every scan
         else:
@@ -354,7 +353,7 @@ class DataBrowser(QWidget):
 
         query = "(" + query + ")"
 
-        print(query)
+        #print(query)
 
         return query
 

@@ -150,15 +150,11 @@ class AdvancedSearch(QWidget):
         main_layout = QGridLayout()
 
         # Everything added to the layout
-        i = 0
-        while i < len(self.rows):
-            j = 0
-            while j < 7:
+        for i in range (0, len(self.rows)):
+            for j in range(0, 7):
                 widget = self.rows[i][j]
                 if widget != None:
                     main_layout.addWidget(widget, i, j)
-                j = j + 1
-            i = i + 1
 
         # Search button added at the end
         searchLayout = QHBoxLayout(None)
@@ -180,8 +176,7 @@ class AdvancedSearch(QWidget):
         """
 
         # We remove all the links and the add rows
-        i = 0
-        while i < len(self.rows):
+        for i in range (0, len(self.rows)):
             # Plus removed from every row
             if self.rows[i][6] != None:
                 self.rows[i][6].setParent(None)
@@ -192,7 +187,6 @@ class AdvancedSearch(QWidget):
                 self.rows[i][0].setParent(None)
                 self.rows[i][0].deleteLater()
                 self.rows[i][0] = None
-            i = i + 1
 
     def rows_borders_added(self, links):
         """
@@ -210,8 +204,7 @@ class AdvancedSearch(QWidget):
         self.rows[len(self.rows) - 1][6] = addRowLabel
 
         # Link added to every row, except the first one
-        i = 1
-        while i < len(self.rows):
+        for i in range (1, len(self.rows)):
             row = self.rows[i]
             linkChoice = QComboBox()
             linkChoice.setObjectName('link')
@@ -220,7 +213,6 @@ class AdvancedSearch(QWidget):
             if len(links) >= i:
                 linkChoice.setCurrentText(links[i - 1])
             row[0] = linkChoice
-            i = i + 1
 
     def clearLayout(self, layout):
         """
@@ -264,9 +256,7 @@ class AdvancedSearch(QWidget):
             result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
 
             # DataBrowser updated with the new selection
-            result_names = []
-            for document in result:
-                result_names.append(getattr(document, TAG_FILENAME))
+            result_names = [getattr(document, TAG_FILENAME) for document in result]
 
         except Exception as e:
             print(e)
@@ -353,7 +343,7 @@ class AdvancedSearch(QWidget):
 
         final_query = "(" + final_query + ")"
 
-        print(final_query)
+        #print(final_query)
 
         return final_query
 
@@ -411,8 +401,7 @@ class AdvancedSearch(QWidget):
         links = filter.links
         fields = filter.fields
 
-        i = 0
-        while i < len(nots):
+        for i in range (0, len(nots)):
             self.add_row()
             row = self.rows[i]
             if i > 0:
@@ -424,7 +413,6 @@ class AdvancedSearch(QWidget):
                 row[2].setCurrentText(fields[i][0])
             row[3].setCurrentText(conditions[i])
             row[4].setText(str(values[i]))
-            i += 1
 
         old_rows = self.dataBrowser.table_data.scans_to_visualize
 
@@ -437,9 +425,7 @@ class AdvancedSearch(QWidget):
                 result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
 
                 # DataBrowser updated with the new selection
-                result_names = []
-                for document in result:
-                    result_names.append(getattr(document, TAG_FILENAME))
+                result_names = [getattr(document, TAG_FILENAME) for document in result]
 
             except Exception as e:
                 print(e)

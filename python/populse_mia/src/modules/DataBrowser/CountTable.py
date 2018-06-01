@@ -294,9 +294,7 @@ class CountTable(QDialog):
                 generator_scans = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(tag_list))
 
                 # List of scans created, given the generator
-                list_scans = []
-                for scan in generator_scans:
-                    list_scans.append(getattr(scan, TAG_FILENAME))
+                list_scans = [getattr(scan, TAG_FILENAME) for scan in generator_scans]
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
@@ -345,6 +343,6 @@ class CountTable(QDialog):
 
         query = "(" + query + ")"
 
-        print(query)
+        #print(query)
 
         return query
