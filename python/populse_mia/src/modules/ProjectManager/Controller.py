@@ -8,7 +8,8 @@ from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
-from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
+from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -159,11 +160,8 @@ def read_log(project):
                     tag_row = project.database.get_field(COLLECTION_CURRENT, tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
-                        tags_added.append([COLLECTION_CURRENT, tag_name, tag_type, description])
-                        tags_added.append([COLLECTION_INITIAL, tag_name, tag_type, description])
-                        project.setOrigin(tag_name, TAG_ORIGIN_BUILTIN)
-                        project.setUnit(tag_name, unit)
-                        project.setDefaultValue(tag_name, None)
+                        tags_added.append([COLLECTION_CURRENT, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit, None])
+                        tags_added.append([COLLECTION_INITIAL, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit, None])
                         tags_names_added.append(tag_name)
 
                     # The value is accepted if it's not empty or null
@@ -176,7 +174,7 @@ def read_log(project):
 
     # Missing values added thanks to default values
     for tag in project.database.get_fields(COLLECTION_CURRENT):
-        if project.getOrigin(tag.name) == TAG_ORIGIN_USER:
+        if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
                 if tag.default_value is not None and project.database.get_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history

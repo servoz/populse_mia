@@ -387,13 +387,37 @@ class PlugFilter(QWidget):
     def set_plug_value(self):
         """ Emitting a signal to set the file names to the plug value. """
 
-        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        path_names = self.project.database.get_documents_matching_advanced_search(links, fields, conditions,
-                                                                                  values, nots, self.scans_list)
+        from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 
-        for i in range(len(path_names)):
-            path_names[i] = os.path.relpath(os.path.join(self.project.folder, path_names[i]))
-        self.plug_value_changed.emit(path_names)
+        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
+        # Result gotten
+        try:
+
+            filter_query = self.advanced_search.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
+            result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+
+            # DataBrowser updated with the new selection
+            result_names = [getattr(document, TAG_FILENAME) for document in result]
+
+        except Exception as e:
+            print(e)
+
+            # Error message if the search can't be done, and visualization of all scans in the databrowser
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText(
+                "Error in the search")
+            msg.setInformativeText(
+                "The search has encountered a problem, you can correct it and launch it again.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            result_names = self.advanced_search.scans_list
+
+        for i in range(len(result_names)):
+            result_names[i] = os.path.relpath(os.path.join(self.project.folder, result_names[i]))
+        self.plug_value_changed.emit(result_names)
 
     def set_filter_to_process(self):
         """ Setting the selected filter to the filter process. """

@@ -26,7 +26,8 @@ from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
 import populse_db
-from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_FILENAME
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_FILENAME
+from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
 
@@ -311,7 +312,8 @@ class DataBrowser(QWidget):
                     if self.project.database.get_value(scan.name, tag) is None and not scan.name in return_list:
                         return_list.append(scan.name)
         elif str_search != "":
-            generator = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(str_search, self.project.getVisibles()))
+            visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
+            generator = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(str_search, visibles))
 
             # Creating the list of scans
             return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
@@ -418,11 +420,8 @@ class DataBrowser(QWidget):
             values = []
 
             # We add the tag and a value for each scan in the Database
-            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tag_type, new_tag_description)
-            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description)
-            self.project.setUnit(new_tag_name, new_tag_unit)
-            self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
-            self.project.setDefaultValue(new_tag_name, new_default_value)
+            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
+            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
             for scan in self.project.database.get_documents(COLLECTION_CURRENT):
                 self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
                 self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, None)
@@ -445,11 +444,6 @@ class DataBrowser(QWidget):
             column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.add_column(column, new_tag_name)
 
-            # Putting the new tag as visible
-            visibilities = self.project.getVisibles()
-            visibilities.append(new_tag_name)
-            self.project.setVisibles(visibilities)
-
     def clone_tag_pop_up(self):
 
         # We first show the clone_tag pop up
@@ -465,11 +459,8 @@ class DataBrowser(QWidget):
 
             # We add the new tag in the Database
             tagCloned = self.project.database.get_field(COLLECTION_CURRENT, tag_to_clone)
-            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tagCloned.type, tagCloned.description)
-            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tagCloned.type, tagCloned.description)
-            self.project.setDefaultValue(new_tag_name, self.project.getDefaultValue(tag_to_clone))
-            self.project.setOrigin(new_tag_name, TAG_ORIGIN_USER)
-            self.project.setUnit(new_tag_name, self.project.getUnit(tag_to_clone))
+            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tagCloned.type, tagCloned.description, True, TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
+            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tagCloned.type, tagCloned.description, True, TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
             for scan in self.project.database.get_documents(COLLECTION_CURRENT):
 
                 # If the tag to clone has a value, we add this value with the new tag name in the Database
@@ -485,8 +476,8 @@ class DataBrowser(QWidget):
             historyMaker.append("add_tag")
             historyMaker.append(new_tag_name)
             historyMaker.append(tagCloned.type)
-            historyMaker.append(self.project.getUnit(tag_to_clone))
-            historyMaker.append(self.project.getDefaultValue(tag_to_clone))
+            historyMaker.append(tagCloned.unit)
+            historyMaker.append(tagCloned.default_value)
             historyMaker.append(tagCloned.description)
             historyMaker.append(values)
             self.project.undos.append(historyMaker)
@@ -495,11 +486,6 @@ class DataBrowser(QWidget):
             # New tag added to the table
             column = self.table_data.get_index_insertion(new_tag_name)
             self.table_data.add_column(column, new_tag_name)
-
-            # Putting the new tag as visible
-            visibilities = self.project.getVisibles()
-            visibilities.append(new_tag_name)
-            self.project.setVisibles(visibilities)
 
     def remove_tag_pop_up(self):
 
@@ -522,10 +508,7 @@ class DataBrowser(QWidget):
             # Each Tag row to remove is put in the history
             for tag in tag_names_to_remove:
                 tagObject = self.project.database.get_field(COLLECTION_CURRENT, tag)
-                tag_origin = self.project.getOrigin(tag)
-                tag_unit = self.project.getUnit(tag)
-                tag_default_value = self.project.getDefaultValue(tag)
-                tags_removed.append([tagObject, tag_origin, tag_unit, tag_default_value])
+                tags_removed.append([tagObject])
             historyMaker.append(tags_removed)
 
             # Each value of the tags to remove are stored in the history
@@ -545,9 +528,6 @@ class DataBrowser(QWidget):
             for tag in tag_names_to_remove:
                 self.project.database.remove_field(COLLECTION_CURRENT, tag)
                 self.project.database.remove_field(COLLECTION_INITIAL, tag)
-                self.project.removeDefaultValue(tag)
-                self.project.removeOrigin(tag)
-                self.project.removeUnit(tag)
                 self.table_data.removeColumn(self.table_data.get_tag_column(tag))
 
             # Selection updated
@@ -597,7 +577,7 @@ class TableDataBrowser(QTableWidget):
         tag_object = self.project.database.get_field(COLLECTION_CURRENT, tag)
         item.setText(tag)
         item.setToolTip(
-            "Description: " + str(tag_object.description) + "\nUnit: " + str(self.project.getUnit(tag)) + "\nType: " + str(
+            "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
                 tag_object.type))
         # Set column type
         if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
@@ -846,7 +826,7 @@ class TableDataBrowser(QTableWidget):
             element = self.project.database.get_field(COLLECTION_CURRENT, tag_name)
             if element is not None:
                 item.setToolTip(
-                    "Description: " + str(element.description) + "\nUnit: " + str(self.project.getUnit(tag_name)) + "\nType: " + str(
+                    "Description: " + str(element.description) + "\nUnit: " + str(element.unit) + "\nType: " + str(
                         element.type))
 
                 # Set column type
@@ -860,7 +840,7 @@ class TableDataBrowser(QTableWidget):
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
-                if tag_name not in self.project.getVisibles():
+                if not element.visibility:
                     self.setColumnHidden(column, True)
 
                 else:
@@ -944,7 +924,7 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(230, 230, 230)  # Grey
 
                         # Raw tag
-                        elif self.project.getOrigin(tag) == TAG_ORIGIN_BUILTIN:
+                        elif self.project.database.get_field(COLLECTION_CURRENT, tag).origin == TAG_ORIGIN_BUILTIN:
                             current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
                             initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan, tag)
                             if current_value != initial_value:
@@ -1226,7 +1206,7 @@ class TableDataBrowser(QTableWidget):
                 set_item_data(item, value, self.project.database.get_field(COLLECTION_CURRENT, tag_name).type)
             else:
                 item = QTableWidgetItem()
-                set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                 font = item.font()
                 font.setItalic(True)
                 font.setBold(True)
@@ -1275,7 +1255,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def visualized_tags_pop_up(self):
-        old_tags = self.project.getVisibles()  # Old list of columns
+        old_tags = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]  # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.project)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
@@ -1369,11 +1349,12 @@ class TableDataBrowser(QTableWidget):
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
-            if tag not in self.project.getVisibles():
+            if not self.project.database.get_field(COLLECTION_CURRENT, tag).visibility:
                 self.setColumnHidden(self.get_tag_column(tag), True)
 
         # Tags that became visible must be visible
-        for tag in self.project.getVisibles():
+        visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
+        for tag in visibles:
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Selection updated
@@ -1488,7 +1469,6 @@ class TableDataBrowser(QTableWidget):
             # Tag added only if it's not already in the table
             if self.get_tag_column(tag) is None:
 
-
                 columnIndex = self.get_index_insertion(tag)
                 self.insertColumn(columnIndex)
 
@@ -1499,8 +1479,6 @@ class TableDataBrowser(QTableWidget):
                 if tag_object is not None:
                     item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
                         self.project.getUnit(tag)) + "\nType: " + str(tag_object.type))
-                    print(tag)
-                    print(self.project.getUnit(tag))
 
                     # Set column type
                     if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
@@ -1536,6 +1514,7 @@ class TableDataBrowser(QTableWidget):
         for column in range(0, self.columnCount()):
             tag_name = self.horizontalHeaderItem(column).text()
             if not tag_name in self.project.database.get_fields_names(COLLECTION_CURRENT) and tag_name != TAG_FILENAME:
+                print(tag_name)
                 tags_to_remove.append(tag_name)
 
         for tag in tags_to_remove:
@@ -1589,7 +1568,7 @@ class TableDataBrowser(QTableWidget):
                 if not tag_type in self.types:
                     self.types.append(tag_type)
 
-                if tag_type in LIST_TYPES:
+                if tag_type in populse_db.database.LIST_TYPES:
 
                     database_value = self.project.database.get_value(COLLECTION_CURRENT, scan_name, tag_name)
                     self.old_database_values.append(database_value)

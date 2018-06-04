@@ -75,17 +75,17 @@ class Ui_Visualized_Tags(QWidget):
 
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
-        for tag in project.database.get_fields_names(COLLECTION_CURRENT):
-            if tag != TAG_CHECKSUM and tag != TAG_FILENAME:
+        for tag in project.database.get_fields(COLLECTION_CURRENT):
+            if tag.name != TAG_CHECKSUM and tag.name != TAG_FILENAME:
                 item = QtWidgets.QListWidgetItem()
-                if tag not in project.getVisibles():
+                if not tag.visibility:
                     # Tag not visible: left side
                     self.list_widget_tags.addItem(item)
-                    self.left_tags.append(tag)
+                    self.left_tags.append(tag.name)
                 else:
                     # Tag visible: right side
                     self.list_widget_selected_tags.addItem(item)
-                item.setText(tag)
+                item.setText(tag.name)
         self.list_widget_tags.sortItems()
 
     def search_str(self, database, str_search):

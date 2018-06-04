@@ -7,7 +7,8 @@ from Utils.Utils import check_value_type
 import os
 import ast
 from datetime import datetime
-from Project.Project import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ, COLLECTION_CURRENT
+from Project.database_mia import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
+from Project.Project import COLLECTION_CURRENT
 
 class Default_value_list_creation(QDialog):
 
@@ -111,28 +112,28 @@ class Default_value_list_creation(QDialog):
             text = item.text()
 
             try:
-                if self.type == FIELD_TYPE_LIST_INTEGER:
+                if self.type == populse_db.database.FIELD_TYPE_LIST_INTEGER:
                     database_value.append(int(text))
-                elif self.type == FIELD_TYPE_LIST_FLOAT:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_FLOAT:
                     database_value.append(float(text))
-                elif self.type == FIELD_TYPE_LIST_BOOLEAN:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_BOOLEAN:
                     if text == "True":
                         database_value.append(True)
                     elif text == "False":
                         database_value.append(False)
                     else:
                         raise ValueError("Not a boolean value")
-                elif self.type == FIELD_TYPE_LIST_STRING:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_STRING:
                     database_value.append(str(text))
-                elif self.type == FIELD_TYPE_LIST_DATE:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_DATE:
                     format = "%d/%m/%Y"
                     datetime.strptime(text, format).date()
                     database_value.append(text)
-                elif self.type == FIELD_TYPE_LIST_DATETIME:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_DATETIME:
                     format = "%d/%m/%Y %H:%M:%S.%f"
                     datetime.strptime(text, format)
                     database_value.append(text)
-                elif self.type == FIELD_TYPE_LIST_TIME:
+                elif self.type == populse_db.database.FIELD_TYPE_LIST_TIME:
                     format = "%H:%M:%S.%f"
                     datetime.strptime(text, format).time()
                     database_value.append(text)

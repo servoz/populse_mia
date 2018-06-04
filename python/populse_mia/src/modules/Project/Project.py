@@ -9,7 +9,7 @@ from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
 import populse_db
 
-from Project.database_mia import Database_mia
+from Project.database_mia import Database_mia, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 # MIA collections
 COLLECTION_CURRENT = "current"
@@ -19,20 +19,6 @@ COLLECTION_INITIAL = "initial"
 TAG_CHECKSUM = "Checksum"
 TAG_TYPE = "Type"
 TAG_FILENAME = "FileName"
-
-# Tag origin
-TAG_ORIGIN_BUILTIN = "builtin"
-TAG_ORIGIN_USER = "user"
-
-# Tag unit
-TAG_UNIT_MS = "ms"
-TAG_UNIT_MM = "mm"
-TAG_UNIT_DEGREE = "degree"
-TAG_UNIT_HZPIXEL = "Hz/pixel"
-TAG_UNIT_MHZ = "MHz"
-
-ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
-             TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]
 
 class Project:
 
@@ -87,40 +73,22 @@ class Project:
                 name=name,
                 date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                 sorted_tag='',
-                sort_order='',
-                visibles=[TAG_FILENAME, TAG_TYPE],
-                origins={},
-                units={},
-                default_values={}
+                sort_order=''
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
             # Adding current and initial collections
-            self.database.add_collection(COLLECTION_CURRENT, TAG_FILENAME)
-            self.database.add_collection(COLLECTION_INITIAL, TAG_FILENAME)
+            self.database.add_collection(COLLECTION_CURRENT, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
+            self.database.add_collection(COLLECTION_INITIAL, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
 
             # Tags manually added
-            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum")
-            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum") # TODO Maybe remove checksum tag from initial table
-            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type")
-            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type")
+            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
+            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
 
         self.properties = self.loadProperties()
-
-        if new_project:
-
-            self.setUnit(TAG_CHECKSUM, None)
-            self.setDefaultValue(TAG_CHECKSUM, None)
-            self.setOrigin(TAG_CHECKSUM, TAG_ORIGIN_BUILTIN)
-
-            self.setUnit(TAG_TYPE, None)
-            self.setDefaultValue(TAG_TYPE, None)
-            self.setOrigin(TAG_TYPE, TAG_ORIGIN_BUILTIN)
-
-            self.setUnit(TAG_FILENAME, None)
-            self.setDefaultValue(TAG_FILENAME, None)
-            self.setOrigin(TAG_FILENAME, TAG_ORIGIN_BUILTIN)
 
         self.unsavedModifications = False
         self.undos = []
@@ -297,95 +265,6 @@ class Project:
         if old_order != order:
             self.unsavedModifications = True
 
-    def getVisibles(self):
-        """ Returns the visible tags """
-
-        return self.properties["visibles"]
-
-    def setVisibles(self, visibles):
-        """ Sets the list of visible tags """
-
-        self.properties["visibles"] = visibles
-        self.unsavedModifications = True
-
-    def getOrigin(self, tag):
-        """
-        Returns the tag origin
-        :param tag: Tag name
-        """
-
-        return self.properties["origins"][tag]
-
-    def setOrigin(self, tag, origin):
-        """
-        Sets the tag origin
-        :param tag: Tag name
-        :param origin: New tag origin
-        """
-
-        self.properties["origins"][tag] = origin
-        self.unsavedModifications = True
-
-    def removeOrigin(self, tag):
-        """
-        Removes the tag origin
-        :param tag: Tag name
-        """
-
-        del self.properties["origins"][tag]
-
-    def getUnit(self, tag):
-        """
-        Returns the tag unit
-        :param tag: Tag name
-        """
-
-        return self.properties["units"][tag]
-
-    def setUnit(self, tag, unit):
-        """
-        Sets the tag unit
-        :param tag: Tag name
-        :param unit: New tag unit
-        """
-
-        self.properties["units"][tag] = unit
-        self.unsavedModifications = True
-
-    def removeUnit(self, tag):
-        """
-        Removes the tag unit
-        :param tag: Tag name
-        """
-
-        del self.properties["units"][tag]
-
-    def getDefaultValue(self, tag):
-        """
-        Returns the tag default value
-        :param tag: Tag name
-        """
-
-        return self.properties["default_values"][tag]
-
-    def setDefaultValue(self, tag, default_value):
-        """
-        Sets the tag unit
-        :param tag: Tag name
-        :param default_value: New tag default value
-        """
-
-        self.properties["default_values"][tag] = default_value
-        self.unsavedModifications = True
-
-    def removeDefaultValue(self, tag):
-        """
-        Removes the tag default value
-        :param tag: Tag name
-        """
-
-        del self.properties["default_values"][tag]
-
     """ UTILS """
 
     """ MODIFICATIONS """
@@ -432,9 +311,6 @@ class Project:
                 tagToRemove = toUndo[1]
                 self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
                 self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
-                self.removeDefaultValue(tagToRemove)
-                self.removeOrigin(tagToRemove)
-                self.removeUnit(tagToRemove)
                 column_to_remove = table.get_tag_column(tagToRemove)
                 table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
@@ -443,11 +319,8 @@ class Project:
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
-                    self.database.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description)
-                    self.database.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description)
-                    self.setOrigin(tagToReput.name, tagsRemoved[i][1])
-                    self.setUnit(tagToReput.name, tagsRemoved[i][2])
-                    self.setDefaultValue(tagToReput.name, tagsRemoved[i][3])
+                    self.database.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
+                    self.database.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
                 for i in range(0, len(tagsRemoved)):
@@ -491,8 +364,9 @@ class Project:
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
-                        self.database.remove_value(scan, tag)
-                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                        self.database.remove_value(COLLECTION_CURRENT, scan, tag)
+                        self.database.remove_value(COLLECTION_INITIAL, scan, tag)
+                        set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -542,11 +416,8 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_field(COLLECTION_CURRENT, tagToAdd, tagType, tagDescription)
-                self.database.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription)
-                self.setUnit(tagToAdd, tagUnit)
-                self.setOrigin(tagToAdd, TAG_ORIGIN_USER)
-                self.setDefaultValue(tagToAdd, tagDefaultValue)
+                self.database.add_field(COLLECTION_CURRENT, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
+                self.database.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
                     self.database.new_value(COLLECTION_CURRENT, value[0], value[1], value[2])
@@ -561,9 +432,6 @@ class Project:
                     tagToRemove = tagsRemoved[i][0].name
                     self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
                     self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
-                    self.removeDefaultValue(tagToRemove)
-                    self.removeOrigin(tagToRemove)
-                    self.removeUnit(tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
                     table.removeColumn(column_to_remove)
             if (action == "add_scans"):

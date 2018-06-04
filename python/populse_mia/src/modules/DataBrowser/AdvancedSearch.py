@@ -58,7 +58,8 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        for tag in self.project.getVisibles():
+        visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
+        for tag in visibles:
             fieldChoice.addItem(tag)
         fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
@@ -372,7 +373,7 @@ class AdvancedSearch(QWidget):
                         if child.currentText() != "All visualized tags":
                             fields.append([child.currentText()])
                         else:
-                            tags = self.project.getVisibles()
+                            tags = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
                             fields.append(tags)
                     elif childName == 'value':
                         values.append(child.displayText())

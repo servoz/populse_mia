@@ -5,7 +5,7 @@ from functools import partial
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Informations import Ui_Informations
 
-from Project.Project import TAG_FILENAME
+from Project.Project import TAG_FILENAME, COLLECTION_CURRENT, COLLECTION_INITIAL
 
 class Ui_Dialog_Settings(QDialog):
     """
@@ -18,7 +18,7 @@ class Ui_Dialog_Settings(QDialog):
     def __init__(self, project):
         super().__init__()
         self.pop_up(project)
-        self.old_visibles_tags = project.getVisibles()
+        self.old_visibles_tags = [field.name for field in project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
 
     def pop_up(self, database):
         _translate = QtCore.QCoreApplication.translate
@@ -65,12 +65,19 @@ class Ui_Dialog_Settings(QDialog):
         historyMaker.append("modified_visibilities")
         historyMaker.append(self.old_visibles_tags)
         new_visibilities = []
+        for tag in project.database.get_fields(COLLECTION_CURRENT):
+            tag.visibility = False
+        for tag in project.database.get_fields(COLLECTION_INITIAL):
+            tag.visibility = False
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
+            project.database.get_field(COLLECTION_CURRENT, visible_tag).visibility = True
+            project.database.get_field(COLLECTION_INITIAL, visible_tag).visibility = True
         new_visibilities.append(TAG_FILENAME)
+        project.database.get_field(COLLECTION_CURRENT, TAG_FILENAME).visibility = True
+        project.database.get_field(COLLECTION_INITIAL, TAG_FILENAME).visibility = True
         historyMaker.append(new_visibilities)
-        project.setVisibles(new_visibilities)
         project.undos.append(historyMaker)
         project.redos.clear()
         #Database.setName(self.tab_infos.name_value.text())

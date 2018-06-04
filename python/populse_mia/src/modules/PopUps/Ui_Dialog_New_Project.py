@@ -1,7 +1,6 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
 import os
-import ProjectManager.Controller as controller
 import Utils.Utils as utils
 
 class Ui_Dialog_New_Project(QFileDialog):
