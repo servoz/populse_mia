@@ -1,7 +1,8 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
-from Project.Project import TAG_ORIGIN_USER
+from Project.Project import COLLECTION_CURRENT
+from Project.database_mia import TAG_ORIGIN_USER
 
 class Ui_Dialog_remove_tag(QDialog):
     """
@@ -60,15 +61,15 @@ class Ui_Dialog_remove_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag in self.project.database.get_fields_names():
-            if self.project.getOrigin(tag) == TAG_ORIGIN_USER:
+        for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+            if tag.origin == TAG_ORIGIN_USER:
                 item = QtWidgets.QListWidgetItem()
                 self.list_widget_tags.addItem(item)
-                item.setText(_translate("Dialog", tag))
+                item.setText(_translate("Dialog", tag.name))
 
         self.setLayout(vbox)
 
-        # Connecting the OK push button
+        # Connecting the OK push buttone
         self.push_button_ok.clicked.connect(self.ok_action)
 
     def search_str(self, str_search):
@@ -77,15 +78,15 @@ class Ui_Dialog_remove_tag(QDialog):
 
         if str_search != "":
             return_list = []
-            for tag in self.project.database.get_fields_names():
-                if self.project.getOrigin(tag) == TAG_ORIGIN_USER:
-                    if str_search.upper() in tag.upper():
-                        return_list.append(tag)
+            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+                if tag.origin == TAG_ORIGIN_USER:
+                    if str_search.upper() in tag.name.upper():
+                        return_list.append(tag.name)
         else:
             return_list = []
-            for tag in self.project.database.get_fields_names():
-                if self.project.getOrigin(tag) == TAG_ORIGIN_USER:
-                    return_list.append(tag)
+            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+                if tag.origin == TAG_ORIGIN_USER:
+                    return_list.append(tag.name)
         self.list_widget_tags.clear()
         for tag_name in return_list:
             item = QtWidgets.QListWidgetItem()

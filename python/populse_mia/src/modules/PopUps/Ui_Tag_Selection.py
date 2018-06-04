@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
-from SoftwareProperties.Config import Config
+
+from Project.Project import TAG_CHECKSUM, COLLECTION_CURRENT
 
 class Ui_Tag_Selection(QDialog):
     """
@@ -63,13 +64,13 @@ class Ui_Tag_Selection(QDialog):
     def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for tag in self.project.database.get_fields_names():
-                if tag != "Checksum":
+            for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+                if tag != TAG_CHECKSUM:
                     if str_search.upper() in tag.upper():
                         return_list.append(tag)
         else:
-            for tag in self.project.database.get_fields_names():
-                if tag != "Checksum":
+            for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+                if tag != TAG_CHECKSUM:
                     return_list.append(tag)
 
         for idx in range(self.list_widget_tags.count()):

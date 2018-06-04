@@ -109,7 +109,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
         for scan in self.project.database.get_fields_names():
-            current_value = self.project.database.get_current_value(scan, tag_name)
+            current_value = self.project.database.get_value(scan, tag_name)
             if current_value not in self.values_list[idx]:
                 self.values_list[idx].append(current_value)
 

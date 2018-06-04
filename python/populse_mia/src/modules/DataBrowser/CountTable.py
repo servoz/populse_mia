@@ -11,7 +11,7 @@ from Utils.Utils import set_item_data, table_to_database
 from functools import reduce # Valid in Python 2.6+, required in Python 3
 import operator
 
-from populse_db.database_model import DOCUMENT_PRIMARY_KEY
+from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
 
 class CountTable(QDialog):
     """
@@ -118,8 +118,8 @@ class CountTable(QDialog):
         or removed. """
         tag_name = self.push_buttons[idx].text()
         values = []
-        for scan in self.project.database.get_documents_names():
-            current_value = self.project.database.get_current_value(scan, tag_name)
+        for scan in self.project.database.get_documents_names(COLLECTION_CURRENT):
+            current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag_name)
             if current_value is not None:
                 values.append(current_value)
 
@@ -189,7 +189,7 @@ class CountTable(QDialog):
         # idx_last_tag corresponds to the index of the (n-1)th tag
         self.idx_last_tag = idx_end
         last_tag = self.push_buttons[len(self.values_list) - 1].text()
-        last_tag_type = self.project.database.get_field(last_tag).type
+        last_tag_type = self.project.database.get_field(COLLECTION_CURRENT, last_tag).type
         for header_name in self.values_list[-1]:
             idx_end += 1
             item = QTableWidgetItem()
@@ -225,7 +225,7 @@ class CountTable(QDialog):
             for col in range(len(self.values_list) - 1):
                 item = QTableWidgetItem()
                 tag_name = self.push_buttons[col].text()
-                tag_type = self.project.database.get_field(tag_name).type
+                tag_type = self.project.database.get_field(COLLECTION_CURRENT, tag_name).type
                 set_item_data(item, cell_text[col], tag_type)
                 self.table.setItem(row, col, item)
 
@@ -277,12 +277,12 @@ class CountTable(QDialog):
                 tag_list = []
                 for idx_first_columns in range(self.idx_last_tag + 1):
                     tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
-                    tag_type = self.project.database.get_field(tag_name).type
+                    tag_type = self.project.database.get_field(COLLECTION_CURRENT, tag_name).type
                     value_str = self.table.item(row, idx_first_columns).data(Qt.EditRole)
                     value_database = table_to_database(value_str, tag_type)
                     tag_list.append([tag_name, value_database])
                 tag_last_columns = self.push_buttons[-1].text()
-                tag_last_columns_type = self.project.database.get_field(tag_last_columns).type
+                tag_last_columns_type = self.project.database.get_field(COLLECTION_CURRENT, tag_last_columns).type
                 value_last_columns_str = self.table.horizontalHeaderItem(col).data(Qt.EditRole)
                 value_last_columns_database = table_to_database(value_last_columns_str, tag_last_columns_type)
                 tag_list.append([tag_last_columns, value_last_columns_database])
@@ -291,12 +291,10 @@ class CountTable(QDialog):
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                generator_scans = self.project.database.filter_documents(self.prepare_filter(tag_list))
+                generator_scans = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(tag_list))
 
                 # List of scans created, given the generator
-                list_scans = []
-                for scan in generator_scans:
-                    list_scans.append(getattr(scan, DOCUMENT_PRIMARY_KEY))
+                list_scans = [getattr(scan, TAG_FILENAME) for scan in generator_scans]
 
                 if list_scans:
                     icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
@@ -345,6 +343,6 @@ class CountTable(QDialog):
 
         query = "(" + query + ")"
 
-        print(query)
+        #print(query)
 
         return query

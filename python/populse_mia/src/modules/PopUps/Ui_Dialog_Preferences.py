@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QCheckBox, QMenu, QComboBox, QListWidget, QInputDialog, QLineEdit, QVBoxLayout, \
-    QHBoxLayout, QDialog,  QLabel
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog,  QLabel
 from functools import partial
 from SoftwareProperties.Config import Config
 

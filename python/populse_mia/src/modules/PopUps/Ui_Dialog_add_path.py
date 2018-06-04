@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog
 import os
 import shutil
 import hashlib
+
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM
 
 class Ui_Dialog_add_path(QDialog):
     """
@@ -68,9 +70,12 @@ class Ui_Dialog_add_path(QDialog):
                 data = scan_file.read()
                 checksum = hashlib.md5(data).hexdigest()
             path = os.path.join("data", "downloaded_data", filename)
-            self.project.database.add_document(path)
-            self.project.database.new_value(path, "Type", path_type, path_type)
-            self.project.database.new_value(path, "Checksum", checksum, checksum)
+            self.project.database.add_document(COLLECTION_CURRENT, path)
+            self.project.database.add_document(COLLECTION_INITIAL, path)
+            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
+            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
+            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
+            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
             self.table.scans_to_visualize.append(path)
-            self.table.add_rows(self.project.database.get_documents_names())
+            self.table.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
         self.close()

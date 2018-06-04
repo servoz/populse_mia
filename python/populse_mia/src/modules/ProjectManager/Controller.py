@@ -2,13 +2,14 @@ import glob
 import os.path
 import json
 import hashlib # To generate the md5 of each path
-from populse_db.database_model import FIELD_TYPE_STRING, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_DATE, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_FLOAT, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_STRING
+import populse_db
 import datetime
 from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
-from Project.Project import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
+from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -87,7 +88,7 @@ def read_log(project):
                     properties = tag[1]
                     unit = None
                     format = ''
-                    tag_type = FIELD_TYPE_STRING
+                    tag_type = populse_db.database.FIELD_TYPE_STRING
                     description = None
                     if isinstance(properties, dict):
                         value = properties['value']
@@ -97,7 +98,7 @@ def read_log(project):
                         format = properties['format']
                         tag_type = properties['type']
                         if tag_type == "":
-                            tag_type = FIELD_TYPE_STRING
+                            tag_type = populse_db.database.FIELD_TYPE_STRING
                         description = properties['description']
                         if description == "":
                             description = None
@@ -116,51 +117,51 @@ def read_log(project):
                         format = format.replace("ss", "%S")
                         format = format.replace("SSS", "%f")
                         if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = FIELD_TYPE_DATETIME
+                            tag_type = populse_db.database.FIELD_TYPE_DATETIME
                         elif "%Y" in format and "%m" in format and "%d" in format:
-                            tag_type = FIELD_TYPE_DATE
+                            tag_type = populse_db.database.FIELD_TYPE_DATE
                         elif "%H" in format and "%M" in format and "%S" in format:
-                            tag_type = FIELD_TYPE_TIME
+                            tag_type = populse_db.database.FIELD_TYPE_TIME
 
                     if tag_name != "Json_Version":
                         # Preparing value and type
                         if len(value) is 1:
                             value = value[0]
                         else:
-                            if tag_type == FIELD_TYPE_STRING:
-                                tag_type = FIELD_TYPE_LIST_STRING
-                            elif tag_type == FIELD_TYPE_INTEGER:
-                                tag_type = FIELD_TYPE_LIST_INTEGER
-                            elif tag_type == FIELD_TYPE_FLOAT:
-                                tag_type = FIELD_TYPE_LIST_FLOAT
-                            elif tag_type == FIELD_TYPE_DATE:
-                                tag_type = FIELD_TYPE_LIST_DATE
-                            elif tag_type == FIELD_TYPE_DATETIME:
-                                tag_type = FIELD_TYPE_LIST_DATETIME
-                            elif tag_type == FIELD_TYPE_TIME:
-                                tag_type = FIELD_TYPE_LIST_TIME
+                            if tag_type == populse_db.database.FIELD_TYPE_STRING:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_STRING
+                            elif tag_type == populse_db.database.FIELD_TYPE_INTEGER:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_INTEGER
+                            elif tag_type == populse_db.database.FIELD_TYPE_FLOAT:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_FLOAT
+                            elif tag_type == populse_db.database.FIELD_TYPE_BOOLEAN:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_BOOLEAN
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATE:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_DATE
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATETIME:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_DATETIME
+                            elif tag_type == populse_db.database.FIELD_TYPE_TIME:
+                                tag_type = populse_db.database.FIELD_TYPE_LIST_TIME
                             value_prepared = []
                             for value_single in value:
                                 value_prepared.append(value_single[0])
                             value = value_prepared
 
-                    if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
+                    if tag_type == populse_db.database.FIELD_TYPE_DATETIME or tag_type == populse_db.database.FIELD_TYPE_DATE or tag_type == populse_db.database.FIELD_TYPE_TIME:
                         if value is not None and value != "":
                             value = datetime.strptime(value, format)
-                            if tag_type == FIELD_TYPE_TIME:
+                            if tag_type == populse_db.database.FIELD_TYPE_TIME:
                                 value = value.time()
-                            elif tag_type == FIELD_TYPE_DATE:
+                            elif tag_type == populse_db.database.FIELD_TYPE_DATE:
                                 value = value.date()
 
                     # TODO time lists
 
-                    tag_row = project.database.get_field(tag_name)
+                    tag_row = project.database.get_field(COLLECTION_CURRENT, tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
-                        tags_added.append([tag_name, tag_type, description])
-                        project.setOrigin(tag_name, TAG_ORIGIN_BUILTIN)
-                        project.setUnit(tag_name, unit)
-                        project.setDefaultValue(tag_name, None)
+                        tags_added.append([COLLECTION_CURRENT, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit, None])
+                        tags_added.append([COLLECTION_INITIAL, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit, None])
                         tags_names_added.append(tag_name)
 
                     # The value is accepted if it's not empty or null
@@ -168,29 +169,36 @@ def read_log(project):
                         values_added.append([file_database_path, tag_name, value, value]) # Value added to history
 
             # Tags added manually
-            values_added.append([file_database_path, "Checksum", original_md5, original_md5])  # Value added to history
-            values_added.append([file_database_path, "Type", "Scan", "Scan"])  # Value added to history
+            values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
+            values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
 
     # Missing values added thanks to default values
-    for tag in project.database.get_fields():
-        if project.getOrigin(tag.name) == TAG_ORIGIN_USER:
+    for tag in project.database.get_fields(COLLECTION_CURRENT):
+        if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
-                if tag.default_value is not None and project.database.get_current_value(scan[0], tag.name) is None:
+                if tag.default_value is not None and project.database.get_value(scan[0], tag.name) is None:
                     values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
 
     project.database.add_fields(tags_added)
 
-    current_paths = project.database.get_documents_names()
+    current_paths = project.database.get_documents_names(COLLECTION_CURRENT)
 
     for scan in scans_added:
         if scan not in current_paths:
-            project.database.add_document(scan, False)
+            scan_dict = {}
+            scan_dict[TAG_FILENAME] = scan
+            for value in values_added:
+                # The values of the scan are added to the dictionary
+                if value[0] == scan:
+                    scan_dict[value[1]] = value[2]
+            project.database.add_document(COLLECTION_CURRENT, scan_dict, False)
+            project.database.add_document(COLLECTION_INITIAL, scan_dict, False)
     project.database.session.flush()
 
     for value in values_added:
         if value[0] in current_paths:
-            project.database.remove_value(value[0], value[1], False) # Potential value removed to update it
-        project.database.new_value(value[0], value[1], value[2], value[3], False)
+            project.database.set_value(COLLECTION_CURRENT, value[0], value[1], value[2], False)
+            project.database.set_value(COLLECTION_INITIAL, value[0], value[1], value[3], False)
 
     project.database.session.flush()
 
@@ -209,7 +217,7 @@ def read_log(project):
 def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in project.database.get_documents_names():
+    for scan in project.database.get_documents_names(COLLECTION_CURRENT):
 
         file_name = scan
         file_path = os.path.relpath(os.path.join(project.folder, file_name))
@@ -220,7 +228,7 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            initial_checksum = project.database.get_current_value(scan, "Checksum")
+            initial_checksum = project.database.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
             if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 
