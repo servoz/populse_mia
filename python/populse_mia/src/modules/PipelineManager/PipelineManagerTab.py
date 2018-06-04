@@ -18,6 +18,7 @@ from traits.trait_errors import TraitError
 
 from traits.api import TraitListObject
 from capsul.api import get_process_instance, StudyConfig
+from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 from .process_library import ProcessLibraryWidget
 
 from PipelineManager.callStudent import callStudent
@@ -45,7 +46,7 @@ class PipelineManagerTab(QWidget):
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
 
-        menub = ToolBar(self)
+        # menub = ToolBar(self)
 
         self.verticalLayout = QVBoxLayout(self)
 
@@ -70,6 +71,12 @@ class PipelineManagerTab(QWidget):
         self.saveButton = QPushButton('Save pipeline', self)
         self.saveButton.clicked.connect(self.savePipeline)
 
+        self.loadParametersButton = QPushButton('Load pipeline parameters', self)
+        self.loadParametersButton.clicked.connect(self.loadParameters)
+
+        self.saveParametersButton = QPushButton('Save pipeline parameters', self)
+        self.saveParametersButton.clicked.connect(self.saveParameters)
+
         self.initButton = QPushButton('Initialize pipeline', self)
         self.initButton.clicked.connect(self.initPipeline)
 
@@ -77,9 +84,11 @@ class PipelineManagerTab(QWidget):
         self.runButton.clicked.connect(self.runPipeline)
 
         self.hLayout = QHBoxLayout()
-        self.hLayout.addWidget(menub)
+        # self.hLayout.addWidget(menub)
         self.hLayout.addWidget(self.saveButton)
         self.hLayout.addWidget(self.loadButton)
+        self.hLayout.addWidget(self.saveParametersButton)
+        self.hLayout.addWidget(self.loadParametersButton)
         self.hLayout.addWidget(self.initButton)
         self.hLayout.addWidget(self.runButton)
         self.hLayout.addStretch(1)
@@ -241,6 +250,12 @@ class PipelineManagerTab(QWidget):
     def savePipeline(self):
         self.diagramView.save_pipeline()
 
+    def loadParameters(self):
+        self.diagramView.load_pipeline_parameters()
+
+    def saveParameters(self):
+        self.diagramView.save_pipeline_parameters()
+
     def initPipeline(self):
         """ Method that generates the output names of each pipeline node. """
 
@@ -326,9 +341,6 @@ class PipelineManagerTab(QWidget):
                         dest_node_name = info_link[0]
                         nodes_to_check.append(dest_node_name)
 
-                    if plug_name == "native_class_images":
-                        print("NATIVE CLASS IMAGE VALUE: ", plug_value)
-
                     try:
                         pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     except TraitError:
@@ -340,18 +352,36 @@ class PipelineManagerTab(QWidget):
 
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
+        # THIS IS A TEST
+        # TODO: CONTINUE
+        dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
+        import yaml
+        with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)
+
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
         # Now
-        study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])
+        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+        #                            spm_standalone=True, )
+        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
+        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+        #                            spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
+        study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+                                   spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/',
+                                   output_directory="/home/david/spm12/")
+
 
         # Modifying the study_config to use SPM 12 Standalone
-        setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
+        """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
         setattr(study_config, 'spm_standalone', True)
-        setattr(study_config, 'spm_directory', '/home/david/spm12')
-        setattr(study_config, 'use_spm', True)
-        setattr(study_config, 'spm_version', '12')
-        setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')
+        setattr(study_config, 'spm_directory', '/home/david/spm12')"""
+        """setattr(study_config, 'use_spm', True)
+        setattr(study_config, 'spm_version', '12')"""
+        """setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')"""
+
 
         # inspect config options
         for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))

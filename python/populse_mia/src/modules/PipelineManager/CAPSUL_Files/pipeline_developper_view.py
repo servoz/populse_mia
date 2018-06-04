@@ -20,6 +20,7 @@ import sys
 import types
 import inspect
 import six
+import json
 
 # Capsul import
 from soma.qt_gui.qt_backend import QtCore, QtGui, Qt
@@ -3301,3 +3302,57 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             pipeline_tools.save_pipeline(pipeline, filename)
             self._pipeline_filename = unicode(filename)
             pipeline.node_position = old_pos
+
+    def load_pipeline_parameters(self):
+        """
+        Loading and setting pipeline parameters (inputs and outputs) from a Json file.
+        :return:
+        """
+        filename = qt_backend.getOpenFileName(
+            None, 'Load the pipeline parameters', '',
+            'Compatible files (*.json)')
+
+        if filename:
+            with open(filename, 'r', encoding='utf8') as file:
+                dic = json.load(file)
+
+            if "pipeline_parameters" not in dic.keys():
+                raise KeyError('No "pipeline_parameters" key found in {0}.'.format(filename))
+
+            for trait_name, trait_value in dic["pipeline_parameters"].items():
+                if trait_name not in self.scene.pipeline.user_traits().keys():
+                    # Should we raise an error or just "continue"?
+                    raise KeyError('No "{0}" parameter in pipeline.'.format(trait_name))
+                setattr(self.scene.pipeline, trait_name, trait_value)
+            self.scene.pipeline.update_nodes_and_plugs_activation()
+
+    def save_pipeline_parameters(self):
+        """
+        Saving pipeline parameters (inputs and outputs) to a Json file.
+        :return:
+        """
+        pipeline = self.scene.pipeline
+
+        filename = qt_backend.getSaveFileName(
+            None, 'Save the pipeline parameters', '',
+            'Compatible files (*.json)')
+
+        if filename:
+            from traits.api import Undefined
+            # Generating the dictionary
+            param_dic = {}
+            for trait_name, trait in pipeline.user_traits().items():
+                if trait_name in ["nodes_activation"]:
+                    continue
+                value = getattr(pipeline, trait_name)
+                if value is Undefined:
+                    value = ""
+                param_dic[trait_name] = value
+
+            # In the future, more information may be added to this dictionary
+            dic = {}
+            dic["pipeline_parameters"] = param_dic
+
+            # Saving the dictionary in the Json file
+            with open(filename, 'w', encoding='utf8') as file:
+                json.dump(dic, file)

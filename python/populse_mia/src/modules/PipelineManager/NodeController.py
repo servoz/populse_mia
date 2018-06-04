@@ -231,6 +231,7 @@ class NodeController(QWidget):
 
             try:
                 new_value = eval(new_value)
+                #value_type = type(new_value)
             except:
                 #TODO: RAISE SYNTHAXERROR
                 pass
