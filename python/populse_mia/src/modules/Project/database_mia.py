@@ -115,15 +115,22 @@ class Database_mia(populse_db.database.Database):
         :param fields: list of fields (collection, name, type, description, visibility, origin, unit, default_value)
         """
 
+        collections = []
+
         for field in fields:
             # Adding each field
             self.add_field(field[0], field[1], field[2], field[3], field[4], field[5], field[6], field[7], False)
+            if field[0] not in collections:
+                collections.append(field[0])
 
         # Updating the table classes
         self.session.flush()
 
         # Classes reloaded in order to add the new column attribute
         self._Database__update_table_classes()
+
+        for collection in collections:
+            self._Database__refresh_cache_documents(collection)
 
     def add_field(self, collection, name, field_type, description, visibility, origin, unit, default_value, flush=True):
         """
@@ -215,7 +222,7 @@ class Database_mia(populse_db.database.Database):
             # Classes reloaded in order to add the new column attribute
             self._Database__update_table_classes()
 
-        if self._Database__caches:
-            self._Database__refresh_cache_documents(collection)
+            if self._Database__caches:
+                self._Database__refresh_cache_documents(collection)
 
         self.unsaved_modifications = True
