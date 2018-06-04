@@ -148,7 +148,7 @@ class TestListList(Process):
 
         self.add_trait("in_1", List(List(Int()), output=False))
         self.add_trait("in_2", List(List(Int()), output=False))
-        self.add_trait("out", List(List(Int()), output=True))
+        self.add_trait("out", List(Int(), output=True))
 
     def _run_process(self):
         l = []
@@ -687,4 +687,68 @@ class TestPipelineMethods(unittest.TestCase):
             self.assertEqual(type(element), str)
 
     def test_list_list(self):
-        pass
+        class Pipeline1(Pipeline):
+
+            def pipeline_definition(self):
+                # Create processes
+                self.add_process("node_1", TestListList())
+                # Exports
+                self.export_parameter("node_1", "in_1", "in_1")
+                self.export_parameter("node_1", "in_2", "in_2")
+                self.export_parameter("node_1", "out", "out")
+
+        in_1 = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+        in_2 = [[2, 2, 2], [3, 3, 3], [4, 4, 4]]
+        out = [3, 5, 7]
+
+        pipeline1 = Pipeline1()
+        pipeline1.in_1 = in_1
+        pipeline1.in_2 = in_2
+        pipeline1()
+
+        save_pipeline_parameters(self.path, pipeline1)
+
+        # Reinitializing pipeline and loading parameters
+        pipeline1 = Pipeline1()
+        load_pipeline_parameters(self.path, pipeline1)
+        self.assertEqual(pipeline1.in_1, in_1)
+        self.assertEqual(pipeline1.in_2, in_2)
+        self.assertEqual(pipeline1.out, out)
+
+        self.assertEqual(type(pipeline1.in_1), TraitListObject)
+        self.assertEqual(type(pipeline1.in_2), TraitListObject)
+        self.assertEqual(type(pipeline1.out), TraitListObject)
+
+        for idx, element in enumerate(pipeline1.in_1):
+            self.assertEqual(element, in_1[idx])
+            self.assertEqual(type(element), TraitListObject)
+
+        for idx, element in enumerate(pipeline1.in_2):
+            self.assertEqual(element, in_2[idx])
+            self.assertEqual(type(element), TraitListObject)
+
+        for idx, element in enumerate(pipeline1.out):
+            self.assertEqual(element, out[idx])
+            self.assertEqual(type(element), int)
+
+        # Verifying the dictionary
+        dic = load_pipeline_dictionary(self.path)
+        self.assertEqual(dic["pipeline_parameters"]["in_1"], in_1)
+        self.assertEqual(dic["pipeline_parameters"]["in_2"], in_2)
+        self.assertEqual(dic["pipeline_parameters"]["out"], out)
+
+        self.assertEqual(type(dic["pipeline_parameters"]["in_1"]), list)
+        self.assertEqual(type(dic["pipeline_parameters"]["in_2"]), list)
+        self.assertEqual(type(dic["pipeline_parameters"]["out"]), list)
+
+        for idx, element in enumerate(dic["pipeline_parameters"]["in_1"]):
+            self.assertEqual(element, in_1[idx])
+            self.assertEqual(type(element), list)
+
+        for idx, element in enumerate(dic["pipeline_parameters"]["in_2"]):
+            self.assertEqual(element, in_2[idx])
+            self.assertEqual(type(element), list)
+
+        for idx, element in enumerate(dic["pipeline_parameters"]["out"]):
+            self.assertEqual(element, out[idx])
+            self.assertEqual(type(element), int)
