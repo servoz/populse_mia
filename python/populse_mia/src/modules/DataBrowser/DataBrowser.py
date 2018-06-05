@@ -425,9 +425,9 @@ class DataBrowser(QWidget):
             self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
             for scan in self.project.database.get_documents(COLLECTION_CURRENT):
                 self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
-                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, None)
+                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
                 values.append(
-                    [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type), None])  # For history
+                    [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type), table_to_database(new_default_value, tag_type)])  # For history
 
             # For history
             historyMaker = []

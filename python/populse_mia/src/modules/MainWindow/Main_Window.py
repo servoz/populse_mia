@@ -592,6 +592,8 @@ class Main_Window(QMainWindow):
 
         if code_exit == 0:
 
+            import cProfile
+
             # Database filled
             controller.read_log(self.project)
 
