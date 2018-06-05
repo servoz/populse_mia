@@ -3,10 +3,10 @@ import json
 import shutil
 import unittest
 import tempfile
-import datetime
+from datetime import date, time, datetime
 
 from capsul.api import Process, Pipeline
-from traits.api import Float, File, String, Int, List, TraitListObject
+from traits.api import Float, File, String, Int, List, TraitListObject, Time, Date, Undefined, TraitError
 
 
 class TestInt(Process):
@@ -160,10 +160,25 @@ class TestListList(Process):
               self.in_2, '}\nOutput: ', self.out, '\n...\n')
 
 
+class TestDateTime(Process):
+
+    def __init__(self):
+        super(TestDateTime, self).__init__()
+
+        self.add_trait("in_1", Date(output=False))
+        self.add_trait("in_2", Time(output=False))
+        self.add_trait("out", List(output=True))
+
+    def _run_process(self):
+        self.out = [self.in_1, self.in_2]
+
+        print('TestListList\n...\nInputs: {', self.in_1, ', ',
+              self.in_2, '}\nOutput: ', self.out, '\n...\n')
+
+
 def load_pipeline_parameters(filename, pipeline):
     """
     Loading and setting pipeline parameters (inputs and outputs) from a Json file.
-    :return:
     """
 
     if filename:
@@ -177,7 +192,12 @@ def load_pipeline_parameters(filename, pipeline):
             if trait_name not in pipeline.user_traits().keys():
                 # Should we raise an error or just "continue"?
                 raise KeyError('No "{0}" parameter in pipeline.'.format(trait_name))
-            setattr(pipeline, trait_name, trait_value)
+
+            try:
+                setattr(pipeline, trait_name, trait_value)
+            except TraitError:
+                setattr(pipeline, trait_name, None)
+
         pipeline.update_nodes_and_plugs_activation()
 
 
@@ -191,19 +211,34 @@ def load_pipeline_dictionary(filename):
 def save_pipeline_parameters(filename, pipeline):
     """
     Saving pipeline parameters (inputs and outputs) to a Json file.
-    :return:
     """
 
+    def check_value(val):
+        """
+        Checking if the value is a list, Undefined, a date or a time
+        :param val: value
+        :return: the serializable value
+        """
+        if type(val) in [list, TraitListObject, List]:
+            for idx, element in enumerate(val):
+                new_list_value = check_value(element)
+                val[idx] = new_list_value
+
+        if val is Undefined:
+            val = ""
+
+        if type(val) in [date, time, datetime]:
+            val = str(val)
+
+        return val
+
     if filename:
-        from traits.api import Undefined
         # Generating the dictionary
         param_dic = {}
         for trait_name, trait in pipeline.user_traits().items():
             if trait_name in ["nodes_activation"]:
                 continue
-            value = getattr(pipeline, trait_name)
-            if value is Undefined:
-                value = ""
+            value = check_value(getattr(pipeline, trait_name))
             param_dic[trait_name] = value
 
         # In the future, more information may be added to this dictionary
@@ -752,3 +787,57 @@ class TestPipelineMethods(unittest.TestCase):
         for idx, element in enumerate(dic["pipeline_parameters"]["out"]):
             self.assertEqual(element, out[idx])
             self.assertEqual(type(element), int)
+
+    def test_date_time(self):
+        class Pipeline1(Pipeline):
+
+            def pipeline_definition(self):
+                # Create processes
+                self.add_process("node_1", TestDateTime())
+                # Exports
+                self.export_parameter("node_1", "in_1", "in_1")
+                self.export_parameter("node_1", "in_2", "in_2")
+                self.export_parameter("node_1", "out", "out")
+
+        in_1 = date(2008, 6, 5)
+        in_2 = time(14, 4, 5)
+        out = ['2008-06-05', '14:04:05']
+
+        pipeline1 = Pipeline1()
+        pipeline1.in_1 = in_1
+        pipeline1.in_2 = in_2
+        pipeline1()
+
+        save_pipeline_parameters(self.path, pipeline1)
+
+        # Reinitializing pipeline and loading parameters
+        pipeline1 = Pipeline1()
+        load_pipeline_parameters(self.path, pipeline1)
+        self.assertEqual(pipeline1.in_1, None)
+        self.assertEqual(pipeline1.in_2, None)
+        self.assertEqual(pipeline1.out, out)
+
+        self.assertEqual(type(pipeline1.out), TraitListObject)
+
+        for idx, element in enumerate(pipeline1.out):
+            self.assertEqual(element, out[idx])
+            self.assertEqual(type(element), str)
+
+        # Verifying the dictionary
+        dic = load_pipeline_dictionary(self.path)
+        self.assertEqual(dic["pipeline_parameters"]["in_1"], str(in_1))
+        self.assertEqual(dic["pipeline_parameters"]["in_2"], str(in_2))
+        self.assertEqual(dic["pipeline_parameters"]["out"], out)
+
+        self.assertEqual(type(dic["pipeline_parameters"]["in_1"]), str)
+        self.assertEqual(type(dic["pipeline_parameters"]["in_2"]), str)
+        self.assertEqual(type(dic["pipeline_parameters"]["out"]), list)
+
+        for idx, element in enumerate(pipeline1.out):
+            self.assertEqual(element, str(out[idx]))
+            self.assertEqual(type(element), str)
+
+
+if __name__ == '__main__':
+    unittest.main()
+    
