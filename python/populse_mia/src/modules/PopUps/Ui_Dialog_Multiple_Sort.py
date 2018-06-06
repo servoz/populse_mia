@@ -3,6 +3,7 @@ from PyQt5.QtGui import QPixmap
 import os
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
+from Project.Project import COLLECTION_CURRENT
 
 class Ui_Dialog_Multiple_Sort(QDialog):
     def __init__(self, project=None):
@@ -108,8 +109,8 @@ class Ui_Dialog_Multiple_Sort(QDialog):
             self.values_list.insert(idx, [])
         if self.values_list[idx] is not None:
             self.values_list[idx] = []
-        for scan in self.project.database.get_fields_names():
-            current_value = self.project.database.get_value(scan, tag_name)
+        for scan in self.project.database.get_fields_names(COLLECTION_CURRENT):
+            current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag_name)
             if current_value not in self.values_list[idx]:
                 self.values_list[idx].append(current_value)
 

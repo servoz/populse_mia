@@ -307,10 +307,11 @@ class DataBrowser(QWidget):
         # Returns the list of scans that have at least one not defined value in the visualized tags
         if str_search == "*Not Defined*":
             # Returns the list of scans that have a match with the search in their visible tag values
-            for scan in self.project.database.get_documents():
-                for tag in self.project.getVisibles():
-                    if self.project.database.get_value(scan.name, tag) is None and not scan.name in return_list:
-                        return_list.append(scan.name)
+            for scan in self.project.database.get_documents(COLLECTION_CURRENT):
+                visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
+                for tag in visibles:
+                    if self.project.database.get_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), tag) is None and not getattr(scan, TAG_FILENAME) in return_list:
+                        return_list.append(getattr(scan, TAG_FILENAME))
         elif str_search != "":
             visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
             generator = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(str_search, visibles))
@@ -424,9 +425,9 @@ class DataBrowser(QWidget):
             self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
             for scan in self.project.database.get_documents(COLLECTION_CURRENT):
                 self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
-                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, None)
+                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
                 values.append(
-                    [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type), None])  # For history
+                    [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type), table_to_database(new_default_value, tag_type)])  # For history
 
             # For history
             historyMaker = []
@@ -992,9 +993,9 @@ class TableDataBrowser(QTableWidget):
             msg.buttons()[0].clicked.connect(self.remove_scan)
             msg.exec()
         elif action == action_sort_column:
-            self.sort_column()
+            self.sort_column(0)
         elif action == action_sort_column_descending:
-            self.sort_column_descending()
+            self.sort_column(1)
         elif action == action_visualized_tags:
             self.visualized_tags_pop_up()
         elif action == action_select_column:
@@ -1007,33 +1008,22 @@ class TableDataBrowser(QTableWidget):
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
 
-    def sort_column(self):
+    def sort_column(self, order):
         """
-        Sorts the current column in ascending order
+        Sorts the current column
+        :param order: order of sort (0 for ascending, 1 for descending)
         """
 
-        self.itemSelectionChanged.disconnect()
+        self.itemChanged.connect(self.change_cell_color)
+        #self.itemSelectionChanged.disconnect()
 
-        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 0)
+        self.horizontalHeader().setSortIndicator(self.currentItem().column(), order)
 
         # Selection updated
-        self.update_selection()
+        #self.update_selection()
 
-        self.itemSelectionChanged.connect(self.selection_changed)
-
-    def sort_column_descending(self):
-        """
-        Sorts the current column in descending order
-        """
-
-        self.itemSelectionChanged.disconnect()
-
-        self.horizontalHeader().setSortIndicator(self.currentItem().column(), 1)
-
-        # Selection updated
-        self.update_selection()
-
-        self.itemSelectionChanged.connect(self.selection_changed)
+        #self.itemSelectionChanged.connect(self.selection_changed)
+        self.itemChanged.disconnect()
 
     def get_tag_column(self, tag):
         """
@@ -1268,17 +1258,17 @@ class TableDataBrowser(QTableWidget):
         pop_up = Ui_Dialog_Multiple_Sort(self.project)
         if pop_up.exec_():
 
-            self.itemSelectionChanged.disconnect()
+            #self.itemSelectionChanged.disconnect()
 
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
-                list_tags.append(self.project.database.get_field(tag_name))
+                list_tags.append(self.project.database.get_field(COLLECTION_CURRENT, tag_name))
             list_sort = []
             for scan in self.scans_to_visualize:
                 tags_value = []
                 for tag in list_tags:
-                    current_value = self.project.database.get_value(scan, tag.name)
+                    current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag.name)
                     if current_value is not None:
                         tags_value.append(current_value)
                     else:
@@ -1301,13 +1291,15 @@ class TableDataBrowser(QTableWidget):
                         item_wrong_row = self.takeItem(row, column)
                         self.setItem(row, column, item_to_move)
                         self.setItem(old_row, column, item_wrong_row)
+            self.itemChanged.connect(self.change_cell_color)
             self.horizontalHeader().setSortIndicator(-1, 0)
+            self.itemChanged.disconnect()
             self.setSortingEnabled(True)
 
             # Selection updated
-            self.update_selection()
+            #self.update_selection()
 
-            self.itemSelectionChanged.connect(self.selection_changed)
+            #self.itemSelectionChanged.connect(self.selection_changed)
 
     def update_visualized_rows(self, old_scans):
         """
@@ -1447,89 +1439,6 @@ class TableDataBrowser(QTableWidget):
             if self.horizontalHeaderItem(column).text() > to_insert:
                 return column
         return self.columnCount()
-
-    def add_columns(self):
-        """
-        To add the new tags
-        """
-
-        self.itemChanged.disconnect()
-
-        self.itemSelectionChanged.disconnect()
-
-        tags = self.project.database.get_fields_names(COLLECTION_CURRENT)
-        tags.remove(TAG_CHECKSUM)
-        tags.remove(TAG_FILENAME)
-        tags = sorted(tags)
-        tags.insert(0, TAG_FILENAME)
-
-        # Adding missing columns
-        for tag in tags:
-
-            # Tag added only if it's not already in the table
-            if self.get_tag_column(tag) is None:
-
-                columnIndex = self.get_index_insertion(tag)
-                self.insertColumn(columnIndex)
-
-                item = QtWidgets.QTableWidgetItem()
-                self.setHorizontalHeaderItem(columnIndex, item)
-                item.setText(tag)
-                tag_object = self.project.database.get_field(tag)
-                if tag_object is not None:
-                    item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
-                        self.project.getUnit(tag)) + "\nType: " + str(tag_object.type))
-
-                    # Set column type
-                    if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
-                        self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
-                    elif tag_object.type == populse_db.database.FIELD_TYPE_DATETIME:
-                        self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
-                    elif tag_object.type == populse_db.database.FIELD_TYPE_DATE:
-                        self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
-                    elif tag_object.type == populse_db.database.FIELD_TYPE_TIME:
-                        self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
-
-                    # Hide the column if not visible
-                    if tag_object.visible == False:
-                        self.setColumnHidden(columnIndex, True)
-
-                # Rows filled for the column being added
-                for row in range(0, self.rowCount()):
-                    item = QtWidgets.QTableWidgetItem()
-                    self.setItem(row, columnIndex, item)
-                    scan = self.item(row, 0).text()
-                    cur_value = self.project.database.get_value(scan, tag)
-                    if cur_value is not None:
-                        set_item_data(item, cur_value)
-                    else:
-                        set_item_data(item, not_defined_value)
-                        font = item.font()
-                        font.setItalic(True)
-                        font.setBold(True)
-                        item.setFont(font)
-
-        # Removing useless columns
-        tags_to_remove = []
-        for column in range(0, self.columnCount()):
-            tag_name = self.horizontalHeaderItem(column).text()
-            if not tag_name in self.project.database.get_fields_names(COLLECTION_CURRENT) and tag_name != TAG_FILENAME:
-                print(tag_name)
-                tags_to_remove.append(tag_name)
-
-        for tag in tags_to_remove:
-            self.removeColumn(self.get_tag_column(tag))
-
-        self.resizeColumnsToContents()
-
-        # Selection updated
-        self.update_selection()
-
-        self.update_colors()
-
-        self.itemSelectionChanged.connect(self.selection_changed)
-
-        self.itemChanged.connect(self.change_cell_color)
 
     def mouseReleaseEvent(self, e):
         """

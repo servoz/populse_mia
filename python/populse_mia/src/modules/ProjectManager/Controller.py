@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+import snakeviz
 
 def getJsonTagsFromFile(file_path, path):
    """
@@ -31,6 +32,9 @@ def read_log(project):
     #import pprofile
     #prof = pprofile.Profile()
     #with prof():
+    #import cProfile
+    #pr = cProfile.Profile()
+    #pr.enable()
 
     begin = time()
 
@@ -50,6 +54,7 @@ def read_log(project):
     values_added = []
     tags_added = []
     tags_names_added = []
+    documents = {}
 
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
@@ -79,6 +84,9 @@ def read_log(project):
             file_database_path = os.path.relpath(file_path, project.folder)
 
             scans_added.append(file_database_path) # Scan added to history
+
+            documents[file_database_path] = {}
+            documents[file_database_path][TAG_FILENAME] = file_database_path
 
             # For each tag in each scan
             for tag in getJsonTagsFromFile(file_name, path_name):
@@ -167,39 +175,32 @@ def read_log(project):
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
                         values_added.append([file_database_path, tag_name, value, value]) # Value added to history
+                        documents[file_database_path][tag_name] = value
 
             # Tags added manually
             values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
             values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
+            documents[file_database_path][TAG_CHECKSUM] = original_md5
+            documents[file_database_path][TAG_TYPE] = "Scan"
 
     # Missing values added thanks to default values
     for tag in project.database.get_fields(COLLECTION_CURRENT):
         if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
-                if tag.default_value is not None and project.database.get_value(scan[0], tag.name) is None:
-                    values_added.append([scan[0], tag.name, tag.default_value, None])  # Value added to history
+                if tag.default_value is not None and project.database.get_value(COLLECTION_CURRENT, scan[0], tag.name) is None:
+                    values_added.append([scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
+                    documents[scan][tag.name] = tag.default_value
 
     project.database.add_fields(tags_added)
 
     current_paths = project.database.get_documents_names(COLLECTION_CURRENT)
 
-    for scan in scans_added:
-        if scan not in current_paths:
-            scan_dict = {}
-            scan_dict[TAG_FILENAME] = scan
-            for value in values_added:
-                # The values of the scan are added to the dictionary
-                if value[0] == scan:
-                    scan_dict[value[1]] = value[2]
-            project.database.add_document(COLLECTION_CURRENT, scan_dict, False)
-            project.database.add_document(COLLECTION_INITIAL, scan_dict, False)
-    project.database.session.flush()
-
-    for value in values_added:
-        if value[0] in current_paths:
-            project.database.set_value(COLLECTION_CURRENT, value[0], value[1], value[2], False)
-            project.database.set_value(COLLECTION_INITIAL, value[0], value[1], value[3], False)
-
+    for document in documents:
+        if document in current_paths:
+            project.database.remove_document(COLLECTION_CURRENT, document)
+            project.database.remove_document(COLLECTION_INITIAL, document)
+        project.database.add_document(COLLECTION_CURRENT, documents[document], flush=False)
+        project.database.add_document(COLLECTION_INITIAL, documents[document], flush=False)
     project.database.session.flush()
 
     # For history
@@ -212,6 +213,8 @@ def read_log(project):
 
     ui_progressbar.close()
 
+    #pr.disable()
+    #pr.print_stats(sort='time')
     #prof.print_stats()
 
 def verify_scans(project, path):

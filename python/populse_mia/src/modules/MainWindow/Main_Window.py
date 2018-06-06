@@ -592,13 +592,14 @@ class Main_Window(QMainWindow):
 
         if code_exit == 0:
 
+            import cProfile
+
             # Database filled
             controller.read_log(self.project)
 
             # Table updated
             self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
-            self.data_browser.table_data.add_columns()
             self.data_browser.table_data.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
 
         else:

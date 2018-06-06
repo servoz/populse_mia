@@ -77,6 +77,7 @@ class Ui_Dialog_Settings(QDialog):
         new_visibilities.append(TAG_FILENAME)
         project.database.get_field(COLLECTION_CURRENT, TAG_FILENAME).visibility = True
         project.database.get_field(COLLECTION_INITIAL, TAG_FILENAME).visibility = True
+        project.database.session.flush()
         historyMaker.append(new_visibilities)
         project.undos.append(historyMaker)
         project.redos.clear()

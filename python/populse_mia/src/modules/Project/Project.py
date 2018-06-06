@@ -379,9 +379,16 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.getVisibles()  # Old list of columns
+                old_tags = [field.name for field in self.database.get_fields(COLLECTION_CURRENT) if field.visibility]  # Old list of columns
+                for tag in self.database.get_fields(COLLECTION_CURRENT):
+                    tag.visibility = False
+                for tag in self.database.get_fields(COLLECTION_INITIAL):
+                    tag.visibility = False
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
-                self.setVisibles(visibles)
+                for tag in visibles:
+                    self.database.get_field(COLLECTION_CURRENT, tag).visibility = True
+                    self.database.get_field(COLLECTION_INITIAL, tag).visibility = True
+                self.database.session.flush()
                 table.update_visualized_columns(old_tags)  # Columns updated
 
     def reput_values(self, values):
@@ -487,7 +494,15 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.getVisibles()  # Old list of columns
-                visibles = toRedo[2]  # List of the tags visibles after the modification (Tag objects)
-                self.setVisibles(visibles)
+                old_tags = [field.name for field in self.database.get_fields(COLLECTION_CURRENT) if
+                            field.visibility]  # Old list of columns
+                for tag in self.database.get_fields(COLLECTION_CURRENT):
+                    tag.visibility = False
+                for tag in self.database.get_fields(COLLECTION_INITIAL):
+                    tag.visibility = False
+                visibles = toRedo[2]  # List of the tags visibles before the modification (Tag objects)
+                for tag in visibles:
+                    self.database.get_field(COLLECTION_CURRENT, tag).visibility = True
+                    self.database.get_field(COLLECTION_INITIAL, tag).visibility = True
+                self.database.session.flush()
                 table.update_visualized_columns(old_tags)  # Columns updated
