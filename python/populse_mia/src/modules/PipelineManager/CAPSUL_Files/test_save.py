@@ -196,6 +196,8 @@ def load_pipeline_parameters(filename, pipeline):
             try:
                 setattr(pipeline, trait_name, trait_value)
             except TraitError:
+                # This case happen when the trait type is date, time or datetime
+                # Couldn't find an other solution for now 
                 setattr(pipeline, trait_name, None)
 
         pipeline.update_nodes_and_plugs_activation()

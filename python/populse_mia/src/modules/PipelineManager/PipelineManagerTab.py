@@ -342,6 +342,8 @@ class PipelineManagerTab(QWidget):
                         nodes_to_check.append(dest_node_name)
 
                     try:
+                        print('PLUG_VALUE', plug_value)
+                        print('PLUG_NAM', plug_name)
                         pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     except TraitError:
                         if type(plug_value) is list and len(plug_value) == 1:
@@ -354,10 +356,10 @@ class PipelineManagerTab(QWidget):
 
         # THIS IS A TEST
         # TODO: CONTINUE
-        dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
+        """dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
         import yaml
         with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)
+            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
