@@ -199,8 +199,8 @@ def read_log(project):
         if document in current_paths:
             project.database.remove_document(COLLECTION_CURRENT, document)
             project.database.remove_document(COLLECTION_INITIAL, document)
-        project.database.add_document(COLLECTION_CURRENT, documents[document], False)
-        project.database.add_document(COLLECTION_INITIAL, documents[document], False)
+        project.database.add_document(COLLECTION_CURRENT, documents[document], flush=False)
+        project.database.add_document(COLLECTION_INITIAL, documents[document], flush=False)
     project.database.session.flush()
 
     # For history
