@@ -338,7 +338,9 @@ class Project:
                     self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
+                table.itemChanged.disconnect()
                 table.update_colors()
+                table.itemChanged.connect(table.change_cell_color)
             if (action == "remove_scans"):
                 # To reput a removed scan, we need the scans names, and all the values associated
                 scansRemoved = toUndo[1]  # The second element is the list of removed scans (Scan class)
@@ -379,16 +381,9 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = [field.name for field in self.database.get_fields(COLLECTION_CURRENT) if field.visibility]  # Old list of columns
-                for tag in self.database.get_fields(COLLECTION_CURRENT):
-                    tag.visibility = False
-                for tag in self.database.get_fields(COLLECTION_INITIAL):
-                    tag.visibility = False
+                old_tags = self.database.get_visibles()  # Old list of columns
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
-                for tag in visibles:
-                    self.database.get_field(COLLECTION_CURRENT, tag).visibility = True
-                    self.database.get_field(COLLECTION_INITIAL, tag).visibility = True
-                self.database.session.flush()
+                self.database.set_visibles(visibles)
                 table.update_visualized_columns(old_tags)  # Columns updated
 
     def reput_values(self, values):
@@ -468,7 +463,9 @@ class Project:
                     self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
-                table.update_colors()
+                    table.itemChanged.disconnect()
+                    table.update_colors()
+                    table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_values"):  # Not working
                 # To modify the values, we need the cells, and the updated values
                 modifiedValues = toRedo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -494,15 +491,7 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = [field.name for field in self.database.get_fields(COLLECTION_CURRENT) if
-                            field.visibility]  # Old list of columns
-                for tag in self.database.get_fields(COLLECTION_CURRENT):
-                    tag.visibility = False
-                for tag in self.database.get_fields(COLLECTION_INITIAL):
-                    tag.visibility = False
+                old_tags = self.database.get_visibles()  # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles before the modification (Tag objects)
-                for tag in visibles:
-                    self.database.get_field(COLLECTION_CURRENT, tag).visibility = True
-                    self.database.get_field(COLLECTION_INITIAL, tag).visibility = True
-                self.database.session.flush()
+                self.database.set_visibles(visibles)
                 table.update_visualized_columns(old_tags)  # Columns updated

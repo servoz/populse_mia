@@ -562,7 +562,7 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.project.getVisibles()
+        old_tags = self.project.database.get_visibles()
         print(self.project.getName())
         self.pop_up_settings = Ui_Dialog_Settings(self.project)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
@@ -598,8 +598,9 @@ class Main_Window(QMainWindow):
             controller.read_log(self.project)
 
             # Table updated
-            self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            self.data_browser.table_data.add_columns()
+            self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
 
         else:

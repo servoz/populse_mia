@@ -111,7 +111,7 @@ class DataBrowser(QWidget):
         addRowPicture = addRowPicture.scaledToHeight(20)
         addRowLabel.setPixmap(addRowPicture)
         addRowLabel.setFixedWidth(20)
-        addRowLabel.clicked.connect(self.add_path)
+        addRowLabel.clicked.connect(self.table_data.add_path)
         vbox_table.addWidget(addRowLabel)
 
         self.frame_table_data.setLayout(vbox_table)
@@ -161,17 +161,6 @@ class DataBrowser(QWidget):
 
         # Image viewer updated
         self.connect_viewer()
-
-    def add_path(self):
-        """
-        Green cross clicked to add a path
-        """
-
-        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.table_data)
-        self.pop_up_add_path.show()
-
-        if self.pop_up_add_path.exec_():
-            pass
 
     def update_database(self, database):
         """
@@ -304,24 +293,21 @@ class DataBrowser(QWidget):
 
         return_list = []
 
-        # Returns the list of scans that have at least one not defined value in the visualized tags
-        if str_search == "*Not Defined*":
-            # Returns the list of scans that have a match with the search in their visible tag values
-            for scan in self.project.database.get_documents(COLLECTION_CURRENT):
-                visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
-                for tag in visibles:
-                    if self.project.database.get_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), tag) is None and not getattr(scan, TAG_FILENAME) in return_list:
-                        return_list.append(getattr(scan, TAG_FILENAME))
-        elif str_search != "":
-            visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
-            generator = self.project.database.filter_documents(COLLECTION_CURRENT, self.prepare_filter(str_search, visibles))
+        # Every scan taken if empty search
+        if str_search == "":
+            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
+        else:
+            # Scans with at least a not defined value
+            if str_search == "*Not Defined*":
+                filter = self.prepare_not_defined_filter(self.project.database.get_visibles())
+            # Scans matching the search
+            else:
+                filter = self.prepare_filter(str_search, self.project.database.get_visibles())
+
+            generator = self.project.database.filter_documents(COLLECTION_CURRENT, filter)
 
             # Creating the list of scans
             return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
-
-        # Otherwise, we take every scan
-        else:
-            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         self.table_data.scans_to_visualize = return_list
 
@@ -349,6 +335,33 @@ class DataBrowser(QWidget):
                 query += " OR "
 
             query += "({" + tag + "} LIKE \"%" + search + "%\")"
+
+            or_to_write = True
+
+        query = "(" + query + ")"
+
+        #print(query)
+
+        return query
+
+    def prepare_not_defined_filter(self, tags):
+        """
+        Prepares the rapid search filter for not defined values
+        :param tags: list of tags to take into account
+        :return: str filter corresponding to the rapid search for not defined values
+        """
+
+        query = ""
+
+        or_to_write = False
+
+        for tag in tags:
+
+
+            if or_to_write:
+                query += " OR "
+
+            query += "({" + tag + "} == null)"
 
             or_to_write = True
 
@@ -564,6 +577,17 @@ class TableDataBrowser(QTableWidget):
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
 
         self.update_table()
+
+    def add_path(self):
+        """
+        Green cross clicked to add a path
+        """
+
+        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self)
+        self.pop_up_add_path.show()
+
+        if self.pop_up_add_path.exec_():
+            pass
 
     def add_column(self, column, tag):
 
@@ -959,6 +983,7 @@ class TableDataBrowser(QTableWidget):
         action_reset_cell = menu.addAction("Reset cell(s)")
         action_reset_column = menu.addAction("Reset column(s)")
         action_reset_row = menu.addAction("Reset row(s)")
+        action_add_scan = menu.addAction("Add path")
         action_remove_scan = menu.addAction("Remove path(s)")
         action_sort_column = menu.addAction("Sort column")
         action_sort_column_descending = menu.addAction("Sort column (descending)")
@@ -987,6 +1012,10 @@ class TableDataBrowser(QTableWidget):
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_row)
             msg.exec()
+        elif action == action_add_scan:
+            self.itemChanged.connect(self.change_cell_color)
+            self.add_path()
+            self.itemChanged.disconnect()
         elif action == action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
             msg.buttonClicked.connect(msg.close)
@@ -1245,7 +1274,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def visualized_tags_pop_up(self):
-        old_tags = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]  # Old list of columns
+        old_tags = self.project.database.get_visibles()  # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.project)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
@@ -1345,8 +1374,7 @@ class TableDataBrowser(QTableWidget):
                 self.setColumnHidden(self.get_tag_column(tag), True)
 
         # Tags that became visible must be visible
-        visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
-        for tag in visibles:
+        for tag in self.project.database.get_visibles():
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Selection updated
@@ -1357,6 +1385,97 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
         self.update_colors()
+
+    def add_columns(self):
+        """
+        To add the new tags
+        """
+
+        self.itemChanged.disconnect()
+
+        self.itemSelectionChanged.disconnect()
+
+        tags = self.project.database.get_fields_names(COLLECTION_CURRENT)
+        tags.remove(TAG_CHECKSUM)
+        tags.remove(TAG_FILENAME)
+        tags = sorted(tags)
+        tags.insert(0, TAG_FILENAME)
+
+        # Adding missing columns
+
+        for tag in tags:
+
+            # Tag added only if it's not already in the table
+
+            if self.get_tag_column(tag) is None:
+
+                columnIndex = self.get_index_insertion(tag)
+                self.insertColumn(columnIndex)
+
+                item = QtWidgets.QTableWidgetItem()
+                self.setHorizontalHeaderItem(columnIndex, item)
+                item.setText(tag)
+                tag_object = self.project.database.get_field(COLLECTION_CURRENT, tag)
+
+                if tag_object is not None:
+                    item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
+                    tag_object.unit) + "\nType: " + str(tag_object.type))
+
+                # Set column type
+
+                if tag_object.type == populse_db.database.FIELD_TYPE_FLOAT:
+                    self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
+                elif tag_object.type == populse_db.database.FIELD_TYPE_DATETIME:
+                    self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
+                elif tag_object.type == populse_db.database.FIELD_TYPE_DATE:
+                    self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
+                elif tag_object.type == populse_db.database.FIELD_TYPE_TIME:
+                    self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
+
+                # Hide the column if not visible
+
+                if tag_object.visibility == False:
+                    self.setColumnHidden(columnIndex, True)
+
+                # Rows filled for the column being added
+
+                for row in range(0, self.rowCount()):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.setItem(row, columnIndex, item)
+                    scan = self.item(row, 0).text()
+                    cur_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
+
+                    if cur_value is not None:
+                        set_item_data(item, cur_value, tag_object.type)
+                    else:
+                        set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+
+                # Removing useless columns
+                tags_to_remove = []
+
+                for column in range(0, self.columnCount()):
+                    tag_name = self.horizontalHeaderItem(column).text()
+
+                    if not tag_name in self.project.database.get_fields_names(COLLECTION_CURRENT) and tag_name != TAG_FILENAME:
+                        tags_to_remove.append(tag_name)
+
+                    for tag in tags_to_remove:
+                        self.removeColumn(self.get_tag_column(tag))
+
+        self.resizeColumnsToContents()
+
+        # Selection updated
+        self.update_selection()
+
+        self.update_colors()
+
+        self.itemSelectionChanged.connect(self.selection_changed)
+
+        self.itemChanged.connect(self.change_cell_color)
 
     def add_rows(self, rows):
         """
@@ -1649,7 +1768,7 @@ class TableDataBrowser(QTableWidget):
                     # The scan does not have a value for the tag yet: we add it
                     else:
                         modified_values.append([scan_path, tag_name, None, database_value])
-                        self.project.database.new_value(COLLECTION_CURRENT, scan_path, tag_name, database_value, None)
+                        self.project.database.new_value(COLLECTION_CURRENT, scan_path, tag_name, database_value)
 
                         # Font reset in case it was a not defined cell
                         font = item.font()

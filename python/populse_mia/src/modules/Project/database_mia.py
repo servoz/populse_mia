@@ -25,7 +25,7 @@ class Database_mia(populse_db.database.Database):
 
     def __init__(self, string_engine):
 
-        super().__init__(string_engine, caches=True, list_tables=True, query_type="mixed")
+        super().__init__(string_engine, caches=True, list_tables=True, query_type="guess")
 
     def create_empty_schema(self, string_engine):
         """
@@ -226,3 +226,29 @@ class Database_mia(populse_db.database.Database):
                 self._Database__refresh_cache_documents(collection)
 
         self.unsaved_modifications = True
+
+    def get_visibles(self):
+        """
+        Gives the list of visible tags
+        """
+
+        visible_fields = self.session.query(self.table_classes[populse_db.database.FIELD_TABLE]).filter(self.table_classes[populse_db.database.FIELD_TABLE].visibility == True).all()
+        visible_names = []
+        for field in visible_fields:
+            if field.name not in visible_names:
+                visible_names.append(field.name)
+        return visible_names
+
+    def set_visibles(self, visibles):
+        """
+        Sets the list of visible tags
+        :param visibles: list of visible tags
+        """
+
+        for field in self.session.query(self.table_classes[populse_db.database.FIELD_TABLE]).all():
+            if field.name in visibles:
+                field.visibility = True
+            else:
+                field.visibility = False
+            self.session.add(field)
+        self.session.flush()
