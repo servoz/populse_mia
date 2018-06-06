@@ -56,5 +56,4 @@ def launch_mia():
     app.exec()
 
 if __name__ == '__main__':
-
     launch_mia()
