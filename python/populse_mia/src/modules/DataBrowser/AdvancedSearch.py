@@ -81,6 +81,7 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("CONTAINS")
         conditionChoice.addItem("HAS VALUE")
         conditionChoice.addItem("HAS NO VALUE")
+
         # Signal to update the placeholder text of the value
         conditionChoice.currentTextChanged.connect(lambda: self.displayValueRules(conditionChoice, conditionValue))
 
@@ -134,7 +135,7 @@ class AdvancedSearch(QWidget):
         """
 
         # Old values stored
-        (fields, conditions, values, links, nots) = self.get_filters()
+        (fields, conditions, values, links, nots) = self.get_filters(False)
 
         # We remove the old layout
         self.clearLayout(self.layout())
@@ -245,7 +246,7 @@ class AdvancedSearch(QWidget):
         Called to start the search
         """
 
-        (fields, conditions, values, links, nots) = self.get_filters()  # Filters gotten
+        (fields, conditions, values, links, nots) = self.get_filters(True)  # Filters gotten
 
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
@@ -347,10 +348,11 @@ class AdvancedSearch(QWidget):
 
         return final_query
 
-    def get_filters(self):
+    def get_filters(self, replace_all_by_fields):
         """
         To get the filters in list form
-        :return: Lists of filters
+        :param replace_all_by_fields: to replace All visualized tags by the list of visible fields
+        :return: Lists of filters (fields, conditions, values, links, nots)
         """
 
         # Lists to get all the data of the search
@@ -372,7 +374,10 @@ class AdvancedSearch(QWidget):
                         if child.currentText() != "All visualized tags":
                             fields.append([child.currentText()])
                         else:
-                            fields.append(self.project.database.get_visibles())
+                            if replace_all_by_fields:
+                                fields.append(self.project.database.get_visibles())
+                            else:
+                                fields.append([child.currentText()])
                     elif childName == 'value':
                         values.append(child.displayText())
                     elif childName == 'not':
@@ -406,10 +411,12 @@ class AdvancedSearch(QWidget):
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
             row[1].setCurrentText(nots[i])
-            if len(fields[i]) > 1:
-                row[2].setCurrentText("All visualized tags")
-            else:
-                row[2].setCurrentText(fields[i][0])
+            row[2].setCurrentText(fields[i][0])
+
+            # Replacing all visualized tags by the current list of visible tags
+            if fields[i][0] == "All visualized tags":
+                fields[i] = self.project.database.get_visibles()
+
             row[3].setCurrentText(conditions[i])
             row[4].setText(str(values[i]))
 
@@ -451,6 +458,6 @@ class AdvancedSearch(QWidget):
             if self.scans_list:
                 self.dataBrowser.table_data.scans_to_visualize = self.scans_list
             else:
-                self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_documents_names()
+                self.dataBrowser.table_data.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)

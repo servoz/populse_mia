@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButt
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
 
+from DataBrowser.RapidSearch import RapidSearch
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.CountTable import CountTable
 from DataBrowser.ModifyTable import ModifyTable
@@ -30,7 +31,6 @@ from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
-
 
 class NumberFormatDelegate(QItemDelegate):
     def __init__(self, parent=None):
@@ -73,7 +73,6 @@ class TimeFormatDelegate(QItemDelegate):
         editor = QTimeEdit(parent)
         editor.setDisplayFormat("hh:mm:ss.zzz")
         return editor
-
 
 class DataBrowser(QWidget):
 
@@ -168,6 +167,7 @@ class DataBrowser(QWidget):
         :param database: New instance of Database
         :return:
         """
+
         # Database updated everywhere
         self.project = database
         self.table_data.project = database
@@ -190,7 +190,7 @@ class DataBrowser(QWidget):
 
         self.save_filter_action = QAction("Save current filter", self)
         self.save_filter_action.triggered.connect(
-            lambda: self.project.save_current_filter(self.advanced_search.get_filters()))
+            lambda: self.project.save_current_filter(self.advanced_search.get_filters(False)))
 
         self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
         self.open_filter_action.triggered.connect(self.open_filter)
@@ -215,6 +215,7 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.advanced_search.show_search()
+
             self.advanced_search.apply_filter(filterToApply)
 
     def count_table_pop_up(self):
@@ -244,10 +245,7 @@ class DataBrowser(QWidget):
         filters_menu.addAction(self.open_filter_action)
         filters_tool_button.setMenu(filters_menu)
 
-        self.search_bar = QtWidgets.QLineEdit(self)
-        self.search_bar.setObjectName("lineEdit_search_bar")
-        self.search_bar.setPlaceholderText(
-            "Rapid search, enter % to replace any string, _ to replace any character , *Not Defined* for the scans with missing value(s),  dates are in the following format: yyyy-mm-dd hh:mm:ss.fff")
+        self.search_bar = RapidSearch(self)
         self.search_bar.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()
@@ -298,11 +296,11 @@ class DataBrowser(QWidget):
             return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
         else:
             # Scans with at least a not defined value
-            if str_search == "*Not Defined*":
+            if str_search == not_defined_value:
                 filter = self.prepare_not_defined_filter(self.project.database.get_visibles())
             # Scans matching the search
             else:
-                filter = self.prepare_filter(str_search, self.project.database.get_visibles())
+                filter = self.search_bar.prepare_filter(str_search, self.project.database.get_visibles())
 
             generator = self.project.database.filter_documents(COLLECTION_CURRENT, filter)
 
@@ -315,61 +313,6 @@ class DataBrowser(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
         self.project.currentFilter.search_bar = str_search
-
-    def prepare_filter(self, search, tags):
-        """
-        Prepares the rapid search filter
-        :param search: str search
-        :param tags: list of tags to take into account
-        :return: str filter corresponding to the rapid search
-        """
-
-        query = ""
-
-        or_to_write = False
-
-        for tag in tags:
-
-
-            if or_to_write:
-                query += " OR "
-
-            query += "({" + tag + "} LIKE \"%" + search + "%\")"
-
-            or_to_write = True
-
-        query = "(" + query + ")"
-
-        #print(query)
-
-        return query
-
-    def prepare_not_defined_filter(self, tags):
-        """
-        Prepares the rapid search filter for not defined values
-        :param tags: list of tags to take into account
-        :return: str filter corresponding to the rapid search for not defined values
-        """
-
-        query = ""
-
-        or_to_write = False
-
-        for tag in tags:
-
-
-            if or_to_write:
-                query += " OR "
-
-            query += "({" + tag + "} == null)"
-
-            or_to_write = True
-
-        query = "(" + query + ")"
-
-        #print(query)
-
-        return query
 
     def reset_search_bar(self):
         self.search_bar.setText("")

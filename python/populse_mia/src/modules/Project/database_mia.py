@@ -25,7 +25,7 @@ class Database_mia(populse_db.database.Database):
 
     def __init__(self, string_engine):
 
-        super().__init__(string_engine, caches=True, list_tables=True, query_type="guess")
+        super().__init__(string_engine, caches=True, list_tables=True, query_type="mixed")
 
     def create_empty_schema(self, string_engine):
         """
