@@ -22,6 +22,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("Checksum" in tags)
         self.assertTrue("FileName" in tags)
         self.assertTrue("Type" in tags)
+        self.assertEqual(self.imageViewer.project.database.get_documents_names(COLLECTION_CURRENT), [])
 
 if __name__ == '__main__':
     unittest.main()

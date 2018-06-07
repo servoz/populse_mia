@@ -8,5 +8,6 @@ python:
 install:
   - python setup.py install
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
+  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_db/python/"
 
 script: python ./python/populse_mia/src/scripts/test.py
