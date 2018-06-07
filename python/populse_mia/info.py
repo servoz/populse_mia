@@ -45,7 +45,8 @@ CLASSIFIERS = CLASSIFIERS
 PLATFORMS = 'OS Independent'
 REQUIRES = [
   'pyqt5',
-  'pyyaml'
+  'pyyaml',
+  'dateutil'
 ]
 EXTRA_REQUIRES = {
     'doc': [
