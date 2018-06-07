@@ -841,6 +841,8 @@ class TableDataBrowser(QTableWidget):
 
         self.setColumnCount(len(tags))
 
+        visibles = self.project.database.get_visibles()
+
         column = 0
         # Filling the headers
         for tag_name in tags:
@@ -865,11 +867,11 @@ class TableDataBrowser(QTableWidget):
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
-                if not element.visibility:
-                    self.setColumnHidden(column, True)
+                if tag_name in visibles:
+                    self.setColumnHidden(column, False)
 
                 else:
-                    self.setColumnHidden(column, False)
+                    self.setColumnHidden(column, True)
 
             self.setHorizontalHeaderItem(column, item)
 
@@ -1368,13 +1370,15 @@ class TableDataBrowser(QTableWidget):
 
         self.itemSelectionChanged.disconnect()
 
+        visibles = self.project.database.get_visibles()
+
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
-            if not self.project.database.get_field(COLLECTION_CURRENT, tag).visibility:
+            if not tag in visibles:
                 self.setColumnHidden(self.get_tag_column(tag), True)
 
         # Tags that became visible must be visible
-        for tag in self.project.database.get_visibles():
+        for tag in visibles:
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Selection updated
@@ -1400,6 +1404,8 @@ class TableDataBrowser(QTableWidget):
         tags.remove(TAG_FILENAME)
         tags = sorted(tags)
         tags.insert(0, TAG_FILENAME)
+
+        visibles = self.project.database.get_visibles()
 
         # Adding missing columns
 
@@ -1434,7 +1440,7 @@ class TableDataBrowser(QTableWidget):
 
                 # Hide the column if not visible
 
-                if tag_object.visibility == False:
+                if tag in visibles:
                     self.setColumnHidden(columnIndex, True)
 
                 # Rows filled for the column being added

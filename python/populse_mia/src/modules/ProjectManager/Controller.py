@@ -83,7 +83,9 @@ def read_log(project):
             file_path = os.path.join(raw_data_folder, file_name + ".nii")
             file_database_path = os.path.relpath(file_path, project.folder)
 
-            scans_added.append(file_database_path) # Scan added to history
+            document_not_existing = project.database.get_document(COLLECTION_CURRENT, file_database_path) is None
+            if document_not_existing:
+                scans_added.append(file_database_path) # Scan added to history
 
             documents[file_database_path] = {}
             documents[file_database_path][TAG_FILENAME] = file_database_path
@@ -174,12 +176,14 @@ def read_log(project):
 
                     # The value is accepted if it's not empty or null
                     if value is not None and value != "":
-                        values_added.append([file_database_path, tag_name, value, value]) # Value added to history
+                        if document_not_existing:
+                            values_added.append([file_database_path, tag_name, value, value]) # Value added to history
                         documents[file_database_path][tag_name] = value
 
-            # Tags added manually
-            values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
-            values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
+            if document_not_existing:
+                # Tags added manually
+                values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
+                values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
             documents[file_database_path][TAG_CHECKSUM] = original_md5
             documents[file_database_path][TAG_TYPE] = "Scan"
 
@@ -216,6 +220,8 @@ def read_log(project):
     #pr.disable()
     #pr.print_stats(sort='time')
     #prof.print_stats()
+
+    return scans_added
 
 def verify_scans(project, path):
     # Returning the files that are problematic

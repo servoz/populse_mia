@@ -252,3 +252,4 @@ class Database_mia(populse_db.database.Database):
                 field.visibility = False
             self.session.add(field)
         self.session.flush()
+        self.get_visibles()

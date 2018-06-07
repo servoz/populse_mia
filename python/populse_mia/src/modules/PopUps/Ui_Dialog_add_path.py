@@ -96,7 +96,7 @@ class Ui_Dialog_add_path(QDialog):
                 COLLECTION_CURRENT)
             self.table.add_columns()
             self.table.fill_headers()
-            self.table.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
+            self.table.add_rows([path])
 
             self.close()
         else:

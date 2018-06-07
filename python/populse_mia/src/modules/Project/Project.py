@@ -384,7 +384,9 @@ class Project:
                 old_tags = self.database.get_visibles()  # Old list of columns
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
                 self.database.set_visibles(visibles)
+                table.itemChanged.disconnect()
                 table.update_visualized_columns(old_tags)  # Columns updated
+                table.itemChanged.connect(table.change_cell_color)
 
     def reput_values(self, values):
         """
@@ -494,4 +496,6 @@ class Project:
                 old_tags = self.database.get_visibles()  # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles before the modification (Tag objects)
                 self.database.set_visibles(visibles)
+                table.itemChanged.disconnect()
                 table.update_visualized_columns(old_tags)  # Columns updated
+                table.itemChanged.connect(table.change_cell_color)
