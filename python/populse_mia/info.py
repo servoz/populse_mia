@@ -46,7 +46,9 @@ PLATFORMS = 'OS Independent'
 REQUIRES = [
   'pyqt5',
   'pyyaml',
-  'dateutil'
+  'python-dateutil',
+  'sqlalchemy',
+  'lark-parser'
 ]
 EXTRA_REQUIRES = {
     'doc': [
