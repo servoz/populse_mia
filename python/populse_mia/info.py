@@ -49,7 +49,8 @@ REQUIRES = [
   'python-dateutil',
   'sqlalchemy',
   'lark-parser',
-  'scipy'
+  'scipy',
+  'nibabel'
 ]
 EXTRA_REQUIRES = {
     'doc': [
