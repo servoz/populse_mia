@@ -275,6 +275,8 @@ class AdvancedSearch(QWidget):
             msg.exec()
             result_names = self.scans_list
 
+        #print(result_names)
+
         self.dataBrowser.table_data.scans_to_visualize = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
