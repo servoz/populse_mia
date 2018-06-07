@@ -7,5 +7,7 @@ python:
 
 install:
   - python setup.py install
+  - pwd
+  - export PYTHONPATH="${PYTHONPATH}:./python/populse_mia/src/modules"
 
-script: python python/populse_mia/src/scripts/test.py
+script: python ./python/populse_mia/src/scripts/test.py
