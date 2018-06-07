@@ -8,9 +8,10 @@ python:
 install:
   - python setup.py install
   - pwd
-  - ls
+  - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
-  - ls
+  - cd populse_sandbox
+  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_db/python"
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
 
 script: python ./python/populse_mia/src/scripts/test.py
