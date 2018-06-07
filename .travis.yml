@@ -10,6 +10,7 @@ install:
   - pwd
   - ls
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
+  - ls
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
 
 script: python ./python/populse_mia/src/scripts/test.py
