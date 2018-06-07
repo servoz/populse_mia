@@ -8,4 +8,4 @@ python:
 install:
   - python setup.py install
 
-script: python -m populse_mia.test
+script: python python/populse_mia/src/scripts/test.py

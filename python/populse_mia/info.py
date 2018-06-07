@@ -21,11 +21,11 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                 'Topic :: Utilities']
 
 # Project descriptions
-NAME = 'populse_sandbox'
-DESCRIPTION = 'populse sandbox'
+NAME = 'populse_mia'
+DESCRIPTION = 'populse mia'
 LONG_DESCRIPTION = '''
 ===============
-populse_sandbox
+populse_mia
 ===============
 
 Python modules not yet ready for distribution.
