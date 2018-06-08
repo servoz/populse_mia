@@ -12,5 +12,9 @@ install:
   - cd populse_sandbox
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_db/python"
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
 
 script: python ./python/populse_mia/src/scripts/test.py
