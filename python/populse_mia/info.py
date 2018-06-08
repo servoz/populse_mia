@@ -52,7 +52,8 @@ REQUIRES = [
   'scipy',
   'nibabel',
   'snakeviz',
-  'pillow'
+  'pillow',
+  'matplotlib'
 ]
 EXTRA_REQUIRES = {
     'doc': [
