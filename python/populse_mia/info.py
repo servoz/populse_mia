@@ -53,7 +53,8 @@ REQUIRES = [
   'nibabel',
   'snakeviz',
   'pillow',
-  'matplotlib'
+  'matplotlib',
+  'traits'
 ]
 EXTRA_REQUIRES = {
     'doc': [
