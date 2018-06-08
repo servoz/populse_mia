@@ -51,7 +51,8 @@ REQUIRES = [
   'lark-parser',
   'scipy',
   'nibabel',
-  'snakeviz'
+  'snakeviz',
+  'pillow'
 ]
 EXTRA_REQUIRES = {
     'doc': [
