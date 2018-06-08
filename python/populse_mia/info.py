@@ -54,7 +54,8 @@ REQUIRES = [
   'snakeviz',
   'pillow',
   'matplotlib',
-  'traits'
+  'traits',
+  'capsul'
 ]
 EXTRA_REQUIRES = {
     'doc': [
