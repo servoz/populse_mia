@@ -10,11 +10,11 @@ class Ui_Dialog_add_path(QDialog):
     Is called when the user wants to add a path to the project
     """
 
-    def __init__(self, project, table):
+    def __init__(self, project, databrowser):
 
         super().__init__()
         self.project = project
-        self.table = table
+        self.databrowser = databrowser
         self.setWindowTitle("Add a path")
 
         vbox_layout = QVBoxLayout()
@@ -92,12 +92,16 @@ class Ui_Dialog_add_path(QDialog):
             self.project.redos.clear()
 
             # Databrowser updated
-            self.table.scans_to_visualize = self.project.database.get_documents_names(
+            self.databrowser.table_data.scans_to_visualize = self.project.database.get_documents_names(
                 COLLECTION_CURRENT)
-            self.table.add_columns()
-            self.table.fill_headers()
-            self.table.add_rows([path])
-
+            self.databrowser.table_data.scans_to_search = self.project.database.get_documents_names(
+                COLLECTION_CURRENT)
+            self.databrowser.table_data.add_columns()
+            self.databrowser.table_data.fill_headers()
+            self.databrowser.table_data.add_rows([path])
+            self.databrowser.reset_search_bar()
+            self.databrowser.frame_advanced_search.setHidden(True)
+            self.databrowser.advanced_search.rows = []
             self.close()
         else:
             msg = QMessageBox()

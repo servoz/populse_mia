@@ -5,9 +5,10 @@ import sip
 import six
 import os
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox
+    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton
 
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
@@ -16,7 +17,6 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
-from Project.Filter import Filter
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -347,18 +347,32 @@ class PlugFilter(QWidget):
             self.scans_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         self.process = process
-        filter_to_apply = self.project.currentFilter
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
         # Graphical components
         self.table_data = TableDataBrowser(self.project, self)
 
+        # Reducing the list of scans to selection
+        all_scans = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(all_scans)
+
+        search_bar_layout = QHBoxLayout()
+
         self.rapid_search = RapidSearch(self)
         self.rapid_search.textChanged.connect(partial(self.search_str))
 
+        self.button_cross = QToolButton()
+        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
+        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.clicked.connect(self.reset_search_bar)
+
+        search_bar_layout.addWidget(self.rapid_search)
+        search_bar_layout.addWidget(self.button_cross)
+
         self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
-        self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
 
         push_button_ok = QPushButton("OK")
@@ -374,12 +388,23 @@ class PlugFilter(QWidget):
         buttons_layout.addWidget(push_button_cancel)
 
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.rapid_search)
+        main_layout.addLayout(search_bar_layout)
         main_layout.addWidget(self.advanced_search)
         main_layout.addWidget(self.table_data)
         main_layout.addLayout(buttons_layout)
 
         self.setLayout(main_layout)
+
+    def reset_search_bar(self):
+        self.rapid_search.setText("")
+        self.advanced_search.rows = []
+        self.advanced_search.show_search()
+
+        # All rows reput
+        old_scan_list = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
 
@@ -392,7 +417,7 @@ class PlugFilter(QWidget):
 
         # Every scan taken if empty search
         if str_search == "":
-            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            return_list = self.table_data.scans_to_search
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
@@ -424,6 +449,7 @@ class PlugFilter(QWidget):
         """ Emitting a signal to set the file names to the plug value. """
 
         result_names = []
-        for i in range(len(self.table_data.scans_to_visualize)):
-            result_names.append(os.path.relpath(os.path.join(self.project.folder, self.table_data.scans_to_visualize[i])))
+        filter = self.table_data.get_current_filter()
+        for i in range(len(filter)):
+            result_names.append(os.path.relpath(os.path.join(self.project.folder, filter[i])))
         self.plug_value_changed.emit(result_names)

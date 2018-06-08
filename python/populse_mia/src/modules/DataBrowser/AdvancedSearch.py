@@ -278,6 +278,7 @@ class AdvancedSearch(QWidget):
         #print(result_names)
 
         self.dataBrowser.table_data.scans_to_visualize = result_names
+        self.dataBrowser.table_data.scans_to_search = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
     def prepare_filters(self, links, fields, conditions, values, nots, scans):

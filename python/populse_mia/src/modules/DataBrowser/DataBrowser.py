@@ -293,11 +293,11 @@ class DataBrowser(QWidget):
 
         # Every scan taken if empty search
         if str_search == "":
-            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            return_list = self.table_data.scans_to_search
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
-                filter = self.prepare_not_defined_filter(self.project.database.get_visibles())
+                filter = self.search_bar.prepare_not_defined_filter(self.project.database.get_visibles())
             # Scans matching the search
             else:
                 filter = self.search_bar.prepare_filter(str_search, self.project.database.get_visibles())
@@ -357,8 +357,8 @@ class DataBrowser(QWidget):
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
             # We reput all the scans in the DataBrowser
-            return_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
-            self.table_data.scans_to_visualize = return_list
+            self.table_data.scans_to_visualize = self.advanced_search.scans_list
+            self.table_data.scans_to_search = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
             self.table_data.update_visualized_rows(old_scans_list)
 
@@ -526,7 +526,7 @@ class TableDataBrowser(QTableWidget):
         Green cross clicked to add a path
         """
 
-        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self)
+        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.parent)
         self.pop_up_add_path.show()
 
         if self.pop_up_add_path.exec_():
@@ -730,6 +730,7 @@ class TableDataBrowser(QTableWidget):
 
         # The list of scans to visualize
         self.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
+        self.scans_to_search = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         # The list of selected scans
         self.scans = []
