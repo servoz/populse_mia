@@ -50,7 +50,8 @@ REQUIRES = [
   'sqlalchemy',
   'lark-parser',
   'scipy',
-  'nibabel'
+  'nibabel',
+  'snakeviz'
 ]
 EXTRA_REQUIRES = {
     'doc': [
