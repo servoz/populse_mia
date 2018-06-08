@@ -3,6 +3,7 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL
 from MainWindow.Main_Window import Main_Window
+import os
 
 class TestMIADataBrowser(unittest.TestCase):
 
@@ -29,4 +30,5 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_CURRENT in collections)
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
     unittest.main()
