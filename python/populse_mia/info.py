@@ -56,7 +56,8 @@ REQUIRES = [
   'matplotlib',
   'traits',
   'capsul',
-  'soma_workflow'
+  'soma_workflow',
+  'SIP'
 ]
 EXTRA_REQUIRES = {
     'doc': [
