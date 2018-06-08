@@ -1,12 +1,14 @@
 import os
 
-from PyQt5.QtCore import QObjectCleanupHandler
+from PyQt5.QtCore import QObjectCleanupHandler, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
 
 from Utils.Tools import ClickableLabel
 
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+
+import populse_db
 
 class AdvancedSearch(QWidget):
 
@@ -81,9 +83,13 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("CONTAINS")
         conditionChoice.addItem("HAS VALUE")
         conditionChoice.addItem("HAS NO VALUE")
+        conditionChoice.model().sort(0)
 
         # Signal to update the placeholder text of the value
         conditionChoice.currentTextChanged.connect(lambda: self.displayValueRules(conditionChoice, conditionValue))
+
+        # Signal to update the list of conditions, depending on the tag type
+        fieldChoice.currentTextChanged.connect(lambda: self.displayConditionRules(fieldChoice, conditionChoice))
 
         # Minus to remove the row
         removeRowLabel = ClickableLabel()
@@ -107,12 +113,55 @@ class AdvancedSearch(QWidget):
 
         self.refresh_search()
 
+        self.displayConditionRules(fieldChoice, conditionChoice)
+
+    def displayConditionRules(self, field, condition):
+        """
+        Sets the list of condition choices, depending on the tag type
+        :param field: field
+        :param condition: condition
+        """
+
+        tag_name = field.currentText()
+        tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag_name)
+
+        no_operators_tags = []
+        for list_type in populse_db.database.LIST_TYPES:
+            no_operators_tags.append(list_type)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+
+        if tag_row is not None and tag_row.type in no_operators_tags:
+            condition.removeItem(condition.findText("<"))
+            condition.removeItem(condition.findText(">"))
+            condition.removeItem(condition.findText("<="))
+            condition.removeItem(condition.findText(">="))
+            condition.removeItem(condition.findText("BETWEEN"))
+
+        if tag_row is not None and tag_row.type in populse_db.database.LIST_TYPES:
+            condition.removeItem(condition.findText("IN"))
+
+        if tag_row is None or tag_row.type not in no_operators_tags:
+            operators_to_reput = ["<", ">", "<=", ">=", "BETWEEN"]
+            for operator in operators_to_reput:
+                is_op_existing = condition.findText(operator) != -1
+                if not is_op_existing:
+                    condition.addItem(operator)
+
+        if tag_row is None or tag_row.type not in populse_db.database.LIST_TYPES:
+            operators_to_reput = ["IN"]
+            for operator in operators_to_reput:
+                is_op_existing = condition.findText(operator) != -1
+                if not is_op_existing:
+                    condition.addItem(operator)
+
+        condition.model().sort(0)
+
     def displayValueRules(self, choice, value):
         """
         Called when the condition choice is changed, to update the placeholder text
-        :param choice:
-        :param value:
-        :return:
+        :param choice: choice
+        :param value: value
         """
         if choice.currentText() == "BETWEEN":
             value.setDisabled(False)
@@ -386,10 +435,27 @@ class AdvancedSearch(QWidget):
                     elif childName == 'not':
                         nots.append(child.currentText())
 
+        operators = ["<", ">", "<=", ">=", "BETWEEN"]
+        no_operators_tags = []
+        for list_type in populse_db.database.LIST_TYPES:
+            no_operators_tags.append(list_type)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+
         # Converting BETWEEN and IN values into lists
         for i in range(0, len(conditions)):
             if conditions[i] == "BETWEEN" or conditions[i] == "IN":
                 values[i] = values[i].split("; ")
+            if conditions[i] == "IN":
+                for tag in fields[i].copy():
+                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    if tag_row.type in populse_db.database.LIST_TYPES:
+                        fields[i].remove(tag)
+            elif conditions[i] in operators:
+                for tag in fields[i].copy():
+                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    if tag_row.type in no_operators_tags:
+                        fields[i].remove(tag)
 
         return fields, conditions, values, links, nots
 
