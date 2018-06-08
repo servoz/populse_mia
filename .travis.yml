@@ -12,5 +12,6 @@ install:
   - cd populse_sandbox
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_db/python"
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
+  - export QT_QPA_PLATFORM=offscreen
 
 script: python ./python/populse_mia/src/scripts/test.py
