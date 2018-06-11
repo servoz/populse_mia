@@ -405,6 +405,10 @@ class DataBrowser(QWidget):
         self.table_data.add_column(column, new_tag_name)
 
     def add_tag_pop_up(self):
+        """
+        Displays add_tag popup
+        :return:
+        """
 
         # We first show the add_tag pop up
         self.pop_up_add_tag = Ui_Dialog_add_tag(self, self.project)
@@ -413,6 +417,8 @@ class DataBrowser(QWidget):
     def clone_tag_infos(self, tag_to_clone, new_tag_name):
         """
         Clones the tag after the clone_tag pop_up
+        :param tag_to_clone: Tag to clone
+        :param new_tag_name: New tag name
         """
 
         values = []
@@ -456,58 +462,65 @@ class DataBrowser(QWidget):
         self.table_data.add_column(column, new_tag_name)
 
     def clone_tag_pop_up(self):
+        """
+        Displays clone_tag popup
+        """
 
         # We first show the clone_tag pop up
         self.pop_up_clone_tag = Ui_Dialog_clone_tag(self, self.project)
         self.pop_up_clone_tag.show()
 
+    def remove_tag_infos(self, tag_names_to_remove):
+        """
+        Removes user tags after the popup
+        :param tag_names_to_remove: List of tags to remove
+        """
+
+        self.table_data.itemSelectionChanged.disconnect()
+
+        # For history
+        historyMaker = []
+        historyMaker.append("remove_tags")
+        tags_removed = []
+
+        # Each Tag row to remove is put in the history
+        for tag in tag_names_to_remove:
+            tagObject = self.project.database.get_field(COLLECTION_CURRENT, tag)
+            tags_removed.append([tagObject])
+        historyMaker.append(tags_removed)
+
+        # Each value of the tags to remove are stored in the history
+        values_removed = []
+        for tag in tag_names_to_remove:
+            for scan in self.project.database.get_documents_names(COLLECTION_CURRENT):
+                current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
+                initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan, tag)
+                if current_value is not None or initial_value is not None:
+                    values_removed.append([scan, tag, current_value, initial_value])
+        historyMaker.append(values_removed)
+
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
+
+        # Tags removed from the Database and table
+        for tag in tag_names_to_remove:
+            self.project.database.remove_field(COLLECTION_CURRENT, tag)
+            self.project.database.remove_field(COLLECTION_INITIAL, tag)
+            self.table_data.removeColumn(self.table_data.get_tag_column(tag))
+
+        # Selection updated
+        self.table_data.update_selection()
+
+        self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
+
     def remove_tag_pop_up(self):
+        """
+        Displays the popup to remove user tags
+        """
 
         # We first open the remove_tag pop up
-        self.pop_up_remove_tag = Ui_Dialog_remove_tag(self.project)
+        self.pop_up_remove_tag = Ui_Dialog_remove_tag(self, self.project)
         self.pop_up_remove_tag.show()
-
-        # We get the tags to remove
-        if self.pop_up_remove_tag.exec_():
-
-            self.table_data.itemSelectionChanged.disconnect()
-
-            tag_names_to_remove = self.pop_up_remove_tag.get_values()
-
-            # For history
-            historyMaker = []
-            historyMaker.append("remove_tags")
-            tags_removed = []
-
-            # Each Tag row to remove is put in the history
-            for tag in tag_names_to_remove:
-                tagObject = self.project.database.get_field(COLLECTION_CURRENT, tag)
-                tags_removed.append([tagObject])
-            historyMaker.append(tags_removed)
-
-            # Each value of the tags to remove are stored in the history
-            values_removed = []
-            for tag in tag_names_to_remove:
-                for scan in self.project.database.get_documents_names(COLLECTION_CURRENT):
-                    current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
-                    initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan, tag)
-                    if current_value is not None or initial_value is not None:
-                        values_removed.append([scan, tag, current_value, initial_value])
-            historyMaker.append(values_removed)
-
-            self.project.undos.append(historyMaker)
-            self.project.redos.clear()
-
-            # Tags removed from the Database and table
-            for tag in tag_names_to_remove:
-                self.project.database.remove_field(COLLECTION_CURRENT, tag)
-                self.project.database.remove_field(COLLECTION_INITIAL, tag)
-                self.table_data.removeColumn(self.table_data.get_tag_column(tag))
-
-            # Selection updated
-            self.table_data.update_selection()
-
-            self.table_data.itemSelectionChanged.connect(self.table_data.selection_changed)
 
 
 class TableDataBrowser(QTableWidget):

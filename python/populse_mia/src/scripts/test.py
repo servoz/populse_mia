@@ -6,6 +6,7 @@ from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
+from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 import os
 import populse_db
 
@@ -155,6 +156,36 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(test_row.type, filename_row.type)
         self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
         self.assertEqual(test_row.visibility, True)
+
+    def test_remove_tag(self):
+        """
+        Tests the popup removing user tags
+        """
+
+        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        add_tag.text_edit_tag_name.setText("Test")
+        QTest.mouseClick(add_tag.push_button_ok, 1)
+
+        old_tags_current = self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT)
+        old_tags_initial = self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL)
+        remove_tag = Ui_Dialog_remove_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        QTest.mouseClick(remove_tag.push_button_ok, 1)
+        new_tags_current = self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT)
+        new_tags_initial = self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL)
+        self.assertTrue(old_tags_current == new_tags_current)
+        self.assertTrue(old_tags_initial == new_tags_initial)
+
+        old_tags_current = self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT)
+        old_tags_initial = self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL)
+        self.assertTrue("Test" in old_tags_current)
+        self.assertTrue("Test" in old_tags_initial)
+        remove_tag = Ui_Dialog_remove_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        remove_tag.list_widget_tags.setCurrentRow(0) # Test tag selected
+        QTest.mouseClick(remove_tag.push_button_ok, 1)
+        new_tags_current = self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT)
+        new_tags_initial = self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL)
+        self.assertTrue("Test" not in new_tags_current)
+        self.assertTrue("Test" not in new_tags_initial)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
