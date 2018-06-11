@@ -204,6 +204,13 @@ class Main_Window(QMainWindow):
         if can_exit:
             self.project.database.unsave_modifications()
 
+            # Clean up
+            config = Config()
+            opened_projects = config.get_opened_projects()
+            opened_projects.remove(self.project.folder)
+            config.set_opened_projects(opened_projects)
+            self.remove_raw_files_useless()
+
             event.accept()
         else:
             event.ignore()
@@ -438,6 +445,7 @@ class Main_Window(QMainWindow):
         Called to switch project if it's possible
         :param path: relative path of the new project
         :param file_name: raw file_name
+        :param name: project name
         """
 
         # If the file exists

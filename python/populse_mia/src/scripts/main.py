@@ -11,11 +11,12 @@ import atexit
 
 imageViewer = None
 
+"""
 @atexit.register
 def clean_up():
-    """
+    '''
     Cleans up the software during "normal" closing
-    """
+    '''
 
     global imageViewer
 
@@ -26,6 +27,7 @@ def clean_up():
     opened_projects.remove(imageViewer.project.folder)
     config.set_opened_projects(opened_projects)
     imageViewer.remove_raw_files_useless()
+"""
 
 def launch_mia():
 

@@ -362,44 +362,50 @@ class DataBrowser(QWidget):
 
             self.table_data.update_visualized_rows(old_scans_list)
 
+    def add_tag_infos(self, new_tag_name, new_default_value, tag_type, new_tag_description,new_tag_unit):
+
+        values = []
+
+        # We add the tag and a value for each scan in the Database
+        self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tag_type, new_tag_description, True,
+                                        TAG_ORIGIN_USER, new_tag_unit, new_default_value)
+        self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True,
+                                        TAG_ORIGIN_USER, new_tag_unit, new_default_value)
+        for scan in self.project.database.get_documents(COLLECTION_CURRENT):
+            self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
+                                            table_to_database(new_default_value, tag_type))
+            self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
+                                            table_to_database(new_default_value, tag_type))
+            values.append(
+                [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type),
+                 table_to_database(new_default_value, tag_type)])  # For history
+
+        # For history
+        historyMaker = []
+        historyMaker.append("add_tag")
+        historyMaker.append(new_tag_name)
+        historyMaker.append(tag_type)
+        historyMaker.append(new_tag_unit)
+        historyMaker.append(new_default_value)
+        historyMaker.append(new_tag_description)
+        historyMaker.append(values)
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
+
+        # New tag added to the table
+        column = self.table_data.get_index_insertion(new_tag_name)
+        self.table_data.add_column(column, new_tag_name)
+
     def add_tag_pop_up(self):
 
         # We first show the add_tag pop up
-        self.pop_up_add_tag = Ui_Dialog_add_tag(self.project)
+        self.pop_up_add_tag = Ui_Dialog_add_tag(self, self.project)
         self.pop_up_add_tag.show()
 
+        """
         # We get the values entered by the user
         if self.pop_up_add_tag.exec_():
-
-            (new_tag_name, new_default_value, tag_type, new_tag_description,
-             new_tag_unit) = self.pop_up_add_tag.get_values()
-
-            values = []
-
-            # We add the tag and a value for each scan in the Database
-            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
-            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True, TAG_ORIGIN_USER, new_tag_unit, new_default_value)
-            for scan in self.project.database.get_documents(COLLECTION_CURRENT):
-                self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
-                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type))
-                values.append(
-                    [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type), table_to_database(new_default_value, tag_type)])  # For history
-
-            # For history
-            historyMaker = []
-            historyMaker.append("add_tag")
-            historyMaker.append(new_tag_name)
-            historyMaker.append(tag_type)
-            historyMaker.append(new_tag_unit)
-            historyMaker.append(new_default_value)
-            historyMaker.append(new_tag_description)
-            historyMaker.append(values)
-            self.project.undos.append(historyMaker)
-            self.project.redos.clear()
-
-            # New tag added to the table
-            column = self.table_data.get_index_insertion(new_tag_name)
-            self.table_data.add_column(column, new_tag_name)
+        """
 
     def clone_tag_pop_up(self):
 
