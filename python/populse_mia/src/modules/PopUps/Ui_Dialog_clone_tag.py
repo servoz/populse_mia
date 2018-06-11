@@ -13,10 +13,12 @@ class Ui_Dialog_clone_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_clone_tag = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, databrowser, project):
         super().__init__()
         self.setWindowTitle("Clone a tag")
         self.pop_up(project)
+        self.databrowser = databrowser
+        self.project = project
 
     def pop_up(self, project):
         _translate = QtCore.QCoreApplication.translate
@@ -110,37 +112,35 @@ class Ui_Dialog_clone_tag(QDialog):
             if tag.name == self.line_edit_new_tag_name.text():
                 name_already_exists = True
         if name_already_exists:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("This tag name already exists")
-            msg.setInformativeText("Please select another tag name")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("This tag name already exists")
+            self.msg.setInformativeText("Please select another tag name")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
         elif self.line_edit_new_tag_name.text() == "":
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("The tag name can't be empty")
-            msg.setInformativeText("Please select a tag name")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("The tag name can't be empty")
+            self.msg.setInformativeText("Please select a tag name")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
         elif len(self.list_widget_tags.selectedItems()) == 0:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("The tag to clone must be selected")
-            msg.setInformativeText("Please select a tag to clone")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("The tag to clone must be selected")
+            self.msg.setInformativeText("Please select a tag to clone")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
         else:
             self.accept()
+            self.tag_to_replace = self.list_widget_tags.selectedItems()[0].text()
+            self.new_tag_name = self.line_edit_new_tag_name.text()
+            self.databrowser.clone_tag_infos(self.tag_to_replace, self.new_tag_name)
             self.close()
-
-    def get_values(self):
-        self.tag_to_replace = self.list_widget_tags.selectedItems()[0].text()
-        self.new_tag_name = self.line_edit_new_tag_name.text()
-        return self.tag_to_replace, self.new_tag_name

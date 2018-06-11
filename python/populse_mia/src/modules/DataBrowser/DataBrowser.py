@@ -363,6 +363,14 @@ class DataBrowser(QWidget):
             self.table_data.update_visualized_rows(old_scans_list)
 
     def add_tag_infos(self, new_tag_name, new_default_value, tag_type, new_tag_description,new_tag_unit):
+        """
+        Adds the tag after add_tag pop_up
+        :param new_tag_name: New tag name
+        :param new_default_value:  New default value
+        :param tag_type: New tag type
+        :param new_tag_description: New tag description
+        :param new_tag_unit: New tag unit
+        """
 
         values = []
 
@@ -402,53 +410,56 @@ class DataBrowser(QWidget):
         self.pop_up_add_tag = Ui_Dialog_add_tag(self, self.project)
         self.pop_up_add_tag.show()
 
+    def clone_tag_infos(self, tag_to_clone, new_tag_name):
         """
-        # We get the values entered by the user
-        if self.pop_up_add_tag.exec_():
+        Clones the tag after the clone_tag pop_up
         """
+
+        values = []
+
+        # We add the new tag in the Database
+        tagCloned = self.project.database.get_field(COLLECTION_CURRENT, tag_to_clone)
+        tagClonedInit = self.project.database.get_field(COLLECTION_INITIAL, tag_to_clone)
+        self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tagCloned.type, tagCloned.description, True,
+                                        TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
+        self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tagCloned.type, tagClonedInit.description, True,
+                                        TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
+        for scan in self.project.database.get_documents(COLLECTION_CURRENT):
+
+            # If the tag to clone has a value, we add this value with the new tag name in the Database
+            cloned_cur_value = self.project.database.get_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME),
+                                                               tag_to_clone)
+            cloned_init_value = self.project.database.get_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME),
+                                                                tag_to_clone)
+            if cloned_cur_value is not None or cloned_init_value is not None:
+                self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
+                                                cloned_cur_value)
+                self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
+                                                cloned_init_value)
+                values.append(
+                    [getattr(scan, TAG_FILENAME), new_tag_name, cloned_cur_value, cloned_init_value])  # For history
+
+        # For history
+        historyMaker = []
+        historyMaker.append("add_tag")
+        historyMaker.append(new_tag_name)
+        historyMaker.append(tagCloned.type)
+        historyMaker.append(tagCloned.unit)
+        historyMaker.append(tagCloned.default_value)
+        historyMaker.append(tagCloned.description)
+        historyMaker.append(values)
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
+
+        # New tag added to the table
+        column = self.table_data.get_index_insertion(new_tag_name)
+        self.table_data.add_column(column, new_tag_name)
 
     def clone_tag_pop_up(self):
 
         # We first show the clone_tag pop up
-        self.pop_up_clone_tag = Ui_Dialog_clone_tag(self.project)
+        self.pop_up_clone_tag = Ui_Dialog_clone_tag(self, self.project)
         self.pop_up_clone_tag.show()
-
-        # We get the informations given by the user
-        if self.pop_up_clone_tag.exec_():
-
-            (tag_to_clone, new_tag_name) = self.pop_up_clone_tag.get_values()
-
-            values = []
-
-            # We add the new tag in the Database
-            tagCloned = self.project.database.get_field(COLLECTION_CURRENT, tag_to_clone)
-            self.project.database.add_field(COLLECTION_CURRENT, new_tag_name, tagCloned.type, tagCloned.description, True, TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
-            self.project.database.add_field(COLLECTION_INITIAL, new_tag_name, tagCloned.type, tagCloned.description, True, TAG_ORIGIN_USER, tagCloned.unit, tagCloned.default_value)
-            for scan in self.project.database.get_documents(COLLECTION_CURRENT):
-
-                # If the tag to clone has a value, we add this value with the new tag name in the Database
-                cloned_cur_value = self.project.database.get_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), tag_to_clone)
-                cloned_init_value = self.project.database.get_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), tag_to_clone)
-                if cloned_cur_value is not None or cloned_init_value is not None:
-                    self.project.database.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name, cloned_cur_value)
-                    self.project.database.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name, cloned_init_value)
-                    values.append([getattr(scan, TAG_FILENAME), new_tag_name, cloned_cur_value, cloned_init_value])  # For history
-
-            # For history
-            historyMaker = []
-            historyMaker.append("add_tag")
-            historyMaker.append(new_tag_name)
-            historyMaker.append(tagCloned.type)
-            historyMaker.append(tagCloned.unit)
-            historyMaker.append(tagCloned.default_value)
-            historyMaker.append(tagCloned.description)
-            historyMaker.append(values)
-            self.project.undos.append(historyMaker)
-            self.project.redos.clear()
-
-            # New tag added to the table
-            column = self.table_data.get_index_insertion(new_tag_name)
-            self.table_data.add_column(column, new_tag_name)
 
     def remove_tag_pop_up(self):
 

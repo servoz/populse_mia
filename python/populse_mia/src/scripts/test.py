@@ -1,21 +1,30 @@
 import unittest
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL
+from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
+from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 import os
 import populse_db
 
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
+        """
+        Called before each test
+        """
+
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
 
     def tearDown(self):
+        """
+        Called after each test
+        """
+
         self.imageViewer.close()
 
     def test_unnamed_project_software_opening(self):
@@ -37,17 +46,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_INITIAL in collections)
         self.assertTrue(COLLECTION_CURRENT in collections)
         self.assertEqual(self.imageViewer.windowTitle(), "MIA2 - Multiparametric Image Analysis 2 - Unnamed project")
-
-    """
-    def test_new_project_opening(self):
-        '''
-        Tests the opening of a new project
-        '''
-
-        self.imageViewer.action_create.trigger()
-        print(self.imageViewer.exPopup.selectedFiles())
-        self.imageViewer.close()
-    """
 
     def test_projects_removed_from_current_projects(self):
         """
@@ -115,6 +113,48 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertTrue("Test" in self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL))
+
+    def test_clone_tag(self):
+        """
+        Tests the pop up cloning a tag
+        """
+
+        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        self.assertEqual(clone_tag.msg.text(), "The tag name can't be empty")
+
+        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        clone_tag.line_edit_new_tag_name.setText("Test")
+        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        self.assertEqual(clone_tag.msg.text(), "The tag to clone must be selected")
+
+        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        clone_tag.line_edit_new_tag_name.setText("Type")
+        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        self.assertEqual(clone_tag.msg.text(), "This tag name already exists")
+
+        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        clone_tag.line_edit_new_tag_name.setText("Test")
+        clone_tag.list_widget_tags.setCurrentRow(0) # FileName tag selected
+        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        self.assertTrue("Test" in self.imageViewer.project.database.get_fields_names(COLLECTION_CURRENT))
+        self.assertTrue("Test" in self.imageViewer.project.database.get_fields_names(COLLECTION_INITIAL))
+        test_row = self.imageViewer.project.database.get_field(COLLECTION_CURRENT, "Test")
+        filename_row = self.imageViewer.project.database.get_field(COLLECTION_CURRENT, "FileName")
+        self.assertEqual(test_row.description, filename_row.description)
+        self.assertEqual(test_row.unit, filename_row.unit)
+        self.assertEqual(test_row.default_value, filename_row.default_value)
+        self.assertEqual(test_row.type, filename_row.type)
+        self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
+        self.assertEqual(test_row.visibility, True)
+        test_row = self.imageViewer.project.database.get_field(COLLECTION_INITIAL, "Test")
+        filename_row = self.imageViewer.project.database.get_field(COLLECTION_INITIAL, "FileName")
+        self.assertEqual(test_row.description, filename_row.description)
+        self.assertEqual(test_row.unit, filename_row.unit)
+        self.assertEqual(test_row.default_value, filename_row.default_value)
+        self.assertEqual(test_row.type, filename_row.type)
+        self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
+        self.assertEqual(test_row.visibility, True)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
