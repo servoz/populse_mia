@@ -2,7 +2,7 @@ auto_save: 'no'
 background_color: ''
 chain_cursors: 'yes'
 name: MIA2
-nb_slices_max: '5'
+nb_slices_max: '10'
 opened_projects: []
 paths:
   data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
