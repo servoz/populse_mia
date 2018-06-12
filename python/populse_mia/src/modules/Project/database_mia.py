@@ -58,15 +58,82 @@ class Database_mia(populse_db.database.Database):
 
         metadata.create_all(engine)
 
+    def __enter__(self):
+        '''
+        Return a DatabaseSession instance for using the database. This is
+        supossed to be called using a "with" statement:
+
+        with database as session:
+           session.add_document(...)
+
+        Therefore __exit__ must be called to get rid of the session.
+        When called recursively, the underlying database session returned
+        is the same. The commit/rollback of the session is done only by the
+        outermost __enter__/__exit__ pair (i.e. by the outermost with
+        statement).
+        '''
+        # Create the session object
+        new_session = self._Database__scoped_session()
+        # Check if it is a brain new session object or if __enter__ already
+        # added a DatabaseSession instance to it (meaning recursive call)
+        db_session = getattr(new_session, '_populse_db_session', None)
+        if db_session is None:
+            # No recursive call. Create a new DatabaseSession
+            # and attach it to the session. Doing this way allow
+            # to be thread safe because scoped_session automatically
+            # creates a new session per thread. Therefore we also
+            # create a new DatabaseSession per thread.
+            db_session = Database_session_mia(self, new_session)
+            new_session._populse_db_session = db_session
+            # Attache a counter to the session object to count
+            # the recursion depth of __enter__ calls
+            new_session._populse_db_counter = 1
+        else:
+            # __enter__ is called recursively. Simply increment
+            # the recusive depth counter previously attached to
+            # the session object
+            new_session._populse_db_counter += 1
+        return db_session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        '''
+        Release a DatabaseSession previously created by __enter__.
+        If no recursive call of __enter__ was done, the session
+        is commited if no error is reported (e.g. exc_type is None)
+        otherwise it is rolled back. Nothing is done
+        '''
+        # Get the current session. SqlAlchemy scoped_session returns
+        # the same object (per thread) on each call until remove()
+        # is called.
+        current_session = self.__scoped_session()
+        # Decrement recursive depth counter
+        current_session._populse_db_counter -= 1
+        if current_session._populse_db_counter == 0:
+            # If there is no recursive call, commit or rollback
+            # the session according to the presence of an exception
+            if exc_type is None:
+                current_session.commit()
+            else:
+                current_session.rollback()
+            # Delete the database session
+            del current_session._populse_db_session
+            del current_session._populse_db_counter
+            self.__scoped_session.remove()
+
+class Database_session_mia(populse_db.database.DatabaseSession):
+    """
+    Class overriding the database session
+    """
+
     def add_collection(self, name, primary_key, visibility, origin, unit, default_value):
         """
         Overrides the method adding a collection
         :param name: New collection name
         :param primary_key: New collection primary_key column
-        :param visibility:
-        :param origin:
-        :param unit:
-        :param default_value:
+        :param visibility: Primary key visibility
+        :param origin: Primary key origin
+        :param unit: Primary key unit
+        :param default_value: Primary key default value
         """
 
         # Checks
@@ -99,13 +166,13 @@ class Database_mia(populse_db.database.Database):
                                              type=populse_db.database.FIELD_TYPE_STRING, description="Primary_key of the document collection " + name, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
         self.session.add(primary_key_field)
 
-        if self._Database__caches:
-            self._Database__documents[name] = {}
-            self._Database__fields[name] = {}
-            self._Database__fields[name][primary_key] = primary_key_field
-            self._Database__names[name] = {}
-            self._Database__names[name][primary_key] = primary_key
-            self._Database__collections[name] = collection_row
+        if self._DatabaseSession__caches:
+            self._DatabaseSession__documents[name] = {}
+            self._DatabaseSession__fields[name] = {}
+            self._DatabaseSession__fields[name][primary_key] = primary_key_field
+            self._DatabaseSession__names[name] = {}
+            self._DatabaseSession__names[name][primary_key] = primary_key
+            self._DatabaseSession__collections[name] = collection_row
 
         self.session.flush()
 
@@ -127,10 +194,10 @@ class Database_mia(populse_db.database.Database):
         self.session.flush()
 
         # Classes reloaded in order to add the new column attribute
-        self._Database__update_table_classes()
+        self._DatabaseSession__update_table_classes()
 
         for collection in collections:
-            self._Database__refresh_cache_documents(collection)
+            self._DatabaseSession__refresh_cache_documents(collection)
 
     def add_field(self, collection, name, field_type, description, visibility, origin, unit, default_value, flush=True):
         """
@@ -173,9 +240,9 @@ class Database_mia(populse_db.database.Database):
         field_row = self.table_classes[populse_db.database.FIELD_TABLE](name=name, collection=collection, type=field_type,
                                                     description=description, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
 
-        if self._Database__caches:
-            self._Database__fields[collection][name] = field_row
-            self._Database__names[collection][name] = hashlib.md5(name.encode('utf-8')).hexdigest()
+        if self._DatabaseSession__caches:
+            self._DatabaseSession__fields[collection][name] = field_row
+            self._DatabaseSession__names[collection][name] = hashlib.md5(name.encode('utf-8')).hexdigest()
 
         self.session.add(field_row)
 
@@ -205,8 +272,8 @@ class Database_mia(populse_db.database.Database):
             field_type = self.field_type_to_column_type(field_type)
 
         column = Column(self.field_name_to_column_name(collection, name), field_type)
-        column_str_type = column.type.compile(self._Database__engine.dialect)
-        column_name = column.compile(dialect=self._Database__engine.dialect)
+        column_str_type = column.type.compile(self.database.engine.dialect)
+        column_name = column.compile(dialect=self.database.engine.dialect)
 
         # Column created in document table, and in initial table if initial values are used
 
@@ -220,10 +287,10 @@ class Database_mia(populse_db.database.Database):
             self.session.flush()
 
             # Classes reloaded in order to add the new column attribute
-            self._Database__update_table_classes()
+            self._DatabaseSession__update_table_classes()
 
-            if self._Database__caches:
-                self._Database__refresh_cache_documents(collection)
+            if self._DatabaseSession__caches:
+                self._DatabaseSession__refresh_cache_documents(collection)
 
         self.unsaved_modifications = True
 

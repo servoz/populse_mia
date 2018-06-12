@@ -25,6 +25,8 @@ from PipelineManager.callStudent import callStudent
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
 
+from Project.Project import COLLECTION_CURRENT
+
 if sys.version_info[0] >= 3:
     unicode = str
 
@@ -283,10 +285,10 @@ class PipelineManagerTab(QWidget):
 
                 # If the file name is already in the database, no exception is raised
                 # but the user is warned
-                if self.project.database.get_document(p_value):
+                if self.project.session.get_document(COLLECTION_CURRENT, p_value):
                     print("Path {0} already in database.".format(p_value))
                 else:
-                    self.project.database.add_document(p_value)
+                    self.project.session.add_document(COLLECTION_CURRENT, p_value)
 
         pipeline_scene = self.diagramView.scene
 

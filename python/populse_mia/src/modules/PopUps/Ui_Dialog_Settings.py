@@ -18,7 +18,7 @@ class Ui_Dialog_Settings(QDialog):
     def __init__(self, project):
         super().__init__()
         self.pop_up(project)
-        self.old_visibles_tags = project.database.get_visibles()
+        self.old_visibles_tags = project.session.get_visibles()
 
     def pop_up(self, database):
         _translate = QtCore.QCoreApplication.translate
@@ -69,9 +69,9 @@ class Ui_Dialog_Settings(QDialog):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
         new_visibilities.append(TAG_FILENAME)
-        project.database.get_field(COLLECTION_CURRENT, TAG_FILENAME).visibility = True
-        project.database.get_field(COLLECTION_INITIAL, TAG_FILENAME).visibility = True
-        project.database.set_visibles(new_visibilities)
+        project.session.get_field(COLLECTION_CURRENT, TAG_FILENAME).visibility = True
+        project.session.get_field(COLLECTION_INITIAL, TAG_FILENAME).visibility = True
+        project.session.set_visibles(new_visibilities)
         historyMaker.append(new_visibilities)
         project.undos.append(historyMaker)
         project.redos.clear()

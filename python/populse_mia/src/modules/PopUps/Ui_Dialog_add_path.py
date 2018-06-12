@@ -75,14 +75,14 @@ class Ui_Dialog_add_path(QDialog):
                 data = scan_file.read()
                 checksum = hashlib.md5(data).hexdigest()
             path = os.path.join("data", "downloaded_data", filename)
-            self.project.database.add_document(COLLECTION_CURRENT, path)
-            self.project.database.add_document(COLLECTION_INITIAL, path)
+            self.project.session.add_document(COLLECTION_CURRENT, path)
+            self.project.session.add_document(COLLECTION_INITIAL, path)
             values_added = []
-            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
-            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
+            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
+            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
             values_added.append([path, TAG_TYPE, path_type, path_type])
-            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
-            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
+            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
+            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
             values_added.append([path, TAG_CHECKSUM, checksum, checksum])
 
             # For history
@@ -92,9 +92,9 @@ class Ui_Dialog_add_path(QDialog):
             self.project.redos.clear()
 
             # Databrowser updated
-            self.databrowser.table_data.scans_to_visualize = self.project.database.get_documents_names(
+            self.databrowser.table_data.scans_to_visualize = self.project.session.get_documents_names(
                 COLLECTION_CURRENT)
-            self.databrowser.table_data.scans_to_search = self.project.database.get_documents_names(
+            self.databrowser.table_data.scans_to_search = self.project.session.get_documents_names(
                 COLLECTION_CURRENT)
             self.databrowser.table_data.add_columns()
             self.databrowser.table_data.fill_headers()

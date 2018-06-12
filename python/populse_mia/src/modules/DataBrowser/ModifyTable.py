@@ -124,7 +124,7 @@ class ModifyTable(QDialog):
             for cell in range (0, len(self.scans)):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
-                tag_object = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                tag_object = self.project.session.get_field(COLLECTION_CURRENT, tag)
                 tag_type = tag_object.type
 
                 database_value = []
@@ -154,6 +154,6 @@ class ModifyTable(QDialog):
                         database_value.append(subvalue)
 
                 # Database updated for every cell
-                self.project.database.set_value(COLLECTION_CURRENT, scan, tag, database_value)
+                self.project.session.set_value(COLLECTION_CURRENT, scan, tag, database_value)
 
             self.close()

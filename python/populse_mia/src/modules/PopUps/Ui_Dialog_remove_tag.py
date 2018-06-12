@@ -62,7 +62,7 @@ class Ui_Dialog_remove_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+        for tag in self.project.session.get_fields(COLLECTION_CURRENT):
             if tag.origin == TAG_ORIGIN_USER:
                 item = QtWidgets.QListWidgetItem()
                 self.list_widget_tags.addItem(item)
@@ -79,13 +79,13 @@ class Ui_Dialog_remove_tag(QDialog):
 
         if str_search != "":
             return_list = []
-            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields(COLLECTION_CURRENT):
                 if tag.origin == TAG_ORIGIN_USER:
                     if str_search.upper() in tag.name.upper():
                         return_list.append(tag.name)
         else:
             return_list = []
-            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields(COLLECTION_CURRENT):
                 if tag.origin == TAG_ORIGIN_USER:
                     return_list.append(tag.name)
         self.list_widget_tags.clear()

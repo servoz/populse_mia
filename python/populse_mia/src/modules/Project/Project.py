@@ -42,6 +42,7 @@ class Project:
                 "The project at " + str(self.folder) + " is already opened in another instance of the software.")
 
         self.database = Database_mia('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+        self.session = self.database.__enter__()
 
         if new_project:
 
@@ -79,14 +80,14 @@ class Project:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
 
             # Adding current and initial collections
-            self.database.add_collection(COLLECTION_CURRENT, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
-            self.database.add_collection(COLLECTION_INITIAL, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_collection(COLLECTION_CURRENT, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_collection(COLLECTION_INITIAL, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
 
             # Tags manually added
-            self.database.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.database.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
-            self.database.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.database.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
+            self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
 
         self.properties = self.loadProperties()
 
@@ -274,12 +275,12 @@ class Project:
         Saves the pending operations of the project (actions still not saved)
         """
 
-        self.database.save_modifications()
+        self.session.save_modifications()
         self.saveConfig()
         self.unsavedModifications = False
 
     def unsaveModifications(self):
-        self.database.unsave_modifications()
+        self.session.unsave_modifications()
         self.unsavedModifications = False
 
     def hasUnsavedModifications(self):
@@ -288,7 +289,7 @@ class Project:
         :return: True if the project has pending modifications, False otherwise
         """
 
-        return self.unsavedModifications or self.database.has_unsaved_modifications()
+        return self.unsavedModifications or self.session.has_unsaved_modifications()
 
     """ UNDO/REDO """
 
@@ -309,8 +310,8 @@ class Project:
             if (action == "add_tag"):
                 # For removing the tag added, we just have to memorize the tag name, and remove it
                 tagToRemove = toUndo[1]
-                self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
-                self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
+                self.session.remove_field(COLLECTION_CURRENT, tagToRemove)
+                self.session.remove_field(COLLECTION_INITIAL, tagToRemove)
                 column_to_remove = table.get_tag_column(tagToRemove)
                 table.removeColumn(column_to_remove)
             if (action == "remove_tags"):
@@ -319,8 +320,8 @@ class Project:
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
-                    self.database.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
-                    self.database.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
+                    self.session.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
+                    self.session.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
                 for i in range(0, len(tagsRemoved)):
@@ -334,8 +335,8 @@ class Project:
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToRemove = scansAdded[i]
-                    self.database.remove_document(COLLECTION_CURRENT, scanToRemove)
-                    self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
+                    self.session.remove_document(COLLECTION_CURRENT, scanToRemove)
+                    self.session.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.scans_to_visualize.remove(scanToRemove)
                 table.itemChanged.disconnect()
@@ -347,12 +348,12 @@ class Project:
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToReput = scansRemoved[i]
-                    self.database.add_document(COLLECTION_CURRENT, getattr(scanToReput, TAG_FILENAME))
-                    self.database.add_document(COLLECTION_INITIAL, getattr(scanToReput, TAG_FILENAME))
+                    self.session.add_document(COLLECTION_CURRENT, getattr(scanToReput, TAG_FILENAME))
+                    self.session.add_document(COLLECTION_INITIAL, getattr(scanToReput, TAG_FILENAME))
                     table.scans_to_visualize.append(getattr(scanToReput, TAG_FILENAME))
                 valuesRemoved = toUndo[2]  # The third element is the list of removed values
                 self.reput_values(valuesRemoved)
-                table.add_rows(self.database.get_documents_names(COLLECTION_CURRENT))
+                table.add_rows(self.session.get_documents_names(COLLECTION_CURRENT))
             if (action == "modified_values"):
                 # To revert a value changed in the databrowser, we need two things: the cell (scan and tag, and the old value)
                 modifiedValues = toUndo[1]  # The second element is a list of modified values (reset, or value changed)
@@ -366,8 +367,8 @@ class Project:
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
-                        self.database.remove_value(COLLECTION_CURRENT, scan, tag)
-                        self.database.remove_value(COLLECTION_INITIAL, scan, tag)
+                        self.session.remove_value(COLLECTION_CURRENT, scan, tag)
+                        self.session.remove_value(COLLECTION_INITIAL, scan, tag)
                         set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
@@ -375,15 +376,15 @@ class Project:
                         item.setFont(font)
                     else:
                         # If the cell was there before, we just set it to the old value
-                        self.database.set_value(COLLECTION_CURRENT, scan, tag, old_value)
-                        set_item_data(item, old_value, self.database.get_field(COLLECTION_CURRENT, tag).type)
+                        self.session.set_value(COLLECTION_CURRENT, scan, tag, old_value)
+                        set_item_data(item, old_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.database.get_visibles()  # Old list of columns
+                old_tags = self.session.get_visibles()  # Old list of columns
                 visibles = toUndo[1]  # List of the tags visibles before the modification (Tag objects)
-                self.database.set_visibles(visibles)
+                self.session.set_visibles(visibles)
                 table.itemChanged.disconnect()
                 table.update_visualized_columns(old_tags)  # Columns updated
                 table.itemChanged.connect(table.change_cell_color)
@@ -397,8 +398,8 @@ class Project:
         for i in range(0, len(values)):
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
-            self.database.new_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
-            self.database.new_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
+            self.session.new_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
+            self.session.new_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
 
     def redo(self, table):
         """
@@ -420,12 +421,12 @@ class Project:
                 tagDescription = toRedo[5]
                 values = toRedo[6]  # List of values stored
                 # Adding the tag
-                self.database.add_field(COLLECTION_CURRENT, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
-                self.database.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
+                self.session.add_field(COLLECTION_CURRENT, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
+                self.session.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
-                    self.database.new_value(COLLECTION_CURRENT, value[0], value[1], value[2])
-                    self.database.new_value(COLLECTION_INITIAL, value[0], value[1], value[3])
+                    self.session.new_value(COLLECTION_CURRENT, value[0], value[1], value[2])
+                    self.session.new_value(COLLECTION_INITIAL, value[0], value[1], value[3])
                 column = table.get_index_insertion(tagToAdd)
                 table.add_column(column, tagToAdd)
             if (action == "remove_tags"):
@@ -434,8 +435,8 @@ class Project:
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToRemove = tagsRemoved[i][0].name
-                    self.database.remove_field(COLLECTION_CURRENT, tagToRemove)
-                    self.database.remove_field(COLLECTION_INITIAL, tagToRemove)
+                    self.session.remove_field(COLLECTION_CURRENT, tagToRemove)
+                    self.session.remove_field(COLLECTION_INITIAL, tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
                     table.removeColumn(column_to_remove)
             if (action == "add_scans"):
@@ -445,24 +446,24 @@ class Project:
                 for i in range(0, len(scansAdded)):
                     # We remove each scan added
                     scanToAdd = scansAdded[i]
-                    self.database.add_document(COLLECTION_CURRENT, scanToAdd)
-                    self.database.add_document(COLLECTION_INITIAL, scanToAdd)
+                    self.session.add_document(COLLECTION_CURRENT, scanToAdd)
+                    self.session.add_document(COLLECTION_INITIAL, scanToAdd)
                     table.scans_to_visualize.append(scanToAdd)
                 # We add all the values
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range(0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
-                    self.database.new_value(COLLECTION_CURRENT, valueToAdd[0], valueToAdd[1], valueToAdd[2])
-                    self.database.new_value(COLLECTION_INITIAL, valueToAdd[0], valueToAdd[1], valueToAdd[3])
-                table.add_rows(self.database.get_documents_names(COLLECTION_CURRENT))
+                    self.session.new_value(COLLECTION_CURRENT, valueToAdd[0], valueToAdd[1], valueToAdd[2])
+                    self.session.new_value(COLLECTION_INITIAL, valueToAdd[0], valueToAdd[1], valueToAdd[3])
+                table.add_rows(self.session.get_documents_names(COLLECTION_CURRENT))
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
                 scansRemoved = toRedo[1]  # The second element is the list of removed scans (Path class)
                 for i in range(0, len(scansRemoved)):
                     # We reput each scan, keeping the same values
                     scanToRemove = getattr(scansRemoved[i], TAG_FILENAME)
-                    self.database.remove_document(COLLECTION_CURRENT, scanToRemove)
-                    self.database.remove_document(COLLECTION_INITIAL, scanToRemove)
+                    self.session.remove_document(COLLECTION_CURRENT, scanToRemove)
+                    self.session.remove_document(COLLECTION_INITIAL, scanToRemove)
                     table.scans_to_visualize.remove(scanToRemove)
                     table.removeRow(table.get_scan_row(scanToRemove))
                     table.itemChanged.disconnect()
@@ -487,15 +488,15 @@ class Project:
                         font.setItalic(False)
                         font.setBold(False)
                         item.setFont(font)
-                    self.database.set_value(COLLECTION_CURRENT, scan, tag, new_value)
-                    set_item_data(item, new_value, self.database.get_field(COLLECTION_CURRENT, tag).type)
+                    self.session.set_value(COLLECTION_CURRENT, scan, tag, new_value)
+                    set_item_data(item, new_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
                 # To revert the modifications of the visualized tags
-                old_tags = self.database.get_visibles()  # Old list of columns
+                old_tags = self.session.get_visibles()  # Old list of columns
                 visibles = toRedo[2]  # List of the tags visibles before the modification (Tag objects)
-                self.database.set_visibles(visibles)
+                self.session.set_visibles(visibles)
                 table.itemChanged.disconnect()
                 table.update_visualized_columns(old_tags)  # Columns updated
                 table.itemChanged.connect(table.change_cell_color)

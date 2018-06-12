@@ -60,7 +60,7 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        for tag in self.project.database.get_visibles():
+        for tag in self.project.session.get_visibles():
             fieldChoice.addItem(tag)
         fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
@@ -123,7 +123,7 @@ class AdvancedSearch(QWidget):
         """
 
         tag_name = field.currentText()
-        tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag_name)
+        tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
 
         no_operators_tags = []
         for list_type in populse_db.database.LIST_TYPES:
@@ -303,7 +303,7 @@ class AdvancedSearch(QWidget):
         try:
 
             filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-            result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+            result = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
 
             # DataBrowser updated with the new selection
             result_names = [getattr(document, TAG_FILENAME) for document in result]
@@ -497,7 +497,7 @@ class AdvancedSearch(QWidget):
             try:
 
                 filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-                result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+                result = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
 
                 # DataBrowser updated with the new selection
                 result_names = [getattr(document, TAG_FILENAME) for document in result]

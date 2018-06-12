@@ -421,12 +421,12 @@ class PlugFilter(QWidget):
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
-                filter = self.prepare_not_defined_filter(self.project.database.get_visibles())
+                filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.database.get_visibles())
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles())
 
-            generator = self.project.database.filter_documents(COLLECTION_CURRENT, filter)
+            generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
             # Creating the list of scans
             return_list = [getattr(scan, TAG_FILENAME) for scan in generator]

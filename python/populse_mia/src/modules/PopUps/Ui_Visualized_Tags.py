@@ -75,7 +75,7 @@ class Ui_Visualized_Tags(QWidget):
 
         self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
 
-        for tag in project.database.get_fields(COLLECTION_CURRENT):
+        for tag in project.session.get_fields(COLLECTION_CURRENT):
             if tag.name != TAG_CHECKSUM and tag.name != TAG_FILENAME:
                 item = QtWidgets.QListWidgetItem()
                 if not tag.visibility:

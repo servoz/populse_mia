@@ -83,7 +83,7 @@ def read_log(project):
             file_path = os.path.join(raw_data_folder, file_name + ".nii")
             file_database_path = os.path.relpath(file_path, project.folder)
 
-            document_not_existing = project.database.get_document(COLLECTION_CURRENT, file_database_path) is None
+            document_not_existing = project.session.get_document(COLLECTION_CURRENT, file_database_path) is None
             if document_not_existing:
                 scans_added.append(file_database_path) # Scan added to history
 
@@ -167,7 +167,7 @@ def read_log(project):
 
                     # TODO time lists
 
-                    tag_row = project.database.get_field(COLLECTION_CURRENT, tag_name)
+                    tag_row = project.session.get_field(COLLECTION_CURRENT, tag_name)
                     if tag_row is None and tag_name not in tags_names_added:
                         # Adding the tag as it's not in the database yet
                         tags_added.append([COLLECTION_CURRENT, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit, None])
@@ -188,24 +188,24 @@ def read_log(project):
             documents[file_database_path][TAG_TYPE] = "Scan"
 
     # Missing values added thanks to default values
-    for tag in project.database.get_fields(COLLECTION_CURRENT):
+    for tag in project.session.get_fields(COLLECTION_CURRENT):
         if tag.origin == TAG_ORIGIN_USER:
             for scan in scans_added:
-                if tag.default_value is not None and project.database.get_value(COLLECTION_CURRENT, scan[0], tag.name) is None:
+                if tag.default_value is not None and project.session.get_value(COLLECTION_CURRENT, scan[0], tag.name) is None:
                     values_added.append([scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
                     documents[scan][tag.name] = tag.default_value
 
-    project.database.add_fields(tags_added)
+    project.session.add_fields(tags_added)
 
-    current_paths = project.database.get_documents_names(COLLECTION_CURRENT)
+    current_paths = project.session.get_documents_names(COLLECTION_CURRENT)
 
     for document in documents:
         if document in current_paths:
-            project.database.remove_document(COLLECTION_CURRENT, document)
-            project.database.remove_document(COLLECTION_INITIAL, document)
-        project.database.add_document(COLLECTION_CURRENT, documents[document], flush=False)
-        project.database.add_document(COLLECTION_INITIAL, documents[document], flush=False)
-    project.database.session.flush()
+            project.session.remove_document(COLLECTION_CURRENT, document)
+            project.session.remove_document(COLLECTION_INITIAL, document)
+        project.session.add_document(COLLECTION_CURRENT, documents[document], flush=False)
+        project.session.add_document(COLLECTION_INITIAL, documents[document], flush=False)
+    project.session.session.flush()
 
     # For history
     historyMaker.append(scans_added)
@@ -226,7 +226,7 @@ def read_log(project):
 def verify_scans(project, path):
     # Returning the files that are problematic
     return_list = []
-    for scan in project.database.get_documents_names(COLLECTION_CURRENT):
+    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
 
         file_name = scan
         file_path = os.path.relpath(os.path.join(project.folder, file_name))
@@ -237,7 +237,7 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            initial_checksum = project.database.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
+            initial_checksum = project.session.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
             if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 

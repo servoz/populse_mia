@@ -26,7 +26,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
 
         else:
             # Filling the list and checking the previous selected tag
-            tags = self.project.database.get_fields_names(COLLECTION_CURRENT)
+            tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
             tags.remove(TAG_CHECKSUM)
             for tag in tags:
                 item = QtWidgets.QListWidgetItem()

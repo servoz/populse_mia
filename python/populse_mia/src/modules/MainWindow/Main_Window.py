@@ -202,7 +202,7 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
-            self.project.database.unsave_modifications()
+            self.project.session.unsave_modifications()
 
             # Clean up
             config = Config()
@@ -228,17 +228,17 @@ class Main_Window(QMainWindow):
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'downloaded_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
 
     def saveChoice(self):
@@ -253,7 +253,7 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        if (self.project.isTempProject and len(self.project.database.get_documents_names(COLLECTION_CURRENT)) > 0):
+        if (self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0):
             return 1
         if (self.project.isTempProject):
             return 0
@@ -399,7 +399,7 @@ class Main_Window(QMainWindow):
 
             if self.exPopup.exec_():
 
-                self.project.database.unsave_modifications()
+                self.project.session.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 file_name = self.exPopup.selectedFiles()
@@ -499,7 +499,7 @@ class Main_Window(QMainWindow):
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
 
-                self.project.database.unsave_modifications()
+                self.project.session.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 # Project removed from the opened projects list
@@ -606,8 +606,9 @@ class Main_Window(QMainWindow):
             new_scans = controller.read_log(self.project)
 
             # Table updated
-            self.data_browser.table_data.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
-            self.data_browser.table_data.scans_to_search = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.data_browser.table_data.scans_to_visualize = documents
+            self.data_browser.table_data.scans_to_search = documents
             self.data_browser.table_data.add_columns()
             self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.add_rows(new_scans)
