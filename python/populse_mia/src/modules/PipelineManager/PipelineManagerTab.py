@@ -25,7 +25,7 @@ from PipelineManager.callStudent import callStudent
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
 
-from Project.Project import COLLECTION_CURRENT
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -289,6 +289,7 @@ class PipelineManagerTab(QWidget):
                     print("Path {0} already in database.".format(p_value))
                 else:
                     self.project.session.add_document(COLLECTION_CURRENT, p_value)
+                    self.project.session.add_document(COLLECTION_INITIAL, p_value)
 
         pipeline_scene = self.diagramView.scene
 
