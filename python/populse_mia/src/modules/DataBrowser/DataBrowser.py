@@ -21,6 +21,7 @@ from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
 from PopUps.Ui_Dialog_remove_tag import Ui_Dialog_remove_tag
 from PopUps.Ui_Select_Filter import Ui_Select_Filter
+import PopUps.Ui_DataBrowser_Current_Selection
 from ProjectManager.Controller import save_project
 from SoftwareProperties import Config
 from SoftwareProperties.Config import Config
@@ -76,9 +77,10 @@ class TimeFormatDelegate(QItemDelegate):
 
 class DataBrowser(QWidget):
 
-    def __init__(self, project):
+    def __init__(self, project, parent):
 
         self.project = project
+        self.parent = parent
 
         super(DataBrowser, self).__init__()
 
@@ -105,6 +107,7 @@ class DataBrowser(QWidget):
 
         # Add path button under the table
         hbox_layout = QHBoxLayout()
+
         addRowLabel = ClickableLabel()
         addRowLabel.setObjectName('plus')
         addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
@@ -112,8 +115,15 @@ class DataBrowser(QWidget):
         addRowLabel.setPixmap(addRowPicture)
         addRowLabel.setFixedWidth(20)
         addRowLabel.clicked.connect(self.table_data.add_path)
+
         hbox_layout.addWidget(addRowLabel)
+
         hbox_layout.addStretch(1)
+
+        send_documents_to_pipeline = QPushButton("Send documents to the Pipeline Manager")
+        send_documents_to_pipeline.clicked.connect(self.send_documents_to_pipeline)
+        hbox_layout.addWidget(send_documents_to_pipeline)
+
         vbox_table.addLayout(hbox_layout)
 
         self.frame_table_data.setLayout(vbox_table)
@@ -163,6 +173,23 @@ class DataBrowser(QWidget):
 
         # Image viewer updated
         self.connect_viewer()
+
+    def send_documents_to_pipeline(self):
+        """
+        Send the current list of scans to the Pipeline Manager
+        """
+
+        current_scans = self.table_data.get_current_filter()
+
+        # Displays a popup with the list of scans
+        show_selection = PopUps.Ui_DataBrowser_Current_Selection.Ui_DataBrowser_Current_Selection(self.project, self, current_scans)
+        show_selection.show()
+
+        if show_selection.exec_():
+            # Ok clicked
+            self.parent.pipeline_manager.scan_list = current_scans
+            self.parent.pipeline_manager.nodeController.scan_list = current_scans
+            self.parent.pipeline_manager.diagramView.scan_list = current_scans
 
     def update_database(self, database):
         """
@@ -359,7 +386,7 @@ class DataBrowser(QWidget):
             # If the advanced search is visible, we hide it
             self.frame_advanced_search.setHidden(True)
             self.advanced_search.rows = []
-            # We reput all the scans in the DataBrowser
+            # All the scans are reput in the DataBrowser
             self.table_data.scans_to_visualize = self.advanced_search.scans_list
             self.table_data.scans_to_search = self.project.session.get_documents_names(COLLECTION_CURRENT)
 

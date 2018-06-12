@@ -344,7 +344,7 @@ class PlugFilter(QWidget):
 
             self.scans_list = scans_list_copy
         else:
-            self.scans_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            self.scans_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
         self.process = process
 
