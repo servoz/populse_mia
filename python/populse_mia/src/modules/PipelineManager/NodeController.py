@@ -395,6 +395,9 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
+        self.setMinimumWidth(1000)
+        self.setMinimumHeight(1000)
+
     def reset_search_bar(self):
         self.rapid_search.setText("")
         self.advanced_search.rows = []

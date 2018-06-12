@@ -27,3 +27,6 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         self.setLayout(vbox_layout)
+
+        self.setMinimumWidth(1000)
+        self.setMinimumHeight(1000)
