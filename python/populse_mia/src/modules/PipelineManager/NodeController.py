@@ -351,7 +351,7 @@ class PlugFilter(QWidget):
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
         # Graphical components
-        self.table_data = TableDataBrowser(self.project, self)
+        self.table_data = TableDataBrowser(self.project, self, False, False)
 
         # Reducing the list of scans to selection
         all_scans = self.table_data.scans_to_visualize

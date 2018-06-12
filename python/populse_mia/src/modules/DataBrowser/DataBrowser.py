@@ -95,7 +95,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(project, self)
+        self.table_data = TableDataBrowser(project, self, True, True)
         self.table_data.setObjectName("table_data")
 
         ## LAYOUTS ##
@@ -528,10 +528,12 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, project, parent):
+    def __init__(self, project, parent, activate_selection, tags_to_display):
 
         self.project = project
         self.parent = parent
+        self.activate_selection = activate_selection
+        self.tags_to_display = tags_to_display
 
         super().__init__()
 
@@ -547,7 +549,8 @@ class TableDataBrowser(QTableWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(partial(self.context_menu_table))
         self.itemChanged.connect(self.change_cell_color)
-        self.itemSelectionChanged.connect(self.selection_changed)
+        if activate_selection:
+            self.itemSelectionChanged.connect(self.selection_changed)
         self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
         self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
@@ -648,7 +651,7 @@ class TableDataBrowser(QTableWidget):
         """
 
         return_list = []
-        if len(self.scans) > 0:
+        if self.activate_selection and len(self.scans) > 0:
             for scan in self.scans:
                 return_list.append(scan[0])
         else:
@@ -766,7 +769,8 @@ class TableDataBrowser(QTableWidget):
         self.scans_to_search = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
         # The list of selected scans
-        self.scans = []
+        if self.activate_selection:
+            self.scans = []
 
         self.itemChanged.disconnect()
 
@@ -810,11 +814,14 @@ class TableDataBrowser(QTableWidget):
         """
 
         # Sorting the list of tags in alphabetical order, but keeping FileName first
-        tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
-        tags.remove(TAG_CHECKSUM)
-        tags.remove(TAG_FILENAME)
-        tags = sorted(tags)
-        tags.insert(0, TAG_FILENAME)
+        if self.tags_to_display:
+            tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
+            tags.remove(TAG_CHECKSUM)
+            tags.remove(TAG_FILENAME)
+            tags = sorted(tags)
+            tags.insert(0, TAG_FILENAME)
+        else:
+            tags = [TAG_FILENAME]
 
         self.setColumnCount(len(tags))
 
@@ -1322,7 +1329,8 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
 
-        self.itemSelectionChanged.disconnect()
+        if self.activate_selection:
+            self.itemSelectionChanged.disconnect()
 
         # Scans that are not visible anymore are hidden
         for scan in old_scans:
@@ -1336,11 +1344,13 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()  # Columns resized
 
         # Selection updated
-        self.update_selection()
+        if self.activate_selection:
+            self.update_selection()
 
         self.update_colors()
 
-        self.itemSelectionChanged.connect(self.selection_changed)
+        if self.activate_selection:
+            self.itemSelectionChanged.connect(self.selection_changed)
 
         self.itemChanged.connect(self.change_cell_color)
 
