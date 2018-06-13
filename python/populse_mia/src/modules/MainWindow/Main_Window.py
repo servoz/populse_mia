@@ -202,7 +202,14 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
-            self.project.database.unsave_modifications()
+            self.project.session.unsave_modifications()
+
+            # Clean up
+            config = Config()
+            opened_projects = config.get_opened_projects()
+            opened_projects.remove(self.project.folder)
+            config.set_opened_projects(opened_projects)
+            self.remove_raw_files_useless()
 
             event.accept()
         else:
@@ -221,17 +228,17 @@ class Main_Window(QMainWindow):
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'downloaded_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.database.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
 
     def saveChoice(self):
@@ -246,7 +253,7 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        if (self.project.isTempProject and len(self.project.database.get_documents_names(COLLECTION_CURRENT)) > 0):
+        if (self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0):
             return 1
         if (self.project.isTempProject):
             return 0
@@ -269,7 +276,7 @@ class Main_Window(QMainWindow):
         self.textInfo.resize(500, 40)
         self.textInfo.setText('Welcome to Irmage')
 
-        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project)
+        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer(self.textInfo)
@@ -278,28 +285,11 @@ class Main_Window(QMainWindow):
         self.pipeline_manager = PipelineManagerTab(self.project, [])
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
-        self.tabs.currentChanged.connect(self.pipeline_manager_opened)
-
         verticalLayout = QVBoxLayout()
         verticalLayout.addWidget(self.tabs)
         verticalLayout.addWidget(self.textInfo)
         self.centralWindow = QWidget()
         self.centralWindow.setLayout(verticalLayout)
-
-    def pipeline_manager_opened(self):
-        """
-        Called when the pipeline manager tab is opened
-        Updates the project and the list of scans currently selected
-        :return:
-        """
-
-        if self.tabs.currentIndex() == 2:
-            self.pipeline_manager.project = self.project
-            self.pipeline_manager.nodeController.project = self.project
-            self.pipeline_manager.diagramView.project = self.project
-            self.pipeline_manager.scan_list = self.data_browser.table_data.get_current_filter()
-            self.pipeline_manager.nodeController.scan_list = self.data_browser.table_data.get_current_filter()
-            self.pipeline_manager.diagramView.scan_list = self.data_browser.table_data.get_current_filter()
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
@@ -392,7 +382,7 @@ class Main_Window(QMainWindow):
 
             if self.exPopup.exec_():
 
-                self.project.database.unsave_modifications()
+                self.project.session.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 file_name = self.exPopup.selectedFiles()
@@ -438,6 +428,7 @@ class Main_Window(QMainWindow):
         Called to switch project if it's possible
         :param path: relative path of the new project
         :param file_name: raw file_name
+        :param name: project name
         """
 
         # If the file exists
@@ -491,7 +482,7 @@ class Main_Window(QMainWindow):
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
 
-                self.project.database.unsave_modifications()
+                self.project.session.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 # Project removed from the opened projects list
@@ -562,7 +553,7 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.project.getVisibles()
+        old_tags = self.project.database.get_visibles()
         print(self.project.getName())
         self.pop_up_settings = Ui_Dialog_Settings(self.project)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
@@ -595,12 +586,18 @@ class Main_Window(QMainWindow):
             import cProfile
 
             # Database filled
-            controller.read_log(self.project)
+            new_scans = controller.read_log(self.project)
 
             # Table updated
+            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.data_browser.table_data.scans_to_visualize = documents
+            self.data_browser.table_data.scans_to_search = documents
+            self.data_browser.table_data.add_columns()
             self.data_browser.table_data.fill_headers()
-            self.data_browser.table_data.scans_to_visualize = self.project.database.get_documents_names(COLLECTION_CURRENT)
-            self.data_browser.table_data.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
+            self.data_browser.table_data.add_rows(new_scans)
+            self.data_browser.reset_search_bar()
+            self.data_browser.frame_advanced_search.setHidden(True)
+            self.data_browser.advanced_search.rows = []
 
         else:
             pass

@@ -5,9 +5,10 @@ import sip
 import six
 import os
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox
+    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton
 
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
@@ -16,8 +17,11 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
+<<<<<<< HEAD
 from Project.Filter import Filter
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+=======
+>>>>>>> master
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -330,6 +334,9 @@ class PlugFilter(QWidget):
     def __init__(self, project, scans_list, process, node_name="", plug_name="", parent=None):
         super(PlugFilter, self).__init__(parent)
 
+        from DataBrowser.RapidSearch import RapidSearch
+        from Project.Project import COLLECTION_CURRENT
+
         self.project = project
 
         if scans_list:
@@ -342,18 +349,35 @@ class PlugFilter(QWidget):
 
             self.scans_list = scans_list_copy
         else:
-            self.scans_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
+            self.scans_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
         self.process = process
-        filter_to_apply = self.project.currentFilter
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
         # Graphical components
-        self.table_data = TableDataBrowser(self.project, self)
+        self.table_data = TableDataBrowser(self.project, self, False, False)
+
+        # Reducing the list of scans to selection
+        all_scans = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(all_scans)
+
+        search_bar_layout = QHBoxLayout()
+
+        self.rapid_search = RapidSearch(self)
+        self.rapid_search.textChanged.connect(partial(self.search_str))
+
+        self.button_cross = QToolButton()
+        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
+        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.clicked.connect(self.reset_search_bar)
+
+        search_bar_layout.addWidget(self.rapid_search)
+        search_bar_layout.addWidget(self.button_cross)
 
         self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
-        self.advanced_search.apply_filter(filter_to_apply)
         self.advanced_search.show_search()
 
         push_button_ok = QPushButton("OK")
@@ -369,11 +393,54 @@ class PlugFilter(QWidget):
         buttons_layout.addWidget(push_button_cancel)
 
         main_layout = QVBoxLayout()
+        main_layout.addLayout(search_bar_layout)
         main_layout.addWidget(self.advanced_search)
         main_layout.addWidget(self.table_data)
         main_layout.addLayout(buttons_layout)
 
         self.setLayout(main_layout)
+
+        self.setMinimumWidth(1000)
+        self.setMinimumHeight(1000)
+
+    def reset_search_bar(self):
+        self.rapid_search.setText("")
+        self.advanced_search.rows = []
+        self.advanced_search.show_search()
+
+        # All rows reput
+        old_scan_list = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(old_scan_list)
+
+    def search_str(self, str_search):
+
+        from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
+        from DataBrowser.DataBrowser import not_defined_value
+
+        old_scan_list = self.table_data.scans_to_visualize
+
+        # Every scan taken if empty search
+        if str_search == "":
+            return_list = self.table_data.scans_to_search
+        else:
+            # Scans with at least a not defined value
+            if str_search == not_defined_value:
+                filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
+            # Scans matching the search
+            else:
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles())
+
+            generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
+
+            # Creating the list of scans
+            return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
+
+        self.table_data.scans_to_visualize = return_list
+
+        # Rows updated
+        self.table_data.update_visualized_rows(old_scan_list)
 
     def ok_clicked(self):
 
@@ -382,51 +449,13 @@ class PlugFilter(QWidget):
         self.advanced_search.apply_filter(filter)"""
 
         self.set_plug_value()
-        #self.set_filter_to_process()
-        self.save_filter()
         self.close()
 
     def set_plug_value(self):
         """ Emitting a signal to set the file names to the plug value. """
 
-        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        # Result gotten
-        try:
-
-            filter_query = self.advanced_search.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-            result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
-
-            # DataBrowser updated with the new selection
-            result_names = [getattr(document, TAG_FILENAME) for document in result]
-
-        except Exception as e:
-            print(e)
-
-            # Error message if the search can't be done, and visualization of all scans in the databrowser
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText(
-                "Error in the search")
-            msg.setInformativeText(
-                "The search has encountered a problem, you can correct it and launch it again.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
-            result_names = self.advanced_search.scans_list
-
-        for i in range(len(result_names)):
-            result_names[i] = os.path.relpath(os.path.join(self.project.folder, result_names[i]))
+        result_names = []
+        filter = self.table_data.get_current_filter()
+        for i in range(len(filter)):
+            result_names.append(os.path.relpath(os.path.join(self.project.folder, filter[i])))
         self.plug_value_changed.emit(result_names)
-
-    def set_filter_to_process(self):
-        """ Setting the selected filter to the filter process. """
-        (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        filter = Filter(None, nots, values, fields, links, conditions, "")
-        self.process.filter = filter
-        self.process.scans_list = self.scans_list
-
-    def save_filter(self):
-        """ Saving the filter and setting to the plug. Is it necessary? """
-        pass
-

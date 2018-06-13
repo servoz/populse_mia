@@ -64,12 +64,12 @@ class Ui_Tag_Selection(QDialog):
     def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
                 if tag != TAG_CHECKSUM:
                     if str_search.upper() in tag.upper():
                         return_list.append(tag)
         else:
-            for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
                 if tag != TAG_CHECKSUM:
                     return_list.append(tag)
 

@@ -18,7 +18,7 @@ pkgdata = {
 # Read the info.py file in populse_db module
 release_info = {}
 python_dir = os.path.join(os.path.dirname(__file__), 'python')
-with open(os.path.join(python_dir, 'populse_sandbox', 'info.py')) as f:
+with open(os.path.join(python_dir, 'populse_mia', 'info.py')) as f:
     code = f.read()
     exec(code, release_info)
 

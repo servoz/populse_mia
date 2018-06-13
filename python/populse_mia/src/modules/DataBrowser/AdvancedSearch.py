@@ -1,12 +1,14 @@
 import os
 
-from PyQt5.QtCore import QObjectCleanupHandler
+from PyQt5.QtCore import QObjectCleanupHandler, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
 
 from Utils.Tools import ClickableLabel
 
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+
+import populse_db
 
 class AdvancedSearch(QWidget):
 
@@ -58,8 +60,7 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
-        for tag in visibles:
+        for tag in self.project.session.get_visibles():
             fieldChoice.addItem(tag)
         fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
@@ -82,8 +83,13 @@ class AdvancedSearch(QWidget):
         conditionChoice.addItem("CONTAINS")
         conditionChoice.addItem("HAS VALUE")
         conditionChoice.addItem("HAS NO VALUE")
+        conditionChoice.model().sort(0)
+
         # Signal to update the placeholder text of the value
         conditionChoice.currentTextChanged.connect(lambda: self.displayValueRules(conditionChoice, conditionValue))
+
+        # Signal to update the list of conditions, depending on the tag type
+        fieldChoice.currentTextChanged.connect(lambda: self.displayConditionRules(fieldChoice, conditionChoice))
 
         # Minus to remove the row
         removeRowLabel = ClickableLabel()
@@ -107,12 +113,55 @@ class AdvancedSearch(QWidget):
 
         self.refresh_search()
 
+        self.displayConditionRules(fieldChoice, conditionChoice)
+
+    def displayConditionRules(self, field, condition):
+        """
+        Sets the list of condition choices, depending on the tag type
+        :param field: field
+        :param condition: condition
+        """
+
+        tag_name = field.currentText()
+        tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
+
+        no_operators_tags = []
+        for list_type in populse_db.database.LIST_TYPES:
+            no_operators_tags.append(list_type)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+
+        if tag_row is not None and tag_row.type in no_operators_tags:
+            condition.removeItem(condition.findText("<"))
+            condition.removeItem(condition.findText(">"))
+            condition.removeItem(condition.findText("<="))
+            condition.removeItem(condition.findText(">="))
+            condition.removeItem(condition.findText("BETWEEN"))
+
+        if tag_row is not None and tag_row.type in populse_db.database.LIST_TYPES:
+            condition.removeItem(condition.findText("IN"))
+
+        if tag_row is None or tag_row.type not in no_operators_tags:
+            operators_to_reput = ["<", ">", "<=", ">=", "BETWEEN"]
+            for operator in operators_to_reput:
+                is_op_existing = condition.findText(operator) != -1
+                if not is_op_existing:
+                    condition.addItem(operator)
+
+        if tag_row is None or tag_row.type not in populse_db.database.LIST_TYPES:
+            operators_to_reput = ["IN"]
+            for operator in operators_to_reput:
+                is_op_existing = condition.findText(operator) != -1
+                if not is_op_existing:
+                    condition.addItem(operator)
+
+        condition.model().sort(0)
+
     def displayValueRules(self, choice, value):
         """
         Called when the condition choice is changed, to update the placeholder text
-        :param choice:
-        :param value:
-        :return:
+        :param choice: choice
+        :param value: value
         """
         if choice.currentText() == "BETWEEN":
             value.setDisabled(False)
@@ -135,7 +184,7 @@ class AdvancedSearch(QWidget):
         """
 
         # Old values stored
-        (fields, conditions, values, links, nots) = self.get_filters()
+        (fields, conditions, values, links, nots) = self.get_filters(False)
 
         # We remove the old layout
         self.clearLayout(self.layout())
@@ -246,7 +295,7 @@ class AdvancedSearch(QWidget):
         Called to start the search
         """
 
-        (fields, conditions, values, links, nots) = self.get_filters()  # Filters gotten
+        (fields, conditions, values, links, nots) = self.get_filters(True)  # Filters gotten
 
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
@@ -254,7 +303,7 @@ class AdvancedSearch(QWidget):
         try:
 
             filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-            result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+            result = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
 
             # DataBrowser updated with the new selection
             result_names = [getattr(document, TAG_FILENAME) for document in result]
@@ -275,7 +324,10 @@ class AdvancedSearch(QWidget):
             msg.exec()
             result_names = self.scans_list
 
+        #print(result_names)
+
         self.dataBrowser.table_data.scans_to_visualize = result_names
+        self.dataBrowser.table_data.scans_to_search = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
     def prepare_filters(self, links, fields, conditions, values, nots, scans):
@@ -348,10 +400,11 @@ class AdvancedSearch(QWidget):
 
         return final_query
 
-    def get_filters(self):
+    def get_filters(self, replace_all_by_fields):
         """
         To get the filters in list form
-        :return: Lists of filters
+        :param replace_all_by_fields: to replace All visualized tags by the list of visible fields
+        :return: Lists of filters (fields, conditions, values, links, nots)
         """
 
         # Lists to get all the data of the search
@@ -373,17 +426,36 @@ class AdvancedSearch(QWidget):
                         if child.currentText() != "All visualized tags":
                             fields.append([child.currentText()])
                         else:
-                            tags = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if field.visibility]
-                            fields.append(tags)
+                            if replace_all_by_fields:
+                                fields.append(self.project.database.get_visibles())
+                            else:
+                                fields.append([child.currentText()])
                     elif childName == 'value':
                         values.append(child.displayText())
                     elif childName == 'not':
                         nots.append(child.currentText())
 
+        operators = ["<", ">", "<=", ">=", "BETWEEN"]
+        no_operators_tags = []
+        for list_type in populse_db.database.LIST_TYPES:
+            no_operators_tags.append(list_type)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
+        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+
         # Converting BETWEEN and IN values into lists
         for i in range(0, len(conditions)):
             if conditions[i] == "BETWEEN" or conditions[i] == "IN":
                 values[i] = values[i].split("; ")
+            if conditions[i] == "IN":
+                for tag in fields[i].copy():
+                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    if tag_row.type in populse_db.database.LIST_TYPES:
+                        fields[i].remove(tag)
+            elif conditions[i] in operators:
+                for tag in fields[i].copy():
+                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    if tag_row.type in no_operators_tags:
+                        fields[i].remove(tag)
 
         return fields, conditions, values, links, nots
 
@@ -408,10 +480,12 @@ class AdvancedSearch(QWidget):
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
             row[1].setCurrentText(nots[i])
-            if len(fields[i]) > 1:
-                row[2].setCurrentText("All visualized tags")
-            else:
-                row[2].setCurrentText(fields[i][0])
+            row[2].setCurrentText(fields[i][0])
+
+            # Replacing all visualized tags by the current list of visible tags
+            if fields[i][0] == "All visualized tags":
+                fields[i] = self.project.database.get_visibles()
+
             row[3].setCurrentText(conditions[i])
             row[4].setText(str(values[i]))
 
@@ -423,7 +497,7 @@ class AdvancedSearch(QWidget):
             try:
 
                 filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
-                result = self.project.database.filter_documents(COLLECTION_CURRENT, filter_query)
+                result = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
 
                 # DataBrowser updated with the new selection
                 result_names = [getattr(document, TAG_FILENAME) for document in result]

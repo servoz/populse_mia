@@ -12,8 +12,9 @@ class Ui_Dialog_remove_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_remove_tag = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, databrowser, project):
         super().__init__()
+        self.databrowser = databrowser
         self.project = project
         self.setWindowTitle("Remove a tag")
         self.pop_up()
@@ -61,7 +62,7 @@ class Ui_Dialog_remove_tag(QDialog):
 
         self.setLayout(vbox)
 
-        for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+        for tag in self.project.session.get_fields(COLLECTION_CURRENT):
             if tag.origin == TAG_ORIGIN_USER:
                 item = QtWidgets.QListWidgetItem()
                 self.list_widget_tags.addItem(item)
@@ -78,13 +79,13 @@ class Ui_Dialog_remove_tag(QDialog):
 
         if str_search != "":
             return_list = []
-            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields(COLLECTION_CURRENT):
                 if tag.origin == TAG_ORIGIN_USER:
                     if str_search.upper() in tag.name.upper():
                         return_list.append(tag.name)
         else:
             return_list = []
-            for tag in self.project.database.get_fields(COLLECTION_CURRENT):
+            for tag in self.project.session.get_fields(COLLECTION_CURRENT):
                 if tag.origin == TAG_ORIGIN_USER:
                     return_list.append(tag.name)
         self.list_widget_tags.clear()
@@ -96,11 +97,9 @@ class Ui_Dialog_remove_tag(QDialog):
     def ok_action(self):
 
         self.accept()
-        self.close()
-
-    def get_values(self):
         self.tag_names_to_remove = []
         for item in self.list_widget_tags.selectedItems():
             self.tag_names_to_remove.append(item.text())
-        return self.tag_names_to_remove
+        self.databrowser.remove_tag_infos(self.tag_names_to_remove)
+        self.close()
 

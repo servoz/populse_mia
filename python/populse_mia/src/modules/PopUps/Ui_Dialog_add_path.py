@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
 import os
 import shutil
 import hashlib
@@ -10,11 +10,11 @@ class Ui_Dialog_add_path(QDialog):
     Is called when the user wants to add a path to the project
     """
 
-    def __init__(self, project, table):
+    def __init__(self, project, databrowser):
 
         super().__init__()
         self.project = project
-        self.table = table
+        self.databrowser = databrowser
         self.setWindowTitle("Add a path")
 
         vbox_layout = QVBoxLayout()
@@ -62,6 +62,11 @@ class Ui_Dialog_add_path(QDialog):
         path = self.file_line_edit.text()
         path_type = self.type_line_edit.text()
         if path != "" and os.path.exists(path) and path_type != "":
+
+            # For history
+            historyMaker = []
+            historyMaker.append("add_scans")
+
             path = os.path.relpath(path)
             filename = os.path.basename(path)
             copy_path = os.path.join(self.project.folder, "data", "downloaded_data", filename)
@@ -70,12 +75,42 @@ class Ui_Dialog_add_path(QDialog):
                 data = scan_file.read()
                 checksum = hashlib.md5(data).hexdigest()
             path = os.path.join("data", "downloaded_data", filename)
-            self.project.database.add_document(COLLECTION_CURRENT, path)
-            self.project.database.add_document(COLLECTION_INITIAL, path)
-            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
-            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
-            self.project.database.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
-            self.project.database.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
-            self.table.scans_to_visualize.append(path)
-            self.table.add_rows(self.project.database.get_documents_names(COLLECTION_CURRENT))
-        self.close()
+            self.project.session.add_document(COLLECTION_CURRENT, path)
+            self.project.session.add_document(COLLECTION_INITIAL, path)
+            values_added = []
+            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
+            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
+            values_added.append([path, TAG_TYPE, path_type, path_type])
+            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
+            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
+            values_added.append([path, TAG_CHECKSUM, checksum, checksum])
+
+            # For history
+            historyMaker.append([path])
+            historyMaker.append(values_added)
+            self.project.undos.append(historyMaker)
+            self.project.redos.clear()
+
+            # Databrowser updated
+            self.databrowser.table_data.scans_to_visualize = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
+            self.databrowser.table_data.scans_to_search = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
+            self.databrowser.table_data.add_columns()
+            self.databrowser.table_data.fill_headers()
+            self.databrowser.table_data.add_rows([path])
+            self.databrowser.reset_search_bar()
+            self.databrowser.frame_advanced_search.setHidden(True)
+            self.databrowser.advanced_search.rows = []
+            self.close()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText(
+                "Invalid arguments")
+            msg.setInformativeText(
+                "The path must exist.\nThe path type can't be empty.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()

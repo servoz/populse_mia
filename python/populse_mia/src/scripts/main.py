@@ -11,11 +11,13 @@ import atexit
 
 imageViewer = None
 
+"""
 @atexit.register
+"""
 def clean_up():
-    """
+    '''
     Cleans up the software during "normal" closing
-    """
+    '''
 
     global imageViewer
 
@@ -35,6 +37,8 @@ def launch_mia():
         # log the exception here
 
         print("excepthook")
+
+        clean_up()
 
         # then call the default handler
         sys.__excepthook__(type, value, tback)

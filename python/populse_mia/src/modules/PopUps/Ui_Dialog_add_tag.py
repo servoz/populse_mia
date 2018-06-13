@@ -224,9 +224,10 @@ class Ui_Dialog_add_tag(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_add_tag = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, databrowser, project):
         super().__init__()
         self.project = project
+        self.databrowser = databrowser
         self.type = populse_db.database.FIELD_TYPE_STRING # Type is string by default
         self.pop_up()
         self.setMinimumWidth(700)
@@ -303,7 +304,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.combo_box_type.addItem("Date List")
         self.combo_box_type.addItem("Datetime List")
         self.combo_box_type.addItem("Time List")
-        self.combo_box_type.activated[str].connect(self.on_activated)
+        self.combo_box_type.currentTextChanged.connect(self.on_activated)
 
         # Layouts
         v_box_labels = QVBoxLayout()
@@ -354,6 +355,9 @@ class Ui_Dialog_add_tag(QDialog):
         Type updated
         :param text: New type
         """
+
+        print("on activated")
+
         if text == "String":
             self.type = populse_db.database.FIELD_TYPE_STRING
         elif text == "Integer":
@@ -393,7 +397,7 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Tag name checked
         name_already_exists = False
-        if self.text_edit_tag_name.text() in self.project.database.get_fields_names(COLLECTION_CURRENT):
+        if self.text_edit_tag_name.text() in self.project.session.get_fields_names(COLLECTION_CURRENT):
             name_already_exists = True
 
         # Default value checked
@@ -402,47 +406,45 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Tag name can't be empty
         if self.text_edit_tag_name.text() == "":
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("The tag name cannot be empty")
-            msg.setInformativeText("Please enter a tag name")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("The tag name cannot be empty")
+            self.msg.setInformativeText("Please enter a tag name")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
 
         # Tag name can't exist already
         elif name_already_exists:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("This tag name already exists")
-            msg.setInformativeText("Please select another tag name")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("This tag name already exists")
+            self.msg.setInformativeText("Please select another tag name")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
 
         # The default value must be valid
         elif wrong_default_value_type:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Invalid default value")
-            msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type + ".")
-            msg.setWindowTitle("Error")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Invalid default value")
+            self.msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type + ".")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
 
         # Ok
         else:
             self.accept()
+            self.new_tag_name = self.text_edit_tag_name.text()
+            self.new_default_value = self.text_edit_default_value.text()
+            self.new_tag_description = self.text_edit_description_value.text()
+            self.new_tag_unit = self.combo_box_unit.currentText()
+            if self.new_tag_unit == '':
+                self.new_tag_unit = None
+            self.databrowser.add_tag_infos(self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit)
             self.close()
-
-    def get_values(self):
-        self.new_tag_name = self.text_edit_tag_name.text()
-        self.new_default_value = self.text_edit_default_value.text()
-        self.new_tag_description = self.text_edit_description_value.text()
-        self.new_tag_unit = self.combo_box_unit.currentText()
-        if self.new_tag_unit == '':
-            self.new_tag_unit = None
-        return self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit
