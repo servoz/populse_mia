@@ -21,7 +21,7 @@ TAG_CHECKSUM = "Checksum"
 TAG_TYPE = "Type"
 TAG_EXP_TYPE = "Exp Type"
 TAG_FILENAME = "FileName"
-TAG_BRICK = "Brick"
+TAG_BRICKS = "Bricks"
 BRICK_ID = "ID"
 BRICK_NAME = "Name"
 BRICK_INPUTS = "Input(s)"
@@ -100,8 +100,8 @@ class Project:
             self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_CURRENT, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_CURRENT, TAG_BRICK, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_BRICK, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
 
             self.session.add_field(COLLECTION_BRICK, BRICK_NAME, populse_db.database.FIELD_TYPE_STRING, "Brick name", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, populse_db.database.FIELD_TYPE_LIST_STRING, "Brick input(s)", True, TAG_ORIGIN_BUILTIN, None, None)

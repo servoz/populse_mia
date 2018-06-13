@@ -1,7 +1,7 @@
 import unittest
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN
+from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
@@ -36,16 +36,19 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertIsInstance(self.project, Project)
         self.assertEqual(self.imageViewer.project.getName(), "Unnamed project")
         tags = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
-        self.assertEqual(len(tags), 3)
-        self.assertTrue("Checksum" in tags)
-        self.assertTrue("FileName" in tags)
-        self.assertTrue("Type" in tags)
+        self.assertEqual(len(tags), 5)
+        self.assertTrue(TAG_CHECKSUM in tags)
+        self.assertTrue(TAG_FILENAME in tags)
+        self.assertTrue(TAG_TYPE in tags)
+        self.assertTrue(TAG_EXP_TYPE in tags)
+        self.assertTrue(TAG_BRICKS in tags)
         self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), [])
         self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), [])
         collections = self.imageViewer.project.session.get_collections_names()
-        self.assertEqual(len(collections), 2)
+        self.assertEqual(len(collections), 3)
         self.assertTrue(COLLECTION_INITIAL in collections)
         self.assertTrue(COLLECTION_CURRENT in collections)
+        self.assertTrue(COLLECTION_BRICK in collections)
         self.assertEqual(self.imageViewer.windowTitle(), "MIA2 - Multiparametric Image Analysis 2 - Unnamed project")
 
     def test_projects_removed_from_current_projects(self):
@@ -136,12 +139,12 @@ class TestMIADataBrowser(unittest.TestCase):
 
         clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
         clone_tag.line_edit_new_tag_name.setText("Test")
-        clone_tag.list_widget_tags.setCurrentRow(0) # FileName tag selected
+        clone_tag.list_widget_tags.setCurrentRow(0) # Bricks tag selected
         QTest.mouseClick(clone_tag.push_button_ok, 1)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
         test_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, "Test")
-        filename_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, "FileName")
+        filename_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, TAG_BRICKS)
         self.assertEqual(test_row.description, filename_row.description)
         self.assertEqual(test_row.unit, filename_row.unit)
         self.assertEqual(test_row.default_value, filename_row.default_value)
@@ -149,7 +152,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
         self.assertEqual(test_row.visibility, True)
         test_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, "Test")
-        filename_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, "FileName")
+        filename_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, TAG_BRICKS)
         self.assertEqual(test_row.description, filename_row.description)
         self.assertEqual(test_row.unit, filename_row.unit)
         self.assertEqual(test_row.default_value, filename_row.default_value)
