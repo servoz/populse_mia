@@ -47,6 +47,8 @@ class Main_Window(QMainWindow):
         super(Main_Window, self).__init__()
 
         self.project = project
+        app_icon = QIcon(os.path.join('..', 'sources_images', 'lyon.png'))
+        self.setWindowIcon(app_icon)
 
         ############### initial setting ############################################################
         config = Config()
