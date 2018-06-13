@@ -63,6 +63,7 @@ class PipelineManagerTab(QWidget):
         self.textedit.setStyleSheet("background-color : lightgray")
 
         self.nodeController = NodeController(self.project, self.scan_list)
+        self.nodeController.visibles_tags = self.project.session.get_visibles()
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)
@@ -227,6 +228,7 @@ class PipelineManagerTab(QWidget):
         self.project = project
         self.nodeController.project = project
         self.diagramView.project = project
+        self.nodeController.visibles_tags = self.project.session.get_visibles()
 
     def controller_value_changed(self, signal_list):
         case = signal_list.pop(0)

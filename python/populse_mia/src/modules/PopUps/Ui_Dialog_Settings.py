@@ -30,7 +30,7 @@ class Ui_Dialog_Settings(QDialog):
         self.tab_widget.setEnabled(True)
 
         # The 'Visualized tags" tab
-        self.tab_tags = Ui_Visualized_Tags(database)
+        self.tab_tags = Ui_Visualized_Tags(database, database.session.get_visibles())
         self.tab_tags.setObjectName("tab_tags")
         self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
 
@@ -69,8 +69,6 @@ class Ui_Dialog_Settings(QDialog):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
         new_visibilities.append(TAG_FILENAME)
-        project.session.get_field(COLLECTION_CURRENT, TAG_FILENAME).visibility = True
-        project.session.get_field(COLLECTION_INITIAL, TAG_FILENAME).visibility = True
         project.session.set_visibles(new_visibilities)
         historyMaker.append(new_visibilities)
         project.undos.append(historyMaker)

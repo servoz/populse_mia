@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog
 import DataBrowser.DataBrowser
+from Project.Project import TAG_FILENAME
 
 class Ui_DataBrowser_Current_Selection(QDialog):
     """
@@ -17,7 +18,7 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         vbox_layout = QVBoxLayout()
 
         # Adding databrowser table
-        databrowser_table = DataBrowser.DataBrowser.TableDataBrowser(self.project, self.databrowser, False, False, False)
+        databrowser_table = DataBrowser.DataBrowser.TableDataBrowser(self.project, self.databrowser, [TAG_FILENAME], False, False)
         old_scan_list = databrowser_table.scans_to_visualize
         databrowser_table.scans_to_visualize = self.filter
         databrowser_table.update_visualized_rows(old_scan_list)

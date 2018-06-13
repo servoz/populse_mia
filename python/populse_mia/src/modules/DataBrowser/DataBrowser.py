@@ -97,7 +97,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(project, self, True, True, True)
+        self.table_data = TableDataBrowser(project, self, self.project.session.get_visibles(), True, True)
         self.table_data.setObjectName("table_data")
 
         ## LAYOUTS ##
@@ -563,13 +563,13 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, project, parent, show_tags, update_values, activate_selection):
+    def __init__(self, project, parent, tags_to_display, update_values, activate_selection):
 
         super().__init__()
 
         self.project = project
         self.parent = parent
-        self.show_tags = show_tags
+        self.tags_to_display = tags_to_display
         self.update_values = update_values
         self.activate_selection = activate_selection
 
@@ -583,7 +583,8 @@ class TableDataBrowser(QTableWidget):
 
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(partial(self.context_menu_table))
+        if self.activate_selection:
+            self.customContextMenuRequested.connect(partial(self.context_menu_table))
         self.itemChanged.connect(self.change_cell_color)
         if activate_selection:
             self.itemSelectionChanged.connect(self.selection_changed)
@@ -593,7 +594,7 @@ class TableDataBrowser(QTableWidget):
         self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
 
-        self.update_table()
+        self.update_table(True)
 
         if not self.update_values:
             self.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -795,7 +796,7 @@ class TableDataBrowser(QTableWidget):
             self.selectColumn(col)
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
-    def update_table(self):
+    def update_table(self, take_tags_to_update=False):
         """
         This method will fill the tables in the 'Table' tab with the project data
         Only called when switching project to completely reset the table
@@ -820,7 +821,7 @@ class TableDataBrowser(QTableWidget):
         _translate = QtCore.QCoreApplication.translate
 
         # Sort visual management
-        self.fill_headers()
+        self.fill_headers(take_tags_to_update)
 
         # Cells filled
         self.fill_cells_update_table()
@@ -849,24 +850,19 @@ class TableDataBrowser(QTableWidget):
         # When the user changes one item of the table, the background will change
         self.itemChanged.connect(self.change_cell_color)
 
-    def fill_headers(self):
+    def fill_headers(self, take_tags_to_update=False):
         """
         To initialize and fill the headers of the table
         """
 
         # Sorting the list of tags in alphabetical order, but keeping FileName first
-        if self.show_tags:
-            tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
-            tags.remove(TAG_CHECKSUM)
-            tags.remove(TAG_FILENAME)
-            tags = sorted(tags)
-            tags.insert(0, TAG_FILENAME)
-        else:
-            tags = [TAG_FILENAME]
+        tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
+        tags.remove(TAG_CHECKSUM)
+        tags.remove(TAG_FILENAME)
+        tags = sorted(tags)
+        tags.insert(0, TAG_FILENAME)
 
         self.setColumnCount(len(tags))
-
-        visibles = self.project.session.get_visibles()
 
         column = 0
         # Filling the headers
@@ -892,11 +888,18 @@ class TableDataBrowser(QTableWidget):
                     self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
-                if tag_name in visibles:
-                    self.setColumnHidden(column, False)
+                if take_tags_to_update:
+                    if tag_name in self.tags_to_display:
+                        self.setColumnHidden(column, False)
 
+                    else:
+                        self.setColumnHidden(column, True)
                 else:
-                    self.setColumnHidden(column, True)
+                    if element.visibility:
+                        self.setColumnHidden(column, False)
+
+                    else:
+                        self.setColumnHidden(column, True)
 
             self.setHorizontalHeaderItem(column, item)
 
@@ -1313,7 +1316,7 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setGeometry(300, 200, 800, 600)
 
         if self.pop_up.exec_():
-            self.update_visualized_columns(old_tags)  # Columns updated
+            self.update_visualized_columns(old_tags, self.project.session.get_visibles())  # Columns updated
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.project)
@@ -1395,15 +1398,15 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.connect(self.change_cell_color)
 
-    def update_visualized_columns(self, old_tags):
+    def update_visualized_columns(self, old_tags, visibles):
         """
         Called to set the visualized tags in the table
         :param old_tags: Old list of visualized tags
+        :param visibles: List of tags to display
         """
 
-        self.itemSelectionChanged.disconnect()
-
-        visibles = self.project.session.get_visibles()
+        if self.activate_selection:
+            self.itemSelectionChanged.disconnect()
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
@@ -1415,9 +1418,9 @@ class TableDataBrowser(QTableWidget):
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Selection updated
-        self.update_selection()
-
-        self.itemSelectionChanged.connect(self.selection_changed)
+        if self.activate_selection:
+            self.update_selection()
+            self.itemSelectionChanged.connect(self.selection_changed)
 
         self.resizeColumnsToContents()
 

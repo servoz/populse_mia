@@ -562,7 +562,7 @@ class Main_Window(QMainWindow):
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_():
-            self.data_browser.table_data.update_visualized_columns(old_tags)
+            self.data_browser.table_data.update_visualized_columns(old_tags, self.project.session.get_visibles())
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """

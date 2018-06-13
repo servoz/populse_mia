@@ -8,7 +8,7 @@ import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton
+    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton, QDialog, QDialogButtonBox
 
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
@@ -17,6 +17,9 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
+
+from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
+from Project.Project import TAG_FILENAME
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -267,7 +270,7 @@ class NodeController(QWidget):
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def display_filter(self, node_name, plug_name, parameters, process):
-        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name)
+        pop_up = PlugFilter(self.project, self.scan_list, process, self, node_name, plug_name)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
@@ -326,13 +329,14 @@ class PlugFilter(QWidget):
 
     plug_value_changed = pyqtSignal(list)
 
-    def __init__(self, project, scans_list, process, node_name="", plug_name="", parent=None):
+    def __init__(self, project, scans_list, process, node_controller, node_name="", plug_name="", parent=None):
         super(PlugFilter, self).__init__(parent)
 
         from DataBrowser.RapidSearch import RapidSearch
         from Project.Project import COLLECTION_CURRENT
 
         self.project = project
+        self.node_controller = node_controller
 
         if scans_list:
             scans_list_copy = []
@@ -351,7 +355,7 @@ class PlugFilter(QWidget):
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
         # Graphical components
-        self.table_data = TableDataBrowser(self.project, self, True, False, False)
+        self.table_data = TableDataBrowser(self.project, self, self.node_controller.visibles_tags, False, False)
 
         # Reducing the list of scans to selection
         all_scans = self.table_data.scans_to_visualize
@@ -375,6 +379,9 @@ class PlugFilter(QWidget):
         self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
         self.advanced_search.show_search()
 
+        push_button_tags = QPushButton("Visualized tags")
+        push_button_tags.clicked.connect(self.update_tags)
+
         push_button_ok = QPushButton("OK")
         push_button_ok.clicked.connect(self.ok_clicked)
 
@@ -383,6 +390,7 @@ class PlugFilter(QWidget):
 
         # Layout
         buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(push_button_tags)
         buttons_layout.addStretch(1)
         buttons_layout.addWidget(push_button_ok)
         buttons_layout.addWidget(push_button_cancel)
@@ -397,6 +405,34 @@ class PlugFilter(QWidget):
 
         self.setMinimumWidth(1000)
         self.setMinimumHeight(1000)
+
+    def update_tags(self):
+        """
+        Updates the list of visualized tags
+        """
+
+        dialog = QDialog()
+        visualized_tags = Ui_Visualized_Tags(self.project, self.node_controller.visibles_tags)
+        layout = QVBoxLayout()
+        layout.addWidget(visualized_tags)
+        buttons_layout = QHBoxLayout()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        buttons_layout.addWidget(buttons)
+        layout.addLayout(buttons_layout)
+        dialog.setLayout(layout)
+        dialog.show()
+        dialog.setMinimumHeight(600)
+        dialog.setMinimumWidth(600)
+        if dialog.exec():
+            new_visibilities = []
+            for x in range(visualized_tags.list_widget_selected_tags.count()):
+                visible_tag = visualized_tags.list_widget_selected_tags.item(x).text()
+                new_visibilities.append(visible_tag)
+            new_visibilities.append(TAG_FILENAME)
+            self.table_data.update_visualized_columns(self.node_controller.visibles_tags, new_visibilities)
+            self.node_controller.visibles_tags = new_visibilities
 
     def reset_search_bar(self):
         self.rapid_search.setText("")
@@ -433,6 +469,7 @@ class PlugFilter(QWidget):
             return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
 
         self.table_data.scans_to_visualize = return_list
+        self.advanced_search.scans_list = return_list
 
         # Rows updated
         self.table_data.update_visualized_rows(old_scan_list)
