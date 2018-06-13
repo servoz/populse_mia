@@ -17,11 +17,6 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
-<<<<<<< HEAD
-from Project.Filter import Filter
-from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
-=======
->>>>>>> master
 
 if sys.version_info[0] >= 3:
     unicode = str
