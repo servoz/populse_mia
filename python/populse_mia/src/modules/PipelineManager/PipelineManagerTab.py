@@ -15,8 +15,9 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
+from Project.Project import COLLECTION_CURRENT
 
-from traits.api import TraitListObject
+from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig
 from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 from .process_library import ProcessLibraryWidget
@@ -283,10 +284,10 @@ class PipelineManagerTab(QWidget):
 
                 # If the file name is already in the database, no exception is raised
                 # but the user is warned
-                if self.project.database.get_document(p_value):
+                if self.project.database.get_document(COLLECTION_CURRENT, p_value):
                     print("Path {0} already in database.".format(p_value))
                 else:
-                    self.project.database.add_document(p_value)
+                    self.project.database.add_document(COLLECTION_CURRENT, p_value)
 
         pipeline_scene = self.diagramView.scene
 
@@ -331,7 +332,8 @@ class PipelineManagerTab(QWidget):
                         for element in plug_value:
                             add_plug_value_to_database(element)
                     else:"""
-                    add_plug_value_to_database(plug_value)
+                    if plug_value not in ["<undefined>", Undefined]:
+                        add_plug_value_to_database(plug_value)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -342,8 +344,6 @@ class PipelineManagerTab(QWidget):
                         nodes_to_check.append(dest_node_name)
 
                     try:
-                        print('PLUG_VALUE', plug_value)
-                        print('PLUG_NAM', plug_name)
                         pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     except TraitError:
                         if type(plug_value) is list and len(plug_value) == 1:

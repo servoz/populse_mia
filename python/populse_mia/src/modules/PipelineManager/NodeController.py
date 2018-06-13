@@ -17,6 +17,7 @@ from soma.controller import trait_ids
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
 from Project.Filter import Filter
+from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -341,7 +342,7 @@ class PlugFilter(QWidget):
 
             self.scans_list = scans_list_copy
         else:
-            self.scans_list = self.project.database.get_documents_names()
+            self.scans_list = self.project.database.get_documents_names(COLLECTION_CURRENT)
 
         self.process = process
         filter_to_apply = self.project.currentFilter
@@ -387,8 +388,6 @@ class PlugFilter(QWidget):
 
     def set_plug_value(self):
         """ Emitting a signal to set the file names to the plug value. """
-
-        from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 
         (fields, conditions, values, links, nots) = self.advanced_search.get_filters()
         # Result gotten
