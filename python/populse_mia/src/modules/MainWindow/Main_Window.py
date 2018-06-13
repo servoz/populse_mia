@@ -285,6 +285,8 @@ class Main_Window(QMainWindow):
         self.pipeline_manager = PipelineManagerTab(self.project, [])
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
+        self.tabs.currentChanged.connect(self.tab_changed)
+
         verticalLayout = QVBoxLayout()
         verticalLayout.addWidget(self.tabs)
         verticalLayout.addWidget(self.textInfo)
@@ -601,3 +603,29 @@ class Main_Window(QMainWindow):
 
         else:
             pass
+
+    def tab_changed(self):
+        """
+        Method called when the tab is changed
+        """
+
+        if self.tabs.currentIndex() == 0:
+            # DataBrowser
+            old_scans = self.data_browser.table_data.scans_to_visualize
+            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.data_browser.table_data.add_columns()
+            self.data_browser.table_data.fill_headers()
+            self.data_browser.table_data.add_rows(documents)
+
+            # We open the advanced search + search_bar
+            self.data_browser.table_data.scans_to_visualize = documents
+            self.data_browser.table_data.scans_to_search = documents
+            self.data_browser.table_data.update_visualized_rows(old_scans)
+
+            self.data_browser.search_bar.setText(self.project.currentFilter.search_bar)
+
+            if len(self.project.currentFilter.nots) > 0:
+                self.data_browser.frame_advanced_search.setHidden(False)
+                self.data_browser.advanced_search.scans_list = self.data_browser.table_data.scans_to_visualize
+                self.data_browser.advanced_search.show_search()
+                self.data_browser.advanced_search.apply_filter(self.project.currentFilter)

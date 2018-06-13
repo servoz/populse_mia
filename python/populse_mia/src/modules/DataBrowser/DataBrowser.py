@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
 
 from DataBrowser.RapidSearch import RapidSearch
 from DataBrowser.AdvancedSearch import AdvancedSearch
@@ -97,7 +97,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(project, self, True, True)
+        self.table_data = TableDataBrowser(project, self, True, True, True)
         self.table_data.setObjectName("table_data")
 
         ## LAYOUTS ##
@@ -230,22 +230,25 @@ class DataBrowser(QWidget):
         To open a project filter saved before
         """
 
-        oldFilter = self.project.currentFilter
-
         self.popUp = Ui_Select_Filter(self.project)
         if self.popUp.exec_():
             pass
 
         filterToApply = self.project.currentFilter
 
-        if oldFilter != filterToApply:
-            self.search_bar.setText(filterToApply.search_bar)
+        # We open the advanced search + search_bar
+        old_scans = self.table_data.scans_to_visualize
+        documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        self.table_data.scans_to_visualize = documents
+        self.table_data.scans_to_search = documents
+        self.table_data.update_visualized_rows(old_scans)
 
-            # We open the advanced search
+        self.search_bar.setText(filterToApply.search_bar)
+
+        if len(filterToApply.nots) > 0:
             self.frame_advanced_search.setHidden(False)
             self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.advanced_search.show_search()
-
             self.advanced_search.apply_filter(filterToApply)
 
     def count_table_pop_up(self):
@@ -389,6 +392,11 @@ class DataBrowser(QWidget):
             # All the scans are reput in the DataBrowser
             self.table_data.scans_to_visualize = self.advanced_search.scans_list
             self.table_data.scans_to_search = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.project.currentFilter.nots = []
+            self.project.currentFilter.values = []
+            self.project.currentFilter.fields = []
+            self.project.currentFilter.links = []
+            self.project.currentFilter.conditions = []
 
             self.table_data.update_visualized_rows(old_scans_list)
 
@@ -555,14 +563,15 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, project, parent, activate_selection, tags_to_display):
+    def __init__(self, project, parent, show_tags, update_values, activate_selection):
+
+        super().__init__()
 
         self.project = project
         self.parent = parent
+        self.show_tags = show_tags
+        self.update_values = update_values
         self.activate_selection = activate_selection
-        self.tags_to_display = tags_to_display
-
-        super().__init__()
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
@@ -578,11 +587,16 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
         if activate_selection:
             self.itemSelectionChanged.connect(self.selection_changed)
+        else:
+            self.setSelectionMode(QAbstractItemView.NoSelection)
         self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
         self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
 
         self.update_table()
+
+        if not self.update_values:
+            self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def add_path(self):
         """
@@ -841,7 +855,7 @@ class TableDataBrowser(QTableWidget):
         """
 
         # Sorting the list of tags in alphabetical order, but keeping FileName first
-        if self.tags_to_display:
+        if self.show_tags:
             tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
             tags.remove(TAG_CHECKSUM)
             tags.remove(TAG_FILENAME)

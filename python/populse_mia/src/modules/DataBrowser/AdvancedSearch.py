@@ -308,6 +308,12 @@ class AdvancedSearch(QWidget):
             # DataBrowser updated with the new selection
             result_names = [getattr(document, TAG_FILENAME) for document in result]
 
+            self.project.currentFilter.nots = nots
+            self.project.currentFilter.values = values
+            self.project.currentFilter.fields = fields
+            self.project.currentFilter.links = links
+            self.project.currentFilter.conditions = conditions
+
         except Exception as e:
             print(e)
 
