@@ -14,11 +14,20 @@ from Project.database_mia import Database_mia, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_US
 # MIA collections
 COLLECTION_CURRENT = "current"
 COLLECTION_INITIAL = "initial"
+COLLECTION_BRICK = "brick"
 
 # MIA tags
 TAG_CHECKSUM = "Checksum"
 TAG_TYPE = "Type"
+TAG_EXP_TYPE = "Exp Type"
 TAG_FILENAME = "FileName"
+TAG_BRICK = "Brick"
+BRICK_ID = "ID"
+BRICK_NAME = "Name"
+BRICK_INPUTS = "Input(s)"
+BRICK_OUTPUTS = "Output(s)"
+BRICK_INIT = "Init"
+BRICK_EXEC = "Exec"
 
 class Project:
 
@@ -82,12 +91,23 @@ class Project:
             # Adding current and initial collections
             self.session.add_collection(COLLECTION_CURRENT, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_collection(COLLECTION_INITIAL, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_collection(COLLECTION_BRICK, BRICK_ID, True, TAG_ORIGIN_BUILTIN, None, None)
 
             # Tags manually added
             self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
             self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_BRICK, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_BRICK, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+
+            self.session.add_field(COLLECTION_BRICK, BRICK_NAME, populse_db.database.FIELD_TYPE_STRING, "Brick name", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, populse_db.database.FIELD_TYPE_LIST_STRING, "Brick input(s)", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_OUTPUTS, populse_db.database.FIELD_TYPE_LIST_STRING, "Brick output(s)", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INIT, populse_db.database.FIELD_TYPE_STRING, "Brick init status", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, populse_db.database.FIELD_TYPE_STRING, "Brick exec status", True, TAG_ORIGIN_BUILTIN, None, None)
 
         self.properties = self.loadProperties()
 
