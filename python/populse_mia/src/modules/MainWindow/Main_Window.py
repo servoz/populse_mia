@@ -622,7 +622,9 @@ class Main_Window(QMainWindow):
             self.data_browser.table_data.scans_to_search = documents
             self.data_browser.table_data.update_visualized_rows(old_scans)
 
-            self.data_browser.search_bar.setText(self.project.currentFilter.search_bar)
+            old_search = self.project.currentFilter.search_bar
+            self.data_browser.reset_search_bar()
+            self.data_browser.search_bar.setText(old_search)
 
             if len(self.project.currentFilter.nots) > 0:
                 self.data_browser.frame_advanced_search.setHidden(False)
