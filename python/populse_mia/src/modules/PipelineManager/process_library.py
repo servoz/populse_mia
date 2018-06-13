@@ -145,10 +145,7 @@ class ProcessLibraryWidget(QWidget):
 
         for path in self.paths:
             # Adding the module path to the system path
-            print("ADDING PATH TO SYS: ", path)
             sys.path.insert(0, os.path.abspath(path))
-            #sys.path.append(path)
-            print("SYS.PATH", sys.path)
 
     def save_config(self):
         self.process_config["Packages"] = self.packages

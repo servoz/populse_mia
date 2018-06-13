@@ -416,8 +416,6 @@ class PlugFilter(QWidget):
 
         old_scan_list = self.table_data.scans_to_visualize
 
-        return_list = []
-
         # Every scan taken if empty search
         if str_search == "":
             return_list = self.table_data.scans_to_search

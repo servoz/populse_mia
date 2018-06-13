@@ -15,8 +15,9 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
+from Project.Project import COLLECTION_CURRENT
 
-from traits.api import TraitListObject
+from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig
 from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 from .process_library import ProcessLibraryWidget
@@ -334,7 +335,8 @@ class PipelineManagerTab(QWidget):
                         for element in plug_value:
                             add_plug_value_to_database(element)
                     else:"""
-                    add_plug_value_to_database(plug_value)
+                    if plug_value not in ["<undefined>", Undefined]:
+                        add_plug_value_to_database(plug_value)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -357,10 +359,10 @@ class PipelineManagerTab(QWidget):
 
         # THIS IS A TEST
         # TODO: CONTINUE
-        dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
+        """dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
         import yaml
         with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)
+            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
