@@ -347,8 +347,8 @@ class PipelineManagerTab(QWidget):
                 continue
 
             # Adding I/O to database history
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, str(process.get_inputs()))
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, str(process.get_outputs()))
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
 
             if process_outputs:
 
@@ -383,8 +383,8 @@ class PipelineManagerTab(QWidget):
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
 
             # Adding I/O to database history again to update outputs
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, str(process.get_inputs()))
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, str(process.get_outputs()))
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
 
             # Setting brick init state if init finished correctly
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")

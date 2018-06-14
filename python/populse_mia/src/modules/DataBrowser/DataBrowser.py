@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView, QHeaderView
 
 from DataBrowser.RapidSearch import RapidSearch
 from DataBrowser.AdvancedSearch import AdvancedSearch
@@ -28,7 +28,8 @@ from SoftwareProperties.Config import Config
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type, set_item_data, table_to_database
 import populse_db
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_FILENAME
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, TAG_FILENAME, \
+    TAG_BRICKS, BRICK_NAME
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 not_defined_value = "*Not Defined*"  # Variable shown everywhere when no value for the tag
@@ -941,7 +942,18 @@ class TableDataBrowser(QTableWidget):
                     current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, current_tag)
                     # The scan has a value for the tag
                     if current_value is not None:
-                        set_item_data(item, current_value, self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
+
+                        if current_tag != TAG_BRICKS:
+                            set_item_data(item, current_value, self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
+                        else:
+                            # Tag bricks, display list with hypertext links
+                            brick_names = []
+                            for brick_uuid in current_value:
+                                brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid, BRICK_NAME)
+                                brick_names.append(brick_name)
+                            displayed_value = '\n'.join(map(str, brick_names))
+                            set_item_data(item, displayed_value, populse_db.database.FIELD_TYPE_STRING)
+                            self.setRowHeight(row, 30 * len(brick_names))
 
                     # The scan does not have a value for the tag
                     else:
@@ -1566,7 +1578,18 @@ class TableDataBrowser(QTableWidget):
                     else:
                         cur_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag)
                         if cur_value is not None:
-                            set_item_data(item, cur_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
+                            if tag != TAG_BRICKS:
+                                set_item_data(item, cur_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
+                            else:
+                                # Tag bricks, display list with hypertext links
+                                brick_names = []
+                                for brick_uuid in cur_value:
+                                    brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid,
+                                                                                BRICK_NAME)
+                                    brick_names.append(brick_name)
+                                displayed_value = '\n'.join(map(str, brick_names))
+                                set_item_data(item, displayed_value, populse_db.database.FIELD_TYPE_STRING)
+                                self.setRowHeight(rowCount, 30 * len(brick_names))
                         else:
                             set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                             font = item.font()
