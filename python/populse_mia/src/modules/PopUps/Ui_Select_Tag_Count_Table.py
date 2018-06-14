@@ -8,13 +8,11 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    def __init__(self, project, tag_name_checked=None, visualized_tags_only=False):
+    def __init__(self, project, tags_to_display, tag_name_checked=None):
         super(Ui_Select_Tag_Count_Table, self).__init__(project)
 
-        if visualized_tags_only:
-            visibles = [field.name for field in self.project.database.get_fields(COLLECTION_CURRENT) if
-                        field.visibility]
-            for tag in visibles:
+        for tag in tags_to_display:
+            if tag != TAG_CHECKSUM:
                 item = QtWidgets.QListWidgetItem()
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
                 if tag == tag_name_checked:
@@ -23,21 +21,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
                     item.setCheckState(QtCore.Qt.Unchecked)
                 self.list_widget_tags.addItem(item)
                 item.setText(tag)
-
-        else:
-            # Filling the list and checking the previous selected tag
-            tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
-            tags.remove(TAG_CHECKSUM)
-            for tag in tags:
-                item = QtWidgets.QListWidgetItem()
-                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-                if tag == tag_name_checked:
-                    item.setCheckState(QtCore.Qt.Checked)
-                else:
-                    item.setCheckState(QtCore.Qt.Unchecked)
-                self.list_widget_tags.addItem(item)
-                item.setText(tag)
-            self.list_widget_tags.sortItems()
+        self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
         for idx in range(self.list_widget_tags.count()):
