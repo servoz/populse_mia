@@ -28,6 +28,8 @@ BRICK_INPUTS = "Input(s)"
 BRICK_OUTPUTS = "Output(s)"
 BRICK_INIT = "Init"
 BRICK_EXEC = "Exec"
+BRICK_INIT_TIME = "Init Time"
+BRICK_EXEC_TIME = "Exec Time"
 
 class Project:
 
@@ -40,7 +42,7 @@ class Project:
             self.isTempProject = False
             self.folder = project_root_folder
 
-        # Checks that the projet is not already opened
+        # Checks that the project is not already opened
         config = Config()
         opened_projects = config.get_opened_projects()
         if self.folder not in opened_projects:
@@ -91,7 +93,7 @@ class Project:
             # Adding current and initial collections
             self.session.add_collection(COLLECTION_CURRENT, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_collection(COLLECTION_INITIAL, TAG_FILENAME, True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_collection(COLLECTION_BRICK, BRICK_ID, True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_collection(COLLECTION_BRICK, BRICK_ID, False, TAG_ORIGIN_BUILTIN, None, None)
 
             # Tags manually added
             self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
@@ -100,14 +102,16 @@ class Project:
             self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_CURRENT, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_CURRENT, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_INTEGER, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
 
-            self.session.add_field(COLLECTION_BRICK, BRICK_NAME, populse_db.database.FIELD_TYPE_STRING, "Brick name", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, populse_db.database.FIELD_TYPE_LIST_STRING, "Brick input(s)", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_OUTPUTS, populse_db.database.FIELD_TYPE_LIST_STRING, "Brick output(s)", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_INIT, populse_db.database.FIELD_TYPE_STRING, "Brick init status", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, populse_db.database.FIELD_TYPE_STRING, "Brick exec status", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_NAME, populse_db.database.FIELD_TYPE_STRING, "Brick name", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, populse_db.database.FIELD_TYPE_STRING, "Brick input(s)", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_OUTPUTS, populse_db.database.FIELD_TYPE_STRING, "Brick output(s)", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INIT, populse_db.database.FIELD_TYPE_STRING, "Brick init status", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INIT_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick init time", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, populse_db.database.FIELD_TYPE_STRING, "Brick exec status", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick exec time", False, TAG_ORIGIN_BUILTIN, None, None)
 
         self.properties = self.loadProperties()
 
