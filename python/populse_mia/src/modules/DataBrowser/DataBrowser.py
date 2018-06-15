@@ -16,6 +16,7 @@ from DataBrowser.ModifyTable import ModifyTable
 from ImageViewer.MiniViewer import MiniViewer
 from PopUps.Ui_Dialog_Multiple_Sort import Ui_Dialog_Multiple_Sort
 from PopUps.Ui_Dialog_Settings import Ui_Dialog_Settings
+from PopUps.Ui_Dialog_Show_Brick import Ui_Dialog_Show_Brick
 from PopUps.Ui_Dialog_add_path import Ui_Dialog_add_path
 from PopUps.Ui_Dialog_add_tag import Ui_Dialog_add_tag
 from PopUps.Ui_Dialog_clone_tag import Ui_Dialog_clone_tag
@@ -573,6 +574,7 @@ class TableDataBrowser(QTableWidget):
         self.tags_to_display = tags_to_display
         self.update_values = update_values
         self.activate_selection = activate_selection
+        self.bricks = {}
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
@@ -946,14 +948,19 @@ class TableDataBrowser(QTableWidget):
                         if current_tag != TAG_BRICKS:
                             set_item_data(item, current_value, self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
                         else:
-                            # Tag bricks, display list with hypertext links
-                            brick_names = []
-                            for brick_uuid in current_value:
+                            # Tag bricks, display list with buttons
+                            widget = QWidget()
+                            layout = QVBoxLayout()
+                            for brick_number in range(0, len(current_value)):
+                                brick_uuid = current_value[brick_number]
                                 brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid, BRICK_NAME)
-                                brick_names.append(brick_name)
-                            displayed_value = '\n'.join(map(str, brick_names))
-                            set_item_data(item, displayed_value, populse_db.database.FIELD_TYPE_STRING)
-                            self.setRowHeight(row, 30 * len(brick_names))
+                                brick_name_button = QPushButton(brick_name, self)
+                                self.bricks[brick_name_button] = brick_uuid
+                                brick_name_button.clicked.connect(self.show_brick_history)
+                                layout.addWidget(brick_name_button)
+                            widget.setLayout(layout)
+                            self.setCellWidget(row, column, widget)
+                            self.setRowHeight(row, 40 * len(current_value))
 
                     # The scan does not have a value for the tag
                     else:
@@ -966,6 +973,16 @@ class TableDataBrowser(QTableWidget):
             row += 1
 
         ui_progressbar.close()
+
+    def show_brick_history(self):
+        """
+        Shows brick history popup
+        """
+
+        brick_uuid = self.bricks[self.sender()]
+        show_brick_popup = Ui_Dialog_Show_Brick(self.project, brick_uuid)
+        show_brick_popup.show()
+        show_brick_popup.exec()
 
     def update_colors(self):
         """ Method that changes the background of all the cells """
@@ -1292,22 +1309,22 @@ class TableDataBrowser(QTableWidget):
             row = point.row()
             scan_path = self.item(row, 0).text()
 
-            scan_object = self.project.database.get_document(COLLECTION_CURRENT, scan_path)
+            scan_object = self.project.session.get_document(COLLECTION_CURRENT, scan_path)
 
             if scan_object is not None:
                 scans_removed.append(scan_object)
 
                 # Adding removed values to history
-                for tag in self.project.database.get_fields_names(COLLECTION_CURRENT):
+                for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
                     if tag != TAG_FILENAME:
-                        current_value = self.project.database.get_value(COLLECTION_CURRENT, scan_path, tag)
-                        initial_value = self.project.database.get_value(COLLECTION_INITIAL, scan_path, tag)
+                        current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_path, tag)
+                        initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan_path, tag)
                         if current_value is not None or initial_value is not None:
                             values_removed.append([scan_path, tag, current_value, initial_value])
 
                 self.scans_to_visualize.remove(scan_path)
-                self.project.database.remove_document(COLLECTION_CURRENT, scan_path)
-                self.project.database.remove_document(COLLECTION_INITIAL, scan_path)
+                self.project.session.remove_document(COLLECTION_CURRENT, scan_path)
+                self.project.session.remove_document(COLLECTION_INITIAL, scan_path)
 
         for scan in scans_removed:
             scan_name = getattr(scan, TAG_FILENAME)
@@ -1581,15 +1598,20 @@ class TableDataBrowser(QTableWidget):
                             if tag != TAG_BRICKS:
                                 set_item_data(item, cur_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
                             else:
-                                # Tag bricks, display list with hypertext links
-                                brick_names = []
-                                for brick_uuid in cur_value:
+                                # Tag bricks, display list with buttons
+                                widget = QWidget()
+                                layout = QVBoxLayout()
+                                for brick_number in range(0, len(cur_value)):
+                                    brick_uuid = cur_value[brick_number]
                                     brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid,
                                                                                 BRICK_NAME)
-                                    brick_names.append(brick_name)
-                                displayed_value = '\n'.join(map(str, brick_names))
-                                set_item_data(item, displayed_value, populse_db.database.FIELD_TYPE_STRING)
-                                self.setRowHeight(rowCount, 30 * len(brick_names))
+                                    brick_name_button = QPushButton(brick_name, self)
+                                    self.bricks[brick_name_button] = brick_uuid
+                                    brick_name_button.clicked.connect(self.show_brick_history)
+                                    layout.addWidget(brick_name_button)
+                                widget.setLayout(layout)
+                                self.setCellWidget(rowCount, column, widget)
+                                self.setRowHeight(rowCount, 40 * len(cur_value))
                         else:
                             set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                             font = item.font()
