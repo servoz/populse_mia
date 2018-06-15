@@ -31,6 +31,9 @@ BRICK_EXEC = "Exec"
 BRICK_INIT_TIME = "Init Time"
 BRICK_EXEC_TIME = "Exec Time"
 
+TYPE_NII = "Scan"
+TYPE_MAT = "Matrix"
+
 class Project:
 
     def __init__(self, project_root_folder, new_project):

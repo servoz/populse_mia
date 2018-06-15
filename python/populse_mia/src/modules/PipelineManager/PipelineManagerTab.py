@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
-from Project.Project import COLLECTION_CURRENT
+from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig
@@ -304,6 +304,15 @@ class PipelineManagerTab(QWidget):
                 bricks.append(brick_id)
                 self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
                 self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
+
+                # Type tag
+                filename, file_extension = os.path.splitext(p_value)
+                if file_extension == ".nii":
+                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
+                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
+                elif file_extension == ".mat":
+                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
+                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
 
         pipeline_scene = self.diagramView.scene
 

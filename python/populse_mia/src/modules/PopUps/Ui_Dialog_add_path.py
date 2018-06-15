@@ -3,7 +3,8 @@ import os
 import shutil
 import hashlib
 
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
+
 
 class Ui_Dialog_add_path(QDialog):
     """
@@ -15,7 +16,7 @@ class Ui_Dialog_add_path(QDialog):
         super().__init__()
         self.project = project
         self.databrowser = databrowser
-        self.setWindowTitle("Add a path")
+        self.setWindowTitle("Add a document")
 
         vbox_layout = QVBoxLayout()
 
@@ -23,7 +24,8 @@ class Ui_Dialog_add_path(QDialog):
         file_label = QLabel("File: ")
         self.file_line_edit = QLineEdit()
         self.file_line_edit.setFixedWidth(300)
-        file_button = QPushButton("Choose a path")
+        self.file_line_edit.textChanged.connect(self.find_type)
+        file_button = QPushButton("Choose a document")
         file_button.clicked.connect(self.file_to_choose)
         hbox_layout.addWidget(file_label)
         hbox_layout.addWidget(self.file_line_edit)
@@ -48,12 +50,26 @@ class Ui_Dialog_add_path(QDialog):
 
         self.setLayout(vbox_layout)
 
+    def find_type(self):
+        """
+        Tries to find the document type when the document is changed
+        """
+
+        new_file = self.file_line_edit.text()
+        filename, file_extension = os.path.splitext(new_file)
+        if file_extension == ".nii":
+            self.type_line_edit.setText(TYPE_NII)
+        elif file_extension == ".mat":
+            self.type_line_edit.setText(TYPE_MAT)
+        else:
+            self.type_line_edit.setText("")
+
     def file_to_choose(self):
         """
         Lets the user choose a file to import
         """
 
-        fname = QFileDialog.getOpenFileName(self, 'Choose a path to import', '/home')
+        fname = QFileDialog.getOpenFileName(self, 'Choose a document to import', '/home')
         if fname[0]:
             self.file_line_edit.setText(fname[0])
 

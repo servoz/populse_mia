@@ -8,7 +8,7 @@ from time import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, TYPE_NII
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 import snakeviz
 
@@ -183,9 +183,9 @@ def read_log(project):
             if document_not_existing:
                 # Tags added manually
                 values_added.append([file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
-                values_added.append([file_database_path, TAG_TYPE, "Scan", "Scan"])  # Value added to history
+                values_added.append([file_database_path, TAG_TYPE, TYPE_NII, TYPE_NII])  # Value added to history
             documents[file_database_path][TAG_CHECKSUM] = original_md5
-            documents[file_database_path][TAG_TYPE] = "Scan"
+            documents[file_database_path][TAG_TYPE] = TYPE_NII
 
     # Missing values added thanks to default values
     for tag in project.session.get_fields(COLLECTION_CURRENT):
