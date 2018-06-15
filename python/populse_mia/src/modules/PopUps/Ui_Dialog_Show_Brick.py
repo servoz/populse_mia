@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget, QLabel, QPushButton
 
 from Project.Project import COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT, BRICK_INIT_TIME, \
-    BRICK_INPUTS, BRICK_OUTPUTS
+    BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_CURRENT
 
 
 class Ui_Dialog_Show_Brick(QDialog):
@@ -9,15 +9,19 @@ class Ui_Dialog_Show_Brick(QDialog):
     Class to display the brick history
     """
 
-    def __init__(self, project, brick_uuid):
+    def __init__(self, project, brick_uuid, databrowser, imageViewer):
         """
         Prepares the brick history popup
         :param project: project
         :param brick_uuid: brick to display
+        :param databrowser; databrowser that made the call
+        :param imageViewer: main window
         """
 
         super().__init__()
 
+        self.databrowser = databrowser
+        self.imageViewer = imageViewer
         project = project
         brick_row = project.session.get_document(COLLECTION_BRICK, brick_uuid)
         self.setWindowTitle("Brick " + getattr(brick_row, BRICK_NAME) + " history")
@@ -83,15 +87,22 @@ class Ui_Dialog_Show_Brick(QDialog):
             table.setHorizontalHeaderItem(column, item)
             value = inputs[name]
             if isinstance(value, list):
-                row = 0
+                widget = QWidget()
+                sub_layout = QVBoxLayout()
                 for sub_value in value:
-                    current_rows = table.rowCount()
-                    if row >= current_rows:
-                        table.setRowCount(current_rows + 1)
-                    item = QTableWidgetItem()
-                    item.setText(str(sub_value))
-                    table.setItem(row, column, item)
-                    row += 1
+                    value_scan = None
+                    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
+                        if scan in str(sub_value):
+                            value_scan = scan
+                    if value_scan is not None:
+                        button = QPushButton(value_scan)
+                        button.clicked.connect(self.file_clicked)
+                        sub_layout.addWidget(button)
+                    else:
+                        label = QLabel(str(sub_value))
+                        sub_layout.addWidget(label)
+                widget.setLayout(sub_layout)
+                table.setCellWidget(0, column, widget)
             else:
                 item = QTableWidgetItem()
                 item.setText(str(value))
@@ -105,24 +116,46 @@ class Ui_Dialog_Show_Brick(QDialog):
             table.setHorizontalHeaderItem(column, item)
             value = outputs[name]
             if isinstance(value, list):
-                row = 0
+                widget = QWidget()
+                sub_layout = QVBoxLayout()
                 for sub_value in value:
-                    current_rows = table.rowCount()
-                    if row >= current_rows:
-                        table.setRowCount(current_rows + 1)
-                    item = QTableWidgetItem()
-                    item.setText(str(sub_value))
-                    table.setItem(row, column, item)
-                    row += 1
+                    value_scan = None
+                    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
+                        if scan in str(sub_value):
+                            value_scan = scan
+                    if value_scan is not None:
+                        button = QPushButton(value_scan)
+                        button.clicked.connect(self.file_clicked)
+                        sub_layout.addWidget(button)
+                    else:
+                        label = QLabel(str(sub_value))
+                        sub_layout.addWidget(label)
+                widget.setLayout(sub_layout)
+                table.setCellWidget(0, column, widget)
             else:
                 item = QTableWidgetItem()
                 item.setText(str(value))
                 table.setItem(0, column, item)
             column += 1
 
+        table.verticalHeader().setMinimumSectionSize(30)
         table.resizeColumnsToContents()
+        table.resizeRowsToContents()
         layout.addWidget(table)
 
         self.setLayout(layout)
-        self.setMinimumHeight(700)
-        self.setMinimumWidth(1200)
+        self.setMinimumHeight(300)
+        self.setMinimumWidth(1300)
+
+    def file_clicked(self):
+        """
+        Called when a file is clicked
+        """
+
+        file = self.sender().text()
+        self.databrowser.table_data.clearSelection()
+        row_to_select = self.databrowser.table_data.get_scan_row(file)
+        self.databrowser.table_data.selectRow(row_to_select)
+        item_to_scroll_to = self.databrowser.table_data.item(row_to_select, 0)
+        self.databrowser.table_data.scrollToItem(item_to_scroll_to)
+        self.imageViewer.activateWindow()
