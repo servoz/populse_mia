@@ -171,6 +171,9 @@ class MiniViewer(QWidget):
                 except nib.filebasedimages.ImageFileError:
                     print("Error while trying to display the image " + file_path)
                     self.file_paths.remove(file_path)
+                except FileNotFoundError:
+                    print("File " + file_path + " not existing")
+                    self.file_paths.remove(file_path)
 
             # If we are in the "cursors" display mode
             if self.check_box_slices.checkState() == Qt.Unchecked:

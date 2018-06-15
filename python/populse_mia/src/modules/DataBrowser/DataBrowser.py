@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView, QHeaderView
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
 
 from DataBrowser.RapidSearch import RapidSearch
 from DataBrowser.AdvancedSearch import AdvancedSearch
@@ -596,6 +596,7 @@ class TableDataBrowser(QTableWidget):
         self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
         self.horizontalHeader().sectionDoubleClicked.connect(partial(self.selectAllColumn))
         self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
+        self.verticalHeader().setMinimumSectionSize(30)
 
         self.update_table(True)
 
@@ -685,6 +686,7 @@ class TableDataBrowser(QTableWidget):
             self.sortItems(column, order)
 
             self.update_colors()
+            self.resizeRowsToContents()
 
         self.itemChanged.connect(self.change_cell_color)
 
@@ -847,6 +849,7 @@ class TableDataBrowser(QTableWidget):
 
         # Columns and rows resized
         self.resizeColumnsToContents()
+        self.resizeRowsToContents()
 
         self.update_colors()
 
@@ -960,7 +963,6 @@ class TableDataBrowser(QTableWidget):
                                 layout.addWidget(brick_name_button)
                             widget.setLayout(layout)
                             self.setCellWidget(row, column, widget)
-                            self.setRowHeight(row, 40 * len(current_value))
 
                     # The scan does not have a value for the tag
                     else:
@@ -1103,14 +1105,9 @@ class TableDataBrowser(QTableWidget):
         """
 
         self.itemChanged.connect(self.change_cell_color)
-        #self.itemSelectionChanged.disconnect()
 
         self.horizontalHeader().setSortIndicator(self.currentItem().column(), order)
 
-        # Selection updated
-        #self.update_selection()
-
-        #self.itemSelectionChanged.connect(self.selection_changed)
         self.itemChanged.disconnect()
 
     def get_tag_column(self, tag):
@@ -1351,8 +1348,6 @@ class TableDataBrowser(QTableWidget):
         pop_up = Ui_Dialog_Multiple_Sort(self.project)
         if pop_up.exec_():
 
-            #self.itemSelectionChanged.disconnect()
-
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
@@ -1388,11 +1383,6 @@ class TableDataBrowser(QTableWidget):
             self.horizontalHeader().setSortIndicator(-1, 0)
             self.itemChanged.disconnect()
             self.setSortingEnabled(True)
-
-            # Selection updated
-            #self.update_selection()
-
-            #self.itemSelectionChanged.connect(self.selection_changed)
 
     def update_visualized_rows(self, old_scans):
         """
@@ -1611,7 +1601,7 @@ class TableDataBrowser(QTableWidget):
                                     layout.addWidget(brick_name_button)
                                 widget.setLayout(layout)
                                 self.setCellWidget(rowCount, column, widget)
-                                self.setRowHeight(rowCount, 40 * len(cur_value))
+
                         else:
                             set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
                             font = item.font()
@@ -1625,6 +1615,7 @@ class TableDataBrowser(QTableWidget):
         self.setSortingEnabled(True)
 
         self.resizeColumnsToContents()
+        self.resizeRowsToContents()
 
         # Selection updated
         self.update_selection()
