@@ -377,7 +377,7 @@ class PlugFilter(QWidget):
         search_bar_layout.addWidget(self.rapid_search)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.node_controller.visibles_tags)
         self.advanced_search.show_search()
 
         push_button_tags = QPushButton("Visualized tags")
@@ -447,6 +447,13 @@ class PlugFilter(QWidget):
             new_visibilities.append(TAG_FILENAME)
             self.table_data.update_visualized_columns(self.node_controller.visibles_tags, new_visibilities)
             self.node_controller.visibles_tags = new_visibilities
+            for row in self.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in new_visibilities:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
 
     def reset_search_bar(self):
         self.rapid_search.setText("")
