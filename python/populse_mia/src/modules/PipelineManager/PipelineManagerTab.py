@@ -314,6 +314,8 @@ class PipelineManagerTab(QWidget):
                     self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
                     self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
 
+                self.project.saveModifications()
+
         pipeline_scene = self.diagramView.scene
 
         # nodes_to_check contains the node names that need to be update
@@ -340,6 +342,7 @@ class PipelineManagerTab(QWidget):
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_NAME, node_name)
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT_TIME, datetime.datetime.now())
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Not Done")
+            self.project.saveModifications()
 
             gnode = pipeline_scene.gnodes[node_name]
             process = gnode.process
@@ -358,6 +361,7 @@ class PipelineManagerTab(QWidget):
             # Adding I/O to database history
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
+            self.project.saveModifications()
 
             if process_outputs:
 
@@ -397,6 +401,7 @@ class PipelineManagerTab(QWidget):
 
             # Setting brick init state if init finished correctly
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")
+            self.project.saveModifications()
 
         # THIS IS A TEST
         # TODO: CONTINUE
@@ -596,7 +601,6 @@ class DiagramScene(QGraphicsScene):
             self.b1 = BlockItem(name, nIn , nOut)
             self.b1.setPos(self.mapToScene(event.pos()))
             self.scene().addItem(self.b1)"""
-
 
 class TextEditor(QTextEdit):
     def __init__(self,parent=None):

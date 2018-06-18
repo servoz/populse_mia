@@ -8,7 +8,7 @@ import subprocess
 import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
-    QMainWindow, QMessageBox, QMenu
+    QMainWindow, QMessageBox, QMenu, QPushButton
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
@@ -633,3 +633,21 @@ class Main_Window(QMainWindow):
                 self.data_browser.advanced_search.scans_list = self.data_browser.table_data.scans_to_visualize
                 self.data_browser.advanced_search.show_search()
                 self.data_browser.advanced_search.apply_filter(self.project.currentFilter)
+
+        elif self.tabs.currentIndex() == 2:
+            # Pipeline Manager
+            # The pending modifications must be saved before working with pipelines (auto_commit)
+            if self.project.hasUnsavedModifications():
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Unsaved modifications")
+                msg.setInformativeText(
+                    "There are unsaved modications, you need to save them or remove them before working with pipelines.")
+                msg.setWindowTitle("Warning")
+                save_button = QPushButton("Save")
+                save_button.clicked.connect(self.project.saveModifications)
+                unsave_button = QPushButton("Not Save")
+                unsave_button.clicked.connect(self.project.unsaveModifications)
+                msg.addButton(save_button, QMessageBox.AcceptRole)
+                msg.addButton(unsave_button, QMessageBox.AcceptRole)
+                msg.exec()
