@@ -238,7 +238,7 @@ class TestMIADataBrowser(unittest.TestCase):
         settings = self.imageViewer.data_browser.table_data.pop_up
 
         # Testing that checksum tag isn't displayed
-        settings.tab_tags.search_bar.setText("Checksum")
+        settings.tab_tags.search_bar.setText(TAG_CHECKSUM)
         self.assertEqual(settings.tab_tags.list_widget_tags.count(), 0)
 
         # Testing that FileName is not displayed in the list of visible tags
@@ -279,6 +279,87 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(TAG_FILENAME in columns_displayed)
         self.assertTrue(TAG_EXP_TYPE in columns_displayed)
         self.assertTrue(TAG_TYPE in columns_displayed)
+
+        # Testing when showing a new tag
+        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, 1)
+        settings = self.imageViewer.data_browser.table_data.pop_up
+        settings.tab_tags.search_bar.setText(TAG_BRICKS)
+        settings.tab_tags.list_widget_tags.item(0).setSelected(True)
+        QTest.mouseClick(settings.tab_tags.push_button_select_tag, 1)
+        QTest.mouseClick(settings.push_button_ok, 1)
+
+        new_visibles = self.imageViewer.project.session.get_visibles()
+        self.assertEqual(len(new_visibles), 4)
+        self.assertTrue(TAG_FILENAME in new_visibles)
+        self.assertTrue(TAG_EXP_TYPE in new_visibles)
+        self.assertTrue(TAG_TYPE in new_visibles)
+        self.assertTrue(TAG_BRICKS in new_visibles)
+
+        columns_displayed = []
+        for column in range(0, self.imageViewer.data_browser.table_data.columnCount()):
+            item = self.imageViewer.data_browser.table_data.horizontalHeaderItem(column)
+            if not self.imageViewer.data_browser.table_data.isColumnHidden(column):
+                columns_displayed.append(item.text())
+        self.assertEqual(len(columns_displayed), 4)
+        self.assertTrue(TAG_FILENAME in columns_displayed)
+        self.assertTrue(TAG_EXP_TYPE in columns_displayed)
+        self.assertTrue(TAG_TYPE in columns_displayed)
+        self.assertTrue(TAG_BRICKS in columns_displayed)
+
+    def test_rapid_search(self):
+        """
+        Tests the rapid search bar
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        # Checking that the 8 scans are shown in the databrowser
+        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 8)
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 8)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+
+        # Testing G1 rapid search
+        self.imageViewer.data_browser.search_bar.setText("G1")
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 1)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+
+        # Testing that all the scans are back when clicking on the cross
+        QTest.mouseClick(self.imageViewer.data_browser.button_cross, 1)
+
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 8)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
