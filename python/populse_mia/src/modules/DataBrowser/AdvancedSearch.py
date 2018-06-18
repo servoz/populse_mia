@@ -12,7 +12,7 @@ import populse_db
 
 class AdvancedSearch(QWidget):
 
-    def __init__(self, project, dataBrowser, scans_list=[]):
+    def __init__(self, project, dataBrowser, scans_list=[], tags_list=[]):
         """
         Class that manages the widget of the advanced search
         """
@@ -23,6 +23,7 @@ class AdvancedSearch(QWidget):
         self.dataBrowser = dataBrowser
         self.rows = []
         self.scans_list = scans_list
+        self.tags_list = tags_list
 
     def show_search(self):
         """
@@ -60,8 +61,12 @@ class AdvancedSearch(QWidget):
         # Field choice
         fieldChoice = QComboBox()
         fieldChoice.setObjectName('field')
-        for tag in self.project.session.get_visibles():
-            fieldChoice.addItem(tag)
+        if len(self.tags_list) > 0:
+            for tag in self.tags_list:
+                fieldChoice.addItem(tag)
+        else:
+            for tag in self.project.session.get_visibles():
+                fieldChoice.addItem(tag)
         fieldChoice.model().sort(0)
         fieldChoice.addItem("All visualized tags")
 

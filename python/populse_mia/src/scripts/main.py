@@ -23,6 +23,7 @@ def clean_up():
 
     print("clean up done")
 
+    imageViewer.project.session.save_modifications()
     config = Config()
     opened_projects = config.get_opened_projects()
     opened_projects.remove(imageViewer.project.folder)

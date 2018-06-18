@@ -17,9 +17,10 @@ from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
 from DataBrowser.DataBrowser import TableDataBrowser
+from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
-from Project.Project import TAG_FILENAME
+from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -376,11 +377,14 @@ class PlugFilter(QWidget):
         search_bar_layout.addWidget(self.rapid_search)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.node_controller.visibles_tags)
         self.advanced_search.show_search()
 
         push_button_tags = QPushButton("Visualized tags")
         push_button_tags.clicked.connect(self.update_tags)
+
+        self.push_button_tag_filter = QPushButton(TAG_FILENAME)
+        self.push_button_tag_filter.clicked.connect(self.update_tag_to_filter)
 
         push_button_ok = QPushButton("OK")
         push_button_ok.clicked.connect(self.ok_clicked)
@@ -391,6 +395,7 @@ class PlugFilter(QWidget):
         # Layout
         buttons_layout = QHBoxLayout()
         buttons_layout.addWidget(push_button_tags)
+        buttons_layout.addWidget(self.push_button_tag_filter)
         buttons_layout.addStretch(1)
         buttons_layout.addWidget(push_button_ok)
         buttons_layout.addWidget(push_button_cancel)
@@ -403,8 +408,17 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
-        self.setMinimumWidth(1000)
+        self.setMinimumWidth(1100)
         self.setMinimumHeight(1000)
+
+    def update_tag_to_filter(self):
+        """
+        Updates the tag to Filter
+        """
+
+        popUp = Ui_Select_Tag_Count_Table(self.project, self.node_controller.visibles_tags, self.push_button_tag_filter.text())
+        if popUp.exec_():
+            self.push_button_tag_filter.setText(popUp.selected_tag)
 
     def update_tags(self):
         """
@@ -433,6 +447,13 @@ class PlugFilter(QWidget):
             new_visibilities.append(TAG_FILENAME)
             self.table_data.update_visualized_columns(self.node_controller.visibles_tags, new_visibilities)
             self.node_controller.visibles_tags = new_visibilities
+            for row in self.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in new_visibilities:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
 
     def reset_search_bar(self):
         self.rapid_search.setText("")
@@ -489,5 +510,10 @@ class PlugFilter(QWidget):
         result_names = []
         filter = self.table_data.get_current_filter()
         for i in range(len(filter)):
-            result_names.append(os.path.relpath(os.path.join(self.project.folder, filter[i])))
+            scan_name = filter[i]
+            tag_name = self.push_button_tag_filter.text()
+            value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            if tag_name == TAG_FILENAME:
+                value = os.path.relpath(os.path.join(self.project.folder, value))
+            result_names.append(value)
         self.plug_value_changed.emit(result_names)

@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
-from Project.Project import COLLECTION_CURRENT
+from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig
@@ -26,7 +26,10 @@ from PipelineManager.callStudent import callStudent
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
 
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME
+
+import uuid
+import datetime
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -264,15 +267,15 @@ class PipelineManagerTab(QWidget):
     def initPipeline(self):
         """ Method that generates the output names of each pipeline node. """
 
-        def add_plug_value_to_database(p_value):
+        def add_plug_value_to_database(p_value, brick):
             """
             Adds the plug value to the database.
             :param p_value: plug value, a file name or a list of file names
-            :return:
+            :param brick: brick of the value
             """
             if type(p_value) in [list, TraitListObject]:
                 for elt in p_value:
-                    add_plug_value_to_database(elt)
+                    add_plug_value_to_database(elt, brick)
                 return
 
             try:
@@ -294,6 +297,23 @@ class PipelineManagerTab(QWidget):
                     self.project.session.add_document(COLLECTION_CURRENT, p_value)
                     self.project.session.add_document(COLLECTION_INITIAL, p_value)
 
+                # Adding the new brick to the output files
+                bricks = self.project.session.get_value(COLLECTION_CURRENT, p_value, TAG_BRICKS)
+                if bricks is None:
+                    bricks = []
+                bricks.append(brick_id)
+                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
+                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
+
+                # Type tag
+                filename, file_extension = os.path.splitext(p_value)
+                if file_extension == ".nii":
+                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
+                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
+                elif file_extension == ".mat":
+                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
+                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
+
         pipeline_scene = self.diagramView.scene
 
         # nodes_to_check contains the node names that need to be update
@@ -314,6 +334,13 @@ class PipelineManagerTab(QWidget):
             if node_name in ['', 'inputs', 'outputs']:
                 continue
 
+            # Adding the brick to the bricks history
+            brick_id = str(uuid.uuid4())
+            self.project.session.add_document(COLLECTION_BRICK, brick_id)
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_NAME, node_name)
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT_TIME, datetime.datetime.now())
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Not Done")
+
             gnode = pipeline_scene.gnodes[node_name]
             process = gnode.process
 
@@ -328,7 +355,12 @@ class PipelineManagerTab(QWidget):
                 # nodes_to_check.insert(0, node_name)
                 continue
 
+            # Adding I/O to database history
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
+
             if process_outputs:
+
                 for plug_name, plug_value in process_outputs.items():
                     node = pipeline_scene.pipeline.nodes[node_name]
                     if plug_name not in node.plugs.keys():
@@ -338,7 +370,7 @@ class PipelineManagerTab(QWidget):
                             add_plug_value_to_database(element)
                     else:"""
                     if plug_value not in ["<undefined>", Undefined]:
-                        add_plug_value_to_database(plug_value)
+                        add_plug_value_to_database(plug_value, brick_id)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -358,6 +390,13 @@ class PipelineManagerTab(QWidget):
                                 pass
 
                     pipeline_scene.pipeline.update_nodes_and_plugs_activation()
+
+            # Adding I/O to database history again to update outputs
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
+
+            # Setting brick init state if init finished correctly
+            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")
 
         # THIS IS A TEST
         # TODO: CONTINUE

@@ -165,8 +165,15 @@ class MiniViewer(QWidget):
             font.setPointSize(9)
 
             # Reading the images from the file paths
-            for idx, file_path in enumerate(self.file_paths):
-                self.img.insert(idx, nib.load(file_path))
+            for idx, file_path in enumerate(self.file_paths.copy()):
+                try:
+                    self.img.insert(idx, nib.load(file_path))
+                except nib.filebasedimages.ImageFileError:
+                    print("Error while trying to display the image " + file_path)
+                    self.file_paths.remove(file_path)
+                except FileNotFoundError:
+                    print("File " + file_path + " not existing")
+                    self.file_paths.remove(file_path)
 
             # If we are in the "cursors" display mode
             if self.check_box_slices.checkState() == Qt.Unchecked:

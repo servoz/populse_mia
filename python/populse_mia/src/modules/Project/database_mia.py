@@ -35,28 +35,32 @@ class Database_mia(populse_db.database.Database):
 
         engine = create_engine(string_engine)
         metadata = MetaData()
+        metadata.reflect(bind=engine)
+        if populse_db.database.FIELD_TABLE in metadata.tables:
+            return False
+        else:
+            Table(populse_db.database.FIELD_TABLE, metadata,
+                  Column("name", String, primary_key=True),
+                  Column("collection", String, primary_key=True),
+                  Column(
+                      "type", Enum(populse_db.database.FIELD_TYPE_STRING, populse_db.database.FIELD_TYPE_INTEGER, populse_db.database.FIELD_TYPE_FLOAT, populse_db.database.FIELD_TYPE_BOOLEAN,
+                                   populse_db.database.FIELD_TYPE_DATE, populse_db.database.FIELD_TYPE_DATETIME, populse_db.database.FIELD_TYPE_TIME,
+                                   populse_db.database.FIELD_TYPE_LIST_STRING, populse_db.database.FIELD_TYPE_LIST_INTEGER,
+                                   populse_db.database.FIELD_TYPE_LIST_FLOAT, populse_db.database.FIELD_TYPE_LIST_BOOLEAN, populse_db.database.FIELD_TYPE_LIST_DATE,
+                                   populse_db.database.FIELD_TYPE_LIST_DATETIME, populse_db.database.FIELD_TYPE_LIST_TIME, populse_db.database.FIELD_TYPE_JSON, populse_db.database.FIELD_TYPE_LIST_JSON),
+                      nullable=False),
+                  Column("description", String, nullable=True),
+                  Column("visibility", Boolean, nullable=False),
+                  Column("origin", Enum(TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN), nullable=False),
+                  Column("unit", Enum(TAG_UNIT_MHZ, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MM, TAG_UNIT_MS), nullable=True),
+                  Column("default_value", String, nullable=True))
 
-        Table(populse_db.database.FIELD_TABLE, metadata,
-              Column("name", String, primary_key=True),
-              Column("collection", String, primary_key=True),
-              Column(
-                  "type", Enum(populse_db.database.FIELD_TYPE_STRING, populse_db.database.FIELD_TYPE_INTEGER, populse_db.database.FIELD_TYPE_FLOAT, populse_db.database.FIELD_TYPE_BOOLEAN,
-                               populse_db.database.FIELD_TYPE_DATE, populse_db.database.FIELD_TYPE_DATETIME, populse_db.database.FIELD_TYPE_TIME,
-                               populse_db.database.FIELD_TYPE_LIST_STRING, populse_db.database.FIELD_TYPE_LIST_INTEGER,
-                               populse_db.database.FIELD_TYPE_LIST_FLOAT, populse_db.database.FIELD_TYPE_LIST_BOOLEAN, populse_db.database.FIELD_TYPE_LIST_DATE,
-                               populse_db.database.FIELD_TYPE_LIST_DATETIME, populse_db.database.FIELD_TYPE_LIST_TIME),
-                  nullable=False),
-              Column("description", String, nullable=True),
-              Column("visibility", Boolean, nullable=False),
-              Column("origin", Enum(TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN), nullable=False),
-              Column("unit", Enum(TAG_UNIT_MHZ, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MM, TAG_UNIT_MS), nullable=True),
-              Column("default_value", String, nullable=True))
-
-        Table(populse_db.database.COLLECTION_TABLE, metadata,
-              Column("name", String, primary_key=True),
-              Column("primary_key", String, nullable=False))
+            Table(populse_db.database.COLLECTION_TABLE, metadata,
+                  Column("name", String, primary_key=True),
+                  Column("primary_key", String, nullable=False))
 
         metadata.create_all(engine)
+        return True
 
     def __enter__(self):
         '''
@@ -199,7 +203,7 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         for collection in collections:
             self._DatabaseSession__refresh_cache_documents(collection)
 
-    def add_field(self, collection, name, field_type, description, visibility, origin, unit, default_value, flush=True):
+    def add_field(self, collection, name, field_type, description, visibility, origin, unit, default_value, index=False, flush=True):
         """
         Adds a field to the database, if it does not already exist
         :param collection: field collection (str)
@@ -262,16 +266,12 @@ class Database_session_mia(populse_db.database.DatabaseSession):
                 mapper(collection_class, list_table)
                 self.table_classes[table] = collection_class
 
-                # sql = sql_text('CREATE TABLE %s (document_id VARCHAR, value %s)' % (table, str(self.field_type_to_column_type(field_type[5:])())))
-                # self.session.execute(sql)
-                # sql = sql_text('CREATE INDEX {0}_index ON {0} (document_id)'.format(table))
-                # self.session.execute(sql)
             # String columns if it list type, as the str representation of the lists will be stored
             field_type = String
         else:
             field_type = self.field_type_to_column_type(field_type)
 
-        column = Column(self.field_name_to_column_name(collection, name), field_type)
+        column = Column(self.field_name_to_column_name(collection, name), field_type, index=index)
         column_str_type = column.type.compile(self.database.engine.dialect)
         column_name = column.compile(dialect=self.database.engine.dialect)
 

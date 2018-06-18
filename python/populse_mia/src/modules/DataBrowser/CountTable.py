@@ -108,7 +108,7 @@ class CountTable(QDialog):
 
     def select_tag(self, idx):
         """ Method that calls a pop-up to choose a tag. """
-        popUp = Ui_Select_Tag_Count_Table(self.project, self.push_buttons[idx].text())
+        popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT), self.push_buttons[idx].text())
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
