@@ -300,9 +300,9 @@ class DataBrowser(QWidget):
         self.frame_test = QFrame()
         self.frame_test.setLayout(search_bar_layout)
 
-        visualized_tags_button = QPushButton()
-        visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(lambda: self.table_data.visualized_tags_pop_up())
+        self.visualized_tags_button = QPushButton()
+        self.visualized_tags_button.setText('Visualized tags')
+        self.visualized_tags_button.clicked.connect(lambda: self.table_data.visualized_tags_pop_up())
 
         count_table_button = QPushButton()
         count_table_button.setText('Count table')
@@ -316,7 +316,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(advanced_search_button)
         self.menu_toolbar.addSeparator()
-        self.menu_toolbar.addWidget(visualized_tags_button)
+        self.menu_toolbar.addWidget(self.visualized_tags_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(count_table_button)
 
@@ -1318,13 +1318,11 @@ class TableDataBrowser(QTableWidget):
 
     def visualized_tags_pop_up(self):
         old_tags = self.project.session.get_visibles()  # Old list of columns
-        self.pop_up = Ui_Dialog_Settings(self.project)
+        self.pop_up = Ui_Dialog_Settings(self.project, self.parent, old_tags)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
-
-        if self.pop_up.exec_():
-            self.update_visualized_columns(old_tags, self.project.session.get_visibles())  # Columns updated
+        self.pop_up.show()
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.project)

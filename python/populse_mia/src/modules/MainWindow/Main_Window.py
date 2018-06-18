@@ -557,9 +557,8 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.project.database.get_visibles()
-        print(self.project.getName())
-        self.pop_up_settings = Ui_Dialog_Settings(self.project)
+        old_tags = self.project.session.get_visibles()
+        self.pop_up_settings = Ui_Dialog_Settings(self.project, self.data_browser, old_tags)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
@@ -612,7 +611,7 @@ class Main_Window(QMainWindow):
         """
 
         if self.tabs.currentIndex() == 0:
-            # DataBrowser
+            # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
             self.data_browser.table_data.add_columns()
