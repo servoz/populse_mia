@@ -65,7 +65,7 @@ class Database_mia(populse_db.database.Database):
     def __enter__(self):
         '''
         Return a DatabaseSession instance for using the database. This is
-        supossed to be called using a "with" statement:
+        supposed to be called using a "with" statement:
 
         with database as session:
            session.add_document(...)
@@ -109,7 +109,7 @@ class Database_mia(populse_db.database.Database):
         # Get the current session. SqlAlchemy scoped_session returns
         # the same object (per thread) on each call until remove()
         # is called.
-        current_session = self.__scoped_session()
+        current_session = self._Database__scoped_session()
         # Decrement recursive depth counter
         current_session._populse_db_counter -= 1
         if current_session._populse_db_counter == 0:

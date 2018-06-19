@@ -95,16 +95,22 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up adding a tag
         """
 
-        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing without tag name
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertEqual(add_tag.msg.text(), "The tag name cannot be empty")
 
-        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing with tag name already existing
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Type")
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertEqual(add_tag.msg.text(), "This tag name already exists")
 
-        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing with wrong type
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
         add_tag.combo_box_type.setCurrentText(populse_db.database.FIELD_TYPE_INTEGER)
         add_tag.type = populse_db.database.FIELD_TYPE_INTEGER
@@ -112,7 +118,8 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertEqual(add_tag.msg.text(), "Invalid default value")
 
-        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
@@ -123,21 +130,28 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up cloning a tag
         """
 
-        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing without new tag name
+        self.imageViewer.data_browser.clone_tag_action.trigger()
+        clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         QTest.mouseClick(clone_tag.push_button_ok, 1)
         self.assertEqual(clone_tag.msg.text(), "The tag name can't be empty")
 
-        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing without any tag selected to clone
+        self.imageViewer.data_browser.clone_tag_action.trigger()
+        clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Test")
         QTest.mouseClick(clone_tag.push_button_ok, 1)
         self.assertEqual(clone_tag.msg.text(), "The tag to clone must be selected")
 
-        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Testing with tag name already existing
+        self.imageViewer.data_browser.clone_tag_action.trigger()
+        clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Type")
         QTest.mouseClick(clone_tag.push_button_ok, 1)
         self.assertEqual(clone_tag.msg.text(), "This tag name already exists")
 
-        clone_tag = Ui_Dialog_clone_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        self.imageViewer.data_browser.clone_tag_action.trigger()
+        clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Test")
         clone_tag.list_widget_tags.setCurrentRow(0) # Bricks tag selected
         QTest.mouseClick(clone_tag.push_button_ok, 1)
@@ -165,13 +179,16 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the popup removing user tags
         """
 
-        add_tag = Ui_Dialog_add_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        # Adding a tag
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
         QTest.mouseClick(add_tag.push_button_ok, 1)
 
         old_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         old_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
-        remove_tag = Ui_Dialog_remove_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        self.imageViewer.data_browser.remove_tag_action.trigger()
+        remove_tag = self.imageViewer.data_browser.pop_up_remove_tag
         QTest.mouseClick(remove_tag.push_button_ok, 1)
         new_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         new_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
@@ -182,13 +199,167 @@ class TestMIADataBrowser(unittest.TestCase):
         old_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
         self.assertTrue("Test" in old_tags_current)
         self.assertTrue("Test" in old_tags_initial)
-        remove_tag = Ui_Dialog_remove_tag(self.imageViewer.data_browser, self.imageViewer.data_browser.project)
+        self.imageViewer.data_browser.remove_tag_action.trigger()
+        remove_tag = self.imageViewer.data_browser.pop_up_remove_tag
         remove_tag.list_widget_tags.setCurrentRow(0) # Test tag selected
         QTest.mouseClick(remove_tag.push_button_ok, 1)
         new_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         new_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
         self.assertTrue("Test" not in new_tags_current)
         self.assertTrue("Test" not in new_tags_initial)
+
+    def test_visualized_tags(self):
+        """
+        Tests the popup modifying the visualized tags
+        """
+
+        # Testing default tags visibility
+        visibles = self.imageViewer.project.session.get_visibles()
+        self.assertEqual(len(visibles), 4)
+        self.assertTrue(TAG_FILENAME in visibles)
+        self.assertTrue(TAG_BRICKS in visibles)
+        self.assertTrue(TAG_TYPE in visibles)
+        self.assertTrue(TAG_EXP_TYPE in visibles)
+
+        # Testing columns displayed in the databrowser
+        self.assertEqual(self.imageViewer.data_browser.table_data.columnCount(), 4)
+        columns_displayed = []
+        for column in range (0, self.imageViewer.data_browser.table_data.columnCount()):
+            tag_displayed = self.imageViewer.data_browser.table_data.horizontalHeaderItem(column).text()
+            if not self.imageViewer.data_browser.table_data.isColumnHidden(column):
+                columns_displayed.append(tag_displayed)
+        self.assertEqual(sorted(visibles), sorted(columns_displayed))
+
+        # Testing that FileName tag is the first column
+        self.assertEqual(self.imageViewer.data_browser.table_data.horizontalHeaderItem(0).text(), TAG_FILENAME)
+
+        # Trying to set the visibles tags
+        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, 1)
+        settings = self.imageViewer.data_browser.table_data.pop_up
+
+        # Testing that checksum tag isn't displayed
+        settings.tab_tags.search_bar.setText(TAG_CHECKSUM)
+        self.assertEqual(settings.tab_tags.list_widget_tags.count(), 0)
+
+        # Testing that FileName is not displayed in the list of visible tags
+        settings.tab_tags.search_bar.setText("")
+        visibles_tags = []
+        for row in range (0, settings.tab_tags.list_widget_selected_tags.count()):
+            item = settings.tab_tags.list_widget_selected_tags.item(row).text()
+            visibles_tags.append(item)
+        self.assertEqual(len(visibles_tags), 3)
+        self.assertTrue(TAG_BRICKS in visibles_tags)
+        self.assertTrue(TAG_EXP_TYPE in visibles_tags)
+        self.assertTrue(TAG_TYPE in visibles_tags)
+
+        # Testing when hiding a tag
+        settings.tab_tags.list_widget_selected_tags.item(0).setSelected(True) # Bricks tag selected
+        QTest.mouseClick(settings.tab_tags.push_button_unselect_tag, 1)
+        visibles_tags = []
+        for row in range(0, settings.tab_tags.list_widget_selected_tags.count()):
+            item = settings.tab_tags.list_widget_selected_tags.item(row).text()
+            visibles_tags.append(item)
+        self.assertEqual(len(visibles_tags), 2)
+        self.assertTrue(TAG_TYPE in visibles_tags)
+        self.assertTrue(TAG_EXP_TYPE in visibles_tags)
+        QTest.mouseClick(settings.push_button_ok, 1)
+
+        new_visibles = self.imageViewer.project.session.get_visibles()
+        self.assertEqual(len(new_visibles), 3)
+        self.assertTrue(TAG_FILENAME in new_visibles)
+        self.assertTrue(TAG_EXP_TYPE in new_visibles)
+        self.assertTrue(TAG_TYPE in new_visibles)
+
+        columns_displayed = []
+        for column in range(0, self.imageViewer.data_browser.table_data.columnCount()):
+            item = self.imageViewer.data_browser.table_data.horizontalHeaderItem(column)
+            if not self.imageViewer.data_browser.table_data.isColumnHidden(column):
+                columns_displayed.append(item.text())
+        self.assertEqual(len(columns_displayed), 3)
+        self.assertTrue(TAG_FILENAME in columns_displayed)
+        self.assertTrue(TAG_EXP_TYPE in columns_displayed)
+        self.assertTrue(TAG_TYPE in columns_displayed)
+
+        # Testing when showing a new tag
+        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, 1)
+        settings = self.imageViewer.data_browser.table_data.pop_up
+        settings.tab_tags.search_bar.setText(TAG_BRICKS)
+        settings.tab_tags.list_widget_tags.item(0).setSelected(True)
+        QTest.mouseClick(settings.tab_tags.push_button_select_tag, 1)
+        QTest.mouseClick(settings.push_button_ok, 1)
+
+        new_visibles = self.imageViewer.project.session.get_visibles()
+        self.assertEqual(len(new_visibles), 4)
+        self.assertTrue(TAG_FILENAME in new_visibles)
+        self.assertTrue(TAG_EXP_TYPE in new_visibles)
+        self.assertTrue(TAG_TYPE in new_visibles)
+        self.assertTrue(TAG_BRICKS in new_visibles)
+
+        columns_displayed = []
+        for column in range(0, self.imageViewer.data_browser.table_data.columnCount()):
+            item = self.imageViewer.data_browser.table_data.horizontalHeaderItem(column)
+            if not self.imageViewer.data_browser.table_data.isColumnHidden(column):
+                columns_displayed.append(item.text())
+        self.assertEqual(len(columns_displayed), 4)
+        self.assertTrue(TAG_FILENAME in columns_displayed)
+        self.assertTrue(TAG_EXP_TYPE in columns_displayed)
+        self.assertTrue(TAG_TYPE in columns_displayed)
+        self.assertTrue(TAG_BRICKS in columns_displayed)
+
+    def test_rapid_search(self):
+        """
+        Tests the rapid search bar
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        # Checking that the 8 scans are shown in the databrowser
+        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 8)
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 8)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+
+        # Testing G1 rapid search
+        self.imageViewer.data_browser.search_bar.setText("G1")
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 1)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+
+        # Testing that all the scans are back when clicking on the cross
+        QTest.mouseClick(self.imageViewer.data_browser.button_cross, 1)
+
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 8)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.realpath(__file__)))

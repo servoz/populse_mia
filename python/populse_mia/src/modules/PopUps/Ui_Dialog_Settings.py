@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
-from functools import partial
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Informations import Ui_Informations
 
@@ -15,12 +14,15 @@ class Ui_Dialog_Settings(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_settings_change = pyqtSignal()
 
-    def __init__(self, project):
+    def __init__(self, project, databrowser, old_tags):
         super().__init__()
-        self.pop_up(project)
+        self.project = project
+        self.databrowser = databrowser
+        self.old_tags = old_tags
+        self.pop_up()
         self.old_visibles_tags = project.session.get_visibles()
 
-    def pop_up(self, database):
+    def pop_up(self):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -30,19 +32,19 @@ class Ui_Dialog_Settings(QDialog):
         self.tab_widget.setEnabled(True)
 
         # The 'Visualized tags" tab
-        self.tab_tags = Ui_Visualized_Tags(database, database.session.get_visibles())
+        self.tab_tags = Ui_Visualized_Tags(self.project, self.project.session.get_visibles())
         self.tab_tags.setObjectName("tab_tags")
         self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
 
         # The 'Informations" tab
-        self.tab_infos = Ui_Informations(database)
+        self.tab_infos = Ui_Informations(self.project)
         self.tab_infos.setObjectName("tab_infos")
         self.tab_widget.addTab(self.tab_infos, _translate("Dialog", "Informations"))
 
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, database))
+        self.push_button_ok.clicked.connect(self.ok_clicked)
 
         # The 'Cancel' push button
         self.push_button_cancel = QtWidgets.QPushButton("Cancel")
@@ -60,7 +62,7 @@ class Ui_Dialog_Settings(QDialog):
 
         self.setLayout(vbox)
 
-    def ok_clicked(self, project):
+    def ok_clicked(self):
         historyMaker = []
         historyMaker.append("modified_visibilities")
         historyMaker.append(self.old_visibles_tags)
@@ -69,11 +71,12 @@ class Ui_Dialog_Settings(QDialog):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
         new_visibilities.append(TAG_FILENAME)
-        project.session.set_visibles(new_visibilities)
+        self.project.session.set_visibles(new_visibilities)
         historyMaker.append(new_visibilities)
-        project.undos.append(historyMaker)
-        project.redos.clear()
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
         #Database.setName(self.tab_infos.name_value.text())
+        self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_visibles())  # Columns updated
         self.accept()
         self.close()
 

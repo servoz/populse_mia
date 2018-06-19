@@ -8,7 +8,7 @@ import subprocess
 import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
-    QMainWindow, QMessageBox, QMenu
+    QMainWindow, QMessageBox, QMenu, QPushButton
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
@@ -557,9 +557,8 @@ class Main_Window(QMainWindow):
     def project_properties_pop_up(self):
         """ Opens the Project properties pop-up """
 
-        old_tags = self.project.database.get_visibles()
-        print(self.project.getName())
-        self.pop_up_settings = Ui_Dialog_Settings(self.project)
+        old_tags = self.project.session.get_visibles()
+        self.pop_up_settings = Ui_Dialog_Settings(self.project, self.data_browser, old_tags)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
@@ -612,7 +611,7 @@ class Main_Window(QMainWindow):
         """
 
         if self.tabs.currentIndex() == 0:
-            # DataBrowser
+            # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
             self.data_browser.table_data.add_columns()
@@ -633,3 +632,21 @@ class Main_Window(QMainWindow):
                 self.data_browser.advanced_search.scans_list = self.data_browser.table_data.scans_to_visualize
                 self.data_browser.advanced_search.show_search()
                 self.data_browser.advanced_search.apply_filter(self.project.currentFilter)
+
+        elif self.tabs.currentIndex() == 2:
+            # Pipeline Manager
+            # The pending modifications must be saved before working with pipelines (auto_commit)
+            if self.project.hasUnsavedModifications():
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Unsaved modifications")
+                msg.setInformativeText(
+                    "There are unsaved modications, you need to save them or remove them before working with pipelines.")
+                msg.setWindowTitle("Warning")
+                save_button = QPushButton("Save")
+                save_button.clicked.connect(self.project.saveModifications)
+                unsave_button = QPushButton("Not Save")
+                unsave_button.clicked.connect(self.project.unsaveModifications)
+                msg.addButton(save_button, QMessageBox.AcceptRole)
+                msg.addButton(unsave_button, QMessageBox.AcceptRole)
+                msg.exec()

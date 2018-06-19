@@ -300,9 +300,9 @@ class DataBrowser(QWidget):
         self.frame_test = QFrame()
         self.frame_test.setLayout(search_bar_layout)
 
-        visualized_tags_button = QPushButton()
-        visualized_tags_button.setText('Visualized tags')
-        visualized_tags_button.clicked.connect(lambda: self.table_data.visualized_tags_pop_up())
+        self.visualized_tags_button = QPushButton()
+        self.visualized_tags_button.setText('Visualized tags')
+        self.visualized_tags_button.clicked.connect(lambda: self.table_data.visualized_tags_pop_up())
 
         count_table_button = QPushButton()
         count_table_button.setText('Count table')
@@ -316,7 +316,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(advanced_search_button)
         self.menu_toolbar.addSeparator()
-        self.menu_toolbar.addWidget(visualized_tags_button)
+        self.menu_toolbar.addWidget(self.visualized_tags_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(count_table_button)
 
@@ -966,11 +966,15 @@ class TableDataBrowser(QTableWidget):
 
                     # The scan does not have a value for the tag
                     else:
-                        set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
-                        font = item.font()
-                        font.setItalic(True)
-                        font.setBold(True)
-                        item.setFont(font)
+                        if current_tag != TAG_BRICKS:
+                            set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                            font = item.font()
+                            font.setItalic(True)
+                            font.setBold(True)
+                            item.setFont(font)
+                        else:
+                            set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
                 self.setItem(row, column, item)
             row += 1
 
@@ -1271,28 +1275,6 @@ class TableDataBrowser(QTableWidget):
         msg.buttonClicked.connect(msg.close)
         msg.exec()
 
-    def reset_cells_with_item(self, items_in):
-
-        for item_in in items_in:
-            row = item_in.row()
-            col = item_in.column()
-
-            scan_path = self.item(row, 0).text()
-            tag_name = self.horizontalHeaderItem(col).text()
-
-            item = QTableWidgetItem()
-            value = self.project.session.get_value(COLLECTION_CURRENT, scan_path, tag_name)
-            if value is not None:
-                set_item_data(item, value, self.project.session.get_field(COLLECTION_CURRENT, tag_name).type)
-            else:
-                item = QTableWidgetItem()
-                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
-                font = item.font()
-                font.setItalic(True)
-                font.setBold(True)
-                item.setFont(font)
-            self.setItem(row, col, item)
-
     def remove_scan(self):
 
         points = self.selectedIndexes()
@@ -1336,13 +1318,11 @@ class TableDataBrowser(QTableWidget):
 
     def visualized_tags_pop_up(self):
         old_tags = self.project.session.get_visibles()  # Old list of columns
-        self.pop_up = Ui_Dialog_Settings(self.project)
+        self.pop_up = Ui_Dialog_Settings(self.project, self.parent, old_tags)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
-
-        if self.pop_up.exec_():
-            self.update_visualized_columns(old_tags, self.project.session.get_visibles())  # Columns updated
+        self.pop_up.show()
 
     def multiple_sort_pop_up(self):
         pop_up = Ui_Dialog_Multiple_Sort(self.project)
@@ -1603,11 +1583,15 @@ class TableDataBrowser(QTableWidget):
                                 self.setCellWidget(rowCount, column, widget)
 
                         else:
-                            set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
-                            font = item.font()
-                            font.setItalic(True)
-                            font.setBold(True)
-                            item.setFont(font)
+                            if tag != TAG_BRICKS:
+                                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                                font = item.font()
+                                font.setItalic(True)
+                                font.setBold(True)
+                                item.setFont(font)
+                            else:
+                                set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
+                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
                     self.setItem(rowCount, column, item)
 
         ui_progressbar.close()
@@ -1665,6 +1649,10 @@ class TableDataBrowser(QTableWidget):
                 tag_object = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
                 tag_type = tag_object.type
                 scan_name = self.item(row, 0).text()
+
+                if tag_name == TAG_BRICKS:
+                    self.setMouseTracking(True)
+                    return
 
                 # Scan and tag added
                 self.tags.append(tag_name)
@@ -1768,7 +1756,7 @@ class TableDataBrowser(QTableWidget):
 
         cells_types = []  # Will contain the type list of the selection
 
-        self.reset_cells_with_item(self.selectedItems())  # To reset the first cell already changed
+        self.fill_cells_update_table() # To reset the first cell already changed
 
         # For each item selected, we check the validity of the types
         for item in self.selectedItems():
@@ -1777,6 +1765,11 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             tag_object = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
             tag_type = tag_object.type
+
+            if tag_name == TAG_BRICKS or tag_name == TAG_FILENAME:
+                self.update_colors()
+                self.itemChanged.connect(self.change_cell_color)
+                return
 
             # Type added to types list
             if not tag_type in cells_types:
