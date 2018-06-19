@@ -1041,8 +1041,6 @@ class TableDataBrowser(QTableWidget):
 
     def context_menu_table(self, position):
 
-        print("right menu called")
-
         self.itemChanged.disconnect()
 
         self.menu = QMenu(self)
