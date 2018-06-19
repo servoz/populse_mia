@@ -204,7 +204,7 @@ class Main_Window(QMainWindow):
             can_exit = True
 
         if can_exit:
-            self.project.session.unsave_modifications()
+            self.project.unsaveModifications()
 
             # Clean up
             config = Config()

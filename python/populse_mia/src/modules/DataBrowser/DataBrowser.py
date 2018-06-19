@@ -1041,60 +1041,62 @@ class TableDataBrowser(QTableWidget):
 
     def context_menu_table(self, position):
 
+        print("right menu called")
+
         self.itemChanged.disconnect()
 
-        menu = QMenu(self)
+        self.menu = QMenu(self)
 
-        action_reset_cell = menu.addAction("Reset cell(s)")
-        action_reset_column = menu.addAction("Reset column(s)")
-        action_reset_row = menu.addAction("Reset row(s)")
-        action_add_scan = menu.addAction("Add path")
-        action_remove_scan = menu.addAction("Remove path(s)")
-        action_sort_column = menu.addAction("Sort column")
-        action_sort_column_descending = menu.addAction("Sort column (descending)")
-        action_visualized_tags = menu.addAction("Visualized tags")
-        action_select_column = menu.addAction("Select column(s)")
-        action_multiple_sort = menu.addAction("Multiple sort")
+        self.action_reset_cell = self.menu.addAction("Reset cell(s)")
+        self.action_reset_column = self.menu.addAction("Reset column(s)")
+        self.action_reset_row = self.menu.addAction("Reset row(s)")
+        self.action_add_scan = self.menu.addAction("Add path")
+        self.action_remove_scan = self.menu.addAction("Remove path(s)")
+        self.action_sort_column = self.menu.addAction("Sort column")
+        self.action_sort_column_descending = self.menu.addAction("Sort column (descending)")
+        self.action_visualized_tags = self.menu.addAction("Visualized tags")
+        self.action_select_column = self.menu.addAction("Select column(s)")
+        self.action_multiple_sort = self.menu.addAction("Multiple sort")
 
-        action = menu.exec_(self.mapToGlobal(position))
+        action = self.menu.exec_(self.mapToGlobal(position))
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
-        if action == action_reset_cell:
+        if action == self.action_reset_cell:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_cell)
             msg.exec()
-        elif action == action_reset_column:
+        elif action == self.action_reset_column:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_column)
             msg.exec()
-        elif action == action_reset_row:
+        elif action == self.action_reset_row:
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_row)
             msg.exec()
-        elif action == action_add_scan:
+        elif action == self.action_add_scan:
             self.itemChanged.connect(self.change_cell_color)
             self.add_path()
             self.itemChanged.disconnect()
-        elif action == action_remove_scan:
+        elif action == self.action_remove_scan:
             msg.setText("You are about to remove a scan from the project.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.remove_scan)
             msg.exec()
-        elif action == action_sort_column:
+        elif action == self.action_sort_column:
             self.sort_column(0)
-        elif action == action_sort_column_descending:
+        elif action == self.action_sort_column_descending:
             self.sort_column(1)
-        elif action == action_visualized_tags:
+        elif action == self.action_visualized_tags:
             self.visualized_tags_pop_up()
-        elif action == action_select_column:
+        elif action == self.action_select_column:
             self.selectAllColumns()
-        elif action == action_multiple_sort:
+        elif action == self.action_multiple_sort:
             self.multiple_sort_pop_up()
 
         self.update_colors()
