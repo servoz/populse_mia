@@ -293,9 +293,9 @@ class DataBrowser(QWidget):
         search_bar_layout.addWidget(self.search_bar)
         search_bar_layout.addWidget(self.button_cross)
 
-        advanced_search_button = QPushButton()
-        advanced_search_button.setText('Advanced search')
-        advanced_search_button.clicked.connect(self.advanced_search)
+        self.advanced_search_button = QPushButton()
+        self.advanced_search_button.setText('Advanced search')
+        self.advanced_search_button.clicked.connect(self.advanced_search)
 
         self.frame_test = QFrame()
         self.frame_test.setLayout(search_bar_layout)
@@ -314,7 +314,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.frame_test)
         self.menu_toolbar.addSeparator()
-        self.menu_toolbar.addWidget(advanced_search_button)
+        self.menu_toolbar.addWidget(self.advanced_search_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.visualized_tags_button)
         self.menu_toolbar.addSeparator()

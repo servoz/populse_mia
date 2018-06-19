@@ -214,10 +214,10 @@ class AdvancedSearch(QWidget):
         # Search button added at the end
         searchLayout = QHBoxLayout(None)
         searchLayout.setObjectName("search layout")
-        search = QPushButton("Search")
-        search.setFixedWidth(100)
-        search.clicked.connect(self.launch_search)
-        searchLayout.addWidget(search)
+        self.search = QPushButton("Search")
+        self.search.setFixedWidth(100)
+        self.search.clicked.connect(self.launch_search)
+        searchLayout.addWidget(self.search)
         searchLayout.setParent(None)
 
         # New layout added
