@@ -26,7 +26,7 @@ from PipelineManager.callStudent import callStudent
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
 
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM
 
 import uuid
 import datetime
@@ -285,6 +285,7 @@ class PipelineManagerTab(QWidget):
             else:
                 # Deleting the project's folder in the file name so it can
                 # fit to the database's syntax
+                old_value = p_value
                 p_value = p_value.replace(self.project.folder, "")
                 if p_value[0] in ["\\", "/"]:
                     p_value = p_value[1:]
@@ -313,6 +314,20 @@ class PipelineManagerTab(QWidget):
                 elif file_extension == ".mat":
                     self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
                     self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
+
+                # Adding inherited tags
+                if inheritance_dict:
+                    parent_file = inheritance_dict[old_value]
+                    for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                        if scan in str(parent_file):
+                            database_parent_file = scan
+                    banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
+                    for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
+                        if not tag in banished_tags:
+                            parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file, tag)
+                            self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
+                            parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file, tag)
+                            self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
 
                 self.project.saveModifications()
 
@@ -349,7 +364,8 @@ class PipelineManagerTab(QWidget):
 
             # Getting the list of the outputs of the node according to its inputs
             try:
-                process_outputs = process.list_outputs()
+                inheritance_dict = None
+                (process_outputs, inheritance_dict) = process.list_outputs()
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
                 # The node should be checked again but it can lead to an
@@ -357,6 +373,9 @@ class PipelineManagerTab(QWidget):
                 # solution is found.
                 # nodes_to_check.insert(0, node_name)
                 continue
+            except ValueError:
+                process_outputs = process.list_outputs()
+                print("No inheritance dict for the process " + node_name)
 
             # Adding I/O to database history
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
