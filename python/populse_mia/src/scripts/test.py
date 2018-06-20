@@ -1,8 +1,7 @@
 import unittest
 
-from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
@@ -463,6 +462,34 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+
+        self.imageViewer.project.unsaveModifications()
+
+    def test_set_value(self):
+        """
+        Tests the values modifications
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        G1_bandwidth_value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
+        bandwidth_column  = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        G1_bandwidth_databrowser = float(item.text())
+        self.assertEqual(G1_bandwidth_value, float(50000))
+        self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
+
+
+        item.setSelected(True)
+        item.setText("25000")
+
+        G1_bandwidth_value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        G1_bandwidth_databrowser = float(item.text())
+        self.assertEqual(G1_bandwidth_value, float(25000))
+        self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
 
         self.imageViewer.project.unsaveModifications()
 
