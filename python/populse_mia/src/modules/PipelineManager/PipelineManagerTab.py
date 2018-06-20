@@ -278,6 +278,9 @@ class PipelineManagerTab(QWidget):
                     add_plug_value_to_database(elt, brick)
                 return
 
+            # This means that the value is not a filename
+            if not os.path.isdir(os.path.split(p_value)[0]):
+                return
             try:
                 open(p_value, 'a').close()
             except IOError:
