@@ -87,8 +87,8 @@ class Project:
             properties = dict(
                 name=name,
                 date=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
-                sorted_tag='',
-                sort_order=''
+                sorted_tag=TAG_FILENAME,
+                sort_order=0
             )
             with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as propertyfile:
                 yaml.dump(properties, propertyfile, default_flow_style=False, allow_unicode=True)
@@ -115,6 +115,8 @@ class Project:
             self.session.add_field(COLLECTION_BRICK, BRICK_INIT_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick init time", False, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, populse_db.database.FIELD_TYPE_STRING, "Brick exec status", False, TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_BRICK, BRICK_EXEC_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick exec time", False, TAG_ORIGIN_BUILTIN, None, None)
+
+            self.session.save_modifications() # Base modifications, do not count for unsaved modifications
 
         self.properties = self.loadProperties()
 
