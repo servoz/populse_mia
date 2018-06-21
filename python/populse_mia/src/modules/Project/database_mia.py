@@ -319,4 +319,4 @@ class Database_session_mia(populse_db.database.DatabaseSession):
                 field.visibility = False
             self.session.add(field)
         self.session.flush()
-        self.get_visibles()
+        self.unsaved_modifications = True

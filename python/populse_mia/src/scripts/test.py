@@ -1,8 +1,8 @@
 import unittest
 
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
+from PyQt5.QtWidgets import QApplication
+from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 import os
@@ -18,7 +18,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
-        print(self._testMethodName)
 
     def tearDown(self):
         """

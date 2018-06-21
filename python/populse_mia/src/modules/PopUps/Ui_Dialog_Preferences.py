@@ -72,7 +72,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_widget.addTab(self.tab_tools, _translate("Dialog", "Tools"))
 
         self.tools_layout = QVBoxLayout()
-        self.save_checkbox = QCheckBox('Auto Save (only on saved projects, does not work on default unnamed project)', self)
+        self.save_checkbox = QCheckBox('Auto Save', self)
 
         if config.isAutoSave() == "yes":
             self.save_checkbox.setChecked(1)
