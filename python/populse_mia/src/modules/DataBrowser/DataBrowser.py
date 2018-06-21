@@ -380,7 +380,7 @@ class DataBrowser(QWidget):
         Called when the button advanced search is called
         """
 
-        if (self.frame_advanced_search.isHidden()):
+        if self.frame_advanced_search.isHidden():
             # If the advanced search is hidden, we reset it and display it
             self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.frame_advanced_search.setHidden(False)
@@ -1415,6 +1415,16 @@ class TableDataBrowser(QTableWidget):
         # Tags that became visible must be visible
         for tag in visibles:
             self.setColumnHidden(self.get_tag_column(tag), False)
+
+        # Update the list of tags in the advanced search if it's opened
+        if not self.parent.frame_advanced_search.isHidden():
+            for row in self.parent.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in visibles:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
 
         self.resizeColumnsToContents()
 
