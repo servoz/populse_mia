@@ -1,7 +1,10 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog,  QLabel
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QLineEdit, QPushButton, \
+    QFileDialog
 from functools import partial
+
+from PipelineManager.Processes.processes import refresh_matlab_command
 from SoftwareProperties.Config import Config
 
 class Ui_Dialog_Preferences(QDialog):
@@ -71,15 +74,42 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_tools.setObjectName("tab_tools")
         self.tab_widget.addTab(self.tab_tools, _translate("Dialog", "Tools"))
 
-        self.tools_layout = QVBoxLayout()
-        self.save_checkbox = QCheckBox('Auto Save', self)
+        self.labels_layout = QVBoxLayout()
+        self.values_layout = QVBoxLayout()
+        self.global_layout = QHBoxLayout()
 
+        self.save_label = QLabel("Auto_save ")
+        self.labels_layout.addWidget(self.save_label)
+        self.save_checkbox = QCheckBox('', self)
         if config.isAutoSave() == "yes":
             self.save_checkbox.setChecked(1)
-        self.tools_layout.addWidget(self.save_checkbox)
-        self.tools_layout.addStretch(1)
+        self.values_layout.addWidget(self.save_checkbox)
 
-        self.tab_tools.setLayout(self.tools_layout)
+        self.matlab_label = QLabel("MCR (MatLab Compiler Runtime) path ")
+        self.labels_layout.addWidget(self.matlab_label)
+        self.matlab_choice = QLineEdit(config.get_matlab_path())
+        self.matlab_browse = QPushButton("Browse")
+        self.matlab_browse.clicked.connect(self.browse_matlab)
+        self.matlab_value_layout = QHBoxLayout()
+        self.matlab_value_layout.addWidget(self.matlab_choice)
+        self.matlab_value_layout.addWidget(self.matlab_browse)
+        self.values_layout.addLayout(self.matlab_value_layout)
+
+        self.spm_label = QLabel("SPM standalone path ")
+        self.labels_layout.addWidget(self.spm_label)
+        self.spm_choice = QLineEdit(config.get_spm_path())
+        self.spm_browse = QPushButton("Browse")
+        self.spm_browse.clicked.connect(self.browse_spm)
+        self.spm_value_layout = QHBoxLayout()
+        self.spm_value_layout.addWidget(self.spm_choice)
+        self.spm_value_layout.addWidget(self.spm_browse)
+        self.values_layout.addLayout(self.spm_value_layout)
+
+        self.labels_layout.addStretch(1)
+        self.values_layout.addStretch(1)
+        self.global_layout.addLayout(self.labels_layout)
+        self.global_layout.addLayout(self.values_layout)
+        self.tab_tools.setLayout(self.global_layout)
 
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
@@ -102,6 +132,24 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.setLayout(vbox)
 
+    def browse_matlab(self):
+        """
+        Called when matlab browse button is clicked
+        """
+
+        fname = QFileDialog.getExistingDirectory(self, 'Choose MRC directory', '/home')
+        if fname:
+            self.matlab_choice.setText(fname)
+
+    def browse_spm(self):
+        """
+        Called when spm browse button is clicked
+        """
+
+        fname = QFileDialog.getExistingDirectory(self, 'Choose SPM standalone directory', '/home')
+        if fname:
+            self.spm_choice.setText(fname)
+
     def ok_clicked(self, main):
         config = Config()
 
@@ -110,6 +158,11 @@ class Ui_Dialog_Preferences(QDialog):
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
+
+        # SPM and MCR paths
+        config.set_matlab_path(self.matlab_choice.text())
+        config.set_spm_path(self.spm_choice.text())
+        refresh_matlab_command()
 
         #Colors
         background_color = self.background_color_combo.currentText()
