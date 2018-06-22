@@ -1,6 +1,7 @@
-auto_save: 'no'
+auto_save: 'yes'
 background_color: ''
-chain_cursors: 'yes'
+chain_cursors: 'no'
+matlab: /usr/local/MATLAB/MATLAB_Runtime/v93
 name: MIA2
 nb_slices_max: '10'
 opened_projects: []
@@ -9,5 +10,6 @@ paths:
   modules: modules
   projects: ..\data
 show_all_slices: 'no'
+spm: /home/lucie/spm12
 text_color: ''
-thumbnail_tag: SequenceName
+thumbnail_tag: BandWidth

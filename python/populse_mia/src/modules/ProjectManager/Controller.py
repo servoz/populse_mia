@@ -247,5 +247,5 @@ def verify_scans(project, path):
 
     return return_list
 
-def save_project(database):
-    database.saveModifications()
+def save_project(project):
+    project.saveModifications()

@@ -20,6 +20,8 @@ from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig
 from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
+
+from SoftwareProperties.Config import Config
 from .process_library import ProcessLibraryWidget
 
 from PipelineManager.callStudent import callStudent
@@ -442,10 +444,13 @@ class PipelineManagerTab(QWidget):
         # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
         # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
         #                            spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
-        study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-                                   spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/',
-                                   output_directory="/home/david/spm12/")
 
+        config = Config()
+        spm_path = config.get_spm_path()
+        matlab_path = config.get_matlab_path()
+        study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
+                                   spm_exec="{0}/".format(matlab_path),
+                                   output_directory="{0}/".format(spm_path))
 
         # Modifying the study_config to use SPM 12 Standalone
         """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')

@@ -380,7 +380,7 @@ class DataBrowser(QWidget):
         Called when the button advanced search is called
         """
 
-        if (self.frame_advanced_search.isHidden()):
+        if self.frame_advanced_search.isHidden():
             # If the advanced search is hidden, we reset it and display it
             self.advanced_search.scans_list = self.table_data.scans_to_visualize
             self.frame_advanced_search.setHidden(False)
@@ -673,15 +673,9 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
 
-        # Auto-save
-        config = Config()
-
         if column != -1:
             self.project.setSortOrder(int(order))
             self.project.setSortedTag(self.horizontalHeaderItem(column).text())
-
-            if config.isAutoSave() == "yes" and not self.project.isTempProject:
-                save_project(self.project)
 
             self.sortItems(column, order)
 
@@ -1038,6 +1032,11 @@ class TableDataBrowser(QTableWidget):
                         row_number += 1
 
                         item.setData(Qt.BackgroundRole, QtCore.QVariant(color))
+
+        # Auto-save
+        config = Config()
+        if config.isAutoSave() == "yes":
+            save_project(self.project)
 
     def context_menu_table(self, position):
 
@@ -1404,6 +1403,7 @@ class TableDataBrowser(QTableWidget):
         :param visibles: List of tags to display
         """
 
+        self.itemChanged.disconnect()
         if self.activate_selection:
             self.itemSelectionChanged.disconnect()
 
@@ -1416,14 +1416,26 @@ class TableDataBrowser(QTableWidget):
         for tag in visibles:
             self.setColumnHidden(self.get_tag_column(tag), False)
 
+        # Update the list of tags in the advanced search if it's opened
+        if not self.parent.frame_advanced_search.isHidden():
+            for row in self.parent.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in visibles:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
+
+        self.resizeColumnsToContents()
+
+        self.update_colors()
+
         # Selection updated
         if self.activate_selection:
             self.update_selection()
             self.itemSelectionChanged.connect(self.selection_changed)
 
-        self.resizeColumnsToContents()
-
-        self.update_colors()
+        self.itemChanged.connect(self.change_cell_color)
 
     def add_columns(self):
         """
@@ -1734,11 +1746,6 @@ class TableDataBrowser(QTableWidget):
 
             self.setMouseTracking(True)
 
-            # Auto-save
-            config = Config()
-            if config.isAutoSave() == "yes" and not self.project.isTempProject:
-                save_project(self.project)
-
             self.resizeColumnsToContents()  # Columns resized
 
         except Exception as e:
@@ -1853,11 +1860,6 @@ class TableDataBrowser(QTableWidget):
             historyMaker.append(modified_values)
             self.project.undos.append(historyMaker)
             self.project.redos.clear()
-
-            # Auto-save
-            config = Config()
-            if config.isAutoSave() == "yes" and not self.project.isTempProject:
-                save_project(self.project)
 
             self.resizeColumnsToContents()  # Columns resized
 

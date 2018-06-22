@@ -103,3 +103,19 @@ class Config:
         self.config["opened_projects"] = new_projects
         # Then save the modification
         self.saveConfig()
+
+    def get_matlab_path(self):
+        return self.config["matlab"]
+
+    def set_matlab_path(self, new_projects):
+        self.config["matlab"] = new_projects
+        # Then save the modification
+        self.saveConfig()
+
+    def get_spm_path(self):
+        return self.config["spm"]
+
+    def set_spm_path(self, new_projects):
+        self.config["spm"] = new_projects
+        # Then save the modification
+        self.saveConfig()

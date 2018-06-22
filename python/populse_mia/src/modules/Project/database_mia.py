@@ -25,7 +25,7 @@ class Database_mia(populse_db.database.Database):
 
     def __init__(self, string_engine):
 
-        super().__init__(string_engine, caches=True, list_tables=True, query_type="mixed")
+        super().__init__(string_engine, caches=True, list_tables=True, query_type=populse_db.filter.QUERY_MIXED)
 
     def create_empty_schema(self, string_engine):
         """
@@ -319,4 +319,4 @@ class Database_session_mia(populse_db.database.DatabaseSession):
                 field.visibility = False
             self.session.add(field)
         self.session.flush()
-        self.get_visibles()
+        self.unsaved_modifications = True

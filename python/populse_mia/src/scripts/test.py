@@ -1,8 +1,8 @@
 import unittest
 
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_ORIGIN_BUILTIN, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
+from PyQt5.QtWidgets import QApplication
+from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 import os
@@ -490,6 +490,116 @@ class TestMIADataBrowser(unittest.TestCase):
         G1_bandwidth_databrowser = float(item.text())
         self.assertEqual(G1_bandwidth_value, float(25000))
         self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
+
+        self.imageViewer.project.unsaveModifications()
+
+    def test_reset_cell(self):
+        """
+        Tests the method resetting the selected cells
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        bandwidth_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(50000))
+        self.assertEqual(value, databrowser)
+        item.setSelected(True)
+
+        item.setText("25000")
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(25000))
+        self.assertEqual(value, databrowser)
+
+        self.imageViewer.data_browser.table_data.itemChanged.disconnect()
+        self.imageViewer.data_browser.table_data.reset_cell()
+        self.imageViewer.data_browser.table_data.itemChanged.connect(
+        self.imageViewer.data_browser.table_data.change_cell_color)
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(50000))
+        self.assertEqual(value, databrowser)
+
+        self.imageViewer.project.unsaveModifications()
+
+    def test_reset_column(self):
+        """
+        Tests the method resetting the columns selected
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        bandwidth_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(50000))
+        self.assertEqual(value, databrowser)
+        item.setSelected(True)
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(25000))
+        self.assertEqual(value, databrowser)
+        item.setSelected(True)
+
+        item.setText("70000")
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(70000))
+        self.assertEqual(value, databrowser)
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(70000))
+        self.assertEqual(value, databrowser)
+
+        self.imageViewer.data_browser.table_data.itemChanged.disconnect()
+        self.imageViewer.data_browser.table_data.reset_column()
+        self.imageViewer.data_browser.table_data.itemChanged.connect(self.imageViewer.data_browser.table_data.change_cell_color)
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(50000))
+        self.assertEqual(value, databrowser)
+
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+                                                                              "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                              "BandWidth"))
+        item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
+        databrowser = float(item.text())
+        self.assertEqual(value, float(25000))
+        self.assertEqual(value, databrowser)
 
         self.imageViewer.project.unsaveModifications()
 
