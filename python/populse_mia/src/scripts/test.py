@@ -58,7 +58,6 @@ class TestMIADataBrowser(unittest.TestCase):
         projects = config.get_opened_projects()
         self.assertEqual(len(projects), 1)
         self.assertTrue(self.imageViewer.project.folder in projects)
-    """
 
     def test_open_project(self):
         '''
