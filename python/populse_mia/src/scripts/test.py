@@ -49,11 +49,10 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_BRICK in collections)
         self.assertEqual(self.imageViewer.windowTitle(), "MIA2 - Multiparametric Image Analysis 2 - Unnamed project")
 
-    """
     def test_projects_removed_from_current_projects(self):
-        '''
+        """
         Tests that the projects are removed from the list of current projects
-        '''
+        """
 
         config = Config()
         projects = config.get_opened_projects()
