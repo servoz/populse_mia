@@ -1,12 +1,20 @@
+import sys
+import os
+
+# Working from the scripts directory
+sys.stderr.write(os.getcwd() + "\n")
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
+sys.stderr.write(os.getcwd() + "\n")
+
 import unittest
 
-import sys
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
-import os
+
 import populse_db
 
 class TestMIADataBrowser(unittest.TestCase):
@@ -16,13 +24,7 @@ class TestMIADataBrowser(unittest.TestCase):
         Called before each test
         """
 
-        sys.stderr.write(os.getcwd() + "\n")
 
-        # Working from the scripts directory
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-        sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
-        sys.stderr.write(os.getcwd() + "\n")
 
         self.app = QApplication([])
         self.project = Project(None, True)
@@ -613,14 +615,4 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.project.unsaveModifications()
 
 if __name__ == '__main__':
-
-    sys.stderr.write(os.getcwd() + "\n")
-
-    # Working from the scripts directory
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-    sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
-
-    sys.stderr.write(os.getcwd() + "\n")
-
     unittest.main()
