@@ -18,6 +18,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
+        print(self._testMethodName)
 
     def tearDown(self):
         """
@@ -60,9 +61,9 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(self.imageViewer.project.folder in projects)
 
     def test_open_project(self):
-        '''
+        """
         Tests project opening
-        '''
+        """
 
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
         self.assertEqual(self.imageViewer.project.getName(), "project_8")
@@ -479,7 +480,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(G1_bandwidth_value, float(50000))
         self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
 
-
         item.setSelected(True)
         item.setText("25000")
 
@@ -604,5 +604,9 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.project.unsaveModifications()
 
 if __name__ == '__main__':
+    print(os.getcwd())
+    print(os.path.realpath(__file__))
+    # Working from the scripts directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    print(os.getcwd())
     unittest.main()
