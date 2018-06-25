@@ -2,10 +2,7 @@ import sys
 import os
 
 # Working from the scripts directory
-sys.stderr.write(os.getcwd() + "\n")
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
-sys.stderr.write(os.getcwd() + "\n")
 
 import unittest
 
@@ -23,8 +20,6 @@ class TestMIADataBrowser(unittest.TestCase):
         """
         Called before each test
         """
-
-
 
         self.app = QApplication([])
         self.project = Project(None, True)
