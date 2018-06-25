@@ -57,7 +57,9 @@ REQUIRES = [
   'traits',
   'capsul',
   'soma_workflow',
-  'SIP'
+  'SIP',
+  'nipype',
+  'skimage'
 ]
 EXTRA_REQUIRES = {
     'doc': [
