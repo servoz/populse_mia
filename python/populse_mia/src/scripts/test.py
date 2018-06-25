@@ -10,12 +10,6 @@ import populse_db
 
 class TestMIADataBrowser(unittest.TestCase):
 
-    print(os.getcwd())
-    print(os.path.realpath(__file__))
-    # Working from the scripts directory
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    print(os.getcwd())
-
     def setUp(self):
         """
         Called before each test
@@ -25,6 +19,11 @@ class TestMIADataBrowser(unittest.TestCase):
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
         print(self._testMethodName)
+        print(os.getcwd())
+        print(os.path.realpath(__file__))
+        # Working from the scripts directory
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        print(os.getcwd())
 
     def tearDown(self):
         """
