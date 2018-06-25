@@ -59,7 +59,7 @@ REQUIRES = [
   'soma_workflow',
   'SIP',
   'nipype',
-  'skimage'
+  'scikit-image'
 ]
 EXTRA_REQUIRES = {
     'doc': [
