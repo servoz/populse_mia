@@ -1,4 +1,4 @@
-auto_save: 'yes'
+auto_save: 'no'
 background_color: ''
 chain_cursors: 'no'
 matlab: /usr/local/MATLAB/MATLAB_Runtime/v93
