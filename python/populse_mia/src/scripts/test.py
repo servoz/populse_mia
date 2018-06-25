@@ -16,6 +16,14 @@ class TestMIADataBrowser(unittest.TestCase):
         Called before each test
         """
 
+        sys.stderr.write(os.getcwd() + "\n")
+
+        # Working from the scripts directory
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+        sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
+        sys.stderr.write(os.getcwd() + "\n")
+
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
