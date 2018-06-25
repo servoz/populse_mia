@@ -1,5 +1,6 @@
 import unittest
 
+import sys
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
@@ -19,11 +20,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project)
         print(self._testMethodName)
-        print(os.getcwd())
-        print(os.path.realpath(__file__))
-        # Working from the scripts directory
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        print(os.getcwd())
 
     def tearDown(self):
         """
@@ -609,4 +605,14 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.project.unsaveModifications()
 
 if __name__ == '__main__':
+
+    sys.stderr.write(os.getcwd() + "\n")
+
+    # Working from the scripts directory
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    sys.stderr.write(os.path.dirname(os.path.realpath(__file__)) + "\n")
+
+    sys.stderr.write(os.getcwd() + "\n")
+
     unittest.main()
