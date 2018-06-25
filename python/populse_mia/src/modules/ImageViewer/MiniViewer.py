@@ -11,7 +11,7 @@ from Utils.Tools import ClickableLabel
 from PopUps.Ui_Select_Tag import Ui_Select_Tag
 
 from SoftwareProperties import Config
-import scipy.misc as misc
+from skimage.transform import resize
 
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
@@ -619,10 +619,10 @@ class MiniViewer(QWidget):
         if im2D is not None:
             im2D = rotate(im2D, -90, reshape=False)
             im2D = np.uint8((im2D - im2D.min()) / im2D.ptp() * 255.0)
-            im2D = misc.imresize(im2D, (128, 128))
+            im2D = resize(im2D, (128, 128))
             return im2D
         else:
             self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
             self.im_2D[idx] = np.uint8((self.im_2D[idx] - self.im_2D[idx].min())
                                        / self.im_2D[idx].ptp() * 255.0)
-            self.im_2D[idx] = misc.imresize(self.im_2D[idx], (128, 128))
+            self.im_2D[idx] = resize(self.im_2D[idx], (128, 128))
