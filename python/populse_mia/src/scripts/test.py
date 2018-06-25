@@ -10,6 +10,12 @@ import populse_db
 
 class TestMIADataBrowser(unittest.TestCase):
 
+    print(os.getcwd())
+    print(os.path.realpath(__file__))
+    # Working from the scripts directory
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    print(os.getcwd())
+
     def setUp(self):
         """
         Called before each test
@@ -604,9 +610,4 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.project.unsaveModifications()
 
 if __name__ == '__main__':
-    print(os.getcwd())
-    print(os.path.realpath(__file__))
-    # Working from the scripts directory
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    print(os.getcwd())
     unittest.main()
