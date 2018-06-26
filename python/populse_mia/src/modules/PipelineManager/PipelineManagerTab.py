@@ -32,6 +32,7 @@ from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_B
 
 import uuid
 import datetime
+import yaml
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -63,6 +64,7 @@ class PipelineManagerTab(QWidget):
         self.diagramScene = DiagramScene(self)
         self.diagramView = PipelineEditor(self.project)
         self.diagramView.node_clicked.connect(self.displayNodeParameters)
+        self.diagramView.pipeline_saved.connect(self.updateProcessLibrary)
 
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
@@ -253,6 +255,43 @@ class PipelineManagerTab(QWidget):
 
         self.diagramView.undos.append(history_maker)
         self.diagramView.redos.clear()
+
+    def updateProcessLibrary(self, filename):
+
+        import fileinput
+
+        filename_folder, file_name = os.path.split(filename)
+        module_name = os.path.splitext(file_name)[0]
+        class_name = module_name.capitalize()
+
+        # Change the "Pipeline" name to the name of file
+        with fileinput.FileInput(filename, inplace=True) as f:
+            for line in f:
+                print(line.replace('class Pipeline', 'class {0}'.format(class_name)), end='')
+
+        if filename_folder != os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes'):
+            return
+
+        # Update __init__.py
+        init_file = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes', '__init__.py')
+        with open(init_file, 'w') as f:
+            f.write('from .{0} import {1}'.format(module_name, class_name))
+
+        # Update process_config.yml
+        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+            dic = yaml.load(stream)
+
+        #TODO: What do we do with this dictionary?
+        """
+        self.process_config["Packages"] = self.packages
+        self.process_config["Paths"] = self.paths
+        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
+            self.signal_save.emit()
+
+        self.processLibrary.update_process_library()
+        
+        """
 
     def loadPipeline(self):
         self.diagramView.load_pipeline()
