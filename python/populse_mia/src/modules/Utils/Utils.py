@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 import populse_db
 
+
 def set_item_data(item, value, value_type):
     """
     Sets the item data

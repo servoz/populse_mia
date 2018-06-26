@@ -119,3 +119,6 @@ class Config:
         self.config["spm"] = new_projects
         # Then save the modification
         self.saveConfig()
+
+    def get_matlab_command(self):
+        return '{0}/run_spm12.sh {1}/ script'.format(self.config["spm"], self.config["matlab"])

@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import pyqtSignal
 
+
 class ClickableLabel(QLabel):
     """
     Is called when the user wants to update the tags that are visualized in the data browser

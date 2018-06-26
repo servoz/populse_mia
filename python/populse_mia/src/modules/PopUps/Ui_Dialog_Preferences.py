@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDia
     QFileDialog
 from functools import partial
 
-from PipelineManager.Processes.processes import refresh_matlab_command
 from SoftwareProperties.Config import Config
 
 class Ui_Dialog_Preferences(QDialog):
@@ -162,7 +161,6 @@ class Ui_Dialog_Preferences(QDialog):
         # SPM and MCR paths
         config.set_matlab_path(self.matlab_choice.text())
         config.set_spm_path(self.spm_choice.text())
-        refresh_matlab_command()
 
         #Colors
         background_color = self.background_color_combo.currentText()
