@@ -144,7 +144,7 @@ class Ui_Dialog_Show_Brick(QDialog):
         layout.addWidget(table)
 
         self.setLayout(layout)
-        self.setMinimumHeight(300)
+        self.setMinimumHeight(400)
         self.setMinimumWidth(1300)
 
     def file_clicked(self):

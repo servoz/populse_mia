@@ -621,6 +621,10 @@ class Main_Window(QMainWindow):
             self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.add_rows(documents)
 
+            self.data_browser.table_data.itemChanged.disconnect()
+            self.data_browser.table_data.fill_cells_update_table()
+            self.data_browser.table_data.itemChanged.connect(self.data_browser.table_data.change_cell_color)
+
             # We open the advanced search + search_bar
             self.data_browser.table_data.scans_to_visualize = documents
             self.data_browser.table_data.scans_to_search = documents
