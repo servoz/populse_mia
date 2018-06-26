@@ -75,7 +75,7 @@ class PipelineEditor(PipelineDevelopperView):
                     else:
                         self.add_process(instance)
                 else:
-                    self.add_process(instance(self.project))
+                    self.add_process(instance)
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
