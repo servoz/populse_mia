@@ -45,6 +45,7 @@ class PipelineEditor(PipelineDevelopperView):
             """import pprofile
             prof = pprofile.Profile()
             with prof():"""
+            print(path)
             self.find_process(path.decode('utf8'))
 
             """with open('/home/david/MIA2/profile.txt', 'w') as f:
@@ -71,8 +72,10 @@ class PipelineEditor(PipelineDevelopperView):
                     except Exception as e:
                         print(e)
                         return
+                    else:
+                        self.add_process(instance)
                 else:
-                    self.add_process(instance)
+                    self.add_process(instance(self.project))
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
