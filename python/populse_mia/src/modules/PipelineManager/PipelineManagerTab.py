@@ -18,7 +18,7 @@ from traits.trait_errors import TraitError
 from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig
+from capsul.api import get_process_instance, StudyConfig, PipelineNode
 from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 
 from SoftwareProperties.Config import Config

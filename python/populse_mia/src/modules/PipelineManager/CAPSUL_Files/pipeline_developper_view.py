@@ -913,7 +913,14 @@ class NodeGWidget(QtGui.QGraphicsItem):
 
         if event.button() == QtCore.Qt.LeftButton \
                 and self.process is not None:
-            self.scene().node_clicked.emit(self.name, self.process)
+            pipeline = self.scene().pipeline
+            node = pipeline.nodes[self.name]
+            # TODO: still have to debug (cf. issue on Capsul's GitHub)
+            if isinstance(node, PipelineNode):
+                #sub_pipeline = process
+                self.scene().node_clicked.emit(self.name, get_process_instance(self.process))
+            else:
+                self.scene().node_clicked.emit(self.name, self.process)
             event.accept()
 
 
