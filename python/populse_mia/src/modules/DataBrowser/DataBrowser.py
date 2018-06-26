@@ -972,6 +972,9 @@ class TableDataBrowser(QTableWidget):
                 self.setItem(row, column, item)
             row += 1
 
+        self.resizeRowsToContents()
+        self.resizeColumnsToContents()
+
         ui_progressbar.close()
 
     def show_brick_history(self):
