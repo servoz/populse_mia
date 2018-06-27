@@ -121,4 +121,15 @@ class Config:
         self.saveConfig()
 
     def get_matlab_command(self):
-        return '{0}/run_spm12.sh {1}/ script'.format(self.config["spm"], self.config["matlab"])
+        if self.config["use_spm"] == "yes":
+            return '{0}/run_spm12.sh {1}/ script'.format(self.config["spm"], self.config["matlab"])
+        else:
+            return None
+
+    def set_use_spm(self, use_spm):
+        self.config["use_spm"] = use_spm
+        # Then save the modification
+        self.saveConfig()
+
+    def get_use_spm(self):
+        return self.config["use_spm"]

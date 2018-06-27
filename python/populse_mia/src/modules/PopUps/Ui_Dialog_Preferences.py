@@ -1,10 +1,12 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QLineEdit, QPushButton, \
-    QFileDialog
+    QFileDialog, QMessageBox
 from functools import partial
 
 from SoftwareProperties.Config import Config
+
+import os
 
 class Ui_Dialog_Preferences(QDialog):
     """
@@ -85,20 +87,33 @@ class Ui_Dialog_Preferences(QDialog):
         self.values_layout.addWidget(self.save_checkbox)
 
         self.matlab_label = QLabel("MCR (MatLab Compiler Runtime) path ")
-        self.labels_layout.addWidget(self.matlab_label)
         self.matlab_choice = QLineEdit(config.get_matlab_path())
         self.matlab_browse = QPushButton("Browse")
         self.matlab_browse.clicked.connect(self.browse_matlab)
+
+        self.spm_label = QLabel("SPM standalone path ")
+        self.spm_choice = QLineEdit(config.get_spm_path())
+        self.spm_browse = QPushButton("Browse")
+        self.spm_browse.clicked.connect(self.browse_spm)
+
+        self.use_spm_label = QLabel("Use SPM standalone for the pipelines")
+        self.labels_layout.addWidget(self.use_spm_label)
+        self.use_spm_checkbox = QCheckBox('', self)
+        self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
+        if config.get_use_spm() == "yes":
+            self.use_spm_checkbox.setChecked(1)
+        else:
+            self.use_spm_checkbox.setChecked(1)
+            self.use_spm_checkbox.setChecked(0)
+        self.values_layout.addWidget(self.use_spm_checkbox)
+
+        self.labels_layout.addWidget(self.matlab_label)
         self.matlab_value_layout = QHBoxLayout()
         self.matlab_value_layout.addWidget(self.matlab_choice)
         self.matlab_value_layout.addWidget(self.matlab_browse)
         self.values_layout.addLayout(self.matlab_value_layout)
 
-        self.spm_label = QLabel("SPM standalone path ")
         self.labels_layout.addWidget(self.spm_label)
-        self.spm_choice = QLineEdit(config.get_spm_path())
-        self.spm_browse = QPushButton("Browse")
-        self.spm_browse.clicked.connect(self.browse_spm)
         self.spm_value_layout = QHBoxLayout()
         self.spm_value_layout.addWidget(self.spm_choice)
         self.spm_value_layout.addWidget(self.spm_browse)
@@ -131,6 +146,26 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.setLayout(vbox)
 
+    def use_spm_changed(self):
+        """
+        Called when the use_spm checkbox is changed
+        """
+
+        if not self.use_spm_checkbox.isChecked():
+            self.matlab_choice.setDisabled(True)
+            self.spm_choice.setDisabled(True)
+            self.matlab_label.setDisabled(True)
+            self.spm_label.setDisabled(True)
+            self.spm_browse.setDisabled(True)
+            self.matlab_browse.setDisabled(True)
+        else:
+            self.matlab_choice.setDisabled(False)
+            self.spm_choice.setDisabled(False)
+            self.matlab_label.setDisabled(False)
+            self.spm_label.setDisabled(False)
+            self.spm_browse.setDisabled(False)
+            self.matlab_browse.setDisabled(False)
+
     def browse_matlab(self):
         """
         Called when matlab browse button is clicked
@@ -152,15 +187,45 @@ class Ui_Dialog_Preferences(QDialog):
     def ok_clicked(self, main):
         config = Config()
 
-        #Auto-save
+        # Auto-save
         if self.save_checkbox.isChecked():
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
 
-        # SPM and MCR paths
-        config.set_matlab_path(self.matlab_choice.text())
-        config.set_spm_path(self.spm_choice.text())
+        # Use SPM
+        if self.use_spm_checkbox.isChecked():
+            config.set_use_spm("yes")
+        else:
+            config.set_use_spm("no")
+
+        # SPM and MCR paths checks and update
+        matlab_input = self.matlab_choice.text()
+        spm_input = self.spm_choice.text()
+        if os.path.exists(matlab_input) and "MATLAB/MATLAB_Runtime/v93" in matlab_input:
+            config.set_matlab_path(matlab_input)
+        else:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Invalid MCR path")
+            self.msg.setInformativeText("The MCR path entered {0} is invalid.".format(matlab_input))
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+        if os.path.exists(spm_input) and "spm12" in spm_input:
+            config.set_spm_path(spm_input)
+        else:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Invalid SPM standalone path")
+            self.msg.setInformativeText("The SPM standalone path entered {0} is invalid.".format(spm_input))
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
 
         #Colors
         background_color = self.background_color_combo.currentText()
