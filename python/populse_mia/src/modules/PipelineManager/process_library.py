@@ -564,9 +564,14 @@ class PackageLibraryDialog(QDialog):
         else:
             self.add_package(self.line_edit.text())
 
-    def add_package(self, module_name):
+    def add_package(self, module_name, class_name=None):
         self.packages = self.package_library.package_tree
         if module_name:
+
+            # Reloading the package
+            if module_name in sys.modules.keys():
+                del sys.modules[module_name]
+
             __import__(module_name)
             pkg = sys.modules[module_name]
 
@@ -576,6 +581,8 @@ class PackageLibraryDialog(QDialog):
                     self.add_package(str(module_name + '.' + modname))
 
             for k, v in sorted(list(pkg.__dict__.items())):
+                if class_name and k != class_name:
+                    continue
                 # Checking each class of in the package
                 if inspect.isclass(v):
                     try:
@@ -636,7 +643,7 @@ class PackageLibraryDialog(QDialog):
         else:
             self.process_config = {}
         self.process_config["Packages"] = self.packages
-        self.process_config["Paths"] = self.paths
+        self.process_config["Paths"] = list(set(self.paths))
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()

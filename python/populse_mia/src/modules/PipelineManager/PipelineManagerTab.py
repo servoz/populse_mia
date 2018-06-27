@@ -257,41 +257,49 @@ class PipelineManagerTab(QWidget):
         self.diagramView.redos.clear()
 
     def updateProcessLibrary(self, filename):
-
-        import fileinput
-
         filename_folder, file_name = os.path.split(filename)
         module_name = os.path.splitext(file_name)[0]
         class_name = module_name.capitalize()
 
-        # Change the "Pipeline" name to the name of file
-        with fileinput.FileInput(filename, inplace=True) as f:
-            for line in f:
-                print(line.replace('class Pipeline', 'class {0}'.format(class_name)), end='')
+        tmp_file = os.path.join(filename_folder, module_name + '_tmp')
 
-        if filename_folder != os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes'):
+        # Changing the "Pipeline" name to the name of file
+        #with fileinput.FileInput(filename, inplace=True) as f:
+        with open(filename, 'r') as f:
+            with open(tmp_file, 'w') as tmp:
+                for line in f:
+                    line = line.strip('\r\n')
+                    if 'class ' in line:
+                        line = 'class {0}(Pipeline):'.format(class_name)
+                    tmp.write(line + '\n')
+
+        with open(tmp_file, 'r') as tmp:
+            with open(filename, 'w') as f:
+                for line in tmp:
+                    f.write(line)
+
+        os.remove(tmp_file)
+
+        if os.path.relpath(filename_folder) != os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes'):
             return
 
-        # Update __init__.py
+        # Updating __init__.py
         init_file = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes', '__init__.py')
-        with open(init_file, 'w') as f:
-            f.write('from .{0} import {1}'.format(module_name, class_name))
+        with open(init_file, 'a') as f:
+            print('from .{0} import {1}'.format(module_name, class_name), file=f)
 
-        # Update process_config.yml
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
-            dic = yaml.load(stream)
+        package = 'User_processes'
+        path = os.path.relpath(os.path.join(filename_folder, '..'))
 
-        #TODO: What do we do with this dictionary?
-        """
-        self.process_config["Packages"] = self.packages
-        self.process_config["Paths"] = self.paths
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
-            self.signal_save.emit()
+        # Adding the module path to the system path
+        sys.path.append(path)
+        print('class_name', class_name)
+        print('package', package)
 
-        self.processLibrary.update_process_library()
-        
-        """
+        self.processLibrary.pkg_library.add_package(package, class_name)
+        if os.path.relpath(path) not in self.processLibrary.pkg_library.paths:
+            self.processLibrary.pkg_library.paths.append(os.path.relpath(path))
+        self.processLibrary.pkg_library.save()
 
     def loadPipeline(self):
         self.diagramView.load_pipeline()

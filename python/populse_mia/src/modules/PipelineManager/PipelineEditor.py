@@ -46,17 +46,8 @@ class PipelineEditor(PipelineDevelopperView):
     def dropEvent(self, event):
         if event.mimeData().hasFormat('component/name'):
             self.click_pos = QtGui.QCursor.pos()
-
             path = bytes(event.mimeData().data('component/name'))
-            """import pprofile
-            prof = pprofile.Profile()
-            with prof():"""
-            print(path)
             self.find_process(path.decode('utf8'))
-
-            """with open('/home/david/MIA2/profile.txt', 'w') as f:
-                sys.stdout = f
-                prof.print_stats()"""
 
     def find_process(self, path):
         """
