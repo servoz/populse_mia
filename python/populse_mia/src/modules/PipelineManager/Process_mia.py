@@ -12,9 +12,8 @@ class Process_mia(Process):
     Class overriding the default capsul Process class, in order to personalize the run in MIA
     """
 
-    def __init__(self, project):
+    def __init__(self):
         super(Process_mia, self).__init__()
-        self.project = project
 
     def _before_run_process(self):
         """

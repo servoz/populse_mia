@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
+
+from PipelineManager.Process_mia import Process_mia
 from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
@@ -49,6 +51,7 @@ class PipelineManagerTab(QWidget):
         global textedit, tagEditor, editor
 
         editor = self
+        Process_mia.project = project
         self.project = project
         self.scan_list = scan_list
 
@@ -236,6 +239,7 @@ class PipelineManagerTab(QWidget):
         self.nodeController.project = project
         self.diagramView.project = project
         self.nodeController.visibles_tags = self.project.session.get_visibles()
+        Process_mia.project = project
 
     def controller_value_changed(self, signal_list):
         case = signal_list.pop(0)

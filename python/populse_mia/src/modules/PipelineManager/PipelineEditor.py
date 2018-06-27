@@ -62,15 +62,10 @@ class PipelineEditor(PipelineDevelopperView):
         for name, instance in sorted(list(pkg.__dict__.items())):
             if name == process_name:
                 try:
-                    process = get_process_instance(instance(self.project))
-                except Exception:
-                    try:
-                        process = get_process_instance(instance)
-                    except Exception as e:
-                        print(e)
-                        return
-                    else:
-                        self.add_process(instance)
+                    process = get_process_instance(instance)
+                except Exception as e:
+                    print(e)
+                    return
                 else:
                     self.add_process(instance)
 
@@ -114,10 +109,7 @@ class PipelineEditor(PipelineDevelopperView):
                 i += 1
                 node_name = class_name.lower() + str(i)
 
-            try:
-                process_to_use = class_process(self.project)
-            except Exception:
-                process_to_use = class_process()
+            process_to_use = class_process()
 
         else:
             process_to_use = class_process
