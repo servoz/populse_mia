@@ -609,5 +609,32 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.imageViewer.project.unsaveModifications()
 
+    def test_add_path(self):
+        """
+        Tests the popup to add a path
+        """
+
+        QTest.mouseClick(self.imageViewer.data_browser.addRowLabel, 1)
+        add_path = self.imageViewer.data_browser.table_data.pop_up_add_path
+
+        QTest.mouseClick(add_path.ok_button, 1)
+        self.assertEqual(add_path.msg.text(), "Invalid arguments")
+
+        add_path.file_line_edit.setText(os.path.join(".", "test_not_existing.py"))
+        add_path.type_line_edit.setText("Python")
+        QTest.mouseClick(add_path.ok_button, 1)
+        self.assertEqual(add_path.msg.text(), "Invalid arguments")
+
+        add_path.file_line_edit.setText(os.path.join(".", "test.py"))
+        add_path.type_line_edit.setText("Python")
+        QTest.mouseClick(add_path.ok_button, 1)
+
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), ['data/downloaded_data/test.py'])
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), ['data/downloaded_data/test.py'])
+        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 1)
+        self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), 'data/downloaded_data/test.py')
+
+        self.imageViewer.project.unsaveModifications()
+
 if __name__ == '__main__':
     unittest.main()

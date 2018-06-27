@@ -63,6 +63,7 @@ def read_log(project):
     ui_progressbar.setWindowModality(Qt.WindowModal)
     ui_progressbar.setWindowTitle("")
     ui_progressbar.setMinimum(0)
+    ui_progressbar.show()
     idx = 0
 
     for dict_log in list_dict_log:

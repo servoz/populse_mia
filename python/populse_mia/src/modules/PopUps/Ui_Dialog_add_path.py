@@ -40,11 +40,11 @@ class Ui_Dialog_add_path(QDialog):
         vbox_layout.addLayout(hbox_layout)
 
         hbox_layout = QHBoxLayout()
-        ok_button = QPushButton("Ok")
-        ok_button.clicked.connect(self.save_path)
+        self.ok_button = QPushButton("Ok")
+        self.ok_button.clicked.connect(self.save_path)
         cancel_button = QPushButton("Cancel")
         cancel_button.clicked.connect(self.close)
-        hbox_layout.addWidget(ok_button)
+        hbox_layout.addWidget(self.ok_button)
         hbox_layout.addWidget(cancel_button)
         vbox_layout.addLayout(hbox_layout)
 
@@ -120,13 +120,13 @@ class Ui_Dialog_add_path(QDialog):
             self.databrowser.advanced_search.rows = []
             self.close()
         else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText(
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Warning)
+            self.msg.setText(
                 "Invalid arguments")
-            msg.setInformativeText(
+            self.msg.setInformativeText(
                 "The path must exist.\nThe path type can't be empty.")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            self.msg.setWindowTitle("Warning")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()

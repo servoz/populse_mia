@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
-import sys
-import sip
+import datetime
 import os
+import sip
+import sys
+import uuid
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
@@ -13,28 +15,20 @@ from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
+from capsul.api import get_process_instance, StudyConfig
 from matplotlib.backends.qt_compat import QtWidgets
+from traits.api import TraitListObject, Undefined
 from traits.trait_errors import TraitError
 
 from PipelineManager.Process_mia import Process_mia
-from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
-
-from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode
-from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
-
-from SoftwareProperties.Config import Config
-from .process_library import ProcessLibraryWidget
-
 from PipelineManager.callStudent import callStudent
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
+    BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
+    TYPE_MAT
+from SoftwareProperties.Config import Config
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
-
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM
-
-import uuid
-import datetime
-import yaml
+from .process_library import ProcessLibraryWidget
 
 if sys.version_info[0] >= 3:
     unicode = str
