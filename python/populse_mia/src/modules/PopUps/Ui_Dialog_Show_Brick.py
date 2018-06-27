@@ -158,4 +158,4 @@ class Ui_Dialog_Show_Brick(QDialog):
         self.databrowser.table_data.selectRow(row_to_select)
         item_to_scroll_to = self.databrowser.table_data.item(row_to_select, 0)
         self.databrowser.table_data.scrollToItem(item_to_scroll_to)
-        self.imageViewer.activateWindow()
+        self.close()
