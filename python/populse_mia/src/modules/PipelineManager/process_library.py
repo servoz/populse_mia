@@ -72,8 +72,6 @@ class ProcessLibraryWidget(QWidget):
         It will be useful to generate processes in the near future.
         """
 
-        study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig'])
-
         process_name = item.text(0)
         list_path = []
         while item is not self.process_library.topLevelItem(0):
@@ -83,15 +81,12 @@ class ProcessLibraryWidget(QWidget):
         list_path = list(reversed(list_path))
         package_name = '.'.join(list_path)
 
-        print("PACKAGE NAME: ", package_name)
         import time
         t = time.time()
         __import__(package_name)
         t2 = time.time()
-        print("IMPORT TIME: ", t2-t)
         pkg = sys.modules[package_name]
         t = time.time()
-        print("PACKAGE TIME: ", t - t2)
 
         for k, v in sorted(list(pkg.__dict__.items())):
             if k == process_name:
@@ -428,6 +423,7 @@ def node_structure_from_dict(datadict, parent=None, root_node=None):
 
     return root_node
 
+
 class ProcessLibrary(QTreeView):
     """returns an object containing the tree of the given dictionary d.
     example:
@@ -442,7 +438,7 @@ class ProcessLibrary(QTreeView):
         super(ProcessLibrary, self).__init__()
         self.load_dictionary(d)
 
-    def load_dictionary(self,d):
+    def load_dictionary(self, d):
         """load a dictionary into my tree application"""
         self._d = d
         self._nodes = node_structure_from_dict(d)

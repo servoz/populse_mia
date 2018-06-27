@@ -3,10 +3,13 @@
 import sys
 
 from PyQt5 import QtGui
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QFileDialog
 import os
 import six
 
 from capsul.api import get_process_instance
+from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 
 if sys.version_info[0] >= 3:
@@ -19,6 +22,9 @@ else:
 
 
 class PipelineEditor(PipelineDevelopperView):
+
+    pipeline_saved = pyqtSignal(str)
+
     def __init__(self, project):
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
                                         show_sub_pipelines=True, enable_edition=True)
@@ -392,3 +398,26 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = ["update_plug_value", node_name, old_value, plug_name, value_type]
 
         self.update_history(history_maker, from_undo, from_redo)
+
+    def save_pipeline(self):
+        '''
+                Ask for a filename using the file dialog, and save the pipeline as a
+                XML or python file.
+                '''
+        pipeline = self.scene.pipeline
+        folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
+        filename = QFileDialog.getSaveFileName(
+            None, 'Save the pipeline', folder,
+            'Compatible files (*.xml *.py);; All (*)')[0]
+        if filename:
+            posdict = dict([(key, (value.x(), value.y())) \
+                            for key, value in six.iteritems(self.scene.pos)])
+            old_pos = pipeline.node_position
+            pipeline.node_position = posdict
+            pipeline_tools.save_pipeline(pipeline, filename)
+            self._pipeline_filename = unicode(filename)
+            pipeline.node_position = old_pos
+
+            self.pipeline_saved.emit(filename)
+
+
