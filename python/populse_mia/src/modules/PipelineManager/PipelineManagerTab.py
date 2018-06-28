@@ -22,7 +22,7 @@ from traits.trait_errors import TraitError
 from PipelineManager.Process_mia import Process_mia
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode, Pipeline
+from capsul.api import get_process_instance, StudyConfig, PipelineNode
 
 from PipelineManager.callStudent import callStudent
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
@@ -44,13 +44,14 @@ else:
 
 
 class PipelineManagerTab(QWidget):
-    def __init__(self, project, scan_list):
+    def __init__(self, project, scan_list, parent):
         global textedit, tagEditor, editor
 
         editor = self
         Process_mia.project = project
         self.project = project
         self.scan_list = scan_list
+        self.parent = parent
 
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
@@ -315,13 +316,15 @@ class PipelineManagerTab(QWidget):
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
 
-        self.progress = InitProgress(self.project, self.diagramView, pipeline)
+        self.progress = InitProgress(self.project, self.diagramView, pipeline, self.parent)
         self.progress.show()
+        self.progress.exec()
 
     def runPipeline(self):
 
-        self.progress = RunProgress(self.diagramView)
+        self.progress = RunProgress(self.diagramView, self.parent)
         self.progress.show()
+        self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
@@ -348,13 +351,17 @@ class PipelineManagerTab(QWidget):
             self.startedConnection = None
 
 class InitProgress(QProgressDialog):
+    """
+    Init progress bar
+    """
 
-    def __init__(self, project, diagram_view, pipeline):
+    def __init__(self, project, diagram_view, pipeline, parent):
 
-        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0)
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0, parent)
 
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
 
         self.project = project
         self.diagramView = diagram_view
@@ -367,26 +374,12 @@ class InitProgress(QProgressDialog):
         self.worker.finished.connect(self.close)
         self.worker.start()
 
-class RunProgress(QProgressDialog):
-
-    def __init__(self, diagram_view):
-
-        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0)
-
-        self.setWindowTitle("Pipeline run")
-        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-
-        self.diagramView = diagram_view
-
-        self.setMinimumDuration(0)
-        self.setValue(0)
-
-        self.worker = RunWorker(self.diagramView)
-        self.worker.finished.connect(self.close)
-        self.worker.start()
 
 class InitWorker(QThread):
-    
+    """
+    Thread doing the pipeline initialization
+    """
+
     def __init__(self, project, diagram_view, pipeline):
         super().__init__()
         self.project = project
@@ -454,9 +447,11 @@ class InitWorker(QThread):
                 banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
                 for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
                     if not tag in banished_tags:
-                        parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file, tag)
+                        parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file,
+                                                                              tag)
                         self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
-                        parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file, tag)
+                        parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file,
+                                                                              tag)
                         self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
 
             self.project.saveModifications()
@@ -574,8 +569,32 @@ class InitWorker(QThread):
         with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
 
-class RunWorker(QThread):
+class RunProgress(QProgressDialog):
+    """
+    Run progress bar
+    """
 
+    def __init__(self, diagram_view, parent):
+
+        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0, parent)
+
+        self.setWindowTitle("Pipeline run")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.diagramView = diagram_view
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = RunWorker(self.diagramView)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class RunWorker(QThread):
+    """
+    Thread doing the pipeline run
+    """
     def __init__(self, diagram_view):
         super().__init__()
         self.diagramView = diagram_view

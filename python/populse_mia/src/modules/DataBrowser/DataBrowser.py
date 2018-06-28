@@ -3,7 +3,7 @@ import os
 from functools import partial
 
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
     QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
@@ -907,72 +907,9 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
-        # Progressbar
-        len_scans = len(self.scans_to_visualize)
-        ui_progressbar = QProgressDialog("Filling the table", None, 0, len_scans)
-        ui_progressbar.setWindowModality(Qt.WindowModal)
-        ui_progressbar.setWindowTitle("")
-        ui_progressbar.setMinimumDuration(0)
-        ui_progressbar.show()
-        idx = 0
-
-        row = 0
-        for scan in self.scans_to_visualize:
-
-            # Progressbar
-            idx += 1
-            ui_progressbar.setValue(idx)
-
-            for column in range(0, len(self.horizontalHeader())):
-
-                current_tag = self.horizontalHeaderItem(column).text()
-
-                item = QTableWidgetItem()
-
-                if column == 0:
-                    # name tag
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                    set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
-                else:
-                    # Other tags
-                    current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, current_tag)
-                    # The scan has a value for the tag
-                    if current_value is not None:
-
-                        if current_tag != TAG_BRICKS:
-                            set_item_data(item, current_value, self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
-                        else:
-                            # Tag bricks, display list with buttons
-                            widget = QWidget()
-                            layout = QVBoxLayout()
-                            for brick_number in range(0, len(current_value)):
-                                brick_uuid = current_value[brick_number]
-                                brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid, BRICK_NAME)
-                                brick_name_button = QPushButton(brick_name, self)
-                                self.bricks[brick_name_button] = brick_uuid
-                                brick_name_button.clicked.connect(self.show_brick_history)
-                                layout.addWidget(brick_name_button)
-                            widget.setLayout(layout)
-                            self.setCellWidget(row, column, widget)
-
-                    # The scan does not have a value for the tag
-                    else:
-                        if current_tag != TAG_BRICKS:
-                            set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
-                            font = item.font()
-                            font.setItalic(True)
-                            font.setBold(True)
-                            item.setFont(font)
-                        else:
-                            set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
-                self.setItem(row, column, item)
-            row += 1
-
-        self.resizeRowsToContents()
-        self.resizeColumnsToContents()
-
-        ui_progressbar.close()
+        self.progress = FillCellsProgress(self.project, self.parent.parent, self)
+        self.progress.show()
+        self.progress.exec()
 
     def show_brick_history(self):
         """
@@ -1536,92 +1473,9 @@ class TableDataBrowser(QTableWidget):
         :param rows: List of all scans
         """
 
-        self.setSortingEnabled(False)
-
-        self.itemSelectionChanged.disconnect()
-
-        self.itemChanged.disconnect()
-
-        # Progressbar
-        len_rows = len(rows)
-        ui_progressbar = QProgressDialog("Adding rows to the table", None, 0, len_rows)
-        ui_progressbar.setWindowTitle("")
-        ui_progressbar.setWindowModality(Qt.WindowModal)
-        ui_progressbar.setMinimumDuration(0)
-        ui_progressbar.show()
-        idx = 0
-        ui_progressbar.setValue(idx)
-
-        for scan in rows:
-
-            # Progressbar
-            idx += 1
-            ui_progressbar.setValue(idx)
-            if ui_progressbar.wasCanceled():
-                break
-
-            # Scan added only if it's not already in the table
-            if self.get_scan_row(scan) is None:
-
-                rowCount = self.rowCount()
-                self.insertRow(rowCount)
-
-                # Columns filled for the row being added
-                for column in range(0, self.columnCount()):
-                    item = QtWidgets.QTableWidgetItem()
-                    tag = self.horizontalHeaderItem(column).text()
-
-                    if column == 0:
-                        # name tag
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
-                        set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
-                    else:
-                        cur_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag)
-                        if cur_value is not None:
-                            if tag != TAG_BRICKS:
-                                set_item_data(item, cur_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
-                            else:
-                                # Tag bricks, display list with buttons
-                                widget = QWidget()
-                                layout = QVBoxLayout()
-                                for brick_number in range(0, len(cur_value)):
-                                    brick_uuid = cur_value[brick_number]
-                                    brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid,
-                                                                                BRICK_NAME)
-                                    brick_name_button = QPushButton(brick_name, self)
-                                    self.bricks[brick_name_button] = brick_uuid
-                                    brick_name_button.clicked.connect(self.show_brick_history)
-                                    layout.addWidget(brick_name_button)
-                                widget.setLayout(layout)
-                                self.setCellWidget(rowCount, column, widget)
-
-                        else:
-                            if tag != TAG_BRICKS:
-                                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
-                                font = item.font()
-                                font.setItalic(True)
-                                font.setBold(True)
-                                item.setFont(font)
-                            else:
-                                set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
-                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
-                    self.setItem(rowCount, column, item)
-
-        ui_progressbar.close()
-
-        self.setSortingEnabled(True)
-
-        self.resizeColumnsToContents()
-        self.resizeRowsToContents()
-
-        # Selection updated
-        self.update_selection()
-
-        self.update_colors()
-
-        self.itemSelectionChanged.connect(self.selection_changed)
-
-        self.itemChanged.connect(self.change_cell_color)
+        self.progress = AddRowsProgress(self.project, self.parent.parent, self, rows)
+        self.progress.show()
+        self.progress.exec()
 
     def get_index_insertion(self, to_insert):
         """
@@ -1704,7 +1558,6 @@ class TableDataBrowser(QTableWidget):
                 msg.exec()
 
             # Ok
-
             elif len(self.old_table_values) > 0:
 
                 if len(self.coordinates) > 1:
@@ -1867,3 +1720,187 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
+
+class FillCellsProgress(QProgressDialog):
+    """
+    Fill cells progress bar
+    """
+    def __init__(self, project, parent, table):
+
+        super(FillCellsProgress, self).__init__("Please wait while the cells are being filled...", None, 0, 0, parent)
+
+        self.setWindowTitle("Filling the cells")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = FillCellsWorker(project, table)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class FillCellsWorker(QThread):
+    """
+    Thread filling the cells
+    """
+    def __init__(self, project, table):
+        super().__init__()
+        self.project = project
+        self.table = table
+
+    def run(self):
+
+        row = 0
+        for scan in self.table.scans_to_visualize:
+
+            for column in range(0, len(self.table.horizontalHeader())):
+
+                current_tag = self.table.horizontalHeaderItem(column).text()
+
+                item = QTableWidgetItem()
+
+                if column == 0:
+                    # name tag
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
+                    set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
+                else:
+                    # Other tags
+                    current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, current_tag)
+                    # The scan has a value for the tag
+                    if current_value is not None:
+
+                        if current_tag != TAG_BRICKS:
+                            set_item_data(item, current_value,
+                                          self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
+                        else:
+                            # Tag bricks, display list with buttons
+                            widget = QWidget()
+                            layout = QVBoxLayout()
+                            for brick_number in range(0, len(current_value)):
+                                brick_uuid = current_value[brick_number]
+                                brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid, BRICK_NAME)
+                                brick_name_button = QPushButton(brick_name, self.table)
+                                self.table.bricks[brick_name_button] = brick_uuid
+                                brick_name_button.clicked.connect(self.table.show_brick_history)
+                                layout.addWidget(brick_name_button)
+                            widget.setLayout(layout)
+                            self.table.setCellWidget(row, column, widget)
+
+                    # The scan does not have a value for the tag
+                    else:
+                        if current_tag != TAG_BRICKS:
+                            set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                            font = item.font()
+                            font.setItalic(True)
+                            font.setBold(True)
+                            item.setFont(font)
+                        else:
+                            set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
+                self.table.setItem(row, column, item)
+            row += 1
+
+        self.table.resizeRowsToContents()
+        self.table.resizeColumnsToContents()
+
+class AddRowsProgress(QProgressDialog):
+    """
+    Add rows progress bar
+    """
+    def __init__(self, project, parent, table, rows):
+
+        super(AddRowsProgress, self).__init__("Please wait while the paths are being added...", None, 0, 0, parent)
+
+        self.setWindowTitle("Adding rows")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = AddRowsWorker(project, table, rows)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class AddRowsWorker(QThread):
+    """
+    Thread adding rows
+    """
+    def __init__(self, project, table, rows):
+        super().__init__()
+        self.project = project
+        self.table = table
+        self.rows = rows
+
+    def run(self):
+
+        self.table.setSortingEnabled(False)
+
+        self.table.itemSelectionChanged.disconnect()
+
+        self.table.itemChanged.disconnect()
+
+        for scan in self.rows:
+
+            # Scan added only if it's not already in the table
+            if self.table.get_scan_row(scan) is None:
+
+                rowCount = self.table.rowCount()
+                self.table.insertRow(rowCount)
+
+                # Columns filled for the row being added
+                for column in range(0, self.table.columnCount()):
+                    item = QtWidgets.QTableWidgetItem()
+                    tag = self.table.horizontalHeaderItem(column).text()
+
+                    if column == 0:
+                        # name tag
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # name not editable
+                        set_item_data(item, scan, populse_db.database.FIELD_TYPE_STRING)
+                    else:
+                        cur_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag)
+                        if cur_value is not None:
+                            if tag != TAG_BRICKS:
+                                set_item_data(item, cur_value,
+                                              self.project.session.get_field(COLLECTION_CURRENT, tag).type)
+                            else:
+                                # Tag bricks, display list with buttons
+                                widget = QWidget()
+                                layout = QVBoxLayout()
+                                for brick_number in range(0, len(cur_value)):
+                                    brick_uuid = cur_value[brick_number]
+                                    brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid,
+                                                                                BRICK_NAME)
+                                    brick_name_button = QPushButton(brick_name, self.table)
+                                    self.table.bricks[brick_name_button] = brick_uuid
+                                    brick_name_button.clicked.connect(self.table.show_brick_history)
+                                    layout.addWidget(brick_name_button)
+                                widget.setLayout(layout)
+                                self.table.setCellWidget(rowCount, column, widget)
+
+                        else:
+                            if tag != TAG_BRICKS:
+                                set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                                font = item.font()
+                                font.setItalic(True)
+                                font.setBold(True)
+                                item.setFont(font)
+                            else:
+                                set_item_data(item, "", populse_db.database.FIELD_TYPE_STRING)
+                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
+                    self.table.setItem(rowCount, column, item)
+
+        self.table.setSortingEnabled(True)
+
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+
+        # Selection updated
+        self.table.update_selection()
+
+        self.table.update_colors()
+
+        self.table.itemSelectionChanged.connect(self.table.selection_changed)
+
+        self.table.itemChanged.connect(self.table.change_cell_color)

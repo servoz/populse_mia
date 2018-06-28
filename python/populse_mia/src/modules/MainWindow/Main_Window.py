@@ -284,7 +284,7 @@ class Main_Window(QMainWindow):
         self.image_viewer = ImageViewer(self.textInfo)
         self.tabs.addTab(self.image_viewer, "Image Viewer")
 
-        self.pipeline_manager = PipelineManagerTab(self.project, [])
+        self.pipeline_manager = PipelineManagerTab(self.project, [], self)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         self.tabs.currentChanged.connect(self.tab_changed)
@@ -592,7 +592,7 @@ class Main_Window(QMainWindow):
             import cProfile
 
             # Database filled
-            new_scans = controller.read_log(self.project)
+            new_scans = controller.read_log(self.project, self)
 
             # Table updated
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
