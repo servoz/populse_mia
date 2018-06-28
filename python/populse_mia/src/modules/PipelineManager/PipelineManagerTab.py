@@ -20,7 +20,7 @@ from PipelineManager.Process_mia import Process_mia
 from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode
+from capsul.api import get_process_instance, StudyConfig, PipelineNode, Pipeline
 from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
 
 from SoftwareProperties.Config import Config
@@ -297,8 +297,6 @@ class PipelineManagerTab(QWidget):
 
         # Adding the module path to the system path
         sys.path.append(path)
-        print('class_name', class_name)
-        print('package', package)
 
         self.processLibrary.pkg_library.add_package(package, class_name)
         if os.path.relpath(path) not in self.processLibrary.pkg_library.paths:
@@ -317,7 +315,7 @@ class PipelineManagerTab(QWidget):
     def saveParameters(self):
         self.diagramView.save_pipeline_parameters()
 
-    def initPipeline(self):
+    def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
 
         def add_plug_value_to_database(p_value, brick):
@@ -387,13 +385,15 @@ class PipelineManagerTab(QWidget):
 
                 self.project.saveModifications()
 
-        pipeline_scene = self.diagramView.scene
+        # If the initialisation is launch for the main pipeline
+        if not pipeline:
+            pipeline = self.diagramView.scene.pipeline
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
 
         # This list is initialized with all node names
-        for node_name in pipeline_scene.gnodes.keys():
+        for node_name in pipeline.nodes.keys():
             nodes_to_check.append(node_name)
 
         while nodes_to_check:
@@ -407,6 +407,22 @@ class PipelineManagerTab(QWidget):
             if node_name in ['', 'inputs', 'outputs']:
                 continue
 
+            # If the node is a pipeline node, each of its nodes has to be initialised
+            node = pipeline.nodes[node_name]
+            if isinstance(node, PipelineNode):
+                sub_pipeline = node.process
+                self.initPipeline(sub_pipeline)
+
+                for plug_name in node.plugs.keys():
+                    if hasattr(node.plugs[plug_name], 'links_to'):
+                        list_info_link = list(node.plugs[plug_name].links_to)
+                        for info_link in list_info_link:
+                            if info_link[2] in pipeline.nodes.values():
+                                dest_node_name = info_link[0]
+                                nodes_to_check.append(dest_node_name)
+
+                continue
+
             # Adding the brick to the bricks history
             brick_id = str(uuid.uuid4())
             self.project.session.add_document(COLLECTION_BRICK, brick_id)
@@ -415,8 +431,7 @@ class PipelineManagerTab(QWidget):
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Not Done")
             self.project.saveModifications()
 
-            gnode = pipeline_scene.gnodes[node_name]
-            process = gnode.process
+            process = node.process
 
             # Getting the list of the outputs of the node according to its inputs
             try:
@@ -441,13 +456,9 @@ class PipelineManagerTab(QWidget):
             if process_outputs:
 
                 for plug_name, plug_value in process_outputs.items():
-                    node = pipeline_scene.pipeline.nodes[node_name]
+                    node = pipeline.nodes[node_name]
                     if plug_name not in node.plugs.keys():
                         continue
-                    """if type(plug_value) in [list, TraitListObject]:
-                        for element in plug_value:
-                            add_plug_value_to_database(element)
-                    else:"""
                     if plug_value not in ["<undefined>", Undefined]:
                         add_plug_value_to_database(plug_value, brick_id)
 
@@ -460,15 +471,15 @@ class PipelineManagerTab(QWidget):
                         nodes_to_check.append(dest_node_name)
 
                     try:
-                        pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
+                        pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
                     except TraitError:
                         if type(plug_value) is list and len(plug_value) == 1:
                             try:
-                                pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
+                                pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
                             except TraitError:
                                 pass
 
-                    pipeline_scene.pipeline.update_nodes_and_plugs_activation()
+                    pipeline.update_nodes_and_plugs_activation()
 
             # Adding I/O to database history again to update outputs
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
@@ -477,13 +488,6 @@ class PipelineManagerTab(QWidget):
             # Setting brick init state if init finished correctly
             self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")
             self.project.saveModifications()
-
-        # THIS IS A TEST
-        # TODO: CONTINUE
-        """dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
-        import yaml
-        with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
 
     def runPipeline(self):
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
