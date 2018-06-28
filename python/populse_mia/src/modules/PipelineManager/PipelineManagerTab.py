@@ -8,13 +8,13 @@ import uuid
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize
+    QRectF, QSize, QThread
 from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
     QCursor, QBrush, QIcon
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
 from capsul.api import get_process_instance, StudyConfig
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.api import TraitListObject, Undefined
@@ -314,232 +314,13 @@ class PipelineManagerTab(QWidget):
     def initPipeline(self):
         """ Method that generates the output names of each pipeline node. """
 
-        def add_plug_value_to_database(p_value, brick):
-            """
-            Adds the plug value to the database.
-            :param p_value: plug value, a file name or a list of file names
-            :param brick: brick of the value
-            """
-            if type(p_value) in [list, TraitListObject]:
-                for elt in p_value:
-                    add_plug_value_to_database(elt, brick)
-                return
-
-            # This means that the value is not a filename
-            if not os.path.isdir(os.path.split(p_value)[0]):
-                return
-            try:
-                open(p_value, 'a').close()
-            except IOError:
-                raise IOError('Could not open {0} file.'.format(p_value))
-            else:
-                # Deleting the project's folder in the file name so it can
-                # fit to the database's syntax
-                old_value = p_value
-                p_value = p_value.replace(self.project.folder, "")
-                if p_value[0] in ["\\", "/"]:
-                    p_value = p_value[1:]
-
-                # If the file name is already in the database, no exception is raised
-                # but the user is warned
-                if self.project.session.get_document(COLLECTION_CURRENT, p_value):
-                    print("Path {0} already in database.".format(p_value))
-                else:
-                    self.project.session.add_document(COLLECTION_CURRENT, p_value)
-                    self.project.session.add_document(COLLECTION_INITIAL, p_value)
-
-                # Adding the new brick to the output files
-                bricks = self.project.session.get_value(COLLECTION_CURRENT, p_value, TAG_BRICKS)
-                if bricks is None:
-                    bricks = []
-                bricks.append(brick_id)
-                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
-                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
-
-                # Type tag
-                filename, file_extension = os.path.splitext(p_value)
-                if file_extension == ".nii":
-                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
-                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
-                elif file_extension == ".mat":
-                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
-                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
-
-                # Adding inherited tags
-                if inheritance_dict:
-                    parent_file = inheritance_dict[old_value]
-                    for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-                        if scan in str(parent_file):
-                            database_parent_file = scan
-                    banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
-                    for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
-                        if not tag in banished_tags:
-                            parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file, tag)
-                            self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
-                            parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file, tag)
-                            self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
-
-                self.project.saveModifications()
-
-
-
-        pipeline_scene = self.diagramView.scene
-
-        # nodes_to_check contains the node names that need to be update
-        nodes_to_check = []
-
-        # This list is initialized with all node names
-        for node_name in pipeline_scene.gnodes.keys():
-            nodes_to_check.append(node_name)
-
-        while nodes_to_check:
-            # Verifying if any element of nodes_to_check is unique
-            nodes_to_check = list(set(nodes_to_check))
-
-            node_name = nodes_to_check.pop()
-
-            # Inputs/Outputs nodes will be automatically updated with
-            # the method update_nodes_and_plugs_activation of the pipeline object
-            if node_name in ['', 'inputs', 'outputs']:
-                continue
-
-            # Adding the brick to the bricks history
-            brick_id = str(uuid.uuid4())
-            self.project.session.add_document(COLLECTION_BRICK, brick_id)
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_NAME, node_name)
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT_TIME, datetime.datetime.now())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Not Done")
-            self.project.saveModifications()
-
-            gnode = pipeline_scene.gnodes[node_name]
-            process = gnode.process
-
-            # Getting the list of the outputs of the node according to its inputs
-            try:
-                inheritance_dict = None
-                (process_outputs, inheritance_dict) = process.list_outputs()
-            except TraitError:
-                print("TRAIT ERROR for node {0}".format(node_name))
-                # The node should be checked again but it can lead to an
-                # infinite loop, so this line is commented until a better
-                # solution is found.
-                # nodes_to_check.insert(0, node_name)
-                continue
-            except ValueError:
-                process_outputs = process.list_outputs()
-                print("No inheritance dict for the process " + node_name)
-
-            # Adding I/O to database history
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
-            self.project.saveModifications()
-
-            if process_outputs:
-
-                for plug_name, plug_value in process_outputs.items():
-                    node = pipeline_scene.pipeline.nodes[node_name]
-                    if plug_name not in node.plugs.keys():
-                        continue
-                    """if type(plug_value) in [list, TraitListObject]:
-                        for element in plug_value:
-                            add_plug_value_to_database(element)
-                    else:"""
-                    if plug_value not in ["<undefined>", Undefined]:
-                        add_plug_value_to_database(plug_value, brick_id)
-
-                    list_info_link = list(node.plugs[plug_name].links_to)
-
-                    # If the output is connected to another node,
-                    # the latter is added to nodes_to_check
-                    for info_link in list_info_link:
-                        dest_node_name = info_link[0]
-                        nodes_to_check.append(dest_node_name)
-
-                    try:
-                        pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
-                    except TraitError:
-                        if type(plug_value) is list and len(plug_value) == 1:
-                            try:
-                                pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
-                            except TraitError:
-                                pass
-
-                    pipeline_scene.pipeline.update_nodes_and_plugs_activation()
-
-            # Adding I/O to database history again to update outputs
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
-
-            # Setting brick init state if init finished correctly
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")
-            self.project.saveModifications()
-
-        # THIS IS A TEST
-        # TODO: CONTINUE
-        """dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
-        import yaml
-        with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
+        self.progress = InitProgress(self.project, self.diagramView)
+        self.progress.show()
 
     def runPipeline(self):
-        pipeline = get_process_instance(self.diagramView.scene.pipeline)
-        # Now
-        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
-        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-        #                            spm_standalone=True, )
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-        #                            spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
 
-        config = Config()
-        spm_path = config.get_spm_path()
-        matlab_path = config.get_matlab_path()
-        use_spm = config.get_use_spm()
-        if use_spm == "yes" and spm_path != "" and matlab_path != "" and spm_path is not None and matlab_path is not None:
-            study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
-                                   spm_exec="{0}/".format(matlab_path),
-                                   output_directory="{0}/".format(spm_path))
-        else:
-            study_config = StudyConfig(use_spm=False)
-
-        # Modifying the study_config to use SPM 12 Standalone
-        """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
-        setattr(study_config, 'spm_standalone', True)
-        setattr(study_config, 'spm_directory', '/home/david/spm12')"""
-        """setattr(study_config, 'use_spm', True)
-        setattr(study_config, 'spm_version', '12')"""
-        """setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')"""
-
-
-        # inspect config options
-        for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
-
-        """with open('/tmp/tmp_pipeline.txt', 'w') as f:
-            sys.stdout = f
-            f.write('Pipeline execution\n...\n\n')
-            # Before
-            #pipeline()
-
-            study_config.reset_process_counter()
-            study_config.run(pipeline, verbose=1)
-
-        with open('/tmp/tmp_pipeline.txt', 'r') as f:
-            self.textedit.setText(f.read())"""
-
-        study_config.reset_process_counter()
-
-        try:
-            study_config.run(pipeline, verbose=1)
-        except OSError as e:
-            self.msg = QMessageBox()
-            self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("SPM standalone is not set")
-            self.msg.setInformativeText("SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA2 preferences.")
-            self.msg.setWindowTitle("Error")
-            self.msg.setStandardButtons(QMessageBox.Ok)
-            self.msg.buttonClicked.connect(self.msg.close)
-            self.msg.show()
+        self.progress = RunProgress(self.diagramView)
+        self.progress.show()
 
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
@@ -565,6 +346,284 @@ class PipelineManagerTab(QWidget):
                 self.startedConnection.delete()
             self.startedConnection = None
 
+class InitProgress(QProgressDialog):
+
+    def __init__(self, project, diagram_view):
+
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0)
+
+        self.setWindowTitle("Pipeline initialization")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+
+        self.project = project
+        self.diagramView = diagram_view
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = InitWorker(self.project, self.diagramView)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class RunProgress(QProgressDialog):
+
+    def __init__(self, diagram_view):
+
+        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0)
+
+        self.setWindowTitle("Pipeline run")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+
+        self.diagramView = diagram_view
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = RunWorker(self.diagramView)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class InitWorker(QThread):
+    
+    def __init__(self, project, diagram_view):
+        super().__init__()
+        self.project = project
+        self.diagramView = diagram_view
+
+    def add_plug_value_to_database(self, p_value, brick):
+        """
+        Adds the plug value to the database.
+        :param p_value: plug value, a file name or a list of file names
+        :param brick: brick of the value
+        """
+        if type(p_value) in [list, TraitListObject]:
+            for elt in p_value:
+                self.add_plug_value_to_database(elt, brick)
+            return
+
+        # This means that the value is not a filename
+        if not os.path.isdir(os.path.split(p_value)[0]):
+            return
+        try:
+            open(p_value, 'a').close()
+        except IOError:
+            raise IOError('Could not open {0} file.'.format(p_value))
+        else:
+            # Deleting the project's folder in the file name so it can
+            # fit to the database's syntax
+            old_value = p_value
+            p_value = p_value.replace(self.project.folder, "")
+            if p_value[0] in ["\\", "/"]:
+                p_value = p_value[1:]
+
+            # If the file name is already in the database, no exception is raised
+            # but the user is warned
+            if self.project.session.get_document(COLLECTION_CURRENT, p_value):
+                print("Path {0} already in database.".format(p_value))
+            else:
+                self.project.session.add_document(COLLECTION_CURRENT, p_value)
+                self.project.session.add_document(COLLECTION_INITIAL, p_value)
+
+            # Adding the new brick to the output files
+            bricks = self.project.session.get_value(COLLECTION_CURRENT, p_value, TAG_BRICKS)
+            if bricks is None:
+                bricks = []
+            bricks.append(self.brick_id)
+            self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
+            self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
+
+            # Type tag
+            filename, file_extension = os.path.splitext(p_value)
+            if file_extension == ".nii":
+                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
+                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
+            elif file_extension == ".mat":
+                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
+                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
+
+            # Adding inherited tags
+            if self.inheritance_dict:
+                parent_file = self.inheritance_dict[old_value]
+                for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                    if scan in str(parent_file):
+                        database_parent_file = scan
+                banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
+                for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
+                    if not tag in banished_tags:
+                        parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file, tag)
+                        self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
+                        parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file, tag)
+                        self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
+
+            self.project.saveModifications()
+
+    def run(self):
+
+        pipeline_scene = self.diagramView.scene
+
+        # nodes_to_check contains the node names that need to be update
+        nodes_to_check = []
+
+        # This list is initialized with all node names
+        for node_name in pipeline_scene.gnodes.keys():
+            nodes_to_check.append(node_name)
+
+        while nodes_to_check:
+            # Verifying if any element of nodes_to_check is unique
+            nodes_to_check = list(set(nodes_to_check))
+
+            node_name = nodes_to_check.pop()
+
+            # Inputs/Outputs nodes will be automatically updated with
+            # the method update_nodes_and_plugs_activation of the pipeline object
+            if node_name in ['', 'inputs', 'outputs']:
+                continue
+
+            # Adding the brick to the bricks history
+            self.brick_id = str(uuid.uuid4())
+            self.project.session.add_document(COLLECTION_BRICK, self.brick_id)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_NAME, node_name)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT_TIME, datetime.datetime.now())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT, "Not Done")
+            self.project.saveModifications()
+
+            gnode = pipeline_scene.gnodes[node_name]
+            process = gnode.process
+
+            # Getting the list of the outputs of the node according to its inputs
+            try:
+                self.inheritance_dict = None
+                (process_outputs, self.inheritance_dict) = process.list_outputs()
+            except TraitError:
+                print("TRAIT ERROR for node {0}".format(node_name))
+                # The node should be checked again but it can lead to an
+                # infinite loop, so this line is commented until a better
+                # solution is found.
+                # nodes_to_check.insert(0, node_name)
+                continue
+            except ValueError:
+                process_outputs = process.list_outputs()
+                print("No inheritance dict for the process " + node_name)
+
+            # Adding I/O to database history
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
+            self.project.saveModifications()
+
+            if process_outputs:
+
+                for plug_name, plug_value in process_outputs.items():
+                    node = pipeline_scene.pipeline.nodes[node_name]
+                    if plug_name not in node.plugs.keys():
+                        continue
+                    """if type(plug_value) in [list, TraitListObject]:
+                        for element in plug_value:
+                            add_plug_value_to_database(element)
+                    else:"""
+                    if plug_value not in ["<undefined>", Undefined]:
+                        self.add_plug_value_to_database(plug_value, self.brick_id)
+
+                    list_info_link = list(node.plugs[plug_name].links_to)
+
+                    # If the output is connected to another node,
+                    # the latter is added to nodes_to_check
+                    for info_link in list_info_link:
+                        dest_node_name = info_link[0]
+                        nodes_to_check.append(dest_node_name)
+
+                    try:
+                        pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value)
+                    except TraitError:
+                        if type(plug_value) is list and len(plug_value) == 1:
+                            try:
+                                pipeline_scene.pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
+                            except TraitError:
+                                pass
+
+                    pipeline_scene.pipeline.update_nodes_and_plugs_activation()
+
+            # Adding I/O to database history again to update outputs
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
+
+            # Setting brick init state if init finished correctly
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT, "Done")
+            self.project.saveModifications()
+
+        # THIS IS A TEST
+        # TODO: CONTINUE
+        """dic = dump_pipeline_state_as_dict(pipeline_scene.pipeline)
+        import yaml
+        with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
+
+
+class RunWorker(QThread):
+
+    def __init__(self, diagram_view):
+        super().__init__()
+        self.diagramView = diagram_view
+
+    def run(self):
+
+        pipeline = get_process_instance(self.diagramView.scene.pipeline)
+        # Now
+        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
+        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])
+        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+        #                            spm_standalone=True, )
+        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
+        #  study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+        #                             spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
+
+        config = Config()
+        spm_path = config.get_spm_path()
+        matlab_path = config.get_matlab_path()
+        use_spm = config.get_use_spm()
+        if use_spm == "yes" and spm_path != "" and matlab_path != "" and spm_path is not None and matlab_path is not None:
+            study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
+                                       spm_exec="{0}/".format(matlab_path),
+                                       output_directory="{0}/".format(spm_path))
+        else:
+            study_config = StudyConfig(use_spm=False)
+
+        # Modifying the study_config to use SPM 12 Standalone
+        """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
+        setattr(study_config, 'spm_standalone', True)
+        setattr(study_config, 'spm_directory', '/home/david/spm12')"""
+        """setattr(study_config, 'use_spm', True)
+        setattr(study_config, 'spm_version', '12')"""
+        """setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')"""
+
+        # inspect config options
+        for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
+
+        """with open('/tmp/tmp_pipeline.txt', 'w') as f:
+            sys.stdout = f
+            f.write('Pipeline execution\n...\n\n')
+            # Before
+            #pipeline()
+
+            study_config.reset_process_counter()
+            study_config.run(pipeline, verbose=1)
+
+        with open('/tmp/tmp_pipeline.txt', 'r') as f:
+            self.textedit.setText(f.read())"""
+
+        study_config.reset_process_counter()
+
+        try:
+            study_config.run(pipeline, verbose=1)
+        except OSError as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("SPM standalone is not set")
+            self.msg.setInformativeText(
+                "SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA2 preferences.")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):

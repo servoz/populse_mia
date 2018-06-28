@@ -59,7 +59,7 @@ def read_log(project):
     tags_to_remove = ["Dataset data file", "Dataset header file"] # List of tags to remove
 
     # Progressbar
-    ui_progressbar = QProgressDialog("Importing into the database", "Cancel", 0, len(list_dict_log))
+    ui_progressbar = QProgressDialog("Importing into the database", None, 0, len(list_dict_log))
     ui_progressbar.setWindowModality(Qt.WindowModal)
     ui_progressbar.setWindowTitle("")
     ui_progressbar.setMinimum(0)
