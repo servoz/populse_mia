@@ -381,6 +381,8 @@ class PipelineManagerTab(QWidget):
 
                 self.project.saveModifications()
 
+
+
         pipeline_scene = self.diagramView.scene
 
         # nodes_to_check contains the node names that need to be update
@@ -494,7 +496,7 @@ class PipelineManagerTab(QWidget):
         spm_path = config.get_spm_path()
         matlab_path = config.get_matlab_path()
         use_spm = config.get_use_spm()
-        if use_spm == "yes" and spm_path != "" and matlab_path != "":
+        if use_spm == "yes" and spm_path != "" and matlab_path != "" and spm_path is not None and matlab_path is not None:
             study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
                                    spm_exec="{0}/".format(matlab_path),
                                    output_directory="{0}/".format(spm_path))
@@ -532,8 +534,8 @@ class PipelineManagerTab(QWidget):
         except OSError as e:
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("SPM standalone is disabled")
-            self.msg.setInformativeText("SPM processes cannot be run with SPM standalone desactivated.\nYou can activate it in MIA2 preferences.")
+            self.msg.setText("SPM standalone is not set")
+            self.msg.setInformativeText("SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA2 preferences.")
             self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
