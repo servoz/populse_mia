@@ -617,6 +617,7 @@ class Main_Window(QMainWindow):
             # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+
             self.data_browser.table_data.add_columns()
             self.data_browser.table_data.fill_headers()
             self.data_browser.table_data.add_rows(documents)
