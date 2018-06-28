@@ -110,15 +110,15 @@ class DataBrowser(QWidget):
         # Add path button under the table
         hbox_layout = QHBoxLayout()
 
-        addRowLabel = ClickableLabel()
-        addRowLabel.setObjectName('plus')
+        self.addRowLabel = ClickableLabel()
+        self.addRowLabel.setObjectName('plus')
         addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
         addRowPicture = addRowPicture.scaledToHeight(20)
-        addRowLabel.setPixmap(addRowPicture)
-        addRowLabel.setFixedWidth(20)
-        addRowLabel.clicked.connect(self.table_data.add_path)
+        self.addRowLabel.setPixmap(addRowPicture)
+        self.addRowLabel.setFixedWidth(20)
+        self.addRowLabel.clicked.connect(self.table_data.add_path)
 
-        hbox_layout.addWidget(addRowLabel)
+        hbox_layout.addWidget(self.addRowLabel)
 
         hbox_layout.addStretch(1)
 
@@ -610,9 +610,6 @@ class TableDataBrowser(QTableWidget):
 
         self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.parent)
         self.pop_up_add_path.show()
-
-        if self.pop_up_add_path.exec_():
-            pass
 
     def add_column(self, column, tag):
 

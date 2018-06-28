@@ -479,23 +479,29 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
 
-        G1_bandwidth_value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
         bandwidth_column  = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         G1_bandwidth_databrowser = float(item.text())
-        self.assertEqual(G1_bandwidth_value, float(50000))
-        self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
+        self.assertEqual(value, float(50000))
+        self.assertEqual(value, G1_bandwidth_databrowser)
+        self.assertEqual(value, value_initial)
 
         item.setSelected(True)
         item.setText("25000")
 
-        G1_bandwidth_value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
+        value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         G1_bandwidth_databrowser = float(item.text())
-        self.assertEqual(G1_bandwidth_value, float(25000))
-        self.assertEqual(G1_bandwidth_value, G1_bandwidth_databrowser)
+        self.assertEqual(value, float(25000))
+        self.assertEqual(value, G1_bandwidth_databrowser)
+        self.assertEqual(value_initial, float(50000))
 
         self.imageViewer.project.unsaveModifications()
 
@@ -511,10 +517,14 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(50000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
         item.setSelected(True)
 
         item.setText("25000")
@@ -522,10 +532,14 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(25000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value_initial, float(50000))
 
         self.imageViewer.data_browser.table_data.itemChanged.disconnect()
         self.imageViewer.data_browser.table_data.reset_cell()
@@ -535,10 +549,14 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(50000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
 
         self.imageViewer.project.unsaveModifications()
 
@@ -554,19 +572,27 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(50000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
         item.setSelected(True)
 
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(25000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
         item.setSelected(True)
 
         item.setText("70000")
@@ -574,18 +600,26 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(70000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value_initial, float(50000))
 
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(70000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value_initial, float(25000))
 
         self.imageViewer.data_browser.table_data.itemChanged.disconnect()
         self.imageViewer.data_browser.table_data.reset_column()
@@ -594,18 +628,53 @@ class TestMIADataBrowser(unittest.TestCase):
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(0, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(50000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
 
         value = float(self.imageViewer.project.session.get_value(COLLECTION_CURRENT,
                                                                               "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
                                                                               "BandWidth"))
+        value_initial = float(self.imageViewer.project.session.get_value(COLLECTION_INITIAL,
+                                                                 "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii",
+                                                                 "BandWidth"))
         item = self.imageViewer.data_browser.table_data.item(1, bandwidth_column)
         databrowser = float(item.text())
         self.assertEqual(value, float(25000))
         self.assertEqual(value, databrowser)
+        self.assertEqual(value, value_initial)
+
+        self.imageViewer.project.unsaveModifications()
+
+    def test_add_path(self):
+        """
+        Tests the popup to add a path
+        """
+
+        QTest.mouseClick(self.imageViewer.data_browser.addRowLabel, 1)
+        add_path = self.imageViewer.data_browser.table_data.pop_up_add_path
+
+        QTest.mouseClick(add_path.ok_button, 1)
+        self.assertEqual(add_path.msg.text(), "Invalid arguments")
+
+        add_path.file_line_edit.setText(os.path.join(".", "test_not_existing.py"))
+        add_path.type_line_edit.setText("Python")
+        QTest.mouseClick(add_path.ok_button, 1)
+        self.assertEqual(add_path.msg.text(), "Invalid arguments")
+
+        add_path.file_line_edit.setText(os.path.join(".", "test.py"))
+        add_path.type_line_edit.setText("Python")
+        QTest.mouseClick(add_path.ok_button, 1)
+
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), ['data/downloaded_data/test.py'])
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), ['data/downloaded_data/test.py'])
+        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 1)
+        self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), 'data/downloaded_data/test.py')
 
         self.imageViewer.project.unsaveModifications()
 

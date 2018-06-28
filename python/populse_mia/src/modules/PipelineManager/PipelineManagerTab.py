@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
-import sys
-import sip
+import datetime
 import os
+import sip
+import sys
+import uuid
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
@@ -12,29 +14,24 @@ from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox
+
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
 
 from PipelineManager.Process_mia import Process_mia
-from Project.Project import COLLECTION_CURRENT, TAG_TYPE, TYPE_NII, TYPE_MAT
 
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig, PipelineNode, Pipeline
-from capsul.pipeline.pipeline_tools import dump_pipeline_state_as_dict
-
-from SoftwareProperties.Config import Config
-from .process_library import ProcessLibraryWidget
 
 from PipelineManager.callStudent import callStudent
+from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
+    BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
+    TYPE_MAT
+from SoftwareProperties.Config import Config
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditor
-
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM
-
-import uuid
-import datetime
-import yaml
+from .process_library import ProcessLibraryWidget
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -503,9 +500,13 @@ class PipelineManagerTab(QWidget):
         config = Config()
         spm_path = config.get_spm_path()
         matlab_path = config.get_matlab_path()
-        study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
+        use_spm = config.get_use_spm()
+        if use_spm == "yes" and spm_path != "" and matlab_path != "":
+            study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
                                    spm_exec="{0}/".format(matlab_path),
                                    output_directory="{0}/".format(spm_path))
+        else:
+            study_config = StudyConfig(use_spm=False)
 
         # Modifying the study_config to use SPM 12 Standalone
         """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
@@ -532,8 +533,18 @@ class PipelineManagerTab(QWidget):
             self.textedit.setText(f.read())"""
 
         study_config.reset_process_counter()
-        study_config.run(pipeline, verbose=1)
 
+        try:
+            study_config.run(pipeline, verbose=1)
+        except OSError as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("SPM standalone is disabled")
+            self.msg.setInformativeText("SPM processes cannot be run with SPM standalone desactivated.\nYou can activate it in MIA2 preferences.")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
 
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)

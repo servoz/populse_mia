@@ -13,3 +13,4 @@ show_all_slices: 'no'
 spm: /home/lucie/spm12
 text_color: ''
 thumbnail_tag: BandWidth
+use_spm: 'no'
