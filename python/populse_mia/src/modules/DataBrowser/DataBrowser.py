@@ -1562,6 +1562,7 @@ class TableDataBrowser(QTableWidget):
 
             # Scan added only if it's not already in the table
             if self.get_scan_row(scan) is None:
+
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 

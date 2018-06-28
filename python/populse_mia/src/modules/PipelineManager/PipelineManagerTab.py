@@ -399,6 +399,7 @@ class InitWorker(QThread):
         :param p_value: plug value, a file name or a list of file names
         :param brick: brick of the value
         """
+
         if type(p_value) in [list, TraitListObject]:
             for elt in p_value:
                 self.add_plug_value_to_database(elt, brick)
@@ -572,7 +573,6 @@ class InitWorker(QThread):
         import yaml
         with open(os.path.join('..', '..', 'properties', 'pipeline_test.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(dic, configfile, default_flow_style=False, allow_unicode=True)"""
-
 
 class RunWorker(QThread):
 
