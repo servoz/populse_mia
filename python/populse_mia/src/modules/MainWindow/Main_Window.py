@@ -41,12 +41,13 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self, project):
+    def __init__(self, project, test=False):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
         self.project = project
+        self.test = test
         app_icon = QIcon(os.path.join('..', 'sources_images', 'lyon.png'))
         self.setWindowIcon(app_icon)
 
@@ -313,7 +314,8 @@ class Main_Window(QMainWindow):
             downloaded_data_path = os.path.join(data_path, 'downloaded_data')
 
             # List of projects updated
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+            if not self.test:
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
             os.makedirs(exPopup.relative_path)
@@ -536,7 +538,8 @@ class Main_Window(QMainWindow):
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.getName())
 
         # List of project updated
-        self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+        if not self.test:
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
         self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
@@ -554,7 +557,8 @@ class Main_Window(QMainWindow):
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
         if self.exPopup.exec_():
             file_name = self.exPopup.relative_path
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+            if not self.test:
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
     def project_properties_pop_up(self):

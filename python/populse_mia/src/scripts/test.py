@@ -23,7 +23,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app = QApplication([])
         self.project = Project(None, True)
-        self.imageViewer = Main_Window(self.project)
+        self.imageViewer = Main_Window(self.project, test=True)
         print(self._testMethodName)
 
     def tearDown(self):
@@ -31,6 +31,7 @@ class TestMIADataBrowser(unittest.TestCase):
         Called after each test
         """
 
+        self.imageViewer.project.unsaveModifications()
         self.imageViewer.close()
 
     def test_unnamed_project_software_opening(self):
@@ -470,8 +471,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
 
-        self.imageViewer.project.unsaveModifications()
-
     def test_set_value(self):
         """
         Tests the values modifications
@@ -502,8 +501,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(value, float(25000))
         self.assertEqual(value, G1_bandwidth_databrowser)
         self.assertEqual(value_initial, float(50000))
-
-        self.imageViewer.project.unsaveModifications()
 
     def test_reset_cell(self):
         """
@@ -557,8 +554,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(value, float(50000))
         self.assertEqual(value, databrowser)
         self.assertEqual(value, value_initial)
-
-        self.imageViewer.project.unsaveModifications()
 
     def test_reset_column(self):
         """
@@ -649,8 +644,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(value, databrowser)
         self.assertEqual(value, value_initial)
 
-        self.imageViewer.project.unsaveModifications()
-
     def test_add_path(self):
         """
         Tests the popup to add a path
@@ -675,8 +668,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), ['data/downloaded_data/test.py'])
         self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 1)
         self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), 'data/downloaded_data/test.py')
-
-        self.imageViewer.project.unsaveModifications()
 
 if __name__ == '__main__':
     unittest.main()
