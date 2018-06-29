@@ -1582,7 +1582,7 @@ class TableDataBrowser(QTableWidget):
                                     brick_name_button.moveToThread(QApplication.instance().thread())
                                     self.bricks[brick_name_button] = brick_uuid
                                     brick_name_button.clicked.connect(self.show_brick_history)
-                                    layout.addWidget(self.table.brick_name_button)
+                                    layout.addWidget(brick_name_button)
                                 widget.setLayout(layout)
                                 self.setCellWidget(rowCount, column, widget)
 
