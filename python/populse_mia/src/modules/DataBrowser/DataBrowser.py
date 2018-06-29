@@ -907,7 +907,8 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
-        self.progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, 0, self.data_browser.main_window)
+        cells_number = len(self.scans_to_visualize) * len(self.horizontalHeader())
+        self.progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, cells_number, self.data_browser.main_window)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
         self.progress.setWindowTitle("Filling the cells")
@@ -916,11 +917,14 @@ class TableDataBrowser(QTableWidget):
         self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
         self.progress.show()
 
+        idx = 0
         row = 0
         for scan in self.scans_to_visualize:
 
             for column in range(0, len(self.horizontalHeader())):
 
+                idx += 1
+                self.progress.setValue(idx)
                 QApplication.processEvents()
 
                 current_tag = self.horizontalHeaderItem(column).text()
@@ -1543,7 +1547,8 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
 
-        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, 0, self.data_browser.main_window)
+        cells_number = len(rows) * self.columnCount()
+        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, cells_number, self.data_browser.main_window)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
         self.progress.setWindowTitle("Adding the paths")
@@ -1552,6 +1557,7 @@ class TableDataBrowser(QTableWidget):
         self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
         self.progress.show()
 
+        idx = 0
         for scan in rows:
 
             # Scan added only if it's not already in the table
@@ -1563,6 +1569,8 @@ class TableDataBrowser(QTableWidget):
                 # Columns filled for the row being added
                 for column in range(0, self.columnCount()):
 
+                    idx += 1
+                    self.progress.setValue(idx)
                     QApplication.processEvents()
 
                     item = QtWidgets.QTableWidgetItem()

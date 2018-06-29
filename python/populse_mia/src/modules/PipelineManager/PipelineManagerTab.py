@@ -356,8 +356,20 @@ class InitProgress(QProgressDialog):
 
     def __init__(self, project, diagram_view, pipeline, main_window):
 
-        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0, main_window)
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0,
+                                           main_window)
 
+        if not pipeline:
+            nodes_to_check = []
+            for node_name in diagram_view.scene.pipeline.nodes.keys():
+                nodes_to_check.append(node_name)
+            bricks_number = len(set(nodes_to_check))
+        else:
+            nodes_to_check = []
+            for node_name in pipeline.nodes.keys():
+                nodes_to_check.append(node_name)
+            bricks_number = len(set(nodes_to_check))
+        self.setMaximum(bricks_number)
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.setWindowModality(Qt.WindowModal)
@@ -369,7 +381,7 @@ class InitProgress(QProgressDialog):
         self.setMinimumDuration(0)
         self.setValue(0)
 
-        self.worker = InitWorker(self.project, self.diagramView, self.pipeline)
+        self.worker = InitWorker(self.project, self.diagramView, self.pipeline, self)
         self.worker.finished.connect(self.close)
         self.worker.start()
 
@@ -378,11 +390,12 @@ class InitWorker(QThread):
     Thread doing the pipeline initialization
     """
 
-    def __init__(self, project, diagram_view, pipeline):
+    def __init__(self, project, diagram_view, pipeline, progress):
         super().__init__()
         self.project = project
         self.diagramView = diagram_view
         self.pipeline = pipeline
+        self.progress = progress
 
     def add_plug_value_to_database(self, p_value, brick):
         """
@@ -466,7 +479,14 @@ class InitWorker(QThread):
         for node_name in pipeline.nodes.keys():
             nodes_to_check.append(node_name)
 
+        idx = 0
         while nodes_to_check:
+
+            # progressbar
+            idx += 1
+            self.progress.setValue(idx)
+            QApplication.processEvents()
+
             # Verifying if any element of nodes_to_check is unique
             nodes_to_check = list(set(nodes_to_check))
 
@@ -562,7 +582,6 @@ class InitWorker(QThread):
 
     def run(self):
         self.init_pipeline(self.pipeline)
-
 
 class RunProgress(QProgressDialog):
     """
