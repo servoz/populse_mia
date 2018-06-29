@@ -44,14 +44,14 @@ else:
 
 
 class PipelineManagerTab(QWidget):
-    def __init__(self, project, scan_list, parent):
+    def __init__(self, project, scan_list, main_window):
         global textedit, tagEditor, editor
 
         editor = self
         Process_mia.project = project
         self.project = project
         self.scan_list = scan_list
-        self.parent = parent
+        self.main_window = main_window
 
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
@@ -70,7 +70,7 @@ class PipelineManagerTab(QWidget):
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
 
-        self.nodeController = NodeController(self.project, self.scan_list)
+        self.nodeController = NodeController(self.project, self.scan_list, self, self.main_window)
         self.nodeController.visibles_tags = self.project.session.get_visibles()
 
         self.scrollArea = QScrollArea()
@@ -316,13 +316,13 @@ class PipelineManagerTab(QWidget):
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
 
-        self.progress = InitProgress(self.project, self.diagramView, pipeline, self.parent)
+        self.progress = InitProgress(self.project, self.diagramView, pipeline, self.main_window)
         self.progress.show()
         self.progress.exec()
 
     def runPipeline(self):
 
-        self.progress = RunProgress(self.diagramView, self.parent)
+        self.progress = RunProgress(self.diagramView, self.main_window)
         self.progress.show()
         self.progress.exec()
 
@@ -373,7 +373,6 @@ class InitProgress(QProgressDialog):
         self.worker = InitWorker(self.project, self.diagramView, self.pipeline)
         self.worker.finished.connect(self.close)
         self.worker.start()
-
 
 class InitWorker(QThread):
     """
