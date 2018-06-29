@@ -6,7 +6,7 @@ import populse_db
 import datetime
 from time import time
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtWidgets import QProgressDialog
+from PyQt5.QtWidgets import QProgressDialog, QApplication
 from datetime import datetime
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, TYPE_NII
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
@@ -41,7 +41,7 @@ class ImportProgress(QProgressDialog):
     """
     def __init__(self, project, main_window):
 
-        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 0, main_window)
+        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 3, main_window)
 
         self.setWindowTitle("Importing the paths")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
@@ -50,7 +50,7 @@ class ImportProgress(QProgressDialog):
         self.setMinimumDuration(0)
         self.setValue(0)
 
-        self.worker = ImportWorker(project)
+        self.worker = ImportWorker(project, self)
         self.worker.finished.connect(self.close)
         self.worker.start()
 
@@ -58,9 +58,10 @@ class ImportWorker(QThread):
     """
     Thread import
     """
-    def __init__(self, project):
+    def __init__(self, project, progress):
         super().__init__()
         self.project = project
+        self.progress = progress
 
     def run(self):
 
@@ -225,7 +226,13 @@ class ImportWorker(QThread):
                             [scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
                         documents[scan][tag.name] = tag.default_value
 
+        self.progress.setValue(1)
+        QApplication.processEvents()
+
         self.project.session.add_fields(tags_added)
+
+        self.progress.setValue(2)
+        QApplication.processEvents()
 
         current_paths = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
@@ -236,6 +243,9 @@ class ImportWorker(QThread):
             self.project.session.add_document(COLLECTION_CURRENT, documents[document], flush=False)
             self.project.session.add_document(COLLECTION_INITIAL, documents[document], flush=False)
         self.project.session.session.flush()
+
+        self.progress.setValue(3)
+        QApplication.processEvents()
 
         # For history
         historyMaker.append(self.scans_added)

@@ -3,11 +3,11 @@
 
 import sys
 import os
+
 from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
 from Project.Project import Project
 from SoftwareProperties.Config import Config
-import atexit
 
 imageViewer = None
 
