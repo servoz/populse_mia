@@ -395,9 +395,9 @@ class PipelineManagerTab(QWidget):
 
         while nodes_to_check:
             # Verifying if any element of nodes_to_check is unique
-            nodes_to_check = sorted(list(set(nodes_to_check)))
+            nodes_to_check = list(set(nodes_to_check))
 
-            node_name = nodes_to_check.pop()
+            node_name = nodes_to_check.pop(0)
 
             # Inputs/Outputs nodes will be automatically updated with
             # the method update_nodes_and_plugs_activation of the pipeline object
@@ -412,12 +412,14 @@ class PipelineManagerTab(QWidget):
 
                 for plug_name in node.plugs.keys():
                     if hasattr(node.plugs[plug_name], 'links_to'):
+
                         list_info_link = list(node.plugs[plug_name].links_to)
                         for info_link in list_info_link:
                             if info_link[2] in pipeline.nodes.values():
                                 dest_node_name = info_link[0]
                                 nodes_to_check.append(dest_node_name)
 
+                pipeline.update_nodes_and_plugs_activation()
                 continue
 
             # Adding the brick to the bricks history
@@ -456,7 +458,6 @@ class PipelineManagerTab(QWidget):
                     if plug_name not in node.plugs.keys():
                         continue
                     if plug_value not in ["<undefined>", Undefined]:
-                        print(plug_value)
                         add_plug_value_to_database(plug_value, brick_id)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
