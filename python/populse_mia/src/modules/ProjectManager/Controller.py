@@ -24,24 +24,24 @@ def getJsonTagsFromFile(file_path, path):
             json_tags.append([name, value])
    return json_tags
 
-def read_log(project, parent):
+def read_log(project, main_window):
 
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
-    parent.progress = ImportProgress(project, parent)
-    parent.progress.show()
-    parent.progress.exec()
+    main_window.progress = ImportProgress(project, main_window)
+    main_window.progress.show()
+    main_window.progress.exec()
 
-    return parent.progress.worker.scans_added
+    return main_window.progress.worker.scans_added
 
 class ImportProgress(QProgressDialog):
     """
     Import progress bar
     """
-    def __init__(self, project, parent):
+    def __init__(self, project, main_window):
 
-        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 0, parent)
+        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 0, main_window)
 
         self.setWindowTitle("Importing the paths")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)

@@ -907,15 +907,21 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
-        #progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, 0, self.data_browser.main_window)
-        #self.worker = FillCellsProgress(self.data_browser.main_window, progress)
-        #self.worker.finished.connect(progress.close)
-        #self.worker.start()
+        self.progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, 0, self.data_browser.main_window)
+        self.progress.setMinimumDuration(0)
+        self.progress.setValue(0)
+        self.progress.setWindowTitle("Filling the cells")
+        self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.progress.show()
 
         row = 0
         for scan in self.scans_to_visualize:
 
             for column in range(0, len(self.horizontalHeader())):
+
+                QApplication.processEvents()
 
                 current_tag = self.horizontalHeaderItem(column).text()
 
@@ -967,16 +973,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeRowsToContents()
         self.resizeColumnsToContents()
 
-        #print("end fill cells")
-
-        #print(self.worker.isFinished())
-
-        #self.worker.terminate()
-        #self.worker.finished.emit()
-
-        #print(self.worker.isFinished())
-
-        #print("after terminate")
+        self.progress.close()
 
     def show_brick_history(self):
         """
@@ -1546,6 +1543,15 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
 
+        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, 0, self.data_browser.main_window)
+        self.progress.setMinimumDuration(0)
+        self.progress.setValue(0)
+        self.progress.setWindowTitle("Adding the paths")
+        self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.progress.show()
+
         for scan in rows:
 
             # Scan added only if it's not already in the table
@@ -1556,6 +1562,9 @@ class TableDataBrowser(QTableWidget):
 
                 # Columns filled for the row being added
                 for column in range(0, self.columnCount()):
+
+                    QApplication.processEvents()
+
                     item = QtWidgets.QTableWidgetItem()
                     tag = self.horizontalHeaderItem(column).text()
 
@@ -1582,7 +1591,7 @@ class TableDataBrowser(QTableWidget):
                                     brick_name_button.moveToThread(QApplication.instance().thread())
                                     self.bricks[brick_name_button] = brick_uuid
                                     brick_name_button.clicked.connect(self.show_brick_history)
-                                    layout.addWidget(self.table.brick_name_button)
+                                    layout.addWidget(brick_name_button)
                                 widget.setLayout(layout)
                                 self.setCellWidget(rowCount, column, widget)
 
@@ -1611,6 +1620,8 @@ class TableDataBrowser(QTableWidget):
         self.itemSelectionChanged.connect(self.selection_changed)
 
         self.itemChanged.connect(self.change_cell_color)
+
+        self.progress.close()
 
     def get_index_insertion(self, to_insert):
         """
@@ -1855,30 +1866,6 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
-
-class FillCellsProgress(QThread):
-    """
-    Fill cells progress bar
-    """
-
-    def __init__(self, main_window, progress):
-
-        super().__init__()
-
-        self.main_window = main_window
-        self.progress = progress
-
-    def run(self):
-
-        print("begin run")
-        self.progress.setMinimumDuration(0)
-        self.progress.setValue(0)
-        self.progress.setWindowTitle("Filling the cells")
-        self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.progress.setWindowModality(Qt.WindowModal)
-        self.progress.show()
-        self.progress.exec()
-        print("end run")
 
 class AddRowsProgress(QProgressDialog):
     """
