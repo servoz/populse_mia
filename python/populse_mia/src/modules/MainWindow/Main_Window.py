@@ -41,12 +41,13 @@ class Main_Window(QMainWindow):
 
 
     """
-    def __init__(self, project):
+    def __init__(self, project, test=False):
 
         ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
         self.project = project
+        self.test = test
         app_icon = QIcon(os.path.join('..', 'sources_images', 'lyon.png'))
         self.setWindowIcon(app_icon)
 
@@ -284,7 +285,7 @@ class Main_Window(QMainWindow):
         self.image_viewer = ImageViewer(self.textInfo)
         self.tabs.addTab(self.image_viewer, "Image Viewer")
 
-        self.pipeline_manager = PipelineManagerTab(self.project, [])
+        self.pipeline_manager = PipelineManagerTab(self.project, [], self)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         self.tabs.currentChanged.connect(self.tab_changed)
@@ -313,7 +314,8 @@ class Main_Window(QMainWindow):
             downloaded_data_path = os.path.join(data_path, 'downloaded_data')
 
             # List of projects updated
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+            if not self.test:
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
             os.makedirs(exPopup.relative_path)
@@ -536,7 +538,8 @@ class Main_Window(QMainWindow):
             self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.getName())
 
         # List of project updated
-        self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+        if not self.test:
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
         self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
@@ -554,7 +557,8 @@ class Main_Window(QMainWindow):
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
         if self.exPopup.exec_():
             file_name = self.exPopup.relative_path
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+            if not self.test:
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
     def project_properties_pop_up(self):
@@ -592,7 +596,7 @@ class Main_Window(QMainWindow):
             import cProfile
 
             # Database filled
-            new_scans = controller.read_log(self.project)
+            new_scans = controller.read_log(self.project, self)
 
             # Table updated
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
@@ -617,19 +621,22 @@ class Main_Window(QMainWindow):
             # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+
             self.data_browser.table_data.add_columns()
             self.data_browser.table_data.fill_headers()
+
             self.data_browser.table_data.add_rows(documents)
+
+            self.data_browser.table_data.scans_to_visualize = documents
+            self.data_browser.table_data.scans_to_search = documents
 
             self.data_browser.table_data.itemChanged.disconnect()
             self.data_browser.table_data.fill_cells_update_table()
             self.data_browser.table_data.itemChanged.connect(self.data_browser.table_data.change_cell_color)
 
-            # We open the advanced search + search_bar
-            self.data_browser.table_data.scans_to_visualize = documents
-            self.data_browser.table_data.scans_to_search = documents
             self.data_browser.table_data.update_visualized_rows(old_scans)
 
+            # Advanced search + search_bar opened
             old_search = self.project.currentFilter.search_bar
             self.data_browser.reset_search_bar()
             self.data_browser.search_bar.setText(old_search)

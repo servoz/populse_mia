@@ -3,10 +3,10 @@ import os
 from functools import partial
 
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
-    QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit
+    QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit, QApplication
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
 
 from DataBrowser.RapidSearch import RapidSearch
@@ -79,10 +79,10 @@ class TimeFormatDelegate(QItemDelegate):
 
 class DataBrowser(QWidget):
 
-    def __init__(self, project, parent):
+    def __init__(self, project, main_window):
 
         self.project = project
-        self.parent = parent
+        self.main_window = main_window
 
         super(DataBrowser, self).__init__()
 
@@ -189,9 +189,9 @@ class DataBrowser(QWidget):
 
         if show_selection.exec_():
             # Ok clicked
-            self.parent.pipeline_manager.scan_list = current_scans
-            self.parent.pipeline_manager.nodeController.scan_list = current_scans
-            self.parent.pipeline_manager.diagramView.scan_list = current_scans
+            self.main_window.pipeline_manager.scan_list = current_scans
+            self.main_window.pipeline_manager.nodeController.scan_list = current_scans
+            self.main_window.pipeline_manager.diagramView.scan_list = current_scans
 
     def update_database(self, database):
         """
@@ -565,12 +565,12 @@ class DataBrowser(QWidget):
 
 class TableDataBrowser(QTableWidget):
 
-    def __init__(self, project, parent, tags_to_display, update_values, activate_selection):
+    def __init__(self, project, data_browser, tags_to_display, update_values, activate_selection):
 
         super().__init__()
 
         self.project = project
-        self.parent = parent
+        self.data_browser = data_browser
         self.tags_to_display = tags_to_display
         self.update_values = update_values
         self.activate_selection = activate_selection
@@ -608,7 +608,7 @@ class TableDataBrowser(QTableWidget):
         Green cross clicked to add a path
         """
 
-        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.parent)
+        self.pop_up_add_path = Ui_Dialog_add_path(self.project, self.data_browser)
         self.pop_up_add_path.show()
 
     def add_column(self, column, tag):
@@ -740,7 +740,7 @@ class TableDataBrowser(QTableWidget):
                 self.scans.append([scan_name, [tag_name]])
 
         # ImageViewer updated
-        self.parent.connect_viewer()
+        self.data_browser.connect_viewer()
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
@@ -907,23 +907,21 @@ class TableDataBrowser(QTableWidget):
         To initialize and fill the cells of the table
         """
 
-        # Progressbar
-        len_scans = len(self.scans_to_visualize)
-        ui_progressbar = QProgressDialog("Filling the table", "Cancel", 0, len_scans)
-        ui_progressbar.setWindowModality(Qt.WindowModal)
-        ui_progressbar.setWindowTitle("")
-        ui_progressbar.setMinimumDuration(0)
-        ui_progressbar.show()
-        idx = 0
+        self.progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, 0, self.data_browser.main_window)
+        self.progress.setMinimumDuration(0)
+        self.progress.setValue(0)
+        self.progress.setWindowTitle("Filling the cells")
+        self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.progress.show()
 
         row = 0
         for scan in self.scans_to_visualize:
 
-            # Progressbar
-            idx += 1
-            ui_progressbar.setValue(idx)
-
             for column in range(0, len(self.horizontalHeader())):
+
+                QApplication.processEvents()
 
                 current_tag = self.horizontalHeaderItem(column).text()
 
@@ -940,15 +938,18 @@ class TableDataBrowser(QTableWidget):
                     if current_value is not None:
 
                         if current_tag != TAG_BRICKS:
-                            set_item_data(item, current_value, self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
+                            set_item_data(item, current_value,
+                                          self.project.session.get_field(COLLECTION_CURRENT, current_tag).type)
                         else:
                             # Tag bricks, display list with buttons
                             widget = QWidget()
+                            widget.moveToThread(QApplication.instance().thread())
                             layout = QVBoxLayout()
                             for brick_number in range(0, len(current_value)):
                                 brick_uuid = current_value[brick_number]
                                 brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid, BRICK_NAME)
-                                brick_name_button = QPushButton(brick_name, self)
+                                brick_name_button = QPushButton(brick_name)
+                                brick_name_button.moveToThread(QApplication.instance().thread())
                                 self.bricks[brick_name_button] = brick_uuid
                                 brick_name_button.clicked.connect(self.show_brick_history)
                                 layout.addWidget(brick_name_button)
@@ -972,7 +973,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeRowsToContents()
         self.resizeColumnsToContents()
 
-        ui_progressbar.close()
+        self.progress.close()
 
     def show_brick_history(self):
         """
@@ -980,7 +981,7 @@ class TableDataBrowser(QTableWidget):
         """
 
         brick_uuid = self.bricks[self.sender()]
-        show_brick_popup = Ui_Dialog_Show_Brick(self.project, brick_uuid, self.parent, self.parent.parent)
+        show_brick_popup = Ui_Dialog_Show_Brick(self.project, brick_uuid, self.data_browser, self.data_browser.parent)
         show_brick_popup.show()
         show_brick_popup.exec()
 
@@ -1317,7 +1318,7 @@ class TableDataBrowser(QTableWidget):
 
     def visualized_tags_pop_up(self):
         old_tags = self.project.session.get_visibles()  # Old list of columns
-        self.pop_up = Ui_Dialog_Settings(self.project, self.parent, old_tags)
+        self.pop_up = Ui_Dialog_Settings(self.project, self.data_browser, old_tags)
         self.pop_up.tab_widget.setCurrentIndex(0)
 
         self.pop_up.setGeometry(300, 200, 800, 600)
@@ -1417,8 +1418,8 @@ class TableDataBrowser(QTableWidget):
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Update the list of tags in the advanced search if it's opened
-        if not self.parent.frame_advanced_search.isHidden():
-            for row in self.parent.advanced_search.rows:
+        if not self.data_browser.frame_advanced_search.isHidden():
+            for row in self.data_browser.advanced_search.rows:
                 fields = row[2]
                 fields.clear()
                 for visible_tag in visibles:
@@ -1542,31 +1543,28 @@ class TableDataBrowser(QTableWidget):
 
         self.itemChanged.disconnect()
 
-        # Progressbar
-        len_rows = len(rows)
-        ui_progressbar = QProgressDialog("Adding rows to the table", "Cancel", 0, len_rows)
-        ui_progressbar.setWindowTitle("")
-        ui_progressbar.setWindowModality(Qt.WindowModal)
-        ui_progressbar.setMinimumDuration(0)
-        ui_progressbar.show()
-        idx = 0
-        ui_progressbar.setValue(idx)
+        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, 0, self.data_browser.main_window)
+        self.progress.setMinimumDuration(0)
+        self.progress.setValue(0)
+        self.progress.setWindowTitle("Adding the paths")
+        self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.progress.show()
 
         for scan in rows:
 
-            # Progressbar
-            idx += 1
-            ui_progressbar.setValue(idx)
-            if ui_progressbar.wasCanceled():
-                break
-
             # Scan added only if it's not already in the table
             if self.get_scan_row(scan) is None:
+
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 
                 # Columns filled for the row being added
                 for column in range(0, self.columnCount()):
+
+                    QApplication.processEvents()
+
                     item = QtWidgets.QTableWidgetItem()
                     tag = self.horizontalHeaderItem(column).text()
 
@@ -1578,16 +1576,19 @@ class TableDataBrowser(QTableWidget):
                         cur_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag)
                         if cur_value is not None:
                             if tag != TAG_BRICKS:
-                                set_item_data(item, cur_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
+                                set_item_data(item, cur_value,
+                                              self.project.session.get_field(COLLECTION_CURRENT, tag).type)
                             else:
                                 # Tag bricks, display list with buttons
                                 widget = QWidget()
+                                widget.moveToThread(QApplication.instance().thread())
                                 layout = QVBoxLayout()
                                 for brick_number in range(0, len(cur_value)):
                                     brick_uuid = cur_value[brick_number]
                                     brick_name = self.project.session.get_value(COLLECTION_BRICK, brick_uuid,
                                                                                 BRICK_NAME)
-                                    brick_name_button = QPushButton(brick_name, self)
+                                    brick_name_button = QPushButton(brick_name)
+                                    brick_name_button.moveToThread(QApplication.instance().thread())
                                     self.bricks[brick_name_button] = brick_uuid
                                     brick_name_button.clicked.connect(self.show_brick_history)
                                     layout.addWidget(brick_name_button)
@@ -1606,8 +1607,6 @@ class TableDataBrowser(QTableWidget):
                                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # bricks not editable
                     self.setItem(rowCount, column, item)
 
-        ui_progressbar.close()
-
         self.setSortingEnabled(True)
 
         self.resizeColumnsToContents()
@@ -1621,6 +1620,8 @@ class TableDataBrowser(QTableWidget):
         self.itemSelectionChanged.connect(self.selection_changed)
 
         self.itemChanged.connect(self.change_cell_color)
+
+        self.progress.close()
 
     def get_index_insertion(self, to_insert):
         """
@@ -1703,7 +1704,6 @@ class TableDataBrowser(QTableWidget):
                 msg.exec()
 
             # Ok
-
             elif len(self.old_table_values) > 0:
 
                 if len(self.coordinates) > 1:
@@ -1866,3 +1866,22 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
+
+class AddRowsProgress(QProgressDialog):
+    """
+    Add rows progress bar
+    """
+    def __init__(self, project, main_window, table, rows):
+
+        super(AddRowsProgress, self).__init__("Please wait while the paths are being added...", None, 0, 0, main_window)
+
+        self.setWindowTitle("Adding rows")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = AddRowsWorker(project, table, rows)
+        self.worker.finished.connect(self.close)
+        self.worker.start()

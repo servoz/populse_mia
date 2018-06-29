@@ -45,8 +45,6 @@ class Process_mia(Process):
             else:
                 self.manage_brick_output_before_run(output_value)
 
-        self.project.saveModifications()
-
     def manage_brick_after_run(self):
         """
         Manages the brick history after the run (Done status)
@@ -59,8 +57,6 @@ class Process_mia(Process):
                     self.manage_brick_output_after_run(single_value)
             else:
                 self.manage_brick_output_after_run(output_value)
-
-        self.project.saveModifications()
 
     def get_scan_bricks(self, output_value):
         """
@@ -96,6 +92,7 @@ class Process_mia(Process):
                         output_value = outputs[output_name]
                         self.remove_brick_output(brick, output_value)
                     self.project.session.remove_document(COLLECTION_BRICK, brick)
+                    self.project.saveModifications()
             return brick_to_keep
 
     def remove_brick_output(self, brick, output):
@@ -116,6 +113,7 @@ class Process_mia(Process):
                 output_bricks.remove(brick)
                 self.project.session.set_value(COLLECTION_CURRENT, scan, TAG_BRICKS, output_bricks)
                 self.project.session.set_value(COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
+                self.project.saveModifications()
 
     def manage_brick_output_before_run(self, output_value):
         """
@@ -129,6 +127,7 @@ class Process_mia(Process):
             self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC_TIME,
                                       datetime.datetime.now())
             self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC, "Not Done")
+            self.project.saveModifications()
 
     def manage_brick_output_after_run(self, output_value):
         """
@@ -140,3 +139,4 @@ class Process_mia(Process):
         brick_to_update = self.get_brick_to_update(scan_bricks_history)
         if brick_to_update is not None:
             self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC, "Done")
+            self.project.saveModifications()

@@ -8,13 +8,13 @@ import uuid
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize
+    QRectF, QSize, QThread
 from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
     QCursor, QBrush, QIcon
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
     QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
 
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
@@ -22,7 +22,7 @@ from traits.trait_errors import TraitError
 from PipelineManager.Process_mia import Process_mia
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode, Pipeline
+from capsul.api import get_process_instance, StudyConfig, PipelineNode
 
 from PipelineManager.callStudent import callStudent
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
@@ -44,13 +44,14 @@ else:
 
 
 class PipelineManagerTab(QWidget):
-    def __init__(self, project, scan_list):
+    def __init__(self, project, scan_list, main_window):
         global textedit, tagEditor, editor
 
         editor = self
         Process_mia.project = project
         self.project = project
         self.scan_list = scan_list
+        self.main_window = main_window
 
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
@@ -69,7 +70,7 @@ class PipelineManagerTab(QWidget):
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
 
-        self.nodeController = NodeController(self.project, self.scan_list)
+        self.nodeController = NodeController(self.project, self.scan_list, self, self.main_window)
         self.nodeController.visibles_tags = self.project.session.get_visibles()
 
         self.scrollArea = QScrollArea()
@@ -314,74 +315,146 @@ class PipelineManagerTab(QWidget):
 
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
+        self.progress = InitProgress(self.project, self.diagramView, pipeline, self.main_window)
+        self.progress.show()
+        self.progress.exec()
 
-        def add_plug_value_to_database(p_value, brick):
-            """
-            Adds the plug value to the database.
-            :param p_value: plug value, a file name or a list of file names
-            :param brick: brick of the value
-            """
-            if type(p_value) in [list, TraitListObject]:
-                for elt in p_value:
-                    add_plug_value_to_database(elt, brick)
-                return
+    def runPipeline(self):
+        self.progress = RunProgress(self.diagramView, self.main_window)
+        self.progress.show()
+        self.progress.exec()
 
-            # This means that the value is not a filename
-            if p_value in ["<undefined>", Undefined] or not os.path.isdir(os.path.split(p_value)[0]):
-                return
-            try:
-                open(p_value, 'a').close()
-            except IOError:
-                raise IOError('Could not open {0} file.'.format(p_value))
+    def displayNodeParameters(self, node_name, process):
+        self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
+        self.scrollArea.setWidget(self.nodeController)
+
+    def startConnection(self, port):
+        self.startedConnection = Connection(port, None)
+
+    def sceneMouseMoveEvent(self, event):
+        if self.startedConnection:
+            pos = event.scenePos()
+            self.startedConnection.setEndPos(pos)
+
+    def sceneMouseReleaseEvent(self, event):
+        # Clear the actual connection:
+        if self.startedConnection:
+            pos = event.scenePos()
+            items = self.diagramScene.items(pos)
+            for item in items:
+                if type(item) is PortItem:
+                    self.startedConnection.setToPort(item)
+            if self.startedConnection.toPort is None:
+                self.startedConnection.delete()
+            self.startedConnection = None
+
+
+class InitProgress(QProgressDialog):
+    """
+    Init progress bar
+    """
+
+    def __init__(self, project, diagram_view, pipeline, main_window):
+
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0, main_window)
+
+        self.setWindowTitle("Pipeline initialization")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.project = project
+        self.diagramView = diagram_view
+        self.pipeline = pipeline
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = InitWorker(self.project, self.diagramView, self.pipeline)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class InitWorker(QThread):
+    """
+    Thread doing the pipeline initialization
+    """
+
+    def __init__(self, project, diagram_view, pipeline):
+        super().__init__()
+        self.project = project
+        self.diagramView = diagram_view
+        self.pipeline = pipeline
+
+    def add_plug_value_to_database(self, p_value, brick):
+        """
+        Adds the plug value to the database.
+        :param p_value: plug value, a file name or a list of file names
+        :param brick: brick of the value
+        """
+
+        if type(p_value) in [list, TraitListObject]:
+            for elt in p_value:
+                self.add_plug_value_to_database(elt, brick)
+            return
+
+        # This means that the value is not a filename
+        if p_value in ["<undefined>", Undefined] or not os.path.isdir(os.path.split(p_value)[0]):
+            return
+        try:
+            open(p_value, 'a').close()
+        except IOError:
+            raise IOError('Could not open {0} file.'.format(p_value))
+        else:
+            # Deleting the project's folder in the file name so it can
+            # fit to the database's syntax
+            old_value = p_value
+            p_value = p_value.replace(self.project.folder, "")
+            if p_value[0] in ["\\", "/"]:
+                p_value = p_value[1:]
+
+            # If the file name is already in the database, no exception is raised
+            # but the user is warned
+            if self.project.session.get_document(COLLECTION_CURRENT, p_value):
+                print("Path {0} already in database.".format(p_value))
             else:
-                # Deleting the project's folder in the file name so it can
-                # fit to the database's syntax
-                old_value = p_value
-                p_value = p_value.replace(self.project.folder, "")
-                if p_value[0] in ["\\", "/"]:
-                    p_value = p_value[1:]
+                self.project.session.add_document(COLLECTION_CURRENT, p_value)
+                self.project.session.add_document(COLLECTION_INITIAL, p_value)
 
-                # If the file name is already in the database, no exception is raised
-                # but the user is warned
-                if self.project.session.get_document(COLLECTION_CURRENT, p_value):
-                    print("Path {0} already in database.".format(p_value))
-                else:
-                    self.project.session.add_document(COLLECTION_CURRENT, p_value)
-                    self.project.session.add_document(COLLECTION_INITIAL, p_value)
+            # Adding the new brick to the output files
+            bricks = self.project.session.get_value(COLLECTION_CURRENT, p_value, TAG_BRICKS)
+            if bricks is None:
+                bricks = []
+            bricks.append(self.brick_id)
+            self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
+            self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
 
-                # Adding the new brick to the output files
-                bricks = self.project.session.get_value(COLLECTION_CURRENT, p_value, TAG_BRICKS)
-                if bricks is None:
-                    bricks = []
-                bricks.append(brick_id)
-                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
-                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
+            # Type tag
+            filename, file_extension = os.path.splitext(p_value)
+            if file_extension == ".nii":
+                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
+                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
+            elif file_extension == ".mat":
+                self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
+                self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
 
-                # Type tag
-                filename, file_extension = os.path.splitext(p_value)
-                if file_extension == ".nii":
-                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_NII)
-                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_NII)
-                elif file_extension == ".mat":
-                    self.project.session.set_value(COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
-                    self.project.session.set_value(COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
+            # Adding inherited tags
+            if self.inheritance_dict:
+                parent_file = self.inheritance_dict[old_value]
+                for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                    if scan in str(parent_file):
+                        database_parent_file = scan
+                banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
+                for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
+                    if not tag in banished_tags:
+                        parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file,
+                                                                              tag)
+                        self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
+                        parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file,
+                                                                              tag)
+                        self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
 
-                # Adding inherited tags
-                if inheritance_dict:
-                    parent_file = inheritance_dict[old_value]
-                    for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-                        if scan in str(parent_file):
-                            database_parent_file = scan
-                    banished_tags = [TAG_TYPE, TAG_EXP_TYPE, TAG_BRICKS, TAG_CHECKSUM, TAG_FILENAME]
-                    for tag in self.project.session.get_fields_names(COLLECTION_CURRENT):
-                        if not tag in banished_tags:
-                            parent_current_value = self.project.session.get_value(COLLECTION_CURRENT, database_parent_file, tag)
-                            self.project.session.set_value(COLLECTION_CURRENT, p_value, tag, parent_current_value)
-                            parent_initial_value = self.project.session.get_value(COLLECTION_INITIAL, database_parent_file, tag)
-                            self.project.session.set_value(COLLECTION_INITIAL, p_value, tag, parent_initial_value)
+            self.project.saveModifications()
 
-                self.project.saveModifications()
-
+    def init_pipeline(self, pipeline):
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = self.diagramView.scene.pipeline
@@ -408,7 +481,7 @@ class PipelineManagerTab(QWidget):
             node = pipeline.nodes[node_name]
             if isinstance(node, PipelineNode):
                 sub_pipeline = node.process
-                self.initPipeline(sub_pipeline)
+                self.init_pipeline(sub_pipeline)
 
                 for plug_name in node.plugs.keys():
                     if hasattr(node.plugs[plug_name], 'links_to'):
@@ -423,19 +496,19 @@ class PipelineManagerTab(QWidget):
                 continue
 
             # Adding the brick to the bricks history
-            brick_id = str(uuid.uuid4())
-            self.project.session.add_document(COLLECTION_BRICK, brick_id)
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_NAME, node_name)
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT_TIME, datetime.datetime.now())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Not Done")
+            self.brick_id = str(uuid.uuid4())
+            self.project.session.add_document(COLLECTION_BRICK, self.brick_id)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_NAME, node_name)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT_TIME, datetime.datetime.now())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT, "Not Done")
             self.project.saveModifications()
 
             process = node.process
 
             # Getting the list of the outputs of the node according to its inputs
             try:
-                inheritance_dict = None
-                (process_outputs, inheritance_dict) = process.list_outputs()
+                self.inheritance_dict = None
+                (process_outputs, self.inheritance_dict) = process.list_outputs()
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
                 # The node should be checked again but it can lead to an
@@ -448,8 +521,8 @@ class PipelineManagerTab(QWidget):
                 print("No inheritance dict for the process " + node_name)
 
             # Adding I/O to database history
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
             self.project.saveModifications()
 
             if process_outputs:
@@ -458,7 +531,7 @@ class PipelineManagerTab(QWidget):
                     if plug_name not in node.plugs.keys():
                         continue
                     if plug_value not in ["<undefined>", Undefined]:
-                        add_plug_value_to_database(plug_value, brick_id)
+                        self.add_plug_value_to_database(plug_value, self.brick_id)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -480,14 +553,49 @@ class PipelineManagerTab(QWidget):
                     pipeline.update_nodes_and_plugs_activation()
 
             # Adding I/O to database history again to update outputs
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_OUTPUTS, process.get_outputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
 
             # Setting brick init state if init finished correctly
-            self.project.session.set_value(COLLECTION_BRICK, brick_id, BRICK_INIT, "Done")
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT, "Done")
             self.project.saveModifications()
 
-    def runPipeline(self):
+    def run(self):
+        self.init_pipeline(self.pipeline)
+
+
+class RunProgress(QProgressDialog):
+    """
+    Run progress bar
+    """
+
+    def __init__(self, diagram_view, main_window):
+
+        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0, main_window)
+
+        self.setWindowTitle("Pipeline run")
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowModality(Qt.WindowModal)
+
+        self.diagramView = diagram_view
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = RunWorker(self.diagramView)
+        self.worker.finished.connect(self.close)
+        self.worker.start()
+
+class RunWorker(QThread):
+    """
+    Thread doing the pipeline run
+    """
+    def __init__(self, diagram_view):
+        super().__init__()
+        self.diagramView = diagram_view
+
+    def run(self):
+
         pipeline = get_process_instance(self.diagramView.scene.pipeline)
         # Now
         # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
@@ -495,17 +603,17 @@ class PipelineManagerTab(QWidget):
         # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
         #                            spm_standalone=True, )
         # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-        #                            spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
+        #  study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
+        #                             spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
 
         config = Config()
         spm_path = config.get_spm_path()
         matlab_path = config.get_matlab_path()
         use_spm = config.get_use_spm()
-        if use_spm == "yes" and spm_path != "" and matlab_path != "":
+        if use_spm == "yes" and spm_path != "" and matlab_path != "" and spm_path is not None and matlab_path is not None:
             study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
-                                   spm_exec="{0}/".format(matlab_path),
-                                   output_directory="{0}/".format(spm_path))
+                                       spm_exec="{0}/".format(matlab_path),
+                                       output_directory="{0}/".format(spm_path))
         else:
             study_config = StudyConfig(use_spm=False)
 
@@ -516,7 +624,6 @@ class PipelineManagerTab(QWidget):
         """setattr(study_config, 'use_spm', True)
         setattr(study_config, 'spm_version', '12')"""
         """setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')"""
-
 
         # inspect config options
         for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
@@ -540,37 +647,13 @@ class PipelineManagerTab(QWidget):
         except OSError as e:
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("SPM standalone is disabled")
-            self.msg.setInformativeText("SPM processes cannot be run with SPM standalone desactivated.\nYou can activate it in MIA2 preferences.")
+            self.msg.setText("SPM standalone is not set")
+            self.msg.setInformativeText(
+                "SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA2 preferences.")
             self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
             self.msg.show()
-
-    def displayNodeParameters(self, node_name, process):
-        self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
-        self.scrollArea.setWidget(self.nodeController)
-
-    def startConnection(self, port):
-        self.startedConnection = Connection(port, None)
-
-    def sceneMouseMoveEvent(self, event):
-        if self.startedConnection:
-            pos = event.scenePos()
-            self.startedConnection.setEndPos(pos)
-
-    def sceneMouseReleaseEvent(self, event):
-        # Clear the actual connection:
-        if self.startedConnection:
-            pos = event.scenePos()
-            items = self.diagramScene.items(pos)
-            for item in items:
-                if type(item) is PortItem:
-                    self.startedConnection.setToPort(item)
-            if self.startedConnection.toPort is None:
-                self.startedConnection.delete()
-            self.startedConnection = None
-
 
 class MenuBar(QMenuBar):
     def __init__(self, parent=None):
