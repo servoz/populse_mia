@@ -41,6 +41,15 @@
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 dictionaryMRI:
 
+  B-values Number:
+                   description: {info: ""}
+  
+                   whereBruker:  {file: method, keyName: $PVM_DwNDiffExpEach=, type: int, format: ~, units: ~}
+                   
+                   viewer: {category: Diffusion}
+                   json:   {tagJson: ~, type: ~, format: ~, units: ~}
+            
+  
   Coding Scheme Designator:
                    description: {info: ""}
   
@@ -115,3 +124,25 @@ dictionaryMRI:
                    
                   viewer: {category: Specification}
                   json:   {tagJson: ~, type: ~, format: ~, units: ~}
+                  
+  Transposition:
+                  description: {info: ""}
+                  whereBruker:  {file: reco, keyName: $RECO_transposition=, type: string, format: ~, units: ~}
+                   
+                  viewer: {category: Grad Orient}
+                  json:   {tagJson: ~, type: ~, format: ~, units: ~}
+
+  Gradient Orientation:
+                  description: {info: ""}
+                  whereBruker:  {file: method, keyName: $PVM_SPackArrGradOrient=, type: string, format: ~, units: ~}
+                   
+                  viewer: {category: Grad Orient}
+                  json:   {tagJson: ~, type: ~, format: ~, units: ~}
+
+  Gradient Matrix:
+                  description: {info: ""}
+                  whereBruker:  {file: acqp, keyName: $ACQ_grad_matrix=, type: string, format: ~, units: ~}
+                   
+                  viewer: {category: Grad Orient}
+                  json:   {tagJson: ~, type: ~, format: ~, units: ~}                  
+             
