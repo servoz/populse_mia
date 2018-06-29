@@ -355,9 +355,9 @@ class InitProgress(QProgressDialog):
     Init progress bar
     """
 
-    def __init__(self, project, diagram_view, pipeline, parent):
+    def __init__(self, project, diagram_view, pipeline, main_window):
 
-        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0, parent)
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0, main_window)
 
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
@@ -573,9 +573,9 @@ class RunProgress(QProgressDialog):
     Run progress bar
     """
 
-    def __init__(self, diagram_view, parent):
+    def __init__(self, diagram_view, main_window):
 
-        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0, parent)
+        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0, main_window)
 
         self.setWindowTitle("Pipeline run")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
