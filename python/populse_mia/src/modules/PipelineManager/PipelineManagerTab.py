@@ -327,7 +327,7 @@ class PipelineManagerTab(QWidget):
                 return
 
             # This means that the value is not a filename
-            if not os.path.isdir(os.path.split(p_value)[0]):
+            if p_value in ["<undefined>", Undefined] or not os.path.isdir(os.path.split(p_value)[0]):
                 return
             try:
                 open(p_value, 'a').close()
@@ -395,7 +395,7 @@ class PipelineManagerTab(QWidget):
 
         while nodes_to_check:
             # Verifying if any element of nodes_to_check is unique
-            nodes_to_check = list(set(nodes_to_check))
+            nodes_to_check = sorted(list(set(nodes_to_check)))
 
             node_name = nodes_to_check.pop()
 
@@ -451,12 +451,12 @@ class PipelineManagerTab(QWidget):
             self.project.saveModifications()
 
             if process_outputs:
-
                 for plug_name, plug_value in process_outputs.items():
                     node = pipeline.nodes[node_name]
                     if plug_name not in node.plugs.keys():
                         continue
                     if plug_value not in ["<undefined>", Undefined]:
+                        print(plug_value)
                         add_plug_value_to_database(plug_value, brick_id)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
