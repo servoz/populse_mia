@@ -36,12 +36,13 @@ class NodeController(QWidget):
 
     value_changed = pyqtSignal(list)
 
-    def __init__(self, project, scan_list, parent=None):
-        super(NodeController, self).__init__(parent)
+    def __init__(self, project, scan_list, pipeline_manager_tab, main_window):
+        super(NodeController, self).__init__(pipeline_manager_tab)
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
         self.project = project
         self.scan_list = scan_list
+        self.main_window = main_window
 
     def display_parameters(self, node_name, process, pipeline):
         """ Methods that displays all the parameters of the selected nodes"""
@@ -271,7 +272,7 @@ class NodeController(QWidget):
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def display_filter(self, node_name, plug_name, parameters, process):
-        pop_up = PlugFilter(self.project, self.scan_list, process, self, node_name, plug_name)
+        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
         """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
@@ -330,14 +331,15 @@ class PlugFilter(QWidget):
 
     plug_value_changed = pyqtSignal(list)
 
-    def __init__(self, project, scans_list, process, node_controller, node_name="", plug_name="", parent=None):
-        super(PlugFilter, self).__init__(parent)
+    def __init__(self, project, scans_list, process, node_name, plug_name, node_controller, main_window):
+        super(PlugFilter, self).__init__(None)
 
         from DataBrowser.RapidSearch import RapidSearch
         from Project.Project import COLLECTION_CURRENT
 
         self.project = project
         self.node_controller = node_controller
+        self.main_window = main_window
 
         if scans_list:
             scans_list_copy = []
