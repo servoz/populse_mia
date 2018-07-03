@@ -20,6 +20,7 @@ class Process_mia(Process):
         Method called before running the process
         It adds the exec status Not Done and exec time to the process history
         """
+        return
         self.manage_brick_before_run()
 
     def _after_run_process(self, run_process_result):
@@ -28,6 +29,7 @@ class Process_mia(Process):
         :param run_process_result: Result of the run process
         :return: the result of the run process
         """
+        return
         self.manage_brick_after_run()
         return run_process_result
 

@@ -315,6 +315,13 @@ class PipelineManagerTab(QWidget):
 
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
+        
+        # TODO: TO REMOVE
+        import shutil
+        data_folder = os.path.join(self.project.folder, 'data', 'raw_data')
+        spm_mat_file = os.path.join('..', '..', 'ressources', 'SPM.mat')
+        shutil.copy2(spm_mat_file, data_folder)
+
         self.progress = InitProgress(self.project, self.diagramView, pipeline, self.main_window)
         self.progress.show()
         self.progress.exec()

@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
 
+from traits.api import TraitListObject, List
+
 from soma.controller import trait_ids
 
 from DataBrowser.AdvancedSearch import AdvancedSearch
@@ -285,8 +287,10 @@ class NodeController(QWidget):
         value_type = parameters[2]
 
         len_list = len(path_list)
-        if len_list >= 1:
+        if len_list > 1:
             res = path_list
+        elif len_list == 1:
+            res = path_list[0]
         else:
             res = []
 
@@ -410,8 +414,9 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
-        self.setMinimumWidth(1100)
-        self.setMinimumHeight(1000)
+        # To adapt to the size of the screen (currently way too big)
+        # self.setMinimumWidth(1100)
+        # self.setMinimumHeight(1000)
 
     def update_tag_to_filter(self):
         """
@@ -518,4 +523,5 @@ class PlugFilter(QWidget):
             if tag_name == TAG_FILENAME:
                 value = os.path.relpath(os.path.join(self.project.folder, value))
             result_names.append(value)
+
         self.plug_value_changed.emit(result_names)
