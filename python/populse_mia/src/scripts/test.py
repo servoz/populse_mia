@@ -1,4 +1,3 @@
-import sys
 import os
 
 # Working from the scripts directory
