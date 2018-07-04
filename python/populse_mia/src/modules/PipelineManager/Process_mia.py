@@ -5,6 +5,7 @@ from traits.trait_handlers import TraitListObject
 
 from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
     COLLECTION_CURRENT, BRICK_OUTPUTS
+from populse_db.database import Undefined
 
 
 class Process_mia(Process):
@@ -39,11 +40,12 @@ class Process_mia(Process):
         outputs = self.get_outputs()
         for output_name in outputs:
             output_value = outputs[output_name]
-            if type(output_value) in [list, TraitListObject]:
-                for single_value in output_value:
-                    self.manage_brick_output_before_run(single_value)
-            else:
-                self.manage_brick_output_before_run(output_value)
+            if output_value not in ["<undefined>", Undefined]:
+                if type(output_value) in [list, TraitListObject]:
+                    for single_value in output_value:
+                        self.manage_brick_output_before_run(single_value)
+                else:
+                    self.manage_brick_output_before_run(output_value)
 
     def manage_brick_after_run(self):
         """
@@ -52,11 +54,12 @@ class Process_mia(Process):
         outputs = self.get_outputs()
         for output_name in outputs:
             output_value = outputs[output_name]
-            if type(output_value) in [list, TraitListObject]:
-                for single_value in output_value:
-                    self.manage_brick_output_after_run(single_value)
-            else:
-                self.manage_brick_output_after_run(output_value)
+            if output_value not in ["<undefined>", Undefined]:
+                if type(output_value) in [list, TraitListObject]:
+                    for single_value in output_value:
+                        self.manage_brick_output_after_run(single_value)
+                else:
+                    self.manage_brick_output_after_run(output_value)
 
     def get_scan_bricks(self, output_value):
         """
