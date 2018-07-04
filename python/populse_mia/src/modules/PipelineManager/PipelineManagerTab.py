@@ -315,7 +315,7 @@ class PipelineManagerTab(QWidget):
 
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
-        
+
         # TODO: TO REMOVE
         import shutil
         data_folder = os.path.join(self.project.folder, 'data', 'raw_data')
