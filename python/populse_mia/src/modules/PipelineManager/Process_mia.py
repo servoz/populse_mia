@@ -1,11 +1,11 @@
 import datetime
 
 from capsul.process.process import Process
+from traits.trait_base import Undefined
 from traits.trait_handlers import TraitListObject
 
 from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
     COLLECTION_CURRENT, BRICK_OUTPUTS
-import populse_db
 
 class Process_mia(Process):
     """
@@ -39,7 +39,7 @@ class Process_mia(Process):
         outputs = self.get_outputs()
         for output_name in outputs:
             output_value = outputs[output_name]
-            if output_value not in ["<undefined>", populse_db.database.Undefined]:
+            if output_value not in ["<undefined>", Undefined]:
                 if type(output_value) in [list, TraitListObject]:
                     for single_value in output_value:
                         self.manage_brick_output_before_run(single_value)
@@ -53,7 +53,7 @@ class Process_mia(Process):
         outputs = self.get_outputs()
         for output_name in outputs:
             output_value = outputs[output_name]
-            if output_value not in ["<undefined>", populse_db.database.Undefined]:
+            if output_value not in ["<undefined>", Undefined]:
                 if type(output_value) in [list, TraitListObject]:
                     for single_value in output_value:
                         self.manage_brick_output_after_run(single_value)
