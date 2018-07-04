@@ -410,7 +410,7 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
-        self.setMinimumWidth(1100)
+        self.setMinimumWidth(1000)
         self.setMinimumHeight(1000)
 
     def update_tag_to_filter(self):
