@@ -231,7 +231,14 @@ class Main_Window(QMainWindow):
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan = os.path.basename(filename)
                 # We remove the file only if it's not a scan still in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "raw_data", scan)) is None and "logExport" not in scan:
+                file_name, file_extension = os.path.splitext(scan)
+                file_in_database = False
+                for database_scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                    if file_name in database_scan:
+                        file_in_database = True
+                if "logExport" in scan:
+                    file_in_database = True
+                if not file_in_database:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
