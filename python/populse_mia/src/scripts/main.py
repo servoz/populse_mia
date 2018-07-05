@@ -4,6 +4,7 @@
 import sys
 import os
 
+from PyQt5.QtCore import QDir, QLockFile
 from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
 from Project.Project import Project
@@ -49,6 +50,15 @@ def launch_mia():
 
     # Working from the scripts directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    lock_file = QLockFile(QDir.temp().absoluteFilePath('lock_file_populse_mia.lock'))
+    if not lock_file.tryLock(100):
+        # Software already opened in another instance
+        pass
+    else:
+        # No instances of the software is opened, the list of opened projects can be cleared
+        config = Config()
+        config.set_opened_projects([])
 
     app = QApplication(sys.argv)
 
