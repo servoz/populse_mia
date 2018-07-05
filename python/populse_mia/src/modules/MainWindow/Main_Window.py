@@ -48,7 +48,7 @@ class Main_Window(QMainWindow):
 
         self.project = project
         self.test = test
-        app_icon = QIcon(os.path.join('..', 'sources_images', 'lyon.png'))
+        app_icon = QIcon(os.path.join('..', 'sources_images', 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
         ############### initial setting ############################################################
