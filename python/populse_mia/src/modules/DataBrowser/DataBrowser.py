@@ -1424,7 +1424,7 @@ class TableDataBrowser(QTableWidget):
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Update the list of tags in the advanced search if it's opened
-        if not self.data_browser.frame_advanced_search.isHidden():
+        if hasattr(self.data_browser, "frame_advanced_search") and not self.data_browser.frame_advanced_search.isHidden():
             for row in self.data_browser.advanced_search.rows:
                 fields = row[2]
                 fields.clear()
