@@ -2,13 +2,11 @@
 
 import sys
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5 import QtGui, QtWidgets, QtCore
 import os
 import six
 
-from capsul.api import get_process_instance
+from capsul.api import get_process_instance, Process
 from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 
@@ -21,9 +19,63 @@ else:
         return d.values()
 
 
+class PipelineEditorTabs(QtWidgets.QTabWidget):
+    pipeline_saved = QtCore.pyqtSignal(str)
+    node_clicked = QtCore.Signal(str, Process)
+
+    def __init__(self, project):
+        super(PipelineEditorTabs, self).__init__()
+
+        self.project = project
+        self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;text-align: center;color:black;}')
+        self.setTabsClosable(True)
+
+        p_e = PipelineEditor(self.project)
+        p_e.node_clicked.connect(self.emit_node_clicked)
+
+        self.addTab(p_e, "New Pipeline")
+        tb = QtWidgets.QToolButton()
+        tb.setText('+')
+        tb.clicked.connect(self.new_tab)
+        self.addTab(QtWidgets.QLabel('Add tabs by pressing "+"'), str())
+        self.setTabEnabled(1, False)
+        self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
+
+    def new_tab(self):
+        print('count', self.count())
+        p_e = PipelineEditor(self.project)
+        p_e.node_clicked.connect(self.emit_node_clicked)
+        self.insertTab(self.count()-1, p_e, "New pipeline")
+
+    def get_current_editor(self):
+        idx = self.currentIndex()
+        return self.widget(idx)
+
+    def get_current_pipeline(self):
+        return self.get_current_editor().scene.pipeline
+
+    def load_pipeline(self):
+        print(self.count())
+        # If there is only one opened PipelineEditor
+        if self.count() == 2:
+            # If the PipelineEditor has been edited
+            if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
+                self.new_tab()
+                self.widget(1).load_pipeline()
+            else:
+                self.widget(0).load_pipeline()
+        else:
+            self.new_tab()
+            self.widget(self.count()-2).load_pipeline()
+            self.setCurrentIndex(self.count()-2)
+
+    def emit_node_clicked(self, node_name, process):
+        self.node_clicked.emit(node_name, process)
+
+
 class PipelineEditor(PipelineDevelopperView):
 
-    pipeline_saved = pyqtSignal(str)
+    pipeline_saved = QtCore.pyqtSignal(str)
 
     def __init__(self, project):
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
@@ -389,7 +441,7 @@ class PipelineEditor(PipelineDevelopperView):
                 '''
         pipeline = self.scene.pipeline
         folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
-        filename = QFileDialog.getSaveFileName(
+        filename = QtWidgets.QFileDialog.getSaveFileName(
             None, 'Save the pipeline', folder,
             'Compatible files (*.xml *.py);; All (*)')[0]
         if filename:

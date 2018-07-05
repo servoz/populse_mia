@@ -5,7 +5,7 @@ from traits.trait_handlers import TraitListObject
 
 from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
     COLLECTION_CURRENT, BRICK_OUTPUTS
-from populse_db.database import Undefined
+from traits.api import Undefined
 
 
 class Process_mia(Process):
@@ -21,7 +21,7 @@ class Process_mia(Process):
         Method called before running the process
         It adds the exec status Not Done and exec time to the process history
         """
-        return
+
         self.manage_brick_before_run()
 
     def _after_run_process(self, run_process_result):
@@ -30,7 +30,7 @@ class Process_mia(Process):
         :param run_process_result: Result of the run process
         :return: the result of the run process
         """
-        return
+
         self.manage_brick_after_run()
         return run_process_result
 
@@ -47,6 +47,7 @@ class Process_mia(Process):
                     for single_value in output_value:
                         self.manage_brick_output_before_run(single_value)
                 else:
+                    print('entering manage_brick_output_before_run')
                     self.manage_brick_output_before_run(output_value)
 
     def manage_brick_after_run(self):

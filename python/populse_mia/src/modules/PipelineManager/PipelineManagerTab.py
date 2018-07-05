@@ -30,7 +30,7 @@ from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_B
     TYPE_MAT
 from SoftwareProperties.Config import Config
 from .NodeController import NodeController
-from .PipelineEditor import PipelineEditor
+from .PipelineEditor import PipelineEditorTabs
 from .process_library import ProcessLibraryWidget
 
 if sys.version_info[0] >= 3:
@@ -63,7 +63,7 @@ class PipelineManagerTab(QWidget):
         self.processLibrary = ProcessLibraryWidget()
 
         self.diagramScene = DiagramScene(self)
-        self.diagramView = PipelineEditor(self.project)
+        self.diagramView = PipelineEditorTabs(self.project)
         self.diagramView.node_clicked.connect(self.displayNodeParameters)
         self.diagramView.pipeline_saved.connect(self.updateProcessLibrary)
 
@@ -332,7 +332,8 @@ class PipelineManagerTab(QWidget):
         self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
-        self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
+        #self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
+        self.nodeController.display_parameters(node_name, process, self.diagramView.get_current_pipeline())
         self.scrollArea.setWidget(self.nodeController)
 
     def startConnection(self, port):
@@ -368,7 +369,8 @@ class InitProgress(QProgressDialog):
 
         if not pipeline:
             nodes_to_check = []
-            for node_name in diagram_view.scene.pipeline.nodes.keys():
+            #for node_name in diagram_view.scene.pipeline.nodes.keys():
+            for node_name in diagram_view.get_current_pipeline().nodes.keys():
                 nodes_to_check.append(node_name)
             bricks_number = len(set(nodes_to_check))
         else:
@@ -477,7 +479,8 @@ class InitWorker(QThread):
     def init_pipeline(self, pipeline):
         # If the initialisation is launch for the main pipeline
         if not pipeline:
-            pipeline = self.diagramView.scene.pipeline
+            #pipeline = self.diagramView.scene.pipeline
+            pipeline = self.diagramView.get_current_pipeline()
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
