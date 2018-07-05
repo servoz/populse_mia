@@ -44,6 +44,7 @@ VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
 PLATFORMS = 'OS Independent'
 REQUIRES = [
+  'SIP',  
   'pyqt5',
   'pyyaml',
   'python-dateutil',
@@ -57,7 +58,6 @@ REQUIRES = [
   'traits',
   'capsul',
   'soma_workflow',
-  'SIP',
   'nipype',
   'scikit-image'
 ]
