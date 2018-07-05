@@ -48,7 +48,7 @@ class Main_Window(QMainWindow):
 
         self.project = project
         self.test = test
-        app_icon = QIcon(os.path.join('..', 'sources_images', 'lyon.png'))
+        app_icon = QIcon(os.path.join('..', 'sources_images', 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
         ############### initial setting ############################################################
@@ -230,7 +230,8 @@ class Main_Window(QMainWindow):
         else:
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
                 scan = os.path.basename(filename)
-                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
+                # Json files associated to nii files are kept for the raw_data folder
                 file_name, file_extension = os.path.splitext(scan)
                 file_in_database = False
                 for database_scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
@@ -242,12 +243,12 @@ class Main_Window(QMainWindow):
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
-                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
                 if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'downloaded_data', '*')):
                 scan = os.path.basename(filename)
-                # We remove the file only if it's not a scan still in the project, and if it's not a logExport
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
                 if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
 
