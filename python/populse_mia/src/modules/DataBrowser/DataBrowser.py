@@ -1324,8 +1324,10 @@ class TableDataBrowser(QTableWidget):
         old_tags = self.project.session.get_visibles()  # Old list of columns
         self.pop_up = Ui_Dialog_Settings(self.project, self.data_browser, old_tags)
         self.pop_up.tab_widget.setCurrentIndex(0)
-
-        self.pop_up.setGeometry(300, 200, 800, 600)
+        screen_resolution = QApplication.instance().desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        self.pop_up.setMinimumWidth(0.5 * width)
+        self.pop_up.setMinimumHeight(0.8 * height)
         self.pop_up.show()
 
     def multiple_sort_pop_up(self):
