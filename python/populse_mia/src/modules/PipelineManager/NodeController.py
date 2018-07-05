@@ -8,7 +8,7 @@ import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton, QDialog, QDialogButtonBox
+    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton, QDialog, QDialogButtonBox, QApplication
 
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
@@ -414,9 +414,10 @@ class PlugFilter(QWidget):
 
         self.setLayout(main_layout)
 
-        # To adapt to the size of the screen (currently way too big)
-        # self.setMinimumWidth(1100)
-        # self.setMinimumHeight(1000)
+        screen_resolution = QApplication.instance().desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        self.setMinimumWidth(0.6 * width)
+        self.setMinimumHeight(0.8 * height)
 
     def update_tag_to_filter(self):
         """

@@ -356,7 +356,6 @@ class PipelineManagerTab(QWidget):
                 self.startedConnection.delete()
             self.startedConnection = None
 
-
 class InitProgress(QProgressDialog):
     """
     Init progress bar
@@ -372,12 +371,9 @@ class InitProgress(QProgressDialog):
             #for node_name in diagram_view.scene.pipeline.nodes.keys():
             for node_name in diagram_view.get_current_pipeline().nodes.keys():
                 nodes_to_check.append(node_name)
-            bricks_number = len(set(nodes_to_check))
+            bricks_number = self.get_bricks_number(diagram_view.scene.pipeline)
         else:
-            nodes_to_check = []
-            for node_name in pipeline.nodes.keys():
-                nodes_to_check.append(node_name)
-            bricks_number = len(set(nodes_to_check))
+            bricks_number = self.get_bricks_number(pipeline)
         self.setMaximum(bricks_number)
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
@@ -393,6 +389,25 @@ class InitProgress(QProgressDialog):
         self.worker = InitWorker(self.project, self.diagramView, self.pipeline, self)
         self.worker.finished.connect(self.close)
         self.worker.start()
+
+    def get_bricks_number(self, pipeline):
+        """
+        Gives the number of bricks in the current pipeline
+        :return: The number of bricks to initialize in the current pipeline
+        """
+
+        number_of_bricks = 0
+        for node_name in pipeline.nodes.keys():
+            if node_name in ['', 'inputs', 'outputs']:
+                continue
+            node = pipeline.nodes[node_name]
+            if isinstance(node, PipelineNode):
+                sub_pipeline = node.process
+                number_of_bricks += self.get_bricks_number(sub_pipeline)
+                continue
+            else:
+                number_of_bricks += 1
+        return number_of_bricks + 1
 
 class InitWorker(QThread):
     """
@@ -489,13 +504,8 @@ class InitWorker(QThread):
         for node_name in pipeline.nodes.keys():
             nodes_to_check.append(node_name)
 
-        idx = 0
+        idx = self.progress.value()
         while nodes_to_check:
-
-            # progressbar
-            idx += 1
-            self.progress.setValue(idx)
-            QApplication.processEvents()
 
             # Verifying if any element of nodes_to_check is unique
             nodes_to_check = list(set(nodes_to_check))
@@ -506,6 +516,11 @@ class InitWorker(QThread):
             # the method update_nodes_and_plugs_activation of the pipeline object
             if node_name in ['', 'inputs', 'outputs']:
                 continue
+
+            # progressbar
+            idx += 1
+            self.progress.setValue(idx)
+            QApplication.processEvents()
 
             # If the node is a pipeline node, each of its nodes has to be initialised
             node = pipeline.nodes[node_name]
@@ -592,6 +607,10 @@ class InitWorker(QThread):
 
     def run(self):
         self.init_pipeline(self.pipeline)
+        idx = self.progress.value()
+        idx += 1
+        self.progress.setValue(idx)
+        QApplication.processEvents()
 
 class RunProgress(QProgressDialog):
     """

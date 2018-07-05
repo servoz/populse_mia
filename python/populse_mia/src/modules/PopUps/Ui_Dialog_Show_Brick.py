@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget, QLabel, QPushButton
+from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget, QLabel, QPushButton, \
+    QApplication
 
 from Project.Project import COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT, BRICK_INIT_TIME, \
     BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_CURRENT
@@ -144,8 +145,11 @@ class Ui_Dialog_Show_Brick(QDialog):
         layout.addWidget(table)
 
         self.setLayout(layout)
-        self.setMinimumHeight(400)
-        self.setMinimumWidth(1300)
+
+        screen_resolution = QApplication.instance().desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        self.setMinimumHeight(0.5 * height)
+        self.setMinimumWidth(0.8 * width)
 
     def file_clicked(self):
         """

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog
+from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog, QApplication
 import DataBrowser.DataBrowser
 from Project.Project import TAG_FILENAME
 
@@ -29,5 +29,7 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         buttons.rejected.connect(self.reject)
         self.setLayout(vbox_layout)
 
-        self.setMinimumWidth(1000)
-        self.setMinimumHeight(1000)
+        screen_resolution = QApplication.instance().desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        self.setMinimumWidth(0.5 * width)
+        self.setMinimumHeight(0.8 * height)

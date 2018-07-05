@@ -1,11 +1,11 @@
 import datetime
 
 from capsul.process.process import Process
+from traits.trait_base import Undefined
 from traits.trait_handlers import TraitListObject
 
 from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
     COLLECTION_CURRENT, BRICK_OUTPUTS
-from traits.api import Undefined
 
 
 class Process_mia(Process):
