@@ -332,7 +332,6 @@ class PipelineManagerTab(QWidget):
         self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
-        #self.nodeController.display_parameters(node_name, process, self.diagramView.scene.pipeline)
         self.nodeController.display_parameters(node_name, process, self.diagramView.get_current_pipeline())
         self.scrollArea.setWidget(self.nodeController)
 
@@ -369,10 +368,8 @@ class InitProgress(QProgressDialog):
 
         if not pipeline:
             nodes_to_check = []
-            #for node_name in diagram_view.scene.pipeline.nodes.keys():
             for node_name in diagram_view.get_current_pipeline().nodes.keys():
                 nodes_to_check.append(node_name)
-            #bricks_number = self.get_bricks_number(diagram_view.scene.pipeline)
             bricks_number = self.get_bricks_number(diagram_view.get_current_pipeline())
         else:
             bricks_number = self.get_bricks_number(pipeline)
@@ -497,7 +494,6 @@ class InitWorker(QThread):
     def init_pipeline(self, pipeline):
         # If the initialisation is launch for the main pipeline
         if not pipeline:
-            #pipeline = self.diagramView.scene.pipeline
             pipeline = self.diagramView.get_current_pipeline()
 
         # nodes_to_check contains the node names that need to be update
