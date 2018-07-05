@@ -29,6 +29,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.project = project
         self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;text-align: center;color:black;}')
         self.setTabsClosable(True)
+        self.tabCloseRequested.connect(self.close_tab)
 
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
@@ -47,6 +48,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         self.insertTab(self.count()-1, p_e, "New pipeline")
+        self.setCurrentIndex(self.count()-1)
+
+    def close_tab(self, idx):
+        if idx == self.currentIndex():
+            self.setCurrentIndex(max(0, self.currentIndex()-1))
+        self.removeTab(idx)
 
     def get_current_editor(self):
         idx = self.currentIndex()
@@ -64,13 +71,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             # If the PipelineEditor has been edited
             if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
                 self.new_tab()
-                self.widget(1).load_pipeline()
+                filename = self.widget(1).load_pipeline()
+                self.setCurrentIndex(1)
             else:
-                self.widget(0).load_pipeline()
+                filename = self.widget(0).load_pipeline()
         else:
             self.new_tab()
-            self.widget(self.count()-2).load_pipeline()
+            filename = self.widget(self.count()-2).load_pipeline()
             self.setCurrentIndex(self.count()-2)
+        if filename:
+            self.setTabText(self.currentIndex(), os.path.basename(filename))
 
     def load_pipeline_parameters(self):
         self.get_current_editor().load_pipeline_parameters()
@@ -81,8 +91,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     def emit_node_clicked(self, node_name, process):
         self.node_clicked.emit(node_name, process)
 
-    def emit_pipeline_saved(self, file_name):
-        self.pipeline_saved.emit(file_name)
+    def emit_pipeline_saved(self, filename):
+        self.setTabText(self.currentIndex(), os.path.basename(filename))
+        self.pipeline_saved.emit(filename)
 
 
 class PipelineEditor(PipelineDevelopperView):

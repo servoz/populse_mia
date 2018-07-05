@@ -3290,6 +3290,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 if pipeline is not None:
                     self.set_pipeline(pipeline)
                     self._pipeline_filename = filename
+                    return filename
 
     def save_pipeline(self):
         '''
