@@ -356,6 +356,7 @@ class PipelineManagerTab(QWidget):
                 self.startedConnection.delete()
             self.startedConnection = None
 
+
 class InitProgress(QProgressDialog):
     """
     Init progress bar
@@ -371,7 +372,8 @@ class InitProgress(QProgressDialog):
             #for node_name in diagram_view.scene.pipeline.nodes.keys():
             for node_name in diagram_view.get_current_pipeline().nodes.keys():
                 nodes_to_check.append(node_name)
-            bricks_number = self.get_bricks_number(diagram_view.scene.pipeline)
+            #bricks_number = self.get_bricks_number(diagram_view.scene.pipeline)
+            bricks_number = self.get_bricks_number(diagram_view.get_current_pipeline())
         else:
             bricks_number = self.get_bricks_number(pipeline)
         self.setMaximum(bricks_number)
@@ -408,6 +410,7 @@ class InitProgress(QProgressDialog):
             else:
                 number_of_bricks += 1
         return number_of_bricks + 1
+
 
 class InitWorker(QThread):
     """
@@ -612,6 +615,7 @@ class InitWorker(QThread):
         self.progress.setValue(idx)
         QApplication.processEvents()
 
+
 class RunProgress(QProgressDialog):
     """
     Run progress bar
@@ -634,6 +638,7 @@ class RunProgress(QProgressDialog):
         self.worker.finished.connect(self.close)
         self.worker.start()
 
+
 class RunWorker(QThread):
     """
     Thread doing the pipeline run
@@ -644,7 +649,7 @@ class RunWorker(QThread):
 
     def run(self):
 
-        pipeline = get_process_instance(self.diagramView.scene.pipeline)
+        pipeline = get_process_instance(self.diagramView.get_current_pipeline())
         # Now
         # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
         # study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])

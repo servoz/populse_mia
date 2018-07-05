@@ -32,6 +32,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
 
         self.addTab(p_e, "New Pipeline")
         tb = QtWidgets.QToolButton()
@@ -42,9 +43,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
 
     def new_tab(self):
-        print('count', self.count())
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         self.insertTab(self.count()-1, p_e, "New pipeline")
 
     def get_current_editor(self):
@@ -54,8 +55,10 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     def get_current_pipeline(self):
         return self.get_current_editor().scene.pipeline
 
+    def save_pipeline(self):
+        self.get_current_editor().save_pipeline()
+
     def load_pipeline(self):
-        print(self.count())
         # If there is only one opened PipelineEditor
         if self.count() == 2:
             # If the PipelineEditor has been edited
@@ -69,8 +72,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.widget(self.count()-2).load_pipeline()
             self.setCurrentIndex(self.count()-2)
 
+    def load_pipeline_parameters(self):
+        self.get_current_editor().load_pipeline_parameters()
+
+    def save_pipeline_parameters(self):
+        self.get_current_editor().save_pipeline_parameters()
+
     def emit_node_clicked(self, node_name, process):
         self.node_clicked.emit(node_name, process)
+
+    def emit_pipeline_saved(self, file_name):
+        self.pipeline_saved.emit(file_name)
 
 
 class PipelineEditor(PipelineDevelopperView):
