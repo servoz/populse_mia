@@ -155,15 +155,17 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         self.session.add(collection_row)
 
         # Creating the collection document table
-        collection_table = Table(name, self.metadata, Column(primary_key, String, primary_key=True))
+        pk_name = self.name_to_valid_column_name(primary_key)
+        table_name = self.name_to_valid_column_name(name)
+        collection_table = Table(table_name, self.metadata, Column(pk_name, String, primary_key=True))
         collection_query = CreateTable(collection_table)
         self.session.execute(collection_query)
 
         # Creating the class associated
-        collection_dict = {'__tablename__': name, '__table__': collection_table}
-        collection_class = type(name, (self.base,), collection_dict)
+        collection_dict = {'__tablename__': table_name, '__table__': collection_table}
+        collection_class = type(table_name, (self.base,), collection_dict)
         mapper(collection_class, collection_table)
-        self.table_classes[name] = collection_class
+        self.table_classes[table_name] = collection_class
 
         # Adding the primary_key of the collection as field
         primary_key_field = self.table_classes[populse_db.database.FIELD_TABLE](name=primary_key, collection=name,
@@ -174,8 +176,6 @@ class Database_session_mia(populse_db.database.DatabaseSession):
             self._DatabaseSession__documents[name] = {}
             self._DatabaseSession__fields[name] = {}
             self._DatabaseSession__fields[name][primary_key] = primary_key_field
-            self._DatabaseSession__names[name] = {}
-            self._DatabaseSession__names[name][primary_key] = primary_key
             self._DatabaseSession__collections[name] = collection_row
 
         self.session.flush()
@@ -246,14 +246,13 @@ class Database_session_mia(populse_db.database.DatabaseSession):
 
         if self._DatabaseSession__caches:
             self._DatabaseSession__fields[collection][name] = field_row
-            self._DatabaseSession__names[collection][name] = hashlib.md5(name.encode('utf-8')).hexdigest()
 
         self.session.add(field_row)
 
         # Fields creation
         if field_type in populse_db.database.LIST_TYPES:
             if self.list_tables:
-                table = 'list_%s_%s' % (collection, self.field_name_to_column_name(collection, name))
+                table = 'list_%s_%s' % (collection, self.name_to_valid_column_name(name))
                 list_table = Table(table, self.metadata, Column('document_id', String, primary_key=True),
                                    Column('i', Integer, primary_key=True),
                                    Column('value', populse_db.database.TYPE_TO_COLUMN[field_type[5:]]))
@@ -271,16 +270,16 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         else:
             field_type = self.field_type_to_column_type(field_type)
 
-        column = Column(self.field_name_to_column_name(collection, name), field_type, index=index)
+        column = Column(self.name_to_valid_column_name(name), field_type, index=index)
         column_str_type = column.type.compile(self.database.engine.dialect)
         column_name = column.compile(dialect=self.database.engine.dialect)
 
         # Column created in document table, and in initial table if initial values are used
 
-        document_query = str('ALTER TABLE %s ADD COLUMN %s %s' %
-                             (collection, column_name, column_str_type))
+        document_query = str('ALTER TABLE "%s" ADD COLUMN %s %s' %
+                             (self.name_to_valid_column_name(collection), column_name, column_str_type))
         self.session.execute(document_query)
-        self.table_classes[collection].__table__.append_column(column)
+        self.table_classes[self.name_to_valid_column_name(collection)].__table__.append_column(column)
 
         # Redefinition of the table classes
         if flush:
