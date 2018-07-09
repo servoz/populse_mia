@@ -131,20 +131,20 @@ class PipelineManagerTab(QWidget):
     def undo(self):
         #TODO: it is not totally finished
         # We can undo if we have an action to revert
-        if len(self.diagramView.undos) > 0:
-            to_undo = self.diagramView.undos.pop()
+        if len(self.diagramView.undos[self.diagramView.get_current_filename()]) > 0:
+            to_undo = self.diagramView.undos[self.diagramView.get_current_filename()].pop()
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
 
             if action == "add_process":
                 node_name = to_undo[1]
-                self.diagramView.del_node(node_name, from_undo=True)
+                self.diagramView.get_current_editor().del_node(node_name, from_undo=True)
 
             elif action == "delete_process":
                 node_name = to_undo[1]
                 class_name = to_undo[2]
                 links = to_undo[3]
-                self.diagramView.add_process(class_name, node_name, from_undo=True, links=links)
+                self.diagramView.get_current_editor().add_process(class_name, node_name, from_undo=True, links=links)
 
             elif action == "export_plugs":
                 pass
@@ -153,42 +153,34 @@ class PipelineManagerTab(QWidget):
                 node = to_undo[1]
                 new_node_name = to_undo[2]
                 old_node_name = to_undo[3]
-                self.diagramView.update_node_name(node, new_node_name, old_node_name, from_undo=True)
+                self.diagramView.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_undo=True)
 
             elif action == "update_plug_value":
                 node_name = to_undo[1]
                 old_value = to_undo[2]
                 plug_name = to_undo[3]
                 value_type = to_undo[4]
-                self.diagramView.update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
+                self.diagramView.get_current_editor().update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
 
             elif action == "add_link":
                 link = to_undo[1]
-                self.diagramView._del_link(link, from_undo=True)
+                self.diagramView.get_current_editor()._del_link(link, from_undo=True)
 
             elif action == "delete_link":
                 source = to_undo[1]
                 dest = to_undo[2]
                 active = to_undo[3]
                 weak = to_undo[4]
-                self.diagramView.add_link(source, dest, active, weak, from_undo=True)
+                self.diagramView.get_current_editor().add_link(source, dest, active, weak, from_undo=True)
             # TODO: ADD "MOVE PROCESS ?"
 
-            self.diagramView.scene.pipeline.update_nodes_and_plugs_activation()
-        print("REDOS IN UNDO")
-        print(self.diagramView.redos)
-        print("UNDOS IN UNDO")
-        print(self.diagramView.undos)
+            self.diagramView.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
     def redo(self):
-        print("REDO IN REDO")
-        print(self.diagramView.redos)
-        print("UNDO IN REDO")
-        print(self.diagramView.undos)
 
         # We can redo if we have an action to make again
-        if len(self.diagramView.redos) > 0:
-            to_redo = self.diagramView.redos.pop()
+        if len(self.diagramView.redos[self.diagramView.get_current_filename()]) > 0:
+            to_redo = self.diagramView.redos[self.diagramView.get_current_filename()].pop()
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
 
@@ -196,11 +188,11 @@ class PipelineManagerTab(QWidget):
                 node_name = to_redo[1]
                 class_process = to_redo[2]
                 links = to_redo[3]
-                self.diagramView.add_process(class_process, node_name, from_redo=True, links=links)
+                self.diagramView.get_current_editor().add_process(class_process, node_name, from_redo=True, links=links)
 
             elif action == "add_process":
                 node_name = to_redo[1]
-                self.diagramView.del_node(node_name, from_redo=True)
+                self.diagramView.get_current_editor().del_node(node_name, from_redo=True)
 
             elif action == "export_plugs":
                 pass
@@ -209,27 +201,27 @@ class PipelineManagerTab(QWidget):
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.diagramView.update_node_name(node, new_node_name, old_node_name, from_redo=True)
+                self.diagramView.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_redo=True)
 
             elif action == "update_plug_value":
                 node_name = to_redo[1]
                 new_value = to_redo[2]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
-                self.diagramView.update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
+                self.diagramView.get_current_editor().update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
 
             elif action == "add_link":
                 link = to_redo[1]
-                self.diagramView._del_link(link, from_redo=True)
+                self.diagramView.get_current_editor()._del_link(link, from_redo=True)
 
             elif action == "delete_link":
                 source = to_redo[1]
                 dest = to_redo[2]
                 active = to_redo[3]
                 weak = to_redo[4]
-                self.diagramView.add_link(source, dest, active, weak, from_redo=True)
+                self.diagramView.get_current_editor().add_link(source, dest, active, weak, from_redo=True)
 
-            self.diagramView.scene.pipeline.update_nodes_and_plugs_activation()
+            self.diagramView.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
             # TODO: ADD "MOVE NODE ?"
 
     def update_project(self, project):
@@ -255,8 +247,8 @@ class PipelineManagerTab(QWidget):
             for element in signal_list:
                 history_maker.append(element)
 
-        self.diagramView.undos.append(history_maker)
-        self.diagramView.redos.clear()
+        self.diagramView.undos[self.diagramView.get_current_filename()].append(history_maker)
+        self.diagramView.redos[self.diagramView.get_current_filename()].clear()
 
     def updateProcessLibrary(self, filename):
         filename_folder, file_name = os.path.split(filename)

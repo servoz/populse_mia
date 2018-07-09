@@ -3310,6 +3310,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             pipeline_tools.save_pipeline(pipeline, filename)
             self._pipeline_filename = unicode(filename)
             pipeline.node_position = old_pos
+            return filename
 
     def load_pipeline_parameters(self):
         """

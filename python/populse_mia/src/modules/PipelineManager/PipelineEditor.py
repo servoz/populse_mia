@@ -31,11 +31,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setTabsClosable(True)
         self.tabCloseRequested.connect(self.close_tab)
 
+        self.undos = {}
+        self.redos = {}
+
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
+        p_e.pipeline_modified.connect(self.update_history)
 
         self.addTab(p_e, "New Pipeline")
+        self.undos["New Pipeline"] = []
+        self.redos["New Pipeline"] = []
         tb = QtWidgets.QToolButton()
         tb.setText('+')
         tb.clicked.connect(self.new_tab)
@@ -43,44 +49,77 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setTabEnabled(1, False)
         self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
 
-    def new_tab(self):
+    def new_tab(self, loaded=False):
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-        self.insertTab(self.count()-1, p_e, "New pipeline")
-        self.setCurrentIndex(self.count()-1)
+        p_e.pipeline_modified.connect(self.update_history)
+        if not loaded:
+            idx = 1
+            while True and idx < 20:
+                name = "New Pipeline {0}".format(idx)
+                if name in self.undos.keys():
+                    idx += 1
+                    continue
+                else:
+                    break
+            self.undos[name] = []
+            self.redos[name] = []
+        else:
+            name = "New pipeline"
+        self.insertTab(self.count()-1, p_e, name)
+        self.setCurrentIndex(self.count()-2)
 
     def close_tab(self, idx):
+        del self.undos[self.get_current_filename()]
+        del self.redos[self.get_current_filename()]
+
         if idx == self.currentIndex():
             self.setCurrentIndex(max(0, self.currentIndex()-1))
         self.removeTab(idx)
 
     def get_current_editor(self):
-        idx = self.currentIndex()
-        return self.widget(idx)
+        return self.widget(self.currentIndex())
+
+    def get_current_filename(self):
+        return self.tabText(self.currentIndex())
 
     def get_current_pipeline(self):
         return self.get_current_editor().scene.pipeline
 
     def save_pipeline(self):
-        self.get_current_editor().save_pipeline()
+        old_filename = getattr(self.get_current_editor(), '_pipeline_filename', '')
+        new_file_name = self.get_current_editor().save_pipeline()
+
+        if old_filename != new_file_name:
+            self.setTabText(self.currentIndex(), os.path.basename(new_file_name))
+            undos = self.undos[old_filename]
+            redos = self.redos[old_filename]
+
+            del self.undos[old_filename]
+            del self.redos[old_filename]
+
+            self.undos[new_file_name] = undos
+            self.redos[new_file_name] = redos
 
     def load_pipeline(self):
         # If there is only one opened PipelineEditor
         if self.count() == 2:
             # If the PipelineEditor has been edited
             if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
-                self.new_tab()
+                self.new_tab(loaded=True)
                 filename = self.widget(1).load_pipeline()
                 self.setCurrentIndex(1)
             else:
                 filename = self.widget(0).load_pipeline()
         else:
-            self.new_tab()
+            self.new_tab(loaded=True)
             filename = self.widget(self.count()-2).load_pipeline()
             self.setCurrentIndex(self.count()-2)
         if filename:
             self.setTabText(self.currentIndex(), os.path.basename(filename))
+            self.undos[os.path.basename(filename)] = []
+            self.redos[os.path.basename(filename)] = []
 
     def load_pipeline_parameters(self):
         self.get_current_editor().load_pipeline_parameters()
@@ -95,10 +134,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setTabText(self.currentIndex(), os.path.basename(filename))
         self.pipeline_saved.emit(filename)
 
+    def update_history(self, developper_view):
+        self.undos[self.get_current_filename()] = developper_view.undos
+        self.redos[self.get_current_filename()] = developper_view.redos
+
+
 
 class PipelineEditor(PipelineDevelopperView):
 
     pipeline_saved = QtCore.pyqtSignal(str)
+    pipeline_modified = QtCore.pyqtSignal(PipelineDevelopperView)
 
     def __init__(self, project):
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
@@ -162,6 +207,8 @@ class PipelineEditor(PipelineDevelopperView):
             # the redos has to be cleared
             if not from_redo:
                 self.redos.clear()
+
+        self.pipeline_modified.emit(self)
 
     def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
         """
