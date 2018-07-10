@@ -25,6 +25,7 @@ before_install:
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install PyWavelets; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
