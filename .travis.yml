@@ -15,7 +15,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
 
 install:
-  # - python setup.py install
+  - python3 setup.py install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
   - cd ..
