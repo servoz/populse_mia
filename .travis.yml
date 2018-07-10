@@ -25,13 +25,11 @@ before_install:
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install PyWavelets==0.5.2; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
-  - python3 setup.py install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
   - cd ..
