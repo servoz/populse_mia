@@ -11,19 +11,13 @@ matrix:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall --ignore-dependencies python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -OL http://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar xzvf Python-3.5.5.tgz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd Python-3.5.5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./configure --prefix=/usr/local --enable-shared; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/ec545d45d4512ace3570782283df4ecda6bb0044/Formula/python3.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
 
 install:
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
+  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
   - python3 setup.py install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
