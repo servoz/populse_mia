@@ -1971,13 +1971,11 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 pipeline.scene_scale_factor, pipeline.scene_scale_factor)
         self.reset_initial_nodes_positions()
 
-
     def set_pipeline(self, pipeline):
         '''
         Assigns a new pipeline to the view.
         '''
         self._set_pipeline(pipeline)
-
         # Setup callback to update view when pipeline state is modified
         pipeline.on_trait_change(self._reset_pipeline, 'selection_changed',
                                  dispatch='ui')
@@ -2008,7 +2006,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self._reset_pipeline()
 
     def _reset_pipeline(self):
-        # print('reset pipeline')
         #self._set_pipeline(pipeline)
         self.scene.logical_view = self._logical_view
         self.scene.update_pipeline()

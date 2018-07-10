@@ -138,6 +138,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.undos[self.get_current_filename()] = developper_view.undos
         self.redos[self.get_current_filename()] = developper_view.redos
 
+    def reset_pipeline(self):
+        self.get_current_editor()._reset_pipeline()
 
 
 class PipelineEditor(PipelineDevelopperView):
