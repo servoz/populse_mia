@@ -1,10 +1,41 @@
-language: python
-python:
-  - '3.5'
+matrix:
+  include:
+    - os: osx
+      language: generic
+    - os: linux
+      language: python  
+      python:
+        - "3.5"
+    - os: linux
+      language: python  
+      python:
+        - "3.6"
+
+# osx deps
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall --ignore-dependencies python; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade pyenv; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyenv install 3.5.5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyenv global 3.5.5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python -V; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which pip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which pip3; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pkg-config; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pip; fi
 
 install:
-  - python setup.py install
-  - pip install codecov
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
+  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 setup.py install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
+  - python3 setup.py install
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
@@ -12,12 +43,14 @@ install:
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
   - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
   - sleep 3 # give xvfb some time to start
 
 
 script: 
-  - python ./python/populse_mia/src/scripts/test.py
+  - python3 -V
+  - python3 ./python/populse_mia/src/scripts/test.py
   - coverage run ./python/populse_mia/src/scripts/test.py
 
 after_success:

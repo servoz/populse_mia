@@ -39,7 +39,7 @@ ORGANISATION = 'populse'
 AUTHOR = ''
 AUTHOR_EMAIL = ''
 URL = 'http://populse.github.io'
-LICENSE = 'CeCILL-B'
+LICENSE = 'CeCILL'
 VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
 PLATFORMS = 'OS Independent'
@@ -59,7 +59,7 @@ REQUIRES = [
   'capsul',
   'soma_workflow',
   'nipype',
-  'scikit-image',
+  'scikit-image'
 ]
 EXTRA_REQUIRES = {
     'doc': [
