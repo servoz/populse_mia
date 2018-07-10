@@ -13,6 +13,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/ec545d45d4512ace3570782283df4ecda6bb0044/Formula/python3.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pkg-config; fi
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
