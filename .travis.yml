@@ -15,6 +15,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
   - python3 setup.py install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
