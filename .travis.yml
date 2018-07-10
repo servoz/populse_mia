@@ -20,6 +20,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyenv global 3.5.5; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python -V; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which pip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which pip3; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pkg-config; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pip; fi
