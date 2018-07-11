@@ -20,7 +20,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl  https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz > Python-3.5.5.tgz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zxvf Python-3.5.5.tgz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd Python-3.5.5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pwd; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./configure --prefix=/Users/travis/build/populse/populse_sandbox/python_3.5.5 --enable-optimizations; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make install; fi
@@ -28,8 +27,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pkg-config; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
