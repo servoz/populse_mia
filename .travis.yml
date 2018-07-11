@@ -25,19 +25,21 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python get-pip.py --user; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install numpy; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --user --upgrade Cython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install numpy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --user --upgrade Cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 setup.py install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install codecov; fi
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
