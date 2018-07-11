@@ -639,7 +639,12 @@ class InitWorker(QThread):
                 # interfaces
                 try:
                     process_outputs = process._nipype_interface._list_outputs()
-                except:  # TODO: test which king of error can generate a Nipype interface
+                    # The NipypeProcess outputs are always "private" for Capsul
+                    for key, value in process_outputs.items():
+                        tmp_value = process_outputs[key]
+                        del process_outputs[key]
+                        process_outputs['_'+key] = tmp_value
+                except:  # TODO: test which kind of error can generate a Nipype interface
                     print("No output list method for the process {0}.".format(node_name))
                     process_outputs = {}
 
