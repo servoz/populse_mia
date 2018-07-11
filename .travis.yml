@@ -26,6 +26,10 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python3; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python -V; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python3 -V; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python get-pip.py --user; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
