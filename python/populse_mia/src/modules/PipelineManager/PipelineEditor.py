@@ -88,7 +88,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         return self.get_current_editor().scene.pipeline
 
     def save_pipeline(self):
-        old_filename = getattr(self.get_current_editor(), '_pipeline_filename', '')
+        # old_filename = getattr(self.get_current_editor(), '_pipeline_filename', '')
+        old_filename = self.get_current_filename()
         new_file_name = self.get_current_editor().save_pipeline()
 
         if old_filename != new_file_name:
@@ -526,5 +527,6 @@ class PipelineEditor(PipelineDevelopperView):
             pipeline.node_position = old_pos
 
             self.pipeline_saved.emit(filename)
+            return filename
 
 

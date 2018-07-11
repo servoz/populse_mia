@@ -497,7 +497,7 @@ class InitWorker(QThread):
 
             self.project.saveModifications()
 
-    def init_pipeline(self, pipeline, verbose=True):
+    def init_pipeline(self, pipeline, verbose=False):
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(self.diagramView.get_current_pipeline())
@@ -573,8 +573,8 @@ class InitWorker(QThread):
             # order. So if key_name[0] appears twice, it will stay at the first place
             nodes_to_check = list(OrderedDict((x, True) for x in nodes_to_check[::-1]).keys())
             if verbose:
-                print('NODES INPUTS RATIO 2', nodes_inputs_ratio)
-                print('NODES TO CHECK 2', nodes_to_check)
+                print('NODES INPUTS RATIO', nodes_inputs_ratio)
+                print('NODES TO CHECK', nodes_to_check)
 
             node_name = nodes_to_check.pop(0)
 
@@ -599,14 +599,17 @@ class InitWorker(QThread):
                 sub_pipeline = node.process
                 self.init_pipeline(sub_pipeline, verbose=False)
                 for plug_name in node.plugs.keys():
-                    if hasattr(node.plugs[plug_name], 'links_to'):
+                    if hasattr(node.plugs[plug_name], 'links_to'):  # If the plug is an output and is
+                        # connected to another one
                         list_info_link = list(node.plugs[plug_name].links_to)
                         for info_link in list_info_link:
-                            if info_link[2] in pipeline.nodes.values():
+                            if info_link[2] in pipeline.nodes.values():  # The third element of info_link contains the
+                                # destination node object
                                 dest_node_name = info_link[0]
                                 if dest_node_name:
                                     # Adding the destination node name and incrementing
-                                    # the input counter of the latter
+                                    # the input counter of the latter if it is not the
+                                    # pipeline "global" outputs ('')
                                     nodes_to_check.append(dest_node_name)
                                     nodes_inputs_ratio[dest_node_name][0] += 1
 
@@ -629,14 +632,16 @@ class InitWorker(QThread):
                 (process_outputs, self.inheritance_dict) = process.list_outputs()
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
-                # The node should be checked again but it can lead to an
-                # infinite loop, so this line is commented until a better
-                # solution is found.
-                # nodes_to_check.insert(0, node_name)
-                continue
             except ValueError:
                 process_outputs = process.list_outputs()
-                print("No inheritance dict for the process " + node_name)
+                print("No inheritance dict for the process {0}.".format(node_name))
+            except AttributeError:  # If the process has no "list_outputs" method, which is the case for Nipype's
+                # interfaces
+                try:
+                    process_outputs = process._nipype_interface._list_outputs()
+                except:  # TODO: test which king of error can generate a Nipype interface
+                    print("No output list method for the process {0}.".format(node_name))
+                    process_outputs = {}
 
             # Adding I/O to database history
             self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
