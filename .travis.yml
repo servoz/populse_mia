@@ -32,12 +32,14 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ${HOME}/localpython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${HOME}/localpython/bin/virtualenv box --python=${HOME}/localpython/bin/python3; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /Users/travis/build/populse/populse_sandbox/; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then chmod u+x ${HOME}/localpython/box/bin/activate; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ${HOME}/localpython/box/bin/activate; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python -V; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python3 -V; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python get-pip.py --user; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python -V; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -V; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 get-pip.py --user; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
