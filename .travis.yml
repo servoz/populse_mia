@@ -36,8 +36,10 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /Users/travis/build/populse/populse_sandbox/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then chmod u+x ${HOME}/localpython/box/bin/activate; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ${HOME}/localpython/box/bin/activate; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 get-pip.py; fi
+  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
+  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 get-pip.py; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then easy_install pip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo python3 -m ensurepip; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
