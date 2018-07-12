@@ -15,21 +15,23 @@ matrix:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall --ignore-dependencies python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir python_3.5.5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd python_3.5.5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd; fi  
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir localpython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd localpython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl  https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz > Python-3.5.5.tgz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zxvf Python-3.5.5.tgz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd Python-3.5.5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./configure --prefix=/Users/travis/build/populse/populse_sandbox/python_3.5.5 --enable-optimizations; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./configure --prefix=${HOME}/localpython --enable-optimizations; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ${HOME}/localpython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -OL https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.1.0.tar.gz > virtualenv-15.1.0.tar.gz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zxvf virtualenv-15.1.0.tar.gz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd virtualenv-15.1.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /Users/travis/build/populse/populse_sandbox/python_3.5.5/bin/virtualenv box --python=/Users/travis/build/populse/populse_sandbox/python_3.5.5/bin/python; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${HOME}/localpython/bin/python setup.py install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ${HOME}/localpython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${HOME}/localpython/bin/virtualenv box --python=${HOME}/localpython/bin/python; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /Users/travis/build/populse/populse_sandbox/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then which python3; fi
