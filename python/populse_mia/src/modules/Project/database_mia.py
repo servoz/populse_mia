@@ -1,10 +1,15 @@
-import populse_db
-import hashlib
 from sqlalchemy import create_engine, MetaData, String, Boolean, Integer, Enum, Column, Table
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.orm import mapper
 
 # Tag origin
+from populse_db.database import Database, FIELD_TABLE, FIELD_TYPE_STRING, FIELD_TYPE_DATE, FIELD_TYPE_LIST_STRING, \
+    FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATE, \
+    FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_DATETIME, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, \
+    FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_JSON, FIELD_TYPE_LIST_JSON, COLLECTION_TABLE, \
+    DatabaseSession, ALL_TYPES, LIST_TYPES, TYPE_TO_COLUMN
+from populse_db.filter import QUERY_MIXED
+
 TAG_ORIGIN_BUILTIN = "builtin"
 TAG_ORIGIN_USER = "user"
 
@@ -18,14 +23,14 @@ TAG_UNIT_MHZ = "MHz"
 ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
              TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]
 
-class Database_mia(populse_db.database.Database):
+class Database_mia(Database):
     """
     Class overriding the default behavior of populse_db
     """
 
     def __init__(self, string_engine):
 
-        super().__init__(string_engine, caches=True, list_tables=True, query_type=populse_db.filter.QUERY_MIXED)
+        super().__init__(string_engine, caches=True, list_tables=True, query_type=QUERY_MIXED)
 
     def create_empty_schema(self, string_engine):
         """
@@ -36,18 +41,18 @@ class Database_mia(populse_db.database.Database):
         engine = create_engine(string_engine)
         metadata = MetaData()
         metadata.reflect(bind=engine)
-        if populse_db.database.FIELD_TABLE in metadata.tables:
+        if FIELD_TABLE in metadata.tables:
             return False
         else:
-            Table(populse_db.database.FIELD_TABLE, metadata,
+            Table(FIELD_TABLE, metadata,
                   Column("name", String, primary_key=True),
                   Column("collection", String, primary_key=True),
                   Column(
-                      "type", Enum(populse_db.database.FIELD_TYPE_STRING, populse_db.database.FIELD_TYPE_INTEGER, populse_db.database.FIELD_TYPE_FLOAT, populse_db.database.FIELD_TYPE_BOOLEAN,
-                                   populse_db.database.FIELD_TYPE_DATE, populse_db.database.FIELD_TYPE_DATETIME, populse_db.database.FIELD_TYPE_TIME,
-                                   populse_db.database.FIELD_TYPE_LIST_STRING, populse_db.database.FIELD_TYPE_LIST_INTEGER,
-                                   populse_db.database.FIELD_TYPE_LIST_FLOAT, populse_db.database.FIELD_TYPE_LIST_BOOLEAN, populse_db.database.FIELD_TYPE_LIST_DATE,
-                                   populse_db.database.FIELD_TYPE_LIST_DATETIME, populse_db.database.FIELD_TYPE_LIST_TIME, populse_db.database.FIELD_TYPE_JSON, populse_db.database.FIELD_TYPE_LIST_JSON),
+                      "type", Enum(FIELD_TYPE_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_BOOLEAN,
+                                   FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_TIME,
+                                   FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_INTEGER,
+                                   FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_DATE,
+                                   FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_JSON, FIELD_TYPE_LIST_JSON),
                       nullable=False),
                   Column("description", String, nullable=True),
                   Column("visibility", Boolean, nullable=False),
@@ -55,7 +60,7 @@ class Database_mia(populse_db.database.Database):
                   Column("unit", Enum(TAG_UNIT_MHZ, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MM, TAG_UNIT_MS), nullable=True),
                   Column("default_value", String, nullable=True))
 
-            Table(populse_db.database.COLLECTION_TABLE, metadata,
+            Table(COLLECTION_TABLE, metadata,
                   Column("name", String, primary_key=True),
                   Column("primary_key", String, nullable=False))
 
@@ -124,7 +129,7 @@ class Database_mia(populse_db.database.Database):
             del current_session._populse_db_counter
             self.__scoped_session.remove()
 
-class Database_session_mia(populse_db.database.DatabaseSession):
+class Database_session_mia(DatabaseSession):
     """
     Class overriding the database session
     """
@@ -151,7 +156,7 @@ class Database_session_mia(populse_db.database.DatabaseSession):
             raise ValueError("The collection primary_key must be of type " + str(str) + ", but collection primary_key of type " + str(type(primary_key)) + " given")
 
         # Adding the collection row
-        collection_row = self.table_classes[populse_db.database.COLLECTION_TABLE](name=name, primary_key=primary_key)
+        collection_row = self.table_classes[COLLECTION_TABLE](name=name, primary_key=primary_key)
         self.session.add(collection_row)
 
         # Creating the collection document table
@@ -168,8 +173,8 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         self.table_classes[table_name] = collection_class
 
         # Adding the primary_key of the collection as field
-        primary_key_field = self.table_classes[populse_db.database.FIELD_TABLE](name=primary_key, collection=name,
-                                             type=populse_db.database.FIELD_TYPE_STRING, description="Primary_key of the document collection " + name, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
+        primary_key_field = self.table_classes[FIELD_TABLE](name=primary_key, collection=name,
+                                             type=FIELD_TYPE_STRING, description="Primary_key of the document collection " + name, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
         self.session.add(primary_key_field)
 
         if self._DatabaseSession__caches:
@@ -231,8 +236,8 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         if not isinstance(name, str):
             raise ValueError("The field name must be of type " + str(str) +
                              ", but field name of type " + str(type(name)) + " given")
-        if not field_type in populse_db.database.ALL_TYPES:
-            raise ValueError("The field type must be in " + str(populse_db.database.ALL_TYPES) + ", but " + str(
+        if not field_type in ALL_TYPES:
+            raise ValueError("The field type must be in " + str(ALL_TYPES) + ", but " + str(
                 field_type) + " given")
         if not isinstance(description, str) and description is not None:
             raise ValueError(
@@ -241,7 +246,7 @@ class Database_session_mia(populse_db.database.DatabaseSession):
                     type(description)) + " given")
 
         # Adding the field in the field table
-        field_row = self.table_classes[populse_db.database.FIELD_TABLE](name=name, collection=collection, type=field_type,
+        field_row = self.table_classes[FIELD_TABLE](name=name, collection=collection, type=field_type,
                                                     description=description, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
 
         if self._DatabaseSession__caches:
@@ -250,12 +255,12 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         self.session.add(field_row)
 
         # Fields creation
-        if field_type in populse_db.database.LIST_TYPES:
+        if field_type in LIST_TYPES:
             if self.list_tables:
                 table = 'list_%s_%s' % (collection, self.name_to_valid_column_name(name))
                 list_table = Table(table, self.metadata, Column('document_id', String, primary_key=True),
                                    Column('i', Integer, primary_key=True),
-                                   Column('value', populse_db.database.TYPE_TO_COLUMN[field_type[5:]]))
+                                   Column('value', TYPE_TO_COLUMN[field_type[5:]]))
                 list_query = CreateTable(list_table)
                 self.session.execute(list_query)
 
@@ -298,7 +303,7 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         Gives the list of visible tags
         """
 
-        visible_fields = self.session.query(self.table_classes[populse_db.database.FIELD_TABLE]).filter(self.table_classes[populse_db.database.FIELD_TABLE].visibility == True).all()
+        visible_fields = self.session.query(self.table_classes[FIELD_TABLE]).filter(self.table_classes[FIELD_TABLE].visibility == True).all()
         visible_names = []
         for field in visible_fields:
             if field.name not in visible_names:
@@ -311,7 +316,7 @@ class Database_session_mia(populse_db.database.DatabaseSession):
         :param visibles: list of visible tags
         """
 
-        for field in self.session.query(self.table_classes[populse_db.database.FIELD_TABLE]).all():
+        for field in self.session.query(self.table_classes[FIELD_TABLE]).all():
             if field.name in visibles:
                 field.visibility = True
             else:

@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushBut
 from Utils.Tools import ClickableLabel
 
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN
 
-import populse_db
 
 class AdvancedSearch(QWidget):
 
@@ -131,10 +131,10 @@ class AdvancedSearch(QWidget):
         tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
 
         no_operators_tags = []
-        for list_type in populse_db.database.LIST_TYPES:
+        for list_type in LIST_TYPES:
             no_operators_tags.append(list_type)
-        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
-        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+        no_operators_tags.append(FIELD_TYPE_STRING)
+        no_operators_tags.append(FIELD_TYPE_BOOLEAN)
 
         if tag_row is not None and tag_row.type in no_operators_tags:
             condition.removeItem(condition.findText("<"))
@@ -143,7 +143,7 @@ class AdvancedSearch(QWidget):
             condition.removeItem(condition.findText(">="))
             condition.removeItem(condition.findText("BETWEEN"))
 
-        if tag_row is not None and tag_row.type in populse_db.database.LIST_TYPES:
+        if tag_row is not None and tag_row.type in LIST_TYPES:
             condition.removeItem(condition.findText("IN"))
 
         if tag_row is None or tag_row.type not in no_operators_tags:
@@ -153,7 +153,7 @@ class AdvancedSearch(QWidget):
                 if not is_op_existing:
                     condition.addItem(operator)
 
-        if tag_row is None or tag_row.type not in populse_db.database.LIST_TYPES:
+        if tag_row is None or tag_row.type not in LIST_TYPES:
             operators_to_reput = ["IN"]
             for operator in operators_to_reput:
                 is_op_existing = condition.findText(operator) != -1
@@ -448,10 +448,10 @@ class AdvancedSearch(QWidget):
 
         operators = ["<", ">", "<=", ">=", "BETWEEN"]
         no_operators_tags = []
-        for list_type in populse_db.database.LIST_TYPES:
+        for list_type in LIST_TYPES:
             no_operators_tags.append(list_type)
-        no_operators_tags.append(populse_db.database.FIELD_TYPE_STRING)
-        no_operators_tags.append(populse_db.database.FIELD_TYPE_BOOLEAN)
+        no_operators_tags.append(FIELD_TYPE_STRING)
+        no_operators_tags.append(FIELD_TYPE_BOOLEAN)
 
         # Converting BETWEEN and IN values into lists
         for i in range(0, len(conditions)):
@@ -460,7 +460,7 @@ class AdvancedSearch(QWidget):
             if conditions[i] == "IN":
                 for tag in fields[i].copy():
                     tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
-                    if tag_row.type in populse_db.database.LIST_TYPES:
+                    if tag_row.type in LIST_TYPES:
                         fields[i].remove(tag)
             elif conditions[i] in operators:
                 for tag in fields[i].copy():

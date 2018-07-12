@@ -1,6 +1,8 @@
 import os
 
 # Working from the scripts directory
+from populse_db.database import FIELD_TYPE_INTEGER
+
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 import unittest
@@ -10,8 +12,6 @@ from PyQt5.QtWidgets import QApplication
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
-
-import populse_db
 
 class TestMIADataBrowser(unittest.TestCase):
 
@@ -117,8 +117,8 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
-        add_tag.combo_box_type.setCurrentText(populse_db.database.FIELD_TYPE_INTEGER)
-        add_tag.type = populse_db.database.FIELD_TYPE_INTEGER
+        add_tag.combo_box_type.setCurrentText(FIELD_TYPE_INTEGER)
+        add_tag.type = FIELD_TYPE_INTEGER
         add_tag.text_edit_default_value.setText("Should be integer")
         QTest.mouseClick(add_tag.push_button_ok, 1)
         self.assertEqual(add_tag.msg.text(), "Invalid default value")

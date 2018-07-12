@@ -7,13 +7,12 @@ Update on 08 jan. 2018
 '''
 import json
 import os, fnmatch
-from tkinter.ttk import Separator
 
 from PIL import Image, ImageEnhance  # image processing
 from PyQt5.Qt import QMenuBar
-from PyQt5.QtCore import Qt, QEvent, QModelIndex
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPalette, QPixmap, QImage, QColor
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QSplitter, \
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, \
     QTreeView, QFileSystemModel, QLabel, QSizePolicy, QScrollArea, \
     QLineEdit, QGroupBox, QGridLayout, QPushButton, QSlider, QHBoxLayout, QMenu, \
     QAction, QTextEdit, QTableWidget, QTableWidgetItem, QToolBar, QToolButton, QAbstractScrollArea
@@ -23,7 +22,6 @@ from SoftwareProperties.Config import Config
 
 import nibabel as nib  # to read nifti file
 import numpy as np  # a N-dimensional array object
-
 
 class ImageViewer(QWidget):
     def __init__(self,textInfo):

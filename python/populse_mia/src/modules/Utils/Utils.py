@@ -6,7 +6,10 @@ import dateutil.parser
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from PyQt5.QtWidgets import QMessageBox
 
-import populse_db
+from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN, \
+    FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, \
+    FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, LIST_TYPES, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_BOOLEAN, \
+    FIELD_TYPE_LIST_STRING
 
 
 def set_item_data(item, value, value_type):
@@ -17,27 +20,27 @@ def set_item_data(item, value, value_type):
     :param value_type: new value type
     """
 
-    if value_type in populse_db.database.LIST_TYPES:
+    if value_type in LIST_TYPES:
         if isinstance(value, str):
             value = ast.literal_eval(value)
-        if value_type == populse_db.database.FIELD_TYPE_LIST_DATE:
+        if value_type == FIELD_TYPE_LIST_DATE:
             new_list = []
             for subvalue in value:
                 new_list.append(subvalue.strftime('%d/%m/%Y'))
             value = new_list
-        elif value_type == populse_db.database.FIELD_TYPE_LIST_DATETIME:
+        elif value_type == FIELD_TYPE_LIST_DATETIME:
             new_list = []
             for subvalue in value:
                 new_list.append(subvalue.strftime('%d/%m/%Y %H:%M:%S.%f'))
             value = new_list
-        elif value_type == populse_db.database.FIELD_TYPE_LIST_TIME:
+        elif value_type == FIELD_TYPE_LIST_TIME:
             new_list = []
             for subvalue in value:
                 new_list.append(subvalue.strftime('%H:%M:%S.%f'))
             value = new_list
         value_prepared = str(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_DATETIME:
+    elif value_type == FIELD_TYPE_DATETIME:
         if isinstance(value, datetime):
             value_prepared = QDateTime(value)
         elif isinstance(value, QDateTime):
@@ -46,7 +49,7 @@ def set_item_data(item, value, value_type):
             format = "%d/%m/%Y %H:%M:%S.%f"
             value_prepared = QDateTime(datetime.strptime(value, format))
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_DATE:
+    elif value_type == FIELD_TYPE_DATE:
         if isinstance(value, date):
             value_prepared = QDate(value)
         elif isinstance(value, QDate):
@@ -55,7 +58,7 @@ def set_item_data(item, value, value_type):
             format = "%d/%m/%Y"
             value_prepared = QDate(datetime.strptime(value, format).date())
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_TIME:
+    elif value_type == FIELD_TYPE_TIME:
         if isinstance(value, time):
             value_prepared = QTime(value)
         elif isinstance(value, QTime):
@@ -64,16 +67,16 @@ def set_item_data(item, value, value_type):
             format = "%H:%M:%S.%f"
             value_prepared = QTime(datetime.strptime(value, format).time())
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_FLOAT:
+    elif value_type == FIELD_TYPE_FLOAT:
         value_prepared = float(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_INTEGER:
+    elif value_type == FIELD_TYPE_INTEGER:
         value_prepared = int(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_BOOLEAN:
+    elif value_type == FIELD_TYPE_BOOLEAN:
         value_prepared = value
         item.setData(Qt.EditRole, QVariant(value_prepared))
-    elif value_type == populse_db.database.FIELD_TYPE_STRING:
+    elif value_type == FIELD_TYPE_STRING:
         value_prepared = str(value)
         item.setData(Qt.EditRole, QVariant(value_prepared))
 
@@ -87,27 +90,27 @@ def check_value_type(value, value_type, is_subvalue=False):
     :return: True if the value is valid to replace the old one, False otherwise
     """
 
-    if value_type == populse_db.database.FIELD_TYPE_INTEGER or value_type == populse_db.database.FIELD_TYPE_LIST_INTEGER and is_subvalue:
+    if value_type == FIELD_TYPE_INTEGER or value_type == FIELD_TYPE_LIST_INTEGER and is_subvalue:
         try:
             int(value)
             return True
         except Exception:
             return False
-    elif value_type == populse_db.database.FIELD_TYPE_FLOAT or value_type == populse_db.database.FIELD_TYPE_LIST_FLOAT and is_subvalue:
+    elif value_type == FIELD_TYPE_FLOAT or value_type == FIELD_TYPE_LIST_FLOAT and is_subvalue:
         try:
             float(value)
             return True
         except Exception:
             return False
-    elif value_type == populse_db.database.FIELD_TYPE_BOOLEAN or value_type == populse_db.database.FIELD_TYPE_LIST_BOOLEAN and is_subvalue:
+    elif value_type == FIELD_TYPE_BOOLEAN or value_type == FIELD_TYPE_LIST_BOOLEAN and is_subvalue:
         return value == "True" or value == True or value == "False" or value == False
-    elif value_type == populse_db.database.FIELD_TYPE_STRING or value_type == populse_db.database.FIELD_TYPE_LIST_STRING and is_subvalue:
+    elif value_type == FIELD_TYPE_STRING or value_type == FIELD_TYPE_LIST_STRING and is_subvalue:
         try:
             str(value)
             return True
         except Exception:
             return False
-    elif value_type in populse_db.database.LIST_TYPES and not is_subvalue:
+    elif value_type in LIST_TYPES and not is_subvalue:
         if isinstance(value, str):
             value = ast.literal_eval(value)
         is_valid_value = True
@@ -116,7 +119,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 is_valid_value = False
                 break
         return is_valid_value
-    elif value_type == populse_db.database.FIELD_TYPE_DATE or value_type == populse_db.database.FIELD_TYPE_LIST_DATE and is_subvalue:
+    elif value_type == FIELD_TYPE_DATE or value_type == FIELD_TYPE_LIST_DATE and is_subvalue:
         if isinstance(value, QDate):
             return True
         elif isinstance(value, str):
@@ -126,7 +129,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 return True
             except Exception:
                 return False
-    elif value_type == populse_db.database.FIELD_TYPE_DATETIME or value_type == populse_db.database.FIELD_TYPE_LIST_DATETIME and is_subvalue:
+    elif value_type == FIELD_TYPE_DATETIME or value_type == FIELD_TYPE_LIST_DATETIME and is_subvalue:
         if isinstance(value, QDateTime):
             return True
         elif isinstance(value, str):
@@ -136,7 +139,7 @@ def check_value_type(value, value_type, is_subvalue=False):
                 return True
             except Exception:
                 return False
-    elif value_type == populse_db.database.FIELD_TYPE_TIME or value_type == populse_db.database.FIELD_TYPE_LIST_TIME and is_subvalue:
+    elif value_type == FIELD_TYPE_TIME or value_type == FIELD_TYPE_LIST_TIME and is_subvalue:
         if isinstance(value, QTime):
             return True
         elif isinstance(value, str):
@@ -156,18 +159,18 @@ def table_to_database(value, value_type):
     :return: The value converted for the database
     """
 
-    if value_type == populse_db.database.FIELD_TYPE_FLOAT:
+    if value_type == FIELD_TYPE_FLOAT:
         return float(value)
-    elif value_type == populse_db.database.FIELD_TYPE_STRING:
+    elif value_type == FIELD_TYPE_STRING:
         return str(value)
-    elif value_type == populse_db.database.FIELD_TYPE_INTEGER:
+    elif value_type == FIELD_TYPE_INTEGER:
         return int(value)
-    elif value_type == populse_db.database.FIELD_TYPE_BOOLEAN:
+    elif value_type == FIELD_TYPE_BOOLEAN:
         if value == "True" or value == True:
             return True
         elif value == "False" or value == False:
             return False
-    elif value_type == populse_db.database.FIELD_TYPE_DATETIME:
+    elif value_type == FIELD_TYPE_DATETIME:
         if isinstance(value, QDateTime):
             return value.toPyDateTime()
         elif isinstance(value, str):
@@ -178,19 +181,19 @@ def table_to_database(value, value_type):
                 date_typed = dateutil.parser.parse(value)
             return date_typed
 
-    elif value_type == populse_db.database.FIELD_TYPE_DATE:
+    elif value_type == FIELD_TYPE_DATE:
         if isinstance(value, QDate):
             return value.toPyDate()
         elif isinstance(value, str):
             format = "%d/%m/%Y"
             return datetime.strptime(value, format).date()
-    elif value_type == populse_db.database.FIELD_TYPE_TIME:
+    elif value_type == FIELD_TYPE_TIME:
         if isinstance(value, QTime):
             return value.toPyTime()
         elif isinstance(value, str):
             format = "%H:%M:%S.%f"
             return datetime.strptime(value, format).time()
-    elif value_type in populse_db.database.LIST_TYPES:
+    elif value_type in LIST_TYPES:
         old_list = ast.literal_eval(value)
         list_to_return = []
         for old_element in old_list:
