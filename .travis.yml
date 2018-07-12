@@ -15,8 +15,6 @@ matrix:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall --ignore-dependencies python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl xz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CPPFLAGS="-I$(brew --prefix openssl)/include" LDFLAGS="-L$(brew --prefix openssl)/lib"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd; fi  
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir localpython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd localpython; fi
@@ -36,10 +34,13 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /Users/travis/build/populse/populse_sandbox/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then chmod u+x ${HOME}/localpython/box/bin/activate; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ${HOME}/localpython/box/bin/activate; fi
-  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://bootstrap.pypa.io/get-pip.py; fi
-  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 get-pip.py; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then easy_install pip; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo python3 -m ensurepip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl xz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CPPFLAGS="-I$(brew --prefix openssl)/include" LDFLAGS="-L$(brew --prefix openssl)/lib"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LDFLAGS= "-L/usr/local/opt/readline/lib"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CPPFLAGS= "-I/usr/local/opt/readline/include"; fi 
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then PKG_CONFIG_PATH= "/usr/local/opt/openssl/lib/pkgconfig"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.bash_profile; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo easy_install pip; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
@@ -48,7 +49,6 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install numpy; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --user --upgrade Cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
-  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install setuptools; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
