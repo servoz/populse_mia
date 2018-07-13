@@ -15,52 +15,16 @@ matrix:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall --ignore-dependencies python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd; fi  
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir localpython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd localpython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl  https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz > Python-3.5.5.tgz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zxvf Python-3.5.5.tgz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd Python-3.5.5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./configure --prefix=${HOME}/localpython --enable-optimizations; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ${HOME}/localpython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -OL https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.1.0.tar.gz > virtualenv-15.1.0.tar.gz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zxvf virtualenv-15.1.0.tar.gz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd virtualenv-15.1.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${HOME}/localpython/bin/python3 setup.py install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ${HOME}/localpython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ${HOME}/localpython/bin/virtualenv box --python=${HOME}/localpython/bin/python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /Users/travis/build/populse/populse_sandbox/; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then chmod u+x ${HOME}/localpython/box/bin/activate; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ${HOME}/localpython/box/bin/activate; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl xz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ~/.bash_profile; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo easy_install pip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi  
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/openssl/lib:$LDFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/readline/lib:$LDFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/openssl/include:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/readline/include:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/opt/openssl/include:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/opt/readline/include:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="/usr/local/opt/openssl/bin:$PATH"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install numpy; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --user --upgrade Cython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade Cython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade numpy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade cython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install codecov; fi
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
