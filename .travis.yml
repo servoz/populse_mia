@@ -40,6 +40,9 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo 'export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.bash_profile; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.bash_profile; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ~/.bash_profile; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list openssl; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/openssl/lib"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2j/include"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo easy_install pip; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
