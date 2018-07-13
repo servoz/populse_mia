@@ -29,10 +29,10 @@ install:
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
-  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_db/python"
-  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/scripts"
-  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
-  - export PYTHONPATH="${PYTHONPATH}:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"
+  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_db/python"
+  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/scripts"
+  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
+  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"
   - "export DISPLAY=:99.0"
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
@@ -40,6 +40,7 @@ install:
 
 script:
   - python3 -V
+  - echo $PYTHONPATH
   - python3 ./python/populse_mia/src/scripts/test.py
   - coverage run ./python/populse_mia/src/scripts/test.py
 
