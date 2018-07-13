@@ -35,18 +35,21 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then chmod u+x ${HOME}/localpython/box/bin/activate; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ${HOME}/localpython/box/bin/activate; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl xz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo 'export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.bash_profile; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.bash_profile; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source ~/.bash_profile; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/openssl/lib:$LDFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/opt/openssl/include:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CPPFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/openssl/include:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CFLAGS"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CFLAGS"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo easy_install pip; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/openssl/lib:$LDFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS="-L/usr/local/opt/readline/lib:$LDFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/openssl/include:$CFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/readline/include:$CFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/opt/openssl/include:$CPPFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/opt/readline/include:$CPPFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include:$CPPFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CPPFLAGS="-I/usr/local/Cellar/openssl/1.0.2l/include/openssl:$CPPFLAGS"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="/usr/local/opt/openssl/bin:$PATH"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip install --upgrade pip; fi
 
