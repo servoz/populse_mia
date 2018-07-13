@@ -30,10 +30,14 @@ install:
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
-  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_db/python"
-  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/scripts"
-  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"
-  - export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_db/python"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_db/python"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/scripts"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_sandbox/python/populse_mia/src/scripts"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_sandbox/python/populse_mia/src/modules"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_sandbox/python/populse_mia/src/modules/PipelineManager/Processes"; fi
   - "export DISPLAY=:99.0"
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
