@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-import populse_db
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type
 import os
@@ -9,6 +8,11 @@ import ast
 from datetime import datetime
 from Project.database_mia import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
 from Project.Project import COLLECTION_CURRENT
+from populse_db.database import FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, \
+    FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_INTEGER, LIST_TYPES, \
+    FIELD_TYPE_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_BOOLEAN, FIELD_TYPE_TIME, FIELD_TYPE_DATETIME, \
+    FIELD_TYPE_DATE
+
 
 class Default_value_list_creation(QDialog):
 
@@ -112,28 +116,28 @@ class Default_value_list_creation(QDialog):
             text = item.text()
 
             try:
-                if self.type == populse_db.database.FIELD_TYPE_LIST_INTEGER:
+                if self.type == FIELD_TYPE_LIST_INTEGER:
                     database_value.append(int(text))
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_FLOAT:
+                elif self.type == FIELD_TYPE_LIST_FLOAT:
                     database_value.append(float(text))
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_BOOLEAN:
+                elif self.type == FIELD_TYPE_LIST_BOOLEAN:
                     if text == "True":
                         database_value.append(True)
                     elif text == "False":
                         database_value.append(False)
                     else:
                         raise ValueError("Not a boolean value")
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_STRING:
+                elif self.type == FIELD_TYPE_LIST_STRING:
                     database_value.append(str(text))
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_DATE:
+                elif self.type == FIELD_TYPE_LIST_DATE:
                     format = "%d/%m/%Y"
                     datetime.strptime(text, format).date()
                     database_value.append(text)
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_DATETIME:
+                elif self.type == FIELD_TYPE_LIST_DATETIME:
                     format = "%d/%m/%Y %H:%M:%S.%f"
                     datetime.strptime(text, format)
                     database_value.append(text)
-                elif self.type == populse_db.database.FIELD_TYPE_LIST_TIME:
+                elif self.type == FIELD_TYPE_LIST_TIME:
                     format = "%H:%M:%S.%f"
                     datetime.strptime(text, format).time()
                     database_value.append(text)
@@ -208,7 +212,7 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
         :param event:
         """
 
-        if self.parent.type in populse_db.database.LIST_TYPES:
+        if self.parent.type in LIST_TYPES:
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
@@ -228,7 +232,7 @@ class Ui_Dialog_add_tag(QDialog):
         super().__init__()
         self.project = project
         self.databrowser = databrowser
-        self.type = populse_db.database.FIELD_TYPE_STRING # Type is string by default
+        self.type = FIELD_TYPE_STRING # Type is string by default
         self.pop_up()
         self.setMinimumWidth(700)
         self.setWindowTitle("Add a tag")
@@ -359,39 +363,39 @@ class Ui_Dialog_add_tag(QDialog):
         print("on activated")
 
         if text == "String":
-            self.type = populse_db.database.FIELD_TYPE_STRING
+            self.type = FIELD_TYPE_STRING
         elif text == "Integer":
-            self.type = populse_db.database.FIELD_TYPE_INTEGER
+            self.type = FIELD_TYPE_INTEGER
             self.text_edit_default_value.setPlaceholderText("Please enter an integer")
         elif text == "Float":
-            self.type = populse_db.database.FIELD_TYPE_FLOAT
+            self.type = FIELD_TYPE_FLOAT
             self.text_edit_default_value.setPlaceholderText("Please enter a float")
         elif text == "Boolean":
-            self.type = populse_db.database.FIELD_TYPE_BOOLEAN
+            self.type = FIELD_TYPE_BOOLEAN
             self.text_edit_default_value.setPlaceholderText("Please enter a boolean (True or False)")
         elif text == "Date":
-            self.type = populse_db.database.FIELD_TYPE_DATE
+            self.type = FIELD_TYPE_DATE
             self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
         elif text == "Datetime":
-            self.type = populse_db.database.FIELD_TYPE_DATETIME
+            self.type = FIELD_TYPE_DATETIME
             self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm:ss.zzz")
         elif text == "Time":
-            self.type = populse_db.database.FIELD_TYPE_TIME
+            self.type = FIELD_TYPE_TIME
             self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm:ss.zzz")
         elif text == "String List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_STRING
+            self.type = FIELD_TYPE_LIST_STRING
         elif text == "Integer List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_INTEGER
+            self.type = FIELD_TYPE_LIST_INTEGER
         elif text == "Float List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_FLOAT
+            self.type = FIELD_TYPE_LIST_FLOAT
         elif text == "Boolean List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_BOOLEAN
+            self.type = FIELD_TYPE_LIST_BOOLEAN
         elif text == "Date List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_DATE
+            self.type = FIELD_TYPE_LIST_DATE
         elif text == "Datetime List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_DATETIME
+            self.type = FIELD_TYPE_LIST_DATETIME
         elif text == "Time List":
-            self.type = populse_db.database.FIELD_TYPE_LIST_TIME
+            self.type = FIELD_TYPE_LIST_TIME
 
     def ok_action(self):
 

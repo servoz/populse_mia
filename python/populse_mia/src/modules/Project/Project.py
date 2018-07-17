@@ -7,11 +7,12 @@ import yaml
 from Project.Filter import Filter
 from SoftwareProperties.Config import Config
 from Utils.Utils import set_item_data
-import populse_db
 
 from Project.database_mia import Database_mia, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 # MIA collections
+from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_LIST_STRING, FIELD_TYPE_JSON, FIELD_TYPE_DATETIME
+
 COLLECTION_CURRENT = "current"
 COLLECTION_INITIAL = "initial"
 COLLECTION_BRICK = "brick"
@@ -99,22 +100,22 @@ class Project:
             self.session.add_collection(COLLECTION_BRICK, BRICK_ID, False, TAG_ORIGIN_BUILTIN, None, None)
 
             # Tags manually added
-            self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, populse_db.database.FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
-            self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_CURRENT, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_EXP_TYPE, populse_db.database.FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_CURRENT, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_INITIAL, TAG_BRICKS, populse_db.database.FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False, TAG_ORIGIN_BUILTIN, None, None) # TODO Maybe remove checksum tag from initial table
+            self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_EXP_TYPE, FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_EXP_TYPE, FIELD_TYPE_STRING, "Path exp type", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_CURRENT, TAG_BRICKS, FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_INITIAL, TAG_BRICKS, FIELD_TYPE_LIST_STRING, "Path bricks", True, TAG_ORIGIN_BUILTIN, None, None)
 
-            self.session.add_field(COLLECTION_BRICK, BRICK_NAME, populse_db.database.FIELD_TYPE_STRING, "Brick name", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, populse_db.database.FIELD_TYPE_JSON, "Brick input(s)", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_OUTPUTS, populse_db.database.FIELD_TYPE_JSON, "Brick output(s)", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_INIT, populse_db.database.FIELD_TYPE_STRING, "Brick init status", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_INIT_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick init time", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, populse_db.database.FIELD_TYPE_STRING, "Brick exec status", False, TAG_ORIGIN_BUILTIN, None, None)
-            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC_TIME, populse_db.database.FIELD_TYPE_DATETIME, "Brick exec time", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_NAME, FIELD_TYPE_STRING, "Brick name", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INPUTS, FIELD_TYPE_JSON, "Brick input(s)", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_OUTPUTS, FIELD_TYPE_JSON, "Brick output(s)", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INIT, FIELD_TYPE_STRING, "Brick init status", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_INIT_TIME, FIELD_TYPE_DATETIME, "Brick init time", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC, FIELD_TYPE_STRING, "Brick exec status", False, TAG_ORIGIN_BUILTIN, None, None)
+            self.session.add_field(COLLECTION_BRICK, BRICK_EXEC_TIME, FIELD_TYPE_DATETIME, "Brick exec time", False, TAG_ORIGIN_BUILTIN, None, None)
 
             self.session.save_modifications() # Base modifications, do not count for unsaved modifications
 
