@@ -5,6 +5,7 @@ import sys
 from PyQt5 import QtGui, QtWidgets, QtCore
 import os
 import six
+import yaml
 
 from capsul.api import get_process_instance, Process
 from capsul.pipeline import pipeline_tools
@@ -38,6 +39,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_history)
+        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
 
         self.addTab(p_e, "New Pipeline")
         self.undos["New Pipeline"] = []
@@ -54,6 +56,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_history)
+        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
         if not loaded:
             idx = 1
             while True and idx < 20:
@@ -78,6 +81,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.setCurrentIndex(max(0, self.currentIndex()-1))
         self.removeTab(idx)
 
+    def set_current_editor_by_name(self, tab_name):
+        self.setCurrentWidget(self.findChild(QtWidgets.QWidget, tab_name))
+
     def get_current_editor(self):
         return self.widget(self.currentIndex())
 
@@ -88,7 +94,6 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         return self.get_current_editor().scene.pipeline
 
     def save_pipeline(self):
-        # old_filename = getattr(self.get_current_editor(), '_pipeline_filename', '')
         old_filename = self.get_current_filename()
         new_file_name = self.get_current_editor().save_pipeline()
 
@@ -103,20 +108,21 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.undos[new_file_name] = undos
             self.redos[new_file_name] = redos
 
-    def load_pipeline(self):
-        # If there is only one opened PipelineEditor
-        if self.count() == 2:
-            # If the PipelineEditor has been edited
-            if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
-                self.new_tab(loaded=True)
-                filename = self.widget(1).load_pipeline()
-                self.setCurrentIndex(1)
+    def load_pipeline(self, filename=None):
+        if not filename:
+            # If there is only one opened PipelineEditor
+            if self.count() == 2:
+                # If the PipelineEditor has been edited
+                if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
+                    self.new_tab(loaded=True)
+                    filename = self.widget(1).load_pipeline()
+                    self.setCurrentIndex(1)
+                else:
+                    filename = self.widget(0).load_pipeline()
             else:
-                filename = self.widget(0).load_pipeline()
-        else:
-            self.new_tab(loaded=True)
-            filename = self.widget(self.count()-2).load_pipeline()
-            self.setCurrentIndex(self.count()-2)
+                self.new_tab(loaded=True)
+                filename = self.widget(self.count()-2).load_pipeline()
+                self.setCurrentIndex(self.count()-2)
         if filename:
             self.setTabText(self.currentIndex(), os.path.basename(filename))
             self.undos[os.path.basename(filename)] = []
@@ -141,6 +147,103 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def reset_pipeline(self):
         self.get_current_editor()._reset_pipeline()
+
+    def open_sub_pipeline(self, sub_pipeline):
+        """
+        Opens a pipeline node in a new editor tab.
+        :param sub_pipeline: the pipeline to open
+        :return:
+        """
+
+        def get_path(name, dictionary, prev_paths=None):
+            """
+            This recursive function returns the package path to the selected sub-pipeline.
+            :param name: name of the sub-pipeline
+            :param dictionary: package tree (read from process_config.yml)
+            :param prev_paths: paths of the last call of this function
+            :return: the package path of the sub-pipeline if it is found, else None
+            """
+            if prev_paths is None:
+                prev_paths = []
+
+            # new_paths is a list containing the packages to the desired module
+            new_paths = prev_paths.copy()
+            for idx, (key, value) in enumerate(dictionary.items()):
+                # If the value is a string, this means that this is a "leaf" of the tree
+                # so the key is a module name.
+                if isinstance(value, str):
+                    if key == name:
+                        new_paths.append(key)
+                        return new_paths
+                    else:
+                        continue
+                # Else, this means that the value is still a dictionary, we are still in the tree
+                else:
+                    new_paths.append(key)
+                    final_res = get_path(name, value, new_paths)
+                    # final_res is None if the module name has not been found in the tree
+                    if final_res:
+                        return final_res
+                    else:
+                        new_paths = prev_paths.copy()
+
+        def find_filename(paths_list, packages_list, file_name):
+            """
+            Finds the corresponding file name in the paths list of process_config.yml.
+            :param paths_list: list of all the paths contained in process_config.yml
+            :param packages_list: packages path
+            :param file_name: name of the sub-pipeline
+            :return: name of the corresponding file if it is found, else None
+            """
+            filenames = [file_name + '.py', file_name + '.xml']
+            for filename in filenames:
+                for path in paths_list:
+                    new_path = path
+                    for package in packages_list:
+                        new_path = os.path.join(new_path, package)
+
+                    # Making sure that the filename is found (has somme issues with case sensitivity)
+                    for f in os.listdir(new_path):
+                        new_file = os.path.join(new_path, f)
+                        if os.path.isfile(new_file) and f.lower() == filename.lower():
+                            return new_file
+
+        # Reading the process configuration file
+        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+            try:
+                dic = yaml.load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+                dic = {}
+
+        sub_pipeline_name = sub_pipeline.name
+
+        # get_path returns a list that is the package path to the sub_pipeline file
+        sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
+        sub_pipeline_name = sub_pipeline_list.pop()
+
+        # Finding the real sub-pipeline filename
+        sub_pipeline_filename = find_filename(dic['Paths'], sub_pipeline_list, sub_pipeline_name)
+        if sub_pipeline_filename:
+            pipeline = get_process_instance(sub_pipeline_filename)
+            if pipeline is not None:
+                sub_pipeline_basename = os.path.basename(sub_pipeline_filename)
+
+                # Checking if the sub-pipeline is not already opened in an editor tab
+                pipeline_opened = False
+                for opened_filename in self.undos.keys():
+                    if opened_filename == sub_pipeline_basename:
+                        pipeline_opened = True
+                        break
+
+                if pipeline_opened:
+                    self.set_current_editor_by_name(sub_pipeline_basename)
+                else:
+                    self.new_tab(loaded=True)
+                    self.setCurrentIndex(self.count() - 2)
+                    self.get_current_editor().set_pipeline(pipeline)
+                    self.get_current_editor()._pipeline_filename = sub_pipeline_filename
+                    self.load_pipeline(sub_pipeline_basename)
 
 
 class PipelineEditor(PipelineDevelopperView):

@@ -1716,6 +1716,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     '''Signal emitted when a plug is right-clicked'''
     link_right_clicked = QtCore.Signal(str, str, str, str)
     '''Signal emitted when a link is right-clicked'''
+    edit_sub_pipeline = QtCore.Signal(Pipeline)
+    '''Signal emitted when a sub-pipeline has to be edited'''
     scene = None
     '''
     type: PipelineScene
@@ -2293,9 +2295,23 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         if gnode.show_opt_outputs:
             show_opt_outputs.setChecked(True)
 
+        # Emit a signal to edit the node if it is a PipelineNode
+        if isinstance(node, PipelineNode):
+            menu.addSeparator()
+            edit_sub_pipeline = menu.addAction('Edit sub-pipeline')
+            edit_sub_pipeline.triggered.connect(self.emit_edit_sub_pipeline)
+
         menu.exec_(QtGui.QCursor.pos())
         del self.current_node_name
         del self.current_process
+
+    def emit_edit_sub_pipeline(self):
+        node = self.scene.pipeline.nodes[self.current_node_name]
+        sub_pipeline = node.process
+        if isinstance(sub_pipeline, weakref.ProxyTypes):
+            # get the "real" object
+            sub_pipeline = sub_pipeline.__init__.__self__
+        self.edit_sub_pipeline.emit(sub_pipeline)
 
     def show_optional_inputs(self):
         '''

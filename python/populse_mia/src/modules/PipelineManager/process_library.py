@@ -81,12 +81,8 @@ class ProcessLibraryWidget(QWidget):
         list_path = list(reversed(list_path))
         package_name = '.'.join(list_path)
 
-        import time
-        t = time.time()
         __import__(package_name)
-        t2 = time.time()
         pkg = sys.modules[package_name]
-        t = time.time()
 
         for k, v in sorted(list(pkg.__dict__.items())):
             if k == process_name:
