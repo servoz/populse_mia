@@ -497,7 +497,7 @@ class InitWorker(QThread):
 
             self.project.saveModifications()
 
-    def init_pipeline(self, pipeline, verbose=False):
+    def init_pipeline(self, pipeline):
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(self.diagramView.get_current_pipeline())
@@ -556,11 +556,7 @@ class InitWorker(QThread):
             # Finding one node that has a ratio of 1, which means that all of its mandatory
             # inputs are "connected"
             key_name = [key for key, value in nodes_inputs_ratio.items() if value[0] == value[1]]
-            if verbose:
-                print('KEY NAME TEST', [key for key, value in nodes_inputs_ratio.items() if value == 1.0])
             if key_name:
-                if verbose:
-                    print("KEY NAME", key_name[0])
 
                 # This node can be initialized so it is placed at the end of the nodes_to_check list
                 nodes_to_check.append(key_name[0])
@@ -572,15 +568,10 @@ class InitWorker(QThread):
             # Using OrderedDict allows to remove the duplicate in the list without losing the
             # order. So if key_name[0] appears twice, it will stay at the first place
             nodes_to_check = list(OrderedDict((x, True) for x in nodes_to_check[::-1]).keys())
-            if verbose:
-                print('NODES INPUTS RATIO', nodes_inputs_ratio)
-                print('NODES TO CHECK', nodes_to_check)
 
             node_name = nodes_to_check.pop(0)
 
             nodes_to_check = nodes_to_check[::-1]
-            if verbose:
-                print('THE NODE TO CHECK', node_name)
 
             # Inputs/Outputs nodes will be automatically updated with
             # the method update_nodes_and_plugs_activation of the pipeline object
@@ -597,7 +588,7 @@ class InitWorker(QThread):
             node = pipeline.nodes[node_name]
             if isinstance(node, PipelineNode):
                 sub_pipeline = node.process
-                self.init_pipeline(sub_pipeline, verbose=False)
+                self.init_pipeline(sub_pipeline)
                 for plug_name in node.plugs.keys():
                     if hasattr(node.plugs[plug_name], 'links_to'):  # If the plug is an output and is
                         # connected to another one
