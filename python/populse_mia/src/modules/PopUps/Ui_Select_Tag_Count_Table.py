@@ -3,6 +3,7 @@ from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
 
 from Project.Project import TAG_CHECKSUM, COLLECTION_CURRENT
 
+
 class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
     """
     Is called when the user wants to update the tags that are visualized in the data browser

@@ -8,10 +8,11 @@ from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
 from Utils.Utils import set_item_data, table_to_database
 
-from functools import reduce # Valid in Python 2.6+, required in Python 3
+from functools import reduce  # Valid in Python 2.6+, required in Python 3
 import operator
 
 from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
+
 
 class CountTable(QDialog):
     """

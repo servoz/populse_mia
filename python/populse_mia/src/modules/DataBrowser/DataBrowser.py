@@ -194,6 +194,7 @@ class DataBrowser(QWidget):
             self.main_window.pipeline_manager.scan_list = current_scans
             self.main_window.pipeline_manager.nodeController.scan_list = current_scans
             self.main_window.pipeline_manager.diagramView.scan_list = current_scans
+            self.main_window.pipeline_manager.iterationTable.scan_list = current_scans
 
     def update_database(self, database):
         """

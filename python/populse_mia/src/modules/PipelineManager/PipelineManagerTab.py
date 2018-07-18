@@ -15,7 +15,7 @@ from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
     QCursor, QBrush, QIcon
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
     QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
-    QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
+    QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, QStackedWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
 
 from matplotlib.backends.qt_compat import QtWidgets
@@ -27,6 +27,7 @@ from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig, PipelineNode
 
 from PipelineManager.callStudent import callStudent
+from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
     BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
     TYPE_MAT
@@ -75,6 +76,8 @@ class PipelineManagerTab(QWidget):
         self.nodeController = NodeController(self.project, self.scan_list, self, self.main_window)
         self.nodeController.visibles_tags = self.project.session.get_visibles()
 
+        self.iterationTable = IterationTable(self.project, self.scan_list, self.main_window)
+
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.nodeController)
@@ -107,14 +110,18 @@ class PipelineManagerTab(QWidget):
         self.hLayout.addWidget(self.runButton)
         self.hLayout.addStretch(1)
 
+        self.splitterRight = QSplitter(Qt.Vertical)
+        self.splitterRight.addWidget(self.iterationTable)
+        self.splitterRight.addWidget(self.scrollArea)
+
         self.splitter0 = QSplitter(Qt.Horizontal)
         self.splitter0.addWidget(self.diagramView)
-        self.splitter0.addWidget(self.scrollArea)
+        self.splitter0.addWidget(self.splitterRight)
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter1.addWidget(self.processLibrary)
         self.splitter1.addWidget(self.diagramView)
-        self.splitter1.addWidget(self.scrollArea)
+        self.splitter1.addWidget(self.splitterRight)
         self.splitter1.setSizes([100, 400, 200])
 
         self.splitter2 = QSplitter(Qt.Vertical)
@@ -231,6 +238,7 @@ class PipelineManagerTab(QWidget):
         self.nodeController.project = project
         self.diagramView.project = project
         self.nodeController.visibles_tags = self.project.session.get_visibles()
+        self.iterationTable.project = project
         Process_mia.project = project
 
     def controller_value_changed(self, signal_list):
