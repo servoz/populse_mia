@@ -639,7 +639,6 @@ class InitWorker(QThread):
                 # interfaces
                 try:
                     process_outputs = process._nipype_interface._list_outputs()
-                    print('PROCESS OUTPUTS NIPYPE', process_outputs)
                     # The NipypeProcess outputs are always "private" for Capsul
                     for key, value in process_outputs.items():
                         tmp_value = process_outputs[key]
@@ -744,36 +743,20 @@ class RunWorker(QThread):
     def run(self):
 
         pipeline = get_process_instance(self.diagramView.get_current_pipeline())
-        # Now
-        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['NipypeConfig', 'SPMConfig', 'FSLConfig'])
-        # study_config = StudyConfig(modules=StudyConfig.default_modules + ['SPMConfig'])
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-        #                            spm_standalone=True, )
-        # study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12') # spm_exec must be defined
-        #  study_config = StudyConfig(use_spm=True, spm_directory='/home/david/spm12',
-        #                             spm_exec='/usr/local/MATLAB/MATLAB_Runtime/v93/') # cannot CD to /tmp/undefined
 
         config = Config()
         spm_path = config.get_spm_path()
         matlab_path = config.get_matlab_path()
         use_spm = config.get_use_spm()
-        if use_spm == "yes" and spm_path != "" and matlab_path != "" and spm_path is not None and matlab_path is not None:
-            study_config = StudyConfig(use_spm=True, spm_directory=spm_path,
+        if use_spm == "yes" and spm_path != "" and matlab_path != "" \
+                and spm_path is not None and matlab_path is not None:
+            study_config = StudyConfig(use_spm=True, spm_directory="{0}/".format(spm_path),
                                        spm_exec="{0}/".format(matlab_path),
                                        output_directory="{0}/".format(spm_path))
+
         else:
             study_config = StudyConfig(use_spm=False)
 
-        # Modifying the study_config to use SPM 12 Standalone
-        """setattr(study_config, 'spm_exec', '/home/david/spm12/run_spm12.sh')
-        setattr(study_config, 'spm_standalone', True)
-        setattr(study_config, 'spm_directory', '/home/david/spm12')"""
-        """setattr(study_config, 'use_spm', True)
-        setattr(study_config, 'spm_version', '12')"""
-        """setattr(study_config, 'output_directory', '/home/david/spm12/spm12_mcr/spm/spm12/')"""
-
-        # inspect config options
-        for k in study_config.user_traits().keys(): print(k, ':  ', getattr(study_config, k))
 
         """with open('/tmp/tmp_pipeline.txt', 'w') as f:
             sys.stdout = f
@@ -796,7 +779,7 @@ class RunWorker(QThread):
             self.msg.setIcon(QMessageBox.Critical)
             self.msg.setText("SPM standalone is not set")
             self.msg.setInformativeText(
-                "SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA2 preferences.")
+                "SPM processes cannot be run with SPM standalone not set.\nYou can activate it and set the paths in MIA preferences.")
             self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
