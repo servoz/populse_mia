@@ -124,9 +124,9 @@ class DataBrowser(QWidget):
 
         hbox_layout.addStretch(1)
 
-        send_documents_to_pipeline = QPushButton("Send documents to the Pipeline Manager")
-        send_documents_to_pipeline.clicked.connect(self.send_documents_to_pipeline)
-        hbox_layout.addWidget(send_documents_to_pipeline)
+        self.send_documents_to_pipeline_button = QPushButton("Send documents to the Pipeline Manager")
+        self.send_documents_to_pipeline_button.clicked.connect(self.send_documents_to_pipeline)
+        hbox_layout.addWidget(self.send_documents_to_pipeline_button)
 
         vbox_table.addLayout(hbox_layout)
 
@@ -186,15 +186,9 @@ class DataBrowser(QWidget):
         current_scans = self.table_data.get_current_filter()
 
         # Displays a popup with the list of scans
-        show_selection = PopUps.Ui_DataBrowser_Current_Selection.Ui_DataBrowser_Current_Selection(self.project, self, current_scans)
-        show_selection.show()
 
-        if show_selection.exec_():
-            # Ok clicked
-            self.main_window.pipeline_manager.scan_list = current_scans
-            self.main_window.pipeline_manager.nodeController.scan_list = current_scans
-            self.main_window.pipeline_manager.pipelineEditorTabs.scan_list = current_scans
-            self.main_window.pipeline_manager.iterationTable.scan_list = current_scans
+        self.show_selection = PopUps.Ui_DataBrowser_Current_Selection.Ui_DataBrowser_Current_Selection(self.project, self, current_scans, self.main_window)
+        self.show_selection.show()
 
     def update_database(self, database):
         """
@@ -1056,6 +1050,7 @@ class TableDataBrowser(QTableWidget):
         self.action_reset_cell = self.menu.addAction("Reset cell(s)")
         self.action_reset_column = self.menu.addAction("Reset column(s)")
         self.action_reset_row = self.menu.addAction("Reset row(s)")
+        self.action_clear_cell = self.menu.addAction("Clear cell(s)")
         self.action_add_scan = self.menu.addAction("Add path")
         self.action_remove_scan = self.menu.addAction("Remove path(s)")
         self.action_sort_column = self.menu.addAction("Sort column")
@@ -1084,6 +1079,11 @@ class TableDataBrowser(QTableWidget):
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_row)
+            msg.exec()
+        if action == self.action_clear_cell:
+            msg.setText("You are about to clear cells.")
+            msg.buttonClicked.connect(msg.close)
+            msg.buttons()[0].clicked.connect(self.clear_cell)
             msg.exec()
         elif action == self.action_add_scan:
             self.itemChanged.connect(self.change_cell_color)
@@ -1147,6 +1147,37 @@ class TableDataBrowser(QTableWidget):
             scan_name = item.text()
             if scan_name == scan:
                 return row
+
+    def clear_cell(self):
+        """
+        Clears the selected cells
+        """
+
+        # For history
+        historyMaker = []
+        historyMaker.append("modified_values")
+        modified_values = []
+
+        points = self.selectedIndexes()
+        for point in points:
+            row = point.row()
+            col = point.column()
+            tag_name = self.horizontalHeaderItem(col).text()
+            scan_name = self.item(row, 0).text()  # We get the FileName of the scan from the first row
+            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            modified_values.append([scan_name, tag_name, current_value, None])  # For history
+            self.project.session.remove_value(COLLECTION_CURRENT, scan_name, tag_name)
+            item  = self.item(row, col)
+            set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+            font = item.font()
+            font.setItalic(True)
+            font.setBold(True)
+            item.setFont(font)
+
+        # For history
+        historyMaker.append(modified_values)
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
 
     def reset_cell(self):
 
@@ -1880,6 +1911,7 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
+
 
 class AddRowsProgress(QProgressDialog):
     """
