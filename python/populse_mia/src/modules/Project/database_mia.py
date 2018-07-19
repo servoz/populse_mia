@@ -32,7 +32,7 @@ class Database_mia(Database):
 
         super().__init__(string_engine, caches=True, list_tables=True, query_type=QUERY_MIXED)
 
-    def create_empty_schema(self, string_engine):
+    def _Database__create_empty_schema(self, string_engine):
         """
         Overrides the method creating the empty schema, in order to add columns to field table
         :param string_engine: Path of the new database file
@@ -273,7 +273,7 @@ class Database_session_mia(DatabaseSession):
             # String columns if it list type, as the str representation of the lists will be stored
             field_type = String
         else:
-            field_type = self.field_type_to_column_type(field_type)
+            field_type = self._DatabaseSession__field_type_to_column_type(field_type)
 
         column = Column(self.name_to_valid_column_name(name), field_type, index=index)
         column_str_type = column.type.compile(self.database.engine.dialect)
