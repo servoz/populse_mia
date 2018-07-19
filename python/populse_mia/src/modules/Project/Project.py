@@ -394,6 +394,7 @@ class Project:
                     scan = valueToRestore[0]
                     tag = valueToRestore[1]
                     old_value = valueToRestore[2]
+                    new_value = valueToRestore[3]
                     item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
                     if (old_value == None):
                         # If the cell was not defined before, we reput it
@@ -408,6 +409,12 @@ class Project:
                         # If the cell was there before, we just set it to the old value
                         self.session.set_value(COLLECTION_CURRENT, scan, tag, old_value)
                         set_item_data(item, old_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
+                        # If the new value is None, the not defined font must be removed
+                        if new_value is None:
+                            font = item.font()
+                            font.setItalic(False)
+                            font.setBold(False)
+                            item.setFont(font)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):
@@ -433,6 +440,8 @@ class Project:
         """
         Redo the last action made by the user on the project
         """
+
+        from DataBrowser.DataBrowser import not_defined_value
 
         # We can redo if we have an action to make again
         if len(self.redos) > 0:
@@ -517,7 +526,14 @@ class Project:
                         font.setBold(False)
                         item.setFont(font)
                     self.session.set_value(COLLECTION_CURRENT, scan, tag, new_value)
-                    set_item_data(item, new_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
+                    if new_value is None:
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                    else:
+                        set_item_data(item, new_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
                 table.update_colors()
                 table.itemChanged.connect(table.change_cell_color)
             if (action == "modified_visibilities"):

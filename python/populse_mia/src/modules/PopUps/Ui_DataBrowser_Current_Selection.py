@@ -23,11 +23,11 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         old_scan_list = databrowser_table.scans_to_visualize
         databrowser_table.scans_to_visualize = self.filter
         databrowser_table.update_visualized_rows(old_scan_list)
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         vbox_layout.addWidget(databrowser_table)
-        vbox_layout.addWidget(self.buttons)
-        self.buttons.accepted.connect(self.ok_clicked)
-        self.buttons.rejected.connect(self.close)
+        vbox_layout.addWidget(buttons)
+        buttons.accepted.connect(self.ok_clicked)
+        buttons.rejected.connect(self.close)
         self.setLayout(vbox_layout)
         screen_resolution = QApplication.instance().desktop().screenGeometry()
         width, height = screen_resolution.width(), screen_resolution.height()

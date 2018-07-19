@@ -1048,6 +1048,7 @@ class TableDataBrowser(QTableWidget):
         self.action_reset_cell = self.menu.addAction("Reset cell(s)")
         self.action_reset_column = self.menu.addAction("Reset column(s)")
         self.action_reset_row = self.menu.addAction("Reset row(s)")
+        self.action_clear_cell = self.menu.addAction("Clear cell(s)")
         self.action_add_scan = self.menu.addAction("Add path")
         self.action_remove_scan = self.menu.addAction("Remove path(s)")
         self.action_sort_column = self.menu.addAction("Sort column")
@@ -1076,6 +1077,11 @@ class TableDataBrowser(QTableWidget):
             msg.setText("You are about to reset cells.")
             msg.buttonClicked.connect(msg.close)
             msg.buttons()[0].clicked.connect(self.reset_row)
+            msg.exec()
+        if action == self.action_clear_cell:
+            msg.setText("You are about to clear cells.")
+            msg.buttonClicked.connect(msg.close)
+            msg.buttons()[0].clicked.connect(self.clear_cell)
             msg.exec()
         elif action == self.action_add_scan:
             self.itemChanged.connect(self.change_cell_color)
@@ -1139,6 +1145,37 @@ class TableDataBrowser(QTableWidget):
             scan_name = item.text()
             if scan_name == scan:
                 return row
+
+    def clear_cell(self):
+        """
+        Clears the selected cells
+        """
+
+        # For history
+        historyMaker = []
+        historyMaker.append("modified_values")
+        modified_values = []
+
+        points = self.selectedIndexes()
+        for point in points:
+            row = point.row()
+            col = point.column()
+            tag_name = self.horizontalHeaderItem(col).text()
+            scan_name = self.item(row, 0).text()  # We get the FileName of the scan from the first row
+            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            modified_values.append([scan_name, tag_name, current_value, None])  # For history
+            self.project.session.remove_value(COLLECTION_CURRENT, scan_name, tag_name)
+            item  = self.item(row, col)
+            set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+            font = item.font()
+            font.setItalic(True)
+            font.setBold(True)
+            item.setFont(font)
+
+        # For history
+        historyMaker.append(modified_values)
+        self.project.undos.append(historyMaker)
+        self.project.redos.clear()
 
     def reset_cell(self):
 
