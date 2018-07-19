@@ -338,7 +338,7 @@ class DataBrowser(QWidget):
                 filter = self.search_bar.prepare_not_defined_filter(self.project.session.get_visibles())
             # Scans matching the search
             else:
-                filter = self.search_bar.prepare_filter(str_search, self.project.session.get_visibles())
+                filter = self.search_bar.prepare_filter(str_search, self.project.session.get_visibles(), self.table_data.scans_to_search)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
@@ -423,10 +423,10 @@ class DataBrowser(QWidget):
         self.project.session.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True,
                                         TAG_ORIGIN_USER, new_tag_unit, new_default_value)
         for scan in self.project.session.get_documents(COLLECTION_CURRENT):
-            self.project.session.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
-                                            table_to_database(new_default_value, tag_type))
-            self.project.session.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
-                                            table_to_database(new_default_value, tag_type))
+            self.project.session.add_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
+                                           table_to_database(new_default_value, tag_type))
+            self.project.session.add_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
+                                           table_to_database(new_default_value, tag_type))
             values.append(
                 [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type),
                  table_to_database(new_default_value, tag_type)])  # For history
@@ -481,10 +481,10 @@ class DataBrowser(QWidget):
             cloned_init_value = self.project.session.get_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME),
                                                                 tag_to_clone)
             if cloned_cur_value is not None or cloned_init_value is not None:
-                self.project.session.new_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
-                                                cloned_cur_value)
-                self.project.session.new_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
-                                                cloned_init_value)
+                self.project.session.add_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
+                                               cloned_cur_value)
+                self.project.session.add_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
+                                               cloned_init_value)
                 values.append(
                     [getattr(scan, TAG_FILENAME), new_tag_name, cloned_cur_value, cloned_init_value])  # For history
 
@@ -1859,7 +1859,7 @@ class TableDataBrowser(QTableWidget):
                     # The scan does not have a value for the tag yet: we add it
                     else:
                         modified_values.append([scan_path, tag_name, None, database_value])
-                        self.project.session.new_value(COLLECTION_CURRENT, scan_path, tag_name, database_value)
+                        self.project.session.add_value(COLLECTION_CURRENT, scan_path, tag_name, database_value)
 
                         # Font reset in case it was a not defined cell
                         font = item.font()

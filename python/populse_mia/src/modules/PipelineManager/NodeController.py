@@ -499,7 +499,7 @@ class PlugFilter(QWidget):
                 filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles())
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles(), self.table_data.scans_to_search)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
