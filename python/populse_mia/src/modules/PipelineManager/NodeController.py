@@ -758,8 +758,8 @@ class FilterWidget(QWidget):
             full_path = os.path.join(self.project.folder, result_name)
             result_files.append(full_path)
 
-        if len(result_names) == 1:
-            result_files = result_files[0]
+        """if len(result_names) == 1:
+            result_files = result_files[0]"""
 
         self.node.set_plug_value("output", result_files)
 

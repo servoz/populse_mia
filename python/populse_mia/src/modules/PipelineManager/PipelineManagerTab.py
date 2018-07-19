@@ -22,6 +22,7 @@ from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
 
 from PipelineManager.Process_mia import Process_mia
+from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
 
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig, PipelineNode
@@ -361,21 +362,23 @@ class PipelineManagerTab(QWidget):
 
     def runPipeline(self):
         if self.iterationTable.check_box_iterate.isChecked():
-            #TODO: Display a message box to choose on which value to iterate
-            tag_to_iterate = self.iterationTable.iterated_tag
+            iterated_tag = self.iterationTable.iterated_tag
             tag_values = self.iterationTable.tag_values_list
-            for tag_value in tag_values:
-                idx_combo_box = self.iterationTable.combo_box.findText(tag_value)
-                self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
-                self.iterationTable.update_table()
+            ui_iteration = Ui_Select_Iteration(iterated_tag, tag_values)
+            if ui_iteration.exec():
+                tag_values = ui_iteration.final_values
+                for tag_value in tag_values:
+                    idx_combo_box = self.iterationTable.combo_box.findText(tag_value)
+                    self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
+                    self.iterationTable.update_table()
 
-                self.progress = InitProgress(self.project, self.pipelineEditorTabs, None, self.main_window)
-                self.progress.show()
-                self.progress.exec()
+                    self.progress = InitProgress(self.project, self.pipelineEditorTabs, None, self.main_window)
+                    self.progress.show()
+                    self.progress.exec()
 
-                self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
-                self.progress.show()
-                self.progress.exec()
+                    self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
+                    self.progress.show()
+                    self.progress.exec()
         else:
             self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
             self.progress.show()
