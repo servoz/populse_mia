@@ -338,10 +338,10 @@ class PipelineManagerTab(QWidget):
         """ Method that generates the output names of each pipeline node. """
 
         # TODO: TO REMOVE
-        import shutil
+        """import shutil
         data_folder = os.path.join(self.project.folder, 'data', 'raw_data')
         spm_mat_file = os.path.join('..', '..', 'ressources', 'SPM.mat')
-        shutil.copy2(spm_mat_file, data_folder)
+        shutil.copy2(spm_mat_file, data_folder)"""
 
         """import pprofile
         prof = pprofile.Profile()
@@ -360,9 +360,26 @@ class PipelineManagerTab(QWidget):
         prof.print_stats()"""
 
     def runPipeline(self):
-        self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
-        self.progress.show()
-        self.progress.exec()
+        if self.iterationTable.check_box_iterate.isChecked():
+            #TODO: Display a message box to choose on which value to iterate
+            tag_to_iterate = self.iterationTable.iterated_tag
+            tag_values = self.iterationTable.tag_values_list
+            for tag_value in tag_values:
+                idx_combo_box = self.iterationTable.combo_box.findText(tag_value)
+                self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
+                self.iterationTable.update_table()
+
+                self.progress = InitProgress(self.project, self.pipelineEditorTabs, None, self.main_window)
+                self.progress.show()
+                self.progress.exec()
+
+                self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
+                self.progress.show()
+                self.progress.exec()
+        else:
+            self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
+            self.progress.show()
+            self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())

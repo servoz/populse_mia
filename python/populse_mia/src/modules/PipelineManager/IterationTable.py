@@ -64,7 +64,7 @@ class IterationTable(QWidget):
         self.check_box_iterate.stateChanged.connect(self.emit_iteration_table_updated)
 
         # Label "Iterate over:"
-        self.label_iterate = QLabel("Iterative over:")
+        self.label_iterate = QLabel("Iterate over:")
 
         # Label that displays the name of the selected tag
         self.iterated_tag_label = QLabel("Select a tag")
@@ -246,6 +246,8 @@ class IterationTable(QWidget):
             self.update_iterated_tag(ui_select.selected_tag)
 
     def update_iterated_tag(self, tag_name):
+        if not self.scan_list:
+            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
         self.iterated_tag_push_button.setText(tag_name)
         self.iterated_tag = tag_name
@@ -253,6 +255,7 @@ class IterationTable(QWidget):
 
         # Update combo_box
         scans_names = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        scans_names = list(set(scans_names).intersection(self.scan_list))
         self.tag_values_list = []
         for scan_name in scans_names:
             tag_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)

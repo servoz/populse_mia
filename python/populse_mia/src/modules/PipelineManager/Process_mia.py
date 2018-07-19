@@ -15,21 +15,17 @@ class Process_mia(Process):
 
     def __init__(self):
         super(Process_mia, self).__init__()
-        self.filters = {}
+        # self.filters = {}  # use if the filters are set on plugs
 
     def list_outputs(self):
-        for plug_name, filter in self.filters.items():
-
-            # TODO: if the value is a TraitListObject, set only the first value (some plugs cannot be list, but if
-            # TODO: they have to be lists, it is automatically casted)
-            pass
+        pass
 
     def _before_run_process(self):
         """
         Method called before running the process
         It adds the exec status Not Done and exec time to the process history
         """
-
+        
         self.manage_brick_before_run()
 
     def _after_run_process(self, run_process_result):
