@@ -668,5 +668,76 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 1)
         self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), 'data/downloaded_data/test.py')
 
+    def test_send_documents_to_pipeline(self):
+        """
+        Tests the popup sending the documents to the pipeline manager
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        # Checking that the pipeline manager has an empty list at the beginning
+        self.assertEqual(self.imageViewer.pipeline_manager.scan_list, [])
+
+        # Sending the selection (all scans), but closing the popup
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        send_popup = self.imageViewer.data_browser.show_selection
+        send_popup.close()
+
+        # Checking that the list is stil empty
+        self.assertEqual(self.imageViewer.pipeline_manager.scan_list, [])
+
+        # Sending the selection (all scans)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        send_popup = self.imageViewer.data_browser.show_selection
+        send_popup.ok_clicked()
+
+        # Checking that all scans have been sent to the pipeline manager
+        scans = self.imageViewer.pipeline_manager.scan_list
+        self.assertEqual(len(scans), 8)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
+        self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+
+        # Selecting the first 2 scans
+        item1 = self.imageViewer.data_browser.table_data.item(0, 0)
+        item1.setSelected(True)
+        scan1 = item1.text()
+        item2 = self.imageViewer.data_browser.table_data.item(1, 0)
+        scan2 = item2.text()
+        item2.setSelected(True)
+
+        # Sending the selection (first 2 scans)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        send_popup = self.imageViewer.data_browser.show_selection
+        send_popup.ok_clicked()
+
+        # Checking that the first 2 scans have been sent to the pipeline manager
+        scans = self.imageViewer.pipeline_manager.scan_list
+        self.assertEqual(len(scans), 2)
+        self.assertTrue(scan1 in scans)
+        self.assertTrue(scan2 in scans)
+
+        # Testing with the rapid search
+        self.imageViewer.data_browser.table_data.clearSelection()
+        self.imageViewer.data_browser.search_bar.setText("G3")
+
+        # Sending the selection (G3 scans)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        send_popup = self.imageViewer.data_browser.show_selection
+        send_popup.ok_clicked()
+
+        # Checking that G3 scans have been sent to the pipeline manager
+        scans = self.imageViewer.pipeline_manager.scan_list
+        self.assertEqual(len(scans), 2)
+        self.assertTrue(
+            "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
+        self.assertTrue(
+            "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
+
 if __name__ == '__main__':
     unittest.main()

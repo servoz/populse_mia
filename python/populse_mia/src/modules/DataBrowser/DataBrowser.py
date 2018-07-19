@@ -124,9 +124,9 @@ class DataBrowser(QWidget):
 
         hbox_layout.addStretch(1)
 
-        send_documents_to_pipeline = QPushButton("Send documents to the Pipeline Manager")
-        send_documents_to_pipeline.clicked.connect(self.send_documents_to_pipeline)
-        hbox_layout.addWidget(send_documents_to_pipeline)
+        self.send_documents_to_pipeline_button = QPushButton("Send documents to the Pipeline Manager")
+        self.send_documents_to_pipeline_button.clicked.connect(self.send_documents_to_pipeline)
+        hbox_layout.addWidget(self.send_documents_to_pipeline_button)
 
         vbox_table.addLayout(hbox_layout)
 
@@ -186,14 +186,8 @@ class DataBrowser(QWidget):
         current_scans = self.table_data.get_current_filter()
 
         # Displays a popup with the list of scans
-        show_selection = PopUps.Ui_DataBrowser_Current_Selection.Ui_DataBrowser_Current_Selection(self.project, self, current_scans)
-        show_selection.show()
-
-        if show_selection.exec_():
-            # Ok clicked
-            self.main_window.pipeline_manager.scan_list = current_scans
-            self.main_window.pipeline_manager.nodeController.scan_list = current_scans
-            self.main_window.pipeline_manager.diagramView.scan_list = current_scans
+        self.show_selection = PopUps.Ui_DataBrowser_Current_Selection.Ui_DataBrowser_Current_Selection(self.project, self, current_scans, self.main_window)
+        self.show_selection.show()
 
     def update_database(self, database):
         """
