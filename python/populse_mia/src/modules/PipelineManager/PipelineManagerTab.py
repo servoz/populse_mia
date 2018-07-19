@@ -53,8 +53,15 @@ class PipelineManagerTab(QWidget):
         editor = self
         Process_mia.project = project
         self.project = project
-        self.scan_list = scan_list
+        if not scan_list:
+            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        else:
+            self.scan_list = scan_list
         self.main_window = main_window
+
+        # This list is the list of scans contained in the iteration table
+        # If it is empty, the scan list in the Pipeline Manager is the scan list from the DataBrowser
+        self.iteration_table_scans_list = []
 
         QWidget.__init__(self)
         self.setWindowTitle("Diagram editor")
@@ -66,9 +73,9 @@ class PipelineManagerTab(QWidget):
         self.processLibrary = ProcessLibraryWidget()
 
         self.diagramScene = DiagramScene(self)
-        self.diagramView = PipelineEditorTabs(self.project)
-        self.diagramView.node_clicked.connect(self.displayNodeParameters)
-        self.diagramView.pipeline_saved.connect(self.updateProcessLibrary)
+        self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list)
+        self.pipelineEditorTabs.node_clicked.connect(self.displayNodeParameters)
+        self.pipelineEditorTabs.pipeline_saved.connect(self.updateProcessLibrary)
 
         self.textedit = TextEditor(self)
         self.textedit.setStyleSheet("background-color : lightgray")
@@ -77,6 +84,7 @@ class PipelineManagerTab(QWidget):
         self.nodeController.visibles_tags = self.project.session.get_visibles()
 
         self.iterationTable = IterationTable(self.project, self.scan_list, self.main_window)
+        self.iterationTable.iteration_table_updated.connect(self.update_scans_list)
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidgetResizable(True)
@@ -115,12 +123,12 @@ class PipelineManagerTab(QWidget):
         self.splitterRight.addWidget(self.scrollArea)
 
         self.splitter0 = QSplitter(Qt.Horizontal)
-        self.splitter0.addWidget(self.diagramView)
+        self.splitter0.addWidget(self.pipelineEditorTabs)
         self.splitter0.addWidget(self.splitterRight)
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter1.addWidget(self.processLibrary)
-        self.splitter1.addWidget(self.diagramView)
+        self.splitter1.addWidget(self.pipelineEditorTabs)
         self.splitter1.addWidget(self.splitterRight)
         self.splitter1.setSizes([100, 400, 200])
 
@@ -140,20 +148,20 @@ class PipelineManagerTab(QWidget):
     def undo(self):
         #TODO: it is not totally finished
         # We can undo if we have an action to revert
-        if len(self.diagramView.undos[self.diagramView.get_current_filename()]) > 0:
-            to_undo = self.diagramView.undos[self.diagramView.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()]) > 0:
+            to_undo = self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].pop()
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
 
             if action == "add_process":
                 node_name = to_undo[1]
-                self.diagramView.get_current_editor().del_node(node_name, from_undo=True)
+                self.pipelineEditorTabs.get_current_editor().del_node(node_name, from_undo=True)
 
             elif action == "delete_process":
                 node_name = to_undo[1]
                 class_name = to_undo[2]
                 links = to_undo[3]
-                self.diagramView.get_current_editor().add_process(class_name, node_name, from_undo=True, links=links)
+                self.pipelineEditorTabs.get_current_editor().add_process(class_name, node_name, from_undo=True, links=links)
 
             elif action == "export_plugs":
                 pass
@@ -162,34 +170,34 @@ class PipelineManagerTab(QWidget):
                 node = to_undo[1]
                 new_node_name = to_undo[2]
                 old_node_name = to_undo[3]
-                self.diagramView.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_undo=True)
+                self.pipelineEditorTabs.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_undo=True)
 
             elif action == "update_plug_value":
                 node_name = to_undo[1]
                 old_value = to_undo[2]
                 plug_name = to_undo[3]
                 value_type = to_undo[4]
-                self.diagramView.get_current_editor().update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
+                self.pipelineEditorTabs.get_current_editor().update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
 
             elif action == "add_link":
                 link = to_undo[1]
-                self.diagramView.get_current_editor()._del_link(link, from_undo=True)
+                self.pipelineEditorTabs.get_current_editor()._del_link(link, from_undo=True)
 
             elif action == "delete_link":
                 source = to_undo[1]
                 dest = to_undo[2]
                 active = to_undo[3]
                 weak = to_undo[4]
-                self.diagramView.get_current_editor().add_link(source, dest, active, weak, from_undo=True)
+                self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_undo=True)
             # TODO: ADD "MOVE PROCESS ?"
 
-            self.diagramView.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
+            self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
     def redo(self):
 
         # We can redo if we have an action to make again
-        if len(self.diagramView.redos[self.diagramView.get_current_filename()]) > 0:
-            to_redo = self.diagramView.redos[self.diagramView.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()]) > 0:
+            to_redo = self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].pop()
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
 
@@ -197,11 +205,11 @@ class PipelineManagerTab(QWidget):
                 node_name = to_redo[1]
                 class_process = to_redo[2]
                 links = to_redo[3]
-                self.diagramView.get_current_editor().add_process(class_process, node_name, from_redo=True, links=links)
+                self.pipelineEditorTabs.get_current_editor().add_process(class_process, node_name, from_redo=True, links=links)
 
             elif action == "add_process":
                 node_name = to_redo[1]
-                self.diagramView.get_current_editor().del_node(node_name, from_redo=True)
+                self.pipelineEditorTabs.get_current_editor().del_node(node_name, from_redo=True)
 
             elif action == "export_plugs":
                 pass
@@ -210,33 +218,44 @@ class PipelineManagerTab(QWidget):
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.diagramView.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_redo=True)
+                self.pipelineEditorTabs.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_redo=True)
 
             elif action == "update_plug_value":
                 node_name = to_redo[1]
                 new_value = to_redo[2]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
-                self.diagramView.get_current_editor().update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
+                self.pipelineEditorTabs.get_current_editor().update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
 
             elif action == "add_link":
                 link = to_redo[1]
-                self.diagramView.get_current_editor()._del_link(link, from_redo=True)
+                self.pipelineEditorTabs.get_current_editor()._del_link(link, from_redo=True)
 
             elif action == "delete_link":
                 source = to_redo[1]
                 dest = to_redo[2]
                 active = to_redo[3]
                 weak = to_redo[4]
-                self.diagramView.get_current_editor().add_link(source, dest, active, weak, from_redo=True)
+                self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_redo=True)
 
-            self.diagramView.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
+            self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
             # TODO: ADD "MOVE NODE ?"
+
+    def update_scans_list(self, iteration_list):
+        if self.iterationTable.check_box_iterate.isChecked():
+            self.iteration_table_scans_list = iteration_list
+            self.pipelineEditorTabs.scan_list = iteration_list
+        else:
+            self.iteration_table_scans_list = []
+            self.pipelineEditorTabs.scan_list = self.scan_list
+        if not self.pipelineEditorTabs.scan_list:
+            self.pipelineEditorTabs.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        self.pipelineEditorTabs.update_scans_list()
 
     def update_project(self, project):
         self.project = project
         self.nodeController.project = project
-        self.diagramView.project = project
+        self.pipelineEditorTabs.project = project
         self.nodeController.visibles_tags = self.project.session.get_visibles()
         self.iterationTable.project = project
         Process_mia.project = project
@@ -257,8 +276,8 @@ class PipelineManagerTab(QWidget):
             for element in signal_list:
                 history_maker.append(element)
 
-        self.diagramView.undos[self.diagramView.get_current_filename()].append(history_maker)
-        self.diagramView.redos[self.diagramView.get_current_filename()].clear()
+        self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].append(history_maker)
+        self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].clear()
 
     def updateProcessLibrary(self, filename):
         filename_folder, file_name = os.path.split(filename)
@@ -304,16 +323,16 @@ class PipelineManagerTab(QWidget):
         self.processLibrary.pkg_library.save()
 
     def loadPipeline(self):
-        self.diagramView.load_pipeline()
+        self.pipelineEditorTabs.load_pipeline()
 
     def savePipeline(self):
-        self.diagramView.save_pipeline()
+        self.pipelineEditorTabs.save_pipeline()
 
     def loadParameters(self):
-        self.diagramView.load_pipeline_parameters()
+        self.pipelineEditorTabs.load_pipeline_parameters()
 
     def saveParameters(self):
-        self.diagramView.save_pipeline_parameters()
+        self.pipelineEditorTabs.save_pipeline_parameters()
 
     def initPipeline(self, pipeline=None):
         """ Method that generates the output names of each pipeline node. """
@@ -331,7 +350,7 @@ class PipelineManagerTab(QWidget):
             pr = cProfile.Profile()
             pr.enable()"""
 
-        self.progress = InitProgress(self.project, self.diagramView, pipeline, self.main_window)
+        self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline, self.main_window)
         self.progress.show()
         self.progress.exec()
 
@@ -341,12 +360,12 @@ class PipelineManagerTab(QWidget):
         prof.print_stats()"""
 
     def runPipeline(self):
-        self.progress = RunProgress(self.diagramView, self.main_window)
+        self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
         self.progress.show()
         self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
-        self.nodeController.display_parameters(node_name, process, self.diagramView.get_current_pipeline())
+        self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())
         self.scrollArea.setWidget(self.nodeController)
 
     def startConnection(self, port):

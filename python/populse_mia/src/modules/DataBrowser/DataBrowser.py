@@ -193,7 +193,7 @@ class DataBrowser(QWidget):
             # Ok clicked
             self.main_window.pipeline_manager.scan_list = current_scans
             self.main_window.pipeline_manager.nodeController.scan_list = current_scans
-            self.main_window.pipeline_manager.diagramView.scan_list = current_scans
+            self.main_window.pipeline_manager.pipelineEditorTabs.scan_list = current_scans
             self.main_window.pipeline_manager.iterationTable.scan_list = current_scans
 
     def update_database(self, database):
@@ -911,7 +911,8 @@ class TableDataBrowser(QTableWidget):
         """
 
         cells_number = len(self.scans_to_visualize) * len(self.horizontalHeader())
-        self.progress = QProgressDialog("Please wait while the cells are being filled...", None, 0, cells_number, self.data_browser.main_window)
+        self.progress = QProgressDialog("Please wait while the cells are being filled...",
+                                        None, 0, cells_number, self.data_browser.main_window)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
         self.progress.setWindowTitle("Filling the cells")

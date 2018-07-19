@@ -26,13 +26,14 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     pipeline_saved = QtCore.pyqtSignal(str)
     node_clicked = QtCore.Signal(str, Process)
 
-    def __init__(self, project):
+    def __init__(self, project, scan_list):
         super(PipelineEditorTabs, self).__init__()
 
         self.project = project
         self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;text-align: center;color:black;}')
         self.setTabsClosable(True)
         self.tabCloseRequested.connect(self.close_tab)
+        self.scan_list = scan_list
 
         self.undos = {}
         self.redos = {}
@@ -152,6 +153,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     def reset_pipeline(self):
         self.get_current_editor()._reset_pipeline()
 
+    def update_scans_list(self):
+        for i in range(self.count()-1):
+            pipeline = self.widget(i).scene.pipeline
+            if hasattr(pipeline, "nodes"):
+                for node_name, node in pipeline.nodes.items():
+                    if node_name == "":
+                        for plug_name, plug in node.plugs.items():
+                            if plug_name == "database_scans":
+                                node.set_plug_value(plug_name, self.scan_list)
+
     def open_sub_pipeline(self, sub_pipeline):
         """
         Opens a pipeline node in a new editor tab.
@@ -251,9 +262,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def open_filter(self, node_name):
         node = self.get_current_pipeline().nodes[node_name]
-        filter_widget = FilterWidget(self.project, node_name, node)
+        filter_widget = FilterWidget(self.project, node_name, node, self)
         filter_widget.show()
-
 
 
 class PipelineEditor(PipelineDevelopperView):

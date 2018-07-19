@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
 
-from traits.api import TraitListObject, List
+from traits.api import TraitListObject, List, Undefined
 
 from soma.controller import trait_ids
 
@@ -544,35 +544,30 @@ class FilterWidget(QWidget):
 
     plug_value_changed = pyqtSignal(list)
 
-    def __init__(self, project, node_name, node, visible_tags=None):
+    def __init__(self, project, node_name, node, main_window):
         super(FilterWidget, self).__init__(None)
 
         from DataBrowser.RapidSearch import RapidSearch
         from Project.Project import COLLECTION_CURRENT
 
         self.project = project
-        if visible_tags is None:
-            visible_tags = []
-        self.visible_tags = visible_tags
+        self.visible_tags = self.project.session.get_visibles()
         self.node = node
         self.process = node.process
+        self.main_window = main_window
 
         # TODO: fill the advanced search with the corresponding filter: self.process.filter
 
+        scan_list = []
+        if self.process.input and self.process is not Undefined:
+            for scan in self.process.input:
+                path, file_name = os.path.split(scan)
+                path, second_folder = os.path.split(path)
+                first_folder = os.path.basename(path)
+                database_file = os.path.join(first_folder, second_folder, file_name)
+                scan_list.append(database_file)
 
-        """if scans_list:
-            scans_list_copy = []
-            for scan in scans_list:
-                scan_no_pfolder = scan.replace(self.project.folder, "")
-                if scan_no_pfolder[0] in ["\\", "/"]:
-                    scan_no_pfolder = scan_no_pfolder[1:]
-                scans_list_copy.append(scan_no_pfolder)
-
-            self.scans_list = scans_list_copy
-        else:
-            self.scans_list = self.project.session.get_documents_names(COLLECTION_CURRENT)"""
-
-        self.scans_list = self.process.input
+        self.scan_list = scan_list
 
         self.setWindowTitle("Filter - " + node_name)
 
@@ -581,8 +576,8 @@ class FilterWidget(QWidget):
 
         # Reducing the list of scans to selection
         all_scans = self.table_data.scans_to_visualize
-        self.table_data.scans_to_visualize = self.scans_list
-        self.table_data.scans_to_search = self.scans_list
+        self.table_data.scans_to_visualize = self.scan_list
+        self.table_data.scans_to_search = self.scan_list
         self.table_data.update_visualized_rows(all_scans)
 
         search_bar_layout = QHBoxLayout()
@@ -598,7 +593,7 @@ class FilterWidget(QWidget):
         search_bar_layout.addWidget(self.rapid_search)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.visible_tags)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scan_list, self.visible_tags)
         self.advanced_search.show_search()
 
         push_button_tags = QPushButton("Visualized tags")
@@ -685,8 +680,8 @@ class FilterWidget(QWidget):
 
         # All rows reput
         old_scan_list = self.table_data.scans_to_visualize
-        self.table_data.scans_to_visualize = self.scans_list
-        self.table_data.scans_to_search = self.scans_list
+        self.table_data.scans_to_visualize = self.scan_list
+        self.table_data.scans_to_search = self.scan_list
         self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
@@ -758,8 +753,13 @@ class FilterWidget(QWidget):
                 value = os.path.relpath(os.path.join(self.project.folder, value))
             result_names.append(value)
 
-        if len(result_names) == 1:
-            result_names = result_names[0]
+        result_files = []
+        for result_name in result_names:
+            full_path = os.path.join(self.project.folder, result_name)
+            result_files.append(full_path)
 
-        self.node.set_plug_value("output", result_names)
+        if len(result_names) == 1:
+            result_files = result_files[0]
+
+        self.node.set_plug_value("output", result_files)
 

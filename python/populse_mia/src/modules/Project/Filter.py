@@ -43,7 +43,9 @@ class Filter:
         rapid_filter = DataBrowser.RapidSearch.RapidSearch.prepare_filter(self.search_bar, tags, scans)
         rapid_result = project.session.filter_documents(Project.Project.COLLECTION_CURRENT, rapid_filter)
         rapid_list = [getattr(scan, Project.Project.TAG_FILENAME) for scan in rapid_result]
-        advanced_filter = DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters(self.links, self.fields, self.conditions, self.values, self.nots, rapid_list)
+        advanced_filter = DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters(self.links, self.fields,
+                                                                                    self.conditions, self.values,
+                                                                                    self.nots, rapid_list)
         advanced_result = project.session.filter_documents(Project.Project.COLLECTION_CURRENT, advanced_filter)
         final_result = [getattr(scan, Project.Project.TAG_FILENAME) for scan in advanced_result]
         return final_result
