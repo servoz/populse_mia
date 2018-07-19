@@ -1718,6 +1718,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     '''Signal emitted when a link is right-clicked'''
     edit_sub_pipeline = QtCore.Signal(Pipeline)
     '''Signal emitted when a sub-pipeline has to be edited'''
+    open_filter = QtCore.Signal(str)
+    '''Signal emitted when a Populse Filter has to be opened'''
     scene = None
     '''
     type: PipelineScene
@@ -2181,6 +2183,13 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         if node_name in ('inputs', 'outputs'):
             node_name = ''
         node = self.scene.pipeline.nodes[node_name]
+
+        # Populse_Filter
+        if process.name == "Populse_Filter":
+            edit_sub_pipeline = menu.addAction('Open filter')
+            edit_sub_pipeline.triggered.connect(self.emit_open_filter)
+            menu.addSeparator()
+
         controller_action = QtGui.QAction('open node controller', menu)
         controller_action.triggered.connect(self.openProcessController)
         menu.addAction(controller_action)
@@ -2304,6 +2313,9 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         menu.exec_(QtGui.QCursor.pos())
         del self.current_node_name
         del self.current_process
+
+    def emit_open_filter(self):
+        self.open_filter.emit(self.current_node_name)
 
     def emit_edit_sub_pipeline(self):
         node = self.scene.pipeline.nodes[self.current_node_name]

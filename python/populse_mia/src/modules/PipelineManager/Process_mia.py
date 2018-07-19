@@ -15,6 +15,14 @@ class Process_mia(Process):
 
     def __init__(self):
         super(Process_mia, self).__init__()
+        self.filters = {}
+
+    def list_outputs(self):
+        for plug_name, filter in self.filters.items():
+
+            # TODO: if the value is a TraitListObject, set only the first value (some plugs cannot be list, but if
+            # TODO: they have to be lists, it is automatically casted)
+            pass
 
     def _before_run_process(self):
         """

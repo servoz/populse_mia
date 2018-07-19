@@ -23,6 +23,8 @@ from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+from Project.Filter import Filter
+from PipelineManager.Process_mia import Process_mia
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -111,14 +113,14 @@ class NodeController(QWidget):
                     parameters = (idx, pipeline, type(value))
                     if not trait.optional:
                         push_button = QPushButton('Filter')
-                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters))
+                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters, process))
                         h_box.addWidget(push_button)
                     else:
                         if hasattr(trait, 'mandatory'):
                             if trait.mandatory:
                                 push_button = QPushButton('Filter')
                                 push_button.clicked.connect(
-                                    partial(self.display_filter, self.node_name, name, parameters))
+                                    partial(self.display_filter, self.node_name, name, parameters, process))
                                 h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
@@ -344,6 +346,13 @@ class PlugFilter(QWidget):
         self.project = project
         self.node_controller = node_controller
         self.main_window = main_window
+        self.process = process
+        self.plug_name = plug_name
+
+        if hasattr(self.process, 'filters'):
+            if self.plug_name in self.process.filters.keys():
+                print("Already a filter for {0} plug of {1} process".format(self.plug_name, self.process.name))
+                # TODO: fill the advanced search with the corresponding filter
 
         if scans_list:
             scans_list_copy = []
@@ -505,9 +514,12 @@ class PlugFilter(QWidget):
 
     def ok_clicked(self):
 
-        """(fields, conditions, values, links, nots) = self.advanced_search.get_filters()
-        filter = Filter(None, nots, values, fields, links, conditions, "")
-        self.advanced_search.apply_filter(filter)"""
+        if isinstance(self.process, Process_mia):
+            (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
+            plug_filter = Filter(None, nots, values, fields, links, conditions, "")
+            self.process.filters[self.plug_name] = plug_filter
+
+        '''self.advanced_search.apply_filter(filter)'''
 
         self.set_plug_value()
         self.close()
@@ -526,3 +538,228 @@ class PlugFilter(QWidget):
             result_names.append(value)
 
         self.plug_value_changed.emit(result_names)
+
+
+class FilterWidget(QWidget):
+
+    plug_value_changed = pyqtSignal(list)
+
+    def __init__(self, project, node_name, node, visible_tags=None):
+        super(FilterWidget, self).__init__(None)
+
+        from DataBrowser.RapidSearch import RapidSearch
+        from Project.Project import COLLECTION_CURRENT
+
+        self.project = project
+        if visible_tags is None:
+            visible_tags = []
+        self.visible_tags = visible_tags
+        self.node = node
+        self.process = node.process
+
+        # TODO: fill the advanced search with the corresponding filter: self.process.filter
+
+
+        """if scans_list:
+            scans_list_copy = []
+            for scan in scans_list:
+                scan_no_pfolder = scan.replace(self.project.folder, "")
+                if scan_no_pfolder[0] in ["\\", "/"]:
+                    scan_no_pfolder = scan_no_pfolder[1:]
+                scans_list_copy.append(scan_no_pfolder)
+
+            self.scans_list = scans_list_copy
+        else:
+            self.scans_list = self.project.session.get_documents_names(COLLECTION_CURRENT)"""
+
+        self.scans_list = self.process.input
+
+        self.setWindowTitle("Filter - " + node_name)
+
+        # Graphical components
+        self.table_data = TableDataBrowser(self.project, self, self.visible_tags, False, False)
+
+        # Reducing the list of scans to selection
+        all_scans = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(all_scans)
+
+        search_bar_layout = QHBoxLayout()
+
+        self.rapid_search = RapidSearch(self)
+        self.rapid_search.textChanged.connect(partial(self.search_str))
+
+        self.button_cross = QToolButton()
+        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
+        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.clicked.connect(self.reset_search_bar)
+
+        search_bar_layout.addWidget(self.rapid_search)
+        search_bar_layout.addWidget(self.button_cross)
+
+        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.visible_tags)
+        self.advanced_search.show_search()
+
+        push_button_tags = QPushButton("Visualized tags")
+        push_button_tags.clicked.connect(self.update_tags)
+
+        self.push_button_tag_filter = QPushButton(TAG_FILENAME)
+        self.push_button_tag_filter.clicked.connect(self.update_tag_to_filter)
+
+        push_button_ok = QPushButton("OK")
+        push_button_ok.clicked.connect(self.ok_clicked)
+
+        push_button_cancel = QPushButton("Cancel")
+        push_button_cancel.clicked.connect(self.close)
+
+        # Layout
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(push_button_tags)
+        buttons_layout.addWidget(self.push_button_tag_filter)
+        buttons_layout.addStretch(1)
+        buttons_layout.addWidget(push_button_ok)
+        buttons_layout.addWidget(push_button_cancel)
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(search_bar_layout)
+        main_layout.addWidget(self.advanced_search)
+        main_layout.addWidget(self.table_data)
+        main_layout.addLayout(buttons_layout)
+
+        self.setLayout(main_layout)
+
+        screen_resolution = QApplication.instance().desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        self.setMinimumWidth(0.6 * width)
+        self.setMinimumHeight(0.8 * height)
+
+    def update_tag_to_filter(self):
+        """
+        Updates the tag to Filter
+        """
+
+        popUp = Ui_Select_Tag_Count_Table(self.project, self.visible_tags, self.push_button_tag_filter.text())
+        if popUp.exec_():
+            self.push_button_tag_filter.setText(popUp.selected_tag)
+
+    def update_tags(self):
+        """
+        Updates the list of visualized tags
+        """
+
+        dialog = QDialog()
+        visualized_tags = Ui_Visualized_Tags(self.project, self.visible_tags)
+        layout = QVBoxLayout()
+        layout.addWidget(visualized_tags)
+        buttons_layout = QHBoxLayout()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        buttons_layout.addWidget(buttons)
+        layout.addLayout(buttons_layout)
+        dialog.setLayout(layout)
+        dialog.show()
+        dialog.setMinimumHeight(600)
+        dialog.setMinimumWidth(600)
+        if dialog.exec():
+            new_visibilities = []
+            for x in range(visualized_tags.list_widget_selected_tags.count()):
+                visible_tag = visualized_tags.list_widget_selected_tags.item(x).text()
+                new_visibilities.append(visible_tag)
+            new_visibilities.append(TAG_FILENAME)
+            self.table_data.update_visualized_columns(self.visible_tags, new_visibilities)
+            self.node_controller.visibles_tags = new_visibilities
+            for row in self.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in new_visibilities:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
+
+    def reset_search_bar(self):
+        self.rapid_search.setText("")
+        self.advanced_search.rows = []
+        self.advanced_search.show_search()
+
+        # All rows reput
+        old_scan_list = self.table_data.scans_to_visualize
+        self.table_data.scans_to_visualize = self.scans_list
+        self.table_data.scans_to_search = self.scans_list
+        self.table_data.update_visualized_rows(old_scan_list)
+
+    def search_str(self, str_search):
+
+        from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
+        from DataBrowser.DataBrowser import not_defined_value
+
+        old_scan_list = self.table_data.scans_to_visualize
+
+        # Every scan taken if empty search
+        if str_search == "":
+            return_list = self.table_data.scans_to_search
+        else:
+            # Scans with at least a not defined value
+            if str_search == not_defined_value:
+                filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
+            # Scans matching the search
+            else:
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles())
+
+            generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
+
+            # Creating the list of scans
+            return_list = [getattr(scan, TAG_FILENAME) for scan in generator]
+
+        self.table_data.scans_to_visualize = return_list
+        self.advanced_search.scans_list = return_list
+
+        # Rows updated
+        self.table_data.update_visualized_rows(old_scan_list)
+
+    def ok_clicked(self):
+
+        if isinstance(self.process, Process_mia):
+            (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
+            filt = Filter(None, nots, values, fields, links, conditions, "")
+            self.process.filter = filt
+
+        '''self.advanced_search.apply_filter(filter)'''
+
+        self.set_output_value()
+        self.close()
+
+    '''def set_plug_value(self):
+        """ Emitting a signal to set the file names to the plug value. """
+
+        result_names = []
+        filter = self.table_data.get_current_filter()
+        for i in range(len(filter)):
+            scan_name = filter[i]
+            tag_name = self.push_button_tag_filter.text()
+            value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            if tag_name == TAG_FILENAME:
+                value = os.path.relpath(os.path.join(self.project.folder, value))
+            result_names.append(value)
+
+        self.plug_value_changed.emit(result_names)'''
+
+    def set_output_value(self):
+        """ Emitting a signal to set the file names to the plug value. """
+
+        result_names = []
+        filter = self.table_data.get_current_filter()
+        for i in range(len(filter)):
+            scan_name = filter[i]
+            tag_name = self.push_button_tag_filter.text()
+            value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            if tag_name == TAG_FILENAME:
+                value = os.path.relpath(os.path.join(self.project.folder, value))
+            result_names.append(value)
+
+        if len(result_names) == 1:
+            result_names = result_names[0]
+
+        self.node.set_plug_value("output", result_names)
+

@@ -11,6 +11,8 @@ from capsul.api import get_process_instance, Process
 from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 
+from PipelineManager.NodeController import FilterWidget
+
 if sys.version_info[0] >= 3:
     unicode = str
     def values(d):
@@ -40,6 +42,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_history)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+        p_e.open_filter.connect(self.open_filter)
 
         self.addTab(p_e, "New Pipeline")
         self.undos["New Pipeline"] = []
@@ -57,6 +60,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_history)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+        p_e.open_filter.connect(self.open_filter)
         if not loaded:
             idx = 1
             while True and idx < 20:
@@ -244,6 +248,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                     self.get_current_editor().set_pipeline(pipeline)
                     self.get_current_editor()._pipeline_filename = sub_pipeline_filename
                     self.load_pipeline(sub_pipeline_basename)
+
+    def open_filter(self, node_name):
+        node = self.get_current_pipeline().nodes[node_name]
+        filter_widget = FilterWidget(self.project, node_name, node)
+        filter_widget.show()
+
 
 
 class PipelineEditor(PipelineDevelopperView):
