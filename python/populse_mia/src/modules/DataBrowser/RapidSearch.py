@@ -42,11 +42,13 @@ class RapidSearch(QLineEdit):
 
         return query
 
-    def prepare_filter(self, search, tags):
+    @staticmethod
+    def prepare_filter(search, tags, scans):
         """
         Prepares the rapid search filter
-        :param search: str search
-        :param tags: list of tags to take into account
+        :param search: Search (str)
+        :param tags: List of tags to take into account
+        :param scans: List of scans to search into
         :return: str filter corresponding to the rapid search
         """
 
@@ -63,7 +65,7 @@ class RapidSearch(QLineEdit):
 
             or_to_write = True
 
-        query += " AND ({" + TAG_FILENAME + "} IN " + str(self.databrowser.table_data.scans_to_search).replace("'", "\"") + ")"
+        query += " AND ({" + TAG_FILENAME + "} IN " + str(scans).replace("'", "\"") + ")"
 
         query = "(" + query + ")"
 

@@ -94,11 +94,11 @@ class Ui_Dialog_add_path(QDialog):
             self.project.session.add_document(COLLECTION_CURRENT, path)
             self.project.session.add_document(COLLECTION_INITIAL, path)
             values_added = []
-            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
-            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
+            self.project.session.add_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
+            self.project.session.add_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
             values_added.append([path, TAG_TYPE, path_type, path_type])
-            self.project.session.new_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
-            self.project.session.new_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
+            self.project.session.add_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
+            self.project.session.add_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
             values_added.append([path, TAG_CHECKSUM, checksum, checksum])
 
             # For history

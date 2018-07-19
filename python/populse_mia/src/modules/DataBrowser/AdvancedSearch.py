@@ -341,7 +341,8 @@ class AdvancedSearch(QWidget):
         self.dataBrowser.table_data.scans_to_search = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
 
-    def prepare_filters(self, links, fields, conditions, values, nots, scans):
+    @staticmethod
+    def prepare_filters(links, fields, conditions, values, nots, scans):
         """
         Prepares the str representation of the filter
         :param links: list of links (AND/OR)

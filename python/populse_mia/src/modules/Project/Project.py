@@ -399,7 +399,7 @@ class Project:
                         # If the cell was not defined before, we reput it
                         self.session.remove_value(COLLECTION_CURRENT, scan, tag)
                         self.session.remove_value(COLLECTION_INITIAL, scan, tag)
-                        set_item_data(item, not_defined_value, populse_db.database.FIELD_TYPE_STRING)
+                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
                         font = item.font()
                         font.setItalic(True)
                         font.setBold(True)
@@ -426,8 +426,8 @@ class Project:
         for i in range(0, len(values)):
             # We reput each value, exactly the same as it was before
             valueToReput = values[i]
-            self.session.new_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
-            self.session.new_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
+            self.session.add_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
+            self.session.add_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
 
     def redo(self, table):
         """
@@ -453,8 +453,8 @@ class Project:
                 self.session.add_field(COLLECTION_INITIAL, tagToAdd, tagType, tagDescription, True, TAG_ORIGIN_USER, tagUnit, tagDefaultValue)
                 # Adding all the values associated
                 for value in values:
-                    self.session.new_value(COLLECTION_CURRENT, value[0], value[1], value[2])
-                    self.session.new_value(COLLECTION_INITIAL, value[0], value[1], value[3])
+                    self.session.add_value(COLLECTION_CURRENT, value[0], value[1], value[2])
+                    self.session.add_value(COLLECTION_INITIAL, value[0], value[1], value[3])
                 column = table.get_index_insertion(tagToAdd)
                 table.add_column(column, tagToAdd)
             if (action == "remove_tags"):
@@ -481,8 +481,8 @@ class Project:
                 valuesAdded = toRedo[2]  # The third element is a list of the values to add
                 for i in range(0, len(valuesAdded)):
                     valueToAdd = valuesAdded[i]
-                    self.session.new_value(COLLECTION_CURRENT, valueToAdd[0], valueToAdd[1], valueToAdd[2])
-                    self.session.new_value(COLLECTION_INITIAL, valueToAdd[0], valueToAdd[1], valueToAdd[3])
+                    self.session.add_value(COLLECTION_CURRENT, valueToAdd[0], valueToAdd[1], valueToAdd[2])
+                    self.session.add_value(COLLECTION_INITIAL, valueToAdd[0], valueToAdd[1], valueToAdd[3])
                 table.add_rows(self.session.get_documents_names(COLLECTION_CURRENT))
             if (action == "remove_scans"):
                 # To remove a scan, we only need the FileName of the scan
