@@ -1370,12 +1370,12 @@ class TableDataBrowser(QTableWidget):
             list_tags_name = pop_up.list_tags
             list_tags = []
             for tag_name in list_tags_name:
-                list_tags.append(self.project.database.get_field(COLLECTION_CURRENT, tag_name))
+                list_tags.append(self.project.session.get_field(COLLECTION_CURRENT, tag_name))
             list_sort = []
             for scan in self.scans_to_visualize:
                 tags_value = []
                 for tag in list_tags:
-                    current_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag.name)
+                    current_value = str(self.project.session.get_value(COLLECTION_CURRENT, scan, tag.name))
                     if current_value is not None:
                         tags_value.append(current_value)
                     else:
