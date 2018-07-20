@@ -23,6 +23,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade numpy; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade cython; fi
