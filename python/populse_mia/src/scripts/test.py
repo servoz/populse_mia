@@ -103,15 +103,11 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up adding a tag
         """
 
-        print("trace 1")
-
         # Testing without tag name
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "The tag name cannot be empty")
-
-        print("trace 2")
 
         # Testing with tag name already existing
         self.imageViewer.data_browser.add_tag_action.trigger()
@@ -119,8 +115,6 @@ class TestMIADataBrowser(unittest.TestCase):
         add_tag.text_edit_tag_name.setText("Type")
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "This tag name already exists")
-
-        print("trace 3")
 
         # Testing with wrong type
         self.imageViewer.data_browser.add_tag_action.trigger()
@@ -132,16 +126,31 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "Invalid default value")
 
-        print("trace 4")
+        print("trace 1")
 
         self.imageViewer.data_browser.add_tag_action.trigger()
+
+        print("trace 2")
+
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
+
+        print("trace 3")
+
         add_tag.text_edit_tag_name.setText("Test")
+
+        print("trace 4")
+
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
-        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
-        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
 
         print("trace 5")
+
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+
+        print("trace 6")
+
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+
+        print("trace 7")
 
     def test_clone_tag(self):
         """
