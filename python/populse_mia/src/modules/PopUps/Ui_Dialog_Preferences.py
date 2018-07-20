@@ -17,14 +17,14 @@ class Ui_Dialog_Preferences(QDialog):
     signal_preferences_change = pyqtSignal()
 
     def __init__(self, main):
-        super().__init__()
+        super().__init__(main)
         self.pop_up(main)
 
     def pop_up(self, main):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
-        self.setWindowTitle('MIA2 preferences')
+        self.setWindowTitle('MIA preferences')
 
         self.tab_widget = QtWidgets.QTabWidget(self)
         self.tab_widget.setEnabled(True)

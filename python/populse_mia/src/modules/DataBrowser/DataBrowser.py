@@ -1196,17 +1196,18 @@ class TableDataBrowser(QTableWidget):
             tag_name = self.horizontalHeaderItem(col).text()
             scan_name = self.item(row, 0).text()  # We get the FileName of the scan from the first row
 
-            if tag_name != TAG_FILENAME:
-
-                current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
-                initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan_name, tag_name)
-                if initial_value is not None:
+            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan_name, tag_name)
+            if initial_value is not None:
+                try:
+                    self.project.session.set_value(COLLECTION_CURRENT, scan_name, tag_name, initial_value)
+                    set_item_data(self.item(row, col), initial_value,
+                                  self.project.session.get_field(COLLECTION_CURRENT, tag_name).type)
                     modified_values.append([scan_name, tag_name, current_value, initial_value])  # For history
-                    if self.project.session.set_value(COLLECTION_CURRENT, scan_name, tag_name, initial_value) != None:
-                        has_unreset_values = True # TODO Improve this bool
-                    set_item_data(self.item(row, col), initial_value, self.project.session.get_field(COLLECTION_CURRENT, tag_name).type)
-                else:
+                except ValueError:
                     has_unreset_values = True
+            else:
+                has_unreset_values = True
 
         # For history
         historyMaker.append(modified_values)
@@ -1234,19 +1235,20 @@ class TableDataBrowser(QTableWidget):
             col = point.column()
             tag_name = self.horizontalHeaderItem(col).text()
 
-            if tag_name != TAG_FILENAME:
-
-                for row_iter in range(0, len(self.scans_to_visualize)):
-                    scan = self.item(row_iter, 0).text()  # We get the FileName of the scan from the first column
-                    initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan, tag_name)
-                    current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
-                    if initial_value is not None:
+            for row_iter in range(0, len(self.scans_to_visualize)):
+                scan = self.item(row_iter, 0).text()  # We get the FileName of the scan from the first column
+                initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan, tag_name)
+                current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
+                if initial_value is not None:
+                    try:
+                        self.project.session.set_value(COLLECTION_CURRENT, scan, tag_name, initial_value)
+                        set_item_data(self.item(row_iter, col), initial_value,
+                                      self.project.session.get_field(COLLECTION_CURRENT, tag_name).type)
                         modified_values.append([scan, tag_name, current_value, initial_value])  # For history
-                        if self.project.session.set_value(COLLECTION_CURRENT, scan, tag_name, initial_value) != None:
-                            has_unreset_values = True
-                        set_item_data(self.item(row_iter, col), initial_value, self.project.session.get_field(COLLECTION_CURRENT, tag_name).type)
-                    else:
+                    except ValueError:
                         has_unreset_values = True
+                else:
+                    has_unreset_values = True
 
         # For history
         historyMaker.append(modified_values)
@@ -1277,17 +1279,21 @@ class TableDataBrowser(QTableWidget):
 
             for column in range(0, len(self.horizontalHeader())):
                 tag = self.horizontalHeaderItem(column).text()  # We get the tag name from the header
-                if tag != TAG_FILENAME:
-                    current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag)
-                    initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan_name, tag)
-                    if initial_value is not None:
-                        # We reset the value only if it exists
+                current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag)
+                initial_value = self.project.session.get_value(COLLECTION_INITIAL, scan_name, tag)
+                if initial_value is not None:
+                    # We reset the value only if it exists
+
+                    try:
+                        self.project.session.set_value(COLLECTION_CURRENT, scan_name, tag, initial_value)
+                        set_item_data(self.item(row, column), initial_value,
+                                      self.project.session.get_field(COLLECTION_CURRENT, tag).type)
                         modified_values.append([scan_name, tag, current_value, initial_value])  # For history
-                        if self.project.session.set_value(COLLECTION_CURRENT, scan_name, tag, initial_value) != None:
-                            has_unreset_values = True
-                        set_item_data(self.item(row, column), initial_value, self.project.session.get_field(COLLECTION_CURRENT, tag).type)
-                    else:
+                    except ValueError:
                         has_unreset_values = True
+
+                else:
+                    has_unreset_values = True
 
         # For history
         historyMaker.append(modified_values)
@@ -1304,15 +1310,15 @@ class TableDataBrowser(QTableWidget):
         """
         Error message when trying to reset user tags
         """
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        msg.setText("Some values do not have a raw value")
-        msg.setInformativeText(
+        self.msg = QMessageBox()
+        self.msg.setIcon(QMessageBox.Warning)
+        self.msg.setText("Some values do not have a raw value")
+        self.msg.setInformativeText(
             "Some values have not been reset because they do not have a raw value.\nIt is the case for the user tags, FileName and the cells not defined.")
-        msg.setWindowTitle("Warning")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.buttonClicked.connect(msg.close)
-        msg.exec()
+        self.msg.setWindowTitle("Warning")
+        self.msg.setStandardButtons(QMessageBox.Ok)
+        self.msg.buttonClicked.connect(self.msg.close)
+        self.msg.show()
 
     def remove_scan(self):
 
@@ -1681,7 +1687,7 @@ class TableDataBrowser(QTableWidget):
 
     def mouseReleaseEvent(self, e):
         """
-        Called when clicking released on cells, for table changes
+        Called when clicking released on cells, for list values changes
         :param e: event
         """
 
@@ -1911,23 +1917,3 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
-
-
-class AddRowsProgress(QProgressDialog):
-    """
-    Add rows progress bar
-    """
-    def __init__(self, project, main_window, table, rows):
-
-        super(AddRowsProgress, self).__init__("Please wait while the paths are being added...", None, 0, 0, main_window)
-
-        self.setWindowTitle("Adding rows")
-        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setWindowModality(Qt.WindowModal)
-
-        self.setMinimumDuration(0)
-        self.setValue(0)
-
-        self.worker = AddRowsWorker(project, table, rows)
-        self.worker.finished.connect(self.close)
-        self.worker.start()

@@ -6,6 +6,8 @@ Created on 11 janv. 2018
 '''
 import subprocess
 import os
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
     QMainWindow, QMessageBox, QMenu, QPushButton
@@ -70,11 +72,11 @@ class Main_Window(QMainWindow):
         self.create_actions()
         self.create_menus()
 
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2')
+        self.setWindowTitle('MIA - Multiparametric Image Analysis')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
 
         # BELOW : WAS AT THE END OF MODIFY_UI
-        self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+        self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
         ################ Create Tabs ###############################################################
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
@@ -106,7 +108,7 @@ class Main_Window(QMainWindow):
 
         self.action_project_properties = QAction('Project properties', self)
 
-        self.action_software_preferences = QAction('MIA2 preferences', self)
+        self.action_software_preferences = QAction('MIA preferences', self)
 
         self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
@@ -343,7 +345,7 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
 
             # First we register the Database before commiting the last pending modifications
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
 
             # We commit the last pending modifications
             self.project.saveModifications()
@@ -353,15 +355,15 @@ class Main_Window(QMainWindow):
 
             # We copy the Database with all the modifications commited in the new project
             os.mkdir(os.path.relpath(database_path))
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'), os.path.relpath(database_path))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'), os.path.relpath(database_path))
 
             # We remove the Database with all the modifications saved in the old project
-            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
 
             # We reput the Database without the last modifications in the old project
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia2.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
 
-            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia2_before_commit.db'))
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
 
             self.remove_raw_files_useless() # We remove the useless files from the old project
 
@@ -541,9 +543,9 @@ class Main_Window(QMainWindow):
 
         # Window name updated
         if self.project.isTempProject:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - Unnamed project')
+            self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
         else:
-            self.setWindowTitle('MIA2 - Multiparametric Image Analysis 2 - ' + self.project.getName())
+            self.setWindowTitle('MIA - Multiparametric Image Analysis - ' + self.project.getName())
 
         # List of project updated
         if not self.test:
@@ -583,11 +585,9 @@ class Main_Window(QMainWindow):
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """
         self.pop_up_preferences = Ui_Dialog_Preferences(self)
+        self.pop_up_preferences.setWindowModality(Qt.WindowModal)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
-
-        if self.pop_up_preferences.exec_():
-            pass
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
