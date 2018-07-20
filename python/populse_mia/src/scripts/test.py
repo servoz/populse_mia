@@ -750,5 +750,56 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(
             "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
 
+    def test_sort(self):
+        """
+        Tests the sorting in the databrowser
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        mixed_bandwidths = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            bandwidth_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+            item = self.imageViewer.data_browser.table_data.item(row, bandwidth_column)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                mixed_bandwidths.append(scan_name)
+
+        self.imageViewer.data_browser.table_data.horizontalHeader().setSortIndicator(bandwidth_column, 0)
+
+        up_bandwidths = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            bandwidth_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+            item = self.imageViewer.data_browser.table_data.item(row, bandwidth_column)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                up_bandwidths.append(scan_name)
+
+        self.assertNotEqual(mixed_bandwidths, up_bandwidths)
+        self.assertEqual(sorted(mixed_bandwidths), up_bandwidths)
+
+        self.imageViewer.data_browser.table_data.horizontalHeader().setSortIndicator(bandwidth_column, 1)
+
+        down_bandwidths = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            bandwidth_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+            item = self.imageViewer.data_browser.table_data.item(row, bandwidth_column)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                down_bandwidths.append(scan_name)
+
+        self.assertNotEqual(mixed_bandwidths, down_bandwidths)
+        self.assertEqual(sorted(mixed_bandwidths, reverse=True), down_bandwidths)
+
+    def test_set_list_values(self):
+        """
+        Tests the setting of list values in the databrowser
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        fov_column = self.imageViewer.data_browser.table_data.get_tag_column("FOV")
+        fov_item = self.imageViewer.data_browser.table_data.item(0, fov_column)
+
 if __name__ == '__main__':
     unittest.main()
