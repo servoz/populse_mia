@@ -25,7 +25,7 @@ before_install:
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade numpy; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade cython; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip3 install --upgrade cython; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install --upgrade cython; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pywavelets; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
