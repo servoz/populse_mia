@@ -56,7 +56,7 @@ class Project:
             raise IOError(
                 "The project at " + str(self.folder) + " is already opened in another instance of the software.")
 
-        self.database = Database_mia('sqlite:///' + os.path.join(self.folder, 'database', 'mia2.db'))
+        self.database = Database_mia('sqlite:///' + os.path.join(self.folder, 'database', 'mia.db'))
         self.session = self.database.__enter__()
 
         if new_project:

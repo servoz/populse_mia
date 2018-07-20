@@ -42,5 +42,5 @@ class Ui_DataBrowser_Current_Selection(QDialog):
 
         self.main_window.pipeline_manager.scan_list = self.filter
         self.main_window.pipeline_manager.nodeController.scan_list = self.filter
-        self.main_window.pipeline_manager.diagramView.scan_list = self.filter
+        self.main_window.pipeline_manager.pipelineEditorTabs.scan_list = self.filter
         self.close()

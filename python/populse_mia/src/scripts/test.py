@@ -1,6 +1,8 @@
 import os
 
 # Working from the scripts directory
+from PyQt5.QtCore import QPoint
+
 from populse_db.database import FIELD_TYPE_INTEGER
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -24,6 +26,8 @@ class TestMIADataBrowser(unittest.TestCase):
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project, test=True)
         print(self._testMethodName)
+        config = Config()
+        print(config.isAutoSave())
 
     def tearDown(self):
         """
@@ -54,7 +58,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_INITIAL in collections)
         self.assertTrue(COLLECTION_CURRENT in collections)
         self.assertTrue(COLLECTION_BRICK in collections)
-        self.assertEqual(self.imageViewer.windowTitle(), "MIA2 - Multiparametric Image Analysis 2 - Unnamed project")
+        self.assertEqual(self.imageViewer.windowTitle(), "MIA - Multiparametric Image Analysis - Unnamed project")
 
     def test_projects_removed_from_current_projects(self):
         """
@@ -73,7 +77,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
         self.assertEqual(self.imageViewer.project.getName(), "project_8")
-        self.assertEqual(self.imageViewer.windowTitle(), "MIA2 - Multiparametric Image Analysis 2 - project_8")
+        self.assertEqual(self.imageViewer.windowTitle(), "MIA - Multiparametric Image Analysis - project_8")
         documents = self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)
         self.assertEqual(len(documents), 8)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in documents)
@@ -654,6 +658,40 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(value, databrowser)
         self.assertEqual(value, value_initial)
 
+    def test_reset_row(self):
+        """
+        Tests row reset
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+
+
+        bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        old_bw = bw_item.text()
+        self.assertEqual(int(old_bw), 50000)
+
+        bw_item.setSelected(True)
+        bw_item.setText("25000")
+        set_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        set_bw = set_item.text()
+        self.assertEqual(int(set_bw), 25000)
+
+        self.imageViewer.data_browser.table_data.clearSelection()
+
+        item = self.imageViewer.data_browser.table_data.item(0, 0)
+        item.setSelected(True)
+        self.imageViewer.data_browser.table_data.itemChanged.disconnect()
+        self.imageViewer.data_browser.table_data.reset_row()
+        self.imageViewer.data_browser.table_data.itemChanged.connect(
+            self.imageViewer.data_browser.table_data.change_cell_color)
+
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        new_bw = bw_item.text()
+        self.assertEqual(int(new_bw), 50000)
+
     def test_add_path(self):
         """
         Tests the popup to add a path
@@ -800,6 +838,36 @@ class TestMIADataBrowser(unittest.TestCase):
 
         fov_column = self.imageViewer.data_browser.table_data.get_tag_column("FOV")
         fov_item = self.imageViewer.data_browser.table_data.item(0, fov_column)
+
+    def test_mia_preferences(self):
+        """
+        Tests the MIA preferences popup
+        """
+
+        config = Config()
+        old_auto_save = config.isAutoSave()
+        self.assertEqual(old_auto_save, "no")
+
+        # Auto save activated
+        self.imageViewer.action_software_preferences.trigger()
+        properties = self.imageViewer.pop_up_preferences
+        properties.tab_widget.setCurrentIndex(1)
+        properties.save_checkbox.setChecked(True)
+        QTest.mouseClick(properties.push_button_ok, 1)
+
+        config = Config()
+        new_auto_save = config.isAutoSave()
+        self.assertEqual(new_auto_save, "yes")
+
+        # Auto save disabled again
+        self.imageViewer.action_software_preferences.trigger()
+        properties = self.imageViewer.pop_up_preferences
+        properties.tab_widget.setCurrentIndex(1)
+        properties.save_checkbox.setChecked(False)
+        QTest.mouseClick(properties.push_button_ok, 1)
+        config = Config()
+        reput_auto_save = config.isAutoSave()
+        self.assertEqual(reput_auto_save, "no")
 
 if __name__ == '__main__':
     unittest.main()
