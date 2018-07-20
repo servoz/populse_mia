@@ -1,7 +1,8 @@
 import os
 
 # Working from the scripts directory
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QKeySequence
 
 from populse_db.database import FIELD_TYPE_INTEGER
 
@@ -26,8 +27,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project, test=True)
         print(self._testMethodName)
-        config = Config()
-        print(config.isAutoSave())
 
     def tearDown(self):
         """
@@ -107,14 +106,14 @@ class TestMIADataBrowser(unittest.TestCase):
         # Testing without tag name
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
-        QTest.mouseClick(add_tag.push_button_ok, 1)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "The tag name cannot be empty")
 
         # Testing with tag name already existing
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Type")
-        QTest.mouseClick(add_tag.push_button_ok, 1)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "This tag name already exists")
 
         # Testing with wrong type
@@ -124,13 +123,13 @@ class TestMIADataBrowser(unittest.TestCase):
         add_tag.combo_box_type.setCurrentText(FIELD_TYPE_INTEGER)
         add_tag.type = FIELD_TYPE_INTEGER
         add_tag.text_edit_default_value.setText("Should be integer")
-        QTest.mouseClick(add_tag.push_button_ok, 1)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "Invalid default value")
 
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
-        QTest.mouseClick(add_tag.push_button_ok, 1)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
 
@@ -142,28 +141,28 @@ class TestMIADataBrowser(unittest.TestCase):
         # Testing without new tag name
         self.imageViewer.data_browser.clone_tag_action.trigger()
         clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
-        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        QTest.mouseClick(clone_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(clone_tag.msg.text(), "The tag name can't be empty")
 
         # Testing without any tag selected to clone
         self.imageViewer.data_browser.clone_tag_action.trigger()
         clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Test")
-        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        QTest.mouseClick(clone_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(clone_tag.msg.text(), "The tag to clone must be selected")
 
         # Testing with tag name already existing
         self.imageViewer.data_browser.clone_tag_action.trigger()
         clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Type")
-        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        QTest.mouseClick(clone_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(clone_tag.msg.text(), "This tag name already exists")
 
         self.imageViewer.data_browser.clone_tag_action.trigger()
         clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Test")
         clone_tag.list_widget_tags.setCurrentRow(0) # Bricks tag selected
-        QTest.mouseClick(clone_tag.push_button_ok, 1)
+        QTest.mouseClick(clone_tag.push_button_ok, Qt.LeftButton)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
         test_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, "Test")
@@ -192,13 +191,13 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
-        QTest.mouseClick(add_tag.push_button_ok, 1)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
 
         old_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         old_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
         self.imageViewer.data_browser.remove_tag_action.trigger()
         remove_tag = self.imageViewer.data_browser.pop_up_remove_tag
-        QTest.mouseClick(remove_tag.push_button_ok, 1)
+        QTest.mouseClick(remove_tag.push_button_ok, Qt.LeftButton)
         new_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         new_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
         self.assertTrue(old_tags_current == new_tags_current)
@@ -211,7 +210,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.remove_tag_action.trigger()
         remove_tag = self.imageViewer.data_browser.pop_up_remove_tag
         remove_tag.list_widget_tags.setCurrentRow(0) # Test tag selected
-        QTest.mouseClick(remove_tag.push_button_ok, 1)
+        QTest.mouseClick(remove_tag.push_button_ok, Qt.LeftButton)
         new_tags_current = self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT)
         new_tags_initial = self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL)
         self.assertTrue("Test" not in new_tags_current)
@@ -243,7 +242,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.data_browser.table_data.horizontalHeaderItem(0).text(), TAG_FILENAME)
 
         # Trying to set the visibles tags
-        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, Qt.LeftButton)
         settings = self.imageViewer.data_browser.table_data.pop_up
 
         # Testing that checksum tag isn't displayed
@@ -263,7 +262,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Testing when hiding a tag
         settings.tab_tags.list_widget_selected_tags.item(0).setSelected(True) # Bricks tag selected
-        QTest.mouseClick(settings.tab_tags.push_button_unselect_tag, 1)
+        QTest.mouseClick(settings.tab_tags.push_button_unselect_tag, Qt.LeftButton)
         visibles_tags = []
         for row in range(0, settings.tab_tags.list_widget_selected_tags.count()):
             item = settings.tab_tags.list_widget_selected_tags.item(row).text()
@@ -271,7 +270,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(len(visibles_tags), 2)
         self.assertTrue(TAG_TYPE in visibles_tags)
         self.assertTrue(TAG_EXP_TYPE in visibles_tags)
-        QTest.mouseClick(settings.push_button_ok, 1)
+        QTest.mouseClick(settings.push_button_ok, Qt.LeftButton)
 
         new_visibles = self.imageViewer.project.session.get_visibles()
         self.assertEqual(len(new_visibles), 3)
@@ -290,12 +289,12 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(TAG_TYPE in columns_displayed)
 
         # Testing when showing a new tag
-        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.visualized_tags_button, Qt.LeftButton)
         settings = self.imageViewer.data_browser.table_data.pop_up
         settings.tab_tags.search_bar.setText(TAG_BRICKS)
         settings.tab_tags.list_widget_tags.item(0).setSelected(True)
-        QTest.mouseClick(settings.tab_tags.push_button_select_tag, 1)
-        QTest.mouseClick(settings.push_button_ok, 1)
+        QTest.mouseClick(settings.tab_tags.push_button_select_tag, Qt.LeftButton)
+        QTest.mouseClick(settings.push_button_ok, Qt.LeftButton)
 
         new_visibles = self.imageViewer.project.session.get_visibles()
         self.assertEqual(len(new_visibles), 4)
@@ -352,7 +351,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing that all the scans are back when clicking on the cross
-        QTest.mouseClick(self.imageViewer.data_browser.button_cross, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.button_cross, Qt.LeftButton)
 
         scans_displayed = []
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
@@ -371,7 +370,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
 
         # Testing not defined values
-        QTest.mouseClick(self.imageViewer.data_browser.button_cross, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.button_cross, Qt.LeftButton)
         self.imageViewer.data_browser.search_bar.setText("*Not Defined*")
         scans_displayed = []
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
@@ -404,7 +403,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
 
-        QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, Qt.LeftButton)
         field = self.imageViewer.data_browser.advanced_search.rows[0][2]
         condition = self.imageViewer.data_browser.advanced_search.rows[0][3]
         value = self.imageViewer.data_browser.advanced_search.rows[0][4]
@@ -413,7 +412,7 @@ class TestMIADataBrowser(unittest.TestCase):
         condition_contains_index = condition.findText("CONTAINS")
         condition.setCurrentIndex(condition_contains_index)
         value.setText("G1")
-        QTest.mouseClick(self.imageViewer.data_browser.advanced_search.search, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.advanced_search.search, Qt.LeftButton)
 
         # Testing that only one scan is display with the filter applied
         scans_displayed = []
@@ -426,7 +425,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing that every scan is back when clicking again on advanced search
-        QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, Qt.LeftButton)
         scans_displayed = []
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
             item = self.imageViewer.data_browser.table_data.item(row, 0)
@@ -665,8 +664,6 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
 
-
-
         bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
 
         bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
@@ -697,20 +694,20 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the popup to add a path
         """
 
-        QTest.mouseClick(self.imageViewer.data_browser.addRowLabel, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.addRowLabel, Qt.LeftButton)
         add_path = self.imageViewer.data_browser.table_data.pop_up_add_path
 
-        QTest.mouseClick(add_path.ok_button, 1)
+        QTest.mouseClick(add_path.ok_button, Qt.LeftButton)
         self.assertEqual(add_path.msg.text(), "Invalid arguments")
 
         add_path.file_line_edit.setText(os.path.join(".", "test_not_existing.py"))
         add_path.type_line_edit.setText("Python")
-        QTest.mouseClick(add_path.ok_button, 1)
+        QTest.mouseClick(add_path.ok_button, Qt.LeftButton)
         self.assertEqual(add_path.msg.text(), "Invalid arguments")
 
         add_path.file_line_edit.setText(os.path.join(".", "test.py"))
         add_path.type_line_edit.setText("Python")
-        QTest.mouseClick(add_path.ok_button, 1)
+        QTest.mouseClick(add_path.ok_button, Qt.LeftButton)
 
         self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), ['data/downloaded_data/test.py'])
         self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), ['data/downloaded_data/test.py'])
@@ -728,7 +725,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.pipeline_manager.scan_list, [])
 
         # Sending the selection (all scans), but closing the popup
-        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, Qt.LeftButton)
         send_popup = self.imageViewer.data_browser.show_selection
         send_popup.close()
 
@@ -736,7 +733,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.pipeline_manager.scan_list, [])
 
         # Sending the selection (all scans)
-        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, Qt.LeftButton)
         send_popup = self.imageViewer.data_browser.show_selection
         send_popup.ok_clicked()
 
@@ -761,7 +758,7 @@ class TestMIADataBrowser(unittest.TestCase):
         item2.setSelected(True)
 
         # Sending the selection (first 2 scans)
-        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, Qt.LeftButton)
         send_popup = self.imageViewer.data_browser.show_selection
         send_popup.ok_clicked()
 
@@ -776,7 +773,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.search_bar.setText("G3")
 
         # Sending the selection (G3 scans)
-        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, 1)
+        QTest.mouseClick(self.imageViewer.data_browser.send_documents_to_pipeline_button, Qt.LeftButton)
         send_popup = self.imageViewer.data_browser.show_selection
         send_popup.ok_clicked()
 
@@ -853,7 +850,7 @@ class TestMIADataBrowser(unittest.TestCase):
         properties = self.imageViewer.pop_up_preferences
         properties.tab_widget.setCurrentIndex(1)
         properties.save_checkbox.setChecked(True)
-        QTest.mouseClick(properties.push_button_ok, 1)
+        QTest.mouseClick(properties.push_button_ok, Qt.LeftButton)
 
         config = Config()
         new_auto_save = config.isAutoSave()
@@ -864,10 +861,49 @@ class TestMIADataBrowser(unittest.TestCase):
         properties = self.imageViewer.pop_up_preferences
         properties.tab_widget.setCurrentIndex(1)
         properties.save_checkbox.setChecked(False)
-        QTest.mouseClick(properties.push_button_ok, 1)
+        QTest.mouseClick(properties.push_button_ok, Qt.LeftButton)
         config = Config()
         reput_auto_save = config.isAutoSave()
         self.assertEqual(reput_auto_save, "no")
+
+    def test_undo_redo_databrowser(self):
+        """
+        Tests the databrowser undo/redo
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        self.assertEqual(self.imageViewer.project.undos, [])
+        self.assertEqual(self.imageViewer.project.redos, [])
+
+        # Testing sort undo/redo
+        bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_old = bw_item.text()
+        self.assertEqual(int(bw_old), 50000)
+        bw_item.setSelected(True)
+        bw_item.setText("0")
+        self.assertEqual(self.imageViewer.project.undos, [['modified_values', [['data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii', 'BandWidth', 50000.0, 0.0]]]])
+        self.assertEqual(self.imageViewer.project.redos, [])
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_set = bw_item.text()
+        self.assertEqual(int(bw_set), 0)
+        self.imageViewer.action_undo.trigger()
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_undo = bw_item.text()
+        self.assertEqual(int(bw_undo), 50000)
+        self.assertEqual(self.imageViewer.project.redos, [['modified_values', [[
+                                                                                   'data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii',
+                                                                                   'BandWidth', 50000.0, 0.0]]]])
+        self.assertEqual(self.imageViewer.project.undos, [])
+        self.imageViewer.action_redo.trigger()
+        self.assertEqual(self.imageViewer.project.undos, [['modified_values', [[
+                                                                                   'data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii',
+                                                                                   'BandWidth', 50000.0, 0.0]]]])
+        self.assertEqual(self.imageViewer.project.redos, [])
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_redo = bw_item.text()
+        self.assertEqual(int(bw_redo), 0)
 
 if __name__ == '__main__':
     unittest.main()
