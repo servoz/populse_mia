@@ -26,6 +26,8 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python setup.py install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install codecov; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install codecov; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 --upgrade --force-reinstall pyqt5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip --upgrade --force-reinstall pyqt5; fi
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_sandbox
