@@ -44,6 +44,7 @@ VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
 PLATFORMS = 'OS Independent'
 REQUIRES = [
+  'numpy'
   'SIP',  
   'pyqt5',
   'pyyaml',
