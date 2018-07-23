@@ -288,18 +288,13 @@ class Database_session_mia(DatabaseSession):
 
         # Redefinition of the table classes
         if flush:
-            print("trace 1")
             self.session.flush()
-            print("trace 2")
 
             # Classes reloaded in order to add the new column attribute
             self._DatabaseSession__update_table_classes()
-            print("trace 3")
 
             if self._DatabaseSession__caches:
                 self._DatabaseSession__refresh_cache_documents(collection)
-
-            print("trace 4")
 
         self.unsaved_modifications = True
 
