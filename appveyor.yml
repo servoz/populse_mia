@@ -11,9 +11,6 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "python -m pip install --upgrade pip"
   - "pip install --upgrade cython"
-  - "pip install numpy"
-  - "pip install freetype-py"
-  - "pip install pypng"
   - "python setup.py install"
   - "pip install --upgrade --force-reinstall pyqt5"
 
