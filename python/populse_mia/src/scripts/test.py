@@ -126,10 +126,11 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertEqual(add_tag.msg.text(), "Invalid default value")
 
+        # Testing when everything is ok
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
-        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton) # Blocking here on osx tests
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
 
