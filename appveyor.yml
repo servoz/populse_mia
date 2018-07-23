@@ -19,7 +19,7 @@ install:
   - "cd populse_sandbox"
   - "SET PYTHONPATH=C:\\projects\\populse-db\\python\\;%PYTHONPATH%"
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\;%PYTHONPATH%"
-  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
   - "export DISPLAY=:99.0"
   - "sleep 3"
 
