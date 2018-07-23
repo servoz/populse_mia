@@ -11,7 +11,10 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "pip install --upgrade cython"
   - "pip install numpy"
+  - "pip install freetype-py"
+  - "pip install pypng"
   - "python setup.py install"
+  - "pip install --upgrade --force-reinstall pyqt5"
 
 test_script:
   - "python .\\python\\populse_mia\\src\\scripts\\test.py"
