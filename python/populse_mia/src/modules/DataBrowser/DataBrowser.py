@@ -409,6 +409,8 @@ class DataBrowser(QWidget):
         :param new_tag_unit: New tag unit
         """
 
+        print("begin add tag infos")
+
         values = []
 
         # We add the tag and a value for each scan in the Database
@@ -440,6 +442,8 @@ class DataBrowser(QWidget):
         # New tag added to the table
         column = self.table_data.get_index_insertion(new_tag_name)
         self.table_data.add_column(column, new_tag_name)
+
+        print("end add tag infos")
 
     def add_tag_pop_up(self):
         """

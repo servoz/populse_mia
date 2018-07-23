@@ -443,6 +443,7 @@ class Ui_Dialog_add_tag(QDialog):
 
         # Ok
         else:
+            print("begin ok clicked")
             self.accept()
             self.new_tag_name = self.text_edit_tag_name.text()
             self.new_default_value = self.text_edit_default_value.text()
@@ -452,3 +453,4 @@ class Ui_Dialog_add_tag(QDialog):
                 self.new_tag_unit = None
             self.databrowser.add_tag_infos(self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit)
             self.close()
+            print("end ok clicked")
