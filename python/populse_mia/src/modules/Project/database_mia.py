@@ -224,8 +224,6 @@ class Database_session_mia(DatabaseSession):
         :param flush: bool to know if the table classes must be updated (put False if in the middle of filling fields) => True by default
         """
 
-        print("begin add field")
-
         # Checks
         collection_row = self.get_collection(collection)
         if collection_row is None:
@@ -247,22 +245,14 @@ class Database_session_mia(DatabaseSession):
                     str) + " or None, but field description of type " + str(
                     type(description)) + " given")
 
-        print("end checks")
-
         # Adding the field in the field table
         field_row = self.table_classes[FIELD_TABLE](name=name, collection=collection, type=field_type,
                                                     description=description, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
 
-        print("trace 1")
-
         if self._DatabaseSession__caches:
             self._DatabaseSession__fields[collection][name] = field_row
 
-        print("trace 2")
-
         self.session.add(field_row)
-
-        print("trace 3")
 
         # Fields creation
         if field_type in LIST_TYPES:
@@ -285,13 +275,9 @@ class Database_session_mia(DatabaseSession):
         else:
             field_type = self._DatabaseSession__field_type_to_column_type(field_type)
 
-        print("trace 4")
-
         column = Column(self.name_to_valid_column_name(name), field_type, index=index)
         column_str_type = column.type.compile(self.database.engine.dialect)
         column_name = column.compile(dialect=self.database.engine.dialect)
-
-        print("trace 5")
 
         # Column created in document table, and in initial table if initial values are used
 
@@ -300,20 +286,20 @@ class Database_session_mia(DatabaseSession):
         self.session.execute(document_query)
         self.table_classes[self.name_to_valid_column_name(collection)].__table__.append_column(column)
 
-        print("trace 6")
-
         # Redefinition of the table classes
         if flush:
-            print("trace 7")
+            print("trace 1")
             self.session.flush()
+            print("trace 2")
 
             # Classes reloaded in order to add the new column attribute
             self._DatabaseSession__update_table_classes()
+            print("trace 3")
 
             if self._DatabaseSession__caches:
                 self._DatabaseSession__refresh_cache_documents(collection)
 
-            print("trace 8")
+            print("trace 4")
 
         self.unsaved_modifications = True
 
