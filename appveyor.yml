@@ -5,9 +5,7 @@ environment:
     - PYTHON: "C:\\Python35"
     - PYTHON: "C:\\Python36"
 
-build_script:
-  - "SET PATH=C:\\Program Files\\PostgreSQL\\9.6\\bin\\;%PATH%"
-  - psql -c "create database populse_db_tests;" -U postgres
+build: off
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
@@ -15,4 +13,4 @@ install:
   - "python setup.py install"
 
 test_script:
-  - "python ./python/populse_mia/src/scripts/test.py"
+  - "python .\python\populse_mia\src\scripts\test.py"
