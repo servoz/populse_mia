@@ -13,4 +13,4 @@ install:
   - "python setup.py install"
 
 test_script:
-  - "python .\python\populse_mia\src\scripts\test.py"
+  - "python .\\python\\populse_mia\\src\\scripts\\test.py"
