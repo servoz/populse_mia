@@ -10,6 +10,7 @@ build: off
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "pip install --upgrade cython"
+  - "pip install numpy"
   - "python setup.py install"
 
 test_script:
