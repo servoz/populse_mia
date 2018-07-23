@@ -11,6 +11,7 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "python -m pip install --upgrade pip"
   - "pip install --upgrade cython"
+  - "pip install matplotlib==1.5.1"
   - "python setup.py install"
   - "pip install --upgrade --force-reinstall pyqt5"
   - "cd .."
@@ -20,7 +21,7 @@ install:
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\;%PYTHONPATH%"
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
   - "export DISPLAY=:99.0"
-  - sleep 3
+  - "sleep 3"
 
 test_script:
   - "python .\\python\\populse_mia\\src\\scripts\\test.py"
