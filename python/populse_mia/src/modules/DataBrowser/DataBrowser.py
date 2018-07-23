@@ -409,32 +409,22 @@ class DataBrowser(QWidget):
         :param new_tag_unit: New tag unit
         """
 
-        print("trace 1")
         values = []
-        print("trace 2")
 
         # We add the tag and a value for each scan in the Database
         self.project.session.add_field(COLLECTION_CURRENT, new_tag_name, tag_type, new_tag_description, True,
                                         TAG_ORIGIN_USER, new_tag_unit, new_default_value)
-        print("trace 3")
         self.project.session.add_field(COLLECTION_INITIAL, new_tag_name, tag_type, new_tag_description, True,
                                         TAG_ORIGIN_USER, new_tag_unit, new_default_value)
-        print("trace 4")
         for scan in self.project.session.get_documents(COLLECTION_CURRENT):
-            print(scan)
-            print("trace 1")
             self.project.session.add_value(COLLECTION_CURRENT, getattr(scan, TAG_FILENAME), new_tag_name,
                                            table_to_database(new_default_value, tag_type))
-            print("trace 2")
             self.project.session.add_value(COLLECTION_INITIAL, getattr(scan, TAG_FILENAME), new_tag_name,
                                            table_to_database(new_default_value, tag_type))
-            print("trace 3")
             values.append(
                 [getattr(scan, TAG_FILENAME), new_tag_name, table_to_database(new_default_value, tag_type),
                  table_to_database(new_default_value, tag_type)])  # For history
-            print("trace 4")
 
-        print("trace 5")
         # For history
         historyMaker = []
         historyMaker.append("add_tag")
@@ -446,13 +436,10 @@ class DataBrowser(QWidget):
         historyMaker.append(values)
         self.project.undos.append(historyMaker)
         self.project.redos.clear()
-        print("trace 6")
 
         # New tag added to the table
         column = self.table_data.get_index_insertion(new_tag_name)
         self.table_data.add_column(column, new_tag_name)
-
-        print("trace 7")
 
     def add_tag_pop_up(self):
         """
