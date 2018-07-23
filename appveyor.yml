@@ -13,6 +13,14 @@ install:
   - "pip install --upgrade cython"
   - "python setup.py install"
   - "pip install --upgrade --force-reinstall pyqt5"
+  - "cd .."
+  - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git"
+  - "cd populse_sandbox"
+  - "SET PYTHONPATH=C:\\projects\\populse-db\\python\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
+  - "export DISPLAY=:99.0"
+  - sleep 3
 
 test_script:
   - "python .\\python\\populse_mia\\src\\scripts\\test.py"
