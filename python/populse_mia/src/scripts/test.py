@@ -23,8 +23,11 @@ class TestMIADataBrowser(unittest.TestCase):
         Called before each test
         """
 
+        print("begin setup")
         self.app = QApplication([])
+        print("trace 1")
         self.project = Project(None, True)
+        print("trace 2")
         self.imageViewer = Main_Window(self.project, test=True)
         print(self._testMethodName)
 
@@ -907,4 +910,5 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(int(bw_redo), 0)
 
 if __name__ == '__main__':
+    print("begin tests")
     unittest.main()
