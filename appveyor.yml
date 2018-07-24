@@ -4,6 +4,7 @@ environment:
 
 #   - PYTHON: "C:\\Python35"
     - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.0"
 
 build: off
 
@@ -21,4 +22,5 @@ install:
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
+  - "python --version"
   - "python .\\python\\populse_mia\\src\\scripts\\test.py"
