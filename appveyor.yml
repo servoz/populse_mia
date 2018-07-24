@@ -14,11 +14,14 @@ install:
   - "pip install numpy"
   - "python setup.py install"
   - "pip install --upgrade --force-reinstall pyqt5"
-  - "cd .."
-  - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git"
-  - "SET PYTHONPATH=C:\\projects\\populse_db\\python\\;%PYTHONPATH%"
+  - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git" C:\projects\populse-db
+  - "SET PYTHONPATH=C:\\projects\\populse-db\\python\\;%PYTHONPATH%"
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\;%PYTHONPATH%"
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
+  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\ exists"
+  - "IF EXIST C:\\projects\\populse-db\\ ECHO Folder C:\\projects\\populse-db\\ exists"
+  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\ exists"
+  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\ exists"
   - "python C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\scripts\\test.py"
