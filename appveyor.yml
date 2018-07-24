@@ -8,6 +8,7 @@ environment:
 build: off
 
 install:
+  - "cd"
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "python -m pip install --upgrade pip"
   - "pip install --upgrade cython"
@@ -21,4 +22,6 @@ install:
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
+  - "cd"
+  - "dir"
   - "python C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\scripts\\test.py"
