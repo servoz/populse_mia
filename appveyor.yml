@@ -8,7 +8,6 @@ environment:
 build: off
 
 install:
-  - "cd"
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "python -m pip install --upgrade pip"
   - "pip install --upgrade cython"
@@ -17,11 +16,9 @@ install:
   - "pip install --upgrade --force-reinstall pyqt5"
   - "cd .."
   - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git"
-  - "SET PYTHONPATH=C:\\projects\\populse-db\\python\\;%PYTHONPATH%"
-  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\;%PYTHONPATH%"
-  - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse_db\\python\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
-  - "cd"
-  - "dir"
-  - "python C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\scripts\\test.py"
+  - "python C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\src\\scripts\\test.py"
