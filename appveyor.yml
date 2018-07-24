@@ -21,4 +21,4 @@ install:
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
-  - "python .\\populse-sandbox\\python\\populse_mia\\src\\scripts\\test.py"
+  - "python .\\populse-sandbox\\python\\populse-mia\\src\\scripts\\test.py"
