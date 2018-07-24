@@ -18,7 +18,7 @@ install:
   - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git"
   - "SET PYTHONPATH=C:\\projects\\populse_db\\python\\;%PYTHONPATH%"
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\;%PYTHONPATH%"
-  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
-  - "python C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\src\\scripts\\test.py"
+  - "python C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\scripts\\test.py"
