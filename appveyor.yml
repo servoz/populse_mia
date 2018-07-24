@@ -4,8 +4,6 @@ environment:
 
 #   - PYTHON: "C:\\Python35"
     - PYTHON: "C:\\Python36"
-      USE_QT_API: "PyQt5"
-      PYTEST_QT_API: "pyqt5"  
 
 build: off
 
