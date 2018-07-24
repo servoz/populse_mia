@@ -21,8 +21,4 @@ install:
   - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
 
 test_script:
-  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\ exists"
-  - "IF EXIST C:\\projects\\populse-db\\ ECHO Folder C:\\projects\\populse-db\\ exists"
-  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\ exists"
-  - "IF EXIST C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\ ECHO Folder C:\\projects\\populse-sandbox-rrm4w\\python\\populse-mia\\ exists"
   - "python C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\scripts\\test.py"
