@@ -246,8 +246,9 @@ class ImportWorker(QThread):
             self.project.session.add_document(COLLECTION_INITIAL, documents[document], flush=False)
         self.project.session.session.flush()
 
-        self.progress.setValue(3)
-        QApplication.processEvents()
+        # Commented as OSX has problems
+        #self.progress.setValue(3) # Sometimes blocks here on OSX
+        #QApplication.processEvents()
 
         # For history
         historyMaker.append(self.scans_added)
