@@ -3,8 +3,8 @@ import os.path
 import json
 import hashlib # To generate the md5 of each path
 import datetime
-from time import time
-from PyQt5.QtCore import Qt, QThread
+from time import time, sleep
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QProgressDialog, QApplication
 from datetime import datetime
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, TYPE_NII
@@ -54,12 +54,23 @@ class ImportProgress(QProgressDialog):
 
         self.worker = ImportWorker(project, self)
         self.worker.finished.connect(self.close)
+        self.worker.notifyProgress.connect(self.onProgress)
         self.worker.start()
+
+    def onProgress(self, i):
+        """
+        Signal to set the import progressbar value
+        """
+
+        self.setValue(i)
 
 class ImportWorker(QThread):
     """
     Thread import
     """
+
+    notifyProgress = pyqtSignal(int)
+
     def __init__(self, project, progress):
         super().__init__()
         self.project = project
@@ -228,13 +239,13 @@ class ImportWorker(QThread):
                             [scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
                         documents[scan][tag.name] = tag.default_value
 
-        self.progress.setValue(1)
-        QApplication.processEvents()
+        self.notifyProgress.emit(1)
+        sleep(0.1)
 
         self.project.session.add_fields(tags_added)
 
-        self.progress.setValue(2)
-        QApplication.processEvents()
+        self.notifyProgress.emit(2)
+        sleep(0.1)
 
         current_paths = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
@@ -246,9 +257,8 @@ class ImportWorker(QThread):
             self.project.session.add_document(COLLECTION_INITIAL, documents[document], flush=False)
         self.project.session.session.flush()
 
-        # Commented as OSX has problems
-        #self.progress.setValue(3) # Sometimes blocks here on OSX
-        #QApplication.processEvents()
+        self.notifyProgress.emit(3)
+        sleep(0.1)
 
         # For history
         historyMaker.append(self.scans_added)
