@@ -8,9 +8,9 @@ class Ui_Tag_Selection(QDialog):
     Is called when the user wants to update the tags that are visualized in the data browser
     """
 
-    def __init__(self, database):
+    def __init__(self, project):
         super().__init__()
-        self.project = database
+        self.project = project
 
         _translate = QtCore.QCoreApplication.translate
 

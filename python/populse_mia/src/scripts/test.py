@@ -914,5 +914,16 @@ class TestMIADataBrowser(unittest.TestCase):
         bw_redo = bw_item.text()
         self.assertEqual(int(bw_redo), 0)
 
+    def test_count_table(self):
+        """
+        Tests the count table popup
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        QTest.mouseClick(self.imageViewer.data_browser.count_table_button, Qt.LeftButton)
+
+        count_table = self.imageViewer.data_browser.count_table_pop_up
+
 if __name__ == '__main__':
     unittest.main()

@@ -353,7 +353,7 @@ class PipelineManagerTab(QWidget):
             pr = cProfile.Profile()
             pr.enable()"""
 
-        self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline, self.main_window)
+        self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline)
         self.progress.show()
         self.progress.exec()
 
@@ -374,7 +374,7 @@ class PipelineManagerTab(QWidget):
                     self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
                     self.iterationTable.update_table()
 
-                    self.progress = InitProgress(self.project, self.pipelineEditorTabs, None, self.main_window)
+                    self.progress = InitProgress(self.project, self.pipelineEditorTabs, None)
                     self.progress.show()
                     self.progress.exec()
 
@@ -418,8 +418,7 @@ class InitProgress(QProgressDialog):
 
     def __init__(self, project, diagram_view, pipeline, main_window):
 
-        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0,
-                                           main_window)
+        super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0)
 
         if not pipeline:
             nodes_to_check = []
@@ -431,7 +430,7 @@ class InitProgress(QProgressDialog):
         self.setMaximum(bricks_number)
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setWindowModality(Qt.WindowModal)
+        self.setModal(True)
 
         self.project = project
         self.diagramView = diagram_view
@@ -764,13 +763,13 @@ class RunProgress(QProgressDialog):
     Run progress bar
     """
 
-    def __init__(self, diagram_view, main_window):
+    def __init__(self, diagram_view):
 
-        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0, main_window)
+        super(RunProgress, self).__init__("Please wait while the pipeline is being run...", None, 0, 0)
 
         self.setWindowTitle("Pipeline run")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setWindowModality(Qt.WindowModal)
+        self.setModal(True)
 
         self.diagramView = diagram_view
 

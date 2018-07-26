@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 from Utils.Tools import ClickableLabel
 from Utils.Utils import check_value_type
@@ -236,6 +236,7 @@ class Ui_Dialog_add_tag(QDialog):
         self.pop_up()
         self.setMinimumWidth(700)
         self.setWindowTitle("Add a tag")
+        self.setModal(True)
 
     def pop_up(self):
         self.setObjectName("Add a tag")

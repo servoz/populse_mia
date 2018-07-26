@@ -17,6 +17,7 @@ class Ui_Dialog_add_path(QDialog):
         self.project = project
         self.databrowser = databrowser
         self.setWindowTitle("Add a document")
+        self.setModal(True)
 
         vbox_layout = QVBoxLayout()
 

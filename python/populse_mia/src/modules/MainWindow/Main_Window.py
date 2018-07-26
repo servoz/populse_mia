@@ -586,8 +586,9 @@ class Main_Window(QMainWindow):
 
     def software_preferences_pop_up(self):
         """ Opens the MIA2 preferences pop-up """
+
         self.pop_up_preferences = Ui_Dialog_Preferences(self)
-        self.pop_up_preferences.setWindowModality(Qt.WindowModal)
+        self.pop_up_preferences.setModal(True)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
 

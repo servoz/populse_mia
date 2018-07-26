@@ -16,11 +16,11 @@ class Ui_Dialog_Preferences(QDialog):
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, main):
-        super().__init__(main)
-        self.pop_up(main)
+    def __init__(self, main_window):
+        super().__init__()
+        self.pop_up(main_window)
 
-    def pop_up(self, main):
+    def pop_up(self, main_window):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -128,7 +128,7 @@ class Ui_Dialog_Preferences(QDialog):
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
         self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, main))
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, main_window))
 
         # The 'Cancel' push button
         self.push_button_cancel = QtWidgets.QPushButton("Cancel")

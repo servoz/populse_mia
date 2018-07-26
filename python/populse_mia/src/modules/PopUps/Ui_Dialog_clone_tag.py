@@ -19,6 +19,7 @@ class Ui_Dialog_clone_tag(QDialog):
         self.pop_up(project)
         self.databrowser = databrowser
         self.project = project
+        self.setModal(True)
 
     def pop_up(self, project):
         _translate = QtCore.QCoreApplication.translate

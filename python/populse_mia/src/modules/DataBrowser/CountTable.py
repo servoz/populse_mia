@@ -19,10 +19,12 @@ class CountTable(QDialog):
     Is called when the user wants to verify precisely the scans of the project.
     """
 
-    def __init__(self, project=None):
+    def __init__(self, project):
         super().__init__()
 
         self.project = project
+
+        self.setModal(True)
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]

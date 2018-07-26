@@ -251,11 +251,8 @@ class DataBrowser(QWidget):
             self.advanced_search.apply_filter(filterToApply)
 
     def count_table_pop_up(self):
-        pop_up = CountTable(self.project)
-        pop_up.show()
-
-        if pop_up.exec_():
-            pass
+        self.count_table_pop_up = CountTable(self.project)
+        self.count_table_pop_up.show()
 
     def create_toolbar_menus(self):
         self.menu_toolbar = QToolBar()
@@ -301,9 +298,9 @@ class DataBrowser(QWidget):
         self.visualized_tags_button.setText('Visualized tags')
         self.visualized_tags_button.clicked.connect(lambda: self.table_data.visualized_tags_pop_up())
 
-        count_table_button = QPushButton()
-        count_table_button.setText('Count table')
-        count_table_button.clicked.connect(self.count_table_pop_up)
+        self.count_table_button = QPushButton()
+        self.count_table_button.setText('Count table')
+        self.count_table_button.clicked.connect(self.count_table_pop_up)
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
@@ -315,7 +312,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.visualized_tags_button)
         self.menu_toolbar.addSeparator()
-        self.menu_toolbar.addWidget(count_table_button)
+        self.menu_toolbar.addWidget(self.count_table_button)
 
     def search_str(self, str_search):
 
@@ -906,12 +903,12 @@ class TableDataBrowser(QTableWidget):
 
         cells_number = len(self.scans_to_visualize) * len(self.horizontalHeader())
         self.progress = QProgressDialog("Please wait while the cells are being filled...",
-                                        None, 0, cells_number, self.data_browser.main_window)
+                                        None, 0, cells_number)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
         self.progress.setWindowTitle("Filling the cells")
         self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setModal(True)
         self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
         self.progress.show()
 
@@ -1591,12 +1588,12 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.disconnect()
 
         cells_number = len(rows) * self.columnCount()
-        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, cells_number, self.data_browser.main_window)
+        self.progress = QProgressDialog("Please wait while the paths are being added...", None, 0, cells_number)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
         self.progress.setWindowTitle("Adding the paths")
         self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setModal(True)
         self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
         self.progress.show()
 
