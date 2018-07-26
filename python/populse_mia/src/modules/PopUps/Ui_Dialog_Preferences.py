@@ -200,32 +200,33 @@ class Ui_Dialog_Preferences(QDialog):
             config.set_use_spm("no")
 
         # SPM and MCR paths checks and update
-        matlab_input = self.matlab_choice.text()
-        spm_input = self.spm_choice.text()
-        if os.path.exists(matlab_input) and "MATLAB/MATLAB_Runtime/v93" in matlab_input:
-            config.set_matlab_path(matlab_input)
-        else:
-            self.msg = QMessageBox()
-            self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("Invalid MCR path")
-            self.msg.setInformativeText("The MCR path entered {0} is invalid.".format(matlab_input))
-            self.msg.setWindowTitle("Error")
-            self.msg.setStandardButtons(QMessageBox.Ok)
-            self.msg.buttonClicked.connect(self.msg.close)
-            self.msg.show()
-            return
-        if os.path.exists(spm_input) and "spm12" in spm_input:
-            config.set_spm_path(spm_input)
-        else:
-            self.msg = QMessageBox()
-            self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("Invalid SPM standalone path")
-            self.msg.setInformativeText("The SPM standalone path entered {0} is invalid.".format(spm_input))
-            self.msg.setWindowTitle("Error")
-            self.msg.setStandardButtons(QMessageBox.Ok)
-            self.msg.buttonClicked.connect(self.msg.close)
-            self.msg.show()
-            return
+        if self.use_spm_checkbox.isChecked():
+            matlab_input = self.matlab_choice.text()
+            spm_input = self.spm_choice.text()
+            if os.path.exists(matlab_input) and "MATLAB/MATLAB_Runtime/v93" in matlab_input:
+                config.set_matlab_path(matlab_input)
+            else:
+                self.msg = QMessageBox()
+                self.msg.setIcon(QMessageBox.Critical)
+                self.msg.setText("Invalid MCR path")
+                self.msg.setInformativeText("The MCR path entered {0} is invalid.".format(matlab_input))
+                self.msg.setWindowTitle("Error")
+                self.msg.setStandardButtons(QMessageBox.Ok)
+                self.msg.buttonClicked.connect(self.msg.close)
+                self.msg.show()
+                return
+            if os.path.exists(spm_input) and "spm12" in spm_input:
+                config.set_spm_path(spm_input)
+            else:
+                self.msg = QMessageBox()
+                self.msg.setIcon(QMessageBox.Critical)
+                self.msg.setText("Invalid SPM standalone path")
+                self.msg.setInformativeText("The SPM standalone path entered {0} is invalid.".format(spm_input))
+                self.msg.setWindowTitle("Error")
+                self.msg.setStandardButtons(QMessageBox.Ok)
+                self.msg.buttonClicked.connect(self.msg.close)
+                self.msg.show()
+                return
 
         #Colors
         background_color = self.background_color_combo.currentText()
