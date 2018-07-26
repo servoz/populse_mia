@@ -718,10 +718,10 @@ class TestMIADataBrowser(unittest.TestCase):
         add_path.type_line_edit.setText("Python")
         QTest.mouseClick(add_path.ok_button, Qt.LeftButton)
 
-        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), ['data/downloaded_data/test.py'])
-        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), ['data/downloaded_data/test.py'])
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT), [os.path.join('data', 'downloaded_data', 'test.py')])
+        self.assertEqual(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL), [os.path.join('data', 'downloaded_data', 'test.py')])
         self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 1)
-        self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), 'data/downloaded_data/test.py')
+        self.assertEqual(self.imageViewer.data_browser.table_data.item(0, 0).text(), os.path.join('data', 'downloaded_data', 'test.py'))
 
     def test_send_documents_to_pipeline(self):
         """

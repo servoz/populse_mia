@@ -127,7 +127,7 @@ class Database_mia(Database):
             # Delete the database session
             del current_session._populse_db_session
             del current_session._populse_db_counter
-            self.__scoped_session.remove()
+            self._Database__scoped_session.remove()
 
 class Database_session_mia(DatabaseSession):
     """

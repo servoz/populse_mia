@@ -228,6 +228,7 @@ class Main_Window(QMainWindow):
 
         # If it's unnamed project, we can remove the whole project
         if self.project.isTempProject:
+            self.project.database.__exit__(None, None, None)
             shutil.rmtree(self.project.folder)
         else:
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
@@ -253,6 +254,7 @@ class Main_Window(QMainWindow):
                 # The file is removed only if it's not a scan in the project, and if it's not a logExport
                 if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
+            self.project.database.__exit__(None, None, None)
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as or just saved """
