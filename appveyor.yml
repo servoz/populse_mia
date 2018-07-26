@@ -1,6 +1,4 @@
 environment:
-
-  APPVEYOR_RDP_PASSWORD: <your password>
   
   matrix:
 
