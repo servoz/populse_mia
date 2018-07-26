@@ -54,6 +54,7 @@ REQUIRES = [
   'nibabel',
   'snakeviz',
   'pillow',
+  'matplotlib',
   'traits',
   'capsul',
   'soma_workflow',

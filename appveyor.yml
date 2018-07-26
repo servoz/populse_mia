@@ -2,7 +2,6 @@ environment:
   
   matrix:
 
-    - PYTHON: "C:\\Python35"
     - PYTHON: "C:\\Python36"
 
 build: off
@@ -13,9 +12,6 @@ install:
   - "python -m pip install --upgrade pip"
   - "pip install --upgrade cython"
   - "pip install numpy"
-  - "git clone https://github.com/matplotlib/matplotlib C:\\projects\\matplotlib"
-  - "git clone https://github.com/jbmohler/matplotlib-winbuild C:\\projects\\matplotlib-winbuild"      
-  - "python C:\\projects\\matplotlib-winbuild\\buildall.py"
   - "python setup.py install"
   - "echo y | pip uninstall PyQt5"
   - "pip install PyQt5==5.9.2"
