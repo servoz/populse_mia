@@ -6,11 +6,13 @@ import sip
 import sys
 import uuid
 
+from time import sleep
+
 from collections import OrderedDict
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize, QThread
+    QRectF, QSize, QThread, pyqtSignal
 from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
     QCursor, QBrush, QIcon
 from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
@@ -440,7 +442,15 @@ class InitProgress(QProgressDialog):
 
         self.worker = InitWorker(self.project, self.diagramView, self.pipeline, self)
         self.worker.finished.connect(self.close)
+        self.worker.notifyProgress.connect(self.onProgress)
         self.worker.start()
+
+    def onProgress(self, i):
+        """
+        Signal to set the pipeline initialization progressbar value
+        """
+
+        self.setValue(i)
 
     def get_bricks_number(self, pipeline):
         """
@@ -466,6 +476,8 @@ class InitWorker(QThread):
     """
     Thread doing the pipeline initialization
     """
+
+    notifyProgress = pyqtSignal(int)
 
     def __init__(self, project, diagram_view, pipeline, progress):
         super().__init__()
@@ -627,9 +639,9 @@ class InitWorker(QThread):
 
             # progressbar
             idx += 1
-            self.progress.setValue(idx)
-            self.progress.setWindowTitle("Pipeline {0} initialization".format(pipeline.name))
-            QApplication.processEvents()
+            self.notifyProgress.emit(idx)
+            sleep(0.1)
+
 
             # If the node is a pipeline node, each of its nodes has to be initialised
             node = pipeline.nodes[node_name]
@@ -769,11 +781,11 @@ class RunProgress(QProgressDialog):
         self.worker.finished.connect(self.close)
         self.worker.start()
 
-
 class RunWorker(QThread):
     """
     Thread doing the pipeline run
     """
+
     def __init__(self, diagram_view):
         super().__init__()
         self.diagramView = diagram_view
