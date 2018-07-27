@@ -16,6 +16,7 @@ class Ui_Dialog_Settings(QDialog):
 
     def __init__(self, project, databrowser, old_tags):
         super().__init__()
+        self.setModal(True)
         self.project = project
         self.databrowser = databrowser
         self.old_tags = old_tags

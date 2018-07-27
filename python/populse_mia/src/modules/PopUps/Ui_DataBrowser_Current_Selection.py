@@ -15,6 +15,7 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         self.filter = filter
         self.main_window = main_window
         self.setWindowTitle("Confirm the selection")
+        self.setModal(True)
 
         vbox_layout = QVBoxLayout()
 

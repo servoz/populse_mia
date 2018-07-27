@@ -18,6 +18,7 @@ class Ui_Dialog_Preferences(QDialog):
 
     def __init__(self, main_window):
         super().__init__()
+        self.setModal(True)
         self.pop_up(main_window)
 
     def pop_up(self, main_window):

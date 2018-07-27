@@ -312,15 +312,17 @@ class Main_Window(QMainWindow):
         """ Open a pop-up to save the current project as """
 
         import glob
-        exPopup = Ui_Dialog_Save_Project_As()
-        if exPopup.exec_():
+        self.exPopup = Ui_Dialog_Save_Project_As()
+        self.exPopup.setParent(self)
+        self.exPopup.setModal(True)
+        if self.exPopup.exec_():
 
             old_folder = self.project.folder
-            file_name = exPopup.relative_path
-            data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
-            database_path = os.path.join(os.path.relpath(exPopup.relative_path), 'database')
-            properties_path = os.path.join(os.path.relpath(exPopup.relative_path), 'properties')
-            data_path = os.path.join(os.path.relpath(exPopup.relative_path), 'data')
+            file_name = self.exPopup.relative_path
+            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
+            database_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'database')
+            properties_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'properties')
+            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
             raw_data_path = os.path.join(data_path, 'raw_data')
             derived_data_path = os.path.join(data_path, 'derived_data')
             downloaded_data_path = os.path.join(data_path, 'downloaded_data')
@@ -330,7 +332,7 @@ class Main_Window(QMainWindow):
                 self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
-            os.makedirs(exPopup.relative_path)
+            os.makedirs(self.exPopup.relative_path)
 
             os.mkdir(data_path)
             os.mkdir(raw_data_path)
@@ -376,8 +378,8 @@ class Main_Window(QMainWindow):
             config.set_opened_projects(opened_projects)
 
             # Project updated everywhere
-            self.project = Project(exPopup.relative_path, False)
-            self.project.setName(os.path.basename(exPopup.relative_path))
+            self.project = Project(self.exPopup.relative_path, False)
+            self.project.setName(os.path.basename(self.exPopup.relative_path))
             self.project.setDate(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))
             self.project.saveModifications()
 
@@ -397,6 +399,8 @@ class Main_Window(QMainWindow):
 
             # Opens a pop-up when the 'New Project' action is clicked and updates the recent projects
             self.exPopup = Ui_Dialog_New_Project()
+            self.exPopup.setParent(self)
+            self.exPopup.setModal(True)
 
             if self.exPopup.exec_():
 
@@ -588,7 +592,6 @@ class Main_Window(QMainWindow):
         """ Opens the MIA2 preferences pop-up """
 
         self.pop_up_preferences = Ui_Dialog_Preferences(self)
-        self.pop_up_preferences.setModal(True)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
 

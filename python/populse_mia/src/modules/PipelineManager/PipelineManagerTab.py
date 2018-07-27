@@ -378,11 +378,11 @@ class PipelineManagerTab(QWidget):
                     self.progress.show()
                     self.progress.exec()
 
-                    self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
+                    self.progress = RunProgress(self.pipelineEditorTabs)
                     self.progress.show()
                     self.progress.exec()
         else:
-            self.progress = RunProgress(self.pipelineEditorTabs, self.main_window)
+            self.progress = RunProgress(self.pipelineEditorTabs)
             self.progress.show()
             self.progress.exec()
 
@@ -416,7 +416,7 @@ class InitProgress(QProgressDialog):
     Init progress bar
     """
 
-    def __init__(self, project, diagram_view, pipeline, main_window):
+    def __init__(self, project, diagram_view, pipeline):
 
         super(InitProgress, self).__init__("Please wait while the pipeline is being initialized...", None, 0, 0)
 

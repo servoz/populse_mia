@@ -3239,7 +3239,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         if not self.confirm_erase_pipeline():
             return
         w = Qt.QDialog(self)
-        w.setWindowModality(Qt.Qt.WindowModal)
+        w.setModal(True)
         w.setWindowTitle('Pipeline name')
         l = Qt.QVBoxLayout()
         w.setLayout(l)
@@ -3305,7 +3305,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         old_filename = getattr(self, '_pipeline_filename', '')
         dialog = LoadProcessUi(self, old_filename=old_filename)
         dialog.setWindowTitle('Load pipeline')
-        dialog.setWindowModality(Qt.Qt.WindowModal)
+        dialog.setModal(True)
         res = dialog.exec_()
 
         if res:

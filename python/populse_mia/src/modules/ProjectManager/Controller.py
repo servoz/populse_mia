@@ -31,7 +31,7 @@ def read_log(project, main_window):
     """ From the log export file of the import software, the data base (here the current project) is loaded with
     the tags"""
 
-    main_window.progress = ImportProgress(project, main_window)
+    main_window.progress = ImportProgress(project)
     main_window.progress.show()
     main_window.progress.exec()
 
@@ -41,13 +41,13 @@ class ImportProgress(QProgressDialog):
     """
     Import progress bar
     """
-    def __init__(self, project, main_window):
+    def __init__(self, project):
 
-        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 3, main_window)
+        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 3)
 
         self.setWindowTitle("Importing the paths")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setWindowModality(Qt.WindowModal)
+        self.setModal(True)
 
         self.setMinimumDuration(0)
         self.setValue(0)
