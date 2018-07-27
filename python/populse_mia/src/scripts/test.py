@@ -1,8 +1,7 @@
 import os
 
 # Working from the scripts directory
-from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtCore import Qt
 
 from populse_db.database import FIELD_TYPE_INTEGER
 
@@ -922,8 +921,35 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
 
         QTest.mouseClick(self.imageViewer.data_browser.count_table_button, Qt.LeftButton)
-
         count_table = self.imageViewer.data_browser.count_table_pop_up
+
+        count_table.push_buttons[0].setText("BandWidth")
+        count_table.fill_values(0)
+        count_table.push_buttons[1].setText("EchoTime")
+        count_table.fill_values(1)
+        QTest.mouseClick(count_table.push_button_count, Qt.LeftButton)
+
+        self.assertEqual(count_table.table.horizontalHeaderItem(0).text(), "BandWidth")
+        self.assertEqual(count_table.table.horizontalHeaderItem(1).text(), "75")
+        self.assertEqual(count_table.table.horizontalHeaderItem(2).text(), "5.8239923")
+        self.assertEqual(count_table.table.horizontalHeaderItem(3).text(), "5")
+        self.assertEqual(count_table.table.verticalHeaderItem(3).text(), "Total")
+        self.assertEqual(count_table.table.item(0, 0).text(), "50000")
+        self.assertEqual(count_table.table.item(1, 0).text(), "25000")
+        self.assertEqual(count_table.table.item(2, 0).text(), "65789.48")
+        self.assertEqual(count_table.table.item(3, 0).text(), "3")
+        self.assertEqual(count_table.table.item(0, 1).text(), "1")
+        self.assertEqual(count_table.table.item(1, 1).text(), "")
+        self.assertEqual(count_table.table.item(2, 1).text(), "")
+        self.assertEqual(count_table.table.item(3, 1).text(), "1")
+        self.assertEqual(count_table.table.item(0, 2).text(), "")
+        self.assertEqual(count_table.table.item(1, 2).text(), "2")
+        self.assertEqual(count_table.table.item(2, 2).text(), "")
+        self.assertEqual(count_table.table.item(3, 2).text(), "2")
+        self.assertEqual(count_table.table.item(0, 3).text(), "")
+        self.assertEqual(count_table.table.item(1, 3).text(), "")
+        self.assertEqual(count_table.table.item(2, 3).text(), "4")
+        self.assertEqual(count_table.table.item(3, 3).text(), "4")
 
 if __name__ == '__main__':
     unittest.main()
