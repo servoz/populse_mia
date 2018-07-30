@@ -1690,6 +1690,8 @@ class TableDataBrowser(QTableWidget):
 
         super(TableDataBrowser, self).mouseReleaseEvent(e)
 
+        print("begin mouse release event")
+
         self.setMouseTracking(False)
 
         self.coordinates = []  # Coordinates of selected cells stored

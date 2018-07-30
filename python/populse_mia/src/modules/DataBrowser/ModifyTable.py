@@ -23,6 +23,8 @@ class ModifyTable(QDialog):
         """
         super().__init__()
 
+        self.setModal(True)
+
         # Variables init
         self.types = types
         self.scans = scans

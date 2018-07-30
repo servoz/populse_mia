@@ -45,8 +45,8 @@ class Database_mia(Database):
             return False
         else:
             Table(FIELD_TABLE, metadata,
-                  Column("name", String, primary_key=True),
-                  Column("collection", String, primary_key=True),
+                  Column("field_name", String, primary_key=True),
+                  Column("collection_name", String, primary_key=True),
                   Column(
                       "type", Enum(FIELD_TYPE_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_BOOLEAN,
                                    FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_TIME,
@@ -61,7 +61,7 @@ class Database_mia(Database):
                   Column("default_value", String, nullable=True))
 
             Table(COLLECTION_TABLE, metadata,
-                  Column("name", String, primary_key=True),
+                  Column("collection_name", String, primary_key=True),
                   Column("primary_key", String, nullable=False))
 
         metadata.create_all(engine)
@@ -156,7 +156,7 @@ class Database_session_mia(DatabaseSession):
             raise ValueError("The collection primary_key must be of type " + str(str) + ", but collection primary_key of type " + str(type(primary_key)) + " given")
 
         # Adding the collection row
-        collection_row = self.table_classes[COLLECTION_TABLE](name=name, primary_key=primary_key)
+        collection_row = self.table_classes[COLLECTION_TABLE](collection_name=name, primary_key=primary_key)
         self.session.add(collection_row)
 
         # Creating the collection document table
@@ -173,7 +173,7 @@ class Database_session_mia(DatabaseSession):
         self.table_classes[table_name] = collection_class
 
         # Adding the primary_key of the collection as field
-        primary_key_field = self.table_classes[FIELD_TABLE](name=primary_key, collection=name,
+        primary_key_field = self.table_classes[FIELD_TABLE](field_name=primary_key, collection_name=name,
                                              type=FIELD_TYPE_STRING, description="Primary_key of the document collection " + name, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
         self.session.add(primary_key_field)
 
@@ -246,7 +246,7 @@ class Database_session_mia(DatabaseSession):
                     type(description)) + " given")
 
         # Adding the field in the field table
-        field_row = self.table_classes[FIELD_TABLE](name=name, collection=collection, type=field_type,
+        field_row = self.table_classes[FIELD_TABLE](field_name=name, collection_name=collection, type=field_type,
                                                     description=description, visibility=visibility, origin=origin, unit=unit, default_value=default_value)
 
         if self._DatabaseSession__caches:
@@ -306,8 +306,8 @@ class Database_session_mia(DatabaseSession):
         visible_fields = self.session.query(self.table_classes[FIELD_TABLE]).filter(self.table_classes[FIELD_TABLE].visibility == True).all()
         visible_names = []
         for field in visible_fields:
-            if field.name not in visible_names:
-                visible_names.append(field.name)
+            if field.field_name not in visible_names:
+                visible_names.append(field.field_name)
         return visible_names
 
     def set_visibles(self, visibles):
@@ -317,7 +317,7 @@ class Database_session_mia(DatabaseSession):
         """
 
         for field in self.session.query(self.table_classes[FIELD_TABLE]).all():
-            if field.name in visibles:
+            if field.field_name in visibles:
                 field.visibility = True
             else:
                 field.visibility = False

@@ -110,7 +110,7 @@ class Ui_Dialog_clone_tag(QDialog):
     def ok_action(self, project):
         name_already_exists = False
         for tag in project.session.get_fields(COLLECTION_CURRENT):
-            if tag.name == self.line_edit_new_tag_name.text():
+            if tag.field_name == self.line_edit_new_tag_name.text():
                 name_already_exists = True
         if name_already_exists:
             self.msg = QMessageBox()

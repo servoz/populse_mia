@@ -67,7 +67,7 @@ class Ui_Dialog_remove_tag(QDialog):
             if tag.origin == TAG_ORIGIN_USER:
                 item = QtWidgets.QListWidgetItem()
                 self.list_widget_tags.addItem(item)
-                item.setText(_translate("Dialog", tag.name))
+                item.setText(_translate("Dialog", tag.field_name))
 
         self.setLayout(vbox)
 

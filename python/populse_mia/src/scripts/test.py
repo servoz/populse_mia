@@ -1,7 +1,8 @@
 import os
 
 # Working from the scripts directory
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.uic.properties import QtGui, QtCore
 
 from populse_db.database import FIELD_TYPE_INTEGER
 
@@ -843,6 +844,15 @@ class TestMIADataBrowser(unittest.TestCase):
 
         fov_column = self.imageViewer.data_browser.table_data.get_tag_column("FOV")
         fov_item = self.imageViewer.data_browser.table_data.item(0, fov_column)
+        """
+        print("trace 1")
+        QTest.mouseMove(self.imageViewer.data_browser.table_data, QPoint(1100, 30))
+        print("trace 2")
+        QTest.mousePress(self.imageViewer.data_browser.table_data, Qt.LeftButton, pos=QPoint(1100, 20))
+        print("trace 3")
+        QTest.mouseRelease(self.imageViewer.data_browser.table_data, Qt.LeftButton, pos=QPoint(1100, 20))
+        print("trace 4")
+        """
 
     def test_mia_preferences(self):
         """
@@ -873,6 +883,16 @@ class TestMIADataBrowser(unittest.TestCase):
         config = Config()
         reput_auto_save = config.isAutoSave()
         self.assertEqual(reput_auto_save, "no")
+
+        # Checking that the changes are not effective if cancel is clicked
+        self.imageViewer.action_software_preferences.trigger()
+        properties = self.imageViewer.pop_up_preferences
+        properties.tab_widget.setCurrentIndex(1)
+        properties.save_checkbox.setChecked(True)
+        QTest.mouseClick(properties.push_button_cancel, Qt.LeftButton)
+        config = Config()
+        auto_save = config.isAutoSave()
+        self.assertEqual(auto_save, "no")
 
     def test_undo_redo_databrowser(self):
         """
@@ -948,8 +968,8 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(count_table.table.item(3, 2).text(), "2")
         self.assertEqual(count_table.table.item(0, 3).text(), "")
         self.assertEqual(count_table.table.item(1, 3).text(), "")
-        self.assertEqual(count_table.table.item(2, 3).text(), "4")
-        self.assertEqual(count_table.table.item(3, 3).text(), "4")
+        self.assertEqual(count_table.table.item(2, 3).text(), "5")
+        self.assertEqual(count_table.table.item(3, 3).text(), "5")
 
 if __name__ == '__main__':
     unittest.main()
