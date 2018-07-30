@@ -1,8 +1,7 @@
 import os
 
 # Working from the scripts directory
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.uic.properties import QtGui, QtCore
+from PyQt5.QtCore import Qt
 
 from populse_db.database import FIELD_TYPE_INTEGER
 
@@ -136,7 +135,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
-        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton) # Blocking here on osx tests
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
 
@@ -835,25 +834,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertNotEqual(mixed_bandwidths, down_bandwidths)
         self.assertEqual(sorted(mixed_bandwidths, reverse=True), down_bandwidths)
 
-    def test_set_list_values(self):
-        """
-        Tests the setting of list values in the databrowser
-        """
-
-        self.imageViewer.switch_project("project_8", "project_8", "project_8")
-
-        fov_column = self.imageViewer.data_browser.table_data.get_tag_column("FOV")
-        fov_item = self.imageViewer.data_browser.table_data.item(0, fov_column)
-        """
-        print("trace 1")
-        QTest.mouseMove(self.imageViewer.data_browser.table_data, QPoint(1100, 30))
-        print("trace 2")
-        QTest.mousePress(self.imageViewer.data_browser.table_data, Qt.LeftButton, pos=QPoint(1100, 20))
-        print("trace 3")
-        QTest.mouseRelease(self.imageViewer.data_browser.table_data, Qt.LeftButton, pos=QPoint(1100, 20))
-        print("trace 4")
-        """
-
     def test_mia_preferences(self):
         """
         Tests the MIA preferences popup
@@ -932,6 +912,48 @@ class TestMIADataBrowser(unittest.TestCase):
         bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
         bw_redo = bw_item.text()
         self.assertEqual(int(bw_redo), 0)
+
+        # Testing scan removal undo/redo
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 8)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 8)
+        self.imageViewer.data_browser.table_data.selectRow(0)
+        self.imageViewer.data_browser.table_data.remove_scan()
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 7)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 7)
+        self.imageViewer.action_undo.trigger()
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 8)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 8)
+        self.imageViewer.action_redo.trigger()
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 7)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 7)
+
+        # Testing add tag undo/redo
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
+        add_tag.text_edit_tag_name.setText("Test")
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+        self.imageViewer.action_undo.trigger()
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+        self.imageViewer.action_redo.trigger()
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+
+        # Testing remove tag undo/redo
+        self.imageViewer.data_browser.remove_tag_action.trigger()
+        remove_tag = self.imageViewer.data_browser.pop_up_remove_tag
+        remove_tag.list_widget_tags.setCurrentRow(0)  # Test tag selected
+        QTest.mouseClick(remove_tag.push_button_ok, Qt.LeftButton)
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+        self.imageViewer.action_undo.trigger()
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+        self.imageViewer.action_redo.trigger()
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
+        self.assertFalse("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
 
     def test_count_table(self):
         """

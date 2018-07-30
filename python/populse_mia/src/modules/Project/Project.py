@@ -350,15 +350,15 @@ class Project:
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
-                    self.session.add_field(COLLECTION_CURRENT, tagToReput.name, tagToReput.type, tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
-                    self.session.add_field(COLLECTION_INITIAL, tagToReput.name, tagToReput.type,tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
+                    self.session.add_field(COLLECTION_CURRENT, tagToReput.field_name, tagToReput.type, tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
+                    self.session.add_field(COLLECTION_INITIAL, tagToReput.field_name, tagToReput.type,tagToReput.description, tagToReput.visibility, tagToReput.origin, tagToReput.unit, tagToReput.default_value)
                 valuesRemoved = toUndo[2]  # The third element is a list of tags values (Value class)
                 self.reput_values(valuesRemoved)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
                     tagToReput = tagsRemoved[i][0]
-                    column = table.get_index_insertion(tagToReput.name)
-                    table.add_column(column, tagToReput.name)
+                    column = table.get_index_insertion(tagToReput.field_name)
+                    table.add_column(column, tagToReput.field_name)
             if (action == "add_scans"):
                 # To remove added scans, we just need their file name
                 scansAdded = toUndo[1]  # The second element is a list of added scans to remove
@@ -471,7 +471,7 @@ class Project:
                 tagsRemoved = toRedo[1]  # The second element is a list of the removed tags (Tag class)
                 for i in range(0, len(tagsRemoved)):
                     # We reput each tag in the tag list, keeping all the tags params
-                    tagToRemove = tagsRemoved[i][0].name
+                    tagToRemove = tagsRemoved[i][0].field_name
                     self.session.remove_field(COLLECTION_CURRENT, tagToRemove)
                     self.session.remove_field(COLLECTION_INITIAL, tagToRemove)
                     column_to_remove = table.get_tag_column(tagToRemove)
