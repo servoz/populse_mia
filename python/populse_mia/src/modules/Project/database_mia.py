@@ -41,7 +41,9 @@ class Database_mia(Database):
         engine = create_engine(string_engine)
         metadata = MetaData()
         metadata.reflect(bind=engine)
-        if FIELD_TABLE in metadata.tables:
+        if FIELD_TABLE in metadata.tables and COLLECTION_TABLE in metadata.tables:
+            return True
+        elif len(metadata.tables) > 0:
             return False
         else:
             Table(FIELD_TABLE, metadata,
@@ -64,8 +66,8 @@ class Database_mia(Database):
                   Column("collection_name", String, primary_key=True),
                   Column("primary_key", String, nullable=False))
 
-        metadata.create_all(engine)
-        return True
+            metadata.create_all(engine)
+            return True
 
     def __enter__(self):
         '''
