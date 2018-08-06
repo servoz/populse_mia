@@ -268,4 +268,11 @@ class IterationTable(QWidget):
         self.update_table()
 
     def emit_iteration_table_updated(self):
-        self.iteration_table_updated.emit(self.scans)
+        if self.check_box_iterate.checkState():
+            if hasattr(self, 'scans'):
+                self.iteration_table_updated.emit(self.scans)
+            else:
+                self.iteration_table_updated.emit(self.scan_list)
+        else:
+            self.iteration_table_updated.emit(self.scan_list)
+

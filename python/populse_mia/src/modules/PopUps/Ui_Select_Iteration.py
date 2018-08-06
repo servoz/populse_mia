@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QCheckBox, QLabel
+from PyQt5.QtCore import Qt
 
 
 class Ui_Select_Iteration(QDialog):
@@ -23,6 +24,7 @@ class Ui_Select_Iteration(QDialog):
         self.check_boxes = []
         for tag_value in tag_values:
             check_box = QCheckBox(tag_value)
+            check_box.setCheckState(Qt.Checked)
             self.check_boxes.append(check_box)
             self.v_box.addWidget(check_box)
 

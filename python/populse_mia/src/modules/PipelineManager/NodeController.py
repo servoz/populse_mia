@@ -516,8 +516,10 @@ class PlugFilter(QWidget):
 
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
-            plug_filter = Filter(None, nots, values, fields, links, conditions, "")
-            self.process.filters[self.plug_name] = plug_filter
+
+            # To use if the filters are set on plugs
+            """plug_filter = Filter(None, nots, values, fields, links, conditions, "")
+            self.process.filters[self.plug_name] = plug_filter"""
 
         '''self.advanced_search.apply_filter(filter)'''
 
