@@ -313,8 +313,8 @@ class Main_Window(QMainWindow):
 
         import glob
         self.exPopup = Ui_Dialog_Save_Project_As()
-        self.exPopup.setParent(self)
-        self.exPopup.setModal(True)
+        #self.exPopup.setParent(self)
+        #self.exPopup.setModal(True)
         if self.exPopup.exec_():
 
             old_folder = self.project.folder
@@ -399,8 +399,8 @@ class Main_Window(QMainWindow):
 
             # Opens a pop-up when the 'New Project' action is clicked and updates the recent projects
             self.exPopup = Ui_Dialog_New_Project()
-            self.exPopup.setParent(self)
-            self.exPopup.setModal(True)
+            # self.exPopup.setParent(self)
+            # self.exPopup.setModal(True)
 
             if self.exPopup.exec_():
 
