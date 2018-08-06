@@ -8,7 +8,8 @@ class Ui_Filter_Selection(QDialog):
 
     def __init__(self, database):
         super().__init__()
-        self.database = database
+        self.project = database
+        self.setModal(True)
 
         _translate = QtCore.QCoreApplication.translate
 
@@ -61,11 +62,11 @@ class Ui_Filter_Selection(QDialog):
     def search_str(self, str_search):
         return_list = []
         if str_search != "":
-            for filter in self.database.filters:
+            for filter in self.project.filters:
                 if str_search.upper() in filter.name.upper():
                     return_list.append(filter.name)
         else:
-            for filter in self.database.filters:
+            for filter in self.project.filters:
                 return_list.append(filter.name)
 
         for idx in range(self.list_widget_filters.count()):
