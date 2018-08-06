@@ -124,16 +124,13 @@ class PipelineManagerTab(QWidget):
         self.splitterRight = QSplitter(Qt.Vertical)
         self.splitterRight.addWidget(self.iterationTable)
         self.splitterRight.addWidget(self.scrollArea)
-
-        self.splitter0 = QSplitter(Qt.Horizontal)
-        self.splitter0.addWidget(self.pipelineEditorTabs)
-        self.splitter0.addWidget(self.splitterRight)
+        self.splitterRight.setSizes([400, 400])
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter1.addWidget(self.processLibrary)
         self.splitter1.addWidget(self.pipelineEditorTabs)
         self.splitter1.addWidget(self.splitterRight)
-        self.splitter1.setSizes([100, 400, 200])
+        self.splitter1.setSizes([200, 800, 200])
 
         self.splitter2 = QSplitter(Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
