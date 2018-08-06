@@ -93,7 +93,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         return self.widget(self.currentIndex())
 
     def get_current_filename(self):
-        if self.tabText(self.currentIndex())[:-2] == " *":
+        if self.tabText(self.currentIndex())[-2:] == " *":
             return self.tabText(self.currentIndex())[:-2]
         else:
             return self.tabText(self.currentIndex())
@@ -153,7 +153,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.undos[self.get_current_filename()] = developper_view.undos
         self.redos[self.get_current_filename()] = developper_view.redos
         file_name = self.get_current_filename()
-        self.setTabText(self.currentIndex(), file_name + " *")
+        if file_name[-2:] != " *":
+            self.setTabText(self.currentIndex(), file_name + " *")
 
     def reset_pipeline(self):
         self.get_current_editor()._reset_pipeline()
