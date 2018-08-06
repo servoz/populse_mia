@@ -7,14 +7,15 @@ class Ui_Select_Filter(Ui_Filter_Selection):
     Is called when the user wants to open a filter saved before
     """
 
-    def __init__(self, database):
-        super(Ui_Select_Filter, self).__init__(database)
-        self.database = database
+    def __init__(self, project, databrowser):
+        super(Ui_Select_Filter, self).__init__(project)
+        self.project = project
+        self.databrowser = databrowser
         self.config = Config()
         self.setWindowTitle("Open a filter")
 
         # Filling the filter list
-        for filter in self.database.filters:
+        for filter in self.project.filters:
             item = QtWidgets.QListWidgetItem()
             self.list_widget_filters.addItem(item)
             item.setText(filter.name)
@@ -24,9 +25,11 @@ class Ui_Select_Filter(Ui_Filter_Selection):
 
             # Current filter updated
             filter_name = item.text()
-            filter_object = self.database.getFilter(filter_name)
-            self.database.setCurrentFilter(filter_object)
+            filter_object = self.project.getFilter(filter_name)
+            self.project.setCurrentFilter(filter_object)
             break
+
+        self.databrowser.open_filter_infos()
 
         self.accept()
         self.close()
