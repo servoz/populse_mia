@@ -23,7 +23,7 @@ class Ui_Dialog_Show_Brick(QDialog):
 
         self.databrowser = databrowser
         self.imageViewer = imageViewer
-        project = project
+        self.project = project
         brick_row = project.session.get_document(COLLECTION_BRICK, brick_uuid)
         self.setWindowTitle("Brick " + getattr(brick_row, BRICK_NAME) + " history")
 
@@ -88,13 +88,10 @@ class Ui_Dialog_Show_Brick(QDialog):
             table.setHorizontalHeaderItem(column, item)
             value = inputs[name]
             if isinstance(value, list):
-                widget = QWidget()
+                sub_widget = QWidget()
                 sub_layout = QVBoxLayout()
                 for sub_value in value:
-                    value_scan = None
-                    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
-                        if scan in str(sub_value):
-                            value_scan = scan
+                    value_scan = self.io_value_is_scan(sub_value)
                     if value_scan is not None:
                         button = QPushButton(value_scan)
                         button.clicked.connect(self.file_clicked)
@@ -102,12 +99,22 @@ class Ui_Dialog_Show_Brick(QDialog):
                     else:
                         label = QLabel(str(sub_value))
                         sub_layout.addWidget(label)
-                widget.setLayout(sub_layout)
-                table.setCellWidget(0, column, widget)
+                sub_widget.setLayout(sub_layout)
+                table.setCellWidget(0, column, sub_widget)
             else:
-                item = QTableWidgetItem()
-                item.setText(str(value))
-                table.setItem(0, column, item)
+                value_scan = self.io_value_is_scan(value)
+                if value_scan is not None:
+                    widget = QWidget()
+                    output_layout = QVBoxLayout()
+                    button = QPushButton(value_scan)
+                    button.clicked.connect(self.file_clicked)
+                    output_layout.addWidget(button)
+                    widget.setLayout(output_layout)
+                    table.setCellWidget(0, column, widget)
+                else:
+                    item = QTableWidgetItem()
+                    item.setText(str(value))
+                    table.setItem(0, column, item)
             column += 1
 
         # Outputs
@@ -117,13 +124,10 @@ class Ui_Dialog_Show_Brick(QDialog):
             table.setHorizontalHeaderItem(column, item)
             value = outputs[name]
             if isinstance(value, list):
-                widget = QWidget()
+                sub_widget = QWidget()
                 sub_layout = QVBoxLayout()
                 for sub_value in value:
-                    value_scan = None
-                    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
-                        if scan in str(sub_value):
-                            value_scan = scan
+                    value_scan = self.io_value_is_scan(sub_value)
                     if value_scan is not None:
                         button = QPushButton(value_scan)
                         button.clicked.connect(self.file_clicked)
@@ -131,12 +135,22 @@ class Ui_Dialog_Show_Brick(QDialog):
                     else:
                         label = QLabel(str(sub_value))
                         sub_layout.addWidget(label)
-                widget.setLayout(sub_layout)
-                table.setCellWidget(0, column, widget)
+                sub_widget.setLayout(sub_layout)
+                table.setCellWidget(0, column, sub_widget)
             else:
-                item = QTableWidgetItem()
-                item.setText(str(value))
-                table.setItem(0, column, item)
+                value_scan = self.io_value_is_scan(value)
+                if value_scan is not None:
+                    widget = QWidget()
+                    output_layout = QVBoxLayout()
+                    button = QPushButton(value_scan)
+                    button.clicked.connect(self.file_clicked)
+                    output_layout.addWidget(button)
+                    widget.setLayout(output_layout)
+                    table.setCellWidget(0, column, widget)
+                else:
+                    item = QTableWidgetItem()
+                    item.setText(str(value))
+                    table.setItem(0, column, item)
             column += 1
 
         table.verticalHeader().setMinimumSectionSize(30)
@@ -150,6 +164,19 @@ class Ui_Dialog_Show_Brick(QDialog):
         width, height = screen_resolution.width(), screen_resolution.height()
         self.setMinimumHeight(0.5 * height)
         self.setMinimumWidth(0.8 * width)
+
+    def io_value_is_scan(self, value):
+        """
+        Checks if the I/O value is a scan
+        :param value: I/O value
+        :return: The scan corresponding to the value if it exists, None otherwise
+        """
+
+        value_scan = None
+        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+            if scan in str(value):
+                value_scan = scan
+        return value_scan
 
     def file_clicked(self):
         """

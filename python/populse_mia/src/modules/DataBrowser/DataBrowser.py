@@ -229,9 +229,10 @@ class DataBrowser(QWidget):
         To open a project filter saved before
         """
 
-        self.popUp = Ui_Select_Filter(self.project)
-        if self.popUp.exec_():
-            pass
+        self.popUp = Ui_Select_Filter(self.project, self)
+        self.popUp.show()
+
+    def open_filter_infos(self):
 
         filterToApply = self.project.currentFilter
 

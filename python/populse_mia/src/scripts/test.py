@@ -884,7 +884,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.project.undos, [])
         self.assertEqual(self.imageViewer.project.redos, [])
 
-        # Testing sort undo/redo
+        # Testing modified value undo/redo
         bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
         bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
         bw_old = bw_item.text()
@@ -971,6 +971,8 @@ class TestMIADataBrowser(unittest.TestCase):
         count_table.fill_values(1)
         QTest.mouseClick(count_table.push_button_count, Qt.LeftButton)
 
+        QApplication.processEvents()
+
         self.assertEqual(count_table.table.horizontalHeaderItem(0).text(), "BandWidth")
         self.assertEqual(count_table.table.horizontalHeaderItem(1).text(), "75")
         self.assertEqual(count_table.table.horizontalHeaderItem(2).text(), "5.8239923")
@@ -992,6 +994,54 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(count_table.table.item(1, 3).text(), "")
         self.assertEqual(count_table.table.item(2, 3).text(), "5")
         self.assertEqual(count_table.table.item(3, 3).text(), "5")
+
+    def test_clear_cell(self):
+        """
+        Tests the method clearing cells
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        # Selecting a cell
+        bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_item.setSelected(True)
+        self.assertEqual(int(bw_item.text()), 50000)
+        self.assertEqual(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"), 50000)
+
+        # Clearing the cell
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        bw_item.setSelected(True)
+        self.imageViewer.data_browser.table_data.itemChanged.disconnect()
+        self.imageViewer.data_browser.table_data.clear_cell()
+        self.imageViewer.data_browser.table_data.itemChanged.connect(self.imageViewer.data_browser.table_data.change_cell_color)
+
+        # Checking that it's empty
+        bw_item = self.imageViewer.data_browser.table_data.item(0, bw_column)
+        self.assertEqual(bw_item.text(), "*Not Defined*")
+        self.assertIsNone(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
+
+    def test_open_project_filter(self):
+        """
+        Tests project filter opening
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        self.imageViewer.data_browser.open_filter_action.trigger()
+        open_popup = self.imageViewer.data_browser.popUp
+        open_popup.list_widget_filters.item(0).setSelected(True)
+        QTest.mouseClick(open_popup.push_button_ok, Qt.LeftButton)
+
+        scans_displayed = []
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, 0)
+            scan_name = item.text()
+            if not self.imageViewer.data_browser.table_data.isRowHidden(row):
+                scans_displayed.append(scan_name)
+        self.assertEqual(len(scans_displayed), 1)
+        self.assertTrue(
+            "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
 if __name__ == '__main__':
     unittest.main()
