@@ -79,8 +79,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setCurrentIndex(self.count()-2)
 
     def close_tab(self, idx):
-        del self.undos[self.get_current_filename()]
-        del self.redos[self.get_current_filename()]
+        filename = self.get_filename_by_index(idx)
+        del self.undos[filename]
+        del self.redos[filename]
 
         if idx == self.currentIndex():
             self.setCurrentIndex(max(0, self.currentIndex()-1))
@@ -91,6 +92,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def get_current_editor(self):
         return self.widget(self.currentIndex())
+
+    def get_filename_by_index(self, idx):
+        if self.tabText(idx)[-2:] == " *":
+            return self.tabText(idx)[:-2]
+        else:
+            return self.tabText(idx)
 
     def get_current_filename(self):
         if self.tabText(self.currentIndex())[-2:] == " *":
