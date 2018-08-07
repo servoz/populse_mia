@@ -1719,7 +1719,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     edit_sub_pipeline = QtCore.Signal(Pipeline)
     '''Signal emitted when a sub-pipeline has to be edited'''
     open_filter = QtCore.Signal(str)
-    '''Signal emitted when a Populse Filter has to be opened'''
+    '''Signal emitted when an Input Filter has to be opened'''
     scene = None
     '''
     type: PipelineScene
@@ -2184,8 +2184,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             node_name = ''
         node = self.scene.pipeline.nodes[node_name]
 
-        # Populse_Filter
-        if process.name == "Populse_Filter":
+        # Input_Filter
+        if process.name == "Input_Filter":
             edit_sub_pipeline = menu.addAction('Open filter')
             edit_sub_pipeline.triggered.connect(self.emit_open_filter)
             menu.addSeparator()

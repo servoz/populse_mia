@@ -703,7 +703,7 @@ class PlugFilter(QWidget):
 
 class FilterWidget(QWidget):
     """
-    Filter widget used on a Populse_Filter process
+    Filter widget used on a Input_Filter process
 
     The widget displays a browser with the selected files of the database,
     a rapid search and an advanced search to filter these files. Once the
@@ -714,7 +714,7 @@ class FilterWidget(QWidget):
         - main_window: parent main window
         - process: process instance of the selected node
         - project: current project in the software
-        - node: instance of the corresponding Populse_Filter node
+        - node: instance of the corresponding Input_Filter node
         - node_controller: parent node controller
         - rapid_search: rapid search widget to build a simple filter
         - scan_list: list of database files to filter
@@ -736,7 +736,7 @@ class FilterWidget(QWidget):
 
         :param project: current project in the software
         :param node_name: name of the current node
-        :param node: instance of the corresponding Populse_Filter node
+        :param node: instance of the corresponding Input_Filter node
         :param main_window:parent main window
         """
 
@@ -751,7 +751,7 @@ class FilterWidget(QWidget):
         self.main_window = main_window
 
         scan_list = []
-        # The scan list to filter corresponds to the input of the Populse Filter
+        # The scan list to filter corresponds to the input of the Input Filter
         if self.process.input and self.process is not Undefined:
             for scan in self.process.input:
                 path, file_name = os.path.split(scan)
