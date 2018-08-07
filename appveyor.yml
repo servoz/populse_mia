@@ -3,6 +3,7 @@ environment:
   matrix:
 
     - PYTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python37"
 
 build: off
 
@@ -26,3 +27,10 @@ install:
 test_script:
   - "python --version"
   - "python .\\python\\populse_mia\\src\\scripts\\test.py"
+
+notifications:
+  - provider: Email
+    to:
+      - '{{commitAuthorEmail}}'
+    on_build_failure: true
+    on_build_status_changed: true
