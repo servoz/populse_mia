@@ -2,27 +2,27 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel
 
 
-class Ui_Dialog_Quit(QDialog):
+class Ui_Dialog_Close_Pipeline(QDialog):
     """
-    Is called when the user closes the software and the current project
-    has been modified
+    Is called when the user closes a pipeline and it has been modified
     """
 
     save_as_signal = pyqtSignal()
     do_not_save_signal = pyqtSignal()
     cancel_signal = pyqtSignal()
 
-    def __init__(self, database):
+    def __init__(self, pipeline_name):
         super().__init__()
 
-        self.database = database
+        self.pipeline_name = pipeline_name
 
         self.bool_exit = False
+        self.bool_save_as = False
 
-        self.setWindowTitle("Confirm exit")
+        self.setWindowTitle("Confirm pipeline closing")
 
         label = QLabel(self)
-        label.setText('Do you want to exit without saving ' + self.database.getName() + '?')
+        label.setText('Do you want to close the pipeline without saving ' + self.pipeline_name + '?')
 
         push_button_save_as = QPushButton("Save", self)
         push_button_do_not_save = QPushButton("Do not save", self)
@@ -46,6 +46,7 @@ class Ui_Dialog_Quit(QDialog):
 
     def save_as_clicked(self):
         self.save_as_signal.emit()
+        self.bool_save_as = True
         self.bool_exit = True
         self.close()
 
