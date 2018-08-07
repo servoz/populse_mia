@@ -12,6 +12,7 @@ from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 
 from PipelineManager.NodeController import FilterWidget
+from PopUps.Ui_Dialog_Close_Pipeline import Ui_Dialog_Close_Pipeline
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -79,7 +80,27 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setCurrentIndex(self.count()-2)
 
     def close_tab(self, idx):
+
         filename = self.get_filename_by_index(idx)
+
+        if self.tabText(idx)[-2:] == " *":
+            pop_up_close = Ui_Dialog_Close_Pipeline(filename)
+            pop_up_close.save_as_signal.connect(self.save_pipeline)
+            pop_up_close.exec()
+            can_exit = pop_up_close.can_exit()
+
+            if pop_up_close.bool_save_as:
+                if idx == self.currentIndex():
+                    self.setCurrentIndex(max(0, self.currentIndex() - 1))
+                self.removeTab(idx)
+                return
+
+        else:
+            can_exit = True
+
+        if not can_exit:
+            return
+
         del self.undos[filename]
         del self.redos[filename]
 
