@@ -259,7 +259,7 @@ class Database_session_mia(DatabaseSession):
         # Fields creation
         if field_type in LIST_TYPES:
             if self.list_tables:
-                table = 'list_%s_%s' % (collection, self.name_to_valid_column_name(name))
+                table = 'list_%s_%s' % (self.name_to_valid_column_name(collection), self.name_to_valid_column_name(name))
                 list_table = Table(table, self.metadata, Column('document_id', String, primary_key=True),
                                    Column('i', Integer, primary_key=True),
                                    Column('value', TYPE_TO_COLUMN[field_type[5:]]))
