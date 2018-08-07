@@ -36,20 +36,60 @@ else:
 
 
 class NodeController(QWidget):
-    """ The node controller is displayed on the right of the pipeline editor"""
+    """
+    Controller that allows to change the input and output values of a pipeline node
+
+    Attributes:
+        - node_name: name of the selected node
+        - project: current project in the software
+        - scan_list: list of the selected database files
+
+    Methods:
+        - display_parameters: displays the parameters of the selected node
+        - update_node_name: updates the name of the selected node
+        - update_plug_value: updates the value of a node plug
+        - display_filter: displays a filter widget
+        - update_plug_value_from_filter: updates the plug value from a filter result
+        - browse_file: opens a browser to select file(s)
+        - clearLayout: clears the layouts of the widget
+    """
 
     value_changed = pyqtSignal(list)
 
     def __init__(self, project, scan_list, pipeline_manager_tab, main_window):
+        """
+        Initialization of the Node Controller
+
+        :param project: current project in the software
+        :param scan_list: list of the selected database files
+        :param pipeline_manager_tab: parent widget
+        :param main_window: main window of the software
+        """
+
         super(NodeController, self).__init__(pipeline_manager_tab)
-        self.v_box_final = QVBoxLayout()
-        self.h_box_node_name = QHBoxLayout()
+
         self.project = project
         self.scan_list = scan_list
         self.main_window = main_window
+        self.node_name = ""
+
+        # Layouts
+        self.v_box_final = QVBoxLayout()
+        self.h_box_node_name = QHBoxLayout()
 
     def display_parameters(self, node_name, process, pipeline):
-        """ Methods that displays all the parameters of the selected nodes"""
+        """
+        Displays the parameters of the selected node
+
+        The node parameters are read and line labels/line edits/push buttons are
+        created for each of them. This methods consists mainly in widget and layout
+        organization.
+
+        :param node_name: name of the node
+        :param process: process of the node
+        :param pipeline: current pipeline
+        :return:
+        """
 
         self.node_name = node_name
 
@@ -65,6 +105,8 @@ class NodeController(QWidget):
         label_node_name.setText('Node name:')
 
         self.line_edit_node_name = QLineEdit()
+
+        # The pipeline global inputs and outputs node name cannot be modified
         if self.node_name not in ('inputs', 'outputs'):
             self.line_edit_node_name.setText(self.node_name)
             self.line_edit_node_name.returnPressed.connect(partial(self.update_node_name, pipeline))
@@ -108,7 +150,7 @@ class NodeController(QWidget):
                                                         name, pipeline, type(value)))
                     h_box.addWidget(push_button)
 
-                # Adding the "Filter" push button
+                # Adding the "Filter" push button for all mandatory plugs
                 if hasattr(trait, 'optional'):
                     parameters = (idx, pipeline, type(value))
                     if not trait.optional:
@@ -164,17 +206,26 @@ class NodeController(QWidget):
         self.button_group_outputs.setLayout(self.v_box_outputs)
 
         self.v_box_final.addLayout(self.h_box_node_name)
-        #self.v_box_final.addWidget(self.advanced_search)
         self.v_box_final.addWidget(self.button_group_inputs)
         self.v_box_final.addWidget(self.button_group_outputs)
 
         self.setLayout(self.v_box_final)
 
     def update_node_name(self, pipeline, new_node_name=None):
-        """ Method that allow to change the name of the selected node and update
-        the pipeline. Because the nodes are stored in a dictionary, we have to
-        create a new node that has the same traits as the selected one and create
-        new links that are the same than the selected node."""
+        """
+        Changes the name of the selected node and updates the pipeline.
+
+        Because the nodes are stored in a dictionary, we have to create
+        a new node that has the same traits as the selected one and create
+        new links that are the same than the selected node.
+
+        :param pipeline: current pipeline
+        :param new_node_name: new node name (is None except when this method
+        is called from an undo/redo)
+        :return:
+        """
+
+        # Copying the old node
         old_node = pipeline.nodes[self.node_name]
         old_node_name = self.node_name
 
@@ -192,13 +243,13 @@ class NodeController(QWidget):
                 for (dest_node_name, dest_parameter, dest_node, dest_plug,
                      weak_link) in source_plug.links_to.copy():
                     pipeline.remove_link(self.node_name + "." + source_parameter + "->"
-                                      + dest_node_name + "." + dest_parameter)
+                                         + dest_node_name + "." + dest_parameter)
                     links_to_copy.append(("to", source_parameter, dest_node_name, dest_parameter))
 
                 for (dest_node_name, dest_parameter, dest_node, dest_plug,
                      weak_link) in source_plug.links_from.copy():
                     pipeline.remove_link(dest_node_name + "." + dest_parameter + "->"
-                                      + self.node_name + "." + source_parameter)
+                                         + self.node_name + "." + source_parameter)
                     links_to_copy.append(("from", source_parameter, dest_node_name, dest_parameter))
 
             # Creating a new node with the new name and deleting the previous one
@@ -225,8 +276,20 @@ class NodeController(QWidget):
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
     def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type, new_value=None):
-        """ Method that updates in the pipeline the value of a plug """
+        """
+        Updates the value of a node plug
 
+        :param index: index of the plug
+        :param in_or_out: "in" if the plug is an input plug, "out" else
+        :param plug_name: name of the plug
+        :param pipeline: current pipeline
+        :param value_type: type of the plug value
+        :param new_value: new value for the plug (is None except when this method is
+        called from an undo/redo)
+        :return:
+        """
+
+        # Reading the value from the plug's line edit
         if not new_value:
 
             if in_or_out == 'in':
@@ -235,20 +298,16 @@ class NodeController(QWidget):
                 new_value = self.line_edit_output[index].text()
             else:
                 new_value = None
-                #TODO: RAISE ERROR
-                pass
 
             try:
                 new_value = eval(new_value)
-                #value_type = type(new_value)
-            except:
-                #TODO: RAISE SYNTHAXERROR
-                pass
+            except NameError:
+                print("NameError for value {0}").format(new_value)
+            except SyntaxError:
+                print("SynthaxError for value {0}").format(new_value)
 
             if value_type not in [float, int, str, list]:
-                #new_value = eval(new_value)
                 value_type = str
-                #TODO: RAISE ERROR
 
         if self.node_name in ['inputs', 'outputs']:
             node_name = ''
@@ -256,15 +315,16 @@ class NodeController(QWidget):
             node_name = self.node_name
 
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
+
         try:
             pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
         except:
-            # TODO RAISE EXCEPTION
             msg = QMessageBox()
             msg.setText("The value of {0} has to be of type {1}.".format(plug_name, str(value_type)))
-            #msg.setTitle("Type warning")
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+
+        # Update pipeline to "propagate" the node value
         pipeline.update_nodes_and_plugs_activation()
 
         if in_or_out == 'in':
@@ -276,35 +336,62 @@ class NodeController(QWidget):
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
     def display_filter(self, node_name, plug_name, parameters, process):
+        """
+        Displays a filter widget
+
+        :param node_name: name of the node
+        :param plug_name: name of the plug
+        :param parameters: tuple containing the index of the plug, the current
+        pipeline instance and the type of the plug value
+        :param process: process of the node
+        :return:
+        """
         pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
         pop_up.show()
         pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
-        """pop_up.plug_value_changed.connect(partial(self.update_plug_value, index, "in", plug_name,
-                                                  pipeline, value_type))"""
 
-    def update_plug_value_from_filter(self, plug_name, parameters, path_list):
+    def update_plug_value_from_filter(self, plug_name, parameters, filter_res_list):
+        """
+        Updates the plug value from a filter result
+
+        :param plug_name: name of the plug
+        :param parameters: tuple containing the index of the plug, the current
+        pipeline instance and the type of the plug value
+        :param filter_res_list: list of the filtered files
+        :return:
+        """
 
         index = parameters[0]
         pipeline = parameters[1]
         value_type = parameters[2]
 
-        len_list = len(path_list)
+        # If the list contains only one element, setting this element as the plug value
+        len_list = len(filter_res_list)
         if len_list > 1:
-            res = path_list
+            res = filter_res_list
         elif len_list == 1:
-            res = path_list[0]
+            res = filter_res_list[0]
         else:
             res = []
 
         self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
 
-        """# Changing the output of the filter process
-        self.update_plug_value(index, "out", "output", pipeline, value_type, res)"""
-
     def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
-        """ Method that is called to open a browser to select file(s) """
+        """
+        Opens a browser to select file(s) and sets this files to the plug
+        (should be removed in the future)
+
+        :param idx: index of the plug
+        :param in_or_out: "in" if the plug is an input plug, "out" else
+        :param node_name: name of the node
+        :param plug_name: name of the plug
+        :param pipeline: current pipeline
+        :param value_type: type of the plug value
+        :return:
+        """
+
         file_dialog = QFileDialog()
-        # TODO: TO CHANGE WITH OUR OWN QFILEDIALOG
+
         if in_or_out == 'in':
             file_name = file_dialog.getOpenFileName()
             file_name = file_name[0]
@@ -314,11 +401,17 @@ class NodeController(QWidget):
             file_name = file_name[0]
             self.line_edit_output[idx].setText(file_name)
         else:
-            # TODO: RAISE ERROR
-            pass
+            return
+
         self.update_plug_value(idx, in_or_out, plug_name, pipeline, value_type)
 
     def clearLayout(self, layout):
+        """
+        Clears the layouts of the widget
+
+        :param layout: widget with a layout
+        :return:
+        """
         for i in reversed(range(len(layout.children()))):
             if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
                 layout.layout().itemAt(i).widget().setParent(None)
@@ -333,11 +426,49 @@ class NodeController(QWidget):
 
 
 class PlugFilter(QWidget):
-    """ The plug is displayed to filter a plug of the current pipeline"""
+    """
+    Filter widget used on a node plug
+
+    The widget displays a browser with the selected files of the database,
+    a rapid search and an advanced search to filter these files. Once the
+    filtering is done, the result (as a list of files) is set to the plug.
+
+    Attributes:
+        - advanced_search: advanced search widget to build a complex filter
+        - main_window: parent main window
+        - plug_name: name of the selected node plug
+        - plug_value_changed: event emitted when the filtering has been done
+        - process: process instance of the selected node
+        - project: current project in the software
+        - node_controller: parent node controller
+        - rapid_search: rapid search widget to build a simple filter
+        - scans_list: list of database files to filter
+        - table_data: browser that displays the database files to filter
+
+    Methods:
+        - update_tag_to_filter: updates the tag to Filter
+        - update_tags: updates the list of visualized tags
+        - reset_search_bar: reset the search bar of the rapid search
+        - search_str: updates the files to display in the browser
+        - ok_clicked: sets the new value to the node plug and closes the widget
+        - set_plug_value: emits a signal to set the file names to the node plug
+    """
 
     plug_value_changed = pyqtSignal(list)
 
     def __init__(self, project, scans_list, process, node_name, plug_name, node_controller, main_window):
+        """
+        Initialization of the PlugFilter widget
+
+        :param project: current project in the software
+        :param scans_list: list of database files to filter
+        :param process: process instance of the selected node
+        :param node_name: name of the current node
+        :param plug_name: name of the selected node plug
+        :param node_controller: parent node controller
+        :param main_window: parent main window
+        """
+
         super(PlugFilter, self).__init__(None)
 
         from DataBrowser.RapidSearch import RapidSearch
@@ -349,11 +480,15 @@ class PlugFilter(QWidget):
         self.process = process
         self.plug_name = plug_name
 
+        """
+        # If the filter is saved in the node plug (not the case now)
         if hasattr(self.process, 'filters'):
             if self.plug_name in self.process.filters.keys():
                 print("Already a filter for {0} plug of {1} process".format(self.plug_name, self.process.name))
                 # TODO: fill the advanced search with the corresponding filter
+        """
 
+        # Verifying that the scan names begin not with a "/" or a "\"
         if scans_list:
             scans_list_copy = []
             for scan in scans_list:
@@ -363,10 +498,11 @@ class PlugFilter(QWidget):
                 scans_list_copy.append(scan_no_pfolder)
 
             self.scans_list = scans_list_copy
+
+        # If there is no element in scans_list, this means that all the scans
+        # of the database needs to be taken into account
         else:
             self.scans_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
-
-        self.process = process
 
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
@@ -431,6 +567,8 @@ class PlugFilter(QWidget):
     def update_tag_to_filter(self):
         """
         Updates the tag to Filter
+
+        :return:
         """
 
         popUp = Ui_Select_Tag_Count_Table(self.project, self.node_controller.visibles_tags, self.push_button_tag_filter.text())
@@ -440,6 +578,8 @@ class PlugFilter(QWidget):
     def update_tags(self):
         """
         Updates the list of visualized tags
+
+        :return:
         """
 
         dialog = QDialog()
@@ -473,6 +613,11 @@ class PlugFilter(QWidget):
                 fields.addItem("All visualized tags")
 
     def reset_search_bar(self):
+        """
+        Reset the search bar of the rapid search
+
+        :return:
+        """
         self.rapid_search.setText("")
         self.advanced_search.rows = []
         self.advanced_search.show_search()
@@ -484,6 +629,11 @@ class PlugFilter(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
+        """
+        Updates the files to display in the browser
+        :param str_search: string typed in the rapid search
+        :return:
+        """
 
         from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
         from DataBrowser.DataBrowser import not_defined_value
@@ -497,6 +647,7 @@ class PlugFilter(QWidget):
             # Scans with at least a not defined value
             if str_search == not_defined_value:
                 filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
+
             # Scans matching the search
             else:
                 filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles(), self.table_data.scans_to_search)
@@ -513,21 +664,29 @@ class PlugFilter(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def ok_clicked(self):
+        """
+        Sets the new value to the node plug and closes the widget
+        :return:
+        """
 
+        # To use if the filters are set on plugs, which is not the case
+        """
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
 
-            # To use if the filters are set on plugs
-            """plug_filter = Filter(None, nots, values, fields, links, conditions, "")
-            self.process.filters[self.plug_name] = plug_filter"""
 
-        '''self.advanced_search.apply_filter(filter)'''
+            plug_filter = Filter(None, nots, values, fields, links, conditions, "")
+            self.process.filters[self.plug_name] = plug_filter
+        """
 
         self.set_plug_value()
         self.close()
 
     def set_plug_value(self):
-        """ Emitting a signal to set the file names to the plug value. """
+        """
+        Emits a signal to set the file names to the node plug
+        :return:
+        """
 
         result_names = []
         filter = self.table_data.get_current_filter()
@@ -543,14 +702,47 @@ class PlugFilter(QWidget):
 
 
 class FilterWidget(QWidget):
+    """
+    Filter widget used on a Populse_Filter process
 
-    plug_value_changed = pyqtSignal(list)
+    The widget displays a browser with the selected files of the database,
+    a rapid search and an advanced search to filter these files. Once the
+    filtering is done, the filter is saved in the process.
+
+    Attributes:
+        - advanced_search: advanced search widget to build a complex filter
+        - main_window: parent main window
+        - process: process instance of the selected node
+        - project: current project in the software
+        - node: instance of the corresponding Populse_Filter node
+        - node_controller: parent node controller
+        - rapid_search: rapid search widget to build a simple filter
+        - scan_list: list of database files to filter
+        - table_data: browser that displays the database files to filter
+        - visible_tags: tags that are visible in the current project
+
+    Methods:
+        - update_tag_to_filter: updates the tag to Filter
+        - update_tags: updates the list of visualized tags
+        - reset_search_bar: reset the search bar of the rapid search
+        - search_str: updates the files to display in the browser
+        - ok_clicked: sets the filter to the process and closes the widget
+        - set_plug_value: sets the output of the filter to the output of the node
+    """
 
     def __init__(self, project, node_name, node, main_window):
+        """
+        Initialization of the Filter Widget
+
+        :param project: current project in the software
+        :param node_name: name of the current node
+        :param node: instance of the corresponding Populse_Filter node
+        :param main_window:parent main window
+        """
+
         super(FilterWidget, self).__init__(None)
 
         from DataBrowser.RapidSearch import RapidSearch
-        from Project.Project import COLLECTION_CURRENT
 
         self.project = project
         self.visible_tags = self.project.session.get_visibles()
@@ -558,9 +750,8 @@ class FilterWidget(QWidget):
         self.process = node.process
         self.main_window = main_window
 
-        # TODO: fill the advanced search with the corresponding filter: self.process.filter
-
         scan_list = []
+        # The scan list to filter corresponds to the input of the Populse Filter
         if self.process.input and self.process is not Undefined:
             for scan in self.process.input:
                 path, file_name = os.path.split(scan)
@@ -634,6 +825,8 @@ class FilterWidget(QWidget):
     def update_tag_to_filter(self):
         """
         Updates the tag to Filter
+
+        :return:
         """
 
         popUp = Ui_Select_Tag_Count_Table(self.project, self.visible_tags, self.push_button_tag_filter.text())
@@ -643,6 +836,7 @@ class FilterWidget(QWidget):
     def update_tags(self):
         """
         Updates the list of visualized tags
+        :return:
         """
 
         dialog = QDialog()
@@ -676,6 +870,11 @@ class FilterWidget(QWidget):
                 fields.addItem("All visualized tags")
 
     def reset_search_bar(self):
+        """
+        Reset the search bar of the rapid search
+
+        :return:
+        """
         self.rapid_search.setText("")
         self.advanced_search.rows = []
         self.advanced_search.show_search()
@@ -687,6 +886,12 @@ class FilterWidget(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
+        """
+        Updates the files to display in the browser
+
+        :param str_search: string typed in the rapid search
+        :return:
+        """
 
         from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
         from DataBrowser.DataBrowser import not_defined_value
@@ -716,34 +921,25 @@ class FilterWidget(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def ok_clicked(self):
+        """
+        Sets the filter to the process and closes the widget
 
+        :return:
+        """
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
             filt = Filter(None, nots, values, fields, links, conditions, "")
             self.process.filter = filt
 
-        '''self.advanced_search.apply_filter(filter)'''
-
         self.set_output_value()
         self.close()
 
-    '''def set_plug_value(self):
-        """ Emitting a signal to set the file names to the plug value. """
-
-        result_names = []
-        filter = self.table_data.get_current_filter()
-        for i in range(len(filter)):
-            scan_name = filter[i]
-            tag_name = self.push_button_tag_filter.text()
-            value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
-            if tag_name == TAG_FILENAME:
-                value = os.path.relpath(os.path.join(self.project.folder, value))
-            result_names.append(value)
-
-        self.plug_value_changed.emit(result_names)'''
-
     def set_output_value(self):
-        """ Emitting a signal to set the file names to the plug value. """
+        """
+        Sets the output of the filter to the output of the node
+
+        :return:
+        """
 
         result_names = []
         filter = self.table_data.get_current_filter()
@@ -759,9 +955,6 @@ class FilterWidget(QWidget):
         for result_name in result_names:
             full_path = os.path.join(self.project.folder, result_name)
             result_files.append(full_path)
-
-        """if len(result_names) == 1:
-            result_files = result_files[0]"""
 
         self.node.set_plug_value("output", result_files)
 
