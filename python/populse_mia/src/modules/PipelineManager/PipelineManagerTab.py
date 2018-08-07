@@ -685,7 +685,7 @@ class InitWorker(QThread):
                 # interfaces
                 try:
                     process_outputs = process._nipype_interface._list_outputs()
-                    # The NipypeProcess outputs are always "private" for Capsul
+                    # The Nipype Process outputs are always "private" for Capsul
                     for key, value in process_outputs.items():
                         tmp_value = process_outputs[key]
                         del process_outputs[key]
@@ -695,9 +695,19 @@ class InitWorker(QThread):
                     process_outputs = {}
 
             # Adding I/O to database history
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
+            inputs = process.get_inputs()
+            for key in inputs:
+                value = inputs[key]
+                if value is Undefined:
+                    inputs[key] = "<undefined>"
+            outputs = process.get_outputs()
+            for key in outputs:
+                value = outputs[key]
+                if value is Undefined:
+                    outputs[key] = "<undefined>"
             self.project.saveModifications()
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, inputs)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, outputs)
 
             if process_outputs:
                 for plug_name, plug_value in process_outputs.items():
@@ -731,8 +741,18 @@ class InitWorker(QThread):
                     pipeline.update_nodes_and_plugs_activation()
 
             # Adding I/O to database history again to update outputs
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, process.get_inputs())
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, process.get_outputs())
+            inputs = process.get_inputs()
+            for key in inputs:
+                value = inputs[key]
+                if value is Undefined:
+                    inputs[key] = "<undefined>"
+            outputs = process.get_outputs()
+            for key in outputs:
+                value = outputs[key]
+                if value is Undefined:
+                    outputs[key] = "<undefined>"
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INPUTS, inputs)
+            self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_OUTPUTS, outputs)
 
             # Setting brick init state if init finished correctly
             self.project.session.set_value(COLLECTION_BRICK, self.brick_id, BRICK_INIT, "Done")
