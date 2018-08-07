@@ -361,8 +361,6 @@ class Ui_Dialog_add_tag(QDialog):
         :param text: New type
         """
 
-        print("on activated")
-
         if text == "String":
             self.type = FIELD_TYPE_STRING
         elif text == "Integer":
