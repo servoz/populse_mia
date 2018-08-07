@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLab
 
 class Ui_Dialog_Quit(QDialog):
     """
-    Is called when the user changes a value that is not in the right type
+    Is called when the user closes the software and the current project
+    has been modified
     """
     save_as_signal = pyqtSignal()
     do_not_save_signal = pyqtSignal()
