@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, MetaData, String, Boolean, Integer, Enum, Column, Table
+from sqlalchemy.exc import ArgumentError
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.orm import mapper
 
@@ -38,13 +39,19 @@ class Database_mia(Database):
         :param string_engine: Path of the new database file
         """
 
-        engine = create_engine(string_engine)
+        try:
+            if string_engine.startswith('sqlite'):
+                engine = create_engine(string_engine, connect_args={'check_same_thread': False})
+            else:
+                engine = create_engine(string_engine)
+        except ArgumentError:
+            raise ValueError("The string engine is invalid, please refer to the documentation for more details on how to write the string engine")
         metadata = MetaData()
         metadata.reflect(bind=engine)
         if FIELD_TABLE in metadata.tables and COLLECTION_TABLE in metadata.tables:
-            return True
+            return engine
         elif len(metadata.tables) > 0:
-            return False
+            return None
         else:
             Table(FIELD_TABLE, metadata,
                   Column("field_name", String, primary_key=True),
@@ -67,7 +74,7 @@ class Database_mia(Database):
                   Column("primary_key", String, nullable=False))
 
             metadata.create_all(engine)
-            return True
+            return engine
 
     def __enter__(self):
         '''
