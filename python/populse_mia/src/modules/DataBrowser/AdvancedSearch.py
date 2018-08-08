@@ -304,9 +304,8 @@ class AdvancedSearch(QWidget):
 
         old_scans_list = self.dataBrowser.table_data.scans_to_visualize
 
-        # Result gotten
         try:
-
+            # Result gotten
             filter_query = self.prepare_filters(links, fields, conditions, values, nots, self.scans_list)
             result = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
 
@@ -540,6 +539,6 @@ class AdvancedSearch(QWidget):
                 self.dataBrowser.table_data.scans_to_visualize = self.scans_list
             else:
                 self.dataBrowser.table_data.scans_to_visualize = \
-                    self.project.database.get_documents_names(COLLECTION_CURRENT)
+                    self.project.session.get_documents_names(COLLECTION_CURRENT)
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)

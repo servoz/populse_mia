@@ -15,6 +15,7 @@ from PipelineManager.NodeController import FilterWidget
 from PopUps.Ui_Dialog_Close_Pipeline import Ui_Dialog_Close_Pipeline
 
 from PipelineManager.Processes.MIA_processes.IRMaGe.Tools.tools import Input_Filter
+import sys
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -724,13 +725,7 @@ def save_pipeline(pipeline, filename):
         # fallback to XML
         save_py_pipeline(pipeline, filename)
 
-
-
 # Copy from python_export.py of CAPSUL's API
-import os
-import six
-import sys
-
 
 def save_py_pipeline(pipeline, py_file):
     '''
@@ -1020,7 +1015,7 @@ def save_py_pipeline(pipeline, py_file):
                     first = False
                     print('\n        # filter parameters', file=pyf)
                 # Settings filter parameters to the node
-                print('\n        self.nodes["%s"].process.filter = Filter(%s, %s, %s, %s, %s, %s, %s)'
+                print('\n        self.nodes["%s"].process.filter = Filter(%s, %s, %s, %s, %s, %s, "%s")'
                       % (node_name, filt.name, filt.nots, filt.values, filt.fields, filt.links,
                          filt.conditions, filt.search_bar), file=pyf)
 
@@ -1043,7 +1038,8 @@ def save_py_pipeline(pipeline, py_file):
     _write_links(pipeline, pyf)
     _write_processes_selections(pipeline, pyf)
     _write_steps(pipeline, pyf)
-    _write_values(pipeline, pyf)
+    # Not writing the initial values of the pipeline
+    # _write_values(pipeline, pyf)
     _write_nodes_positions(pipeline, pyf)
     _write_filters(pipeline, pyf)
 

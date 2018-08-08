@@ -717,13 +717,19 @@ class FilterWidget(QWidget):
 
         # Reducing the list of scans to selection
         all_scans = self.table_data.scans_to_visualize
+
         self.table_data.scans_to_visualize = self.scan_list
         self.table_data.scans_to_search = self.scan_list
         self.table_data.update_visualized_rows(all_scans)
 
+        # Filter information
+        filter_to_apply = node.process.filter
+
         search_bar_layout = QHBoxLayout()
 
         self.rapid_search = RapidSearch(self)
+        if filter_to_apply.search_bar:
+            self.rapid_search.setText(filter_to_apply.search_bar)
         self.rapid_search.textChanged.connect(partial(self.search_str))
 
         self.button_cross = QToolButton()
@@ -736,6 +742,7 @@ class FilterWidget(QWidget):
 
         self.advanced_search = AdvancedSearch(self.project, self, self.scan_list, self.visible_tags)
         self.advanced_search.show_search()
+        self.advanced_search.apply_filter(filter_to_apply)
 
         push_button_tags = QPushButton("Visualized tags")
         push_button_tags.clicked.connect(self.update_tags)
