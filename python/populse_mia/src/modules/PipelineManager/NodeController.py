@@ -855,7 +855,7 @@ class FilterWidget(QWidget):
                 filter = self.prepare_not_defined_filter(self.project.session.get_visibles())
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles())
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles(), old_scan_list)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
@@ -876,7 +876,7 @@ class FilterWidget(QWidget):
         """
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
-            filt = Filter(None, nots, values, fields, links, conditions, "")
+            filt = Filter(None, nots, values, fields, links, conditions, self.rapid_search.text())
             self.process.filter = filt
 
         self.set_output_value()

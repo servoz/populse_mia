@@ -7,6 +7,7 @@
 ##########################################################################
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 # System import
 import os
@@ -3399,3 +3400,4 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             # Saving the dictionary in the Json file
             with open(filename, 'w', encoding='utf8') as file:
                 json.dump(dic, file)
+
