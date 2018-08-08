@@ -25,7 +25,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project, test=True)
-        print(self._testMethodName)
 
     def tearDown(self):
         """
