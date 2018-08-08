@@ -1720,6 +1720,9 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     '''Signal emitted when a sub-pipeline has to be edited'''
     open_filter = QtCore.Signal(str)
     '''Signal emitted when an Input Filter has to be opened'''
+    export_to_db_scans = QtCore.Signal(str)
+    '''Signal emitted when an Input Filter has to be linked to database_scans'''
+
     scene = None
     '''
     type: PipelineScene
@@ -2186,8 +2189,12 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
         # Input_Filter
         if process.name == "Input_Filter":
-            edit_sub_pipeline = menu.addAction('Open filter')
-            edit_sub_pipeline.triggered.connect(self.emit_open_filter)
+            open_filter = menu.addAction('Open filter')
+            open_filter.triggered.connect(self.emit_open_filter)
+
+            export_to_db_scans = menu.addAction('Export to database_scans')
+            export_to_db_scans.triggered.connect(self.emit_export_to_db_scans)
+
             menu.addSeparator()
 
         controller_action = QtGui.QAction('open node controller', menu)
@@ -2313,6 +2320,9 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         menu.exec_(QtGui.QCursor.pos())
         del self.current_node_name
         del self.current_process
+
+    def emit_export_to_db_scans(self):
+        self.export_to_db_scans.emit(self.current_node_name)
 
     def emit_open_filter(self):
         self.open_filter.emit(self.current_node_name)

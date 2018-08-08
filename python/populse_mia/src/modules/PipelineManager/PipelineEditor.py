@@ -45,6 +45,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.pipeline_modified.connect(self.update_history)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
         p_e.open_filter.connect(self.open_filter)
+        p_e.export_to_db_scans.connect(self.export_to_db_scans)
 
         self.addTab(p_e, "New Pipeline")
         self.undos["New Pipeline"] = []
@@ -63,6 +64,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.pipeline_modified.connect(self.update_history)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
         p_e.open_filter.connect(self.open_filter)
+        p_e.export_to_db_scans.connect(self.export_to_db_scans)
+
         if not loaded:
             idx = 1
             while True and idx < 20:
@@ -298,6 +301,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         node = self.get_current_pipeline().nodes[node_name]
         filter_widget = FilterWidget(self.project, node_name, node, self)
         filter_widget.show()
+
+    def export_to_db_scans(self, node_name):
+        # If database_scans is already a pipeline global input, the plug cannot be
+        # exported. A link as to be added between database_scans and the input of the filter.
+        if 'database_scans' in self.get_current_pipeline().user_traits().keys():
+            self.get_current_pipeline().add_link('database_scans->{0}.input'.format(node_name))
+        else:
+            self.get_current_pipeline().export_parameter(
+                node_name, 'input',
+                pipeline_parameter='database_scans')
+        self.get_current_editor().scene.update_pipeline()
 
 
 class PipelineEditor(PipelineDevelopperView):
