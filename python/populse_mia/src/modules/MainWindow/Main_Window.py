@@ -176,10 +176,10 @@ class Main_Window(QMainWindow):
         """
         To undo the last action done by the user
         """
-        if self.tabs.currentIndex() == 0:
+        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
             # In Data Browser
-            self.project.undo(self.data_browser.table_data) # Action reverted in the Database
-        elif self.tabs.currentIndex() == 2:
+            self.project.undo(self.data_browser.table_data)  # Action reverted in the Database
+        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.undo()
 
@@ -187,10 +187,10 @@ class Main_Window(QMainWindow):
         """
         To redo the last action made by the user
         """
-        if self.tabs.currentIndex() == 0:
+        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
             # In Data Browser
-            self.project.redo(self.data_browser.table_data) # Action remade in the Database
-        elif self.tabs.currentIndex() == 2:
+            self.project.redo(self.data_browser.table_data)  # Action remade in the Database
+        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.redo()
 
