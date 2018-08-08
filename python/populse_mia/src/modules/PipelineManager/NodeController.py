@@ -50,7 +50,6 @@ class NodeController(QWidget):
         - update_plug_value: updates the value of a node plug
         - display_filter: displays a filter widget
         - update_plug_value_from_filter: updates the plug value from a filter result
-        - browse_file: opens a browser to select file(s)
         - clearLayout: clears the layouts of the widget
     """
 
@@ -142,28 +141,13 @@ class NodeController(QWidget):
                 h_box.addWidget(label_input)
                 h_box.addWidget(self.line_edit_input[idx])
 
-                # Adding the "Browse" push button (has to be remove after)
-                if trait_type[0] in ['File', 'ImageFileSPM', 'List_ImageFileSPM']:
-                    # If the trait is a file, adding a 'Browse' button
-                    push_button = QPushButton('Browse')
-                    push_button.clicked.connect(partial(self.browse_file, idx, 'in', self.node_name,
-                                                        name, pipeline, type(value)))
-                    h_box.addWidget(push_button)
-
-                # Adding the "Filter" push button for all mandatory plugs
-                if hasattr(trait, 'optional'):
+                # Adding the possibility to filter pipeline global inputs except if the input is "database_scans"
+                # which means that the scans will be filtered with InputFilter
+                if self.node_name == "inputs" and name != "database_scans":
                     parameters = (idx, pipeline, type(value))
-                    if not trait.optional:
-                        push_button = QPushButton('Filter')
-                        push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters, process))
-                        h_box.addWidget(push_button)
-                    else:
-                        if hasattr(trait, 'mandatory'):
-                            if trait.mandatory:
-                                push_button = QPushButton('Filter')
-                                push_button.clicked.connect(
-                                    partial(self.display_filter, self.node_name, name, parameters, process))
-                                h_box.addWidget(push_button)
+                    push_button = QPushButton('Filter')
+                    push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters, process))
+                    h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
 
@@ -191,13 +175,6 @@ class NodeController(QWidget):
             h_box = QHBoxLayout()
             h_box.addWidget(label_output)
             h_box.addWidget(self.line_edit_output[idx])
-
-            if trait_type[0] in ['File', 'ImageFileSPM', 'List_ImageFileSPM']:
-                # If the trait is a file, adding a 'Browse' button
-                push_button = QPushButton('Browse')
-                push_button.clicked.connect(partial(self.browse_file, idx, 'out', self.node_name,
-                                                    name, pipeline, type(value)))
-                h_box.addWidget(push_button)
 
             self.v_box_outputs.addLayout(h_box)
 
@@ -375,35 +352,6 @@ class NodeController(QWidget):
             res = []
 
         self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
-
-    def browse_file(self, idx, in_or_out, node_name, plug_name, pipeline, value_type):
-        """
-        Opens a browser to select file(s) and sets this files to the plug
-        (should be removed in the future)
-
-        :param idx: index of the plug
-        :param in_or_out: "in" if the plug is an input plug, "out" else
-        :param node_name: name of the node
-        :param plug_name: name of the plug
-        :param pipeline: current pipeline
-        :param value_type: type of the plug value
-        :return:
-        """
-
-        file_dialog = QFileDialog()
-
-        if in_or_out == 'in':
-            file_name = file_dialog.getOpenFileName()
-            file_name = file_name[0]
-            self.line_edit_input[idx].setText(file_name)
-        elif in_or_out == 'out':
-            file_name = file_dialog.getSaveFileName()
-            file_name = file_name[0]
-            self.line_edit_output[idx].setText(file_name)
-        else:
-            return
-
-        self.update_plug_value(idx, in_or_out, plug_name, pipeline, value_type)
 
     def clearLayout(self, layout):
         """
