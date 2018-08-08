@@ -45,7 +45,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-        p_e.pipeline_modified.connect(self.update_history)
+        p_e.pipeline_modified.connect(self.update_pipeline_editors)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
         p_e.open_filter.connect(self.open_filter)
         p_e.export_to_db_scans.connect(self.export_to_db_scans)
@@ -64,7 +64,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-        p_e.pipeline_modified.connect(self.update_history)
+        p_e.pipeline_modified.connect(self.update_pipeline_editors)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
         p_e.open_filter.connect(self.open_filter)
         p_e.export_to_db_scans.connect(self.export_to_db_scans)
@@ -170,6 +170,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.undos[os.path.basename(filename)] = []
             self.redos[os.path.basename(filename)] = []
 
+        self.update_scans_list()
+
     def load_pipeline_parameters(self):
         self.get_current_editor().load_pipeline_parameters()
 
@@ -183,9 +185,13 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setTabText(self.currentIndex(), os.path.basename(filename))
         self.pipeline_saved.emit(filename)
 
-    def update_history(self, developper_view):
-        self.undos[self.get_current_filename()] = developper_view.undos
-        self.redos[self.get_current_filename()] = developper_view.redos
+    def update_pipeline_editors(self, developer_view):
+        self.update_history(developer_view)
+        self.update_scans_list()
+
+    def update_history(self, developer_view):
+        self.undos[self.get_current_filename()] = developer_view.undos
+        self.redos[self.get_current_filename()] = developer_view.redos
         file_name = self.get_current_filename()
         if file_name[-2:] != " *":
             self.setTabText(self.currentIndex(), file_name + " *")
