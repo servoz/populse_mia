@@ -627,7 +627,7 @@ class Main_Window(QMainWindow):
         Method called when the tab is changed
         """
 
-        if self.tabs.currentIndex() == 0:
+        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
             # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
@@ -657,7 +657,7 @@ class Main_Window(QMainWindow):
                 self.data_browser.advanced_search.show_search()
                 self.data_browser.advanced_search.apply_filter(self.project.currentFilter)
 
-        elif self.tabs.currentIndex() == 2:
+        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
             # Pipeline Manager
             # The pending modifications must be saved before working with pipelines (auto_commit)
             if self.project.hasUnsavedModifications():
