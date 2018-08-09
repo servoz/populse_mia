@@ -975,12 +975,22 @@ class TestMIADataBrowser(unittest.TestCase):
 
         QTest.mouseClick(self.imageViewer.data_browser.count_table_button, Qt.LeftButton)
         count_table = self.imageViewer.data_browser.count_table_pop_up
+        self.assertEqual(len(count_table.push_buttons), 2)
 
         count_table.push_buttons[0].setText("BandWidth")
         count_table.fill_values(0)
         count_table.push_buttons[1].setText("EchoTime")
         count_table.fill_values(1)
         QTest.mouseClick(count_table.push_button_count, Qt.LeftButton)
+
+        # Trying to add and remove tag buttons
+        QTest.mouseClick(count_table.add_tag_label, Qt.LeftButton)
+        self.assertEqual(len(count_table.push_buttons), 3)
+        QTest.mouseClick(count_table.remove_tag_label, Qt.LeftButton)
+        self.assertEqual(len(count_table.push_buttons), 2)
+
+        self.assertEqual(count_table.push_buttons[0].text(), "BandWidth")
+        self.assertEqual(count_table.push_buttons[1].text(), "EchoTime")
 
         QApplication.processEvents()
 

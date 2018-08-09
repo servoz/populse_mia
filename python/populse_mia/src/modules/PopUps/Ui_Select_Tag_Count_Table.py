@@ -25,6 +25,7 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
         self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
+        self.selected_tag = None
         for idx in range(self.list_widget_tags.count()):
             item = self.list_widget_tags.item(idx)
             if item.checkState() == QtCore.Qt.Checked:
