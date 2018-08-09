@@ -981,9 +981,8 @@ class TableDataBrowser(QTableWidget):
         """
 
         brick_uuid = self.bricks[self.sender()]
-        show_brick_popup = Ui_Dialog_Show_Brick(self.project, brick_uuid, self.data_browser, self.data_browser.parent)
-        show_brick_popup.show()
-        show_brick_popup.exec()
+        self.show_brick_popup = Ui_Dialog_Show_Brick(self.project, brick_uuid, self.data_browser, self.data_browser.parent)
+        self.show_brick_popup.show()
 
     def update_colors(self):
         """ Method that changes the background of all the cells """

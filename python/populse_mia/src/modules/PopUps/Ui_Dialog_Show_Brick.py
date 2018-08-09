@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget, QLabel, QPushButton, \
     QApplication
 
@@ -21,6 +22,8 @@ class Ui_Dialog_Show_Brick(QDialog):
 
         super().__init__()
 
+        self.setModal(True)
+
         self.databrowser = databrowser
         self.imageViewer = imageViewer
         self.project = project
@@ -29,64 +32,68 @@ class Ui_Dialog_Show_Brick(QDialog):
 
         layout = QVBoxLayout()
 
-        table = QTableWidget()
+        self.table = QTableWidget()
 
         # Filling the table
         inputs = getattr(brick_row, BRICK_INPUTS)
         outputs = getattr(brick_row, BRICK_OUTPUTS)
-        table.setRowCount(1)
-        table.setColumnCount(5 + len(inputs) + len(outputs))
+        self.table.setRowCount(1)
+        self.table.setColumnCount(5 + len(inputs) + len(outputs))
 
         # Brick name
         item = QTableWidgetItem()
         item.setText(BRICK_NAME)
-        table.setHorizontalHeaderItem(0, item)
+        self.table.setHorizontalHeaderItem(0, item)
         item = QTableWidgetItem()
         item.setText(getattr(brick_row, BRICK_NAME))
-        table.setItem(0, 0, item)
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        self.table.setItem(0, 0, item)
 
         # Brick init
         item = QTableWidgetItem()
         item.setText(BRICK_INIT)
-        table.setHorizontalHeaderItem(1, item)
+        self.table.setHorizontalHeaderItem(1, item)
         item = QTableWidgetItem()
         item.setText(getattr(brick_row, BRICK_INIT))
-        table.setItem(0, 1, item)
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        self.table.setItem(0, 1, item)
 
         # Brick init time
         item = QTableWidgetItem()
         item.setText(BRICK_INIT_TIME)
-        table.setHorizontalHeaderItem(2, item)
+        self.table.setHorizontalHeaderItem(2, item)
         item = QTableWidgetItem()
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         if getattr(brick_row, BRICK_INIT_TIME) is not None:
             item.setText(str(getattr(brick_row, BRICK_INIT_TIME)))
-        table.setItem(0, 2, item)
+            self.table.setItem(0, 2, item)
 
         # Brick execution
         item = QTableWidgetItem()
         item.setText(BRICK_EXEC)
-        table.setHorizontalHeaderItem(3, item)
+        self.table.setHorizontalHeaderItem(3, item)
         item = QTableWidgetItem()
         item.setText(getattr(brick_row, BRICK_EXEC))
-        table.setItem(0, 3, item)
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        self.table.setItem(0, 3, item)
 
         # Brick execution time
         item = QTableWidgetItem()
         item.setText(BRICK_EXEC_TIME)
-        table.setHorizontalHeaderItem(4, item)
+        self.table.setHorizontalHeaderItem(4, item)
         item = QTableWidgetItem()
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         if getattr(brick_row, BRICK_EXEC_TIME) is not None:
             item.setText(str(getattr(brick_row, BRICK_EXEC_TIME)))
-        table.setItem(0, 4, item)
+        self.table.setItem(0, 4, item)
 
         column = 5
 
         # Inputs
-        for name in inputs:
+        for key, value in sorted(inputs.items()):
             item = QTableWidgetItem()
-            item.setText(name)
-            table.setHorizontalHeaderItem(column, item)
-            value = inputs[name]
+            item.setText(key)
+            self.table.setHorizontalHeaderItem(column, item)
             if isinstance(value, list):
                 sub_widget = QWidget()
                 sub_layout = QVBoxLayout()
@@ -100,7 +107,7 @@ class Ui_Dialog_Show_Brick(QDialog):
                         label = QLabel(str(sub_value))
                         sub_layout.addWidget(label)
                 sub_widget.setLayout(sub_layout)
-                table.setCellWidget(0, column, sub_widget)
+                self.table.setCellWidget(0, column, sub_widget)
             else:
                 value_scan = self.io_value_is_scan(value)
                 if value_scan is not None:
@@ -110,19 +117,20 @@ class Ui_Dialog_Show_Brick(QDialog):
                     button.clicked.connect(self.file_clicked)
                     output_layout.addWidget(button)
                     widget.setLayout(output_layout)
-                    table.setCellWidget(0, column, widget)
+                    self.table.setCellWidget(0, column, widget)
                 else:
                     item = QTableWidgetItem()
                     item.setText(str(value))
-                    table.setItem(0, column, item)
+                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    self.table.setItem(0, column, item)
             column += 1
 
         # Outputs
-        for name in outputs:
+        for key, value in sorted(outputs.items()):
             item = QTableWidgetItem()
-            item.setText(name)
-            table.setHorizontalHeaderItem(column, item)
-            value = outputs[name]
+            item.setText(key)
+            self.table.setHorizontalHeaderItem(column, item)
+            value = outputs[key]
             if isinstance(value, list):
                 sub_widget = QWidget()
                 sub_layout = QVBoxLayout()
@@ -136,7 +144,7 @@ class Ui_Dialog_Show_Brick(QDialog):
                         label = QLabel(str(sub_value))
                         sub_layout.addWidget(label)
                 sub_widget.setLayout(sub_layout)
-                table.setCellWidget(0, column, sub_widget)
+                self.table.setCellWidget(0, column, sub_widget)
             else:
                 value_scan = self.io_value_is_scan(value)
                 if value_scan is not None:
@@ -146,17 +154,18 @@ class Ui_Dialog_Show_Brick(QDialog):
                     button.clicked.connect(self.file_clicked)
                     output_layout.addWidget(button)
                     widget.setLayout(output_layout)
-                    table.setCellWidget(0, column, widget)
+                    self.table.setCellWidget(0, column, widget)
                 else:
                     item = QTableWidgetItem()
                     item.setText(str(value))
-                    table.setItem(0, column, item)
+                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    self.table.setItem(0, column, item)
             column += 1
 
-        table.verticalHeader().setMinimumSectionSize(30)
-        table.resizeColumnsToContents()
-        table.resizeRowsToContents()
-        layout.addWidget(table)
+        self.table.verticalHeader().setMinimumSectionSize(30)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        layout.addWidget(self.table)
 
         self.setLayout(layout)
 

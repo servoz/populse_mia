@@ -25,6 +25,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project, test=True)
+        print(self._testMethodName)
 
     def tearDown(self):
         """
@@ -76,7 +77,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(self.imageViewer.project.getName(), "project_8")
         self.assertEqual(self.imageViewer.windowTitle(), "MIA - Multiparametric Image Analysis - project_8")
         documents = self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)
-        self.assertEqual(len(documents), 8)
+        self.assertEqual(len(documents), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
@@ -85,8 +86,9 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in documents)
         documents = self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)
-        self.assertEqual(len(documents), 8)
+        self.assertEqual(len(documents), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
@@ -95,6 +97,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in documents)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in documents)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in documents)
 
     def test_add_tag(self):
         """
@@ -329,14 +332,14 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.switch_project("project_8", "project_8", "project_8")
 
         # Checking that the 8 scans are shown in the databrowser
-        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 8)
+        self.assertEqual(self.imageViewer.data_browser.table_data.rowCount(), 9)
         scans_displayed = []
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
             item = self.imageViewer.data_browser.table_data.item(row, 0)
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 8)
+        self.assertEqual(len(scans_displayed), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -345,6 +348,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing G1 rapid search
         self.imageViewer.data_browser.search_bar.setText("G1")
@@ -354,8 +358,9 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 1)
+        self.assertEqual(len(scans_displayed), 2)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing that all the scans are back when clicking on the cross
         QTest.mouseClick(self.imageViewer.data_browser.button_cross, Qt.LeftButton)
@@ -366,7 +371,7 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 8)
+        self.assertEqual(len(scans_displayed), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -375,6 +380,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing not defined values
         QTest.mouseClick(self.imageViewer.data_browser.button_cross, Qt.LeftButton)
@@ -400,7 +406,7 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 8)
+        self.assertEqual(len(scans_displayed), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -409,6 +415,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, Qt.LeftButton)
         field = self.imageViewer.data_browser.advanced_search.rows[0][2]
@@ -428,8 +435,9 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 1)
+        self.assertEqual(len(scans_displayed), 2)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Testing that every scan is back when clicking again on advanced search
         QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, Qt.LeftButton)
@@ -439,7 +447,7 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 8)
+        self.assertEqual(len(scans_displayed), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -448,6 +456,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
     def test_remove_scan(self):
         """
@@ -462,7 +471,7 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 8)
+        self.assertEqual(len(scans_displayed), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -471,6 +480,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         # Trying to remove a scan
         self.imageViewer.data_browser.table_data.selectRow(0)
@@ -482,7 +492,7 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 7)
+        self.assertEqual(len(scans_displayed), 8)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
@@ -490,6 +500,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans_displayed)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans_displayed)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
     def test_set_value(self):
         """
@@ -746,7 +757,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Checking that all scans have been sent to the pipeline manager
         scans = self.imageViewer.pipeline_manager.scan_list
-        self.assertEqual(len(scans), 8)
+        self.assertEqual(len(scans), 9)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
@@ -755,6 +766,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii" in scans)
         self.assertTrue("data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii" in scans)
+        self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans)
 
         # Selecting the first 2 scans
         item1 = self.imageViewer.data_browser.table_data.item(0, 0)
@@ -913,18 +925,18 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(int(bw_redo), 0)
 
         # Testing scan removal undo/redo
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 8)
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 8)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 9)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 9)
         self.imageViewer.data_browser.table_data.selectRow(0)
         self.imageViewer.data_browser.table_data.remove_scan()
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 7)
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 7)
-        self.imageViewer.action_undo.trigger()
         self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 8)
         self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 8)
+        self.imageViewer.action_undo.trigger()
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 9)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 9)
         self.imageViewer.action_redo.trigger()
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 7)
-        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 7)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT)), 8)
+        self.assertEqual(len(self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL)), 8)
 
         # Testing add tag undo/redo
         self.imageViewer.data_browser.add_tag_action.trigger()
@@ -981,10 +993,10 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(count_table.table.item(1, 0).text(), "25000")
         self.assertEqual(count_table.table.item(2, 0).text(), "65789.48")
         self.assertEqual(count_table.table.item(3, 0).text(), "3")
-        self.assertEqual(count_table.table.item(0, 1).text(), "1")
+        self.assertEqual(count_table.table.item(0, 1).text(), "2")
         self.assertEqual(count_table.table.item(1, 1).text(), "")
         self.assertEqual(count_table.table.item(2, 1).text(), "")
-        self.assertEqual(count_table.table.item(3, 1).text(), "1")
+        self.assertEqual(count_table.table.item(3, 1).text(), "2")
         self.assertEqual(count_table.table.item(0, 2).text(), "")
         self.assertEqual(count_table.table.item(1, 2).text(), "2")
         self.assertEqual(count_table.table.item(2, 2).text(), "")
@@ -1038,9 +1050,51 @@ class TestMIADataBrowser(unittest.TestCase):
             scan_name = item.text()
             if not self.imageViewer.data_browser.table_data.isRowHidden(row):
                 scans_displayed.append(scan_name)
-        self.assertEqual(len(scans_displayed), 1)
+        self.assertEqual(len(scans_displayed), 2)
         self.assertTrue(
             "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+        self.assertTrue(
+            "data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
+
+    def test_brick_history(self):
+        """
+        Tests the brick history popup
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+
+        bricks_column = self.imageViewer.data_browser.table_data.get_tag_column("Bricks")
+        bricks_widget = self.imageViewer.data_browser.table_data.cellWidget(8, bricks_column)
+        smmooth_button = bricks_widget.children()[1]
+        self.assertEqual(smmooth_button.text(), "smooth1")
+        QTest.mouseClick(smmooth_button, Qt.LeftButton)
+        brick_history = self.imageViewer.data_browser.table_data.show_brick_popup
+        brick_table = brick_history.table
+        self.assertEqual(brick_table.horizontalHeaderItem(0).text(), "Name")
+        self.assertEqual(brick_table.horizontalHeaderItem(1).text(), "Init")
+        self.assertEqual(brick_table.horizontalHeaderItem(2).text(), "Init Time")
+        self.assertEqual(brick_table.horizontalHeaderItem(3).text(), "Exec")
+        self.assertEqual(brick_table.horizontalHeaderItem(4).text(), "Exec Time")
+        self.assertEqual(brick_table.horizontalHeaderItem(5).text(), "data_type")
+        self.assertEqual(brick_table.horizontalHeaderItem(6).text(), "fwhm")
+        self.assertEqual(brick_table.horizontalHeaderItem(7).text(), "implicit_masking")
+        self.assertEqual(brick_table.horizontalHeaderItem(8).text(), "in_files")
+        self.assertEqual(brick_table.horizontalHeaderItem(9).text(), "out_prefix")
+        self.assertEqual(brick_table.horizontalHeaderItem(10).text(), "smoothed_files")
+        self.assertEqual(brick_table.item(0, 0).text(), "smooth1")
+        self.assertEqual(brick_table.item(0, 1).text(), "Done")
+        self.assertEqual(brick_table.item(0, 2).text(), "2018-08-08 18:22:25.554610")
+        self.assertEqual(brick_table.item(0, 3).text(), "Done")
+        self.assertEqual(brick_table.item(0, 4).text(), "2018-08-08 18:22:32.371745")
+        self.assertEqual(brick_table.item(0, 5).text(), "0")
+        self.assertEqual(brick_table.cellWidget(0, 6).children()[1].text(), "6")
+        self.assertEqual(brick_table.cellWidget(0, 6).children()[2].text(), "6")
+        self.assertEqual(brick_table.cellWidget(0, 6).children()[3].text(), "6")
+        self.assertEqual(brick_table.item(0, 7).text(), "False")
+        self.assertEqual(brick_table.cellWidget(0, 8).children()[1].text(), "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii")
+        self.assertEqual(brick_table.item(0, 9).text(), "s")
+        self.assertEqual(brick_table.cellWidget(0, 10).children()[1].text(), "data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii")
 
 if __name__ == '__main__':
     unittest.main()

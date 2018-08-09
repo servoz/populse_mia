@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QLineEdit
-from Project.Project import TAG_FILENAME
+from Project.Project import TAG_FILENAME, TAG_BRICKS
+
 
 class RapidSearch(QLineEdit):
 
@@ -25,12 +26,14 @@ class RapidSearch(QLineEdit):
 
         for tag in tags:
 
-            if or_to_write:
-                query += " OR "
+            if tag != TAG_BRICKS:
 
-            query += "({" + tag + "} == null)"
+                if or_to_write:
+                    query += " OR "
 
-            or_to_write = True
+                query += "({" + tag + "} == null)"
+
+                or_to_write = True
 
         query += " AND ({" + TAG_FILENAME + "} IN " + str(self.databrowser.table_data.scans_to_search).replace("'", "\"") + ")"
 
@@ -56,12 +59,14 @@ class RapidSearch(QLineEdit):
 
         for tag in tags:
 
-            if or_to_write:
-                query += " OR "
+            if tag != TAG_BRICKS:
 
-            query += "({" + tag + "} LIKE \"%" + search + "%\")"
+                if or_to_write:
+                    query += " OR "
 
-            or_to_write = True
+                query += "({" + tag + "} LIKE \"%" + search + "%\")"
+
+                or_to_write = True
 
         query += " AND ({" + TAG_FILENAME + "} IN " + str(scans).replace("'", "\"") + ")"
 

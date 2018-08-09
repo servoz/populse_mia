@@ -19,6 +19,8 @@ class Default_value_list_creation(QDialog):
     def __init__(self, parent, type):
         super().__init__()
 
+        self.setModal(True)
+
         # Current type chosen
         self.type = type
 
@@ -216,9 +218,6 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
-            if self.list_creation.exec_():
-                pass
-
 
 class Ui_Dialog_add_tag(QDialog):
     """
