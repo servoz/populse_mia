@@ -179,6 +179,35 @@ class PipelineManagerTab(QWidget):
                     self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
                                                                               from_undo=True)
 
+            elif action == "remove_plug":
+                temp_plug_name = to_undo[1]
+                new_temp_plugs = to_undo[2]
+                optional = to_undo[3]
+                self.pipelineEditorTabs.get_current_editor()._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
+                                                                          optional=optional, from_undo=True,
+                                                                          pipeline_parameter=temp_plug_name[1])
+
+                # Connecting all the plugs that were connected to the original plugs
+                for plug_tuple in new_temp_plugs:
+                    # Checking if the original plug is a pipeline input or output to adapt
+                    # the links to add.
+                    if temp_plug_name[0] == 'inputs':
+                        source = ('', temp_plug_name[1])
+                        dest = plug_tuple
+                    else:
+                        source = plug_tuple
+                        dest = ('', temp_plug_name[1])
+
+                    self.pipelineEditorTabs.get_current_editor().scene.add_link(source, dest, active=True, weak=False)
+
+                    # Writing a string to represent the link
+                    source_parameters = ".".join(source)
+                    dest_parameters = ".".join(dest)
+                    link = "->".join((source_parameters, dest_parameters))
+
+                    self.pipelineEditorTabs.get_current_editor().scene.pipeline.add_link(link)
+                    self.pipelineEditorTabs.get_current_editor().scene.update_pipeline()
+
             elif action == "update_node_name":
                 node = to_undo[1]
                 new_node_name = to_undo[2]
@@ -224,9 +253,20 @@ class PipelineManagerTab(QWidget):
                 node_name = to_redo[1]
                 self.pipelineEditorTabs.get_current_editor().del_node(node_name, from_redo=True)
 
-            elif action == "export_plugs":
-                pass
+            elif action == "export_plug":
+                temp_plug_name = to_redo[1]
+                self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
+                                                                          from_redo=True)
+                """["export_plug", self._temp_plug_name,
+                 str(dial.name_line.text()), dial.optional.isChecked(), dial.weak.isChecked()]"""
 
+            elif action == "export_plugs":
+                parameter_list = to_redo[1]
+                node_name = to_redo[2]
+                for parameter in parameter_list:
+                    temp_plug_name = ('inputs', parameter)
+                    self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
+                                                                              from_redo=True)
             elif action == "update_node_name":
                 node = to_redo[1]
                 new_node_name = to_redo[2]

@@ -550,6 +550,11 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+        print('ADD LINK')
+        print('SOURCE', source)
+        print('DEST', dest)
+        print('ACTIVE', active)
+        print('weak', weak)
         self.scene.add_link(source, dest, active, weak)
 
         # Writing a string to represent the link
@@ -596,7 +601,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
-    def export_plugs(self, inputs=True, outputs=True, optional=False, from_undo=False, from_redo=False):
+    '''def export_plugs(self, inputs=True, outputs=True, optional=False, from_undo=False, from_redo=False):
         """
         STILL IN PROGRESS.
         :param inputs:
@@ -616,7 +621,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
-        PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)
+        PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)'''
 
     def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         """
@@ -687,23 +692,41 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
-    def _export_plug(self, from_undo=False, from_redo=False):
-        dial = self._PlugEdit()
-        dial.name_line.setText(self._temp_plug_name[1])
-        dial.optional.setChecked(self._temp_plug.optional)
+    def _export_plug(self, pipeline_parameter=None, optional=None,
+                     weak_link=None, from_undo=False, from_redo=False,
+                     temp_plug_name=None):
 
-        res = dial.exec_()
+        if not temp_plug_name:
+            dial = self._PlugEdit()
+            dial.name_line.setText(self._temp_plug_name[1])
+            dial.optional.setChecked(self._temp_plug.optional)
+            temp_plug_name = self._temp_plug_name
+
+            res = dial.exec_()
+        else:
+            res = True
+
         if res:
+
+            if pipeline_parameter is None:
+                pipeline_parameter = str(dial.name_line.text())
+
+            if optional is None:
+                optional = dial.optional.isChecked()
+
+            if weak_link is None:
+                weak_link = dial.weak.isChecked()
+
             self.scene.pipeline.export_parameter(
-                self._temp_plug_name[0], self._temp_plug_name[1],
-                pipeline_parameter=str(dial.name_line.text()),
-                is_optional=dial.optional.isChecked(),
-                weak_link=dial.weak.isChecked())
+                temp_plug_name[0], temp_plug_name[1],
+                pipeline_parameter=pipeline_parameter,
+                is_optional=optional,
+                weak_link=weak_link)
             self.scene.update_pipeline()
 
         # For history
-        history_maker = ["export_plug", ('inputs', str(dial.name_line.text())), str(dial.name_line.text()),
-                         dial.optional.isChecked(), dial.weak.isChecked()]
+        history_maker = ["export_plug", ('inputs', pipeline_parameter), pipeline_parameter,
+                         optional, weak_link]
 
         self.update_history(history_maker, from_undo, from_redo)
 
@@ -732,7 +755,7 @@ class PipelineEditor(PipelineDevelopperView):
             _temp_plug_name = self._temp_plug_name
 
         if _temp_plug_name[0] in ('inputs', 'outputs'):
-            print('#' * 50)
+            """print('#' * 50)
             print(_temp_plug_name)
             for trait_name, trait in self.scene.pipeline.traits().items():
                 print(trait_name, trait)
@@ -741,10 +764,25 @@ class PipelineEditor(PipelineDevelopperView):
                 else:
                     print('HANDLER:', trait.handler)
                     if trait.has_items:
-                        print("HANDLER HAS ITEMS")
-
+                        print("HANDLER HAS ITEMS")"""
+            plug_name = _temp_plug_name[1]
+            plug = self.scene.pipeline.pipeline_node.plugs[plug_name]
+            optional = plug.optional
+            new_temp_plugs = []  # contains the plugs that are connected to the input or output plug
+            for link in plug.links_to:
+                temp_plug = (link[0], link[1])
+                new_temp_plugs.append(temp_plug)
+            for link in plug.links_from:
+                temp_plug = (link[0], link[1])
+                new_temp_plugs.append(temp_plug)
             self.scene.pipeline.remove_trait(_temp_plug_name[1])
             self.scene.update_pipeline()
+
+            if not from_undo and not from_redo:
+                # For history
+                history_maker = ["remove_plug", _temp_plug_name, new_temp_plugs, optional]
+
+                self.update_history(history_maker, from_undo, from_redo)
 
     def save_pipeline(self):
         '''
