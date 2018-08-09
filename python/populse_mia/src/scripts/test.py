@@ -104,6 +104,8 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up adding a tag
         """
 
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
         # Testing without tag name
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
@@ -137,9 +139,19 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.add_tag_action.trigger()
         add_tag = self.imageViewer.data_browser.pop_up_add_tag
         add_tag.text_edit_tag_name.setText("Test")
+        add_tag.text_edit_default_value.setText("def_value")
         QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
+        for document in self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT):
+            self.assertEqual(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, document, "Test"), "def_value")
+        for document in self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL):
+            self.assertEqual(self.imageViewer.project.session.get_value(COLLECTION_INITIAL, document, "Test"), "def_value")
+
+        test_column = self.imageViewer.data_browser.table_data.get_tag_column("Test")
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, test_column)
+            self.assertEqual(item.text(), "def_value")
 
         QApplication.processEvents()
 
@@ -147,6 +159,8 @@ class TestMIADataBrowser(unittest.TestCase):
         """
         Tests the pop up cloning a tag
         """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
 
         # Testing without new tag name
         self.imageViewer.data_browser.clone_tag_action.trigger()
@@ -171,26 +185,39 @@ class TestMIADataBrowser(unittest.TestCase):
         self.imageViewer.data_browser.clone_tag_action.trigger()
         clone_tag = self.imageViewer.data_browser.pop_up_clone_tag
         clone_tag.line_edit_new_tag_name.setText("Test")
-        clone_tag.list_widget_tags.setCurrentRow(0) # Bricks tag selected
+        clone_tag.search_bar.setText("BandWidth")
+        clone_tag.list_widget_tags.setCurrentRow(0) # BandWidth tag selected
         QTest.mouseClick(clone_tag.push_button_ok, Qt.LeftButton)
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_CURRENT))
         self.assertTrue("Test" in self.imageViewer.project.session.get_fields_names(COLLECTION_INITIAL))
         test_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, "Test")
-        filename_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, TAG_BRICKS)
-        self.assertEqual(test_row.description, filename_row.description)
-        self.assertEqual(test_row.unit, filename_row.unit)
-        self.assertEqual(test_row.default_value, filename_row.default_value)
-        self.assertEqual(test_row.type, filename_row.type)
+        bandwidth_row = self.imageViewer.project.session.get_field(COLLECTION_CURRENT, "BandWidth")
+        self.assertEqual(test_row.description, bandwidth_row.description)
+        self.assertEqual(test_row.unit, bandwidth_row.unit)
+        self.assertEqual(test_row.default_value, bandwidth_row.default_value)
+        self.assertEqual(test_row.type, bandwidth_row.type)
         self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
         self.assertEqual(test_row.visibility, True)
         test_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, "Test")
-        filename_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, TAG_BRICKS)
-        self.assertEqual(test_row.description, filename_row.description)
-        self.assertEqual(test_row.unit, filename_row.unit)
-        self.assertEqual(test_row.default_value, filename_row.default_value)
-        self.assertEqual(test_row.type, filename_row.type)
+        bandwidth_row = self.imageViewer.project.session.get_field(COLLECTION_INITIAL, "BandWidth")
+        self.assertEqual(test_row.description, bandwidth_row.description)
+        self.assertEqual(test_row.unit, bandwidth_row.unit)
+        self.assertEqual(test_row.default_value, bandwidth_row.default_value)
+        self.assertEqual(test_row.type, bandwidth_row.type)
         self.assertEqual(test_row.origin, TAG_ORIGIN_USER)
         self.assertEqual(test_row.visibility, True)
+
+        for document in self.imageViewer.project.session.get_documents_names(COLLECTION_CURRENT):
+            self.assertEqual(self.imageViewer.project.session.get_value(COLLECTION_CURRENT, document, "Test"), self.imageViewer.project.session.get_value(COLLECTION_CURRENT, document, "BandWidth"))
+        for document in self.imageViewer.project.session.get_documents_names(COLLECTION_INITIAL):
+            self.assertEqual(self.imageViewer.project.session.get_value(COLLECTION_INITIAL, document, "Test"), self.imageViewer.project.session.get_value(COLLECTION_INITIAL, document, "BandWidth"))
+
+        test_column = self.imageViewer.data_browser.table_data.get_tag_column("Test")
+        bw_column = self.imageViewer.data_browser.table_data.get_tag_column("BandWidth")
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item_bw = self.imageViewer.data_browser.table_data.item(row, bw_column)
+            item_test = self.imageViewer.data_browser.table_data.item(row, test_column)
+            self.assertEqual(item_bw.text(), item_test.text())
 
     def test_remove_tag(self):
         """
