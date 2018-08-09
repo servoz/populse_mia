@@ -707,6 +707,26 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+    def export_node_plugs(self, node_name, inputs=True, outputs=True,
+                          optional=False, from_undo=False, from_redo=False):
+        pipeline = self.scene.pipeline
+        node = pipeline.nodes[node_name]
+        parameter_list = []
+        for parameter_name, plug in six.iteritems(node.plugs):
+            if parameter_name in ("nodes_activation", "selection_changed"):
+                continue
+            if (((node_name, parameter_name) not in pipeline.do_not_export and
+                ((outputs and plug.output and not plug.links_to) or
+                    (inputs and not plug.output and not plug.links_from)) and
+                (optional or not node.get_trait(parameter_name).optional))):
+                pipeline.export_parameter(node_name, parameter_name)
+                parameter_list.append(parameter_name)
+
+        # For history
+        history_maker = ["export_plugs", parameter_list, node_name]
+
+        self.update_history(history_maker, from_undo, from_redo)
+
     def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False):
         if not _temp_plug_name:
             _temp_plug_name = self._temp_plug_name

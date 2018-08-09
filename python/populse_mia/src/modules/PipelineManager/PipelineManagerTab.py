@@ -170,11 +170,14 @@ class PipelineManagerTab(QWidget):
 
                 """["export_plug", self._temp_plug_name,
                  str(dial.name_line.text()), dial.optional.isChecked(), dial.weak.isChecked()]"""
-                pass
 
             elif action == "export_plugs":
-                # Loop on remove_plug
-                pass
+                parameter_list = to_undo[1]
+                node_name = to_undo[2]
+                for parameter in parameter_list:
+                    temp_plug_name = ('inputs', parameter)
+                    self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
+                                                                              from_undo=True)
 
             elif action == "update_node_name":
                 node = to_undo[1]
