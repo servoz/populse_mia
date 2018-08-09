@@ -3204,6 +3204,18 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     def _remove_plug(self):
         if self._temp_plug_name[0] in ('inputs', 'outputs'):
             #print 'remove plug:', self._temp_plug_name[1]
+            print('#' * 50)
+            print(self._temp_plug_name)
+            print(self._temp_plug)
+            for trait_name, trait in self.scene.pipeline.traits().items():
+                print(trait_name, trait)
+                if trait.handler is None:
+                    print('HANDLER IS NONE')
+                else:
+                    print('HANDLER:', trait.handler)
+                    if trait.has_items:
+                        print("HANDLER HAS ITEMS")
+
             self.scene.pipeline.remove_trait(self._temp_plug_name[1])
             self.scene.update_pipeline()
 

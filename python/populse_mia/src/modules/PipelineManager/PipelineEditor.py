@@ -687,6 +687,45 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+    def _export_plug(self, from_undo=False, from_redo=False):
+        dial = self._PlugEdit()
+        dial.name_line.setText(self._temp_plug_name[1])
+        dial.optional.setChecked(self._temp_plug.optional)
+
+        res = dial.exec_()
+        if res:
+            self.scene.pipeline.export_parameter(
+                self._temp_plug_name[0], self._temp_plug_name[1],
+                pipeline_parameter=str(dial.name_line.text()),
+                is_optional=dial.optional.isChecked(),
+                weak_link=dial.weak.isChecked())
+            self.scene.update_pipeline()
+
+        # For history
+        history_maker = ["export_plug", ('inputs', str(dial.name_line.text())), str(dial.name_line.text()),
+                         dial.optional.isChecked(), dial.weak.isChecked()]
+
+        self.update_history(history_maker, from_undo, from_redo)
+
+    def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False):
+        if not _temp_plug_name:
+            _temp_plug_name = self._temp_plug_name
+
+        if _temp_plug_name[0] in ('inputs', 'outputs'):
+            print('#' * 50)
+            print(_temp_plug_name)
+            for trait_name, trait in self.scene.pipeline.traits().items():
+                print(trait_name, trait)
+                if trait.handler is None:
+                    print('HANDLER IS NONE')
+                else:
+                    print('HANDLER:', trait.handler)
+                    if trait.has_items:
+                        print("HANDLER HAS ITEMS")
+
+            self.scene.pipeline.remove_trait(_temp_plug_name[1])
+            self.scene.update_pipeline()
+
     def save_pipeline(self):
         '''
                 Ask for a filename using the file dialog, and save the pipeline as a
