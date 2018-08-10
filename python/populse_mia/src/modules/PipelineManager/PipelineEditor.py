@@ -493,11 +493,42 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
 
 class PipelineEditor(PipelineDevelopperView):
+    """
+    View to edit a pipeline graphically
+
+    Attributes:
+        - undos: list of actions to undo
+        - redos: list of actions to redo
+
+    Methods:
+        - dragEnterEvent: event handler when the mouse enters the widget
+        - dragMoveEvent: event handler when the mouse moves in the widget
+        - dropEvent: event handler when something is dropped in the widget
+        - find_process: finds the dropped process in the system's paths
+        - update_history: updates the history for undos and redos
+        - add_process: adds a process to the pipeline
+        - del_node: deletes a node
+        - _release_grab_link: method called when a link is released
+        - add_link: add a link between two nodes
+        - _del_link: deletes a link
+        - update_node_name: updates a node name
+        - update_plug_value: updates a plug value
+        - _export_plug: export a plug to a pipeline global input or output
+        - export_node_plugs: exports all the plugs of a node
+        - _remove_plug: removes a plug
+        - save_pipeline: saves the pipeline
+    """
 
     pipeline_saved = QtCore.pyqtSignal(str)
     pipeline_modified = QtCore.pyqtSignal(PipelineDevelopperView)
 
     def __init__(self, project):
+        """
+        Initialization of the PipelineEditor
+
+        :param project: current project in the software
+        """
+
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
                                         show_sub_pipelines=True, enable_edition=True)
 
@@ -508,14 +539,33 @@ class PipelineEditor(PipelineDevelopperView):
         self.redos = []
 
     def dragEnterEvent(self, event):
+        """
+        Event handler when the mouse enters the widget
+
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             event.accept()
 
     def dragMoveEvent(self, event):
+        """
+        Event handler when the mouse moves in the widget
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             event.accept()
 
     def dropEvent(self, event):
+        """
+        Event handler when something is dropped in the widget
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             self.click_pos = QtGui.QCursor.pos()
             path = bytes(event.mimeData().data('component/name'))
@@ -523,7 +573,7 @@ class PipelineEditor(PipelineDevelopperView):
 
     def find_process(self, path):
         """
-        Finds the dropped process in the system's paths.
+        Finds the dropped process in the system's paths
 
         :param path: class's path (e.g. "nipype.interfaces.spm.Smooth") (str)
         :return:
@@ -544,7 +594,7 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
-        Updates the history for undos and redos.
+        Updates the history for undos and redos
         This method is called after each action in the PipelineEditor.
 
         :param history_maker: list that contains information about what has been done
@@ -566,7 +616,7 @@ class PipelineEditor(PipelineDevelopperView):
 
     def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
         """
-        Adds a process to the pipeline.
+        Adds a process to the pipeline
 
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node (using when undo/redo) (str)
@@ -575,6 +625,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param links: list of links (using when undo/redo)
         :return:
         """
+
         pipeline = self.scene.pipeline
         if not node_name:
             class_name = class_process.__name__
@@ -635,7 +686,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def del_node(self, node_name=None, from_undo=False, from_redo=False):
         """
-        Deletes a node.
+        Deletes a node
+
         :param node_name: name of the corresponding node (using when undo/redo) (str)
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
@@ -698,11 +750,12 @@ class PipelineEditor(PipelineDevelopperView):
 
     def _release_grab_link(self, event, ret=False):
         """
-        Method called when a link is released.
+        Method called when a link is released
         :param event: mouse event corresponding to the release
         :param ret: boolean that is set to True in the original method to return the link
         :return:
         """
+
         # Calling the original method
         link = PipelineDevelopperView._release_grab_link(self, event, ret=True)
 
@@ -714,6 +767,7 @@ class PipelineEditor(PipelineDevelopperView):
     def add_link(self, source, dest, active, weak, from_undo=False, from_redo=False):
         """
         Adds a link between two nodes.
+
         :param source: tuple containing the node and plug source names
         :param dest: tuple containing the node and plug destination names
         :param active: boolean that is True if the link is activated
@@ -722,6 +776,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         self.scene.add_link(source, dest, active, weak)
 
         # Writing a string to represent the link
@@ -739,12 +794,14 @@ class PipelineEditor(PipelineDevelopperView):
 
     def _del_link(self, link=None, from_undo=False, from_redo=False):
         """
-        Deletes a link.
+        Deletes a link
+
         :param link: string representation of a link (e.g. "process1.out->process2.in")
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         if not link:
             link = self._current_link
         else:
@@ -770,7 +827,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         """
-        Updates a node name.
+        Updates a node name
+
         :param old_node: Node object to change
         :param old_node_name: original name of the node (str)
         :param new_node_name: new name of the node (str)
@@ -778,6 +836,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         pipeline = self.scene.pipeline
 
         # Removing links of the selected node and copy the origin/destination
@@ -820,7 +879,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_plug_value(self, node_name, new_value, plug_name, value_type, from_undo=False, from_redo=False):
         """
-        Updates plug value.
+        Updates a plug value
+
         :param node_name: name of the node (str)
         :param new_value: new value to set to the plug
         :param plug_name: name of the plug to change (str)
@@ -829,6 +889,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         old_value = self.scene.pipeline.nodes[node_name].get_plug_value(plug_name)
         self.scene.pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
 
@@ -840,6 +901,17 @@ class PipelineEditor(PipelineDevelopperView):
     def _export_plug(self, pipeline_parameter=False, optional=None,
                      weak_link=None, from_undo=False, from_redo=False,
                      temp_plug_name=None):
+        """
+        Export a plug to a pipeline global input or output
+
+        :param pipeline_parameter: name of the pipeline input/output
+        :param optional: True if the plug is optional
+        :param weak_link: True if the link is weak
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :param temp_plug_name: tuple containing (the name of the node, the name of the plug) to export
+        :return:
+        """
         # Bug: the first parameter (here pipeline_parameter) cannot be None
         # even if we write pipeline_parameter=None in the line above, it will be False...
 
@@ -878,6 +950,18 @@ class PipelineEditor(PipelineDevelopperView):
 
     def export_node_plugs(self, node_name, inputs=True, outputs=True,
                           optional=False, from_undo=False, from_redo=False):
+        """
+        Exports all the plugs of a node
+
+        :param node_name: node name
+        :param inputs: True if the inputs have to be exported
+        :param outputs: True if the outputs have to be exported
+        :param optional: True if the optional plugs have to be exported
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :return:
+        """
+
         pipeline = self.scene.pipeline
         node = pipeline.nodes[node_name]
         parameter_list = []
@@ -897,6 +981,15 @@ class PipelineEditor(PipelineDevelopperView):
         self.update_history(history_maker, from_undo, from_redo)
 
     def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False, from_export_plugs=False):
+        """
+        Removes a plug
+
+        :param _temp_plug_name: tuple containing (the name of the node, the name of the plug) to remove
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :param from_export_plugs: True if this method is called from a "from_export_plugs" undo or redo action
+        :return:
+        """
         if not _temp_plug_name:
             _temp_plug_name = self._temp_plug_name
 
@@ -933,10 +1026,12 @@ class PipelineEditor(PipelineDevelopperView):
                 self.update_history(history_maker, from_undo, from_redo)
 
     def save_pipeline(self):
-        '''
-                Ask for a filename using the file dialog, and save the pipeline as a
-                XML or python file.
-                '''
+        """
+        Saves the pipeline
+
+        :return:
+        """
+
         pipeline = self.scene.pipeline
         folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
         filename = QtWidgets.QFileDialog.getSaveFileName(
