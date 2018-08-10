@@ -28,7 +28,7 @@ install:
 
 test_script:
   - "python --version"
-  - "python .\\python\\populse_mia\\src\\scripts\\test.py"
+  - "python .\\python\\populse_mia\\src\\scripts\\test.py -v"
 
 notifications:
   - provider: Email

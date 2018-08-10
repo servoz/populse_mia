@@ -42,7 +42,7 @@ install:
 
 script:
   - python3 -V
-  - python3 ./python/populse_mia/src/scripts/test.py
+  - python3 ./python/populse_mia/src/scripts/test.py -v
   - coverage run ./python/populse_mia/src/scripts/test.py
 
 after_success:
