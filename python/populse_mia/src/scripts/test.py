@@ -445,6 +445,19 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue("data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii" in scans_displayed)
 
         QTest.mouseClick(self.imageViewer.data_browser.advanced_search_button, Qt.LeftButton)
+
+        # Testing - and + buttons
+        self.assertEqual(len(self.imageViewer.data_browser.advanced_search.rows), 1)
+        first_row = self.imageViewer.data_browser.advanced_search.rows[0]
+        QTest.mouseClick(first_row[6], Qt.LeftButton)
+        self.assertEqual(len(self.imageViewer.data_browser.advanced_search.rows), 2)
+        second_row = self.imageViewer.data_browser.advanced_search.rows[1]
+        QTest.mouseClick(second_row[5], Qt.LeftButton)
+        self.assertEqual(len(self.imageViewer.data_browser.advanced_search.rows), 1)
+        first_row = self.imageViewer.data_browser.advanced_search.rows[0]
+        QTest.mouseClick(first_row[5], Qt.LeftButton)
+        self.assertEqual(len(self.imageViewer.data_browser.advanced_search.rows), 1)
+
         field = self.imageViewer.data_browser.advanced_search.rows[0][2]
         condition = self.imageViewer.data_browser.advanced_search.rows[0][3]
         value = self.imageViewer.data_browser.advanced_search.rows[0][4]
@@ -455,7 +468,7 @@ class TestMIADataBrowser(unittest.TestCase):
         value.setText("G1")
         QTest.mouseClick(self.imageViewer.data_browser.advanced_search.search, Qt.LeftButton)
 
-        # Testing that only one scan is display with the filter applied
+        # Testing that only G1 scans are displayed with the filter applied
         scans_displayed = []
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
             item = self.imageViewer.data_browser.table_data.item(row, 0)
