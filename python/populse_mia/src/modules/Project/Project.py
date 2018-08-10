@@ -67,6 +67,9 @@ class Project:
             if not os.path.exists(os.path.join(self.folder, "database")):
                 os.makedirs(os.path.join(self.folder, "database"))
 
+            if not os.path.exists(os.path.join(self.folder, "filters")):
+                os.makedirs(os.path.join(self.folder, "filters"))
+
             if not os.path.exists(os.path.join(self.folder, "data")):
                 os.makedirs(os.path.join(self.folder, "data"))
 

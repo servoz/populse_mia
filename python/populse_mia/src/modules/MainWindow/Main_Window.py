@@ -455,53 +455,55 @@ class Main_Window(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(path)):
 
-                # We check for unsaved modifications
-                if self.check_unsaved_modifications():
+                if os.path.exists(os.path.join(path, "properties", "properties.yml")) and os.path.exists(os.path.join(path, "database", "mia.db")) and os.path.exists(os.path.join(path, "data", "raw_data")) and os.path.exists(os.path.join(path, "data", "derived_data")) and os.path.exists(os.path.join(path, "data", "downloaded_data")) and os.path.exists(os.path.join(path, "filters")):
 
-                    # If there are unsaved modifications, we ask the user what he wants to do
-                    self.pop_up_close = Ui_Dialog_Quit(self.project)
-                    self.pop_up_close.save_as_signal.connect(self.saveChoice)
-                    self.pop_up_close.exec()
-                    can_switch = self.pop_up_close.can_exit()
+                    # We check for unsaved modifications
+                    if self.check_unsaved_modifications():
 
-                else:
-                    can_switch = True
+                        # If there are unsaved modifications, we ask the user what he wants to do
+                        self.pop_up_close = Ui_Dialog_Quit(self.project)
+                        self.pop_up_close.save_as_signal.connect(self.saveChoice)
+                        self.pop_up_close.exec()
+                        can_switch = self.pop_up_close.can_exit()
 
-                # We can open a new project
-                if can_switch:
+                    else:
+                        can_switch = True
 
-                    # We check for invalid scans in the project
+                    # We can open a new project
+                    if can_switch:
 
-                    try:
-                        tempDatabase = Project(path, False)
-                    except IOError:
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Warning)
-                        msg.setText(
-                            "Project already opened")
-                        msg.setInformativeText(
-                            "The project at " + str(path) + " is already opened in another instance of the software.")
-                        msg.setWindowTitle("Warning")
-                        msg.setStandardButtons(QMessageBox.Ok)
-                        msg.buttonClicked.connect(msg.close)
-                        msg.exec()
-                        return False
-                    problem_list = controller.verify_scans(tempDatabase, path)
+                        # We check for invalid scans in the project
 
-                    # Message if invalid files
-                    if problem_list != []:
-                        str_msg = ""
-                        for element in problem_list:
-                            str_msg += element + "\n\n"
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Warning)
-                        msg.setText(
-                            "These files have been modified or removed since they have been converted for the first time:")
-                        msg.setInformativeText(str_msg)
-                        msg.setWindowTitle("Warning")
-                        msg.setStandardButtons(QMessageBox.Ok)
-                        msg.buttonClicked.connect(msg.close)
-                        msg.exec()
+                        try:
+                            tempDatabase = Project(path, False)
+                        except IOError:
+                            msg = QMessageBox()
+                            msg.setIcon(QMessageBox.Warning)
+                            msg.setText(
+                                "Project already opened")
+                            msg.setInformativeText(
+                                "The project at " + str(path) + " is already opened in another instance of the software.")
+                            msg.setWindowTitle("Warning")
+                            msg.setStandardButtons(QMessageBox.Ok)
+                            msg.buttonClicked.connect(msg.close)
+                            msg.exec()
+                            return False
+                        problem_list = controller.verify_scans(tempDatabase, path)
+
+                        # Message if invalid files
+                        if problem_list != []:
+                            str_msg = ""
+                            for element in problem_list:
+                                str_msg += element + "\n\n"
+                            msg = QMessageBox()
+                            msg.setIcon(QMessageBox.Warning)
+                            msg.setText(
+                                "These files have been modified or removed since they have been converted for the first time:")
+                            msg.setInformativeText(str_msg)
+                            msg.setWindowTitle("Warning")
+                            msg.setStandardButtons(QMessageBox.Ok)
+                            msg.buttonClicked.connect(msg.close)
+                            msg.exec()
 
                     self.project.session.unsave_modifications()
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
@@ -518,11 +520,24 @@ class Main_Window(QMainWindow):
 
                     return True
 
+                # Not a MIA project
+                else:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("The project selected isn't a valid MIA project")
+                    msg.setInformativeText(
+                        "The project selected " + name + " isn't a MIA project.\nPlease select a valid one.")
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+                    return False
+
             # The project doesn't exist anymore
             else:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
-                msg.setText("The project selected doesn't exist anymore:")
+                msg.setText("The project selected doesn't exist anymore")
                 msg.setInformativeText(
                     "The project selected " + name + " doesn't exist anymore.\nPlease select another one.")
                 msg.setWindowTitle("Warning")
