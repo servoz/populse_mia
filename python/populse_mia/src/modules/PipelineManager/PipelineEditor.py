@@ -27,10 +27,49 @@ else:
 
 
 class PipelineEditorTabs(QtWidgets.QTabWidget):
+    """
+    Tab widget that contains pipeline editors
+
+    Attributes:
+        - project: current project in the software
+        - scan_list: list of the selected database files
+        - undos: dictionary containing as values the undo list and as keys the name of the corresponding tab
+        - redos: dictionary containing as values the redo list and as keys the name of the corresponding tab
+
+    Methods:
+        - new_tab: creates a new tab and a new editor
+        - close_tab: closes the selected tab and editor
+        - set_current_editor_by_name: sets the current editor
+        - get_current_editor: gets the instance of the current editor
+        - get_filename_by_index: gets the pipeline filename from its index in the editors
+        - get_current_filename: gets the file name of the current editor
+        - get_current_pipeline: gets the instance of the current pipeline
+        - save_pipeline: saves the pipeline of the current editor
+        - load_pipeline: loads a new pipeline
+        - save_pipeline_parameters: saves the pipeline parameters of the current editor
+        - load_pipeline_parameters: loads parameters to the pipeline of the current editor
+        - emit_node_clicked: emits a signal when a node is clicked
+        - emit_pipeline_saved: emits a signal when a pipeline is saved
+        - update_pipeline_editors: updates editors
+        - update_history: updates undo/redo history of an editor
+        - reset_pipeline: resets the pipeline of the current editor
+        - update_scans_list: updates the list of database scans in every editor
+        - open_sub_pipeline: opens a sub-pipeline in a new tab
+        - open_filter: opens a filter widget
+        - export_to_db_scans: exports the input of a filter to "database_scans"
+
+    """
+
     pipeline_saved = QtCore.pyqtSignal(str)
     node_clicked = QtCore.Signal(str, Process)
 
     def __init__(self, project, scan_list):
+        """
+        Initialization of the Pipeline Editor tabs
+
+        :param project: current project in the software
+        :param scan_list: list of the selected database files
+        """
         super(PipelineEditorTabs, self).__init__()
 
         self.project = project
@@ -50,17 +89,29 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.open_filter.connect(self.open_filter)
         p_e.export_to_db_scans.connect(self.export_to_db_scans)
 
+        # Setting a default editor called "New Pipeline"
         self.addTab(p_e, "New Pipeline")
         self.undos["New Pipeline"] = []
         self.redos["New Pipeline"] = []
+
+        # Tool button to add a tab
         tb = QtWidgets.QToolButton()
         tb.setText('+')
         tb.clicked.connect(self.new_tab)
+
         self.addTab(QtWidgets.QLabel('Add tabs by pressing "+"'), str())
         self.setTabEnabled(1, False)
         self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
 
     def new_tab(self, loaded=False):
+        """
+        Creates a new tab and a new editor
+
+        :param loaded: True if the pipeline is loaded
+        :return:
+        """
+
+        # Creating a new editor
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
@@ -69,6 +120,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.open_filter.connect(self.open_filter)
         p_e.export_to_db_scans.connect(self.export_to_db_scans)
 
+        # If the pipeline is not loaded (the user has clicked on the "+" button),
+        # a unique name has to be automatically generated
+        # If the pipeline is loaded, the tab name will be changed later
         if not loaded:
             idx = 1
             while True and idx < 20:
@@ -86,9 +140,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setCurrentIndex(self.count()-2)
 
     def close_tab(self, idx):
+        """
+        Closes the selected tab and editor
+
+        :param idx: index of the tab to close
+        :return:
+        """
 
         filename = self.get_filename_by_index(idx)
 
+        # If the pipeline has been modified and not saved
         if self.tabText(idx)[-2:] == " *":
             pop_up_close = Ui_Dialog_Close_Pipeline(filename)
             pop_up_close.save_as_signal.connect(self.save_pipeline)
@@ -115,27 +176,65 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.removeTab(idx)
 
     def set_current_editor_by_name(self, tab_name):
+        """
+        Sets the current editor
+
+        :param tab_name: name of the tab
+        :return:
+        """
+
         self.setCurrentWidget(self.findChild(QtWidgets.QWidget, tab_name))
 
     def get_current_editor(self):
+        """
+        Gets the instance of the current editor
+
+        :return:
+        """
+
         return self.widget(self.currentIndex())
 
     def get_filename_by_index(self, idx):
+        """
+        Gets the pipeline filename from its index in the editors
+
+        :param idx: index of the editor
+        :return:
+        """
+
         if self.tabText(idx)[-2:] == " *":
             return self.tabText(idx)[:-2]
         else:
             return self.tabText(idx)
 
     def get_current_filename(self):
+        """
+        Gets the file name of the current editor
+
+        :return:
+        """
+
         if self.tabText(self.currentIndex())[-2:] == " *":
             return self.tabText(self.currentIndex())[:-2]
         else:
             return self.tabText(self.currentIndex())
 
     def get_current_pipeline(self):
+        """
+        Gets the instance of the current pipeline
+
+        :return:
+        """
+
         return self.get_current_editor().scene.pipeline
 
     def save_pipeline(self):
+        """
+        Saves the pipeline of the current editor
+
+        :return:
+        """
+
         old_filename = self.get_current_filename()
         new_file_name = self.get_current_editor().save_pipeline()
 
@@ -151,6 +250,13 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.redos[new_file_name] = redos
 
     def load_pipeline(self, filename=None):
+        """
+        Loads a new pipeline
+
+        :param filename: not None only when this method is called from "edit_sub_pipeline"
+        :return:
+        """
+
         if not filename:
             # If there is only one opened PipelineEditor
             if self.count() == 2:
@@ -165,6 +271,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                 self.new_tab(loaded=True)
                 filename = self.widget(self.count()-2).load_pipeline()
                 self.setCurrentIndex(self.count()-2)
+
         if filename:
             self.setTabText(self.currentIndex(), os.path.basename(filename))
             self.undos[os.path.basename(filename)] = []
@@ -172,34 +279,83 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         self.update_scans_list()
 
-    def load_pipeline_parameters(self):
-        self.get_current_editor().load_pipeline_parameters()
-
     def save_pipeline_parameters(self):
+        """
+        Saves the pipeline parameters of the current editor
+
+        :return:
+        """
+
         self.get_current_editor().save_pipeline_parameters()
 
+    def load_pipeline_parameters(self):
+        """
+        Loads parameters to the pipeline of the current editor
+        :return:
+        """
+
+        self.get_current_editor().load_pipeline_parameters()
+
     def emit_node_clicked(self, node_name, process):
+        """
+        Emits a signal when a node is clicked
+
+        :param node_name: node name
+        :param process: process of the corresponding node
+        :return:
+        """
+
         self.node_clicked.emit(node_name, process)
 
     def emit_pipeline_saved(self, filename):
+        """
+        Emits a signal when a pipeline is saved
+
+        :param filename: file name of the pipeline
+        :return:
+        """
+
         self.setTabText(self.currentIndex(), os.path.basename(filename))
         self.pipeline_saved.emit(filename)
 
-    def update_pipeline_editors(self, developer_view):
-        self.update_history(developer_view)
+    def update_pipeline_editors(self, editor):
+        """
+        Update editors
+
+        :param editor: editor
+        :return:
+        """
+
+        self.update_history(editor)
         self.update_scans_list()
 
-    def update_history(self, developer_view):
-        self.undos[self.get_current_filename()] = developer_view.undos
-        self.redos[self.get_current_filename()] = developer_view.redos
+    def update_history(self, editor):
+        """
+        Updates undo/redo history of an editor
+
+        :param editor: editor
+        :return:
+        """
+        self.undos[self.get_current_filename()] = editor.undos
+        self.redos[self.get_current_filename()] = editor.redos
         file_name = self.get_current_filename()
         if file_name[-2:] != " *":
             self.setTabText(self.currentIndex(), file_name + " *")
 
     def reset_pipeline(self):
+        """
+        Resets the pipeline of the current editor
+        :return:
+        """
+
         self.get_current_editor()._reset_pipeline()
 
     def update_scans_list(self):
+        """
+        Updates the list of database scans in every editor
+        :return:
+        """
+
         for i in range(self.count()-1):
             pipeline = self.widget(i).scene.pipeline
             if hasattr(pipeline, "nodes"):
@@ -211,7 +367,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def open_sub_pipeline(self, sub_pipeline):
         """
-        Opens a pipeline node in a new editor tab.
+        Opens a sub-pipeline in a new tab.
         :param sub_pipeline: the pipeline to open
         :return:
         """
@@ -224,6 +380,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             :param prev_paths: paths of the last call of this function
             :return: the package path of the sub-pipeline if it is found, else None
             """
+
             if prev_paths is None:
                 prev_paths = []
 
@@ -256,6 +413,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             :param file_name: name of the sub-pipeline
             :return: name of the corresponding file if it is found, else None
             """
+
             filenames = [file_name + '.py', file_name + '.xml']
             for filename in filenames:
                 for path in paths_list:
@@ -307,11 +465,22 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                     self.load_pipeline(sub_pipeline_basename)
 
     def open_filter(self, node_name):
+        """
+        Opens a filter widget
+        :param node_name: name of the corresponding node
+        :return:
+        """
         node = self.get_current_pipeline().nodes[node_name]
         filter_widget = FilterWidget(self.project, node_name, node, self)
         filter_widget.show()
 
     def export_to_db_scans(self, node_name):
+        """
+        Exports the input of a filter to "database_scans" plug
+        :param node_name:
+        :return:
+        """
+
         # If database_scans is already a pipeline global input, the plug cannot be
         # exported. A link as to be added between database_scans and the input of the filter.
         if 'database_scans' in self.get_current_pipeline().user_traits().keys():
@@ -324,11 +493,42 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
 
 class PipelineEditor(PipelineDevelopperView):
+    """
+    View to edit a pipeline graphically
+
+    Attributes:
+        - undos: list of actions to undo
+        - redos: list of actions to redo
+
+    Methods:
+        - dragEnterEvent: event handler when the mouse enters the widget
+        - dragMoveEvent: event handler when the mouse moves in the widget
+        - dropEvent: event handler when something is dropped in the widget
+        - find_process: finds the dropped process in the system's paths
+        - update_history: updates the history for undos and redos
+        - add_process: adds a process to the pipeline
+        - del_node: deletes a node
+        - _release_grab_link: method called when a link is released
+        - add_link: add a link between two nodes
+        - _del_link: deletes a link
+        - update_node_name: updates a node name
+        - update_plug_value: updates a plug value
+        - _export_plug: export a plug to a pipeline global input or output
+        - export_node_plugs: exports all the plugs of a node
+        - _remove_plug: removes a plug
+        - save_pipeline: saves the pipeline
+    """
 
     pipeline_saved = QtCore.pyqtSignal(str)
     pipeline_modified = QtCore.pyqtSignal(PipelineDevelopperView)
 
     def __init__(self, project):
+        """
+        Initialization of the PipelineEditor
+
+        :param project: current project in the software
+        """
+
         PipelineDevelopperView.__init__(self, pipeline=None, allow_open_controller=True,
                                         show_sub_pipelines=True, enable_edition=True)
 
@@ -339,14 +539,33 @@ class PipelineEditor(PipelineDevelopperView):
         self.redos = []
 
     def dragEnterEvent(self, event):
+        """
+        Event handler when the mouse enters the widget
+
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             event.accept()
 
     def dragMoveEvent(self, event):
+        """
+        Event handler when the mouse moves in the widget
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             event.accept()
 
     def dropEvent(self, event):
+        """
+        Event handler when something is dropped in the widget
+        :param event: event
+        :return:
+        """
+
         if event.mimeData().hasFormat('component/name'):
             self.click_pos = QtGui.QCursor.pos()
             path = bytes(event.mimeData().data('component/name'))
@@ -354,7 +573,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def find_process(self, path):
         """
-        Finds the dropped process in the system's paths.
+        Finds the dropped process in the system's paths
+
         :param path: class's path (e.g. "nipype.interfaces.spm.Smooth") (str)
         :return:
         """
@@ -374,8 +594,9 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
-        Updates the history for undos and redos. This method is called
-        after each action in the PipelineEditor.
+        Updates the history for undos and redos
+        This method is called after each action in the PipelineEditor.
+
         :param history_maker: list that contains information about what has been done
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
@@ -395,7 +616,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
         """
-        Adds a process to the pipeline.
+        Adds a process to the pipeline
+
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node (using when undo/redo) (str)
         :param from_undo: boolean that is True if the action has been made using an undo
@@ -403,6 +625,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param links: list of links (using when undo/redo)
         :return:
         """
+
         pipeline = self.scene.pipeline
         if not node_name:
             class_name = class_process.__name__
@@ -463,7 +686,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def del_node(self, node_name=None, from_undo=False, from_redo=False):
         """
-        Deletes a node.
+        Deletes a node
+
         :param node_name: name of the corresponding node (using when undo/redo) (str)
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
@@ -526,11 +750,12 @@ class PipelineEditor(PipelineDevelopperView):
 
     def _release_grab_link(self, event, ret=False):
         """
-        Method called when a link is released.
+        Method called when a link is released
         :param event: mouse event corresponding to the release
         :param ret: boolean that is set to True in the original method to return the link
         :return:
         """
+
         # Calling the original method
         link = PipelineDevelopperView._release_grab_link(self, event, ret=True)
 
@@ -542,6 +767,7 @@ class PipelineEditor(PipelineDevelopperView):
     def add_link(self, source, dest, active, weak, from_undo=False, from_redo=False):
         """
         Adds a link between two nodes.
+
         :param source: tuple containing the node and plug source names
         :param dest: tuple containing the node and plug destination names
         :param active: boolean that is True if the link is activated
@@ -550,6 +776,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         self.scene.add_link(source, dest, active, weak)
 
         # Writing a string to represent the link
@@ -567,12 +794,14 @@ class PipelineEditor(PipelineDevelopperView):
 
     def _del_link(self, link=None, from_undo=False, from_redo=False):
         """
-        Deletes a link.
+        Deletes a link
+
         :param link: string representation of a link (e.g. "process1.out->process2.in")
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         if not link:
             link = self._current_link
         else:
@@ -598,7 +827,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         """
-        Updates a node name.
+        Updates a node name
+
         :param old_node: Node object to change
         :param old_node_name: original name of the node (str)
         :param new_node_name: new name of the node (str)
@@ -606,6 +836,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         pipeline = self.scene.pipeline
 
         # Removing links of the selected node and copy the origin/destination
@@ -648,7 +879,8 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_plug_value(self, node_name, new_value, plug_name, value_type, from_undo=False, from_redo=False):
         """
-        Updates plug value.
+        Updates a plug value
+
         :param node_name: name of the node (str)
         :param new_value: new value to set to the plug
         :param plug_name: name of the plug to change (str)
@@ -657,6 +889,7 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
+
         old_value = self.scene.pipeline.nodes[node_name].get_plug_value(plug_name)
         self.scene.pipeline.nodes[node_name].set_plug_value(plug_name, value_type(new_value))
 
@@ -668,6 +901,17 @@ class PipelineEditor(PipelineDevelopperView):
     def _export_plug(self, pipeline_parameter=False, optional=None,
                      weak_link=None, from_undo=False, from_redo=False,
                      temp_plug_name=None):
+        """
+        Export a plug to a pipeline global input or output
+
+        :param pipeline_parameter: name of the pipeline input/output
+        :param optional: True if the plug is optional
+        :param weak_link: True if the link is weak
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :param temp_plug_name: tuple containing (the name of the node, the name of the plug) to export
+        :return:
+        """
         # Bug: the first parameter (here pipeline_parameter) cannot be None
         # even if we write pipeline_parameter=None in the line above, it will be False...
 
@@ -706,6 +950,18 @@ class PipelineEditor(PipelineDevelopperView):
 
     def export_node_plugs(self, node_name, inputs=True, outputs=True,
                           optional=False, from_undo=False, from_redo=False):
+        """
+        Exports all the plugs of a node
+
+        :param node_name: node name
+        :param inputs: True if the inputs have to be exported
+        :param outputs: True if the outputs have to be exported
+        :param optional: True if the optional plugs have to be exported
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :return:
+        """
+
         pipeline = self.scene.pipeline
         node = pipeline.nodes[node_name]
         parameter_list = []
@@ -725,6 +981,15 @@ class PipelineEditor(PipelineDevelopperView):
         self.update_history(history_maker, from_undo, from_redo)
 
     def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False, from_export_plugs=False):
+        """
+        Removes a plug
+
+        :param _temp_plug_name: tuple containing (the name of the node, the name of the plug) to remove
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :param from_export_plugs: True if this method is called from a "from_export_plugs" undo or redo action
+        :return:
+        """
         if not _temp_plug_name:
             _temp_plug_name = self._temp_plug_name
 
@@ -761,10 +1026,12 @@ class PipelineEditor(PipelineDevelopperView):
                 self.update_history(history_maker, from_undo, from_redo)
 
     def save_pipeline(self):
-        '''
-                Ask for a filename using the file dialog, and save the pipeline as a
-                XML or python file.
-                '''
+        """
+        Saves the pipeline
+
+        :return:
+        """
+
         pipeline = self.scene.pipeline
         folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
         filename = QtWidgets.QFileDialog.getSaveFileName(
