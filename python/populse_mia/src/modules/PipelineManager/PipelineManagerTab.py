@@ -168,16 +168,13 @@ class PipelineManagerTab(QWidget):
                 self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
                                                                           from_undo=True)
 
-                """["export_plug", self._temp_plug_name,
-                 str(dial.name_line.text()), dial.optional.isChecked(), dial.weak.isChecked()]"""
-
             elif action == "export_plugs":
                 parameter_list = to_undo[1]
                 node_name = to_undo[2]
                 for parameter in parameter_list:
                     temp_plug_name = ('inputs', parameter)
                     self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
-                                                                              from_undo=True)
+                                                                              from_undo=True, from_export_plugs=True)
 
             elif action == "remove_plug":
                 temp_plug_name = to_undo[1]
@@ -231,7 +228,6 @@ class PipelineManagerTab(QWidget):
                 active = to_undo[3]
                 weak = to_undo[4]
                 self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_undo=True)
-            # TODO: ADD "MOVE PROCESS ?"
 
             self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
@@ -257,16 +253,41 @@ class PipelineManagerTab(QWidget):
                 temp_plug_name = to_redo[1]
                 self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
                                                                           from_redo=True)
-                """["export_plug", self._temp_plug_name,
-                 str(dial.name_line.text()), dial.optional.isChecked(), dial.weak.isChecked()]"""
 
             elif action == "export_plugs":
-                parameter_list = to_redo[1]
-                node_name = to_redo[2]
-                for parameter in parameter_list:
-                    temp_plug_name = ('inputs', parameter)
-                    self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
-                                                                              from_redo=True)
+                # No redo possible
+                pass
+
+            elif action == "remove_plug":
+                temp_plug_name = to_redo[1]
+                new_temp_plugs = to_redo[2]
+                optional = to_redo[3]
+                self.pipelineEditorTabs.get_current_editor()._export_plug(temp_plug_name=new_temp_plugs[0],
+                                                                          weak_link=False,
+                                                                          optional=optional, from_redo=True,
+                                                                          pipeline_parameter=temp_plug_name[1])
+
+                # Connecting all the plugs that were connected to the original plugs
+                for plug_tuple in new_temp_plugs:
+                    # Checking if the original plug is a pipeline input or output to adapt
+                    # the links to add.
+                    if temp_plug_name[0] == 'inputs':
+                        source = ('', temp_plug_name[1])
+                        dest = plug_tuple
+                    else:
+                        source = plug_tuple
+                        dest = ('', temp_plug_name[1])
+
+                    self.pipelineEditorTabs.get_current_editor().scene.add_link(source, dest, active=True, weak=False)
+
+                    # Writing a string to represent the link
+                    source_parameters = ".".join(source)
+                    dest_parameters = ".".join(dest)
+                    link = "->".join((source_parameters, dest_parameters))
+
+                    self.pipelineEditorTabs.get_current_editor().scene.pipeline.add_link(link)
+                    self.pipelineEditorTabs.get_current_editor().scene.update_pipeline()
+
             elif action == "update_node_name":
                 node = to_redo[1]
                 new_node_name = to_redo[2]
@@ -292,7 +313,6 @@ class PipelineManagerTab(QWidget):
                 self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_redo=True)
 
             self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
-            # TODO: ADD "MOVE NODE ?"
 
     def update_scans_list(self, iteration_list):
         if self.iterationTable.check_box_iterate.isChecked():

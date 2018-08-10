@@ -550,11 +550,6 @@ class PipelineEditor(PipelineDevelopperView):
         :param from_redo: boolean that is True if the action has been made using a redo
         :return:
         """
-        print('ADD LINK')
-        print('SOURCE', source)
-        print('DEST', dest)
-        print('ACTIVE', active)
-        print('weak', weak)
         self.scene.add_link(source, dest, active, weak)
 
         # Writing a string to represent the link
@@ -600,28 +595,6 @@ class PipelineEditor(PipelineDevelopperView):
                          (dest_node_name, dest_plug_name), active, weak_link]
 
         self.update_history(history_maker, from_undo, from_redo)
-
-    '''def export_plugs(self, inputs=True, outputs=True, optional=False, from_undo=False, from_redo=False):
-        """
-        STILL IN PROGRESS.
-        :param inputs:
-        :param outputs:
-        :param optional:
-        :param from_undo: boolean that is True if the action has been made using an undo
-        :param from_redo: boolean that is True if the action has been made using a redo
-        :return:
-        """
-        # TODO: TO IMPROVE
-        # For history
-        history_maker = ["export_plugs"]
-
-        for node_name in self.scene.pipeline.nodes:
-            if node_name != "":
-                history_maker.append(node_name)
-
-        self.update_history(history_maker, from_undo, from_redo)
-
-        PipelineDevelopperView.export_plugs(self, inputs, outputs, optional)'''
 
     def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         """
@@ -692,11 +665,13 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
-    def _export_plug(self, pipeline_parameter=None, optional=None,
+    def _export_plug(self, pipeline_parameter=False, optional=None,
                      weak_link=None, from_undo=False, from_redo=False,
                      temp_plug_name=None):
+        # Bug: the first parameter (here pipeline_parameter) cannot be None
+        # even if we write pipeline_parameter=None in the line above, it will be False...
 
-        if not temp_plug_name:
+        if temp_plug_name is None:
             dial = self._PlugEdit()
             dial.name_line.setText(self._temp_plug_name[1])
             dial.optional.setChecked(self._temp_plug.optional)
@@ -707,8 +682,7 @@ class PipelineEditor(PipelineDevelopperView):
             res = True
 
         if res:
-
-            if pipeline_parameter is None:
+            if not pipeline_parameter:
                 pipeline_parameter = str(dial.name_line.text())
 
             if optional is None:
@@ -750,11 +724,12 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
-    def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False):
+    def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False, from_export_plugs=False):
         if not _temp_plug_name:
             _temp_plug_name = self._temp_plug_name
 
         if _temp_plug_name[0] in ('inputs', 'outputs'):
+            # Uncomment to understand the bug when the plug's type is List
             """print('#' * 50)
             print(_temp_plug_name)
             for trait_name, trait in self.scene.pipeline.traits().items():
@@ -778,7 +753,8 @@ class PipelineEditor(PipelineDevelopperView):
             self.scene.pipeline.remove_trait(_temp_plug_name[1])
             self.scene.update_pipeline()
 
-            if not from_undo and not from_redo:
+            # if not from_undo and not from_redo:
+            if not from_export_plugs:
                 # For history
                 history_maker = ["remove_plug", _temp_plug_name, new_temp_plugs, optional]
 
