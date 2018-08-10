@@ -50,6 +50,34 @@ else:
 
 
 class PipelineManagerTab(QWidget):
+    """
+    Widget that handles the Pipeline Manager tab.
+
+    Attributes:
+        - processLibrary: library of processes to drag & drop to a pipeline editor
+        - pipelineEditorTabs: graphical pipeline editor composed of several tabs
+        - nodeController: controller that displays parameters when a node is clicked
+        - iterationTable: widgets that handles pipeline iteration
+        - project: current project in the software
+        - scan_list: list of the selected database files
+        - iteration_table_scans_list: list of the scans contained in the iteration table
+
+    Methods:
+        - undo: undo the last action made on the current pipeline editor
+        - redo: redo the last undone action on the current pipeline editor
+        - update_scans_list: updates the user-selected list of scans
+        - update_project: updates the project attribute of several objects
+        - controller_value_changed: updates history when a pipeline node is changed
+        - updateProcessLibrary: updates the library of processes when a pipeline is saved
+        - loadPipeline: loads a pipeline to the pipeline editor
+        - savePipeline: saves the current pipeline of the pipeline editor
+        - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
+        - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
+        - initPipeline: initialize the current pipeline of the pipeline editor
+        - runPipeline: run the current pipeline of the pipeline editor
+        - displayNodeParameters: displays the node controller when a node is clicked
+    """
+
     def __init__(self, project, scan_list, main_window):
         global textedit, tagEditor, editor
 
@@ -146,7 +174,7 @@ class PipelineManagerTab(QWidget):
         self.nodeController.value_changed.connect(self.controller_value_changed)
 
     def undo(self):
-        #TODO: it is not totally finished
+
         # We can undo if we have an action to revert
         if len(self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()]) > 0:
             to_undo = self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].pop()
@@ -459,26 +487,6 @@ class PipelineManagerTab(QWidget):
     def displayNodeParameters(self, node_name, process):
         self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())
         self.scrollArea.setWidget(self.nodeController)
-
-    def startConnection(self, port):
-        self.startedConnection = Connection(port, None)
-
-    def sceneMouseMoveEvent(self, event):
-        if self.startedConnection:
-            pos = event.scenePos()
-            self.startedConnection.setEndPos(pos)
-
-    def sceneMouseReleaseEvent(self, event):
-        # Clear the actual connection:
-        if self.startedConnection:
-            pos = event.scenePos()
-            items = self.diagramScene.items(pos)
-            for item in items:
-                if type(item) is PortItem:
-                    self.startedConnection.setToPort(item)
-            if self.startedConnection.toPort is None:
-                self.startedConnection.delete()
-            self.startedConnection = None
 
 
 class InitProgress(QProgressDialog):
