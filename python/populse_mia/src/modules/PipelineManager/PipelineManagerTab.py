@@ -73,12 +73,19 @@ class PipelineManagerTab(QWidget):
         - savePipeline: saves the current pipeline of the pipeline editor
         - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
         - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
-        - initPipeline: initialize the current pipeline of the pipeline editor
+        - initPipeline: initializes the current pipeline of the pipeline editor
         - runPipeline: run the current pipeline of the pipeline editor
         - displayNodeParameters: displays the node controller when a node is clicked
     """
 
     def __init__(self, project, scan_list, main_window):
+        """
+        Initialization of the Pipeline Manager tab
+        :param project: current project in the software
+        :param scan_list: list of the selected database files
+        :param main_window: main window of the software
+        """
+
         global textedit, tagEditor, editor
 
         editor = self
@@ -139,6 +146,8 @@ class PipelineManagerTab(QWidget):
         self.runButton = QPushButton('Run pipeline', self)
         self.runButton.clicked.connect(self.runPipeline)
 
+        # Layouts
+
         self.hLayout = QHBoxLayout()
         # self.hLayout.addWidget(menub)
         self.hLayout.addWidget(self.saveButton)
@@ -174,6 +183,22 @@ class PipelineManagerTab(QWidget):
         self.nodeController.value_changed.connect(self.controller_value_changed)
 
     def undo(self):
+        """
+        Undo the last action made on the current pipeline editor
+
+        Actions that can be undone:
+            - add_process
+            - delete_process
+            - export_plug
+            - export_plugs
+            - remove_plug
+            - update_node_name
+            - update_plug_value
+            - add_link
+            - delete_link
+
+        :return:
+        """
 
         # We can undo if we have an action to revert
         if len(self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()]) > 0:
@@ -260,6 +285,22 @@ class PipelineManagerTab(QWidget):
             self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
     def redo(self):
+        """
+        Redo the last undone action on the current pipeline editor
+
+        Actions that can be redone:
+            - add_process
+            - delete_process
+            - export_plug
+            - export_plugs
+            - remove_plug
+            - update_node_name
+            - update_plug_value
+            - add_link
+            - delete_link
+
+        :return:
+        """
 
         # We can redo if we have an action to make again
         if len(self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()]) > 0:
@@ -343,6 +384,12 @@ class PipelineManagerTab(QWidget):
             self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
     def update_scans_list(self, iteration_list):
+        """
+        Updates the user-selected list of scans
+
+        :param iteration_list: current list of scans in the iteration table
+        :return:
+        """
         if self.iterationTable.check_box_iterate.isChecked():
             self.iteration_table_scans_list = iteration_list
             self.pipelineEditorTabs.scan_list = iteration_list
@@ -354,6 +401,12 @@ class PipelineManagerTab(QWidget):
         self.pipelineEditorTabs.update_scans_list()
 
     def update_project(self, project):
+        """
+        Updates the project attribute of several objects
+
+        :param project: current project in the software
+        :return:
+        """
         self.project = project
         self.nodeController.project = project
         self.pipelineEditorTabs.project = project
@@ -362,6 +415,12 @@ class PipelineManagerTab(QWidget):
         Process_mia.project = project
 
     def controller_value_changed(self, signal_list):
+        """
+        Updates history when a pipeline node is changed
+
+        :param signal_list: list of the needed parameters to update history
+        :return:
+        """
         case = signal_list.pop(0)
 
         # For history
@@ -381,14 +440,19 @@ class PipelineManagerTab(QWidget):
         self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].clear()
 
     def updateProcessLibrary(self, filename):
+        """
+        Updates the library of processes when a pipeline is saved
+
+        :param filename: file name of the pipeline that has been saved
+        :return:
+        """
         filename_folder, file_name = os.path.split(filename)
         module_name = os.path.splitext(file_name)[0]
         class_name = module_name.capitalize()
 
         tmp_file = os.path.join(filename_folder, module_name + '_tmp')
 
-        # Changing the "Pipeline" name to the name of file
-        #with fileinput.FileInput(filename, inplace=True) as f:
+        # Changing the "Pipeline" class name to the name of file
         with open(filename, 'r') as f:
             with open(tmp_file, 'w') as tmp:
                 for line in f:
@@ -404,7 +468,8 @@ class PipelineManagerTab(QWidget):
 
         os.remove(tmp_file)
 
-        if os.path.relpath(filename_folder) != os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes'):
+        if os.path.relpath(filename_folder) != os.path.join('..', 'modules', 'PipelineManager', 'Processes',
+                                                            'User_processes'):
             return
 
         # Updating __init__.py
@@ -424,19 +489,47 @@ class PipelineManagerTab(QWidget):
         self.processLibrary.pkg_library.save()
 
     def loadPipeline(self):
+        """
+        Loads a pipeline to the pipeline editor
+
+        :return:
+        """
         self.pipelineEditorTabs.load_pipeline()
 
     def savePipeline(self):
+        """
+        Saves the current pipeline of the pipeline editor
+
+        :return:
+        """
         self.pipelineEditorTabs.save_pipeline()
 
     def loadParameters(self):
+        """
+        Loads pipeline parameters to the current pipeline of the pipeline editor
+
+        :return:
+        """
         self.pipelineEditorTabs.load_pipeline_parameters()
 
     def saveParameters(self):
+        """
+        Save the pipeline parameters of the the current pipeline of the pipeline editor
+
+        :return:
+        """
         self.pipelineEditorTabs.save_pipeline_parameters()
 
     def initPipeline(self, pipeline=None):
-        """ Method that generates the output names of each pipeline node. """
+        """
+        Initializes the current pipeline of the pipeline editor
+
+        During the initialization, the every output file is created empty depending on
+        the inputs and are stored in the database.
+
+        :param pipeline: used to initialize a sub-pipeline
+        :return:
+        """
 
         # TODO: TO REMOVE
         """import shutil
@@ -461,6 +554,11 @@ class PipelineManagerTab(QWidget):
         prof.print_stats()"""
 
     def runPipeline(self):
+        """
+        Run the current pipeline of the pipeline editor
+
+        :return:
+        """
         if self.iterationTable.check_box_iterate.isChecked():
             iterated_tag = self.iterationTable.iterated_tag
             tag_values = self.iterationTable.tag_values_list
@@ -485,6 +583,13 @@ class PipelineManagerTab(QWidget):
             self.progress.exec()
 
     def displayNodeParameters(self, node_name, process):
+        """
+        Displays the node controller when a node is clicked
+
+        :param node_name: name of the node to display parameters
+        :param process: process instance of the corresponding node
+        :return:
+        """
         self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())
         self.scrollArea.setWidget(self.nodeController)
 
