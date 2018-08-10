@@ -27,6 +27,38 @@ else:
 
 
 class PipelineEditorTabs(QtWidgets.QTabWidget):
+    """
+    Tab widget that contains pipeline editors
+
+    Attributes:
+        - project: current project in the software
+        - scan_list: list of the selected database files
+        - undos: dictionary containing as values the undo list and as keys the name of the corresponding tab
+        - redos: dictionary containing as values the redo list and as keys the name of the corresponding tab
+
+    Methods:
+        - new_tab: creates a new tab and a new editor
+        - close_tab: closes the selected tab and editor
+        - set_current_editor_by_name: sets the current editor
+        - get_current_editor: gets the instance of the current editor
+        - get_filename_by_index: gets the pipeline filename from its index in the editors
+        - get_current_filename: gets the file name of the current editor
+        - get_current_pipeline: gets the instance of the current pipeline
+        - save_pipeline: saves the pipeline of the current editor
+        - load_pipeline: loads a new pipeline
+        - save_pipeline_parameters: saves the pipeline parameters of the current editor
+        - load_pipeline_parameters: loads parameters to the pipeline of the current editor
+        - emit_pipeline_saved: emits a signal when a pipeline is saved
+        - update_pipeline_editors: updates attributes of an editor
+        - update_history: updates undo/redo history
+        - reset_pipeline: resets the pipeline of the current editor
+        - update_scans_list: updates the list of database scans in every editor
+        - open_sub_pipeline: opens a sub-pipeline in a new tab
+        - open_filter: opens a filter widget
+        - export_to_db_scans: exports the input of a filter to "database_scans"
+
+    """
+
     pipeline_saved = QtCore.pyqtSignal(str)
     node_clicked = QtCore.Signal(str, Process)
 
@@ -172,11 +204,11 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         self.update_scans_list()
 
-    def load_pipeline_parameters(self):
-        self.get_current_editor().load_pipeline_parameters()
-
     def save_pipeline_parameters(self):
         self.get_current_editor().save_pipeline_parameters()
+
+    def load_pipeline_parameters(self):
+        self.get_current_editor().load_pipeline_parameters()
 
     def emit_node_clicked(self, node_name, process):
         self.node_clicked.emit(node_name, process)
@@ -355,6 +387,7 @@ class PipelineEditor(PipelineDevelopperView):
     def find_process(self, path):
         """
         Finds the dropped process in the system's paths.
+
         :param path: class's path (e.g. "nipype.interfaces.spm.Smooth") (str)
         :return:
         """
@@ -374,8 +407,9 @@ class PipelineEditor(PipelineDevelopperView):
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
-        Updates the history for undos and redos. This method is called
-        after each action in the PipelineEditor.
+        Updates the history for undos and redos.
+        This method is called after each action in the PipelineEditor.
+
         :param history_maker: list that contains information about what has been done
         :param from_undo: boolean that is True if the action has been made using an undo
         :param from_redo: boolean that is True if the action has been made using a redo
@@ -396,6 +430,7 @@ class PipelineEditor(PipelineDevelopperView):
     def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
         """
         Adds a process to the pipeline.
+
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node (using when undo/redo) (str)
         :param from_undo: boolean that is True if the action has been made using an undo
