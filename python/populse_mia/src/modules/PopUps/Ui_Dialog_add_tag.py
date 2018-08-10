@@ -57,8 +57,8 @@ class Default_value_list_creation(QDialog):
         self.resize_table()
 
         # Ok button
-        ok_button = QtWidgets.QPushButton("Ok")
-        ok_button.clicked.connect(self.update_default_value)
+        self.ok_button = QtWidgets.QPushButton("Ok")
+        self.ok_button.clicked.connect(self.update_default_value)
 
         # Cancel button
         cancel_button = QtWidgets.QPushButton("Cancel")
@@ -85,7 +85,7 @@ class Default_value_list_creation(QDialog):
         self.h_box_final = QHBoxLayout()
         self.list_layout = QHBoxLayout()
 
-        self.h_box_final.addWidget(ok_button)
+        self.h_box_final.addWidget(self.ok_button)
         self.h_box_final.addWidget(cancel_button)
 
         self.list_layout.addWidget(self.table)

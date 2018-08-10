@@ -10,7 +10,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 import unittest
 
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
@@ -152,6 +152,35 @@ class TestMIADataBrowser(unittest.TestCase):
         for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
             item = self.imageViewer.data_browser.table_data.item(row, test_column)
             self.assertEqual(item.text(), "def_value")
+
+        QApplication.processEvents()
+
+        # Testing with list type
+        self.imageViewer.data_browser.add_tag_action.trigger()
+        add_tag = self.imageViewer.data_browser.pop_up_add_tag
+        add_tag.text_edit_tag_name.setText("Test_list")
+        add_tag.combo_box_type.setCurrentText("Integer List")
+        QTest.mouseClick(add_tag.text_edit_default_value, Qt.LeftButton)
+        QTest.mouseClick(add_tag.text_edit_default_value.list_creation.add_element_label, Qt.LeftButton)
+        QTest.mouseClick(add_tag.text_edit_default_value.list_creation.add_element_label, Qt.LeftButton)
+        table = add_tag.text_edit_default_value.list_creation.table
+        item = QTableWidgetItem()
+        item.setText(str(1))
+        table.setItem(0, 0, item)
+        item = QTableWidgetItem()
+        item.setText(str(2))
+        table.setItem(0, 1, item)
+        item = QTableWidgetItem()
+        item.setText(str(3))
+        table.setItem(0, 2, item)
+        QTest.mouseClick(add_tag.text_edit_default_value.list_creation.ok_button, Qt.LeftButton)
+        self.assertEqual(add_tag.text_edit_default_value.text(), "[1, 2, 3]")
+        QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
+
+        test_list_column = self.imageViewer.data_browser.table_data.get_tag_column("Test_list")
+        for row in range(0, self.imageViewer.data_browser.table_data.rowCount()):
+            item = self.imageViewer.data_browser.table_data.item(row, test_list_column)
+            self.assertEqual(item.text(), "[1, 2, 3]")
 
         QApplication.processEvents()
 
