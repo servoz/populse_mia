@@ -1368,45 +1368,51 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.setMinimumHeight(0.8 * height)
         self.pop_up.show()
 
+    def multiple_sort_infos(self, list_tags, order):
+
+        self.itemChanged.disconnect()
+
+        list_tags_name = list_tags
+        list_tags = []
+        for tag_name in list_tags_name:
+            list_tags.append(self.project.session.get_field(COLLECTION_CURRENT, tag_name))
+        list_sort = []
+        for scan in self.scans_to_visualize:
+            tags_value = []
+            for tag in list_tags:
+                current_value = str(self.project.session.get_value(COLLECTION_CURRENT, scan, tag.field_name))
+                if current_value is not None:
+                    tags_value.append(current_value)
+                else:
+                    tags_value.append(not_defined_value)
+            list_sort.append(tags_value)
+
+        if order == "Descending":
+            self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize), reverse=True)]
+        else:
+            self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize))]
+
+        # Table updated
+        self.setSortingEnabled(False)
+        for row in range(0, self.rowCount()):
+            scan = self.scans_to_visualize[row]
+            old_row = self.get_scan_row(scan)
+            if old_row != row:
+                for column in range(0, self.columnCount()):
+                    item_to_move = self.takeItem(old_row, column)
+                    item_wrong_row = self.takeItem(row, column)
+                    self.setItem(row, column, item_to_move)
+                    self.setItem(old_row, column, item_wrong_row)
+        self.itemChanged.connect(self.change_cell_color)
+        self.horizontalHeader().setSortIndicator(-1, 0)
+        self.itemChanged.disconnect()
+        self.setSortingEnabled(True)
+
+        self.itemChanged.connect(self.change_cell_color)
+
     def multiple_sort_pop_up(self):
-        pop_up = Ui_Dialog_Multiple_Sort(self.project)
-        if pop_up.exec_():
-
-            list_tags_name = pop_up.list_tags
-            list_tags = []
-            for tag_name in list_tags_name:
-                list_tags.append(self.project.session.get_field(COLLECTION_CURRENT, tag_name))
-            list_sort = []
-            for scan in self.scans_to_visualize:
-                tags_value = []
-                for tag in list_tags:
-                    current_value = str(self.project.session.get_value(COLLECTION_CURRENT, scan, tag.name))
-                    if current_value is not None:
-                        tags_value.append(current_value)
-                    else:
-                        tags_value.append(not_defined_value)
-                list_sort.append(tags_value)
-
-            if pop_up.order == "Descending":
-                self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize), reverse=True)]
-            else:
-                self.scans_to_visualize = [x for _, x in sorted(zip(list_sort, self.scans_to_visualize))]
-
-            # Table updated
-            self.setSortingEnabled(False)
-            for row in range(0, self.rowCount()):
-                scan = self.scans_to_visualize[row]
-                old_row = self.get_scan_row(scan)
-                if old_row != row:
-                    for column in range(0, self.columnCount()):
-                        item_to_move = self.takeItem(old_row, column)
-                        item_wrong_row = self.takeItem(row, column)
-                        self.setItem(row, column, item_to_move)
-                        self.setItem(old_row, column, item_wrong_row)
-            self.itemChanged.connect(self.change_cell_color)
-            self.horizontalHeader().setSortIndicator(-1, 0)
-            self.itemChanged.disconnect()
-            self.setSortingEnabled(True)
+        self.pop_up = Ui_Dialog_Multiple_Sort(self.project, self)
+        self.pop_up.show()
 
     def update_visualized_rows(self, old_scans):
         """

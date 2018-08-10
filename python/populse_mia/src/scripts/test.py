@@ -1133,5 +1133,42 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(brick_table.item(0, 9).text(), "s")
         self.assertEqual(brick_table.cellWidget(0, 10).children()[1].text(), "data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii")
 
+    def test_multiple_sort(self):
+        """
+        Tests the multiple sort popup
+        """
+
+        self.imageViewer.switch_project("project_8", "project_8", "project_8")
+
+        self.imageViewer.data_browser.table_data.itemChanged.disconnect()
+        self.imageViewer.data_browser.table_data.multiple_sort_pop_up()
+        self.imageViewer.data_browser.table_data.itemChanged.connect(self.imageViewer.data_browser.table_data.change_cell_color)
+
+        multiple_sort = self.imageViewer.data_browser.table_data.pop_up
+        multiple_sort.push_buttons[0].setText("BandWidth")
+        multiple_sort.fill_values(0)
+        multiple_sort.push_buttons[1].setText("Type")
+        multiple_sort.fill_values(1)
+        QTest.mouseClick(multiple_sort.push_button_sort, Qt.LeftButton)
+
+        scan = self.imageViewer.data_browser.table_data.item(0, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-04-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii")
+        scan = self.imageViewer.data_browser.table_data.item(1, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-10-G3_Guerbet_MDEFT-MDEFT__pvm_-00-09-40.800.nii")
+        scan = self.imageViewer.data_browser.table_data.item(2, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii")
+        scan = self.imageViewer.data_browser.table_data.item(3, 0).text()
+        self.assertEqual(scan, "data/raw_data/sGuerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii")
+        scan = self.imageViewer.data_browser.table_data.item(4, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-11-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+        scan = self.imageViewer.data_browser.table_data.item(5, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-05-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+        scan = self.imageViewer.data_browser.table_data.item(6, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-06-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+        scan = self.imageViewer.data_browser.table_data.item(7, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+        scan = self.imageViewer.data_browser.table_data.item(8, 0).text()
+        self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+
 if __name__ == '__main__':
     unittest.main()

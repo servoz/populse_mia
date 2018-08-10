@@ -6,9 +6,12 @@ from Utils.Tools import ClickableLabel
 from Project.Project import COLLECTION_CURRENT
 
 class Ui_Dialog_Multiple_Sort(QDialog):
-    def __init__(self, project=None):
+    def __init__(self, project, table_data_browser):
         super().__init__()
         self.project = project
+        self.table_data_browser = table_data_browser
+
+        self.setModal(True)
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
@@ -119,3 +122,4 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         for push_button in self.push_buttons:
             self.list_tags.append(push_button.text())
         self.accept()
+        self.table_data_browser.multiple_sort_infos(self.list_tags, self.order)
