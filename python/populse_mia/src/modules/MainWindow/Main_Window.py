@@ -320,6 +320,7 @@ class Main_Window(QMainWindow):
             data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
             database_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'database')
             properties_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'properties')
+            filters_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'filters')
             data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
             raw_data_path = os.path.join(data_path, 'raw_data')
             derived_data_path = os.path.join(data_path, 'derived_data')
@@ -336,6 +337,7 @@ class Main_Window(QMainWindow):
             os.mkdir(raw_data_path)
             os.mkdir(derived_data_path)
             os.mkdir(downloaded_data_path)
+            os.mkdir(filters_path)
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
@@ -345,6 +347,10 @@ class Main_Window(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
                 for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*')):
                     shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
+
+            if os.path.exists(os.path.join(old_folder, 'filters')):
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'filters', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(filters_path)))
 
             # First we register the Database before commiting the last pending modifications
             shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
