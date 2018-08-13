@@ -155,9 +155,6 @@ class Node(object):
         if parent is not None:
             parent.addChild(self)
 
-    def typeInfo(self):
-        return 'NODE'
-
     def addChild(self, child):
         self._children.append(child)
 
