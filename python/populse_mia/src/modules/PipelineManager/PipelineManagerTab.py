@@ -29,7 +29,6 @@ from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
 from traits.api import TraitListObject, Undefined
 from capsul.api import get_process_instance, StudyConfig, PipelineNode
 
-from PipelineManager.callStudent import callStudent
 from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
     BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
