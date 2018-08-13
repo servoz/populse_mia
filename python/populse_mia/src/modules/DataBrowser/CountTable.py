@@ -399,7 +399,8 @@ class CountTable(QDialog):
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                generator_scans = self.project.session.filter_documents(COLLECTION_CURRENT, self.prepare_filter(tag_list))
+                generator_scans = self.project.session.filter_documents(COLLECTION_CURRENT,
+                                                                        self.prepare_filter(tag_list))
 
                 # List of scans created, given the generator
                 list_scans = [getattr(scan, TAG_FILENAME) for scan in generator_scans]
@@ -426,7 +427,8 @@ class CountTable(QDialog):
             item.setFont(self.font)
             self.table.setItem(self.nb_row, col, item)
 
-    def prepare_filter(self, couples):
+    @staticmethod
+    def prepare_filter(couples):
         """
         Prepares the filter in order to fill the count table
 
