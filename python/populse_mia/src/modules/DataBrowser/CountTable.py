@@ -16,10 +16,73 @@ from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
 
 class CountTable(QDialog):
     """
-    Is called when the user wants to verify precisely the scans of the project.
+    Tool to precisely verify the scans of the project.
+
+    It is composed of push buttons on its top, each one corresponding to a tag selected by the user.
+    When, the "Count scans" button is clicked, a table is created with all the combinations possible
+    for the values of the first n-1 tags. Then, the m values that can take the last tag are displayed
+    in the header of the m last columns of the table. The cells are then filled with a green plus or
+    a red cross depending on if there is at least a scan that has all the tags values or not.
+
+    Example:
+
+    Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
+    T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
+    and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the table will be:
+
+    PatientName | TimePoint | RARE | MDEFT | FLASH
+    -----------------------------------------------
+    P1          | T1        | v(2) | v(1)  | v(1)
+    P1          | T2        | v(2) | v(1)  | v(1)
+    P1          | T3        | v(2) | v(1)  | v(1)
+    P2          | T1        | v(2) | v(1)  | v(1)
+    P2          | T2        | v(2) | v(1)  | v(1)
+    P2          | T3        | v(2) | v(1)  | v(1)
+    -----------------------------------------------
+    with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
+    SequenceName).
+
+    If no scans corresponds for a triplet value, a red cross will be displayed. For example, if the
+    user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The table will be:
+
+    PatientName | TimePoint | RARE | MDEFT | FLASH
+    -----------------------------------------------
+    P1          | T1        | v(2) | v(1)  | v(1)
+    P1          | T2        | v(1) | v(1)  | v(1)
+    P1          | T3        | v(2) | v(1)  | v(1)
+    P2          | T1        | v(2) | v(1)  | v(1)
+    P2          | T2        | v(2) | v(1)  | v(1)
+    P2          | T3        | v(2) | v(1)  | x
+    -----------------------------------------------
+
+    Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.
+
+
+    Attributes:
+        - project: current project in the software
+        - values_list: list that contains lists of all the values that the visualized tags can take
+
+    Methods:
+        - refresh_layout: updates the layout of the widget
+        - add_tag: adds a tag to visualize in the count table
+        - remove_tag: removes a tag to visualize in the count table
+        - select_tag: opens a pop-up to select which tag to visualize in the count table
+        - fill_values: fill values_list depending on the visualized tags
+        - count_scans: counts the number of scans depending on the selected tags and displays the result in the table
+        - fill_headers: fills the headers of the table depending on the selected tags
+        - fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags
+        - fill_last_tag: fills the cells corresponding to the last selected tag
+        - prepare_filter: prepares the filter in order to fill the count table
+
     """
 
     def __init__(self, project):
+        """
+        Initialization of the Count Table
+
+        :param project: current project in the software
+        """
+
         super().__init__()
 
         self.project = project
@@ -73,8 +136,12 @@ class CountTable(QDialog):
         self.refresh_layout()
 
     def refresh_layout(self):
-        """ Methods that update the layouts (especially when a tag push button
-        is added or removed. """
+        """
+        Updates the layout of the widget
+
+        :return:
+        """
+
         self.h_box_top = QHBoxLayout()
         self.h_box_top.setSpacing(10)
         self.h_box_top.addWidget(self.label_tags)
@@ -91,7 +158,12 @@ class CountTable(QDialog):
         self.v_box_final.addWidget(self.table)
 
     def add_tag(self):
-        """ Method that adds a push button. """
+        """
+        Adds a tag to visualize in the count table
+
+        :return:
+        """
+
         idx = len(self.push_buttons)
         push_button = QPushButton()
         push_button.setText('Tag n°' + str(len(self.push_buttons) + 1))
@@ -100,8 +172,12 @@ class CountTable(QDialog):
         self.refresh_layout()
 
     def remove_tag(self):
-        """ Method that removes a push buttons and makes the changes
-        in the list of values. """
+        """
+        Removes a tag to visualize in the count table
+
+        :return:
+        """
+
         push_button = self.push_buttons[-1]
         push_button.deleteLater()
         push_button = None
@@ -110,7 +186,13 @@ class CountTable(QDialog):
         self.refresh_layout()
 
     def select_tag(self, idx):
-        """ Method that calls a pop-up to choose a tag. """
+        """
+        Opens a pop-up to select which tag to visualize in the count table
+
+        :param idx:
+        :return:
+        """
+
         popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT), self.push_buttons[idx].text())
         if popUp.exec_():
             if popUp.selected_tag is not None:
@@ -118,8 +200,13 @@ class CountTable(QDialog):
                 self.fill_values(idx)
 
     def fill_values(self, idx):
-        """ Method that fills the values list when a tag is added
-        or removed. """
+        """
+        Fill values_list depending on the visualized tags
+
+        :param idx: index of the select tag
+        :return:
+        """
+
         tag_name = self.push_buttons[idx].text()
         values = []
         for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
@@ -140,8 +227,11 @@ class CountTable(QDialog):
                 self.values_list[idx].append(value)
 
     def count_scans(self):
-        """ Method that counts the number of scans depending on the
-        selected tags and displays the result in the table"""
+        """
+        Counts the number of scans depending on the selected tags and displays the result in the table
+
+        :return:
+        """
 
         for tag_values in self.values_list:
             if len(tag_values) == 0:
@@ -181,8 +271,12 @@ class CountTable(QDialog):
         self.table.resizeColumnsToContents()
 
     def fill_headers(self):
-        """ Method that fills the headers of the table depending on
-        the selected tags. """
+        """
+        Fills the headers of the table depending on the selected tags
+
+        :return:
+        """
+
         idx_end = 0
         # Headers
         for idx in range(len(self.values_list) - 1):
@@ -212,8 +306,12 @@ class CountTable(QDialog):
         self.table.setVerticalHeaderItem(self.nb_row, item)
 
     def fill_first_tags(self):
-        """ Method that fills the cells of the table corresponding to
-        the (n-1) first selected tags. """
+        """
+        Fills the cells of the table corresponding to the (n-1) first selected tags
+
+        :return:
+        """
+
         cell_text = []
         for col in range(len(self.values_list) - 1):
             # cell_text will contain the n-1 element to display
@@ -272,7 +370,11 @@ class CountTable(QDialog):
                 col_checked -= 1
 
     def fill_last_tag(self):
-        """ Method that fills the cells corresponding to the last selected tag. """
+        """
+        Fills the cells corresponding to the last selected tag
+
+        :return:
+        """
 
         # Cells of the last tag
         for col in range(self.idx_last_tag + 1, self.nb_col):
@@ -327,13 +429,14 @@ class CountTable(QDialog):
     def prepare_filter(self, couples):
         """
         Prepares the filter in order to fill the count table
-        :param couples:
+
+        :param couples: (tag, value) couples
         :return: Str query of the corresponding filter
         """
 
         query = ""
 
-        and_to_write= False
+        and_to_write = False
 
         for couple in couples:
             tag = couple[0]
@@ -348,7 +451,5 @@ class CountTable(QDialog):
             query += "({" + tag + "} == \"" + str(value) + "\")"
 
         query = "(" + query + ")"
-
-        #print(query)
 
         return query
