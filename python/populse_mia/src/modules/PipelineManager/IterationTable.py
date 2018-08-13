@@ -1,65 +1,72 @@
 #!/usr/bin/python3
 
-import datetime
 import os
-import sip
-import sys
-import uuid
 
-from collections import OrderedDict
+# PyQt5 imports
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import  QTableWidgetItem, QPushButton, QVBoxLayout, QWidget, \
+    QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
 
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize, QThread, pyqtSignal
-from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
-    QCursor, QBrush, QIcon
-from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
-    QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QTableWidgetItem, \
-    QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
-
-from matplotlib.backends.qt_compat import QtWidgets
-from traits.trait_errors import TraitError
-
+# MIA imports
 from PipelineManager.Process_mia import Process_mia
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
-from Project.Project import COLLECTION_CURRENT
-
-from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode
-
-from PipelineManager.callStudent import callStudent
-from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
-    BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
-    TYPE_MAT
-from SoftwareProperties.Config import Config
-from .NodeController import NodeController
-from .PipelineEditor import PipelineEditorTabs
-from .process_library import ProcessLibraryWidget
-
+from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
 from Utils.Tools import ClickableLabel
 
 
 class IterationTable(QWidget):
+    """
+    Widget that handles pipeline iteration.
+
+    Attributes:
+        - project: current project in the software
+        - scan_list: list of the selected database files
+        - iteration_scans: list of the selected scans for the current iteration step
+        - main_window: software's main_window
+        - iterated_tag: tag on which to iterate
+        - values_list: list that contains lists of all the values that the visualized tags can take
+
+    Methods:
+        - refresh_layout: updates the layout of the widget
+        - add_tag: adds a tag to visualize in the iteration table
+        - remove_tag: removes a tag to visualize in the iteration table
+        - update_table: updates the iteration table
+        - select_visualized_tag: opens a pop-up to let the user select which tag to visualize in the iteration table
+        - fill_values: fill values_list depending on the visualized tags
+        - select_iterated_tag: opens a pop-up to let the user select on which tag to iterate
+        - update_iterated_tag: updates the widget
+        - emit_iteration_table_updated: emits a signal when the iteration scans have been updated
+    """
 
     iteration_table_updated = pyqtSignal(list)
 
     def __init__(self, project, scan_list, main_window):
+        """
+        Initialization of the IterationTable widget
+
+        :param project: current project in the software
+        :param scan_list: list of the selected database files
+        :param main_window: software's main_window
+        """
+
         QWidget.__init__(self)
 
         Process_mia.project = project
         self.project = project
+
         if not scan_list:
             self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
         else:
             self.scan_list = scan_list
+
         self.main_window = main_window
         self.iterated_tag = None
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
 
-        # Checkbox to choose to iterate or not
+        # Checkbox to choose to iterate the pipeline or not
         self.check_box_iterate = QCheckBox("Iterate pipeline")
         self.check_box_iterate.stateChanged.connect(self.emit_iteration_table_updated)
 
@@ -71,14 +78,14 @@ class IterationTable(QWidget):
 
         # Push button to select the tag to iterate
         self.iterated_tag_push_button = QPushButton("Select")
-        self.iterated_tag_push_button.clicked.connect(self.display_tags)
+        self.iterated_tag_push_button.clicked.connect(self.select_iteration_tag)
 
         # QComboBox
         self.combo_box = QComboBox()
         self.combo_box.currentIndexChanged.connect(self.update_table)
 
         # QTableWidget
-        self.table = QTableWidget()
+        self.iteration_table = QTableWidget()
 
         # Label tag
         self.label_tags = QLabel("Tags to visualize:")
@@ -86,11 +93,11 @@ class IterationTable(QWidget):
         # Each push button will allow the user to visualize a tag in the iteration browser
         push_button_tag_1 = QPushButton()
         push_button_tag_1.setText("SequenceName")
-        push_button_tag_1.clicked.connect(lambda: self.select_tag(0))
+        push_button_tag_1.clicked.connect(lambda: self.select_visualized_tag(0))
 
         push_button_tag_2 = QPushButton()
         push_button_tag_2.setText("AcquisitionDate")
-        push_button_tag_2.clicked.connect(lambda: self.select_tag(1))
+        push_button_tag_2.clicked.connect(lambda: self.select_visualized_tag(1))
 
         # The list of all the push buttons (the user can add as many as he or she wants)
         self.push_buttons = []
@@ -98,12 +105,6 @@ class IterationTable(QWidget):
         self.push_buttons.insert(1, push_button_tag_2)
 
         # Labels to add/remove a tag (a push button)
-        self.remove_tag_label = ClickableLabel()
-        remove_tag_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
-        remove_tag_picture = remove_tag_picture.scaledToHeight(20)
-        self.remove_tag_label.setPixmap(remove_tag_picture)
-        self.remove_tag_label.clicked.connect(self.remove_tag)
-
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
         add_tag_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
@@ -111,15 +112,24 @@ class IterationTable(QWidget):
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)
 
-        # Layout
+        self.remove_tag_label = ClickableLabel()
+        remove_tag_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
+        remove_tag_picture = remove_tag_picture.scaledToHeight(20)
+        self.remove_tag_label.setPixmap(remove_tag_picture)
+        self.remove_tag_label.clicked.connect(self.remove_tag)
 
+        # Layout
         self.v_layout = QVBoxLayout()
         self.setLayout(self.v_layout)
         self.refresh_layout()
 
     def refresh_layout(self):
-        """ Methods that update the layouts (especially when a tag push button
-        is added or removed. """
+        """
+        Updates the layout of the widget
+        Called in widget's initialization and when a tag push button is added or removed.
+
+        :return:
+        """
 
         first_v_layout = QVBoxLayout()
         first_v_layout.addWidget(self.check_box_iterate)
@@ -138,7 +148,7 @@ class IterationTable(QWidget):
         top_layout.addLayout(third_v_layout)
 
         self.v_layout.addLayout(top_layout)
-        self.v_layout.addWidget(self.table)
+        self.v_layout.addWidget(self.iteration_table)
 
         self.h_box = QHBoxLayout()
         self.h_box.setSpacing(10)
@@ -154,17 +164,27 @@ class IterationTable(QWidget):
         self.v_layout.addLayout(self.h_box)
 
     def add_tag(self):
-        """ Method that adds a push button. """
+        """
+        Adds a tag to visualize in the iteration table
+
+        :return:
+        """
+
         idx = len(self.push_buttons)
         push_button = QPushButton()
         push_button.setText('Tag n°' + str(len(self.push_buttons) + 1))
-        push_button.clicked.connect(lambda: self.select_tag(idx))
+        push_button.clicked.connect(lambda: self.select_visualized_tag(idx))
         self.push_buttons.insert(len(self.push_buttons), push_button)
         self.refresh_layout()
 
     def remove_tag(self):
-        """ Method that removes a push buttons and makes the changes
-        in the list of values. """
+        """
+        Removes a tag to visualize in the iteration table
+        Removes also the corresponding values in values_list
+
+        :return:
+        """
+
         push_button = self.push_buttons[-1]
         push_button.deleteLater()
         push_button = None
@@ -173,10 +193,19 @@ class IterationTable(QWidget):
         self.refresh_layout()
 
     def update_table(self):
+        """
+        Updates the iteration table
+
+        :return:
+        """
+
+        # Updating the scan list
         if not self.scan_list:
             self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
-        self.table.clear()
-        self.table.setColumnCount(len(self.push_buttons))
+
+        # Clearing the table and preparing its columns
+        self.iteration_table.clear()
+        self.iteration_table.setColumnCount(len(self.push_buttons))
 
         # Headers
         for idx in range(len(self.push_buttons)):
@@ -184,31 +213,42 @@ class IterationTable(QWidget):
             if header_name not in self.project.session.get_fields_names(COLLECTION_CURRENT):
                 print("{0} not in the project's tags".format(header_name))
                 return
-            # TODO: if the header_name is not in the session, show a QMessageBox
+
             item = QTableWidgetItem()
             item.setText(header_name)
-            self.table.setHorizontalHeaderItem(idx, item)
+            self.iteration_table.setHorizontalHeaderItem(idx, item)
 
+        # Searching the database scans that correspond to the iterated tag value
         filter_query = "({" + self.iterated_tag + "} " + "==" + " \"" + self.combo_box.currentText() + "\")"
         scans_list = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
         scans_res = [getattr(document, TAG_FILENAME) for document in scans_list]
-        self.scans = list(set(scans_res).intersection(self.scan_list))
-        self.table.setRowCount(len(self.scans))
+
+        # Taking the intersection between the found database scans and the user selection in the DataBrowser
+        self.iteration_scans = list(set(scans_res).intersection(self.scan_list))
+        self.iteration_table.setRowCount(len(self.iteration_scans))
+
+        # Filling the table cells
         row = -1
-        for scan_name in self.scans:
+        for scan_name in self.iteration_scans:
             row += 1
             for idx in range(len(self.push_buttons)):
                 tag_name = self.push_buttons[idx].text()
 
                 item = QTableWidgetItem()
                 item.setText(str(self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)))
-                self.table.setItem(row, idx, item)
+                self.iteration_table.setItem(row, idx, item)
 
         # This will change the scans list in the current Pipeline Manager tab
-        self.iteration_table_updated.emit(self.scans)
+        self.iteration_table_updated.emit(self.iteration_scans)
 
-    def select_tag(self, idx):
-        """ Method that calls a pop-up to choose a tag. """
+    def select_visualized_tag(self, idx):
+        """
+        Opens a pop-up to let the user select which tag to visualize in the iteration table
+
+        :param idx: index of the clicked push button
+        :return:
+        """
+
         popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
                                           self.push_buttons[idx].text())
         if popUp.exec_():
@@ -217,6 +257,13 @@ class IterationTable(QWidget):
             self.update_table()
 
     def fill_values(self, idx):
+        """
+        Fill values_list depending on the visualized tags
+
+        :param idx:
+        :return:
+        """
+
         """ Method that fills the values list when a tag is added
         or removed. """
         tag_name = self.push_buttons[idx].text()
@@ -238,7 +285,13 @@ class IterationTable(QWidget):
             if value not in self.values_list[idx]:
                 self.values_list[idx].append(value)
 
-    def display_tags(self):
+    def select_iteration_tag(self):
+        """
+        Opens a pop-up to let the user select on which tag to iterate
+
+        :return:
+        """
+
         ui_select = Ui_Select_Tag_Count_Table(self.project,
                                               self.project.session.get_fields_names(COLLECTION_CURRENT),
                                               self.iterated_tag)
@@ -246,6 +299,13 @@ class IterationTable(QWidget):
             self.update_iterated_tag(ui_select.selected_tag)
 
     def update_iterated_tag(self, tag_name):
+        """
+        Updates the widget when the iterated tag is modified
+
+        :param tag_name: name of the iterated tag
+        :return:
+        """
+
         if not self.scan_list:
             self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
 
@@ -256,6 +316,8 @@ class IterationTable(QWidget):
         # Update combo_box
         scans_names = self.project.session.get_documents_names(COLLECTION_CURRENT)
         scans_names = list(set(scans_names).intersection(self.scan_list))
+
+        # tag_values_list contains all the values that can take the iterated tag
         self.tag_values_list = []
         for scan_name in scans_names:
             tag_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
@@ -268,9 +330,15 @@ class IterationTable(QWidget):
         self.update_table()
 
     def emit_iteration_table_updated(self):
+        """
+        Emits a signal when the iteration scans have been updated
+
+        :return:
+        """
+
         if self.check_box_iterate.checkState():
             if hasattr(self, 'scans'):
-                self.iteration_table_updated.emit(self.scans)
+                self.iteration_table_updated.emit(self.iteration_scans)
             else:
                 self.iteration_table_updated.emit(self.scan_list)
         else:
