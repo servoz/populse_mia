@@ -14,7 +14,7 @@ from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 from PipelineManager.NodeController import FilterWidget
 from PopUps.Ui_Dialog_Close_Pipeline import Ui_Dialog_Close_Pipeline
 
-from PipelineManager.Processes.MIA_processes.IRMaGe.Tools.tools import Input_Filter
+# from PipelineManager.Processes.MIA_processes.IRMaGe.Tools.tools import Input_Filter
 import sys
 
 if sys.version_info[0] >= 3:
