@@ -120,6 +120,7 @@ if __name__ == '__main__':
 
     process_dic["Packages"] = final_package_dic
     process_dic["Paths"] = paths
+    # Idea: Should we encrypt the path ?
 
     with open(os.path.join('properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
         yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
