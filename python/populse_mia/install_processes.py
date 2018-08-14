@@ -45,7 +45,7 @@ def add_package(proc_dic, module_name):
         # Checking if there are subpackages
         for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
             if ispkg:
-                add_package(str(module_name + '.' + modname))
+                add_package(proc_dic, str(module_name + '.' + modname))
 
         for k, v in sorted(list(pkg.__dict__.items())):
             # Checking each class of in the package
@@ -98,6 +98,9 @@ if __name__ == '__main__':
             process_dic = {}
             print(exc)
 
+    if process_dic is None:
+        process_dic = {}
+
     try:
         packages = process_dic["Packages"]
     except KeyError:
@@ -115,8 +118,8 @@ if __name__ == '__main__':
     sys.path.append(os.path.join('processes'))
     final_package_dic = add_package(packages, "MIA_processes")
 
-    if not os.path.join('processes') in paths:
-        paths.append(os.path.join('processes'))
+    if not os.path.abspath(os.path.join('processes')) in paths:
+        paths.append(os.path.abspath(os.path.join('processes')))
 
     process_dic["Packages"] = final_package_dic
     process_dic["Paths"] = paths
@@ -126,3 +129,4 @@ if __name__ == '__main__':
         yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
     print("Process config updated")
+    print("")
