@@ -2,7 +2,6 @@
 Script used to install MIA processes easily.
 MIA_processes.zip needs to be placed in MIA's root folder (same place as this script)
 
-STILL NEED TO TEST
 """
 
 import os
