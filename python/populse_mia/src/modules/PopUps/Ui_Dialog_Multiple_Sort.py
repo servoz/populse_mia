@@ -5,6 +5,7 @@ from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
 from Project.Project import COLLECTION_CURRENT
 
+
 class Ui_Dialog_Multiple_Sort(QDialog):
     def __init__(self, project, table_data_browser):
         super().__init__()
@@ -62,7 +63,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         self.refresh_layout()
 
     def refresh_layout(self):
-        """ Methods that update the layouts (especially when a tag push button
+        """ Method that updates the layouts (especially when a tag push button
         is added or removed. """
         self.h_box_top = QHBoxLayout()
         self.h_box_top.setSpacing(10)
@@ -99,9 +100,9 @@ class Ui_Dialog_Multiple_Sort(QDialog):
 
     def select_tag(self, idx):
         """ Method that calls a pop-up to choose a tag. """
-        popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_visibles(), self.push_buttons[idx].text())
-        if popUp.exec_():
-            self.push_buttons[idx].setText(popUp.selected_tag)
+        pop_up = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_visibles(), self.push_buttons[idx].text())
+        if pop_up.exec_():
+            self.push_buttons[idx].setText(pop_up.selected_tag)
             self.fill_values(idx)
 
     def fill_values(self, idx):

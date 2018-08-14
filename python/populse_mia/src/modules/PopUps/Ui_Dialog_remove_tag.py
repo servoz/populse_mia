@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 from Project.Project import COLLECTION_CURRENT
 from Project.database_mia import TAG_ORIGIN_USER
 
+
 class Ui_Dialog_remove_tag(QDialog):
     """
-     Is called when the user wants to remove a user tag to the project
+     Is called when the user wants to remove a user tag from the project
      """
 
     # Signal that will be emitted at the end to tell that the project has been created

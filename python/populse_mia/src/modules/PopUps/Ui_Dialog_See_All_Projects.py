@@ -3,9 +3,10 @@ from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTreeWidg
 from PyQt5.QtGui import QIcon
 import os
 
+
 class Ui_Dialog_See_All_Projects(QDialog):
     """
-    Is called when the user wants to create a new project
+    Is called when the user wants to create a see all projects
     """
 
     def __init__(self, savedProjects, mainWindow):

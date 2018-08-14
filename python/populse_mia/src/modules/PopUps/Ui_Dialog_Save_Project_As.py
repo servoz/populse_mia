@@ -1,9 +1,8 @@
-from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QDialog, QPushButton, QLabel
+from PyQt5.QtWidgets import QFileDialog
 import os
-from ProjectManager import Controller
 import Utils.Utils as utils
+
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
     """

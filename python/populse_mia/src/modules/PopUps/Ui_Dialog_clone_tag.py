@@ -5,6 +5,7 @@ from functools import partial
 
 from Project.Project import COLLECTION_CURRENT, TAG_CHECKSUM
 
+
 class Ui_Dialog_clone_tag(QDialog):
     """
     Is called when the user wants to clone a tag to the project

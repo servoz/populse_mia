@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 
+
 class Ui_Filter_Selection(QDialog):
     """
     Is called when the user wants to open a filter saved before

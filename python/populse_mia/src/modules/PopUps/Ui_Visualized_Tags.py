@@ -1,16 +1,17 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from functools import partial
 
+# MIA import
 from Project.Project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
+
 
 class Ui_Visualized_Tags(QWidget):
     """
-    Is called when the user wants to update the tags that are visualized in the data browser
+    Is called when the user wants to update the tags that are visualized
     """
 
-    # Signal that will be emitted at the end to tell that the project has been created
+    # Signal that will be emitted at the end to tell that the preferences have been changed
     signal_preferences_change = pyqtSignal()
 
     def __init__(self, database, tags):
@@ -46,7 +47,7 @@ class Ui_Visualized_Tags(QWidget):
         self.search_bar = QtWidgets.QLineEdit(self)
         self.search_bar.setObjectName("lineEdit_search_bar")
         self.search_bar.setPlaceholderText("Search")
-        self.search_bar.textChanged.connect(partial(self.search_str, project))
+        self.search_bar.textChanged.connect(self.search_str)
 
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
@@ -73,7 +74,7 @@ class Ui_Visualized_Tags(QWidget):
 
         self.setLayout(hbox_tags)
 
-        self.left_tags = [] # List that will keep track on the tags on the left (invisible tags)
+        self.left_tags = []  # List that will keep track on the tags on the left (invisible tags)
 
         for tag in project.session.get_fields_names(COLLECTION_CURRENT):
             if tag != TAG_CHECKSUM and tag != TAG_FILENAME:
@@ -88,7 +89,7 @@ class Ui_Visualized_Tags(QWidget):
                 item.setText(tag)
         self.list_widget_tags.sortItems()
 
-    def search_str(self, database, str_search):
+    def search_str(self, str_search):
         return_list = []
         if str_search != "":
             for tag in self.left_tags:
@@ -107,7 +108,11 @@ class Ui_Visualized_Tags(QWidget):
         self.list_widget_tags.sortItems()
 
     def click_select_tag(self):
-        # Put the selected tags in the "selected tag" table
+        """
+        Puts the selected tags in the "selected tag" table
+        :return:
+        """
+
         rows = sorted([index.row() for index in self.list_widget_tags.selectedIndexes()],
                       reverse=True)
         for row in rows:
@@ -115,9 +120,12 @@ class Ui_Visualized_Tags(QWidget):
             self.left_tags.remove(self.list_widget_tags.item(row).text())
             self.list_widget_selected_tags.addItem(self.list_widget_tags.takeItem(row))
 
-
     def click_unselect_tag(self):
-        # Remove the unselected tags from the "selected tag" table
+        """
+        Removes the unselected tags from the "selected tag" table
+        :return:
+        """
+
         rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],
                       reverse=True)
         for row in rows:

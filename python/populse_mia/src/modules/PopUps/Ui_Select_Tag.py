@@ -7,7 +7,7 @@ from Project.Project import COLLECTION_CURRENT, TAG_CHECKSUM
 
 class Ui_Select_Tag(Ui_Tag_Selection):
     """
-    Is called when the user wants to update the tags that are visualized in the data browser
+    Is called when the user wants to update the tag to display in the MiniViewer
     """
 
     def __init__(self, project):

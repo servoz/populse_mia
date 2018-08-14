@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 
 from Project.Project import TAG_CHECKSUM, COLLECTION_CURRENT
 
+
 class Ui_Tag_Selection(QDialog):
     """
     Is called when the user wants to update the tags that are visualized in the data browser

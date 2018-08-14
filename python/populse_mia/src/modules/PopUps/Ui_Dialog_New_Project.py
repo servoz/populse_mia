@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 import Utils.Utils as utils
 
+
 class Ui_Dialog_New_Project(QFileDialog):
     """
     Is called when the user wants to create a new project
@@ -13,7 +14,6 @@ class Ui_Dialog_New_Project(QFileDialog):
 
     def __init__(self):
         super().__init__()
-        #self.setOption(QFileDialog.DontUseNativeDialog)
         self.setLabelText(QFileDialog.Accept, "Create")
         self.setAcceptMode(QFileDialog.AcceptSave)
 

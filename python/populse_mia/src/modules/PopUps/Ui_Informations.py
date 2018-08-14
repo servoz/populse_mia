@@ -1,11 +1,10 @@
-from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit
 
 
 class Ui_Informations(QWidget):
     """
-    Is called when the user wants to update the tags that are visualized in the data browser
+    Is called when the user wants to show the software's information
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -16,7 +15,6 @@ class Ui_Informations(QWidget):
         self.retranslate_Ui(project)
 
     def retranslate_Ui(self, database):
-        _translate = QtCore.QCoreApplication.translate
 
         name_label = QLabel("Name: ")
         self.name_value = QLineEdit(database.getName())

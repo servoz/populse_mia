@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Informations import Ui_Informations
 
-from Project.Project import TAG_FILENAME, COLLECTION_CURRENT, COLLECTION_INITIAL
+from Project.Project import TAG_FILENAME
+
 
 class Ui_Dialog_Settings(QDialog):
     """
@@ -20,10 +21,8 @@ class Ui_Dialog_Settings(QDialog):
         self.project = project
         self.databrowser = databrowser
         self.old_tags = old_tags
-        self.pop_up()
         self.old_visibles_tags = project.session.get_visibles()
 
-    def pop_up(self):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -64,19 +63,20 @@ class Ui_Dialog_Settings(QDialog):
         self.setLayout(vbox)
 
     def ok_clicked(self):
-        historyMaker = []
-        historyMaker.append("modified_visibilities")
-        historyMaker.append(self.old_visibles_tags)
+        history_maker = ["modified_visibilities", self.old_visibles_tags]
         new_visibilities = []
+
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
             visible_tag = self.tab_tags.list_widget_selected_tags.item(x).text()
             new_visibilities.append(visible_tag)
+
         new_visibilities.append(TAG_FILENAME)
         self.project.session.set_visibles(new_visibilities)
-        historyMaker.append(new_visibilities)
-        self.project.undos.append(historyMaker)
+        history_maker.append(new_visibilities)
+
+        self.project.undos.append(history_maker)
         self.project.redos.clear()
-        #Database.setName(self.tab_infos.name_value.text())
+
         self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_visibles())  # Columns updated
         self.accept()
         self.close()

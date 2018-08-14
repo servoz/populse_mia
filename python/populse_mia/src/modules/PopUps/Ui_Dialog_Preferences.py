@@ -8,6 +8,7 @@ from SoftwareProperties.Config import Config
 
 import os
 
+
 class Ui_Dialog_Preferences(QDialog):
     """
     Is called when the user wants to change the software preferences

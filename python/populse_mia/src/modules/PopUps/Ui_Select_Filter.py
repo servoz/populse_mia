@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Filter_Selection import Ui_Filter_Selection
 
+
 class Ui_Select_Filter(Ui_Filter_Selection):
     """
     Is called when the user wants to open a filter saved before

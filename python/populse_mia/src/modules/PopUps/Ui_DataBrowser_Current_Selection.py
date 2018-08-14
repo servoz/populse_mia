@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog, QApplication
 import DataBrowser.DataBrowser
 from Project.Project import TAG_FILENAME
 
+
 class Ui_DataBrowser_Current_Selection(QDialog):
     """
     Is called to display the current DataBrowser selection
@@ -34,7 +35,6 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         width, height = screen_resolution.width(), screen_resolution.height()
         self.setMinimumWidth(0.5 * width)
         self.setMinimumHeight(0.8 * height)
-
 
     def ok_clicked(self):
         """

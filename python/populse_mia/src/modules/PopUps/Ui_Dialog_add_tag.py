@@ -198,6 +198,7 @@ class Default_value_list_creation(QDialog):
             self.table.setFixedWidth(900)
             self.table.setFixedHeight(total_height + 40)
 
+
 class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
     """
     Overrides the QLineEdit for the default value
@@ -218,6 +219,7 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
             # We display the pop up to create the list if the checkbox is checked, otherwise we do nothing
             self.list_creation = Default_value_list_creation(self, self.parent.type)
             self.list_creation.show()
+
 
 class Ui_Dialog_add_tag(QDialog):
     """
