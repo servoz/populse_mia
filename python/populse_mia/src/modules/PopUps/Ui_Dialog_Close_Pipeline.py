@@ -24,15 +24,15 @@ class Ui_Dialog_Close_Pipeline(QDialog):
         label = QLabel(self)
         label.setText('Do you want to close the pipeline without saving ' + self.pipeline_name + '?')
 
-        push_button_save_as = QPushButton("Save", self)
-        push_button_do_not_save = QPushButton("Do not save", self)
-        push_button_cancel = QPushButton("Cancel", self)
+        self.push_button_save_as = QPushButton("Save", self)
+        self.push_button_do_not_save = QPushButton("Do not save", self)
+        self.push_button_cancel = QPushButton("Cancel", self)
 
         hbox = QHBoxLayout()
         hbox.addStretch(1)
-        hbox.addWidget(push_button_save_as)
-        hbox.addWidget(push_button_do_not_save)
-        hbox.addWidget(push_button_cancel)
+        hbox.addWidget(self.push_button_save_as)
+        hbox.addWidget(self.push_button_do_not_save)
+        hbox.addWidget(self.push_button_cancel)
         hbox.addStretch(1)
 
         vbox = QVBoxLayout()
@@ -40,9 +40,9 @@ class Ui_Dialog_Close_Pipeline(QDialog):
         vbox.addLayout(hbox)
         self.setLayout(vbox)
 
-        push_button_save_as.clicked.connect(self.save_as_clicked)
-        push_button_do_not_save.clicked.connect(self.do_not_save_clicked)
-        push_button_cancel.clicked.connect(self.cancel_clicked)
+        self.push_button_save_as.clicked.connect(self.save_as_clicked)
+        self.push_button_do_not_save.clicked.connect(self.do_not_save_clicked)
+        self.push_button_cancel.clicked.connect(self.cancel_clicked)
 
     def save_as_clicked(self):
         self.save_as_signal.emit()

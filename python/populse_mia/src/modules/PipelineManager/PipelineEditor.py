@@ -151,12 +151,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         # If the pipeline has been modified and not saved
         if self.tabText(idx)[-2:] == " *":
-            pop_up_close = Ui_Dialog_Close_Pipeline(filename)
-            pop_up_close.save_as_signal.connect(self.save_pipeline)
-            pop_up_close.exec()
-            can_exit = pop_up_close.can_exit()
+            self.pop_up_close = Ui_Dialog_Close_Pipeline(filename)
+            self.pop_up_close.save_as_signal.connect(self.save_pipeline)
+            self.pop_up_close.exec()
+            can_exit = self.pop_up_close.can_exit()
 
-            if pop_up_close.bool_save_as:
+            if self.pop_up_close.bool_save_as:
                 if idx == self.currentIndex():
                     self.setCurrentIndex(max(0, self.currentIndex() - 1))
                 self.removeTab(idx)
@@ -1025,18 +1025,18 @@ class PipelineEditor(PipelineDevelopperView):
 
                 self.update_history(history_maker, from_undo, from_redo)
 
-    def save_pipeline(self):
+    def save_pipeline(self, filename=None):
         """
         Saves the pipeline
 
         :return:
         """
-
-        pipeline = self.scene.pipeline
-        folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
-        filename = QtWidgets.QFileDialog.getSaveFileName(
-            None, 'Save the pipeline', folder,
-            'Compatible files (*.xml *.py);; All (*)')[0]
+        if not filename:
+            pipeline = self.scene.pipeline
+            folder = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes')
+            filename = QtWidgets.QFileDialog.getSaveFileName(
+                None, 'Save the pipeline', folder,
+                'Compatible files (*.xml *.py);; All (*)')[0]
         if filename:
             posdict = dict([(key, (value.x(), value.y())) \
                             for key, value in six.iteritems(self.scene.pos)])

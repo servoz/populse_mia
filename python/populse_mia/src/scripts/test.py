@@ -11,9 +11,11 @@ import unittest
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
+from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, \
+    TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
+
 
 class TestMIADataBrowser(unittest.TestCase):
 
@@ -1210,6 +1212,75 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.imageViewer.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
+
+
+class TestMIAPipelineManager(unittest.TestCase):
+
+    def setUp(self):
+        """
+        Called before each test
+        """
+
+        self.app = QApplication([])
+        self.project = Project(None, True)
+        self.main_window = Main_Window(self.project, test=True)
+
+    def tearDown(self):
+        """
+        Called after each test
+        """
+
+        self.main_window.project.unsaveModifications()
+        self.main_window.close()
+
+    def test_add_tab(self):
+        """
+        Adds tabs to the PipelineEditorTabs
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding two new tabs
+        pipeline_editor_tabs.new_tab()
+        self.assertEqual(pipeline_editor_tabs.count(), 3)
+        self.assertEqual(pipeline_editor_tabs.tabText(1), "New Pipeline 1")
+        pipeline_editor_tabs.new_tab()
+        self.assertEqual(pipeline_editor_tabs.count(), 4)
+        self.assertEqual(pipeline_editor_tabs.tabText(2), "New Pipeline 2")
+
+    def test_close_tab(self):
+        """
+        Closes a tab to the PipelineEditorTabs
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding a new tab and closing the first one
+        pipeline_editor_tabs.new_tab()
+        pipeline_editor_tabs.close_tab(0)
+        self.assertEqual(pipeline_editor_tabs.count(), 2)
+        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline 1")
+
+        # Modifying the pipeline editor
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+        self.assertEqual(pipeline_editor_tabs.tabText(0)[-2:], " *")
+
+        # Closing the modified pipeline editor and clicking on "Cancel"
+        pipeline_editor_tabs.close_tab(0)
+        pop_up_close = pipeline_editor_tabs.pop_up_close
+        QTest.mouseClick(pop_up_close.push_button_cancel, Qt.LeftButton)
+        self.assertEqual(pipeline_editor_tabs.count(), 2)
+
+        # Closing the modified pipeline editor and clicking on "Do not save"
+        pipeline_editor_tabs.close_tab(0)
+        pop_up_close = pipeline_editor_tabs.pop_up_close
+        QTest.mouseClick(pop_up_close.push_button_do_not_save, Qt.LeftButton)
+        self.assertEqual(pipeline_editor_tabs.count(), 1)
+
+        # TODO: HOW TO TEST "SAVE AS" ACTION ?
+
 
 if __name__ == '__main__':
     unittest.main()
