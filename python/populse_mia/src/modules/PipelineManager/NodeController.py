@@ -476,7 +476,8 @@ class PlugFilter(QWidget):
         search_bar_layout.addWidget(self.rapid_search)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.node_controller.visibles_tags)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scans_list, self.node_controller.visibles_tags,
+                                              from_pipeline=True)
         self.advanced_search.show_search()
 
         push_button_tags = QPushButton("Visualized tags")
@@ -740,7 +741,8 @@ class FilterWidget(QWidget):
         search_bar_layout.addWidget(self.rapid_search)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search = AdvancedSearch(self.project, self, self.scan_list, self.visible_tags)
+        self.advanced_search = AdvancedSearch(self.project, self, self.scan_list, self.visible_tags,
+                                              from_pipeline=True)
         self.advanced_search.show_search()
         self.advanced_search.apply_filter(filter_to_apply)
 

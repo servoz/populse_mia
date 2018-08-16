@@ -12,7 +12,7 @@ from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEA
 
 class AdvancedSearch(QWidget):
 
-    def __init__(self, project, dataBrowser, scans_list=[], tags_list=[]):
+    def __init__(self, project, dataBrowser, scans_list=[], tags_list=[], from_pipeline=False):
         """
         Class that manages the widget of the advanced search
         """
@@ -24,6 +24,7 @@ class AdvancedSearch(QWidget):
         self.rows = []
         self.scans_list = scans_list
         self.tags_list = tags_list
+        self.from_pipeline = from_pipeline
 
     def show_search(self):
         """
@@ -312,11 +313,12 @@ class AdvancedSearch(QWidget):
             # DataBrowser updated with the new selection
             result_names = [getattr(document, TAG_FILENAME) for document in result]
 
-            self.project.currentFilter.nots = nots
-            self.project.currentFilter.values = values
-            self.project.currentFilter.fields = fields
-            self.project.currentFilter.links = links
-            self.project.currentFilter.conditions = conditions
+            if not self.from_pipeline:
+                self.project.currentFilter.nots = nots
+                self.project.currentFilter.values = values
+                self.project.currentFilter.fields = fields
+                self.project.currentFilter.links = links
+                self.project.currentFilter.conditions = conditions
 
         except Exception as e:
             print(e)
