@@ -2,6 +2,7 @@ import os
 
 # Working from the scripts directory
 from PyQt5.QtCore import Qt
+from PyQt5 import QtCore
 
 from populse_db.database import FIELD_TYPE_INTEGER
 
@@ -1264,6 +1265,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         # Modifying the pipeline editor
         from nipype.interfaces.spm import Smooth
         process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
         pipeline_editor_tabs.get_current_editor().add_process(process_class)
         self.assertEqual(pipeline_editor_tabs.tabText(0)[-2:], " *")
 
