@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import sys
-
 from PyQt5 import QtGui, QtWidgets, QtCore
 import os
 import six
@@ -154,6 +152,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.pop_up_close = Ui_Dialog_Close_Pipeline(filename)
             self.pop_up_close.save_as_signal.connect(self.save_pipeline)
             self.pop_up_close.exec()
+
             can_exit = self.pop_up_close.can_exit()
 
             if self.pop_up_close.bool_save_as:

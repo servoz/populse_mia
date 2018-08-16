@@ -14,6 +14,8 @@ class Ui_Dialog_Close_Pipeline(QDialog):
     def __init__(self, pipeline_name):
         super().__init__()
 
+        #self.setModal(True)
+
         self.pipeline_name = pipeline_name
 
         self.bool_exit = False
