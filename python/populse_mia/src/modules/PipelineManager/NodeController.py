@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
 from matplotlib.backends.qt_compat import QtWidgets
 from functools import partial
 
-from traits.api import TraitListObject, List, Undefined
+from traits.api import TraitListObject, List, Undefined, TraitError
 
 from soma.controller import trait_ids
 
@@ -270,36 +270,48 @@ class NodeController(QWidget):
         if not new_value:
 
             if in_or_out == 'in':
-                new_value = self.line_edit_input[index].text()
+                new_value = self.line_edit_input[index].text()   
             elif in_or_out == 'out':
-                new_value = self.line_edit_output[index].text()
+                new_value = self.line_edit_output[index].text()  
             else:
                 new_value = None
 
             try:
                 new_value = eval(new_value)
-            except NameError:
-                print("NameError for value {0}").format(new_value)
-            except SyntaxError:
-                print("SynthaxError for value {0}").format(new_value)
-
+            except Exception as err:
+                print(err)
+                
+            #except NameError:
+            #    print("NameError for value {0}".format(new_value))
+            #except SyntaxError:
+            #    pass
+            #    print("SynthaxError for value {0}".format(new_value))            
+                
             if value_type not in [float, int, str, list]:
                 value_type = str
-
+        
         if self.node_name in ['inputs', 'outputs']:
             node_name = ''
         else:
             node_name = self.node_name
-
+              
         old_value = pipeline.nodes[node_name].get_plug_value(plug_name)
 
         try:
             pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
-        except:
+        except TraitError as err:
             msg = QMessageBox()
-            msg.setText("The value of {0} has to be of type {1}.".format(plug_name, str(value_type)))
+            msg.setText("{0}: {1}.".format(err.__class__, err))
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+
+      #  try:
+      #      pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
+      #  except:
+      #      msg = QMessageBox()
+      #      msg.setText("The value of {0} has to be of type {1}.".format(plug_name, str(value_type)))
+      #      msg.setIcon(QMessageBox.Warning)
+      #      msg.exec_()
 
         # Update pipeline to "propagate" the node value
         pipeline.update_nodes_and_plugs_activation()
