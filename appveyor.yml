@@ -14,6 +14,8 @@ install:
   - "apt-get install freetype6-dev libpng-dev"
   - "pip install --upgrade cython"
   - "pip install numpy"
+  - "pip install freetype-py"
+  - "pip install pypng"
   - "pip install --upgrade pywavelets"
   - "pip install pypiwin32"
   - "python setup.py install"
