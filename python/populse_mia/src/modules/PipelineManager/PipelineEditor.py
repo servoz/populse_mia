@@ -101,6 +101,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.setTabEnabled(1, False)
         self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
 
+        # Checking if the pipeline nodes have been modified
+        self.tabBarClicked.connect(self.check_modifications)
+
     def new_tab(self, loaded=False):
         """
         Creates a new tab and a new editor
@@ -489,6 +492,13 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                 node_name, 'input',
                 pipeline_parameter='database_scans')
         self.get_current_editor().scene.update_pipeline()
+
+    def check_modifications(self):
+        """
+        Checks if the nodes of the current pipeline have been modified
+        :return:
+        """
+        self.get_current_editor().check_modifications()
 
 
 class PipelineEditor(PipelineDevelopperView):
