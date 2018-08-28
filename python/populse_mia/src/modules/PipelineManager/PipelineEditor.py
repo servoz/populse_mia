@@ -4,15 +4,16 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 import os
 import six
 import yaml
+import weakref
 
-from capsul.api import get_process_instance, Process
+from capsul.api import get_process_instance, Process, PipelineNode
 from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
+from soma.utils.weak_proxy import weak_proxy
 
 from PipelineManager.NodeController import FilterWidget
 from PopUps.Ui_Dialog_Close_Pipeline import Ui_Dialog_Close_Pipeline
 
-# from PipelineManager.Processes.MIA_processes.IRMaGe.Tools.tools import Input_Filter
 import sys
 
 if sys.version_info[0] >= 3:
@@ -55,6 +56,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         - open_sub_pipeline: opens a sub-pipeline in a new tab
         - open_filter: opens a filter widget
         - export_to_db_scans: exports the input of a filter to "database_scans"
+        - check_modifications: checks if the nodes of the current pipeline have been modified
 
     """
 
@@ -374,61 +376,6 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        def get_path(name, dictionary, prev_paths=None):
-            """
-            This recursive function returns the package path to the selected sub-pipeline.
-            :param name: name of the sub-pipeline
-            :param dictionary: package tree (read from process_config.yml)
-            :param prev_paths: paths of the last call of this function
-            :return: the package path of the sub-pipeline if it is found, else None
-            """
-
-            if prev_paths is None:
-                prev_paths = []
-
-            # new_paths is a list containing the packages to the desired module
-            new_paths = prev_paths.copy()
-            for idx, (key, value) in enumerate(dictionary.items()):
-                # If the value is a string, this means that this is a "leaf" of the tree
-                # so the key is a module name.
-                if isinstance(value, str):
-                    if key == name:
-                        new_paths.append(key)
-                        return new_paths
-                    else:
-                        continue
-                # Else, this means that the value is still a dictionary, we are still in the tree
-                else:
-                    new_paths.append(key)
-                    final_res = get_path(name, value, new_paths)
-                    # final_res is None if the module name has not been found in the tree
-                    if final_res:
-                        return final_res
-                    else:
-                        new_paths = prev_paths.copy()
-
-        def find_filename(paths_list, packages_list, file_name):
-            """
-            Finds the corresponding file name in the paths list of process_config.yml.
-            :param paths_list: list of all the paths contained in process_config.yml
-            :param packages_list: packages path
-            :param file_name: name of the sub-pipeline
-            :return: name of the corresponding file if it is found, else None
-            """
-
-            filenames = [file_name + '.py', file_name + '.xml']
-            for filename in filenames:
-                for path in paths_list:
-                    new_path = path
-                    for package in packages_list:
-                        new_path = os.path.join(new_path, package)
-
-                    # Making sure that the filename is found (has somme issues with case sensitivity)
-                    for f in os.listdir(new_path):
-                        new_file = os.path.join(new_path, f)
-                        if os.path.isfile(new_file) and f.lower() == filename.lower():
-                            return new_file
-
         # Reading the process configuration file
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
             try:
@@ -493,12 +440,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                 pipeline_parameter='database_scans')
         self.get_current_editor().scene.update_pipeline()
 
-    def check_modifications(self):
+    def check_modifications(self, current_index):
         """
         Checks if the nodes of the current pipeline have been modified
         :return:
         """
-        self.get_current_editor().check_modifications()
+
+        # If the user click on the last tab (with the '+'), it will throw an AttributeError
+        try:
+            self.widget(current_index).check_modifications()
+        except AttributeError:
+            pass
 
 
 class PipelineEditor(PipelineDevelopperView):
@@ -526,6 +478,7 @@ class PipelineEditor(PipelineDevelopperView):
         - export_node_plugs: exports all the plugs of a node
         - _remove_plug: removes a plug
         - save_pipeline: saves the pipeline
+        - check_modifications: checks if the nodes of the pipeline have been modified
     """
 
     pipeline_saved = QtCore.pyqtSignal(str)
@@ -1034,6 +987,71 @@ class PipelineEditor(PipelineDevelopperView):
 
                 self.update_history(history_maker, from_undo, from_redo)
 
+    def check_modifications(self):
+        """
+        Checks if the nodes of the pipeline have been modified
+        :return:
+        """
+
+        pipeline = self.scene.pipeline
+        for node_name, node in pipeline.nodes.items():
+            # Only if the node is a pipeline node ?
+            if node_name and isinstance(node, PipelineNode):
+                sub_pipeline_process = node.process
+                current_process_id = sub_pipeline_process.id
+
+                # Reading the process configuration file
+                with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+                    try:
+                        dic = yaml.load(stream)
+                    except yaml.YAMLError as exc:
+                        print(exc)
+                        dic = {}
+
+                sub_pipeline_name = sub_pipeline_process.name
+
+                # get_path returns a list that is the package path to the sub_pipeline file
+                sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
+                sub_pipeline_name = sub_pipeline_list.pop()
+
+                # Finding the real sub-pipeline filename
+                sub_pipeline_filename = find_filename(dic['Paths'], sub_pipeline_list, sub_pipeline_name)
+
+                saved_process = get_process_instance(sub_pipeline_filename)
+
+                current_inputs = list(sub_pipeline_process.get_inputs().keys())
+                current_outputs = list(sub_pipeline_process.get_outputs().keys())
+                saved_inputs = list(saved_process.get_inputs().keys())
+                saved_outputs = list(saved_process.get_outputs().keys())
+
+                new_inputs = [item for item in saved_inputs if item not in current_inputs]
+                new_outputs = [item for item in saved_outputs if item not in current_outputs]
+                removed_inputs = [item for item in current_inputs if item not in saved_inputs]
+                removed_outputs = [item for item in current_outputs if item not in saved_outputs]
+
+                if new_inputs or new_outputs or removed_inputs or removed_outputs:
+
+                    new_node = saved_process.pipeline_node
+                    new_node.name = node_name
+                    new_node.pipeline = pipeline
+                    saved_process.parent_pipeline = weak_proxy(pipeline)
+                    pipeline.nodes[node_name] = new_node
+
+                    from PipelineManager.CAPSUL_Files.pipeline_developper_view import NodeGWidget
+                    gnode = NodeGWidget(
+                        node_name, new_node.plugs, pipeline,
+                        sub_pipeline=saved_process, process=saved_process,
+                        colored_parameters=self.scene.colored_parameters,
+                        logical_view=self.scene.logical_view, labels=self.scene.labels)
+
+                    pos = self.scene.pos.get(node_name)
+                    gnode.setPos(pos)
+                    self.scene.removeItem(self.scene.gnodes[node_name])
+                    del self.scene.gnodes[node_name]
+                    self.scene.gnodes[node_name] = gnode
+                    self.scene.addItem(gnode)
+                    self.scene.update_pipeline()
+
     def save_pipeline(self, filename=None):
         """
         Saves the pipeline
@@ -1401,5 +1419,59 @@ def save_py_pipeline(pipeline, py_file):
     print('\n        self.do_autoexport_nodes_parameters = False', file=pyf)
 
 
+def get_path(name, dictionary, prev_paths=None):
+    """
+    This recursive function returns the package path to the selected sub-pipeline.
+    :param name: name of the sub-pipeline
+    :param dictionary: package tree (read from process_config.yml)
+    :param prev_paths: paths of the last call of this function
+    :return: the package path of the sub-pipeline if it is found, else None
+    """
 
+    if prev_paths is None:
+        prev_paths = []
+
+    # new_paths is a list containing the packages to the desired module
+    new_paths = prev_paths.copy()
+    for idx, (key, value) in enumerate(dictionary.items()):
+        # If the value is a string, this means that this is a "leaf" of the tree
+        # so the key is a module name.
+        if isinstance(value, str):
+            if key == name:
+                new_paths.append(key)
+                return new_paths
+            else:
+                continue
+        # Else, this means that the value is still a dictionary, we are still in the tree
+        else:
+            new_paths.append(key)
+            final_res = get_path(name, value, new_paths)
+            # final_res is None if the module name has not been found in the tree
+            if final_res:
+                return final_res
+            else:
+                new_paths = prev_paths.copy()
+
+
+def find_filename(paths_list, packages_list, file_name):
+    """
+    Finds the corresponding file name in the paths list of process_config.yml.
+    :param paths_list: list of all the paths contained in process_config.yml
+    :param packages_list: packages path
+    :param file_name: name of the sub-pipeline
+    :return: name of the corresponding file if it is found, else None
+    """
+
+    filenames = [file_name + '.py', file_name + '.xml']
+    for filename in filenames:
+        for path in paths_list:
+            new_path = path
+            for package in packages_list:
+                new_path = os.path.join(new_path, package)
+
+            # Making sure that the filename is found (has somme issues with case sensitivity)
+            for f in os.listdir(new_path):
+                new_file = os.path.join(new_path, f)
+                if os.path.isfile(new_file) and f.lower() == filename.lower():
+                    return new_file
 

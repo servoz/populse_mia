@@ -456,12 +456,11 @@ class PipelineManagerTab(QWidget):
 
         os.remove(tmp_file)
 
-        if os.path.relpath(filename_folder) != os.path.join('..', 'modules', 'PipelineManager', 'Processes',
-                                                            'User_processes'):
+        if os.path.relpath(filename_folder) != os.path.join('..', '..', 'processes', 'User_processes'):
             return
 
         # Updating __init__.py
-        init_file = os.path.join('..', 'modules', 'PipelineManager', 'Processes', 'User_processes', '__init__.py')
+        init_file = os.path.join('..', '..', 'processes', 'User_processes', '__init__.py')
         with open(init_file, 'a') as f:
             print('from .{0} import {1}'.format(module_name, class_name), file=f)
 
