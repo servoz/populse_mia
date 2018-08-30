@@ -1031,12 +1031,24 @@ class PipelineEditor(PipelineDevelopperView):
 
                 if new_inputs or new_outputs or removed_inputs or removed_outputs:
 
+                    # Checking the links of the node
+                    link_to_del = set()
+                    for link, glink in six.iteritems(self.scene.glinks):
+                        print('link', link)
+                        if link[0][0] == node_name or link[1][0] == node_name:
+                            self.scene.removeItem(glink)
+                            link_to_del.add((link, glink))
+                    for link, glink in link_to_del:
+                        del self.scene.glinks[link]
+
+                    # Creating a new node
                     new_node = saved_process.pipeline_node
                     new_node.name = node_name
                     new_node.pipeline = pipeline
                     saved_process.parent_pipeline = weak_proxy(pipeline)
                     pipeline.nodes[node_name] = new_node
 
+                    # Creating a new graphical node
                     from PipelineManager.CAPSUL_Files.pipeline_developper_view import NodeGWidget
                     gnode = NodeGWidget(
                         node_name, new_node.plugs, pipeline,
@@ -1044,12 +1056,37 @@ class PipelineEditor(PipelineDevelopperView):
                         colored_parameters=self.scene.colored_parameters,
                         logical_view=self.scene.logical_view, labels=self.scene.labels)
 
+                    # Setting the new node to the same position as the previous one
                     pos = self.scene.pos.get(node_name)
                     gnode.setPos(pos)
+
+                    # Removing the old node
                     self.scene.removeItem(self.scene.gnodes[node_name])
                     del self.scene.gnodes[node_name]
+
+                    # Adding the new node to the scene
                     self.scene.gnodes[node_name] = gnode
                     self.scene.addItem(gnode)
+
+                    for link, glink in link_to_del:
+                        source = link[0]
+                        dest = link[1]
+                        if source[0] == 'inputs':
+                            link_plug = source[1]
+                            source = ('', link_plug)
+                        if dest[0] == 'outputs':
+                            link_plug = dest[1]
+                            dest = ('', link_plug)
+
+                        # Writing a string to represent the link
+                        source_parameters = ".".join(source)
+                        dest_parameters = ".".join(dest)
+                        pipeline_link = "->".join((source_parameters, dest_parameters))
+
+                        # Adding the link
+                        self.scene.pipeline.add_link(pipeline_link)
+                        self.scene.add_link(source, dest, True, False)
+
                     self.scene.update_pipeline()
 
     def save_pipeline(self, filename=None):
