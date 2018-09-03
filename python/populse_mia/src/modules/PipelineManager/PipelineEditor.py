@@ -994,6 +994,10 @@ class PipelineEditor(PipelineDevelopperView):
         """
 
         pipeline = self.scene.pipeline
+
+        # List to store the removed links
+        removed_links = []
+        
         for node_name, node in pipeline.nodes.items():
             # Only if the node is a pipeline node ?
             if node_name and isinstance(node, PipelineNode):
@@ -1034,7 +1038,6 @@ class PipelineEditor(PipelineDevelopperView):
                     # Checking the links of the node
                     link_to_del = set()
                     for link, glink in six.iteritems(self.scene.glinks):
-                        print('link', link)
                         if link[0][0] == node_name or link[1][0] == node_name:
                             self.scene.removeItem(glink)
                             link_to_del.add((link, glink))
@@ -1083,11 +1086,32 @@ class PipelineEditor(PipelineDevelopperView):
                         dest_parameters = ".".join(dest)
                         pipeline_link = "->".join((source_parameters, dest_parameters))
 
+                        # Checking if a connected plug has been deleting
+                        if dest[0] == node_name and dest[1] in removed_inputs:
+                            removed_links.append(pipeline_link)
+                            continue
+
+                        if source[0] == node_name and source[1] in removed_outputs:
+                            removed_links.append(pipeline_link)
+                            continue
+
                         # Adding the link
                         self.scene.pipeline.add_link(pipeline_link)
                         self.scene.add_link(source, dest, True, False)
 
                     self.scene.update_pipeline()
+
+        if removed_links:
+            dialog_text = 'Pipeline {0} has been updated.\nRemoved links:'.format(node_name)
+            for removed_link in removed_links:
+                dialog_text += '\n{0}'.format(removed_link)
+
+            pop_up = QtWidgets.QMessageBox()
+            pop_up.setIcon(QtWidgets.QMessageBox.Warning)
+            pop_up.setText(dialog_text)
+            pop_up.setWindowTitle("Warning: links have been removed")
+            pop_up.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+            pop_up.exec_()
 
     def save_pipeline(self, filename=None):
         """
