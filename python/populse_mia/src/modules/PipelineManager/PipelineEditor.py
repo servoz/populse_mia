@@ -997,7 +997,7 @@ class PipelineEditor(PipelineDevelopperView):
 
         # List to store the removed links
         removed_links = []
-        
+
         for node_name, node in pipeline.nodes.items():
             # Only if the node is a pipeline node ?
             if node_name and isinstance(node, PipelineNode):
