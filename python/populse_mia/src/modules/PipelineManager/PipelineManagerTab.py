@@ -152,7 +152,7 @@ class PipelineManagerTab(QWidget):
         self.tags_menu.addAction(self.run_pipeline_action)
 
         self.tags_tool_button = QtWidgets.QToolButton()
-        self.tags_tool_button.setText('Tags')
+        self.tags_tool_button.setText('Pipeline')
         self.tags_tool_button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         self.tags_tool_button.setMenu(self.tags_menu)
 
