@@ -18,7 +18,7 @@ from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
 
-
+'''
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1214,7 +1214,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.imageViewer.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-
+'''
 
 class TestMIAPipelineManager(unittest.TestCase):
 
@@ -1296,7 +1296,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
     def test_update_node_name(self):
         """
-        Displays parameters of a node
+        Displays parameters of a node and updates its name
         """
 
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
@@ -1310,7 +1310,8 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # Displaying the node parameters
         pipeline = pipeline_editor_tabs.get_current_pipeline()
-        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        # node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
         node_controller.update_node_name(pipeline, "smooth_test")
         self.assertTrue("smooth_test" in pipeline.nodes.keys())
 
@@ -1328,7 +1329,8 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().add_link(source, dest, True, False)
 
         # Displaying the node parameters (smooth1)
-        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        # node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
 
         # This should not change the node name because there is already a "smooth_test" process in the pipeline
         node_controller.update_node_name(pipeline, "smooth_test")
@@ -1341,6 +1343,26 @@ class TestMIAPipelineManager(unittest.TestCase):
         # Verifying that the updated node has the same links
         self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["in_files"].links_from), 1)
         self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["_smoothed_files"].links_to), 1)
+
+    def test_update_plug_value(self):
+        """
+        Displays parameters of a node and updates a plug value
+        """
+        #TODO: CONTINUE
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        node_controller.update_node_name(pipeline, "smooth_test")
+        self.assertTrue("smooth_test" in pipeline.nodes.keys())
 
 
 if __name__ == '__main__':

@@ -89,7 +89,7 @@ class NodeController(QWidget):
         :param pipeline: current pipeline
         :return:
         """
-
+        print('#\n' * 50)
         self.node_name = node_name
 
         self.line_edit_input = []
