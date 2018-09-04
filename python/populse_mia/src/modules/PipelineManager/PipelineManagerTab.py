@@ -119,32 +119,46 @@ class PipelineManagerTab(QWidget):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.nodeController)
 
-        self.loadButton = QPushButton('Load pipeline', self)
-        self.loadButton.clicked.connect(self.loadPipeline)
+        # Actions
+        self.load_pipeline_action = QAction("Load pipeline", self)
+        self.load_pipeline_action.triggered.connect(self.loadPipeline)
 
-        self.saveButton = QPushButton('Save pipeline', self)
-        self.saveButton.clicked.connect(self.savePipeline)
+        self.save_pipeline_action = QAction("Save pipeline", self)
+        self.save_pipeline_action.triggered.connect(self.savePipeline)
 
-        self.loadParametersButton = QPushButton('Load pipeline parameters', self)
-        self.loadParametersButton.clicked.connect(self.loadParameters)
+        self.load_pipeline_parameters_action = QAction("Load pipeline parameters", self)
+        self.load_pipeline_parameters_action.triggered.connect(self.loadParameters)
 
-        self.saveParametersButton = QPushButton('Save pipeline parameters', self)
-        self.saveParametersButton.clicked.connect(self.saveParameters)
+        self.save_pipeline_parameters_action = QAction("Save pipeline parameters", self)
+        self.save_pipeline_parameters_action.triggered.connect(self.loadPipeline)
 
-        self.initButton = QPushButton('Initialize pipeline', self)
-        self.initButton.clicked.connect(self.initPipeline)
+        self.init_pipeline_action = QAction("Initialize pipeline", self)
+        self.init_pipeline_action.triggered.connect(self.initPipeline)
 
-        self.runButton = QPushButton('Run pipeline', self)
-        self.runButton.clicked.connect(self.runPipeline)
+        self.run_pipeline_action = QAction("Run pipeline", self)
+        self.run_pipeline_action.triggered.connect(self.runPipeline)
+
+        # Toolbar
+        self.menu_toolbar = QToolBar()
+
+        self.tags_menu = QMenu()
+        self.tags_menu.addAction(self.load_pipeline_action)
+        self.tags_menu.addAction(self.save_pipeline_action)
+        self.tags_menu.addSeparator()
+        self.tags_menu.addAction(self.load_pipeline_parameters_action)
+        self.tags_menu.addAction(self.save_pipeline_parameters_action)
+        self.tags_menu.addSeparator()
+        self.tags_menu.addAction(self.init_pipeline_action)
+        self.tags_menu.addAction(self.run_pipeline_action)
+
+        self.tags_tool_button = QtWidgets.QToolButton()
+        self.tags_tool_button.setText('Tags')
+        self.tags_tool_button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+        self.tags_tool_button.setMenu(self.tags_menu)
 
         # Layouts
         self.hLayout = QHBoxLayout()
-        self.hLayout.addWidget(self.saveButton)
-        self.hLayout.addWidget(self.loadButton)
-        self.hLayout.addWidget(self.saveParametersButton)
-        self.hLayout.addWidget(self.loadParametersButton)
-        self.hLayout.addWidget(self.initButton)
-        self.hLayout.addWidget(self.runButton)
+        self.hLayout.addWidget(self.tags_tool_button)
         self.hLayout.addStretch(1)
 
         self.splitterRight = QSplitter(Qt.Vertical)
