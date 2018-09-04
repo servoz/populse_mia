@@ -28,7 +28,7 @@ from soma.qt_gui.qt_backend import QtCore, QtGui, Qt
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 from soma.sorted_dictionary import SortedDictionary
 from capsul.api import Switch, PipelineNode, OptionalOutputSwitch
-from capsul.pipeline import pipeline_tools
+#from capsul.pipeline import pipeline_tools
 from capsul.api import Pipeline
 from capsul.api import Process
 from capsul.api import get_process_instance
@@ -39,6 +39,7 @@ import capsul.pipeline.xml as capsulxml
 from capsul.study_config import process_instance
 from soma.controller import Controller
 from soma.utils.functiontools import SomaPartial
+from PipelineManager.CAPSUL_Files import pipeline_tools
 
 try:
     from traits import api as traits
