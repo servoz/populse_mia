@@ -18,7 +18,7 @@ from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
 
-
+'''
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1214,7 +1214,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.imageViewer.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-
+'''
 
 class TestMIAPipelineManager(unittest.TestCase):
 
@@ -1388,7 +1388,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
     def test_display_filter(self):
         """
-        Displays parameters of a node and updates a plug value
+        Displays parameters of a node and displays a plug filter
         """
 
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
@@ -1399,8 +1399,6 @@ class TestMIAPipelineManager(unittest.TestCase):
         process_class = Threshold
         pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
         pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
-
-        # Displaying the node parameters
         pipeline = pipeline_editor_tabs.get_current_pipeline()
 
         # Exporting the input plugs and modifying the "synchronize" input plug
@@ -1417,6 +1415,39 @@ class TestMIAPipelineManager(unittest.TestCase):
         node_controller.display_filter("inputs", "synchronize", (), input_process)
         node_controller.pop_up.close()
         self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+        # TODO: open a project and modify the filter pop-up
+
+    def test_open_filter(self):
+        """
+        Opens an input filer
+        """
+
+        # Adding the processes path to the system path
+        import sys
+        sys.path.append(os.path.join('..', '..', 'processes'))
+
+        # Importing the package
+        package_name = 'MIA_processes.IRMaGe.Tools'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        process_class = None
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Input_Filter':
+                process_class = cls
+
+        if not process_class:
+            print('No Input_Filer class found')
+            return
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "input_filter1"
+        pipeline_editor_tabs.open_filter("input_filter1")
+        pipeline_editor_tabs.filter_widget.close()
+        self.assertFalse(pipeline.nodes["input_filter1"].get_plug_value("output"))
 
         # TODO: open a project and modify the filter pop-up
 

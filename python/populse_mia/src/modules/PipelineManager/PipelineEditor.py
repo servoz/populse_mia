@@ -420,8 +420,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
         node = self.get_current_pipeline().nodes[node_name]
-        filter_widget = FilterWidget(self.project, node_name, node, self)
-        filter_widget.show()
+        self.filter_widget = FilterWidget(self.project, node_name, node, self)
+        self.filter_widget.show()
 
     def export_to_db_scans(self, node_name):
         """

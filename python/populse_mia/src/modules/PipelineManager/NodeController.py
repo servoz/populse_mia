@@ -722,7 +722,7 @@ class FilterWidget(QWidget):
         :param project: current project in the software
         :param node_name: name of the current node
         :param node: instance of the corresponding Input_Filter node
-        :param main_window:parent main window
+        :param main_window: parent main window
         """
 
         super(FilterWidget, self).__init__(None)
