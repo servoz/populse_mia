@@ -18,7 +18,7 @@ from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
 
-'''
+
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1214,7 +1214,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.imageViewer.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-'''
+
 
 class TestMIAPipelineManager(unittest.TestCase):
 
@@ -1348,21 +1348,77 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
         Displays parameters of a node and updates a plug value
         """
-        #TODO: CONTINUE
+
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
         node_controller = self.main_window.pipeline_manager.nodeController
 
         # Adding a process
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
+        from nipype.interfaces.spm import Threshold
+        process_class = Threshold
         pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
 
         # Displaying the node parameters
         pipeline = pipeline_editor_tabs.get_current_pipeline()
-        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
-        node_controller.update_node_name(pipeline, "smooth_test")
-        self.assertTrue("smooth_test" in pipeline.nodes.keys())
+        node_controller.display_parameters("threshold1", get_process_instance(process_class), pipeline)
+
+        # Updating the value of the "synchronize" plug
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("1")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(1, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+        # Updating the value of the "_activation_forced" plug
+        index = node_controller.get_index_from_plug_name("_activation_forced", "out")
+        node_controller.line_edit_output[index].setText("True")
+        node_controller.line_edit_output[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(True, pipeline.nodes["threshold1"].get_plug_value("_activation_forced"))
+
+        # Exporting the input plugs and modifying the "synchronize" input plug
+        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
+
+        input_process = pipeline.nodes[""].process
+        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
+
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("2")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+    def test_display_filter(self):
+        """
+        Displays parameters of a node and updates a plug value
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Threshold
+        process_class = Threshold
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        # Exporting the input plugs and modifying the "synchronize" input plug
+        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
+
+        input_process = pipeline.nodes[""].process
+        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("2")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+
+        # Calling the display_filter method
+        node_controller.display_filter("inputs", "synchronize", (), input_process)
+        node_controller.pop_up.close()
+        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+        # TODO: open a project and modify the filter pop-up
 
 
 if __name__ == '__main__':

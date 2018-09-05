@@ -46,6 +46,7 @@ class NodeController(QWidget):
 
     Methods:
         - display_parameters: displays the parameters of the selected node
+        - get_index_from_plug_name: returns the index of the plug label
         - update_node_name: updates the name of the selected node
         - update_plug_value: updates the value of a node plug
         - display_filter: displays a filter widget
@@ -89,11 +90,13 @@ class NodeController(QWidget):
         :param pipeline: current pipeline
         :return:
         """
-        print('#\n' * 50)
+
         self.node_name = node_name
 
         self.line_edit_input = []
         self.line_edit_output = []
+        self.labels_input = []
+        self.labels_output = []
         if len(self.children()) > 0:
             self.clearLayout(self)
 
@@ -128,13 +131,14 @@ class NodeController(QWidget):
             if not trait.output:
                 label_input = QLabel()
                 label_input.setText(str(name))
+                self.labels_input.insert(idx, label_input)
 
                 value = getattr(process, name)
                 trait_type = trait_ids(process.trait(name))
 
                 self.line_edit_input.insert(idx, QLineEdit())
                 self.line_edit_input[idx].setText(str(value))
-                self.line_edit_input[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'in',
+                self.line_edit_input[idx].returnPressed.connect(partial(self.update_plug_value, 'in',
                                                                         name, pipeline, type(value)))
 
                 h_box = QHBoxLayout()
@@ -163,13 +167,14 @@ class NodeController(QWidget):
         for name, trait in process.traits(output=True).items():
             label_output = QLabel()
             label_output.setText(str(name))
+            self.labels_output.insert(idx, label_output)
 
             value = getattr(process, name)
             trait_type = trait_ids(process.trait(name))
 
             self.line_edit_output.insert(idx, QLineEdit())
             self.line_edit_output[idx].setText(str(value))
-            self.line_edit_output[idx].returnPressed.connect(partial(self.update_plug_value, idx, 'out',
+            self.line_edit_output[idx].returnPressed.connect(partial(self.update_plug_value, 'out',
                                                                      name, pipeline, type(value)))
 
             h_box = QHBoxLayout()
@@ -187,6 +192,24 @@ class NodeController(QWidget):
         self.v_box_final.addWidget(self.button_group_outputs)
 
         self.setLayout(self.v_box_final)
+
+    def get_index_from_plug_name(self, plug_name, in_or_out):
+        """
+        Returns the index of the plug label.
+
+        :param plug_name: name of the plug
+        :param in_or_out: "in" if the plug is an input plug, "out" else
+        :return:
+        """
+        if in_or_out == "in":
+            for idx, label in enumerate(self.labels_input):
+                if label.text() == plug_name:
+                    return idx
+
+        else:
+            for idx, label in enumerate(self.labels_output):
+                if label.text() == plug_name:
+                    return idx
 
     def update_node_name(self, pipeline, new_node_name=None):
         """
@@ -252,11 +275,10 @@ class NodeController(QWidget):
             # To undo/redo
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
-    def update_plug_value(self, index, in_or_out, plug_name, pipeline, value_type, new_value=None):
+    def update_plug_value(self, in_or_out, plug_name, pipeline, value_type, new_value=None):
         """
         Updates the value of a node plug
 
-        :param index: index of the plug
         :param in_or_out: "in" if the plug is an input plug, "out" else
         :param plug_name: name of the plug
         :param pipeline: current pipeline
@@ -265,6 +287,8 @@ class NodeController(QWidget):
         called from an undo/redo)
         :return:
         """
+
+        index = self.get_index_from_plug_name(plug_name, in_or_out)
 
         # Reading the value from the plug's line edit
         if not new_value:
@@ -335,9 +359,9 @@ class NodeController(QWidget):
         :param process: process of the node
         :return:
         """
-        pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
-        pop_up.show()
-        pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
+        self.pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
+        self.pop_up.show()
+        self.pop_up.plug_value_changed.connect(partial(self.update_plug_value_from_filter, plug_name, parameters))
 
     def update_plug_value_from_filter(self, plug_name, parameters, filter_res_list):
         """
