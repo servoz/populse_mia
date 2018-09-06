@@ -3041,10 +3041,16 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         type (active, weak) between two given boxes: all parameters are not
         represented.
         '''
-        filename = QtGui.QFileDialog.getSaveFileName(
+        file_dialog = QtGui.QFileDialog(filter='Images (*.png *.xpm *.jpg *.ps *.eps);; All (*)')
+        file_dialog.setDefaultSuffix('.png')
+        file_dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+        file_dialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+        if file_dialog.exec_():
+            filename = file_dialog.selectedFiles()
+
+        '''filename = QtGui.QFileDialog.getSaveFileName(
             None, 'Save image of the pipeline', '',
-            'Images (*.png *.xpm *.jpg *.ps *.eps);; All (*)')
-        # TODO: ajouter .png si pas d'extension
+            'Images (*.png *.xpm *.jpg *.ps *.eps);; All (*)')'''
         if filename:
             pipeline_tools.save_dot_image(self.scene.pipeline, filename[0])
 
