@@ -65,6 +65,7 @@ class PipelineManagerTab(QWidget):
     Methods:
         - undo: undo the last action made on the current pipeline editor
         - redo: redo the last undone action on the current pipeline editor
+        - update_clinical_mode: updates the visibility of widgets/actions depending of the chosen mode
         - update_scans_list: updates the user-selected list of scans
         - update_project: updates the project attribute of several objects
         - controller_value_changed: updates history when a pipeline node is changed
@@ -395,6 +396,23 @@ class PipelineManagerTab(QWidget):
 
             self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
 
+    def update_clinical_mode(self):
+        """
+        Updates the visibility of widgets/actions depending of the chosen mode
+
+        :return:
+        """
+        config = Config()
+
+        # If the clinical mode is chosen, the process library is not available
+        # and the user cannot save a pipeline
+        if config.get_clinical_mode() == 'yes':
+            self.processLibrary.setHidden(True)
+            self.save_pipeline_action.setDisabled(True)
+        else:
+            self.processLibrary.setHidden(False)
+            self.save_pipeline_action.setDisabled(False)
+
     def update_scans_list(self, iteration_list):
         """
         Updates the user-selected list of scans
@@ -411,37 +429,6 @@ class PipelineManagerTab(QWidget):
         if not self.pipelineEditorTabs.scan_list:
             self.pipelineEditorTabs.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
         self.pipelineEditorTabs.update_scans_list()
-
-    def update_clinical_mode(self):
-        config = Config()
-
-        # If the clinical mode is chosen, the process library is not available
-        # and the user cannot save a pipeline
-        if config.get_clinical_mode() == 'yes':
-            self.processLibrary.setHidden(True)
-            self.save_pipeline_action.setDisabled(True)
-        else:
-            self.processLibrary.setHidden(False)
-            self.save_pipeline_action.setDisabled(False)
-
-    def clear_layout(self, layout):
-        """
-        Clears the layouts of the widget
-
-        :param layout: widget with a layout
-        :return:
-        """
-        for i in reversed(range(len(layout.children()))):
-            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
-                layout.layout().itemAt(i).widget().setParent(None)
-            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout or type(
-                    layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
-                layout.layout().itemAt(i).deleteLater()
-                for j in reversed(range(len(layout.layout().itemAt(i)))):
-                    layout.layout().itemAt(i).itemAt(j).widget().setParent(None)
-
-        if layout.layout() is not None:
-            sip.delete(layout.layout())
 
     def update_project(self, project):
         """

@@ -617,6 +617,7 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
 
     def add_clinical_tags(self):
+        """ Adds the clinical tags to the database and the data browser """
         added_tags = self.project.add_clinical_tags()
         for tag in added_tags:
             column = self.data_browser.table_data.get_index_insertion(tag)
