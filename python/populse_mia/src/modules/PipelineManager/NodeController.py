@@ -304,8 +304,10 @@ class NodeController(QWidget):
 
             try:
                 new_value = eval(new_value)
+            except NameError:
+                pass
             except Exception as err:
-                print(err)
+                print("{0}: {1}.".format(err.__class__, err))
                 
             #except NameError:
             #    print("NameError for value {0}".format(new_value))
