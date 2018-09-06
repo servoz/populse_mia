@@ -26,6 +26,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Called before each test
         """
 
+        # All the tests are run in regular mode
+        config = Config()
+        config.set_clinical_mode("no")
+
         self.app = QApplication([])
         self.project = Project(None, True)
         self.imageViewer = Main_Window(self.project, test=True)
@@ -1222,6 +1226,10 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
         Called before each test
         """
+
+        # All the tests are run in regular mode
+        config = Config()
+        config.set_clinical_mode("no")
 
         self.app = QApplication([])
         self.project = Project(None, True)
