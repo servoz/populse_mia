@@ -27,7 +27,7 @@ from PipelineManager.Process_mia import Process_mia
 from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode
+from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch
 
 from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
@@ -110,6 +110,7 @@ class PipelineManagerTab(QWidget):
         # self.diagramScene = DiagramScene(self)
         self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list)
         self.pipelineEditorTabs.node_clicked.connect(self.displayNodeParameters)
+        self.pipelineEditorTabs.switch_clicked.connect(self.displayNodeParameters)
         self.pipelineEditorTabs.pipeline_saved.connect(self.updateProcessLibrary)
 
         self.nodeController = NodeController(self.project, self.scan_list, self, self.main_window)
@@ -619,8 +620,11 @@ class PipelineManagerTab(QWidget):
         :param process: process instance of the corresponding node
         :return:
         """
-        self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())
-        self.scrollArea.setWidget(self.nodeController)
+        if isinstance(process, Switch):
+            pass
+        else:
+            self.nodeController.display_parameters(node_name, process, self.pipelineEditorTabs.get_current_pipeline())
+            self.scrollArea.setWidget(self.nodeController)
 
 
 class InitProgress(QProgressDialog):

@@ -1099,7 +1099,11 @@ class NodeGWidget(QtGui.QGraphicsItem):
             event.accept()
 
         if event.button() == QtCore.Qt.LeftButton and process is not None:
-            self.scene().node_clicked.emit(self.name, process)
+            if isinstance(process, Switch):
+                self.scene().switch_clicked.emit(self.name, process)
+            else:
+                self.scene().node_clicked.emit(self.name, process)
+
             self.scene().clearSelection()
             self.box.setSelected(True)
             return QtGui.QGraphicsItem.mousePressEvent(self, event)
@@ -1266,6 +1270,8 @@ class PipelineScene(QtGui.QGraphicsScene):
                                         QtCore.Qt.KeyboardModifiers)
     # Signal emitted when a node box is clicked
     node_clicked = QtCore.Signal(str, Process)
+    # Signal emitted when a switch box is clicked
+    switch_clicked = QtCore.Signal(str, Switch)
     # Signal emitted when a node box is right-clicked
     node_right_clicked = QtCore.Signal(str, Controller)
     # Signal emitted when a plug is clicked
@@ -2059,6 +2065,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     '''Signal emitted when a sub pipeline has to be open.'''
     node_clicked = QtCore.Signal(str, Process)
     '''Signal emitted when a node box has to be open.'''
+    switch_clicked = QtCore.Signal(str, Switch)
+    '''Signal emitted when a switch box has to be open.'''
     node_right_clicked = QtCore.Signal(str, Controller)
     '''Signal emitted when a node box is right-clicked'''
     plug_clicked = QtCore.Signal(str)
@@ -2321,6 +2329,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self.scene.subpipeline_clicked.connect(self.subpipeline_clicked)
         self.scene.subpipeline_clicked.connect(self.onLoadSubPipelineClicked)
         self.scene.node_clicked.connect(self.node_clicked)
+        self.scene.switch_clicked.connect(self.switch_clicked)
         self.scene.node_right_clicked.connect(self.node_right_clicked)
         self.scene.node_right_clicked.connect(self.onOpenProcessController)
         self.scene.plug_clicked.connect(self.plug_clicked)
@@ -2819,8 +2828,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
         if self._enable_edition:
             menu.addSeparator()
-            add_proc = menu.addAction('Add process in pipeline')
-            add_proc.triggered.connect(self.add_process)
+            """add_proc = menu.addAction('Add process in pipeline')
+            add_proc.triggered.connect(self.add_process)"""
             add_switch = menu.addAction('Add switch in pipeline')
             add_switch.triggered.connect(self.add_switch)
             add_optional_output_switch = menu.addAction(

@@ -6,7 +6,7 @@ import six
 import yaml
 import weakref
 
-from capsul.api import get_process_instance, Process, PipelineNode
+from capsul.api import get_process_instance, Process, PipelineNode, Switch
 from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 from soma.utils.weak_proxy import weak_proxy
@@ -48,6 +48,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         - save_pipeline_parameters: saves the pipeline parameters of the current editor
         - load_pipeline_parameters: loads parameters to the pipeline of the current editor
         - emit_node_clicked: emits a signal when a node is clicked
+        - emit_switch_clicked: emits a signal when a switch is clicked
         - emit_pipeline_saved: emits a signal when a pipeline is saved
         - update_pipeline_editors: updates editors
         - update_history: updates undo/redo history of an editor
@@ -61,7 +62,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     """
 
     pipeline_saved = QtCore.pyqtSignal(str)
-    node_clicked = QtCore.Signal(str, Process)
+    node_clicked = QtCore.pyqtSignal(str, Process)
+    switch_clicked = QtCore.pyqtSignal(str, Switch)
 
     def __init__(self, project, scan_list):
         """
@@ -83,6 +85,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.switch_clicked.connect(self.emit_switch_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_pipeline_editors)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
@@ -117,6 +120,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         # Creating a new editor
         p_e = PipelineEditor(self.project)
         p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.switch_clicked.connect(self.emit_switch_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
         p_e.pipeline_modified.connect(self.update_pipeline_editors)
         p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
@@ -310,6 +314,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         self.node_clicked.emit(node_name, process)
+
+    def emit_switch_clicked(self, node_name, switch):
+        """
+        Emits a signal when a switch is clicked
+
+        :param node_name: node name
+        :param switch: process of the corresponding node
+        :return:
+        """
+
+        self.switch_clicked.emit(node_name, switch)
 
     def emit_pipeline_saved(self, filename):
         """
