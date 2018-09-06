@@ -3035,8 +3035,9 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         filename = QtGui.QFileDialog.getSaveFileName(
             None, 'Save image of the pipeline', '',
             'Images (*.png *.xpm *.jpg *.ps *.eps);; All (*)')
+        # TODO: ajouter .png si pas d'extension
         if filename:
-            pipeline_tools.save_dot_image(self.scene.pipeline, filename)
+            pipeline_tools.save_dot_image(self.scene.pipeline, filename[0])
 
     def reset_initial_nodes_positions(self):
         '''

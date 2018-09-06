@@ -171,7 +171,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         if not can_exit:
             return
-
+        print(list(self.undos.keys()))
         del self.undos[filename]
         del self.redos[filename]
 
