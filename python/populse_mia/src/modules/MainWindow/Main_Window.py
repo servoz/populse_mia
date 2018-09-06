@@ -611,6 +611,16 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences = Ui_Dialog_Preferences(self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
+        self.pop_up_preferences.use_clinical_mode_signal.connect(self.add_clinical_tags)
+
+        # Modifying the options in the Pipeline Manager (verify if clinical mode)
+        self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
+
+    def add_clinical_tags(self):
+        added_tags = self.project.add_clinical_tags()
+        for tag in added_tags:
+            column = self.data_browser.table_data.get_index_insertion(tag)
+            self.data_browser.table_data.add_column(column, tag)
 
     def import_data(self):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the

@@ -133,3 +133,14 @@ class Config:
 
     def get_use_spm(self):
         return self.config["use_spm"]
+
+    def set_clinical_mode(self, clinical_mode):
+        self.config["clinical_mode"] = clinical_mode
+        # Then save the modification
+        self.saveConfig()
+
+    def get_clinical_mode(self):
+        try:
+            return self.config["clinical_mode"]
+        except KeyError:
+            return "yes"

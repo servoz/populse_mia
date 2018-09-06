@@ -16,6 +16,7 @@ class Ui_Dialog_Preferences(QDialog):
 
     # Signal that will be emitted at the end to tell that the project has been created
     signal_preferences_change = pyqtSignal()
+    use_clinical_mode_signal = pyqtSignal()
 
     def __init__(self, main_window):
         super().__init__()
@@ -109,6 +110,18 @@ class Ui_Dialog_Preferences(QDialog):
             self.use_spm_checkbox.setChecked(0)
         self.values_layout.addWidget(self.use_spm_checkbox)
 
+
+        self.clinical_mode_label = QLabel("Use clinical mode")
+        self.labels_layout.addWidget(self.clinical_mode_label)
+        self.clinical_mode_checkbox = QCheckBox('', self)
+        #self.clinical_mode_checkbox.stateChanged.connect(self.clinical_mode_changed)
+        if config.get_clinical_mode() == "yes":
+            self.clinical_mode_checkbox.setChecked(1)
+        else:
+            self.clinical_mode_checkbox.setChecked(1)
+            self.clinical_mode_checkbox.setChecked(0)
+        self.values_layout.addWidget(self.clinical_mode_checkbox)
+
         self.labels_layout.addWidget(self.matlab_label)
         self.matlab_value_layout = QHBoxLayout()
         self.matlab_value_layout.addWidget(self.matlab_choice)
@@ -200,6 +213,13 @@ class Ui_Dialog_Preferences(QDialog):
             config.set_use_spm("yes")
         else:
             config.set_use_spm("no")
+
+        # Clinical mode
+        if self.clinical_mode_checkbox.isChecked():
+            config.set_clinical_mode("yes")
+            self.use_clinical_mode_signal.emit()
+        else:
+            config.set_clinical_mode("no")
 
         # SPM and MCR paths checks and update
         if self.use_spm_checkbox.isChecked():

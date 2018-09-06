@@ -37,6 +37,7 @@ from SoftwareProperties.Config import Config
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditorTabs
 from .process_library import ProcessLibraryWidget
+from SoftwareProperties.Config import Config
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -85,6 +86,7 @@ class PipelineManagerTab(QWidget):
         :param main_window: main window of the software
         """
 
+        config = Config()
         Process_mia.project = project
         self.project = project
         if not scan_list:
@@ -151,6 +153,9 @@ class PipelineManagerTab(QWidget):
         self.tags_menu.addAction(self.init_pipeline_action)
         self.tags_menu.addAction(self.run_pipeline_action)
 
+        if config.get_clinical_mode() == 'yes':
+            self.save_pipeline_action.setDisabled(True)
+
         self.tags_tool_button = QtWidgets.QToolButton()
         self.tags_tool_button.setText('Pipeline')
         self.tags_tool_button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
@@ -172,12 +177,17 @@ class PipelineManagerTab(QWidget):
         self.splitter1.addWidget(self.splitterRight)
         self.splitter1.setSizes([200, 800, 200])
 
+        if config.get_clinical_mode() == 'yes':
+            self.processLibrary.setHidden(True)
+
         self.splitter2 = QSplitter(Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
         self.splitter2.setSizes([800, 100])
 
         self.verticalLayout.addLayout(self.hLayout)
         self.verticalLayout.addWidget(self.splitter2)
+
+        #self.update_layouts()
 
         self.startedConnection = None
 
@@ -401,6 +411,37 @@ class PipelineManagerTab(QWidget):
         if not self.pipelineEditorTabs.scan_list:
             self.pipelineEditorTabs.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
         self.pipelineEditorTabs.update_scans_list()
+
+    def update_clinical_mode(self):
+        config = Config()
+
+        # If the clinical mode is chosen, the process library is not available
+        # and the user cannot save a pipeline
+        if config.get_clinical_mode() == 'yes':
+            self.processLibrary.setHidden(True)
+            self.save_pipeline_action.setDisabled(True)
+        else:
+            self.processLibrary.setHidden(False)
+            self.save_pipeline_action.setDisabled(False)
+
+    def clear_layout(self, layout):
+        """
+        Clears the layouts of the widget
+
+        :param layout: widget with a layout
+        :return:
+        """
+        for i in reversed(range(len(layout.children()))):
+            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
+                layout.layout().itemAt(i).widget().setParent(None)
+            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout or type(
+                    layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
+                layout.layout().itemAt(i).deleteLater()
+                for j in reversed(range(len(layout.layout().itemAt(i)))):
+                    layout.layout().itemAt(i).itemAt(j).widget().setParent(None)
+
+        if layout.layout() is not None:
+            sip.delete(layout.layout())
 
     def update_project(self, project):
         """
