@@ -330,18 +330,12 @@ class NodeController(QWidget):
             msg.setText("{0}: {1}.".format(err.__class__, err))
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+
             if in_or_out == 'in':
                 self.line_edit_input[index].setText(str(old_value))
             elif in_or_out == 'out':
                 self.line_edit_output[index].setText(str(old_value))
-
-      #  try:
-      #      pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
-      #  except:
-      #      msg = QMessageBox()
-      #      msg.setText("The value of {0} has to be of type {1}.".format(plug_name, str(value_type)))
-      #      msg.setIcon(QMessageBox.Warning)
-      #      msg.exec_()
+            return
 
         # Update pipeline to "propagate" the node value
         pipeline.update_nodes_and_plugs_activation()
