@@ -19,6 +19,8 @@ except ImportError:
     import subprocess
 import six
 import sys
+import json
+from datetime import date, time, datetime
 
 # Define the logger
 logger = logging.getLogger(__name__)
@@ -74,9 +76,9 @@ def pipeline_node_colors(pipeline, node):
     LIGHT_BLUE_2 = (0.85, 0.85, 0.9)
     LIGHT_BLUE_3 = (0.3, 0.3, 0.5)
 
-    ANTHRACITE_1 = (0.5, 0.5, 0.5)
-    ANTHRACITE_2 = (0.4, 0.4, 0.4)
-    ANTHRACITE_3 = (0.3, 0.3, 0.3)
+    ANTHRACITE_1 = (0.8, 0.8, 0.8)
+    ANTHRACITE_2 = (0.7, 0.7, 0.7)
+    ANTHRACITE_3 = (0.6, 0.6, 0.6)
     LIGHT_ANTHRACITE_1 = (0.9, 0.9, 0.9)
     LIGHT_ANTHRACITE_2 = (1, 1, 1)
     LIGHT_ANTHRACITE_3 = (0.5, 0.5, 0.5)
@@ -84,12 +86,12 @@ def pipeline_node_colors(pipeline, node):
     SEA_1 = (0.7, 0.8, 1.)
     SEA_2 = (0.5, 0.6, 0.9)
     SEA_3 = (0.2, 0.3, 0.6)
-    LIGHT_SEA_1 = (0.95, 0.95, 1.0)
+    LIGHT_SEA_1 = (0.5, 0.95, 1.0)
     LIGHT_SEA_2 = (0.8, 0.8, 1.)
     LIGHT_SEA_3 = (0.2, 0.2, 0.7)
 
-    SAND_1 = (0.8, 0.7, 0.3)
-    SAND_2 = (1., 0.9, 0.5)
+    SAND_1 = (0.8, 0.7, 0.5)
+    SAND_2 = (0.7, 0.6, 0.5)
     SAND_3 = (0.5, 0.45, 0.2)
     LIGHT_SAND_1 = (0.85, 0.78, 0.48)
     LIGHT_SAND_2 = (1., 0.95, 0.73)
@@ -103,11 +105,11 @@ def pipeline_node_colors(pipeline, node):
     #     DEEP_PURPLE_2 = (0.6, 0.5, 0.6)
     #     DEEP_PURPLE_3 = (0.4, 0.35, 0.4)
 
-    PURPLE_1 = (0.85, 0.8, 0.85)
-    PURPLE_2 = (0.8, 0.75, 0.8)
-    PURPLE_3 = (0.5, 0.45, 0.5)
-    DEEP_PURPLE_1 = (1, 0.5, 0.0)
-    DEEP_PURPLE_2 = (0.8, 0.3, 0.0)
+    PURPLE_1 = (0.6, 0.5, 0.8)
+    PURPLE_2 = (0.6, 0.5, 0.8)
+    PURPLE_3 = (0.6, 0.5, 0.5)
+    DEEP_PURPLE_1 = (0.6, 0.5, 0.0)
+    DEEP_PURPLE_2 = (0.6, 0.3, 0.0)
     DEEP_PURPLE_3 = (0.6, 0.1, 0.0)
 
     GREEN_1 = (0.7, 0.9, 0.7)
@@ -1059,7 +1061,6 @@ def save_pipeline(pipeline, filename):
     if not saved:
         # fallback to XML
         save_py_pipeline(pipeline, filename)
-
 
 def load_pipeline_parameters(filename, pipeline):
     """

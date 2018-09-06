@@ -28,17 +28,20 @@ from soma.qt_gui.qt_backend import QtCore, QtGui, Qt
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 from soma.sorted_dictionary import SortedDictionary
 from capsul.api import Switch, PipelineNode, OptionalOutputSwitch
-#from capsul.pipeline import pipeline_tools
+# from capsul.pipeline import pipeline_tools
 from capsul.api import Pipeline
 from capsul.api import Process
 from capsul.api import get_process_instance
 from capsul.pipeline.process_iteration import ProcessIteration
+from PyQt5.Qt import QGraphicsView
 from capsul.qt_gui.widgets.pipeline_file_warning_widget \
     import PipelineFileWarningWidget
 import capsul.pipeline.xml as capsulxml
 from capsul.study_config import process_instance
 from soma.controller import Controller
 from soma.utils.functiontools import SomaPartial
+
+# MIA import
 from PipelineManager.CAPSUL_Files import pipeline_tools
 
 try:
@@ -70,8 +73,10 @@ else:
 
 GRAY_1 = QtGui.QColor.fromRgbF(0.7, 0.7, 0.8, 0.1)
 GRAY_2 = QtGui.QColor.fromRgbF(0.4, 0.4, 0.4, 1)
-LIGHT_GRAY_1 = QtGui.QColor.fromRgbF(0.7, 0.7, 0.8, 1)
-LIGHT_GRAY_2 = QtGui.QColor.fromRgbF(0.6, 0.6, 0.7, 1)
+LIGHT_GRAY_1 = QtGui.QColor.fromRgbF(0.2, 0.2, 0.2, 1)
+LIGHT_GRAY_2 = QtGui.QColor.fromRgbF(0.2, 0.2, 0.2, 1)
+
+# Colors for links and plugs
 
 ORANGE_2 = QtGui.QColor.fromRgb(234, 131, 31)  ############## float
 BLUE_2 = QtGui.QColor.fromRgb(50, 100, 250)  ############## integer
@@ -88,55 +93,54 @@ LIGHT_ANTHRACITE_1 = QtGui.QColor.fromRgbF(0.25, 0.25, 0.25)
 
 class Plug(QtGui.QGraphicsPolygonItem):
 
-    def __init__(self, name, height, width, activated=True,
+    def __init__(self, color, name, height, width, activated=True,
                  optional=False, parent=None):
         super(Plug, self).__init__(parent)
         self.name = name
-        color = self._color(activated, optional)
-        if True:
+        #         self.color = self._color(activated, optional)
+        self.color = color
+        if optional:
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-            brush.setColor(color)
+            brush.setColor(self.color)
+            polygon = QtGui.QPolygonF([QtCore.QPointF(0, 0),
+                                       QtCore.QPointF(width / 2.0, 0),
+                                       QtCore.QPointF(width / 2.0, (height - 5)),
+                                       QtCore.QPointF(0, (height - 5))
+                                       ])
+        #             self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+        else:
+            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+            brush.setColor(self.color)
             polygon = QtGui.QPolygonF([QtCore.QPointF(0, 0),
                                        QtCore.QPointF(
                                            width, (height - 5) / 2.0),
                                        QtCore.QPointF(0, height - 5)
-                                       ])
-            self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-        else:
-            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-            brush.setColor(color)
-            polygon = QtGui.QPolygonF([QtCore.QPointF(0, 0),
-                                       QtCore.QPointF(
-                                           width / 3.0, (height - 5) / 4.0),
-                                       QtCore.QPointF(width / 3.0, 0),
-                                       QtCore.QPointF(
-                                           width, (height - 5) / 2.0),
-                                       QtCore.QPointF(
-                                           width / 3.0, (height - 5)),
-                                       QtCore.QPointF(
-                                           width / 3.0, (height - 5) * 0.75),
-                                       QtCore.QPointF(0, height - 5),
                                        ])
         self.setPolygon(polygon)
         self.setBrush(brush)
         self.setZValue(3)
         self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
 
-    def _color(self, activated, optional):
-        if optional:
-            if activated:
-                color = QtCore.Qt.darkGreen
-            else:
-                color = QtGui.QColor('#BFDB91')
-        else:
-            if activated:
-                color = QtCore.Qt.black
-            else:
-                color = QtCore.Qt.gray
-        return color
+    #     def _color(self, activated, optional):
+    #         if optional:
+    #             if activated:
+    #                 color = QtCore.Qt.darkGreen
+    #             else:
+    #                 color = QtGui.QColor('#BFDB91')
+    #         else:
+    #             if activated:
+    #                 color = QtCore.Qt.black
+    #             else:
+    #                 color = QtCore.Qt.gray
+    #         return color
 
-    def update_plug(self, activated, optional):
-        color = self._color(activated, optional)
+    #     def update_plug(self, activated, optional):
+    #         color = self._color(activated, optional)
+    #         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+    #         brush.setColor(color)
+    #         self.setBrush(brush)
+
+    def update_plug(self, color):
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
         brush.setColor(color)
         self.setBrush(brush)
@@ -205,6 +209,8 @@ class NodeGWidget(QtGui.QGraphicsItem):
                  logical_view=False, labels=[],
                  show_opt_inputs=True, show_opt_outputs=True):
         super(NodeGWidget, self).__init__(parent)
+
+        self.infoActived = QtGui.QGraphicsTextItem('', self)
 
         self.setFlags(self.ItemIsSelectable)
         self.setCursor(Qt.QCursor(QtCore.Qt.PointingHandCursor))
@@ -350,6 +356,13 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.wmin = self.ctr.width()
         self.hmin = self.ctr.height()
 
+        font1 = QtGui.QFont("Times", 12, QtGui.QFont.Normal)
+        font1.setItalic(True)
+        self.infoActived.setFont(font1)
+        self.infoActived.setZValue(2)
+        self.infoActived.setDefaultTextColor(QtCore.Qt.red)
+        self.infoActived.setParentItem(self)
+
         self.box = boxItem(self)
         self.box.setFlags(self.box.ItemIsFocusable)
         self.box.setBrush(self.bg_brush)
@@ -391,6 +404,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.box.setRect(0.0, 0.0, w, h)
         self.box_title.setRect(0.0, 0.0, w, h)
         self.title.setPos(w / 2 - self.title.boundingRect().size().width() / 2, margin)
+        self.infoActived.setPos(w / 2 - self.infoActived.boundingRect().size().width() / 2, h + 2)
 
         #         rect = self.title.mapRectToParent(self.title.boundingRect())
         #         rect.setWidth(w)
@@ -470,7 +484,16 @@ class NodeGWidget(QtGui.QGraphicsItem):
             param_name.setHtml(param_text)
 
             plug_name = '%s:%s' % (self.name, in_param)
-            plug = Plug(plug_name,
+
+            trait_type_str = str(self.process.user_traits()[in_param].trait_type)
+            trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
+            trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
+            try:
+                color = self.colorLink(trait_type_str)
+            except:
+                color = ORANGE_2
+
+            plug = Plug(color, plug_name,
                         param_name.boundingRect().size().height(),
                         plug_width, activated=pipeline_plug.activated,
                         optional=pipeline_plug.optional, parent=self)
@@ -497,7 +520,16 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 param_name.setHtml(param_text)
 
             plug_name = '%s:%s' % (self.name, out_param)
-            plug = Plug(plug_name,
+
+            trait_type_str = str(self.process.user_traits()[in_param].trait_type)
+            trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
+            trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
+            try:
+                color = self.colorLink(trait_type_str)
+            except:
+                color = ORANGE_2
+
+            plug = Plug(color, plug_name,
                         param_name.boundingRect().size().height(),
                         plug_width, activated=pipeline_plug.activated,
                         optional=pipeline_plug.optional, parent=self)
@@ -539,7 +571,10 @@ class NodeGWidget(QtGui.QGraphicsItem):
             param_name = QtGui.QGraphicsTextItem(self)
             param_name.setHtml('')
             plug_name = '%s:inputs' % self.name
-            plug = Plug(plug_name,
+
+            color = QtCore.Qt.black
+
+            plug = Plug(color, plug_name,
                         param_name.boundingRect().size().height(),
                         plug_width, activated=True,
                         optional=False, parent=self)
@@ -555,7 +590,10 @@ class NodeGWidget(QtGui.QGraphicsItem):
             param_name = QtGui.QGraphicsTextItem(self)
             param_name.setHtml('')
             plug_name = '%s:outputs' % self.name
-            plug = Plug(plug_name,
+
+            color = QtCore.Qt.black
+
+            plug = Plug(color, plug_name,
                         param_name.boundingRect().size().height(),
                         plug_width, activated=True,
                         optional=False, parent=self)
@@ -607,6 +645,13 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.out_params = {}
         self.out_plugs = {}
 
+    def updateInfoActived(self, state):
+
+        if state:
+            self.infoActived.setPlainText('')
+        else:
+            self.infoActived.setPlainText('disabled')
+
     def _set_brush(self):
         pipeline = self.pipeline
         if self.name in ('inputs', 'outputs'):
@@ -628,13 +673,18 @@ class NodeGWidget(QtGui.QGraphicsItem):
         if node.activated:
             color_1 = GRAY_1
             color_2 = GRAY_2
+            self.updateInfoActived(True)
+
         else:
             color_1 = LIGHT_GRAY_1
             color_2 = LIGHT_GRAY_2
+            self.updateInfoActived(False)
+
         if node in pipeline.disabled_pipeline_steps_nodes():
             color_1 = self._color_disabled(color_1)
             color_2 = self._color_disabled(color_2)
-        gradient = QtGui.QLinearGradient(0, 5, 0, 100)
+
+        gradient = QtGui.QLinearGradient(0, 2, 5, 100)
         gradient.setColorAt(1, color_1)
         gradient.setColorAt(0, color_2)
         self.title_brush = QtGui.QBrush(gradient)
@@ -666,7 +716,10 @@ class NodeGWidget(QtGui.QGraphicsItem):
             param_name_item = QtGui.QGraphicsTextItem(self)
             param_name_item.setHtml(param_text)
         plug_name = '%s:%s' % (self.name, param_name)
-        plug = Plug(plug_name,
+
+        color = QtCore.Qt.black
+
+        plug = Plug(color, plug_name,
                     param_name_item.boundingRect().size().height(),
                     plug_width, activated=pipeline_plug.activated,
                     optional=pipeline_plug.optional, parent=self)
@@ -791,7 +844,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         if output:
             param_text = '<font color="#400000"><b>%s</b></font>' % param_name
         else:
-            param_text = '<font color="#333333"><b>%s</b></font>' % param_name
+            param_text = '<font color="#111111"><b>%s</b></font>' % param_name
         value = getattr(self.process, param_name)
         if value is None or value is traits.Undefined or value == '':
             param_text = '<em>%s</em>' % param_text
@@ -825,8 +878,19 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 self._create_parameter(param, pipeline_plug)
                 gplug = plugs.get(param)
             if not self.logical_view:
-                gplug.update_plug(pipeline_plug.activated,
-                                  pipeline_plug.optional)
+                #                 gplug.update_plug(pipeline_plug.activated,
+                #                                   pipeline_plug.optional)
+
+                trait_type_str = str(self.process.user_traits()[param].trait_type)
+                trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
+                trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
+                try:
+                    color = self.colorLink(trait_type_str)
+                except:
+                    color = ORANGE_2
+
+                gplug.update_plug(color)
+
                 if isinstance(params[param], QtGui.QGraphicsProxyWidget):
                     # colored parameters are widgets
                     params[param].widget().findChild(
@@ -1056,6 +1120,15 @@ class NodeGWidget(QtGui.QGraphicsItem):
 
         return QtGui.QGraphicsItem.keyPressEvent(self, event)
         event.accept()
+
+    def colorLink(self, x):
+        return {
+            'Str': PURPLE_2,
+            'Float': ORANGE_2,
+            'Int': ORANGE_2,
+            'List': RED_2,
+            'File': RED_2
+        }[x]
 
 
 class HandleItem(QtGui.QGraphicsRectItem):
@@ -1342,8 +1415,6 @@ class PipelineScene(QtGui.QGraphicsScene):
     def set_pipeline(self, pipeline):
 
         self.pipeline = pipeline
-
-        print("self pipeline :", self.pipeline)
 
         self.labels = []
         pipeline_inputs = SortedDictionary()
@@ -2184,10 +2255,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         '''
         super(PipelineDevelopperView, self).__init__(parent)
 
-        self.historyPipeline = []
-        self.historyGnodes = []
-        self.historyGlinks = []
-
         self.setRenderHints(Qt.QPainter.Antialiasing | Qt.QPainter.SmoothPixmapTransform)
         self.setBackgroundBrush(QtGui.QColor(60, 60, 60))
         self.scene = None
@@ -2372,6 +2439,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 self._release_grab_link(event)
             except:
                 print("type source to destination no compatible")
+
         super(PipelineDevelopperView, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
@@ -3001,12 +3069,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
     def del_node(self, node_name=None):
 
-        self.historyPipeline.append(self.scene.pipeline.copy())
-        self.historyGnodes.append(self.scene.gnodes.copy())
-        self.historyGlinks.append(self.scene.glinks.copy())
-
-        print("save history pipeline : ", self.scene.pipeline.nodes[''].plugs)
-
         pipeline = self.scene.pipeline
 
         if not node_name:
@@ -3035,10 +3097,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             pipeline.nodes_activation.remove_trait(node_name)
         self.scene.remove_node(node_name)
         self.scene.pipeline.update_nodes_and_plugs_activation()
-
-    #         self.historyPipeline.append(self.scene)
-    #         self.historyGnodes.append(self.scene.gnodes.copy())
-    #         self.historyGlinks.append(self.scene.glinks.copy())
 
     def export_node_plugs(self, node_name, inputs=True, outputs=True,
                           optional=False):
@@ -3306,8 +3364,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         plug = gnode.out_plugs.get(plug_name)
 
         typeq = self.scene.typeLink(node_name, plug_name)
-        if typeq not in ['Str', 'Float', 'Int', 'List', 'File']:
-            typeq = 'File'
         color = self.scene.colorLink(typeq)
         if not plug:
             return  # probably an input plug
@@ -3364,7 +3420,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 dst = '%s.%s' % tuple(plug)
             else:
                 dst = plug[1]
-            if (src != dst) and ("inputs." + src != dst) and not self.isInputYet(dst):
+            #             if (src != dst) and ("inputs."+src != dst) and not self.isInputYet(dst) :
+            if (src != dst) and ("inputs." + src != dst):
                 self.scene.pipeline.add_link('%s->%s' % (src, dst))
                 self.scene.update_pipeline()
 
@@ -3373,22 +3430,15 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 return '%s->%s' % (src, dst)
         self._grabbed_plug = None
 
-    def isInputYet(self, dest):  ##################################################################### add by OM
-        for listK in self.scene.glinks.keys():
-            #             print(listK,dest)
-            #             print(eval(str(eval(str(listK))[1]))[0],eval(str(eval(str(listK))[1]))[1],dest)
-            if (eval(str(eval(str(listK))[1]))[0] + "." + eval(str(eval(str(listK))[1]))[1] == dest or
-                    eval(str(eval(str(listK))[1]))[0] + "." + eval(str(eval(str(listK))[1]))[1] == "outputs." + dest):
-                print("input '", dest, "' already used !!")
-                return True
-        return False
+    #     def isInputYet(self,dest):##################################################################### add by OM
+    #         for listK in self.scene.glinks.keys():
+    #             if ( eval(str(eval(str(listK))[1]))[0]+"."+ eval(str(eval(str(listK))[1]))[1]==dest or eval(str(eval(str(listK))[1]))[0]+"."+ eval(str(eval(str(listK))[1]))[1]=="outputs."+dest):
+    #                 print("input '",dest, "' already used !!")
+    #                 return True
+    #         return False
 
     def _node_delete_clicked(self, name_node):
         #
-        #         if len(self.historyPipeline)==0:
-        #             self.historyPipeline.append(self.scene.pipeline.copy())
-        #             self.historyGnodes.append(self.scene.gnodes.copy())
-        #             self.historyGlinks.append(self.scene.glinks.copy())
 
         if name_node not in ('inputs', 'outputs'):
             self.current_node_name = name_node
