@@ -1420,7 +1420,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
     def test_open_filter(self):
         """
-        Opens an input filer
+        Opens an input filter
         """
 
         # Adding the processes path to the system path

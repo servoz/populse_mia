@@ -272,6 +272,8 @@ class NodeController(QWidget):
             # Updating the pipeline
             pipeline.update_nodes_and_plugs_activation()
 
+            self.display_parameters(new_node_name, pipeline.nodes[new_node_name].process, pipeline)
+
             # To undo/redo
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
@@ -328,6 +330,10 @@ class NodeController(QWidget):
             msg.setText("{0}: {1}.".format(err.__class__, err))
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+            if in_or_out == 'in':
+                self.line_edit_input[index].setText(str(old_value))
+            elif in_or_out == 'out':
+                self.line_edit_output[index].setText(str(old_value))
 
       #  try:
       #      pipeline.nodes[node_name].set_plug_value(plug_name, new_value)
@@ -344,6 +350,8 @@ class NodeController(QWidget):
             self.line_edit_input[index].setText(str(new_value))
         elif in_or_out == 'out':
             self.line_edit_output[index].setText(str(new_value))
+
+        # self.display_parameters(node_name, pipeline.nodes[node_name].process, pipeline)
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
@@ -387,7 +395,7 @@ class NodeController(QWidget):
         else:
             res = []
 
-        self.update_plug_value(index, "in", plug_name, pipeline, value_type, res)
+        self.update_plug_value("in", plug_name, pipeline, value_type, res)
 
     def clearLayout(self, layout):
         """
