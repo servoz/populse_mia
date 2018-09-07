@@ -110,7 +110,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         # Checking if the pipeline nodes have been modified
         self.tabBarClicked.connect(self.check_modifications)
 
-    def new_tab(self, loaded=False):
+    def new_tab(self):
         """
         Creates a new tab and a new editor
 
@@ -128,11 +128,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         p_e.open_filter.connect(self.open_filter)
         p_e.export_to_db_scans.connect(self.export_to_db_scans)
 
-        # If the pipeline is not loaded (the user has clicked on the "+" button),
-        # a unique name has to be automatically generated
-        # If the pipeline is loaded, the tab name will be changed later
-
-        #if not loaded:
+        # A unique editor name has to be automatically generated
         idx = 1
         while True and idx < 50:
             name = "New Pipeline {0}".format(idx)
@@ -147,8 +143,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         else:
             print('Too many tabs in the Pipeline Editor')
             return
-        '''else:
-            name = "New pipeline"'''
+
         self.insertTab(self.count()-1, p_e, name)
         self.setCurrentIndex(self.count()-2)
 
