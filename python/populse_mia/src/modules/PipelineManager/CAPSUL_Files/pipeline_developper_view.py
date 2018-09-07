@@ -2413,23 +2413,23 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self._enable_edition = state
         self.scene.set_enable_edition(state)
 
-    #     def wheelEvent(self, event):
-    #         done = False
-    #         if event.modifiers() == QtCore.Qt.ControlModifier:
-    #             item = self.itemAt(event.pos())
-    #             if not isinstance(item, QtGui.QGraphicsProxyWidget):
-    #                 done = True
-    #                 if qt_backend.get_qt_backend() == 'PyQt5':
-    #                     delta = event.angleDelta().y()
-    #                 else:
-    #                     delta = event.delta()
-    #                 if delta < 0:
-    #                     self.zoom_out()
-    #                 else:
-    #                     self.zoom_in()
-    #                 event.accept()
-    #         if not done:
-    #             super(PipelineDevelopperView, self).wheelEvent(event)
+    def wheelEvent(self, event):
+        done = False
+        if event.modifiers() == QtCore.Qt.ControlModifier:
+            item = self.itemAt(event.pos())
+            if not isinstance(item, QtGui.QGraphicsProxyWidget):
+                done = True
+                if qt_backend.get_qt_backend() == 'PyQt5':
+                    delta = event.angleDelta().y()
+                else:
+                    delta = event.delta()
+                if delta < 0:
+                    self.zoom_out()
+                else:
+                    self.zoom_in()
+                event.accept()
+        if not done:
+            super(PipelineDevelopperView, self).wheelEvent(event)
 
     def mousePressEvent(self, event):
         super(PipelineDevelopperView, self).mousePressEvent(event)
@@ -3380,7 +3380,10 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         plug = gnode.out_plugs.get(plug_name)
 
         typeq = self.scene.typeLink(node_name, plug_name)
-        color = self.scene.colorLink(typeq)
+        try:
+            color = self.colorLink(typeq)
+        except:
+            color = ORANGE_2
         if not plug:
             return  # probably an input plug
         plug_pos = plug.mapToScene(plug.mapFromParent(plug.get_plug_point()))
@@ -3844,7 +3847,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             with open(filename, 'w', encoding='utf8') as file:
                 json.dump(dic, file)
 
-    def wheelEvent(self, event):
+    '''def wheelEvent(self, event):
         done = False
         item = self.itemAt(event.pos())
         if not isinstance(item, QtGui.QGraphicsProxyWidget):
@@ -3859,4 +3862,4 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 self.zoom_in()
             event.accept()
         if not done:
-            super(PipelineDevelopperView, self).wheelEvent(event)
+            super(PipelineDevelopperView, self).wheelEvent(event)'''
