@@ -134,7 +134,7 @@ class PipelineManagerTab(QWidget):
         self.load_pipeline_parameters_action.triggered.connect(self.loadParameters)
 
         self.save_pipeline_parameters_action = QAction("Save pipeline parameters", self)
-        self.save_pipeline_parameters_action.triggered.connect(self.loadPipeline)
+        self.save_pipeline_parameters_action.triggered.connect(self.saveParameters)
 
         self.init_pipeline_action = QAction("Initialize pipeline", self)
         self.init_pipeline_action.triggered.connect(self.initPipeline)
