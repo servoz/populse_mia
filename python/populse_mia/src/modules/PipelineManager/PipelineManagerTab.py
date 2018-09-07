@@ -903,6 +903,7 @@ class InitWorker(QThread):
                 # interfaces
                 try:
                     process_outputs = process._nipype_interface._list_outputs()
+                    print('process_outputs', process_outputs)
                     # The Nipype Process outputs are always "private" for Capsul
                     for key, value in process_outputs.items():
                         tmp_value = process_outputs[key]

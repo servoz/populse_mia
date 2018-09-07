@@ -1228,7 +1228,10 @@ def save_py_pipeline(pipeline, py_file):
             classname = func.__name__
         else:
             classname = process.__class__.__name__
-        procname = '.'.join((mod, classname))
+        if isinstance(process, NipypeProcess):
+            procname = process._nipype_module
+        else:
+            procname = '.'.join((mod, classname))
         print('        self.add_process("%s", "%s")' % (name, procname),
               file=pyf)
         #if isinstance(process, NipypeProcess):
