@@ -1198,6 +1198,7 @@ def save_pipeline(pipeline, filename):
         # fallback to XML
         save_py_pipeline(pipeline, filename)
 
+
 # Copy from python_export.py of CAPSUL's API
 
 def save_py_pipeline(pipeline, py_file):
@@ -1520,6 +1521,8 @@ def save_py_pipeline(pipeline, py_file):
     _write_filters(pipeline, pyf)
 
     print('\n        self.do_autoexport_nodes_parameters = False', file=pyf)
+
+    pyf.close()
 
 
 def get_path(name, dictionary, prev_paths=None):

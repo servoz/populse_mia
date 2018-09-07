@@ -1459,6 +1459,33 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # TODO: open a project and modify the filter pop-up
 
+    def test_save_pipeline(self):
+        """
+        Saves a simple pipeline
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Threshold
+        process_class = Threshold
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        node_controller.display_parameters("threshold1", get_process_instance(process_class), pipeline)
+
+        # Exporting the input plugs
+        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_plugs()
+
+        from PipelineManager.PipelineEditor import save_pipeline
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        save_pipeline(pipeline, filename)
+        self.assertTrue(os.path.isfile(os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')))
+
 
 if __name__ == '__main__':
     unittest.main()
