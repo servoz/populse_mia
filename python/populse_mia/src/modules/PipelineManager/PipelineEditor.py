@@ -283,13 +283,13 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             if self.count() == 2:
                 # If the PipelineEditor has been edited
                 if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
-                    self.new_tab(loaded=True)
+                    self.new_tab()
                     filename = self.widget(1).load_pipeline()
                     self.setCurrentIndex(1)
                 else:
                     filename = self.widget(0).load_pipeline()
             else:
-                self.new_tab(loaded=True)
+                self.new_tab()
                 filename = self.widget(self.count()-2).load_pipeline()
                 self.setCurrentIndex(self.count()-2)
 
