@@ -446,7 +446,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
                 if pipeline_opened:
                     self.set_current_editor_by_name(sub_pipeline_basename)
                 else:
-                    self.new_tab(loaded=True)
+                    self.new_tab()
                     self.setCurrentIndex(self.count() - 2)
                     self.get_current_editor().set_pipeline(pipeline)
                     self.get_current_editor()._pipeline_filename = sub_pipeline_filename

@@ -69,27 +69,30 @@ def pipeline_node_colors(pipeline, node):
                      (color[2] + target[2]) / 2)
         return new_color
 
-    BLUE_1 = (0.7, 0.7, 0.9)
-    BLUE_2 = (0.5, 0.5, 0.7)
-    BLUE_3 = (0.2, 0.2, 0.4)
-    LIGHT_BLUE_1 = (0.95, 0.95, 1.0)
-    LIGHT_BLUE_2 = (0.85, 0.85, 0.9)
-    LIGHT_BLUE_3 = (0.3, 0.3, 0.5)
+    #     BLUE_1 = (0.7, 0.7, 0.9)
+    #     BLUE_2 = (0.5, 0.5, 0.7)
+    #     BLUE_3 = (0.2, 0.2, 0.4)
+    #     LIGHT_BLUE_1 = (0.95, 0.95, 1.0)
+    #     LIGHT_BLUE_2 = (0.85, 0.85, 0.9)
+    #     LIGHT_BLUE_3 = (0.3, 0.3, 0.5)
 
-    ANTHRACITE_1 = (0.8, 0.8, 0.8)
-    ANTHRACITE_2 = (0.7, 0.7, 0.7)
-    ANTHRACITE_3 = (0.6, 0.6, 0.6)
-    LIGHT_ANTHRACITE_1 = (0.9, 0.9, 0.9)
-    LIGHT_ANTHRACITE_2 = (1, 1, 1)
-    LIGHT_ANTHRACITE_3 = (0.5, 0.5, 0.5)
+    # for process nodes
+    ANTHRACITE_1 = (0.1, 0.7, 0.1)  # active
+    ANTHRACITE_2 = (0.1, 0.5, 0.1)
+    ANTHRACITE_3 = (0.1, 0.3, 0.1)
+    LIGHT_ANTHRACITE_1 = (0.1, 0.4, 0.1)  # not active
+    LIGHT_ANTHRACITE_2 = (0.1, 0.3, 0.1)
+    LIGHT_ANTHRACITE_3 = (0.1, 0.1, 0.1)
 
-    SEA_1 = (0.7, 0.8, 1.)
-    SEA_2 = (0.5, 0.6, 0.9)
-    SEA_3 = (0.2, 0.3, 0.6)
-    LIGHT_SEA_1 = (0.5, 0.95, 1.0)
-    LIGHT_SEA_2 = (0.8, 0.8, 1.)
-    LIGHT_SEA_3 = (0.2, 0.2, 0.7)
+    # for inputs and outputs nodes
+    SEA_1 = (0.2, 0.8, 1.0)  # active
+    SEA_2 = (0.2, 0.4, 0.9)
+    SEA_3 = (0.0, 0.2, 0.6)
+    LIGHT_SEA_1 = (0.2, 0.5, 0.7)  # not active
+    LIGHT_SEA_2 = (0.2, 0.1, 0.6)
+    LIGHT_SEA_3 = (0.0, 0.0, 0.4)
 
+    # for switch nodes
     SAND_1 = (0.8, 0.7, 0.5)
     SAND_2 = (0.7, 0.6, 0.5)
     SAND_3 = (0.5, 0.45, 0.2)
@@ -105,13 +108,15 @@ def pipeline_node_colors(pipeline, node):
     #     DEEP_PURPLE_2 = (0.6, 0.5, 0.6)
     #     DEEP_PURPLE_3 = (0.4, 0.35, 0.4)
 
-    PURPLE_1 = (0.6, 0.5, 0.8)
-    PURPLE_2 = (0.6, 0.5, 0.8)
-    PURPLE_3 = (0.6, 0.5, 0.5)
-    DEEP_PURPLE_1 = (0.6, 0.5, 0.0)
-    DEEP_PURPLE_2 = (0.6, 0.3, 0.0)
-    DEEP_PURPLE_3 = (0.6, 0.1, 0.0)
+    # for pipeline nodes
+    PURPLE_1 = (0.5, 0, 0)  # not active
+    PURPLE_2 = (0.4, 0, 0)
+    PURPLE_3 = (0.3, 0, 0)
+    DEEP_PURPLE_1 = (0.9, 0.2, 0.1)  # active
+    DEEP_PURPLE_2 = (0.8, 0.2, 0.1)
+    DEEP_PURPLE_3 = (0.4, 0.2, 0.1)
 
+    # for iteration nodes
     GREEN_1 = (0.7, 0.9, 0.7)
     GREEN_2 = (0.5, 0.7, 0.5)
     GREEN_3 = (0.2, 0.4, 0.2)
@@ -119,6 +124,7 @@ def pipeline_node_colors(pipeline, node):
     LIGHT_GREEN_2 = (0.85, 0.9, 0.85)
     LIGHT_GREEN_3 = (0.3, 0.5, 0.3)
 
+    # for attributed nodes
     SKY_1 = (0.6, 0.7, 1.)
     SKY_2 = (0.3, 0.5, 0.8)
     SKY_3 = (0., 0.2, 0.5)
@@ -1061,6 +1067,7 @@ def save_pipeline(pipeline, filename):
     if not saved:
         # fallback to XML
         save_py_pipeline(pipeline, filename)
+
 
 def load_pipeline_parameters(filename, pipeline):
     """

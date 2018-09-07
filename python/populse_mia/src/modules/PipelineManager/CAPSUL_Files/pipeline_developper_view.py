@@ -78,10 +78,15 @@ LIGHT_GRAY_2 = QtGui.QColor.fromRgbF(0.2, 0.2, 0.2, 1)
 
 # Colors for links and plugs
 
-ORANGE_2 = QtGui.QColor.fromRgb(234, 131, 31)  ############## float
-BLUE_2 = QtGui.QColor.fromRgb(50, 100, 250)  ############## integer
-PURPLE_2 = QtGui.QColor.fromRgb(200, 0, 200)  ############## string
-RED_2 = QtGui.QColor.fromRgb(200, 0, 0)  ############## List
+ORANGE_1 = QtGui.QColor.fromRgb(220, 80, 20)
+ORANGE_2 = QtGui.QColor.fromRgb(220, 120, 20)
+BLUE_1 = QtGui.QColor.fromRgb(50, 150, 250)
+BLUE_2 = QtGui.QColor.fromRgb(50, 50, 250)
+PURPLE_2 = QtGui.QColor.fromRgb(200, 0, 200)
+RED_2 = QtGui.QColor.fromRgb(200, 0, 0)
+GREEN_2 = QtGui.QColor.fromRgb(0, 100, 0)
+BLACK_2 = QtGui.QColor.fromRgb(10, 10, 10)
+WHITE_2 = QtGui.QColor.fromRgb(255, 255, 255)
 
 ANTHRACITE_1 = QtGui.QColor.fromRgbF(0.05, 0.05, 0.05)
 LIGHT_ANTHRACITE_1 = QtGui.QColor.fromRgbF(0.25, 0.25, 0.25)
@@ -90,6 +95,21 @@ LIGHT_ANTHRACITE_1 = QtGui.QColor.fromRgbF(0.25, 0.25, 0.25)
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------
+
+class ColorType():
+
+    def __init__(self, parent=None):
+        pass
+
+    def colorLink(self, x):
+        return {
+            'Str': PURPLE_2,
+            'Float': ORANGE_1,
+            'Int': BLUE_2,
+            'List': RED_2,
+            'File': ORANGE_2
+        }[x]
+
 
 class Plug(QtGui.QGraphicsPolygonItem):
 
@@ -103,8 +123,8 @@ class Plug(QtGui.QGraphicsPolygonItem):
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
             brush.setColor(self.color)
             polygon = QtGui.QPolygonF([QtCore.QPointF(0, 0),
-                                       QtCore.QPointF(width / 2.0, 0),
-                                       QtCore.QPointF(width / 2.0, (height - 5)),
+                                       QtCore.QPointF(width / 1.5, 0),
+                                       QtCore.QPointF(width / 1.5, (height - 5)),
                                        QtCore.QPointF(0, (height - 5))
                                        ])
         #             self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
@@ -211,6 +231,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         super(NodeGWidget, self).__init__(parent)
 
         self.infoActived = QtGui.QGraphicsTextItem('', self)
+        self.colType = ColorType()
 
         self.setFlags(self.ItemIsSelectable)
         self.setCursor(Qt.QCursor(QtCore.Qt.PointingHandCursor))
@@ -489,7 +510,8 @@ class NodeGWidget(QtGui.QGraphicsItem):
             trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
             trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
             try:
-                color = self.colorLink(trait_type_str)
+                #                 color = self.colorLink(trait_type_str)
+                color = self.colType.colorLink(trait_type_str)
             except:
                 color = ORANGE_2
 
@@ -525,7 +547,9 @@ class NodeGWidget(QtGui.QGraphicsItem):
             trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
             trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
             try:
-                color = self.colorLink(trait_type_str)
+                #                 color = self.colorLink(trait_type_str)
+                color = self.colType.colorLink(trait_type_str)
+
             except:
                 color = ORANGE_2
 
@@ -646,7 +670,6 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.out_plugs = {}
 
     def updateInfoActived(self, state):
-
         if state:
             self.infoActived.setPlainText('')
         else:
@@ -671,13 +694,13 @@ class NodeGWidget(QtGui.QGraphicsItem):
         self.bg_brush = QtGui.QBrush(gradient)
 
         if node.activated:
-            color_1 = GRAY_1
-            color_2 = GRAY_2
+            #             color_1 = GRAY_1
+            #             color_2 = GRAY_2
             self.updateInfoActived(True)
 
         else:
-            color_1 = LIGHT_GRAY_1
-            color_2 = LIGHT_GRAY_2
+            #             color_1 = LIGHT_GRAY_1
+            #             color_2 = LIGHT_GRAY_2
             self.updateInfoActived(False)
 
         if node in pipeline.disabled_pipeline_steps_nodes():
@@ -885,7 +908,9 @@ class NodeGWidget(QtGui.QGraphicsItem):
                 trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
                 trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
                 try:
-                    color = self.colorLink(trait_type_str)
+                    #                     color = self.colorLink(trait_type_str)
+                    color = self.colType.colorLink(trait_type_str)
+
                 except:
                     color = ORANGE_2
 
@@ -1125,15 +1150,6 @@ class NodeGWidget(QtGui.QGraphicsItem):
         return QtGui.QGraphicsItem.keyPressEvent(self, event)
         event.accept()
 
-    def colorLink(self, x):
-        return {
-            'Str': PURPLE_2,
-            'Float': ORANGE_2,
-            'Int': ORANGE_2,
-            'List': RED_2,
-            'File': RED_2
-        }[x]
-
 
 class HandleItem(QtGui.QGraphicsRectItem):
     """ A handle that can be moved by the mouse """
@@ -1191,6 +1207,9 @@ class Link(QtGui.QGraphicsPathItem):
 
     def __init__(self, origin, target, active, weak, color, parent=None):
         super(Link, self).__init__(parent)
+
+        self.bil = biLink(self)
+
         self._set_pen(active, weak, color)
 
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
@@ -1200,16 +1219,31 @@ class Link(QtGui.QGraphicsPathItem):
         path.moveTo(origin.x(), origin.y())
         path.cubicTo(origin.x() + 90, origin.y(),
                      target.x() - 90, target.y(),
-                     target.x(), target.y())
+                     target.x() - 5, target.y())
         self.setPath(path)
+        self.bil.setPath(path)
         self.setZValue(0.5)
         self.active = active
         self.weak = weak
         self.color = color
+        self.weightLine = 3
 
     def _set_pen(self, active, weak, color):
         self.pen = QtGui.QPen()
-        self.pen.setWidth(2)
+
+        self.pen2 = QtGui.QPen()
+        self.pen2.setWidth(3)
+        self.pen2.setBrush(QtGui.QColor(60, 60, 60))
+
+        if color.getRgb() == (ORANGE_2.getRgb()[0], ORANGE_2.getRgb()[1], ORANGE_2.getRgb()[2], 255):
+            self.pen.setWidth(8)
+            self.bil.setPen(self.pen2)
+            self.weightLine = 8
+        else:
+            self.pen.setWidth(2)
+            self.weightLine = 2
+            self.bil.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+
         if active:
             self.pen.setBrush(color)
         else:
@@ -1225,9 +1259,10 @@ class Link(QtGui.QGraphicsPathItem):
         path.moveTo(origin.x(), origin.y())
         path.cubicTo(origin.x() + 90, origin.y(),
                      target.x() - 90, target.y(),
-                     target.x(), target.y())
+                     target.x() - 5, target.y())
 
         self.setPath(path)
+        self.bil.setPath(path)
 
     def update_activation(self, active, weak, color):
         if color == 'current':
@@ -1248,11 +1283,14 @@ class Link(QtGui.QGraphicsPathItem):
             super(Link, self).mousePressEvent(event)
 
     def focusInEvent(self, event):
-        self.setPen(QtGui.QPen(QtGui.QColor(150, 150, 250), 3, QtCore.Qt.DashDotDotLine))
+        self.setPen(QtGui.QPen(QtGui.QColor(150, 150, 250), self.weightLine, QtCore.Qt.DashDotDotLine))
+        self.bil.setPen(QtGui.QPen(QtCore.Qt.NoPen))
         return QtGui.QGraphicsPathItem.focusInEvent(self, event)
 
     def focusOutEvent(self, event):
         self.setPen(self.pen)
+        if self.color.getRgb() == (ORANGE_2.getRgb()[0], ORANGE_2.getRgb()[1], ORANGE_2.getRgb()[2], 255):
+            self.bil.setPen(self.pen2)
         return QtGui.QGraphicsPathItem.focusOutEvent(self, event)
 
     def keyPressEvent(self, event):
@@ -1263,6 +1301,23 @@ class Link(QtGui.QGraphicsPathItem):
         else:
             super(Link, self).keyPressEvent(event)
 
+
+class biLink(QtGui.QGraphicsPathItem):
+    def __init__(self, parent=None):
+        super(biLink, self).__init__(parent)
+
+        self.style = None
+
+    def focusInEvent(self, event):
+        self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+
+    #         return QtGui.QGraphicsPathItem.focusInEvent(self, event)
+
+    def focusOutEvent(self, event):
+        self.setPen(self.style)
+
+
+#         return QtGui.QGraphicsPathItem.focusOutEvent(self, event)
 
 class PipelineScene(QtGui.QGraphicsScene):
     # Signal emitted when a sub pipeline has to be open.
@@ -1303,6 +1358,8 @@ class PipelineScene(QtGui.QGraphicsScene):
         #         self.l = QtCore.QLineF(0,-10,0,10)
         #         self.addLine(self.l,pen)
 
+        self.colType = ColorType()
+
         self.changed.connect(self.update_paths)
 
     def _add_node(self, name, gnode):
@@ -1316,6 +1373,7 @@ class PipelineScene(QtGui.QGraphicsScene):
                 pos = Qt.QPointF(pos[0], pos[1])
             gnode.setPos(pos)
         self.gnodes[name] = gnode
+        gnode.update_node()
 
     def add_node(self, node_name, node):
         if isinstance(node, Switch):
@@ -1334,6 +1392,7 @@ class PipelineScene(QtGui.QGraphicsScene):
             colored_parameters=self.colored_parameters,
             logical_view=self.logical_view, labels=self.labels)
         self._add_node(node_name, gnode)
+        gnode.update_node()
         return gnode
 
     def add_link(self, source, dest, active, weak):
@@ -1349,7 +1408,9 @@ class PipelineScene(QtGui.QGraphicsScene):
             dest_param = 'inputs'
         try:
             typeq = self.typeLink(source_gnode_name, source_param)
-            color = self.colorLink(typeq)
+            #             color = self.colorLink(typeq)
+            color = self.colType.colorLink(typeq)
+
         except:
             color = ORANGE_2
         #         verif=((str(dest_gnode_name), str(dest_param)))
@@ -1370,6 +1431,7 @@ class PipelineScene(QtGui.QGraphicsScene):
             return  # already done
         source_gnode = self.gnodes[source_gnode_name]
         dest_gnode = self.gnodes.get(dest_gnode_name)
+
         if dest_gnode is not None:
             if dest_param in dest_gnode.in_plugs:
                 glink = Link(
@@ -1999,15 +2061,6 @@ class PipelineScene(QtGui.QGraphicsScene):
         trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
         return trait_type_str
 
-    def colorLink(self, x):
-        return {
-            'Str': PURPLE_2,
-            'Float': ORANGE_2,
-            'Int': ORANGE_2,
-            'List': RED_2,
-            'File': RED_2
-        }[x]
-
 
 class PipelineDevelopperView(QtGui.QGraphicsView):
     '''
@@ -2450,6 +2503,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 print("type source to destination no compatible")
 
         super(PipelineDevelopperView, self).mouseReleaseEvent(event)
+        self.scene.update()
 
     def mouseMoveEvent(self, event):
         if self._grab:
@@ -2499,6 +2553,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             QtCore.QObject.setParent(sub_view, self.window())
             sub_view.setAttribute(QtCore.Qt.WA_DeleteOnClose)
             sub_view.setWindowTitle(node_name)
+            self.scene.update()
             sub_view.show()
 
     def window(self):
@@ -3381,7 +3436,9 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
         typeq = self.scene.typeLink(node_name, plug_name)
         try:
-            color = self.colorLink(typeq)
+            #             color = self.scene.colorLink(typeq)
+            color = self.scene.colType.colorLink(typeq)
+
         except:
             color = ORANGE_2
         if not plug:
@@ -3440,6 +3497,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             else:
                 dst = plug[1]
             #             if (src != dst) and ("inputs."+src != dst) and not self.isInputYet(dst) :
+
             if (src != dst) and ("inputs." + src != dst):
                 self.scene.pipeline.add_link('%s->%s' % (src, dst))
                 self.scene.update_pipeline()
@@ -3846,20 +3904,3 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             # Saving the dictionary in the Json file
             with open(filename, 'w', encoding='utf8') as file:
                 json.dump(dic, file)
-
-    '''def wheelEvent(self, event):
-        done = False
-        item = self.itemAt(event.pos())
-        if not isinstance(item, QtGui.QGraphicsProxyWidget):
-            done = True
-            if qt_backend.get_qt_backend() == 'PyQt5':
-                delta = event.angleDelta().y()
-            else:
-                delta = event.delta()
-            if delta < 0:
-                self.zoom_out()
-            else:
-                self.zoom_in()
-            event.accept()
-        if not done:
-            super(PipelineDevelopperView, self).wheelEvent(event)'''
