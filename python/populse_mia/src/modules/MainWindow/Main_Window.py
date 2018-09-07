@@ -695,9 +695,9 @@ class Main_Window(QMainWindow):
             if self.project.hasUnsavedModifications():
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
-                msg.setText("Unsaved modifications")
+                msg.setText("Unsaved modifications in the Data Browser !")
                 msg.setInformativeText(
-                    "There are unsaved modications, you need to save them or remove them before working with pipelines.")
+                    "There are unsaved modifications in the database, you need to save or remove them before working with pipelines.")
                 msg.setWindowTitle("Warning")
                 save_button = QPushButton("Save")
                 save_button.clicked.connect(self.project.saveModifications)
