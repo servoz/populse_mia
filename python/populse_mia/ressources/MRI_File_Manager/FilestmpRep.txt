@@ -1,2 +1,0 @@
-[NamingNifTI] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName
-[LookAndFeel] com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
