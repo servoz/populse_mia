@@ -1479,7 +1479,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # Exporting the input plugs
         pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
-        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_mandatory_plugs()
+        pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
 
         from PipelineManager.PipelineEditor import save_pipeline
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
