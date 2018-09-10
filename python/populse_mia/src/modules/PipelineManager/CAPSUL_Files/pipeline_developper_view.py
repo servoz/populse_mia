@@ -410,6 +410,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
 
     def changeSize(self, w, h):
         limit = False
+        factor_h = 32
 
         if h < self.hmin:
             h = self.hmin
@@ -423,7 +424,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         winMax, woutMax = 0, 0
 
         self.box.setRect(0.0, 0.0, w, h)
-        self.box_title.setRect(0.0, 0.0, w, h)
+        self.box_title.setRect(0.0, 0.0, w, 30)
         self.title.setPos(w / 2 - self.title.boundingRect().size().width() / 2, margin)
         self.infoActived.setPos(w / 2 - self.infoActived.boundingRect().size().width() / 2, h + 2)
 
@@ -431,23 +432,23 @@ class NodeGWidget(QtGui.QGraphicsItem):
         #         rect.setWidth(w)
         #         self.box_title.setRect(rect)
 
-        y = h / (len(self.in_plugs) + 1)
-        dy = y
+        y1 = h / (len(self.in_plugs) + 1)
+        dy = y1
         for inp in self.in_plugs:
-            self.in_plugs[inp].setPos(margin, y)
-            self.in_params[inp].setPos(self.in_plugs[inp].boundingRect().size().width() + margin, y)
+            self.in_plugs[inp].setPos(margin, y1)
+            self.in_params[inp].setPos(self.in_plugs[inp].boundingRect().size().width() + margin, y1)
             if winMax < self.in_params[inp].boundingRect().size().width():
                 winMax = self.in_params[inp].boundingRect().size().width()
-            y += dy
+            y1 += dy
 
-        y = h / (len(self.out_plugs) + 1)
-        dy = y
+        y2 = h / (len(self.out_plugs) + 1)
+        dy = y2
         for outp in self.out_plugs:
-            self.out_plugs[outp].setPos(w - margin, y)
-            self.out_params[outp].setPos(w - self.out_params[outp].boundingRect().size().width() - 5, y)
+            self.out_plugs[outp].setPos(w - margin, y2)
+            self.out_params[outp].setPos(w - self.out_params[outp].boundingRect().size().width() - 5, y2)
             if woutMax < self.out_params[outp].boundingRect().size().width():
                 woutMax = self.out_params[outp].boundingRect().size().width()
-            y += dy
+            y2 += dy
 
         if w < winMax + woutMax + 15:
             w = winMax + woutMax + 15
@@ -459,8 +460,18 @@ class NodeGWidget(QtGui.QGraphicsItem):
             self.sizer.setPos(w, h)
             return
 
+        if self.hmin < factor_h * len(self.in_plugs):
+            self.hmin = factor_h * len(self.in_plugs)
+            self.updateSize(w, h)
+        if self.hmin < factor_h * len(self.out_plugs):
+            self.hmin = factor_h * len(self.out_plugs)
+            self.updateSize(w, h)
+
     def updateSize(self, w, h):
         self.changeSize(w, h)
+
+    def changeHmin(self, wmin):
+        self.wmin += wmin
 
     def _colored_text_item(self, label, text=None, margin=2):
         labelc = self._get_label(label, False)
@@ -708,9 +719,9 @@ class NodeGWidget(QtGui.QGraphicsItem):
             color_2 = self._color_disabled(color_2)
 
         gradient = QtGui.QLinearGradient(0, 2, 5, 100)
-        gradient.setColorAt(1, color_1)
-        gradient.setColorAt(0, color_2)
-        self.title_brush = QtGui.QBrush(gradient)
+        gradient.setColorAt(1, GRAY_1)
+        gradient.setColorAt(0, GRAY_2)
+        self.title_brush = QtGui.QBrush(LIGHT_GRAY_2)
 
     def _color_disabled(self, color):
         target = [220, 240, 220]
@@ -1030,7 +1041,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         #         rect = self.box_title.boundingRect()
         rect = self.box.boundingRect()
         rect.setWidth(self.contentsRect().width())
-        self.box_title.setRect(rect)
+        #         self.box_title.setRect(rect)
         self.box.setRect(self.boundingRect())
 
     def resize_subpipeline_on_hide(self):
@@ -1043,7 +1054,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         #         rect = self.box_title.boundingRect()
         rect = self.box.boundingRect()
         rect.setWidth(self.contentsRect().width())
-        self.box_title.setRect(rect)
+        #         self.box_title.setRect(rect)
         self.box.setRect(self.boundingRect())
 
     def in_params_width(self):
@@ -1208,8 +1219,6 @@ class Link(QtGui.QGraphicsPathItem):
     def __init__(self, origin, target, active, weak, color, parent=None):
         super(Link, self).__init__(parent)
 
-        self.bil = biLink(self)
-
         self._set_pen(active, weak, color)
 
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
@@ -1221,28 +1230,14 @@ class Link(QtGui.QGraphicsPathItem):
                      target.x() - 90, target.y(),
                      target.x() - 5, target.y())
         self.setPath(path)
-        self.bil.setPath(path)
         self.setZValue(0.5)
         self.active = active
         self.weak = weak
         self.color = color
-        self.weightLine = 3
 
     def _set_pen(self, active, weak, color):
         self.pen = QtGui.QPen()
-
-        self.pen2 = QtGui.QPen()
-        self.pen2.setWidth(3)
-        self.pen2.setBrush(QtGui.QColor(60, 60, 60))
-
-        if color.getRgb() == (ORANGE_2.getRgb()[0], ORANGE_2.getRgb()[1], ORANGE_2.getRgb()[2], 255):
-            self.pen.setWidth(8)
-            self.bil.setPen(self.pen2)
-            self.weightLine = 8
-        else:
-            self.pen.setWidth(2)
-            self.weightLine = 2
-            self.bil.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+        self.pen.setWidth(3)
 
         if active:
             self.pen.setBrush(color)
@@ -1262,7 +1257,6 @@ class Link(QtGui.QGraphicsPathItem):
                      target.x() - 5, target.y())
 
         self.setPath(path)
-        self.bil.setPath(path)
 
     def update_activation(self, active, weak, color):
         if color == 'current':
@@ -1283,14 +1277,11 @@ class Link(QtGui.QGraphicsPathItem):
             super(Link, self).mousePressEvent(event)
 
     def focusInEvent(self, event):
-        self.setPen(QtGui.QPen(QtGui.QColor(150, 150, 250), self.weightLine, QtCore.Qt.DashDotDotLine))
-        self.bil.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+        self.setPen(QtGui.QPen(QtGui.QColor(150, 150, 250), 3, QtCore.Qt.DashDotDotLine))
         return QtGui.QGraphicsPathItem.focusInEvent(self, event)
 
     def focusOutEvent(self, event):
         self.setPen(self.pen)
-        if self.color.getRgb() == (ORANGE_2.getRgb()[0], ORANGE_2.getRgb()[1], ORANGE_2.getRgb()[2], 255):
-            self.bil.setPen(self.pen2)
         return QtGui.QGraphicsPathItem.focusOutEvent(self, event)
 
     def keyPressEvent(self, event):
@@ -1301,23 +1292,6 @@ class Link(QtGui.QGraphicsPathItem):
         else:
             super(Link, self).keyPressEvent(event)
 
-
-class biLink(QtGui.QGraphicsPathItem):
-    def __init__(self, parent=None):
-        super(biLink, self).__init__(parent)
-
-        self.style = None
-
-    def focusInEvent(self, event):
-        self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-
-    #         return QtGui.QGraphicsPathItem.focusInEvent(self, event)
-
-    def focusOutEvent(self, event):
-        self.setPen(self.style)
-
-
-#         return QtGui.QGraphicsPathItem.focusOutEvent(self, event)
 
 class PipelineScene(QtGui.QGraphicsScene):
     # Signal emitted when a sub pipeline has to be open.
@@ -3684,16 +3658,26 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         dial.name_line.setText(self._temp_plug_name[1])
         dial.optional.setChecked(self._temp_plug.optional)
 
+        print(self._temp_plug_name[0])
+
         res = dial.exec_()
         if res:
-            self.scene.pipeline.export_parameter(
-                self._temp_plug_name[0], self._temp_plug_name[1],
-                pipeline_parameter=str(dial.name_line.text()),
-                is_optional=dial.optional.isChecked(),
-                weak_link=dial.weak.isChecked())
+            try:
+                self.scene.pipeline.export_parameter(
+                    self._temp_plug_name[0], self._temp_plug_name[1],
+                    pipeline_parameter=str(dial.name_line.text()),
+                    is_optional=dial.optional.isChecked(),
+                    weak_link=dial.weak.isChecked())
+            #             print(str(dial.name_line.text()))
+            #             self.scene.gnodes.changeHmin(15)
+            except Exception as e:
+                print('exception while export plug:', e)
+                pass
+
             self.scene.update_pipeline()
 
     def _remove_plug(self):
+
         if self._temp_plug_name[0] in ('inputs', 'outputs'):
             # print 'remove plug:', self._temp_plug_name[1]
             print('#' * 50)
@@ -3871,7 +3855,11 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
                 if trait_name not in self.scene.pipeline.user_traits().keys():
                     # Should we raise an error or just "continue"?
                     raise KeyError('No "{0}" parameter in pipeline.'.format(trait_name))
-                setattr(self.scene.pipeline, trait_name, trait_value)
+                try:
+                    setattr(self.scene.pipeline, trait_name, trait_value)
+                except traits.TraitError:
+                    print("Error for the plug {0}".format(trait_name))
+
             self.scene.pipeline.update_nodes_and_plugs_activation()
 
     def save_pipeline_parameters(self):
