@@ -903,12 +903,11 @@ class InitWorker(QThread):
                 # interfaces
                 try:
                     process_outputs = process._nipype_interface._list_outputs()
-                    print('process_outputs', process_outputs)
                     # The Nipype Process outputs are always "private" for Capsul
+                    tmp_dict = {}
                     for key, value in process_outputs.items():
-                        tmp_value = process_outputs[key]
-                        del process_outputs[key]
-                        process_outputs['_'+key] = tmp_value
+                        tmp_dict['_' + key] = process_outputs[key]
+                    process_outputs = tmp_dict
                 except:  # TODO: test which kind of error can generate a Nipype interface
                     print("No output list method for the process {0}.".format(node_name))
                     process_outputs = {}
@@ -955,6 +954,7 @@ class InitWorker(QThread):
                             try:
                                 pipeline.nodes[node_name].set_plug_value(plug_name, plug_value[0])
                             except TraitError:
+                                print("Trait error for {0} plug of {1} node".format(plug_name, node_name))
                                 pass
 
                     pipeline.update_nodes_and_plugs_activation()
