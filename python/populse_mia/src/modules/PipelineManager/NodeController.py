@@ -950,7 +950,7 @@ class FilterWidget(QWidget):
 
         result_files = []
         for result_name in result_names:
-            full_path = os.path.join(self.project.folder, result_name)
+            full_path = os.path.abspath(os.path.join(self.project.folder, result_name))
             result_files.append(full_path)
 
         self.node.set_plug_value("output", result_files)
