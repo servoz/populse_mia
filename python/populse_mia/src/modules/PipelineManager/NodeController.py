@@ -684,7 +684,7 @@ class PlugFilter(QWidget):
             tag_name = self.push_button_tag_filter.text()
             value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
             if tag_name == TAG_FILENAME:
-                value = os.path.relpath(os.path.join(self.project.folder, value))
+                value = os.path.abspath(os.path.join(self.project.folder, value))
             result_names.append(value)
 
         self.plug_value_changed.emit(result_names)
@@ -945,7 +945,7 @@ class FilterWidget(QWidget):
             tag_name = self.push_button_tag_filter.text()
             value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
             if tag_name == TAG_FILENAME:
-                value = os.path.relpath(os.path.join(self.project.folder, value))
+                value = os.path.abspath(os.path.join(self.project.folder, value))
             result_names.append(value)
 
         result_files = []
