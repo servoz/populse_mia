@@ -112,9 +112,9 @@ def pipeline_node_colors(pipeline, node):
     PURPLE_1 = (0.5, 0, 0)  # not active
     PURPLE_2 = (0.4, 0, 0)
     PURPLE_3 = (0.3, 0, 0)
-    DEEP_PURPLE_1 = (0.9, 0.2, 0.1)  # active
-    DEEP_PURPLE_2 = (0.8, 0.2, 0.1)
-    DEEP_PURPLE_3 = (0.4, 0.2, 0.1)
+    DEEP_PURPLE_1 = (0.75, 0.2, 0.1)  # active
+    DEEP_PURPLE_2 = (0.55, 0.2, 0.1)
+    DEEP_PURPLE_3 = (0.35, 0.2, 0.1)
 
     # for iteration nodes
     GREEN_1 = (0.7, 0.9, 0.7)

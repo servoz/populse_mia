@@ -1162,7 +1162,7 @@ class PipelineEditor(PipelineDevelopperView):
             pipeline = self.scene.pipeline
             folder = os.path.abspath(os.path.join('..', '..', 'processes', 'User_processes'))
             filename = QtWidgets.QFileDialog.getSaveFileName(
-                self, 'Save the pipeline', folder,
+                None, 'Save the pipeline', folder,
                 'Compatible files (*.xml *.py);; All (*)')[0]
         if filename:
             posdict = dict([(key, (value.x(), value.y())) \
