@@ -260,7 +260,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         old_filename = self.get_current_filename()
         new_file_name = self.get_current_editor().save_pipeline()
 
-        if new_file_name and old_filename != new_file_name:
+        if new_file_name and old_filename != os.path.basename(new_file_name):
             self.setTabText(self.currentIndex(), os.path.basename(new_file_name))
             undos = self.undos[old_filename]
             redos = self.redos[old_filename]
