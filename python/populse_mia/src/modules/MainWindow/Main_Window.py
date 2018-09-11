@@ -627,7 +627,7 @@ class Main_Window(QMainWindow):
         """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
          data base """
         # Opens the conversion software to convert the MRI files in Nifti/Json
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'mia', 'MRI_File_Manager', 'MRIManager.jar'),
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'mia', 'MRIFileManager', 'MRIManager.jar'),
                          '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
                          '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
                          'CloseAfterExport'])
