@@ -596,6 +596,9 @@ class PipelineManagerTab(QWidget):
             if ui_iteration.exec():
                 tag_values = ui_iteration.final_values
                 for tag_value in tag_values:
+                    print("#" * 50)
+                    print("Running pipeline for" + tag_value)
+                    print('#' * 50)
                     idx_combo_box = self.iterationTable.combo_box.findText(tag_value)
                     self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
                     self.iterationTable.update_table()

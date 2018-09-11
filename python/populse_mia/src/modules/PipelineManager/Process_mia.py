@@ -86,6 +86,9 @@ class Process_mia(Process):
         :return: Brick to update
         """
 
+        if bricks is None:
+            return
+
         if len(bricks) == 0:
             return None
         if len(bricks) == 1:

@@ -364,8 +364,11 @@ class DataBrowser(QWidget):
                 row = item.row()
                 full_name = self.table_data.item(row, 0).text()
                 if full_name.endswith(".nii"):
-                    full_name = os.path.relpath(os.path.join(self.project.folder, full_name))
-                    if not full_name in full_names:
+                    if not os.path.isfile(os.sep + full_name):
+                        full_name = os.path.relpath(os.path.join(self.project.folder, full_name))
+                    else:
+                        full_name = os.sep + full_name
+                    if full_name not in full_names:
                         full_names.append(full_name)
 
             self.viewer.verify_slices(full_names)
