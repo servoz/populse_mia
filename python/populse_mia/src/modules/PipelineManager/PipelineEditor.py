@@ -10,6 +10,7 @@ from capsul.api import get_process_instance, Process, PipelineNode, Switch
 from capsul.pipeline import pipeline_tools
 from .CAPSUL_Files.pipeline_developper_view import PipelineDevelopperView
 from soma.utils.weak_proxy import weak_proxy
+from traits.api import TraitError
 
 from PipelineManager.NodeController import FilterWidget
 from PopUps.Ui_Dialog_Close_Pipeline import Ui_Dialog_Close_Pipeline
@@ -936,11 +937,15 @@ class PipelineEditor(PipelineDevelopperView):
             if weak_link is None:
                 weak_link = dial.weak.isChecked()
 
-            self.scene.pipeline.export_parameter(
-                temp_plug_name[0], temp_plug_name[1],
-                pipeline_parameter=pipeline_parameter,
-                is_optional=optional,
-                weak_link=weak_link)
+            try:
+                self.scene.pipeline.export_parameter(
+                    temp_plug_name[0], temp_plug_name[1],
+                    pipeline_parameter=pipeline_parameter,
+                    is_optional=optional,
+                    weak_link=weak_link)
+            except TraitError:
+                print("Cannot export {0}.{1} plug".format(temp_plug_name[0], temp_plug_name[1]))
+
             self.scene.update_pipeline()
 
         # For history

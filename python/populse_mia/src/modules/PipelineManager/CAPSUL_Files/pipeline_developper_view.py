@@ -3853,8 +3853,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
 
             for trait_name, trait_value in dic["pipeline_parameters"].items():
                 if trait_name not in self.scene.pipeline.user_traits().keys():
-                    # Should we raise an error or just "continue"?
-                    raise KeyError('No "{0}" parameter in pipeline.'.format(trait_name))
+                    print('No "{0}" parameter in pipeline.'.format(trait_name))
                 try:
                     setattr(self.scene.pipeline, trait_name, trait_value)
                 except traits.TraitError:

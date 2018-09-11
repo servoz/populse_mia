@@ -27,7 +27,7 @@ from PipelineManager.Process_mia import Process_mia
 from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
 
 from traits.api import TraitListObject, Undefined
-from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess
+from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess, Pipeline
 
 from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
@@ -1028,10 +1028,15 @@ class RunWorker(QThread):
 
     def run(self):
 
-        for node_name, node in self.diagramView.get_current_pipeline().nodes.items():
-            process = node.process
-            if isinstance(process, NipypeProcess):
-                process.activate_copy = False
+        def _check_nipype_processes(pplne):
+            for node_name, node in pplne.nodes.items():
+                if isinstance(node.process, Pipeline):
+                    if node_name != "":
+                        _check_nipype_processes(node.process)
+                elif isinstance(node.process, NipypeProcess):
+                    node.process.activate_copy = False
+
+        _check_nipype_processes(self.diagramView.get_current_pipeline())
 
         pipeline = get_process_instance(self.diagramView.get_current_pipeline())
 
