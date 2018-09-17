@@ -946,6 +946,12 @@ class PipelineEditor(PipelineDevelopperView):
             except TraitError:
                 print("Cannot export {0}.{1} plug".format(temp_plug_name[0], temp_plug_name[1]))
 
+            '''self.scene.pipeline.export_parameter(
+                temp_plug_name[0], temp_plug_name[1],
+                pipeline_parameter=pipeline_parameter,
+                is_optional=optional,
+                weak_link=weak_link)''' # Uncomment to generate the error
+
             self.scene.update_pipeline()
 
         # For history

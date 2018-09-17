@@ -3908,7 +3908,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         Saving pipeline parameters (inputs and outputs) to a Json file.
         :return:
         """
-        pipeline = self.scene.pipelinegit 
+        pipeline = self.scene.pipeline
 
         filename = qt_backend.getSaveFileName(
             None, 'Save the pipeline parameters', '',
