@@ -686,6 +686,16 @@ class NodeGWidget(QtGui.QGraphicsItem):
         else:
             self.infoActived.setPlainText('disabled')
 
+    def fonced_viewer(self, det):
+        if det:
+            #             color=QtGui.QColor(150, 150, 250)
+            self.setOpacity(0.2)
+        else:
+            #             color=self.color
+            self.setOpacity(1)
+
+    #         self._set_pen(self.active, self.weak, color)
+
     def _set_brush(self):
         pipeline = self.pipeline
         if self.name in ('inputs', 'outputs'):
@@ -1234,6 +1244,7 @@ class Link(QtGui.QGraphicsPathItem):
         self.active = active
         self.weak = weak
         self.color = color
+        self.effectiveOpacity()
 
     def _set_pen(self, active, weak, color):
         self.pen = QtGui.QPen()
@@ -1265,6 +1276,16 @@ class Link(QtGui.QGraphicsPathItem):
         self.active = active
         self.weak = weak
 
+    def fonced_viewer(self, det):
+        if det:
+            #             color=QtGui.QColor(150, 150, 250)
+            self.setOpacity(0.2)
+        else:
+            #             color=self.color
+            self.setOpacity(1)
+
+    #         self._set_pen(self.active, self.weak, color)
+
     def mousePressEvent(self, event):
         item = self.scene().itemAt(event.scenePos(), Qt.QTransform())
         # print('Link click, item:', item)
@@ -1272,9 +1293,9 @@ class Link(QtGui.QGraphicsPathItem):
             # not a signal since we don't jhave enough identity information in
             # self: the scene has to help us.
             self.scene()._link_right_clicked(self)
-            event.accept()
         else:
             super(Link, self).mousePressEvent(event)
+        event.accept()
 
     def focusInEvent(self, event):
         self.setPen(QtGui.QPen(QtGui.QColor(150, 150, 250), 3, QtCore.Qt.DashDotDotLine))
@@ -2324,6 +2345,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self.plug_clicked.connect(self._plug_clicked)
         self.plug_right_clicked.connect(self._plug_right_clicked)
         self.link_right_clicked.connect(self._link_clicked)
+        self.node_clicked.connect(self._node_clicked)
         self.link_keydelete_clicked.connect(self._link_delete_clicked)
         self.node_keydelete_clicked.connect(self._node_delete_clicked)
 
@@ -2466,6 +2488,13 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             else:
                 self._grab = True
                 self._grabpos = event.pos()
+
+            #             print("background clicked")
+
+            for source_dest, glink in six.iteritems(self.scene.glinks):
+                glink.fonced_viewer(False)
+            for node_name, gnode in six.iteritems(self.scene.gnodes):
+                gnode.fonced_viewer(False)
 
     def mouseReleaseEvent(self, event):
         self._grab = False
@@ -3015,8 +3044,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         miny = min([x[1] for x in six.itervalues(pos)])
         pos = dict([(name, (p[0] - minx, p[1] - miny))
                     for name, p in six.iteritems(pos)])
-        print('pos:')
-        print(pos)
+        #         print('pos:')
+        #         print(pos)
         scene.pos = pos
         for node, position in six.iteritems(pos):
             gnode = scene.gnodes[node]
@@ -3569,6 +3598,21 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         menu.exec_(QtGui.QCursor.pos())
         del self._current_link
 
+    def _node_clicked(self, name, process):
+
+        for source_dest, glink in six.iteritems(self.scene.glinks):
+            glink.fonced_viewer(False)
+            #             print("source-dest ",source_dest)
+            if name not in str(source_dest):
+                glink.fonced_viewer(True)
+        #             else:
+        #                 print(source_dest[0])
+        for node_name, gnode in six.iteritems(self.scene.gnodes):
+            #             print("    node_name",node_name)
+            gnode.fonced_viewer(False)
+            if name not in str(node_name):
+                gnode.fonced_viewer(True)
+
     def _change_weak_link(self, weak):
         # src_node, src_plug, dst_node, dst_plug = self._current_link
         link_def = self._current_link
@@ -3657,8 +3701,6 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         dial = self._PlugEdit()
         dial.name_line.setText(self._temp_plug_name[1])
         dial.optional.setChecked(self._temp_plug.optional)
-
-        print(self._temp_plug_name[0])
 
         res = dial.exec_()
         if res:
@@ -3866,7 +3908,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         Saving pipeline parameters (inputs and outputs) to a Json file.
         :return:
         """
-        pipeline = self.scene.pipeline
+        pipeline = self.scene.pipelinegit 
 
         filename = qt_backend.getSaveFileName(
             None, 'Save the pipeline parameters', '',
