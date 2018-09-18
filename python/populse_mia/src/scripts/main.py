@@ -103,7 +103,7 @@ def verify_processes():
             __import__('nipype.interfaces')
         except ImportError as e:
             print('MIA warning: Nipype not found')
-        print(e)
+            print(e)
         nipype_pgks = NipypePackages()
         mod_name = 'nipype.interfaces'
         pkg_dic = nipype_pgks.add_package(mod_name)
