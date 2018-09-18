@@ -4,6 +4,7 @@ from glob import glob
 import yaml
 import inspect
 import pkgutil
+import zipfile
 
 # PyQt5 import # TO REMOVE
 from PyQt5.QtCore import QSortFilterProxyModel
@@ -15,7 +16,8 @@ from soma.qt_gui.qt_backend.QtCore import Qt, Signal, QModelIndex, \
     QAbstractItemModel, QByteArray, QMimeData
 from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QPushButton, QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, \
-    QLineEdit, QApplication, QSplitter, QFileDialog, QTreeView
+    QLineEdit, QApplication, QSplitter, QFileDialog, QTreeView, \
+    QMessageBox
 
 # CAPSUL import
 from capsul.api import get_process_instance, StudyConfig
@@ -999,6 +1001,178 @@ class ProcessHelp(QWidget):
 
         label = QLabel()
         label.setText(process.help())
+
+
+class InstallProcesses(QWidget):
+    """
+    A widget that allows to browse a Python package or a zip file to install the
+    processes that it is containing.
+    """
+    def __init__(self):
+        super(InstallProcesses, self).__init__()
+
+        v_layout = QVBoxLayout()
+        self.setLayout(v_layout)
+
+        label_text = 'Choose zip file containing Python packages'
+        v_layout.addWidget(QLabel(label_text))
+
+        edit_layout = QHBoxLayout()
+        v_layout.addLayout(edit_layout)
+
+        self.path_edit = QLineEdit()
+        edit_layout.addWidget(self.path_edit)
+        self.browser_button = QPushButton('Browse')
+        edit_layout.addWidget(self.browser_button)
+
+        bottom_layout = QHBoxLayout()
+        v_layout.addLayout(bottom_layout)
+
+        install_button = QPushButton('Install package')
+        bottom_layout.addWidget(install_button)
+
+        quit_button = QPushButton('Quit')
+        bottom_layout.addWidget(quit_button)
+
+        install_button.clicked.connect(self.install)
+        quit_button.clicked.connect(self.close)
+        self.browser_button.clicked.connect(self.get_filename)
+
+    def get_filename(self):
+        filename = QFileDialog.getOpenFileName(caption='Select a zip file',
+                                               filter='Compatible files (*.zip)')
+        if filename:
+            self.path_edit.setText(filename[0])
+
+    def install(self):
+
+        def add_package(proc_dic, module_name):
+            """
+            Adds a package and its modules to the package tree
+
+
+            :param proc_dic: the process tree-dictionary
+            :param module_name: name of the module
+            :return: proc_dic: the modified process tree-dictionary
+            """
+
+            if module_name:
+
+                # Reloading the package
+                if module_name in sys.modules.keys():
+                    del sys.modules[module_name]
+
+                __import__(module_name)
+                pkg = sys.modules[module_name]
+
+                # Checking if there are subpackages
+                for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+                    if ispkg:
+                        add_package(proc_dic, str(module_name + '.' + modname))
+
+                for k, v in sorted(list(pkg.__dict__.items())):
+                    # Checking each class of in the package
+                    if inspect.isclass(v):
+                        try:
+                            find_in_path(k)
+                        except:
+                            pass
+                        else:
+                            # Updating the tree's dictionnary
+                            path_list = module_name.split('.')
+                            path_list.append(k)
+                            pkg_iter = proc_dic
+                            for element in path_list:
+                                if element in pkg_iter.keys():
+                                    pkg_iter = pkg_iter[element]
+                                else:
+                                    if element is path_list[-1]:
+                                        pkg_iter[element] = 'process_enabled'
+                                    else:
+                                        pkg_iter[element] = {}
+                                        pkg_iter = pkg_iter[element]
+
+                return proc_dic
+
+        filename = self.path_edit.text()
+        if not os.path.isfile(filename):
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("The specified file cannot be found")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            return
+        if os.path.splitext(filename)[1] != ".zip":
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("The specified file has to be a .zip file")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            return
+
+        # Extraction of the zipped content
+        print("Extracting the processes...")
+        if os.path.isfile(filename):
+            zip_ref = zipfile.ZipFile(filename, 'r')
+        else:
+            raise FileNotFoundError("File {0} not found in MIA's root folder".format(filename))
+
+        zip_ref.extractall('..', '..', 'processes')
+        zip_ref.close()
+
+        print("Processes extracted")
+
+        # Process config update
+        print("Updating process config...")
+        if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
+            open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
+
+        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+            try:
+                process_dic = yaml.load(stream)
+            except yaml.YAMLError as exc:
+                process_dic = {}
+                print(exc)
+
+        if process_dic is None:
+            process_dic = {}
+
+        try:
+            packages = process_dic["Packages"]
+        except KeyError:
+            packages = {}
+        except TypeError:
+            packages = {}
+
+        try:
+            paths = process_dic["Paths"]
+        except KeyError:
+            paths = []
+        except TypeError:
+            paths = []
+
+        package_name = os.path.splitext(os.path.basename(filename))[0]
+        sys.path.append(os.path.join('..', '..', 'processes'))
+        final_package_dic = add_package(packages, package_name)
+
+        if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
+            paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+
+        process_dic["Packages"] = final_package_dic
+        process_dic["Paths"] = paths
+        # Idea: Should we encrypt the path ?
+
+        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+            yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
+
+        print("Process config updated")
+        print("")
+
+
 
 
 if __name__ == "__main__":

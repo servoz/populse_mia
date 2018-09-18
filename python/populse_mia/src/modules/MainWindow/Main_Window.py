@@ -30,6 +30,7 @@ from Project.Project import Project, COLLECTION_CURRENT
 
 from datetime import datetime
 
+
 class Main_Window(QMainWindow):
     """
     Primary master class
@@ -110,6 +111,8 @@ class Main_Window(QMainWindow):
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
+        self.action_process_config = QAction('Process config', self)
+
         self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
@@ -118,6 +121,8 @@ class Main_Window(QMainWindow):
 
         self.action_redo = QAction('Redo', self)
         self.action_redo.setShortcut('Ctrl+Y')
+
+        self.action_install_processes = QAction('Install processes', self)
 
         # Connection of the several triggered signals of the actions to some other methods
         self.action_create.triggered.connect(self.create_project_pop_up)
@@ -129,8 +134,10 @@ class Main_Window(QMainWindow):
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
+        self.action_process_config.triggered.connect(self.process_config_pop_up)
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
+        self.action_install_processes.triggered.connect(self.install_processes_pop_up)
 
     def create_menus(self):
         """ Create the menubar """
@@ -140,6 +147,7 @@ class Main_Window(QMainWindow):
         self.menu_edition = self.menuBar().addMenu('Edit')
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
+        self.menu_more = self.menuBar().addMenu('More')
 
         # Submenu of menu_file menu
         self.menu_saved_projects = QMenu('Saved projects', self)
@@ -160,6 +168,7 @@ class Main_Window(QMainWindow):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_software_preferences)
         self.menu_file.addAction(self.action_project_properties)
+        self.menu_file.addAction(self.action_process_config)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.update_recent_projects_actions()
@@ -171,6 +180,9 @@ class Main_Window(QMainWindow):
         # Actions in the "Help" menu
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
+
+        # Actions in the "More" menu
+        self.menu_more.addAction(self.action_install_processes)
 
     def undo(self):
         """
@@ -615,6 +627,19 @@ class Main_Window(QMainWindow):
 
         # Modifying the options in the Pipeline Manager (verify if clinical mode)
         self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
+
+    def process_config_pop_up(self):
+        """ Opens the process config pop-up """
+        from PipelineManager.process_library import PackageLibraryDialog
+        self.pop_up_process_config = PackageLibraryDialog()
+        self.pop_up_process_config.setGeometry(300, 200, 800, 600)
+        self.pop_up_process_config.show()
+
+    def install_processes_pop_up(self):
+        """ Opens the install processes pop-up """
+        from PipelineManager.process_library import InstallProcesses
+        self.pop_up_install_processes = InstallProcesses()
+        self.pop_up_install_processes.show()
 
     def add_clinical_tags(self):
         """ Adds the clinical tags to the database and the data browser """
