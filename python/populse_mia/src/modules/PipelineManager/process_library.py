@@ -1008,6 +1008,9 @@ class InstallProcesses(QWidget):
     A widget that allows to browse a Python package or a zip file to install the
     processes that it is containing.
     """
+
+    process_installed = Signal()
+
     def __init__(self):
         super(InstallProcesses, self).__init__()
 
@@ -1115,19 +1118,15 @@ class InstallProcesses(QWidget):
             return
 
         # Extraction of the zipped content
-        print("Extracting the processes...")
         if os.path.isfile(filename):
             zip_ref = zipfile.ZipFile(filename, 'r')
         else:
             raise FileNotFoundError("File {0} not found in MIA's root folder".format(filename))
 
-        zip_ref.extractall('..', '..', 'processes')
+        zip_ref.extractall(os.path.join('..', '..', 'processes'))
         zip_ref.close()
 
-        print("Processes extracted")
-
         # Process config update
-        print("Updating process config...")
         if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
             open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
 
@@ -1169,10 +1168,7 @@ class InstallProcesses(QWidget):
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
             yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
-        print("Process config updated")
-        print("")
-
-
+        self.process_installed.emit()
 
 
 if __name__ == "__main__":
