@@ -669,6 +669,9 @@ class PackageLibraryDialog(QDialog):
 
         :param module_name: name of the module
         :param class_name: name of the class
+
+        :package_library: PipelineManager.process_library.PackageLibrary object
+        :package_library.package_tree: current package tree known in Package Library window
         :return:
         """
 
@@ -679,42 +682,49 @@ class PackageLibraryDialog(QDialog):
             if module_name in sys.modules.keys():
                 del sys.modules[module_name]
 
-            __import__(module_name)
-            pkg = sys.modules[module_name]
+            try:
+                __import__(module_name)
+                pkg = sys.modules[module_name]
 
-            # Checking if there are subpackages
-            for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
-                if ispkg:
-                    self.add_package(str(module_name + '.' + modname))
+                # Checking if there are subpackages
+                for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+                    if ispkg:
+                        self.add_package(str(module_name + '.' + modname))
 
-            for k, v in sorted(list(pkg.__dict__.items())):
-                if class_name and k != class_name:
-                    continue
-                # Checking each class of in the package
-                if inspect.isclass(v):
-                    try:
-                        find_in_path(k)
-                        #get_process_instance(v)
-                    except:
-                        #TODO: WHICH TYPE OF EXCEPTION?
-                        pass
-                    else:
-                        # Updating the tree's dictionnary
-                        path_list = module_name.split('.')
-                        path_list.append(k)
-                        pkg_iter = self.packages
-                        for element in path_list:
-                            if element in pkg_iter.keys():
-                                pkg_iter = pkg_iter[element]
-                            else:
-                                if element is path_list[-1]:
-                                    pkg_iter[element] = 'process_enabled'
-                                else:
-                                    pkg_iter[element] = {}
+                for k, v in sorted(list(pkg.__dict__.items())):
+                    if class_name and k != class_name:
+                        continue
+                    # Checking each class of in the package
+                    if inspect.isclass(v):
+                        try:
+                            find_in_path(k)
+                            #get_process_instance(v)
+                        except:
+                            #TODO: WHICH TYPE OF EXCEPTION?
+                            pass
+                        else:
+                            # Updating the tree's dictionnary
+                            path_list = module_name.split('.')
+                            path_list.append(k)
+                            pkg_iter = self.packages
+                            for element in path_list:
+                                if element in pkg_iter.keys():
                                     pkg_iter = pkg_iter[element]
+                                else:
+                                    if element is path_list[-1]:
+                                        pkg_iter[element] = 'process_enabled'
+                                    else:
+                                        pkg_iter[element] = {}
+                                        pkg_iter = pkg_iter[element]
 
-            self.package_library.package_tree = self.packages
-            self.package_library.generate_tree()
+                self.package_library.package_tree = self.packages
+                self.package_library.generate_tree()
+
+            except Exception as err:
+                msg = QMessageBox()
+                msg.setText("{0}: {1}.".format(err.__class__, err))
+                msg.setIcon(QMessageBox.Warning)
+                msg.exec_()
 
     def remove_package_with_text(self):
         """
