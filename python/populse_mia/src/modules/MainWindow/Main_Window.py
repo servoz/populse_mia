@@ -641,6 +641,7 @@ class Main_Window(QMainWindow):
         self.pop_up_install_processes = InstallProcesses()
         self.pop_up_install_processes.show()
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
+        self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
 
     def add_clinical_tags(self):
         """ Adds the clinical tags to the database and the data browser """

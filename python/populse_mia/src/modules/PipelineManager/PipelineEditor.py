@@ -950,7 +950,7 @@ class PipelineEditor(PipelineDevelopperView):
                 temp_plug_name[0], temp_plug_name[1],
                 pipeline_parameter=pipeline_parameter,
                 is_optional=optional,
-                weak_link=weak_link)''' # Uncomment to generate the error
+                weak_link=weak_link)'''  # Uncomment to generate the error
 
             self.scene.update_pipeline()
 
@@ -984,8 +984,11 @@ class PipelineEditor(PipelineDevelopperView):
                 ((outputs and plug.output and not plug.links_to) or
                     (inputs and not plug.output and not plug.links_from)) and
                 (optional or not node.get_trait(parameter_name).optional))):
-                pipeline.export_parameter(node_name, parameter_name)
-                parameter_list.append(parameter_name)
+                try:
+                    pipeline.export_parameter(node_name, parameter_name)
+                    parameter_list.append(parameter_name)
+                except TraitError:
+                    print("Cannot export {0}.{1} plug".format(node_name, parameter_name))
 
         # For history
         history_maker = ["export_plugs", parameter_list, node_name]

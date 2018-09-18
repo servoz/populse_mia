@@ -497,6 +497,7 @@ class PackageLibraryDialog(QDialog):
 
     Methods:
         - load_config: updates the config and loads the corresponding packages
+        - update_config: updates the process_config and package_library attributes
         - load_packages: updates the tree of the process library
         - save_config: saves the current config to process_config.yml
         - browse_package: opens a browser to select a package
@@ -577,6 +578,18 @@ class PackageLibraryDialog(QDialog):
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
+
+    def update_config(self):
+        """
+        Updates the process_config and package_library attributes
+
+        :return:
+        """
+        self.process_config = self.load_config()
+        self.load_packages()
+        self.package_library.package_tree = self.packages
+        self.package_library.paths = self.paths
+        self.package_library.generate_tree()
 
     def load_packages(self):
         """
