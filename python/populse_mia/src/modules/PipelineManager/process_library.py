@@ -913,7 +913,8 @@ class PackageLibrary(QTreeWidget):
 
         list_path = []
         list_path.append(item.text(0))
-        while item is not self.topLevelItem(0):
+        self.top_level_items = [self.topLevelItem(i) for i in range(self.topLevelItemCount())]
+        while item not in self.top_level_items:
             item = item.parent()
             list_path.append(item.text(0))
 
