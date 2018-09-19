@@ -26,9 +26,7 @@ import numpy as np  # a N-dimensional array object
 
 class ImageViewer(QWidget):
     def __init__(self):
-     
 
-        
         super(ImageViewer,self).__init__()
         
         pal = QPalette()
@@ -49,6 +47,8 @@ class ImageViewer(QWidget):
         
         self.verticalLayout = QVBoxLayout(self)
         self.horizontalLayout = QHBoxLayout(self)
+
+        self.textInfo = QTextEdit()
      
         self.textInfoTop = QTextEdit()
         self.textInfoTop.setEnabled(True)

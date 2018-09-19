@@ -111,7 +111,11 @@ class Main_Window(QMainWindow):
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
-        self.action_process_config = QAction('Process config', self)
+        self.action_package_library = QAction('Package library', self)
+        if Config().get_clinical_mode() == 'yes':
+            self.action_package_library.setDisabled(True)
+        else:
+            self.action_package_library.setEnabled(True)
 
         self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
@@ -134,7 +138,7 @@ class Main_Window(QMainWindow):
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
-        self.action_process_config.triggered.connect(self.process_config_pop_up)
+        self.action_package_library.triggered.connect(self.package_library_pop_up)
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
         self.action_install_processes.triggered.connect(self.install_processes_pop_up)
@@ -168,7 +172,7 @@ class Main_Window(QMainWindow):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_software_preferences)
         self.menu_file.addAction(self.action_project_properties)
-        self.menu_file.addAction(self.action_process_config)
+        self.menu_file.addAction(self.action_package_library)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.update_recent_projects_actions()
@@ -623,13 +627,21 @@ class Main_Window(QMainWindow):
 
         # Modifying the options in the Pipeline Manager (verify if clinical mode)
         self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
+        self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
 
-    def process_config_pop_up(self):
-        """ Opens the process config pop-up """
+    def update_package_library_action(self):
+        """ Updates the package library action depending on the mode """
+        if Config().get_clinical_mode() == 'yes':
+            self.action_package_library.setDisabled(True)
+        else:
+            self.action_package_library.setEnabled(True)
+
+    def package_library_pop_up(self):
+        """ Opens the package library pop-up """
         from PipelineManager.process_library import PackageLibraryDialog
-        self.pop_up_process_config = PackageLibraryDialog()
-        self.pop_up_process_config.setGeometry(300, 200, 800, 600)
-        self.pop_up_process_config.show()
+        self.pop_up_package_library = PackageLibraryDialog()
+        self.pop_up_package_library.setGeometry(300, 200, 800, 600)
+        self.pop_up_package_library.show()
 
     def install_processes_pop_up(self):
         """ Opens the install processes pop-up """
