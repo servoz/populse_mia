@@ -529,19 +529,19 @@ class PackageLibraryDialog(QDialog):
         self.package_library = PackageLibrary(self.packages, self.paths)
 
         self.line_edit = QLineEdit()
-        self.line_edit.setPlaceholderText('Type a package')
+        self.line_edit.setPlaceholderText('Type a Python package (ex. nipype.interfaces.spm)')
 
-        push_button_browse = QPushButton()
+        '''push_button_browse = QPushButton()
         push_button_browse.setText("Browse")
-        push_button_browse.clicked.connect(self.browse_package)
+        push_button_browse.clicked.connect(self.browse_package)'''
 
         push_button_add_pkg = QPushButton()
         push_button_add_pkg.setText("Add package")
         push_button_add_pkg.clicked.connect(self.add_package_with_text)
 
-        push_button_rm_pkg = QPushButton()
+        '''push_button_rm_pkg = QPushButton()
         push_button_rm_pkg.setText("Remove package")
-        push_button_rm_pkg.clicked.connect(self.remove_package_with_text)
+        push_button_rm_pkg.clicked.connect(self.remove_package_with_text)'''
 
         push_button_save = QPushButton()
         push_button_save.setText("Save changes")
@@ -549,15 +549,21 @@ class PackageLibraryDialog(QDialog):
 
         # Layout
 
-        h_box_browse = QHBoxLayout()
-        h_box_browse.addWidget(self.line_edit)
-        h_box_browse.addWidget(push_button_browse)
+        h_box_line_edit = QHBoxLayout()
+        h_box_line_edit.addWidget(self.line_edit)
+        h_box_line_edit.addWidget(push_button_add_pkg)
+        # h_box_browse.addWidget(push_button_browse)
+
+        h_box_save = QHBoxLayout()
+        h_box_save.addStretch(1)
+        h_box_save.addWidget(push_button_save)
 
         v_box = QVBoxLayout()
-        v_box.addLayout(h_box_browse)
-        v_box.addWidget(push_button_add_pkg)
-        v_box.addWidget(push_button_rm_pkg)
-        v_box.addWidget(push_button_save)
+        v_box.addStretch(1)
+        v_box.addLayout(h_box_line_edit)
+        # v_box.addWidget(push_button_rm_pkg)
+        v_box.addStretch(1)
+        v_box.addLayout(h_box_save)
 
         h_box = QHBoxLayout()
         h_box.addWidget(self.package_library)
