@@ -270,7 +270,7 @@ class Main_Window(QMainWindow):
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as or just saved """
-        if (self.project.isTempProject):
+        if self.project.isTempProject:
             self.save_project_as()
         else:
             controller.save_project(self.project)
@@ -280,11 +280,11 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        if (self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0):
+        if self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
             return 1
-        if (self.project.isTempProject):
+        if self.project.isTempProject:
             return 0
-        if (self.project.hasUnsavedModifications()):
+        if self.project.hasUnsavedModifications():
             return 1
         else:
             return 0
@@ -296,29 +296,25 @@ class Main_Window(QMainWindow):
 
         self.tabs = QTabWidget()
         self.tabs.setAutoFillBackground(False)
-        self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Times;text-align: center;color:blue;}')
+        #self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Helvetica;text-align: center;color:blue;}')
+        self.tabs.setStyleSheet('QTabBar{font-size:16pt;text-align: center}')
         self.tabs.setMovable(True)
-
-        self.textInfo = QLineEdit(self)
-        self.textInfo.resize(500, 40)
-        self.textInfo.setText('Welcome to Irmage')
 
         self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
-        self.image_viewer = ImageViewer(self.textInfo)
-        self.tabs.addTab(self.image_viewer, "Image Viewer")
+        self.image_viewer = ImageViewer()
+        self.tabs.addTab(self.image_viewer, "Data Viewer")
 
         self.pipeline_manager = PipelineManagerTab(self.project, [], self)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         self.tabs.currentChanged.connect(self.tab_changed)
 
-        verticalLayout = QVBoxLayout()
-        verticalLayout.addWidget(self.tabs)
-        verticalLayout.addWidget(self.textInfo)
+        vertical_layout = QVBoxLayout()
+        vertical_layout.addWidget(self.tabs)
         self.centralWindow = QWidget()
-        self.centralWindow.setLayout(verticalLayout)
+        self.centralWindow.setLayout(vertical_layout)
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """

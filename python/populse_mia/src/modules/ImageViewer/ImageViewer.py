@@ -23,18 +23,16 @@ from SoftwareProperties.Config import Config
 import nibabel as nib  # to read nifti file
 import numpy as np  # a N-dimensional array object
 
+
 class ImageViewer(QWidget):
-    def __init__(self,textInfo):
+    def __init__(self):
      
-        global txtInf
+
         
         super(ImageViewer,self).__init__()
         
         pal = QPalette()
         pal.setColor(QPalette.Background, Qt.lightGray)
-        
-        self.textInfo = textInfo
-        txtInf = self.textInfo
        
         self.factor = 3.0
 
@@ -625,7 +623,6 @@ class ImageViewer(QWidget):
         helpMenu.setText('Help')
         helpMenu.setPopupMode(QToolButton.MenuButtonPopup)
         bMenu = QMenu()
-        bMenu.addAction(self.aboutAct)
         helpMenu.setMenu(bMenu)
         
         self.menuToolBar.addWidget(viewMenu)
@@ -647,8 +644,6 @@ class ImageViewer(QWidget):
 
         self.fitToWindowAct = QAction("Fit to Window", self, enabled=False,
                 checkable=True, shortcut="Ctrl+F", triggered=self.fitToWindow)
-
-        self.aboutAct = QAction("About", self, triggered=self.about)
 
     def zoomIn(self):
         self.factor=1.25
@@ -686,9 +681,6 @@ class ImageViewer(QWidget):
         self.zoomInAct.setEnabled(self.scaleFactor < 5.0)
         self.zoomOutAct.setEnabled(self.scaleFactor > 0.333)
 
-    def about(self):
-        AboutSoft()
-
     def close(self):
         self.close()
         
@@ -701,7 +693,7 @@ class TableDataBrower(QTableWidget):
                 self.t = temp.row()
                 self.selectRow(self.t)
                 Browser.setModel(Model)
-                Browser.setCurrentIndex(Model.index(txtInf.text()+'/'+self.item(self.t, 0).text()))
+                Browser.setCurrentIndex(Model.index('Welcome to MIA'+'/'+self.item(self.t, 0).text()))
                 Browser.update()
         QTableWidget.mousePressEvent(self,e)
 
