@@ -898,7 +898,10 @@ class NodeGWidget(QtGui.QGraphicsItem):
             param_text = '<font color="#400000"><b>%s</b></font>' % param_name
         else:
             param_text = '<font color="#111111"><b>%s</b></font>' % param_name
-        value = getattr(self.process, param_name)
+        try:
+            value = getattr(self.process, param_name)
+        except traits.TraitError:
+            value = traits.Undefined
         if value is None or value is traits.Undefined or value == '':
             param_text = '<em>%s</em>' % param_text
         else:

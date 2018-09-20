@@ -132,8 +132,10 @@ class NodeController(QWidget):
                 label_input = QLabel()
                 label_input.setText(str(name))
                 self.labels_input.insert(idx, label_input)
-
-                value = getattr(process, name)
+                try:
+                    value = getattr(process, name)
+                except TraitError:
+                    value = Undefined
                 trait_type = trait_ids(process.trait(name))
 
                 self.line_edit_input.insert(idx, QLineEdit())
