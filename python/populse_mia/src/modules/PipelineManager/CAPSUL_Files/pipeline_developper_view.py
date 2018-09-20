@@ -1159,11 +1159,11 @@ class NodeGWidget(QtGui.QGraphicsItem):
         if event.button() == QtCore.Qt.LeftButton and process is not None:
             if isinstance(process, Switch):
                 self.scene().switch_clicked.emit(self.name, process)
-            # else:
-            #     self.scene().node_clicked.emit(self.name, process)
+            else:
+                self.scene().node_clicked.emit(self.name, process)
 
         if event.button() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ControlModifier:
-            self.scene().node_clicked.emit(self.name, process)
+            self.scene().node_clicked_ctrl.emit(self.name, process)
             self.scene().clearSelection()
             self.box.setSelected(True)
             return QtGui.QGraphicsItem.mousePressEvent(self, event)
@@ -1334,6 +1334,8 @@ class PipelineScene(QtGui.QGraphicsScene):
                                         QtCore.Qt.KeyboardModifiers)
     # Signal emitted when a node box is clicked
     node_clicked = QtCore.Signal(str, Process)
+    # Signal emitted when a node box is clicked with ctrl
+    node_clicked_ctrl = QtCore.Signal(str, Process)
     # Signal emitted when a switch box is clicked
     switch_clicked = QtCore.Signal(str, Switch)
     # Signal emitted when a node box is right-clicked
@@ -2089,6 +2091,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     subpipeline_clicked
     node_right_clicked
     node_clicked
+    node_clicked_ctrl
     plug_clicked
     plug_right_clicked
     link_right_clicked
@@ -2127,6 +2130,8 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
     '''Signal emitted when a sub pipeline has to be open.'''
     node_clicked = QtCore.Signal(str, Process)
     '''Signal emitted when a node box has to be open.'''
+    node_clicked_ctrl = QtCore.Signal(str, Process)
+    '''Signal emitted when a node box has to be in the foreground.'''
     switch_clicked = QtCore.Signal(str, Switch)
     '''Signal emitted when a switch box has to be open.'''
     node_right_clicked = QtCore.Signal(str, Controller)
@@ -2359,7 +2364,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self.plug_clicked.connect(self._plug_clicked)
         self.plug_right_clicked.connect(self._plug_right_clicked)
         self.link_right_clicked.connect(self._link_clicked)
-        self.node_clicked.connect(self._node_clicked)
+        self.node_clicked_ctrl.connect(self._node_clicked_ctrl)
         self.link_keydelete_clicked.connect(self._link_delete_clicked)
         self.node_keydelete_clicked.connect(self._node_delete_clicked)
 
@@ -2392,6 +2397,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         self.scene.subpipeline_clicked.connect(self.subpipeline_clicked)
         self.scene.subpipeline_clicked.connect(self.onLoadSubPipelineClicked)
         self.scene.node_clicked.connect(self.node_clicked)
+        self.scene.node_clicked_ctrl.connect(self._node_clicked_ctrl)
         self.scene.switch_clicked.connect(self.switch_clicked)
         self.scene.node_right_clicked.connect(self.node_right_clicked)
         self.scene.node_right_clicked.connect(self.onOpenProcessController)
@@ -3620,7 +3626,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         menu.exec_(QtGui.QCursor.pos())
         del self._current_link
 
-    def _node_clicked(self, name, process):
+    def _node_clicked_ctrl(self, name, process):
 
         for source_dest, glink in six.iteritems(self.scene.glinks):
             glink.fonced_viewer(False)
