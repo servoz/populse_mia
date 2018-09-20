@@ -410,7 +410,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
 
     def changeSize(self, w, h):
         limit = False
-        factor_h = 32
+        factor_h = 35
 
         if h < self.hmin:
             h = self.hmin
@@ -420,12 +420,11 @@ class NodeGWidget(QtGui.QGraphicsItem):
             w = self.wmin
             limit = True
 
-        margin = 0
         winMax, woutMax = 0, 0
 
         self.box.setRect(0.0, 0.0, w, h)
         self.box_title.setRect(0.0, 0.0, w, 30)
-        self.title.setPos(w / 2 - self.title.boundingRect().size().width() / 2, margin)
+        self.title.setPos(w / 2 - self.title.boundingRect().size().width() / 2, 0)
         self.infoActived.setPos(w / 2 - self.infoActived.boundingRect().size().width() / 2, h + 2)
 
         #         rect = self.title.mapRectToParent(self.title.boundingRect())
@@ -435,8 +434,8 @@ class NodeGWidget(QtGui.QGraphicsItem):
         y1 = h / (len(self.in_plugs) + 1)
         dy = y1
         for inp in self.in_plugs:
-            self.in_plugs[inp].setPos(margin, y1)
-            self.in_params[inp].setPos(self.in_plugs[inp].boundingRect().size().width() + margin, y1)
+            self.in_plugs[inp].setPos(0, y1)
+            self.in_params[inp].setPos(self.in_plugs[inp].boundingRect().size().width(), y1)
             if winMax < self.in_params[inp].boundingRect().size().width():
                 winMax = self.in_params[inp].boundingRect().size().width()
             y1 += dy
@@ -444,7 +443,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
         y2 = h / (len(self.out_plugs) + 1)
         dy = y2
         for outp in self.out_plugs:
-            self.out_plugs[outp].setPos(w - margin, y2)
+            self.out_plugs[outp].setPos(w, y2)
             self.out_params[outp].setPos(w - self.out_params[outp].boundingRect().size().width() - 5, y2)
             if woutMax < self.out_params[outp].boundingRect().size().width():
                 woutMax = self.out_params[outp].boundingRect().size().width()
@@ -460,18 +459,28 @@ class NodeGWidget(QtGui.QGraphicsItem):
             self.sizer.setPos(w, h)
             return
 
-        if self.hmin < factor_h * len(self.in_plugs):
-            self.hmin = factor_h * len(self.in_plugs)
-            self.updateSize(w, h)
-        if self.hmin < factor_h * len(self.out_plugs):
-            self.hmin = factor_h * len(self.out_plugs)
-            self.updateSize(w, h)
+        # if self.hmin < factor_h * len(self.in_plugs):
+        #     self.hmin = factor_h * len(self.in_plugs)
+        #     self.updateSize(w, self.hmin)
+        # if self.hmin < factor_h * len(self.out_plugs):
+        #     self.hmin = factor_h * len(self.out_plugs)
+        #     self.updateSize(w, self.hmin)
 
     def updateSize(self, w, h):
-        self.changeSize(w, h)
+        # print("wmin =",self.wmin,", w=",w)
+        if w<self.wmin:
+            w=self.wmin
+        margin = 20
+        factor_h = 35.0
+        h = factor_h * len(self.in_plugs)+margin
+        self.hmin=h
 
-    def changeHmin(self, wmin):
-        self.wmin += wmin
+        if h < factor_h * len(self.out_plugs):
+            h = factor_h * len(self.out_plugs) + margin
+            self.hmin = h
+        self.sizer.hmin = h
+        self.changeSize(w, h + margin)
+        self.sizer.setPos(w, h + margin)
 
     def _colored_text_item(self, label, text=None, margin=2):
         labelc = self._get_label(label, False)
@@ -957,7 +966,7 @@ class NodeGWidget(QtGui.QGraphicsItem):
                     if pipeline_plug.optional and not self.show_opt_outputs:
                         to_remove.append(param)
                 else:
-                    if pipeline_plug.optional and not self.show_opt_inputs:
+                    if pipeline_plug.optional and not self.show_opt_inputs :
                         to_remove.append(param)
 
             for param in self.in_params:
@@ -1147,9 +1156,11 @@ class NodeGWidget(QtGui.QGraphicsItem):
         if event.button() == QtCore.Qt.LeftButton and process is not None:
             if isinstance(process, Switch):
                 self.scene().switch_clicked.emit(self.name, process)
-            else:
-                self.scene().node_clicked.emit(self.name, process)
+            # else:
+            #     self.scene().node_clicked.emit(self.name, process)
 
+        if event.button() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ControlModifier:
+            self.scene().node_clicked.emit(self.name, process)
             self.scene().clearSelection()
             self.box.setSelected(True)
             return QtGui.QGraphicsItem.mousePressEvent(self, event)
@@ -1160,13 +1171,13 @@ class NodeGWidget(QtGui.QGraphicsItem):
         super(NodeGWidget, self).keyPressEvent(event)
 
         if event.key() == QtCore.Qt.Key_Up:
-            self.setPos(self.x(), self.y() - 2)
+            self.setPos(self.x(), self.y() - 1)
         if event.key() == QtCore.Qt.Key_Down:
-            self.setPos(self.x(), self.y() + 2)
+            self.setPos(self.x(), self.y() + 1)
         if event.key() == QtCore.Qt.Key_Left:
-            self.setPos(self.x() - 2, self.y())
+            self.setPos(self.x() - 1, self.y())
         if event.key() == QtCore.Qt.Key_Right:
-            self.setPos(self.x() + 2, self.y())
+            self.setPos(self.x() + 1, self.y())
 
         return QtGui.QGraphicsItem.keyPressEvent(self, event)
         event.accept()
@@ -2775,14 +2786,22 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
         gnode = self.scene.gnodes[self.current_node_name]
         connected_plugs = []
 
+        # print(self.current_node_name)
+        # print(gnode.in_plugs)
+
+        # for source_dest, link in six.iteritems(self.scene.glinks):
+        #     print(source_dest,",",self.current_node_name in str(source_dest))
+
+
         # The show_opt_inputs attribute is not changed yet
         if gnode.show_opt_inputs:
             # Verifying that the plugs are not connected to another node
             for param, pipeline_plug in six.iteritems(gnode.parameters):
+                # print(param," : ",pipeline_plug.activated)
                 output = (not pipeline_plug.output if gnode.name in (
                     'inputs', 'outputs') else pipeline_plug.output)
                 if not output:
-                    if pipeline_plug.optional and pipeline_plug.links_from and gnode.show_opt_inputs:
+                    if pipeline_plug.optional and pipeline_plug.links_from and gnode.show_opt_inputs :
                         connected_plugs.append(param)
             if connected_plugs:
                 if len(connected_plugs) == 1:

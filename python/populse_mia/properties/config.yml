@@ -1,6 +1,7 @@
 auto_save: 'no'
 background_color: ''
 chain_cursors: 'no'
+clinical_mode: 'no'
 matlab: /usr/local/MATLAB/MATLAB_Runtime/v93
 name: MIA2
 nb_slices_max: '10'
