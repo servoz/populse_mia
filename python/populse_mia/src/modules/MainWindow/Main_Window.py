@@ -51,6 +51,7 @@ class Main_Window(QMainWindow):
 
         self.project = project
         self.test = test
+        self.force_exit = False
         app_icon = QIcon(os.path.join('..', 'sources_images', 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
@@ -213,6 +214,9 @@ class Main_Window(QMainWindow):
     def closeEvent(self, event):
         """ Overriding the closing event to check if there are unsaved modifications """
 
+        if self.force_exit:
+            event.accept()
+            return
         if self.check_unsaved_modifications():
             self.pop_up_close = Ui_Dialog_Quit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)

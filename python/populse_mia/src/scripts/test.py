@@ -1486,6 +1486,67 @@ class TestMIAPipelineManager(unittest.TestCase):
         save_pipeline(pipeline, filename)
         self.assertTrue(os.path.isfile(os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')))
 
+    def test_init_MIA_processes(self):
+        # Adding the processes path to the system path
+        import sys
+        sys.path.append(os.path.join('..', '..', 'processes'))
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        # Importing the package
+        package_name = 'MIA_processes.IRMaGe.Tools'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        process_class = None
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name != "Input_Filter":
+                try:
+                    proc_instance = get_process_instance(cls)
+                except:
+                    pass
+                else:
+                    process_class = cls
+                    pipeline_editor_tabs.get_current_editor().add_process(process_class)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        # Verifying that all the processes are here
+        self.assertTrue('duplicate_file1' in pipeline.nodes.keys())
+        self.assertTrue('find_in_list1' in pipeline.nodes.keys())
+        self.assertTrue('files_to_list1' in pipeline.nodes.keys())
+        self.assertTrue('list_to_file1' in pipeline.nodes.keys())
+        self.assertTrue('list_duplicate1' in pipeline.nodes.keys())
+        self.assertTrue('roi_list_generator1' in pipeline.nodes.keys())
+
+        # Setting values to verify that the initialization works well
+        pipeline.nodes['duplicate_file1'].set_plug_value('file1', 'test_file.txt')
+        pipeline.nodes['find_in_list1'].set_plug_value('in_list', ['test1.txt', 'test2.txt'])
+        pipeline.nodes['find_in_list1'].set_plug_value('pattern', '1')
+        pipeline.nodes['files_to_list1'].set_plug_value('file1', 'test1.txt')
+        pipeline.nodes['files_to_list1'].set_plug_value('file2', 'test2.txt')
+        pipeline.nodes['list_to_file1'].set_plug_value('file_list', ['test1.txt', 'test2.txt'])
+        pipeline.nodes['list_duplicate1'].set_plug_value('file_name', 'test_file.txt')
+        pipeline.nodes['roi_list_generator1'].set_plug_value('pos', ['TEST1', 'TEST2'])
+
+        # Initialization of the pipeline
+        self.main_window.pipeline_manager.initPipeline()
+
+        # Verifying the result of the initialization
+        self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file1'), 'test_file.txt')
+        self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file2'), 'test_file.txt')
+        self.assertEqual(pipeline.nodes['find_in_list1'].get_plug_value('out_file'), 'test1.txt')
+        self.assertEqual(pipeline.nodes['files_to_list1'].get_plug_value('file_list'), ['test1.txt', 'test2.txt'])
+        self.assertEqual(pipeline.nodes['list_to_file1'].get_plug_value('file'), 'test1.txt')
+        self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_list'), ['test_file.txt'])
+        self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_file'), 'test_file.txt')
+        self.assertEqual(pipeline.nodes['roi_list_generator1'].get_plug_value('roi_list'), [['TEST1', '_L'],
+                                                                                            ['TEST1', '_R'],
+                                                                                            ['TEST2', '_L'],
+                                                                                            ['TEST2', '_R']])
+        self.main_window.force_exit = True
+
 
 if __name__ == '__main__':
     unittest.main()
