@@ -1820,7 +1820,7 @@ class TableDataBrowser(QTableWidget):
 
         cells_types = []  # Will contain the type list of the selection
 
-        self.fill_cells_update_table() # To reset the first cell already changed
+        # self.fill_cells_update_table()  # To reset the first cell already changed
 
         # For each item selected, we check the validity of the types
         for item in self.selectedItems():

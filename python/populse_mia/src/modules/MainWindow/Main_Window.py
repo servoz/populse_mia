@@ -30,6 +30,7 @@ from Project.Project import Project, COLLECTION_CURRENT
 
 from datetime import datetime
 
+
 class Main_Window(QMainWindow):
     """
     Primary master class
@@ -110,6 +111,12 @@ class Main_Window(QMainWindow):
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
+        self.action_package_library = QAction('Package library', self)
+        if Config().get_clinical_mode() == 'yes':
+            self.action_package_library.setDisabled(True)
+        else:
+            self.action_package_library.setEnabled(True)
+
         self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
@@ -118,6 +125,8 @@ class Main_Window(QMainWindow):
 
         self.action_redo = QAction('Redo', self)
         self.action_redo.setShortcut('Ctrl+Y')
+
+        self.action_install_processes = QAction('Install processes', self)
 
         # Connection of the several triggered signals of the actions to some other methods
         self.action_create.triggered.connect(self.create_project_pop_up)
@@ -129,8 +138,10 @@ class Main_Window(QMainWindow):
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
         self.action_software_preferences.triggered.connect(self.software_preferences_pop_up)
+        self.action_package_library.triggered.connect(self.package_library_pop_up)
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
+        self.action_install_processes.triggered.connect(self.install_processes_pop_up)
 
     def create_menus(self):
         """ Create the menubar """
@@ -140,6 +151,7 @@ class Main_Window(QMainWindow):
         self.menu_edition = self.menuBar().addMenu('Edit')
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
+        self.menu_more = self.menuBar().addMenu('More')
 
         # Submenu of menu_file menu
         self.menu_saved_projects = QMenu('Saved projects', self)
@@ -160,6 +172,7 @@ class Main_Window(QMainWindow):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_software_preferences)
         self.menu_file.addAction(self.action_project_properties)
+        self.menu_file.addAction(self.action_package_library)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.update_recent_projects_actions()
@@ -171,6 +184,9 @@ class Main_Window(QMainWindow):
         # Actions in the "Help" menu
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
+
+        # Actions in the "More" menu
+        self.menu_more.addAction(self.action_install_processes)
 
     def undo(self):
         """
@@ -258,7 +274,7 @@ class Main_Window(QMainWindow):
 
     def saveChoice(self):
         """ Checks if the project needs to be saved as or just saved """
-        if (self.project.isTempProject):
+        if self.project.isTempProject:
             self.save_project_as()
         else:
             controller.save_project(self.project)
@@ -268,11 +284,11 @@ class Main_Window(QMainWindow):
             Returns 1 if there are unsaved modifications, 0 otherwise
 
         """
-        if (self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0):
+        if self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
             return 1
-        if (self.project.isTempProject):
+        if self.project.isTempProject:
             return 0
-        if (self.project.hasUnsavedModifications()):
+        if self.project.hasUnsavedModifications():
             return 1
         else:
             return 0
@@ -284,29 +300,25 @@ class Main_Window(QMainWindow):
 
         self.tabs = QTabWidget()
         self.tabs.setAutoFillBackground(False)
-        self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Times;text-align: center;color:blue;}')
+        #self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Helvetica;text-align: center;color:blue;}')
+        self.tabs.setStyleSheet('QTabBar{font-size:16pt;text-align: center}')
         self.tabs.setMovable(True)
-
-        self.textInfo = QLineEdit(self)
-        self.textInfo.resize(500, 40)
-        self.textInfo.setText('Welcome to Irmage')
 
         self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
-        self.image_viewer = ImageViewer(self.textInfo)
-        self.tabs.addTab(self.image_viewer, "Image Viewer")
+        self.image_viewer = ImageViewer()
+        self.tabs.addTab(self.image_viewer, "Data Viewer")
 
         self.pipeline_manager = PipelineManagerTab(self.project, [], self)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         self.tabs.currentChanged.connect(self.tab_changed)
 
-        verticalLayout = QVBoxLayout()
-        verticalLayout.addWidget(self.tabs)
-        verticalLayout.addWidget(self.textInfo)
+        vertical_layout = QVBoxLayout()
+        vertical_layout.addWidget(self.tabs)
         self.centralWindow = QWidget()
-        self.centralWindow.setLayout(verticalLayout)
+        self.centralWindow.setLayout(vertical_layout)
 
     def save_project_as(self):
         """ Open a pop-up to save the current project as """
@@ -615,6 +627,29 @@ class Main_Window(QMainWindow):
 
         # Modifying the options in the Pipeline Manager (verify if clinical mode)
         self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
+        self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
+
+    def update_package_library_action(self):
+        """ Updates the package library action depending on the mode """
+        if Config().get_clinical_mode() == 'yes':
+            self.action_package_library.setDisabled(True)
+        else:
+            self.action_package_library.setEnabled(True)
+
+    def package_library_pop_up(self):
+        """ Opens the package library pop-up """
+        from PipelineManager.process_library import PackageLibraryDialog
+        self.pop_up_package_library = PackageLibraryDialog()
+        self.pop_up_package_library.setGeometry(300, 200, 800, 600)
+        self.pop_up_package_library.show()
+
+    def install_processes_pop_up(self):
+        """ Opens the install processes pop-up """
+        from PipelineManager.process_library import InstallProcesses
+        self.pop_up_install_processes = InstallProcesses()
+        self.pop_up_install_processes.show()
+        self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
+        self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
 
     def add_clinical_tags(self):
         """ Adds the clinical tags to the database and the data browser """
