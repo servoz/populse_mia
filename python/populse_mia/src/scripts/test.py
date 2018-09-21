@@ -17,7 +17,6 @@ from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COL
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
-unittest.TestLoader.sortTestMethodsUsing = None
 
 
 class TestMIADataBrowser(unittest.TestCase):
@@ -43,7 +42,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.main_window.project.unsaveModifications()
         self.main_window.close()
 
-    def test_unnamed_project_software_opening(self):
+    def test_01_unnamed_project_software_opening(self):
         """
         Tests unnamed project creation at software opening
         """
@@ -66,7 +65,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_BRICK in collections)
         self.assertEqual(self.main_window.windowTitle(), "MIA - Multiparametric Image Analysis - Unnamed project")
 
-    def test_projects_removed_from_current_projects(self):
+    def test_02_projects_removed_from_current_projects(self):
         """
         Tests that the projects are removed from the list of current projects
         """
@@ -1220,7 +1219,29 @@ class TestMIADataBrowser(unittest.TestCase):
         scan = self.main_window.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
 
-        # PIPELINE MANAGER TESTS
+
+class TestMIAPipelineManager(unittest.TestCase):
+
+    def setUp(self):
+        """
+        Called before each test
+        """
+
+        # All the tests are run in regular mode
+        config = Config()
+        config.set_clinical_mode("no")
+
+        self.app = QApplication([])
+        self.project = Project(None, True)
+        self.main_window = Main_Window(self.project, test=True)
+
+    def tearDown(self):
+        """
+        Called after each test
+        """
+
+        self.main_window.project.unsaveModifications()
+        self.main_window.close()
 
     def test_add_tab(self):
         """
@@ -1634,35 +1655,6 @@ class TestMIADataBrowser(unittest.TestCase):
                          os.path.abspath(os.path.join(folder, 'rp_' + nii_no_ext + '.txt')))
         self.assertEqual(pipeline.nodes['coregister1'].get_plug_value('coregistered_files'),
                          os.path.abspath(os.path.join(folder, nii_file)))
-
-
-class TestMIAPipelineManager(unittest.TestCase):
-
-    def setUp(self):
-        """
-        Called before each test
-        """
-
-        # All the tests are run in regular mode
-        config = Config()
-        config.set_clinical_mode("no")
-
-        self.app = QApplication([])
-        self.project = Project(None, True)
-        self.main_window = Main_Window(self.project, test=True)
-
-    def tearDown(self):
-        """
-        Called after each test
-        """
-
-        self.main_window.project.unsaveModifications()
-        self.main_window.close()
-
-
-
-
-
 
 
 if __name__ == '__main__':
