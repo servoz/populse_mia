@@ -42,7 +42,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.main_window.project.unsaveModifications()
         self.main_window.close()
 
-    def test_01_unnamed_project_software_opening(self):
+    def test_unnamed_project_software_opening(self):
         """
         Tests unnamed project creation at software opening
         """
@@ -65,7 +65,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(COLLECTION_BRICK in collections)
         self.assertEqual(self.main_window.windowTitle(), "MIA - Multiparametric Image Analysis - Unnamed project")
 
-    def test_02_projects_removed_from_current_projects(self):
+    def test_projects_removed_from_current_projects(self):
         """
         Tests that the projects are removed from the list of current projects
         """
@@ -1278,29 +1278,26 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().add_process(process_class)
         self.assertEqual(pipeline_editor_tabs.tabText(0)[-2:], " *")
 
-        '''
-        # Still some bug with the pop-up execution
-
-
-        # Closing the modified pipeline editor and clicking on "Cancel"
-        pipeline_editor_tabs.close_tab(0)
-        pop_up_close = pipeline_editor_tabs.pop_up_close
-        # QTest.mouseClick(pop_up_close.push_button_cancel, Qt.LeftButton)
-        # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
-        pop_up_close.cancel_clicked()
-        self.assertEqual(pipeline_editor_tabs.count(), 2)
-
-        # Closing the modified pipeline editor and clicking on "Do not save"
-        pipeline_editor_tabs.close_tab(0)
-        pop_up_close = pipeline_editor_tabs.pop_up_close
-        # QTest.mouseClick(pop_up_close.push_button_do_not_save, Qt.LeftButton)
-        # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
-        pop_up_close.do_not_save_clicked()
-        self.assertEqual(pipeline_editor_tabs.count(), 1)
+        # # Still some bug with the pop-up execution
+        #
+        #
+        # # Closing the modified pipeline editor and clicking on "Cancel"
+        # pipeline_editor_tabs.close_tab(0)
+        # pop_up_close = pipeline_editor_tabs.pop_up_close
+        # # QTest.mouseClick(pop_up_close.push_button_cancel, Qt.LeftButton)
+        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
+        # pop_up_close.cancel_clicked()
+        # self.assertEqual(pipeline_editor_tabs.count(), 2)
+        #
+        # # Closing the modified pipeline editor and clicking on "Do not save"
+        # pipeline_editor_tabs.close_tab(0)
+        # pop_up_close = pipeline_editor_tabs.pop_up_close
+        # # QTest.mouseClick(pop_up_close.push_button_do_not_save, Qt.LeftButton)
+        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
+        # pop_up_close.do_not_save_clicked()
+        # self.assertEqual(pipeline_editor_tabs.count(), 1)
 
         # TODO: HOW TO TEST "SAVE AS" ACTION ?
-
-        '''
 
     def test_update_node_name(self):
         """
@@ -1658,4 +1655,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # loader = unittest.TestLoader()
+    # loader.sortTestMethodsUsing = None
+    # unittest.main(testLoader=loader, verbosity=2)
+    unittest.main(verbosity=2)
