@@ -17,6 +17,7 @@ from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COL
 from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
+unittest.TestLoader.sortTestMethodsUsing = None
 
 
 class TestMIADataBrowser(unittest.TestCase):
