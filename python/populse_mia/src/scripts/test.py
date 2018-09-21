@@ -1514,6 +1514,7 @@ class TestMIAPipelineManager(unittest.TestCase):
                 except:
                     pass
                 else:
+                    print("class", cls)
                     process_class = cls
                     pipeline_editor_tabs.get_current_editor().add_process(process_class)
 
