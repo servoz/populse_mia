@@ -1665,7 +1665,4 @@ class TestMIAPipelineManager(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # loader = unittest.TestLoader()
-    # loader.sortTestMethodsUsing = None
-    # unittest.main(testLoader=loader, verbosity=2)
     unittest.main(verbosity=2)
