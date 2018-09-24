@@ -26,14 +26,14 @@ from capsul.api import get_process_instance, StudyConfig
 from soma.path import find_in_path
 
 
-class ProcessLibraryWidget(QWidget):
+class ProcessLibraryWidget(QWidget):          
     """
     Widget that handles the available Capsul's processes in the software
 
     Attributes:
         - process_library: library of the selected processes
         - pkg_library: widget to control which processes to show in the process library
-        - packages: tree-dictionary that is the representation of the process library
+        - packages: tree-dictionary that is the representation of the process library. A dictionary, where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. Key can be a submodule. In this case the value is a dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. etc. ex. {'User_processes': {'Double_smooth': 'process_enabled', 'Filter_test': 'process_disabled'}, 'nipype': {'interfaces': {'BIDSDataGrabber': 'process_enabled', 'fsl': {'AR1Image': 'process_disabled'}}}}.
         - paths: list of path to add to the system path
 
     Methods:
@@ -425,23 +425,48 @@ class DictionaryTreeModel(QAbstractItemModel):
         return self._rootNode.to_dict()
 
 
-def node_structure_from_dict(datadict, parent=None, root_node=None):
+def node_structure_from_dict(datadict, parent=None, root_node=None, list_name=None, flag=None):
     """returns a hierarchical node stucture required by the TreeModel"""
+
     if not parent:
         root_node = Node('Root')
         parent = root_node
+        list_name = []
+
+    len_datadict=len(datadict)
+    data_list=[]
+    counter=0
 
     for name, data in sorted(datadict.items()):
+
         if isinstance(data, dict):
-            node = Node(name, parent)
-            node = node_structure_from_dict(data, node, root_node)
+            list_name.append(name)
+            node = Node(name)
+            list_name = node_structure_from_dict(data, parent=node, root_node=root_node, list_name=list_name, flag=True)
+
         else:
+            counter+=1
+            data_list.append(data)
+
             if data == 'process_enabled':
-                node = Node(name, parent)
+                
+                for i in list_name:
+
+                    try: trash = Node(i, trash)
+                    except: trash  = Node(i, root_node)
+                    
+                list_name = []
+                node = Node(name, trash)
                 node.value = data
 
-    return root_node
+            if all(item == 'process_disabled' for item in data_list) and counter == len_datadict:
+                list_name = []
 
+    if flag is True:
+        return list_name
+    
+    else:
+        return root_node
 
 class ProcessLibrary(QTreeView):
     """
@@ -465,10 +490,10 @@ class ProcessLibrary(QTreeView):
         """
         Loads a dictionary to the tree
 
-        :param d: dictionary to load
+        :param d: dictionary to load. See the packages attribut in the ProcessLibraryWidget class.
         :return:
         """
-
+        
         self.dictionary = d
         self._nodes = node_structure_from_dict(d)
         self._model = DictionaryTreeModel(self._nodes)
@@ -903,9 +928,12 @@ class PackageLibrary(QTreeWidget):
 
         :param item: item selected in the current tree
         :param state: checked or not checked
+
+        :Qt.Checked == 2. So if val == 2 -> checkbox is checked, and if val == 0 -> checkbox is not checked
+        :pkg_iter: dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. Key can be a submodule. In this case the value is a dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_dsabled'. etc. pkg_iter take only the modules concerning the top package where a change of status where done. 
         :return:
         """
-
+        
         if state == Qt.Checked:
             val = 'process_enabled'
         else:
@@ -914,6 +942,7 @@ class PackageLibrary(QTreeWidget):
         list_path = []
         list_path.append(item.text(0))
         self.top_level_items = [self.topLevelItem(i) for i in range(self.topLevelItemCount())]
+
         while item not in self.top_level_items:
             item = item.parent()
             list_path.append(item.text(0))
