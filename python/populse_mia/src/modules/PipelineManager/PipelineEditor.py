@@ -185,6 +185,23 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.setCurrentIndex(max(0, self.currentIndex()-1))
         self.removeTab(idx)
 
+        # If there is no more editor, adding one
+        if self.count() == 1:
+            p_e = PipelineEditor(self.project)
+            p_e.node_clicked.connect(self.emit_node_clicked)
+            p_e.switch_clicked.connect(self.emit_switch_clicked)
+            p_e.pipeline_saved.connect(self.emit_pipeline_saved)
+            p_e.pipeline_modified.connect(self.update_pipeline_editors)
+            p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+            p_e.open_filter.connect(self.open_filter)
+            p_e.export_to_db_scans.connect(self.export_to_db_scans)
+
+            # Setting a default editor called "New Pipeline"
+            self.insertTab(0, p_e, "New Pipeline")
+            self.setCurrentIndex(0)
+            self.undos["New Pipeline"] = []
+            self.redos["New Pipeline"] = []
+
     def set_current_editor_by_name(self, tab_name):
         """
         Sets the current editor
