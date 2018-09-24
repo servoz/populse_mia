@@ -39,6 +39,11 @@ class TestMIADataBrowser(unittest.TestCase):
         Called after each test
         """
 
+        # Removing the opened projects (in CI, the tests are run twice)
+        config = Config()
+        config.set_opened_projects([])
+        config.saveConfig()
+
         self.main_window.project.unsaveModifications()
         self.main_window.close()
 
