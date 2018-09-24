@@ -1248,6 +1248,11 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.main_window.project.unsaveModifications()
         self.main_window.close()
 
+        # Removing the opened projects (in CI, the tests are run twice)
+        config = Config()
+        config.set_opened_projects([])
+        config.saveConfig()
+
     def test_add_tab(self):
         """
         Adds tabs to the PipelineEditorTabs
