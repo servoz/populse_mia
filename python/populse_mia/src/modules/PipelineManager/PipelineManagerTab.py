@@ -649,7 +649,7 @@ class InitProgress(QProgressDialog):
         self.setMaximum(bricks_number)
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setModal(True)
+        self.setModal(False)
 
         self.project = project
         self.diagramView = diagram_view
