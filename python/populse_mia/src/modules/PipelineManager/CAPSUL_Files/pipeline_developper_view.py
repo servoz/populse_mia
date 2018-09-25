@@ -2072,6 +2072,7 @@ class PipelineScene(QtGui.QGraphicsScene):
         trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
         return trait_type_str
 
+
 from PyQt5.QtWidgets import QGraphicsView
 
 
