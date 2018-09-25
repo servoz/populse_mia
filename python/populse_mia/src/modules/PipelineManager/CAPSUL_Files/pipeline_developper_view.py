@@ -49,6 +49,9 @@ try:
 except ImportError:
     from enthought.traits import api as traits
 
+# Import to resolve CI bug
+from PyQt5.QtWidgets import QGraphicsView
+
 from soma.qt_gui import qt_backend
 
 qt_backend.init_traitsui_handler()
@@ -2071,9 +2074,6 @@ class PipelineScene(QtGui.QGraphicsScene):
         trait_type_str = trait_type_str[: trait_type_str.find(' object ')]
         trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
         return trait_type_str
-
-
-from PyQt5.QtWidgets import QGraphicsView
 
 
 # class PipelineDevelopperView(QtGui.QGraphicsView):
