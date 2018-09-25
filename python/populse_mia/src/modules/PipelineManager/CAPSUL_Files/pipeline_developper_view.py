@@ -2328,6 +2328,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             adding process boxes, drawing links etc. If pipeline is not
             specified, then edition will be activated anyway.
         '''
+        print(parent)
         super(PipelineDevelopperView, self).__init__(parent)
 
         self.setRenderHints(Qt.QPainter.Antialiasing | Qt.QPainter.SmoothPixmapTransform)
