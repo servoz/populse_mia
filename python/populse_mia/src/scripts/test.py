@@ -1433,7 +1433,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # TODO: open a project and modify the filter pop-up
 
-    def test_open_filter(self):
+    '''def test_open_filter(self):
         """
         Opens an input filter
         """
@@ -1464,7 +1464,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.filter_widget.close()
         self.assertFalse(pipeline.nodes["input_filter1"].get_plug_value("output"))
 
-        # TODO: open a project and modify the filter pop-up
+        # TODO: open a project and modify the filter pop-up'''
 
     def test_save_pipeline(self):
         """
@@ -1493,7 +1493,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         save_pipeline(pipeline, filename)
         self.assertTrue(os.path.isfile(os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')))
 
-    def test_init_MIA_processes(self):
+    '''def test_init_MIA_processes(self):
         """
         Adds all the tools processes, initializes and runs the pipeline
         """
@@ -1661,7 +1661,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertEqual(pipeline.nodes['realign1'].get_plug_value('realignment_parameters'),
                          os.path.abspath(os.path.join(folder, 'rp_' + nii_no_ext + '.txt')))
         self.assertEqual(pipeline.nodes['coregister1'].get_plug_value('coregistered_files'),
-                         os.path.abspath(os.path.join(folder, nii_file)))
+                         os.path.abspath(os.path.join(folder, nii_file)))'''
 
 
 if __name__ == '__main__':
