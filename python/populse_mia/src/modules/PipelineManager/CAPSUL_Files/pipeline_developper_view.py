@@ -99,9 +99,9 @@ LIGHT_ANTHRACITE_1 = QtGui.QColor.fromRgbF(0.25, 0.25, 0.25)
 # Classes and functions
 # -----------------------------------------------------------------------------
 
-class ColorType():
+class ColorType:
 
-    def __init__(self, parent=None):
+    def __init__(self):
         pass
 
     def colorLink(self, x):
