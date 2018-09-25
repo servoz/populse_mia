@@ -2074,6 +2074,7 @@ class PipelineScene(QtGui.QGraphicsScene):
 
 from PyQt5.QtWidgets import QGraphicsView
 
+
 # class PipelineDevelopperView(QtGui.QGraphicsView):
 class PipelineDevelopperView(QGraphicsView):
     '''
