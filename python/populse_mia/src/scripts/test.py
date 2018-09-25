@@ -1663,6 +1663,26 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertEqual(pipeline.nodes['coregister1'].get_plug_value('coregistered_files'),
                          os.path.abspath(os.path.join(folder, nii_file)))'''
 
+    def test_iteration_table(self):
+        """
+        Plays with the iteration table
+        """
+
+        self.main_window.switch_project("project_8", "project_8", "project_8")
+        iteration_table = self.main_window.pipeline_manager.iterationTable
+        iteration_table.check_box_iterate.setChecked(True)
+        iteration_table.update_iterated_tag("BandWidth")
+        self.assertEqual(iteration_table.iterated_tag_label.text(), "BandWidth:")
+        iteration_table.add_tag()
+        self.assertEqual(len(iteration_table.push_buttons), 3)
+        iteration_table.remove_tag()
+        self.assertEqual(len(iteration_table.push_buttons), 2)
+        iteration_table.add_tag()
+        iteration_table.push_buttons[2].setText("AcquisitionTime")
+        iteration_table.fill_values(2)
+        iteration_table.update_table()
+        self.assertTrue(iteration_table.combo_box.currentText() in ["25000.0", "65789.48", "357142.84", "50000.0"])
+
 
 if __name__ == '__main__':
     unittest.main()
