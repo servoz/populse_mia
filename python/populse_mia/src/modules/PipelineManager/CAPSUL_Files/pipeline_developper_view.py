@@ -2072,8 +2072,10 @@ class PipelineScene(QtGui.QGraphicsScene):
         trait_type_str = trait_type_str[trait_type_str.rfind('.') + 1:]
         return trait_type_str
 
+from PyQt5.QtWidgets import QGraphicsView
 
-class PipelineDevelopperView(QtGui.QGraphicsView):
+# class PipelineDevelopperView(QtGui.QGraphicsView):
+class PipelineDevelopperView(QGraphicsView):
     '''
     Pipeline representation as a graph, using boxes and arrows.
 
@@ -2328,7 +2330,7 @@ class PipelineDevelopperView(QtGui.QGraphicsView):
             adding process boxes, drawing links etc. If pipeline is not
             specified, then edition will be activated anyway.
         '''
-        print(parent)
+
         super(PipelineDevelopperView, self).__init__(parent)
 
         self.setRenderHints(Qt.QPainter.Antialiasing | Qt.QPainter.SmoothPixmapTransform)
