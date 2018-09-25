@@ -2076,7 +2076,6 @@ class PipelineScene(QtGui.QGraphicsScene):
         return trait_type_str
 
 
-# class PipelineDevelopperView(QtGui.QGraphicsView):
 class PipelineDevelopperView(QGraphicsView):
     '''
     Pipeline representation as a graph, using boxes and arrows.
