@@ -101,4 +101,8 @@ ENV/
 .mypy_cache/
 
 # Editor backup files
-*~
+*~python/populse_mia/processes/MIA_processes/*
+python/populse_mia/src/modules/PipelineManager/Processes/MIA_processes/*
+src/modules/NodeEditor/Processes/processes.py
+src/modules/PipelineManager/Processes/processes.py
+python/populse_mia/src/modules/PipelineManager/Processes/*
