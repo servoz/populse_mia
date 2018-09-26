@@ -95,6 +95,7 @@ class PipelineManagerTab(QWidget):
         else:
             self.scan_list = scan_list
         self.main_window = main_window
+        self.disable_progress_bar = False
 
         # This list is the list of scans contained in the iteration table
         # If it is empty, the scan list in the Pipeline Manager is the scan list from the DataBrowser
@@ -575,8 +576,11 @@ class PipelineManagerTab(QWidget):
             pr.enable()"""
 
         self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline)
-        self.progress.show()
-        self.progress.exec()
+        if self.disable_progress_bar:
+            self.progress.worker.init_pipeline(pipeline)
+        else:
+            self.progress.show()
+            self.progress.exec()
 
         """sys.stdout = open('/home/david/profile.txt', 'w')
         pr.disable()
