@@ -64,10 +64,10 @@ class ProcessLibraryWidget(QWidget):
         self.process_library.setDragEnabled(True)
         self.process_library.setSelectionMode(self.process_library.SingleSelection)
 
-        # Push button to call the package library
-        push_button_pkg_lib = QPushButton()
-        push_button_pkg_lib.setText('Package library manager')
-        push_button_pkg_lib.clicked.connect(self.open_pkg_lib)
+        # # Push button to call the package library
+        # push_button_pkg_lib = QPushButton()
+        # push_button_pkg_lib.setText('Package library manager')
+        # push_button_pkg_lib.clicked.connect(self.open_pkg_lib)
 
         # Test to see the inputs/outputs of a process
         self.label_test = QLabel()
@@ -79,7 +79,7 @@ class ProcessLibraryWidget(QWidget):
 
         # Layout
         h_box = QVBoxLayout()
-        h_box.addWidget(push_button_pkg_lib)
+        # h_box.addWidget(push_button_pkg_lib)
         h_box.addWidget(self.splitter)
 
         self.setLayout(h_box)
