@@ -646,6 +646,7 @@ class Main_Window(QMainWindow):
         self.pop_up_package_library = PackageLibraryDialog()
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
         self.pop_up_package_library.show()
+        self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
 
     def install_processes_pop_up(self):
         """ Opens the install processes pop-up """
