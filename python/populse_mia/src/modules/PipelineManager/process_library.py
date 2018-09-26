@@ -66,7 +66,7 @@ class ProcessLibraryWidget(QWidget):
 
         # Push button to call the package library
         push_button_pkg_lib = QPushButton()
-        push_button_pkg_lib.setText('Package Library')
+        push_button_pkg_lib.setText('Package library manager')
         push_button_pkg_lib.clicked.connect(self.open_pkg_lib)
 
         # Test to see the inputs/outputs of a process
@@ -542,7 +542,7 @@ class PackageLibraryDialog(QDialog):
 
         super(PackageLibraryDialog, self).__init__()
 
-        self.setWindowTitle("Package Library")
+        self.setWindowTitle("Package library manager")
 
         # True if the path specified in the line edit is a path with '/'
         self.is_path = False

@@ -112,7 +112,7 @@ class Main_Window(QMainWindow):
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
-        self.action_package_library = QAction('Package library', self)
+        self.action_package_library = QAction('Package library manager', self)
         if Config().get_clinical_mode() == 'yes':
             self.action_package_library.setDisabled(True)
         else:
