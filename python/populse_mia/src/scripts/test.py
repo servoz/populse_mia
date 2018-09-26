@@ -1479,18 +1479,19 @@ class TestMIAPipelineManager(unittest.TestCase):
         node_controller = self.main_window.pipeline_manager.nodeController
 
         # Adding a process
-        from nipype.interfaces.spm import Threshold
-        process_class = Threshold
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
         pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
 
         # Displaying the node parameters
         pipeline = pipeline_editor_tabs.get_current_pipeline()
-        node_controller.display_parameters("threshold1", get_process_instance(process_class), pipeline)
+        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
 
         # Exporting the input plugs
-        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
         from PipelineManager.PipelineEditor import save_pipeline
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
@@ -1511,7 +1512,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.load_pipeline(filename)
 
         pipeline = pipeline_editor_tabs.get_current_pipeline()
-        self.assertTrue("threshold1" in pipeline.nodes.keys())
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
 
     def test_z_open_sub_pipeline(self):
         """
@@ -1543,6 +1544,64 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertTrue(pipeline_editor_tabs.count(), 3)
         self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), "test_pipeline.py")
 
+    def test_z_init_pipeline(self):
+        """
+        Initializes the pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Forcing the exit
+        self.main_window.force_exit = True
+
+        # Adding the processes path to the system path
+        import sys
+        sys.path.append(os.path.join('..', '..', 'processes'))
+
+        # Importing the package
+        package_name = 'User_processes'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Test_pipeline':
+                process_class = cls
+
+        # Adding the "test_pipeline" as a process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+
+        # Added another Smooth process
+        from nipype.interfaces.spm import Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
+        pipeline_editor_tabs.get_current_editor().add_process(Smooth)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        # Verifying that all the processes are here
+        self.assertTrue('test_pipeline1' in pipeline.nodes.keys())
+        self.assertTrue('smooth1' in pipeline.nodes.keys())
+
+        # Adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("test_pipeline1", "in_files"),
+                                                           active=True, weak=False)
+
+        # Choosing a nii file from the project_8's raw_data folder
+        folder = os.path.abspath(os.path.join('project_8', 'data', 'raw_data'))
+        nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
+        nii_path = os.path.abspath(os.path.join(folder, nii_file))
+
+        # Setting values to verify that the initialization works well
+        pipeline.nodes['smooth1'].set_plug_value('in_files', nii_path)
+        pipeline.nodes['smooth1'].set_plug_value('out_prefix', 'TEST')
+
+        # Initialization of the pipeline
+        self.main_window.pipeline_manager.initPipeline()
+
+        # Verifying the results
+        self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('_smoothed_files'),
+                         os.path.abspath(os.path.join(folder, 'TEST' + nii_file)))
+        self.assertEqual(pipeline.nodes['test_pipeline1'].get_plug_value('_smoothed_files'),
+                         os.path.abspath(os.path.join(folder, 'sTEST' + nii_file)))
 
     '''def test_init_MIA_processes(self):
         """
@@ -1870,7 +1929,6 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         pipeline_manager.redo()
         self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
-
 
 if __name__ == '__main__':
     unittest.main()
