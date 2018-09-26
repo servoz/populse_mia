@@ -1281,6 +1281,10 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertEqual(pipeline_editor_tabs.count(), 2)
         self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline 1")
 
+        # When the last editor is closed, one is automatically opened
+        pipeline_editor_tabs.close_tab(0)
+        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline")
+
         # Modifying the pipeline editor
         from nipype.interfaces.spm import Smooth
         process_class = Smooth
@@ -1491,7 +1495,54 @@ class TestMIAPipelineManager(unittest.TestCase):
         from PipelineManager.PipelineEditor import save_pipeline
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
+        self.main_window.pipeline_manager.updateProcessLibrary(filename)
         self.assertTrue(os.path.isfile(os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')))
+
+    def test_z_load_pipeline(self):
+        """
+        Loads a pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline = get_process_instance("User_processes.Test_pipeline")
+        pipeline_editor_tabs.get_current_editor().set_pipeline(pipeline)
+        pipeline_editor_tabs.get_current_editor()._pipeline_filename = filename
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("threshold1" in pipeline.nodes.keys())
+
+    def test_z_open_sub_pipeline(self):
+        """
+        Opens a sub_pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding the processes path to the system path
+        import sys
+        sys.path.append(os.path.join('..', '..', 'processes'))
+
+        # Importing the package
+        package_name = 'User_processes'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Test_pipeline':
+                process_class = cls
+
+        # Adding the "test_pipeline" as a process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+
+        # Opening the sub-pipeline in a new editor
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        process_instance = pipeline.nodes["test_pipeline1"].process
+        pipeline_editor_tabs.open_sub_pipeline(process_instance)
+
+        self.assertTrue(pipeline_editor_tabs.count(), 3)
+        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), "test_pipeline.py")
+
 
     '''def test_init_MIA_processes(self):
         """
