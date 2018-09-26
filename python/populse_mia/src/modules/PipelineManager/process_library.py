@@ -424,49 +424,48 @@ class DictionaryTreeModel(QAbstractItemModel):
     def to_dict(self):
         return self._rootNode.to_dict()
 
-
-def node_structure_from_dict(datadict, parent=None, root_node=None, list_name=None, flag=None):
+def node_structure_from_dict(datadict, parent=None, root_node=None):
     """returns a hierarchical node stucture required by the TreeModel"""
-
+    
     if not parent:
         root_node = Node('Root')
         parent = root_node
-        list_name = []
-
-    len_datadict=len(datadict)
-    data_list=[]
-    counter=0
 
     for name, data in sorted(datadict.items()):
-
+        
         if isinstance(data, dict):
-            list_name.append(name)
-            node = Node(name)
-            list_name = node_structure_from_dict(data, parent=node, root_node=root_node, list_name=list_name, flag=True)
 
-        else:
-            counter+=1
-            data_list.append(data)
+            if True in [True for value in data.values() if value == 'process_enabled']:
+                list_name = [value for value in data.values() if value == 'process_enabled']
 
-            if data == 'process_enabled':
+            else:
                 
-                for i in list_name:
+                list_name=[]
+                list_values = [value for value in data.values() if isinstance(value, dict)]
 
-                    try: trash = Node(i, trash)
-                    except: trash  = Node(i, root_node)
-                    
-                list_name = []
-                node = Node(name, trash)
-                node.value = data
+                while (list_values):
+                    value = list_values.pop()
 
-            if all(item == 'process_disabled' for item in data_list) and counter == len_datadict:
-                list_name = []
+                    for i in value.values():
 
-    if flag is True:
-        return list_name
-    
-    else:
-        return root_node
+                        if not isinstance(i, dict):
+                            list_name.append(i)
+
+                    list_values = list_values + [i for i in value.values() if isinstance(i, dict)]
+
+            #if not list_name: list_name = [i for i in data.values()]
+                
+            if (all(item == 'process_disabled' for item in list_name)):
+                continue
+                
+            node = Node(name, parent)
+            node = node_structure_from_dict(data, node, root_node)
+            
+        elif data == 'process_enabled':
+            node = Node(name, parent)
+            node.value = data
+
+    return root_node
 
 class ProcessLibrary(QTreeView):
     """
