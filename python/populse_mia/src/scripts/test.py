@@ -1734,7 +1734,143 @@ class TestMIAPipelineManager(unittest.TestCase):
         iteration_table.update_table()
         self.assertTrue(iteration_table.combo_box.currentText() in ["25000.0", "65789.48", "357142.84", "50000.0"])
 
+    def test_undo_redo(self):
+        """
+        Tests the undo/redo actions
+        """
+
+        pipeline_manager = self.main_window.pipeline_manager
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.undo()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.redo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        # Deleting the process
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
+        pipeline_editor_tabs.get_current_editor().del_node()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.undo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.redo()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        # Adding a new process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+
+        # Exporting the "out_prefix" plug
+        pipeline_editor_tabs.get_current_editor()._export_plug(temp_plug_name=("smooth1", "out_prefix"),
+                                                               pipeline_parameter="prefix_smooth",
+                                                               optional=False,
+                                                               weak_link=False)
+
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.undo()
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.redo()
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        # Deleting the "out_prefix" plug
+        pipeline_editor_tabs.get_current_editor()._remove_plug(_temp_plug_name=("inputs", "prefix_smooth"))
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.undo()
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.redo()
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        # TODO: export_plugs (currently there is a bug when a plug is of type list)
+
+        # Adding a new process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
+
+        # Adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Removing a link
+        link = "smooth1._smoothed_files->smooth2.in_files"
+        pipeline_editor_tabs.get_current_editor()._del_link(link)
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Re-adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        # Updating the node name
+        node_controller.display_parameters("smooth2", get_process_instance(process_class), pipeline)
+        node_controller.line_edit_node_name.setText("my_smooth")
+        node_controller.update_node_name(pipeline)
+        self.assertTrue("my_smooth" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertFalse("my_smooth" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertTrue("my_smooth" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Updating a plug value
+        index = node_controller.get_index_from_plug_name("out_prefix", "in")
+        node_controller.line_edit_input[index].setText("PREFIX")
+        node_controller.update_plug_value("in", "out_prefix", pipeline, str)
+
+        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+        pipeline_manager.undo()
+        self.assertEqual("s", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+        pipeline_manager.redo()
+        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
 
 if __name__ == '__main__':
     unittest.main()
-    # unittest.main(verbosity=2)
