@@ -650,6 +650,7 @@ class InitProgress(QProgressDialog):
         self.setWindowTitle("Pipeline initialization")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.setModal(False)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
 
         self.project = project
         self.diagramView = diagram_view
