@@ -997,11 +997,11 @@ class InitWorker(QThread):
 
     def run(self):
         self.init_pipeline(self.pipeline)
-        self.finished.emit()
+        QApplication.processEvents()
+        # self.finished.emit()
         idx = self.progress.value()
         idx += 1
         self.progress.setValue(idx)
-        QApplication.processEvents()
 
 
 class RunProgress(QProgressDialog):
