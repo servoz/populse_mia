@@ -18,7 +18,7 @@ from MainWindow.Main_Window import Main_Window
 from SoftwareProperties.Config import Config
 from capsul.api import get_process_instance
 
-
+'''
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1223,7 +1223,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.main_window.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-
+'''
 
 class TestMIAPipelineManager(unittest.TestCase):
 
@@ -1930,6 +1930,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         pipeline_manager.redo()
         self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
 
 if __name__ == '__main__':
     unittest.main()

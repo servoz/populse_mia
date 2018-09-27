@@ -576,12 +576,8 @@ class PipelineManagerTab(QWidget):
             pr.enable()"""
 
         self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline)
-        if self.disable_progress_bar:
-            # self.progress.worker.init_pipeline(pipeline)
-            self.progress.show()
-        else:
-            self.progress.show()
-            self.progress.exec()
+        self.progress.show()
+        self.progress.exec()
 
         """sys.stdout = open('/home/david/profile.txt', 'w')
         pr.disable()
@@ -997,6 +993,7 @@ class InitWorker(QThread):
 
     def run(self):
         self.init_pipeline(self.pipeline)
+        self.finished.emit()
         idx = self.progress.value()
         idx += 1
         self.progress.setValue(idx)
