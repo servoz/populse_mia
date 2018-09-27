@@ -1008,9 +1008,6 @@ class PackageLibrary(QTreeWidget):
                     parent.setCheckState(0, Qt.Unchecked)
                     self.recursive_checks_from_child(parent)
 
-        # else:
-        #     child.setCheckState(0, Qt.Checked)
-
     def generate_tree(self):
         """
         Generates the package tree
