@@ -577,7 +577,8 @@ class PipelineManagerTab(QWidget):
 
         self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline)
         if self.disable_progress_bar:
-            self.progress.worker.init_pipeline(pipeline)
+            # self.progress.worker.init_pipeline(pipeline)
+            self.progress.show()
         else:
             self.progress.show()
             self.progress.exec()
