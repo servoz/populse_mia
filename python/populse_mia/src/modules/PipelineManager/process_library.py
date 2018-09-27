@@ -919,7 +919,13 @@ class PackageLibrary(QTreeWidget):
         """
         # Checked state is stored on column 0
         if column == 0:
-            self.recursive_checks(item)
+            self.itemChanged.disconnect()
+            if item.childCount():
+                self.recursive_checks(item)
+            if item.parent():
+                self.recursive_checks_from_child(item)
+
+            self.itemChanged.connect(self.update_checks)
 
     def set_module_view(self, item, state):
         """
@@ -982,14 +988,28 @@ class PackageLibrary(QTreeWidget):
         :param child: child item
         :return:
         """
-        """ If a child is checked, his parents has to be checked """
+
         if child.parent():
             parent = child.parent()
-            if parent.checkState(0) == Qt.Unchecked:
-                parent.setCheckState(0, Qt.Checked)
-                self.recursive_checks_from_child(parent)
-        else:
-            child.setCheckState(0, Qt.Checked)
+            if child.checkState(0) == Qt.Checked:
+                if parent.checkState(0) == Qt.Unchecked:
+                    parent.setCheckState(0, Qt.Checked)
+                    self.recursive_checks_from_child(parent)
+            else:
+                # checked_children = []
+                # for child in range(parent.childCount()):
+                #
+                #     if child.checkState(0) == Qt.Checked:
+                #         checked_children.append()
+
+                checked_children = [child for child in range(parent.childCount())
+                                    if parent.child(child).checkState(0) == Qt.Checked]
+                if not checked_children:
+                    parent.setCheckState(0, Qt.Unchecked)
+                    self.recursive_checks_from_child(parent)
+
+        # else:
+        #     child.setCheckState(0, Qt.Checked)
 
     def generate_tree(self):
         """
