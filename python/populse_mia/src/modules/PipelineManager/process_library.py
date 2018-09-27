@@ -563,9 +563,9 @@ class PackageLibraryDialog(QDialog):
         push_button_add_pkg.setText("Add package")
         push_button_add_pkg.clicked.connect(self.add_package_with_text)
 
-        '''push_button_rm_pkg = QPushButton()
+        push_button_rm_pkg = QPushButton()
         push_button_rm_pkg.setText("Remove package")
-        push_button_rm_pkg.clicked.connect(self.remove_package_with_text)'''
+        push_button_rm_pkg.clicked.connect(self.remove_package_with_text)
 
         push_button_save = QPushButton()
         push_button_save.setText("Save changes")
@@ -575,17 +575,24 @@ class PackageLibraryDialog(QDialog):
 
         h_box_line_edit = QHBoxLayout()
         h_box_line_edit.addWidget(self.line_edit)
-        h_box_line_edit.addWidget(push_button_add_pkg)
+        # h_box_line_edit.addWidget(push_button_add_pkg)
         # h_box_browse.addWidget(push_button_browse)
 
         h_box_save = QHBoxLayout()
         h_box_save.addStretch(1)
         h_box_save.addWidget(push_button_save)
 
+        h_box_buttons = QHBoxLayout()
+        h_box_buttons.addStretch(1)
+        h_box_buttons.addWidget(push_button_add_pkg)
+        h_box_buttons.addStretch(1)
+        h_box_buttons.addWidget(push_button_rm_pkg)
+        h_box_buttons.addStretch(1)
+
         v_box = QVBoxLayout()
         v_box.addStretch(1)
         v_box.addLayout(h_box_line_edit)
-        # v_box.addWidget(push_button_rm_pkg)
+        v_box.addLayout(h_box_buttons)
         v_box.addStretch(1)
         v_box.addLayout(h_box_save)
 
@@ -785,7 +792,13 @@ class PackageLibraryDialog(QDialog):
                     else:
                         del pkg_iter[element]
                 else:
-                    print('Package not found')
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setWindowTitle("Warning: Package not found in Package Library")
+                    msg.setText("Package {0} not found".format(package))
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
                     break
 
         self.package_library.package_tree = self.packages
