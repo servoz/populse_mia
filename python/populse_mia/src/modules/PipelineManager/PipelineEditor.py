@@ -1026,17 +1026,6 @@ class PipelineEditor(PipelineDevelopperView):
             _temp_plug_name = self._temp_plug_name
 
         if _temp_plug_name[0] in ('inputs', 'outputs'):
-            # Uncomment to understand the bug when the plug's type is List
-            """print('#' * 50)
-            print(_temp_plug_name)
-            for trait_name, trait in self.scene.pipeline.traits().items():
-                print(trait_name, trait)
-                if trait.handler is None:
-                    print('HANDLER IS NONE')
-                else:
-                    print('HANDLER:', trait.handler)
-                    if trait.has_items:
-                        print("HANDLER HAS ITEMS")"""
             plug_name = _temp_plug_name[1]
             plug = self.scene.pipeline.pipeline_node.plugs[plug_name]
             optional = plug.optional

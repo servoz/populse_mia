@@ -946,13 +946,9 @@ class InitProgress(QProgressDialog):
         self.setValue(0)
 
         self.worker = InitWorker(self.project, self.diagramView, self.pipeline, self)
-        self.worker.finished.connect(self.close_widget)
+        self.worker.finished.connect(self.close)
         self.worker.notifyProgress.connect(self.onProgress)
         self.worker.start()
-
-    def close_widget(self):
-        print("THE WIDGET HAS BEEN CLOSED")
-        self.close()
 
     def onProgress(self, i):
         """
