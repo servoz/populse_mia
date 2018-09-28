@@ -128,6 +128,10 @@ class Main_Window(QMainWindow):
         self.action_redo.setShortcut('Ctrl+Y')
 
         self.action_install_processes = QAction('Install processes', self)
+        if Config().get_clinical_mode() == 'yes':
+            self.action_install_processes.setDisabled(True)
+        else:
+            self.action_install_processes.setEnabled(True)
 
         # Connection of the several triggered signals of the actions to some other methods
         self.action_create.triggered.connect(self.create_project_pop_up)
@@ -637,8 +641,10 @@ class Main_Window(QMainWindow):
         """ Updates the package library action depending on the mode """
         if Config().get_clinical_mode() == 'yes':
             self.action_package_library.setDisabled(True)
+            self.action_install_processes.setDisabled(True)
         else:
             self.action_package_library.setEnabled(True)
+            self.action_install_processes.setEnabled(True)
 
     def package_library_pop_up(self):
         """ Opens the package library pop-up """
