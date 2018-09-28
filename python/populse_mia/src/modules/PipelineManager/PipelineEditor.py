@@ -1047,6 +1047,13 @@ class PipelineEditor(PipelineDevelopperView):
             for link in plug.links_from:
                 temp_plug = (link[0], link[1])
                 new_temp_plugs.append(temp_plug)
+
+            # To avoid the "_items" bug: setting the has_items attribute of the trait's handler to False
+            node = self.scene.pipeline.nodes['']
+            source_trait = node.get_trait(plug_name)
+            if source_trait.handler.has_items:
+                source_trait.handler.has_items = False
+
             self.scene.pipeline.remove_trait(_temp_plug_name[1])
             self.scene.update_pipeline()
 
