@@ -45,7 +45,7 @@ class ProcessLibraryWidget(QWidget):
         - save_config: saves the current config to process_config.yml
     """
 
-    def __init__(self, main_window):
+    def __init__(self, main_window=None):
         """
         Initializes the ProcessLibraryWidget
         """
@@ -1273,6 +1273,194 @@ class InstallProcesses(QDialog):
             yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
         self.process_installed.emit()
+
+    def install_bis(self):
+        """
+        To be removed after (to avoid merge conflict)
+        :return:
+        """
+
+        def add_package(proc_dic, module_name):
+            """
+            Adds a package and its modules to the package tree
+
+
+            :param proc_dic: the process tree-dictionary
+            :param module_name: name of the module
+            :return: proc_dic: the modified process tree-dictionary
+            """
+
+            if module_name:
+
+                # Reloading the package
+                if module_name in sys.modules.keys():
+                    del sys.modules[module_name]
+
+                __import__(module_name)
+                pkg = sys.modules[module_name]
+
+                # Checking if there are subpackages
+                for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+                    if ispkg:
+                        add_package(proc_dic, str(module_name + '.' + modname))
+
+                for k, v in sorted(list(pkg.__dict__.items())):
+                    # Checking each class of in the package
+                    if inspect.isclass(v):
+                        try:
+                            find_in_path(k)
+                        except:
+                            pass
+                        else:
+                            # Updating the tree's dictionnary
+                            path_list = module_name.split('.')
+                            path_list.append(k)
+                            pkg_iter = proc_dic
+                            for element in path_list:
+                                if element in pkg_iter.keys():
+                                    pkg_iter = pkg_iter[element]
+                                else:
+                                    if element is path_list[-1]:
+                                        pkg_iter[element] = 'process_enabled'
+                                    else:
+                                        pkg_iter[element] = {}
+                                        pkg_iter = pkg_iter[element]
+
+                return proc_dic
+
+        try:
+            filename = self.path_edit.text()
+
+            if not os.path.isfile(filename):
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file cannot be found")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
+            if os.path.splitext(filename)[1] != ".zip":
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file has to be a .zip file")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
+
+            sys.path.append(os.path.join('..', '..', 'processes'))
+
+            # Process config update
+            if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
+                open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
+
+            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+                try:
+                    process_dic = yaml.load(stream)
+                except yaml.YAMLError as exc:
+                    process_dic = {}
+                    print(exc)
+
+            if process_dic is None:
+                process_dic = {}
+
+            # Added in install_bis
+            from copy import copy
+            process_dic_orig = copy(process_dic)
+
+            try:
+                packages = process_dic["Packages"]
+            except KeyError:
+                packages = {}
+            except TypeError:
+                packages = {}
+
+            try:
+                paths = process_dic["Paths"]
+            except KeyError:
+                paths = []
+            except TypeError:
+                paths = []
+
+            # Extraction of the zipped content
+            zip_ref = zipfile.ZipFile(filename, 'r')
+
+            sys.path.append(os.path.join('..', '..', 'processes'))
+
+            # Added in install_bis
+            package_names = []
+            mia_processes_not_found = True
+            import tempfile
+            tmp_folder = None
+
+            for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist()
+                                 if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
+
+                # Added in install_bis to copy MIA_processes in a temporary folder
+                if mia_processes_not_found:
+                    if package_name == "MIA_processes":
+                        mia_processes_not_found = False
+                        tmp_folder = tempfile.mkdtemp()
+                        print("TMP FOLDER", tmp_folder)
+                        if os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes')):
+                            import shutil
+                            shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
+                                            os.path.join(tmp_folder, 'MIA_processes'))
+
+                for member in zip_ref.namelist():
+
+                    if member.split(os.sep)[0] == package_name:
+                        zip_ref.extract(member, os.path.join('..', '..', 'processes'))
+
+                # Added in install_bis
+                package_names.append(package_name)
+
+                final_package_dic = add_package(packages, package_name)
+
+                if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
+                    paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+
+                process_dic["Packages"] = final_package_dic
+                process_dic["Paths"] = paths
+            # Idea: Should we encrypt the path ?
+
+            zip_ref.close()
+
+            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+                yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
+
+            self.process_installed.emit()
+
+        except Exception as e:  # Don't know which kind of exception can be raised yet
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText(e)
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
+            # Resetting process_config.yml
+            if process_dic_orig is None:
+                process_dic_orig = {}
+            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+                yaml.dump(process_dic_orig, stream, default_flow_style=False, allow_unicode=True)
+
+            # Deleting the extracted files
+            import shutil
+            if package_names is None:
+                package_names = []
+            for package_name in package_names:
+                if os.path.exists(os.path.join('..', '..', 'processes', package_name)):
+                    shutil.rmtree(os.path.join('..', '..', 'processes', package_name))
+
+            # If the error comes from a MIA_process update, the old version is restored
+            if not mia_processes_not_found:
+                if tmp_folder is not None:
+                    shutil.copytree(os.path.join(tmp_folder, 'MIA_processes'),
+                                    os.path.join('..', '..', 'processes', 'MIA_processes'),)
 
 
 if __name__ == "__main__":
