@@ -814,6 +814,8 @@ class PackageLibraryDialog(QDialog):
         # Updating the packages and the paths according to the package library tree
         self.packages = self.package_library.package_tree
         self.paths = self.package_library.paths
+        print("packages", self.packages)
+        print("packages nipype interfaces afni", self.packages["nipype"]["interfaces"]["afni"])
         if self.process_config:
             if self.process_config.get("Packages"):
                 del self.process_config["Packages"]
@@ -1001,6 +1003,11 @@ class PackageLibrary(QTreeWidget):
         :param child: child item
         :return:
         """
+
+        check_state = child.checkState(0)
+
+        if child.childCount() == 0:
+            self.set_module_view(child, check_state)
 
         if child.parent():
             parent = child.parent()
