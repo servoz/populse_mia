@@ -814,8 +814,7 @@ class PackageLibraryDialog(QDialog):
         # Updating the packages and the paths according to the package library tree
         self.packages = self.package_library.package_tree
         self.paths = self.package_library.paths
-        print("packages", self.packages)
-        print("packages nipype interfaces afni", self.packages["nipype"]["interfaces"]["afni"])
+
         if self.process_config:
             if self.process_config.get("Packages"):
                 del self.process_config["Packages"]
@@ -1213,11 +1212,7 @@ class InstallProcesses(QWidget):
             return
 
         # Extraction of the zipped content
-        if os.path.isfile(filename):
-            zip_ref = zipfile.ZipFile(filename, 'r')
-        else:
-            raise FileNotFoundError("File {0} not found in MIA's root folder".format(filename))
-
+        zip_ref = zipfile.ZipFile(filename, 'r')
         zip_ref.extractall(os.path.join('..', '..', 'processes'))
         zip_ref.close()
 
