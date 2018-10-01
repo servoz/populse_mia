@@ -1193,6 +1193,7 @@ class InstallProcesses(QWidget):
                 return proc_dic
 
         filename = self.path_edit.text()
+
         if not os.path.isfile(filename):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -1212,16 +1213,10 @@ class InstallProcesses(QWidget):
             msg.exec()
             return
 
-        # Extraction of the zipped content
-        if os.path.isfile(filename):
-            zip_ref = zipfile.ZipFile(filename, 'r')
-        else:
-            raise FileNotFoundError("File {0} not found in MIA's root folder".format(filename))
-
-        zip_ref.extractall(os.path.join('..', '..', 'processes'))
-        zip_ref.close()
-
+        sys.path.append(os.path.join('..', '..', 'processes'))
+        
         # Process config update
+        
         if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
             open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
 
@@ -1249,22 +1244,37 @@ class InstallProcesses(QWidget):
         except TypeError:
             paths = []
 
-        package_name = os.path.splitext(os.path.basename(filename))[0]
+        # Extraction of the zipped content
+        
+        if os.path.isfile(filename):
+            zip_ref = zipfile.ZipFile(filename, 'r')
+        else:
+            raise FileNotFoundError("File {0} not found ...".format(filename))
+
         sys.path.append(os.path.join('..', '..', 'processes'))
-        final_package_dic = add_package(packages, package_name)
 
-        if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
-            paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+        for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist() if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
 
-        process_dic["Packages"] = final_package_dic
-        process_dic["Paths"] = paths
+            for member in zip_ref.namelist():
+
+                if member.split(os.sep)[0] == package_name:
+                    zip_ref.extract(member, os.path.join('..', '..', 'processes'))
+
+            final_package_dic = add_package(packages, package_name)
+
+            if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
+                paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+
+            process_dic["Packages"] = final_package_dic
+            process_dic["Paths"] = paths
         # Idea: Should we encrypt the path ?
+
+        zip_ref.close()
 
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
             yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
         self.process_installed.emit()
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
