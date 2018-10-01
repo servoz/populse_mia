@@ -814,8 +814,7 @@ class PackageLibraryDialog(QDialog):
         # Updating the packages and the paths according to the package library tree
         self.packages = self.package_library.package_tree
         self.paths = self.package_library.paths
-        print("packages", self.packages)
-        print("packages nipype interfaces afni", self.packages["nipype"]["interfaces"]["afni"])
+
         if self.process_config:
             if self.process_config.get("Packages"):
                 del self.process_config["Packages"]
@@ -1214,7 +1213,6 @@ class InstallProcesses(QWidget):
             return
 
         sys.path.append(os.path.join('..', '..', 'processes'))
-        
         # Process config update
         
         if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
@@ -1245,11 +1243,7 @@ class InstallProcesses(QWidget):
             paths = []
 
         # Extraction of the zipped content
-        
-        if os.path.isfile(filename):
-            zip_ref = zipfile.ZipFile(filename, 'r')
-        else:
-            raise FileNotFoundError("File {0} not found ...".format(filename))
+        zip_ref = zipfile.ZipFile(filename, 'r')
 
         sys.path.append(os.path.join('..', '..', 'processes'))
 
