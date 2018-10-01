@@ -1098,7 +1098,7 @@ class ProcessHelp(QWidget):
         label.setText(process.help())
 
 
-class InstallProcesses(QWidget):
+class InstallProcesses(QDialog):
     """
     A widget that allows to browse a Python package or a zip file to install the
     processes that it is containing.
@@ -1106,8 +1106,10 @@ class InstallProcesses(QWidget):
 
     process_installed = Signal()
 
-    def __init__(self):
-        super(InstallProcesses, self).__init__()
+    def __init__(self, main_window):
+        super(InstallProcesses, self).__init__(parent=main_window)
+
+        self.setWindowTitle('Install processes')
 
         v_layout = QVBoxLayout()
         self.setLayout(v_layout)

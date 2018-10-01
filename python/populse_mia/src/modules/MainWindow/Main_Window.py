@@ -657,7 +657,7 @@ class Main_Window(QMainWindow):
     def install_processes_pop_up(self):
         """ Opens the install processes pop-up """
         from PipelineManager.process_library import InstallProcesses
-        self.pop_up_install_processes = InstallProcesses()
+        self.pop_up_install_processes = InstallProcesses(self)
         self.pop_up_install_processes.show()
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
