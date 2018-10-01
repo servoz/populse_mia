@@ -649,7 +649,7 @@ class Main_Window(QMainWindow):
     def package_library_pop_up(self):
         """ Opens the package library pop-up """
         from PipelineManager.process_library import PackageLibraryDialog
-        self.pop_up_package_library = PackageLibraryDialog()
+        self.pop_up_package_library = PackageLibraryDialog(self)
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
         self.pop_up_package_library.show()
         self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)

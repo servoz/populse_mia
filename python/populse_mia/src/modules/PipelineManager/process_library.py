@@ -45,14 +45,15 @@ class ProcessLibraryWidget(QWidget):
         - save_config: saves the current config to process_config.yml
     """
 
-    def __init__(self):
+    def __init__(self, main_window):
         """
         Initializes the ProcessLibraryWidget
         """
 
-        super(ProcessLibraryWidget, self).__init__()
+        super(ProcessLibraryWidget, self).__init__(parent=main_window)
 
         self.setWindowTitle("Process Library")
+        self.main_window = main_window
 
         # Process Config
         self.update_config()
@@ -84,7 +85,7 @@ class ProcessLibraryWidget(QWidget):
 
         self.setLayout(h_box)
 
-        self.pkg_library = PackageLibraryDialog()
+        self.pkg_library = PackageLibraryDialog(parent=self.main_window)
         self.pkg_library.signal_save.connect(self.update_process_library)
 
     def update_config(self):
@@ -535,12 +536,12 @@ class PackageLibraryDialog(QDialog):
 
     signal_save = Signal()
 
-    def __init__(self):
+    def __init__(self, parent=None):
         """
         Initialization of the PackageLibraryDialog widget
         """
 
-        super(PackageLibraryDialog, self).__init__()
+        super(PackageLibraryDialog, self).__init__(parent)
 
         self.setWindowTitle("Package library manager")
 
@@ -1213,8 +1214,8 @@ class InstallProcesses(QWidget):
             return
 
         sys.path.append(os.path.join('..', '..', 'processes'))
+
         # Process config update
-        
         if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
             open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
 
@@ -1247,7 +1248,8 @@ class InstallProcesses(QWidget):
 
         sys.path.append(os.path.join('..', '..', 'processes'))
 
-        for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist() if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
+        for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist()
+                             if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
 
             for member in zip_ref.namelist():
 
@@ -1269,6 +1271,7 @@ class InstallProcesses(QWidget):
             yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
         self.process_installed.emit()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

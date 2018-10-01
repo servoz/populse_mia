@@ -106,7 +106,7 @@ class PipelineManagerTab(QWidget):
 
         self.verticalLayout = QVBoxLayout(self)
 
-        self.processLibrary = ProcessLibraryWidget()
+        self.processLibrary = ProcessLibraryWidget(self.main_window)
 
         # self.diagramScene = DiagramScene(self)
         self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list)
