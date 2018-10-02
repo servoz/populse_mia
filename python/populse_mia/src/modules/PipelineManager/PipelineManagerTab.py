@@ -1331,14 +1331,23 @@ class RunWorker(QThread):
         pipeline = get_process_instance(self.diagramView.get_current_pipeline())
 
         config = Config()
+        spm_standalone_path = config.get_spm_standalone_path()
         spm_path = config.get_spm_path()
         matlab_path = config.get_matlab_path()
         use_spm = config.get_use_spm()
-        if use_spm == "yes" and spm_path != "" and matlab_path != "" \
-                and spm_path is not None and matlab_path is not None:
-            study_config = StudyConfig(use_spm=True, spm_directory="{0}/".format(spm_path),
-                                       spm_exec="{0}/".format(matlab_path),
-                                       output_directory="{0}/".format(spm_path))
+        use_matlab = config.get_use_matlab()
+        matlab_standalone_path = config.get_matlab_standalone_path()
+        if use_spm == "yes" and os.path.exists(spm_path) and os.path.exists(matlab_path):
+            study_config = StudyConfig(use_spm=True, spm_directory="{0}/".format(spm_standalone_path),
+                                       spm_exec="{0}/".format(matlab_standalone_path),
+                                       output_directory="{0}/".format(spm_standalone_path), use_spm_standalone=True)
+
+        elif use_spm == "no" and use_matlab == "yes":  # Using without SPM standalone
+            study_config = StudyConfig(use_spm=True, use_spm_standalone=False,
+                                       matlab_exec="{0}".format(matlab_path),
+                                       spm_directory=spm_path,
+                                       spm_standalone=False,
+                                       use_matlab=True)
 
         else:
             study_config = StudyConfig(use_spm=False)

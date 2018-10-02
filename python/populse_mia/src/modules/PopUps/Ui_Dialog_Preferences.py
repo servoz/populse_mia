@@ -78,67 +78,162 @@ class Ui_Dialog_Preferences(QDialog):
         self.tab_tools.setObjectName("tab_tools")
         self.tab_widget.addTab(self.tab_tools, _translate("Dialog", "Tools"))
 
-        self.labels_layout = QVBoxLayout()
-        self.values_layout = QVBoxLayout()
-        self.global_layout = QHBoxLayout()
+        # Groupbox "Global preferences"
+        self.groupbox_global = QtWidgets.QGroupBox("Global preferences")
 
-        self.save_label = QLabel("Auto_save ")
-        self.labels_layout.addWidget(self.save_label)
         self.save_checkbox = QCheckBox('', self)
+        self.save_label = QLabel("Auto save")
+
         if config.isAutoSave() == "yes":
             self.save_checkbox.setChecked(1)
-        self.values_layout.addWidget(self.save_checkbox)
 
-        self.matlab_label = QLabel("MCR (MatLab Compiler Runtime) path ")
-        self.matlab_choice = QLineEdit(config.get_matlab_path())
-        self.matlab_browse = QPushButton("Browse")
-        self.matlab_browse.clicked.connect(self.browse_matlab)
+        h_box_auto_save = QtWidgets.QHBoxLayout()
+        h_box_auto_save.addWidget(self.save_checkbox)
+        h_box_auto_save.addWidget(self.save_label)
+        h_box_auto_save.addStretch(1)
 
-        self.spm_label = QLabel("SPM standalone path ")
-        self.spm_choice = QLineEdit(config.get_spm_path())
-        self.spm_browse = QPushButton("Browse")
-        self.spm_browse.clicked.connect(self.browse_spm)
-
-        self.use_spm_label = QLabel("Use SPM standalone for the pipelines")
-        self.labels_layout.addWidget(self.use_spm_label)
-        self.use_spm_checkbox = QCheckBox('', self)
-        self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
-        if config.get_use_spm() == "yes":
-            self.use_spm_checkbox.setChecked(1)
-        else:
-            self.use_spm_checkbox.setChecked(1)
-            self.use_spm_checkbox.setChecked(0)
-        self.values_layout.addWidget(self.use_spm_checkbox)
-
-
-        self.clinical_mode_label = QLabel("Use clinical mode")
-        self.labels_layout.addWidget(self.clinical_mode_label)
         self.clinical_mode_checkbox = QCheckBox('', self)
-        #self.clinical_mode_checkbox.stateChanged.connect(self.clinical_mode_changed)
+        self.clinical_mode_label = QLabel("Clinical mode")
+
         if config.get_clinical_mode() == "yes":
             self.clinical_mode_checkbox.setChecked(1)
         else:
             self.clinical_mode_checkbox.setChecked(1)
             self.clinical_mode_checkbox.setChecked(0)
-        self.values_layout.addWidget(self.clinical_mode_checkbox)
 
-        self.labels_layout.addWidget(self.matlab_label)
-        self.matlab_value_layout = QHBoxLayout()
-        self.matlab_value_layout.addWidget(self.matlab_choice)
-        self.matlab_value_layout.addWidget(self.matlab_browse)
-        self.values_layout.addLayout(self.matlab_value_layout)
+        h_box_clinical_mode = QtWidgets.QHBoxLayout()
+        h_box_clinical_mode.addWidget(self.clinical_mode_checkbox)
+        h_box_clinical_mode.addWidget(self.clinical_mode_label)
+        h_box_clinical_mode.addStretch(1)
 
-        self.labels_layout.addWidget(self.spm_label)
-        self.spm_value_layout = QHBoxLayout()
-        self.spm_value_layout.addWidget(self.spm_choice)
-        self.spm_value_layout.addWidget(self.spm_browse)
-        self.values_layout.addLayout(self.spm_value_layout)
+        v_box_global = QtWidgets.QVBoxLayout()
+        v_box_global.addLayout(h_box_auto_save)
+        v_box_global.addLayout(h_box_clinical_mode)
 
-        self.labels_layout.addStretch(1)
-        self.values_layout.addStretch(1)
-        self.global_layout.addLayout(self.labels_layout)
-        self.global_layout.addLayout(self.values_layout)
-        self.tab_tools.setLayout(self.global_layout)
+        self.groupbox_global.setLayout(v_box_global)
+
+        # Groupbox "Matlab"
+        self.groupbox_matlab = QtWidgets.QGroupBox("Matlab")
+        self.use_matlab_label = QLabel("Use Matlab")
+        self.use_matlab_checkbox = QCheckBox('', self)
+
+        self.matlab_label = QLabel("Matlab path:")
+        self.matlab_choice = QLineEdit(config.get_matlab_path())
+        self.matlab_browse = QPushButton("Browse")
+        self.matlab_browse.clicked.connect(self.browse_matlab)
+
+        self.matlab_standalone_label = QLabel("Matlab standalone path:")
+        self.matlab_standalone_choice = QLineEdit(config.get_matlab_standalone_path())
+        self.matlab_standalone_browse = QPushButton("Browse")
+        self.matlab_standalone_browse.clicked.connect(self.browse_matlab_standalone)
+
+        if config.get_use_matlab() == "yes":
+            self.use_matlab_checkbox.setChecked(1)
+        else:
+            self.use_matlab_checkbox.setChecked(0)
+
+        h_box_use_matlab = QtWidgets.QHBoxLayout()
+        h_box_use_matlab.addWidget(self.use_matlab_checkbox)
+        h_box_use_matlab.addWidget(self.use_matlab_label)
+        h_box_use_matlab.addStretch(1)
+
+        h_box_matlab_path = QtWidgets.QHBoxLayout()
+        h_box_matlab_path.addWidget(self.matlab_choice)
+        h_box_matlab_path.addWidget(self.matlab_browse)
+
+        v_box_matlab_path = QtWidgets.QVBoxLayout()
+        v_box_matlab_path.addWidget(self.matlab_label)
+        v_box_matlab_path.addLayout(h_box_matlab_path)
+
+        h_box_matlab_standalone_path = QtWidgets.QHBoxLayout()
+        h_box_matlab_standalone_path.addWidget(self.matlab_standalone_choice)
+        h_box_matlab_standalone_path.addWidget(self.matlab_standalone_browse)
+
+        v_box_matlab_standalone_path = QtWidgets.QVBoxLayout()
+        v_box_matlab_standalone_path.addWidget(self.matlab_standalone_label)
+        v_box_matlab_standalone_path.addLayout(h_box_matlab_standalone_path)
+
+        v_box_matlab = QtWidgets.QVBoxLayout()
+        v_box_matlab.addLayout(h_box_use_matlab)
+        v_box_matlab.addLayout(v_box_matlab_path)
+        v_box_matlab.addLayout(v_box_matlab_standalone_path)
+
+        self.groupbox_matlab.setLayout(v_box_matlab)
+
+        # Groupbox "SPM"
+        self.groupbox_spm = QtWidgets.QGroupBox("SPM")
+
+        self.use_spm_label = QLabel("Use SPM")
+        self.use_spm_checkbox = QCheckBox('', self)
+
+        self.spm_label = QLabel("SPM path:")
+        self.spm_choice = QLineEdit(config.get_spm_path())
+        self.spm_browse = QPushButton("Browse")
+        self.spm_browse.clicked.connect(self.browse_spm)
+
+        if config.get_use_spm() == "yes":
+            self.use_spm_checkbox.setChecked(1)
+        else:
+            self.use_spm_checkbox.setChecked(0)
+
+        h_box_use_spm = QtWidgets.QHBoxLayout()
+        h_box_use_spm.addWidget(self.use_spm_checkbox)
+        h_box_use_spm.addWidget(self.use_spm_label)
+        h_box_use_spm.addStretch(1)
+
+        h_box_spm_path = QtWidgets.QHBoxLayout()
+        h_box_spm_path.addWidget(self.spm_choice)
+        h_box_spm_path.addWidget(self.spm_browse)
+
+        v_box_spm_path = QtWidgets.QVBoxLayout()
+        v_box_spm_path.addWidget(self.spm_label)
+        v_box_spm_path.addLayout(h_box_spm_path)
+
+        self.use_spm_standalone_label = QLabel("Use SPM standalone")
+        self.use_spm_standalone_checkbox = QCheckBox('', self)
+
+        self.spm_standalone_label = QLabel("SPM standalone path:")
+        self.spm_standalone_choice = QLineEdit(config.get_spm_standalone_path())
+        self.spm_standalone_browse = QPushButton("Browse")
+        self.spm_standalone_browse.clicked.connect(self.browse_spm_standalone)
+
+        if config.get_use_spm_standalone() == "yes":
+            self.use_spm_standalone_checkbox.setChecked(1)
+        else:
+            self.use_spm_standalone_checkbox.setChecked(0)
+
+        h_box_use_spm_standalone = QtWidgets.QHBoxLayout()
+        h_box_use_spm_standalone.addWidget(self.use_spm_standalone_checkbox)
+        h_box_use_spm_standalone.addWidget(self.use_spm_standalone_label)
+        h_box_use_spm_standalone.addStretch(1)
+
+        h_box_spm_standalone_path = QtWidgets.QHBoxLayout()
+        h_box_spm_standalone_path.addWidget(self.spm_standalone_choice)
+        h_box_spm_standalone_path.addWidget(self.spm_standalone_browse)
+
+        v_box_spm_standalone_path = QtWidgets.QVBoxLayout()
+        v_box_spm_standalone_path.addWidget(self.spm_standalone_label)
+        v_box_spm_standalone_path.addLayout(h_box_spm_standalone_path)
+
+        v_box_spm = QtWidgets.QVBoxLayout()
+        v_box_spm.addLayout(h_box_use_spm)
+        v_box_spm.addLayout(v_box_spm_path)
+        v_box_spm.addLayout(h_box_use_spm_standalone)
+        v_box_spm.addLayout(v_box_spm_standalone_path)
+
+        self.groupbox_spm.setLayout(v_box_spm)
+
+        # Final tab layouts
+        h_box_top = QtWidgets.QHBoxLayout()
+        h_box_top.addWidget(self.groupbox_global)
+        h_box_top.addStretch(1)
+
+        self.tab_tools_layout = QtWidgets.QVBoxLayout()
+        self.tab_tools_layout.addLayout(h_box_top)
+        self.tab_tools_layout.addWidget(self.groupbox_matlab)
+        self.tab_tools_layout.addWidget(self.groupbox_spm)
+        self.tab_tools_layout.addStretch(1)
+        self.tab_tools.setLayout(self.tab_tools_layout)
 
         # The 'OK' push button
         self.push_button_ok = QtWidgets.QPushButton("OK")
@@ -150,6 +245,7 @@ class Ui_Dialog_Preferences(QDialog):
         self.push_button_cancel.setObjectName("pushButton_cancel")
         self.push_button_cancel.clicked.connect(self.close)
 
+        # Buttons ayouts
         hbox_buttons = QHBoxLayout()
         hbox_buttons.addStretch(1)
         hbox_buttons.addWidget(self.push_button_ok)
@@ -161,41 +257,112 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.setLayout(vbox)
 
+        # Disabling widgets
+        self.use_spm_changed()
+        self.use_matlab_changed()
+
+        # Signals
+        self.use_matlab_checkbox.stateChanged.connect(self.use_matlab_changed)
+        self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
+        self.use_spm_standalone_checkbox.stateChanged.connect(self.use_spm_standalone_changed)
+
+    def use_spm_standalone_changed(self):
+        """
+        Called when the use_spm_standalone checkbox is changed
+        """
+
+        if not self.use_spm_standalone_checkbox.isChecked():
+            self.spm_standalone_choice.setDisabled(True)
+            self.spm_standalone_label.setDisabled(True)
+            self.spm_standalone_browse.setDisabled(True)
+        else:
+            self.spm_standalone_choice.setDisabled(False)
+            self.spm_standalone_label.setDisabled(False)
+            self.spm_standalone_browse.setDisabled(False)
+            self.spm_choice.setDisabled(True)
+            self.spm_label.setDisabled(True)
+            self.spm_browse.setDisabled(True)
+            self.use_spm_checkbox.setChecked(False)
+
     def use_spm_changed(self):
         """
         Called when the use_spm checkbox is changed
         """
 
         if not self.use_spm_checkbox.isChecked():
-            self.matlab_choice.setDisabled(True)
             self.spm_choice.setDisabled(True)
-            self.matlab_label.setDisabled(True)
             self.spm_label.setDisabled(True)
             self.spm_browse.setDisabled(True)
-            self.matlab_browse.setDisabled(True)
         else:
-            self.matlab_choice.setDisabled(False)
             self.spm_choice.setDisabled(False)
-            self.matlab_label.setDisabled(False)
             self.spm_label.setDisabled(False)
             self.spm_browse.setDisabled(False)
+            self.spm_standalone_choice.setDisabled(True)
+            self.spm_standalone_label.setDisabled(True)
+            self.spm_standalone_browse.setDisabled(True)
+            self.use_spm_standalone_checkbox.setChecked(False)
+
+    def use_matlab_changed(self):
+        """
+        Called when the use_matlab checkbox is changed
+        """
+
+        if not self.use_matlab_checkbox.isChecked():
+            self.matlab_choice.setDisabled(True)
+            self.matlab_standalone_choice.setDisabled(True)
+            self.spm_choice.setDisabled(True)
+            self.spm_standalone_choice.setDisabled(True)
+            self.matlab_label.setDisabled(True)
+            self.matlab_standalone_label.setDisabled(True)
+            self.spm_label.setDisabled(True)
+            self.spm_standalone_label.setDisabled(True)
+            self.spm_browse.setDisabled(True)
+            self.spm_standalone_browse.setDisabled(True)
+            self.matlab_browse.setDisabled(True)
+            self.matlab_standalone_browse.setDisabled(True)
+            self.use_spm_checkbox.setChecked(False)
+            self.use_spm_standalone_checkbox.setChecked(False)
+        else:
+            self.matlab_choice.setDisabled(False)
+            self.matlab_standalone_choice.setDisabled(False)
+            self.matlab_label.setDisabled(False)
+            self.matlab_standalone_label.setDisabled(False)
             self.matlab_browse.setDisabled(False)
+            self.matlab_standalone_browse.setDisabled(False)
 
     def browse_matlab(self):
         """
         Called when matlab browse button is clicked
         """
 
-        fname = QFileDialog.getExistingDirectory(self, 'Choose MRC directory', '/home')
+        fname = QFileDialog.getOpenFileName(self, 'Choose Matlab file')[0]
         if fname:
             self.matlab_choice.setText(fname)
+
+    def browse_matlab_standalone(self):
+        """
+        Called when matlab browse button is clicked
+        """
+
+        fname = QFileDialog.getExistingDirectory(self, 'Choose MCR directory')
+        if fname:
+            self.matlab_standalone_choice.setText(fname)
+
+    def browse_spm_standalone(self):
+        """
+        Called when spm standalone browse button is clicked
+        """
+
+        fname = QFileDialog.getExistingDirectory(self, 'Choose SPM standalone directory')
+        if fname:
+            self.spm_standalone_choice.setText(fname)
 
     def browse_spm(self):
         """
         Called when spm browse button is clicked
         """
 
-        fname = QFileDialog.getExistingDirectory(self, 'Choose SPM standalone directory', '/home')
+        fname = QFileDialog.getExistingDirectory(self, 'Choose SPM directory')
         if fname:
             self.spm_choice.setText(fname)
 
@@ -207,6 +374,12 @@ class Ui_Dialog_Preferences(QDialog):
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
+
+        # Use Matlab
+        if self.use_matlab_checkbox.isChecked():
+            config.set_use_matlab("yes")
+        else:
+            config.set_use_matlab("no")
 
         # Use SPM
         if self.use_spm_checkbox.isChecked():
@@ -221,24 +394,55 @@ class Ui_Dialog_Preferences(QDialog):
         else:
             config.set_clinical_mode("no")
 
-        # SPM and MCR paths checks and update
-        if self.use_spm_checkbox.isChecked():
+        # Matlab
+        if self.use_matlab_checkbox.isChecked():
             matlab_input = self.matlab_choice.text()
-            spm_input = self.spm_choice.text()
-            if os.path.exists(matlab_input) and "MATLAB/MATLAB_Runtime/v93" in matlab_input:
+            if os.path.exists(matlab_input):
                 config.set_matlab_path(matlab_input)
             else:
                 self.msg = QMessageBox()
                 self.msg.setIcon(QMessageBox.Critical)
-                self.msg.setText("Invalid MCR path")
+                self.msg.setText("Invalid Matlab path")
                 self.msg.setInformativeText("The MCR path entered {0} is invalid.".format(matlab_input))
                 self.msg.setWindowTitle("Error")
                 self.msg.setStandardButtons(QMessageBox.Ok)
                 self.msg.buttonClicked.connect(self.msg.close)
                 self.msg.show()
                 return
-            if os.path.exists(spm_input) and "spm12" in spm_input:
+
+            matlab_standalone_input = self.matlab_standalone_choice.text()
+            if os.path.exists(matlab_input):
+                config.set_matlab_standalone_path(matlab_standalone_input)
+            else:
+                self.msg = QMessageBox()
+                self.msg.setIcon(QMessageBox.Critical)
+                self.msg.setText("Invalid MCR path")
+                self.msg.setInformativeText("The MCR path entered {0} is invalid.".format(matlab_standalone_input))
+                self.msg.setWindowTitle("Error")
+                self.msg.setStandardButtons(QMessageBox.Ok)
+                self.msg.buttonClicked.connect(self.msg.close)
+                self.msg.show()
+                return
+
+        # SPM
+        if self.use_spm_checkbox.isChecked():
+            spm_input = self.spm_choice.text()
+            if os.path.exists(spm_input):
                 config.set_spm_path(spm_input)
+            else:
+                self.msg = QMessageBox()
+                self.msg.setIcon(QMessageBox.Critical)
+                self.msg.setText("Invalid SPM standalone path")
+                self.msg.setInformativeText("The SPM path entered {0} is invalid.".format(spm_input))
+                self.msg.setWindowTitle("Error")
+                self.msg.setStandardButtons(QMessageBox.Ok)
+                self.msg.buttonClicked.connect(self.msg.close)
+                self.msg.show()
+
+        if self.use_spm_standalone_checkbox.isChecked():
+            spm_input = self.spm_standalone_choice.text()
+            if os.path.exists(spm_input) and "spm12" in spm_input:
+                config.set_spm_standalone_path(spm_input)
             else:
                 self.msg = QMessageBox()
                 self.msg.setIcon(QMessageBox.Critical)

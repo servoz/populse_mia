@@ -107,8 +107,19 @@ class Config:
     def get_matlab_path(self):
         return self.config["matlab"]
 
-    def set_matlab_path(self, new_projects):
-        self.config["matlab"] = new_projects
+    def set_matlab_path(self, path):
+        self.config["matlab"] = path
+        # Then save the modification
+        self.saveConfig()
+
+    def get_matlab_standalone_path(self):
+        try:
+            return self.config["matlab_standalone"]
+        except KeyError:
+            return ""
+
+    def set_matlab_standalone_path(self, path):
+        self.config["matlab_standalone"] = path
         # Then save the modification
         self.saveConfig()
 
@@ -117,6 +128,17 @@ class Config:
 
     def set_spm_path(self, new_projects):
         self.config["spm"] = new_projects
+        # Then save the modification
+        self.saveConfig()
+
+    def get_spm_standalone_path(self):
+        try:
+            return self.config["spm_standalone"]
+        except KeyError:
+            return ""
+
+    def set_spm_standalone_path(self, new_projects):
+        self.config["spm_standalone"] = new_projects
         # Then save the modification
         self.saveConfig()
 
@@ -132,7 +154,32 @@ class Config:
         self.saveConfig()
 
     def get_use_spm(self):
-        return self.config["use_spm"]
+        try:
+            return self.config["use_spm"]
+        except KeyError:
+            return "no"
+
+    def set_use_spm_standalone(self, use_spm_standalone):
+        self.config["use_spm_standalone"] = use_spm_standalone
+        # Then save the modification
+        self.saveConfig()
+
+    def get_use_spm_standalone(self):
+        try:
+            return self.config["use_spm_standalone"]
+        except KeyError:
+            return "yes"
+
+    def set_use_matlab(self, use_matlab):
+        self.config["use_matlab"] = use_matlab
+        # Then save the modification
+        self.saveConfig()
+
+    def get_use_matlab(self):
+        try:
+            return self.config["use_matlab"]
+        except KeyError:
+            return "yes"
 
     def set_clinical_mode(self, clinical_mode):
         self.config["clinical_mode"] = clinical_mode
