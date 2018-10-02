@@ -4,7 +4,10 @@ from glob import glob
 import yaml
 import inspect
 import pkgutil
-import zipfile
+from zipfile import ZipFile
+import tempfile
+import shutil
+from datetime import datetime
 
 # PyQt5 import # TO REMOVE
 from PyQt5.QtCore import QSortFilterProxyModel
@@ -1246,28 +1249,35 @@ class InstallProcesses(QDialog):
             paths = []
 
         # Extraction of the zipped content
-        zip_ref = zipfile.ZipFile(filename, 'r')
 
-        sys.path.append(os.path.join('..', '..', 'processes'))
+        packages_already = [dire for dire in os.listdir(os.path.join('..', '..', 'processes')) if not os.path.isfile(os.path.join('..', '..', 'processes', dire))]
+  
+        with ZipFile(filename, 'r') as zip_ref:
 
-        for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist()
-                             if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
+            for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist() if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
 
-            for member in zip_ref.namelist():
+                if (package_name not in packages_already) or (package_name == 'MIA_processes'):
 
-                if member.split(os.sep)[0] == package_name:
-                    zip_ref.extract(member, os.path.join('..', '..', 'processes'))
+                    members_to_extract = [member for member in zip_ref.namelist() if member.startswith(package_name)]
+                    zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
 
-            final_package_dic = add_package(packages, package_name)
+                else:
+
+                    temp_dir = tempfile.mkdtemp()
+                    members_to_extract = [member for member in zip_ref.namelist() if member.startswith(package_name)]
+                    zip_ref.extractall(temp_dir, members_to_extract)
+                    shutil.move(os.path.join(temp_dir, package_name), os.path.join('..', '..', 'processes', package_name + '_' + datetime.now().strftime("%Y%m%d%H%M%S")))
+                    package_name = package_name + '_' + datetime.now().strftime("%Y%m%d%H%M%S")
+
+                final_package_dic = add_package(packages, package_name)
 
             if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
                 paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
 
             process_dic["Packages"] = final_package_dic
             process_dic["Paths"] = paths
+            
         # Idea: Should we encrypt the path ?
-
-        zip_ref.close()
 
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
             yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
