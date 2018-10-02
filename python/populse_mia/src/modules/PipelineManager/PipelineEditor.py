@@ -1190,7 +1190,19 @@ class PipelineEditor(PipelineDevelopperView):
             folder = os.path.abspath(os.path.join('..', '..', 'processes', 'User_processes'))
             filename = QtWidgets.QFileDialog.getSaveFileName(
                 None, 'Save the pipeline', folder,
-                'Compatible files (*.xml *.py);; All (*)')[0]
+                'Compatible files (*.py);; All (*)')[0]
+            if os.path.splitext(filename)[1] == '':  # which means no extension
+                filename += '.py'
+            elif os.path.splitext(filename)[1] != '.py':
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setText('The pipeline will be saved with a' +
+                            ' ".py" extension instead of {0}'.format(os.path.splitext(filename)[1]))
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                filename = os.path.splitext(filename)[0] + '.py'
         if filename:
             posdict = dict([(key, (value.x(), value.y())) \
                             for key, value in six.iteritems(self.scene.pos)])
