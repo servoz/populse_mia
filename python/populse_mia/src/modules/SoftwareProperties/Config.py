@@ -168,7 +168,7 @@ class Config:
         try:
             return self.config["use_spm_standalone"]
         except KeyError:
-            return "yes"
+            return "no"
 
     def set_use_matlab(self, use_matlab):
         self.config["use_matlab"] = use_matlab
@@ -179,7 +179,7 @@ class Config:
         try:
             return self.config["use_matlab"]
         except KeyError:
-            return "yes"
+            return "no"
 
     def set_clinical_mode(self, clinical_mode):
         self.config["clinical_mode"] = clinical_mode

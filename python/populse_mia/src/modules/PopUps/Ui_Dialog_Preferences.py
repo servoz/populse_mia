@@ -387,6 +387,12 @@ class Ui_Dialog_Preferences(QDialog):
         else:
             config.set_use_spm("no")
 
+        # Use SPM standalone
+        if self.use_spm_standalone_checkbox.isChecked():
+            config.set_use_spm_standalone("yes")
+        else:
+            config.set_use_spm_standalone("no")
+
         # Clinical mode
         if self.clinical_mode_checkbox.isChecked():
             config.set_clinical_mode("yes")
