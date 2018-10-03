@@ -4,10 +4,11 @@ from glob import glob
 import yaml
 import inspect
 import pkgutil
-from zipfile import ZipFile
+from zipfile import ZipFile, is_zipfile
 import tempfile
 import shutil
 from datetime import datetime
+import distutils.dir_util
 
 # PyQt5 import # TO REMOVE
 from PyQt5.QtCore import QSortFilterProxyModel
@@ -1109,7 +1110,7 @@ class InstallProcesses(QDialog):
 
     process_installed = Signal()
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, folder):
         super(InstallProcesses, self).__init__(parent=main_window)
 
         self.setWindowTitle('Install processes')
@@ -1117,7 +1118,12 @@ class InstallProcesses(QDialog):
         v_layout = QVBoxLayout()
         self.setLayout(v_layout)
 
-        label_text = 'Choose zip file containing Python packages'
+        if folder is False:
+            label_text = 'Choose zip file containing Python packages'
+
+        elif folder is True:
+            label_text = 'Choose folder containing Python packages'
+
         v_layout.addWidget(QLabel(label_text))
 
         edit_layout = QHBoxLayout()
@@ -1139,12 +1145,24 @@ class InstallProcesses(QDialog):
 
         install_button.clicked.connect(self.install)
         quit_button.clicked.connect(self.close)
-        self.browser_button.clicked.connect(self.get_filename)
+        self.browser_button.clicked.connect(lambda: self.get_filename(folder=folder))
 
-    def get_filename(self):
-        filename = QFileDialog.getOpenFileName(caption='Select a zip file',
-                                               filter='Compatible files (*.zip)')
-        if filename:
+    def get_filename(self, folder):
+
+        if folder is True:
+            filename = QFileDialog.getExistingDirectory(self, caption='Select a directory',
+                                                        directory=os.path.expanduser("~"),
+                                                        options=QFileDialog.ShowDirsOnly)
+
+        elif folder is False:
+            filename = QFileDialog.getOpenFileName(caption='Select a zip file',
+                                                   directory=os.path.expanduser("~"),
+                                                   filter='Compatible files (*.zip)')
+
+        if filename and isinstance(filename, str):
+            self.path_edit.setText(filename)
+
+        elif filename and isinstance(filename, tuple):
             self.path_edit.setText(filename[0])
 
     def install(self):
@@ -1152,7 +1170,6 @@ class InstallProcesses(QDialog):
         def add_package(proc_dic, module_name):
             """
             Adds a package and its modules to the package tree
-
 
             :param proc_dic: the process tree-dictionary
             :param module_name: name of the module
@@ -1199,27 +1216,30 @@ class InstallProcesses(QDialog):
 
         filename = self.path_edit.text()
 
-        if not os.path.isfile(filename):
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("The specified file cannot be found")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
-            return
-        if os.path.splitext(filename)[1] != ".zip":
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("The specified file has to be a .zip file")
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
-            return
+        if not os.path.isdir(filename):
+        
+            if not os.path.isfile(filename):
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file cannot be found")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
+            
+            if os.path.splitext(filename)[1] != ".zip":
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file has to be a .zip file")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
 
         try:
-            sys.path.append(os.path.join('..', '..', 'processes'))
+            sys.path.append(os.path.join('..', '..', 'processes')) ##############################################
 
             # Process config update
             if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
@@ -1258,60 +1278,84 @@ class InstallProcesses(QDialog):
             mia_processes_not_found = True
             tmp_folder = None
 
-            # Extraction of the zipped content
+            # packages_already: packages already installed in populse_mia (populse_mia/processes)
             packages_already = [dire for dire in os.listdir(os.path.join('..', '..', 'processes'))
                                 if not os.path.isfile(os.path.join('..', '..', 'processes', dire))]
 
-            with ZipFile(filename, 'r') as zip_ref:
+            if is_zipfile(filename):
+                # Extraction of the zipped content
+                with ZipFile(filename, 'r') as zip_ref:
+                    packages_name = [member.split(os.sep)[0] for member in zip_ref.namelist()
+                                     if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]
 
-                for package_name in [member.split(os.sep)[0] for member in zip_ref.namelist() if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]:
+            elif os.path.isdir(filename):#!!! careful: if filename is not a zip file, filename must be a directory that contains only the package(s) to install!!!
+                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename, member))]
 
-                    if (package_name not in packages_already) or (package_name == 'MIA_processes'):
+            for package_name in packages_name:# package_name: package(s) in the zip file; one by one
+                
+                if (package_name not in packages_already) or (package_name == 'MIA_processes'):
+                    # Copy MIA_processes in a temporary folder
+                    if mia_processes_not_found:
 
-                        # Copy MIA_processes in a temporary folder
-                        if mia_processes_not_found:
-                            if package_name == "MIA_processes":
-                                mia_processes_not_found = False
-                                tmp_folder = tempfile.mkdtemp()
-                                if os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes')):
-                                    import shutil
-                                    shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
-                                                    os.path.join(tmp_folder, 'MIA_processes'))
+                        if package_name == "MIA_processes":
+                            mia_processes_not_found = False
+                            tmp_folder4MIA = tempfile.mkdtemp()
+                                    
+                            if os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes')):
+                                        shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
+                                                        os.path.join(tmp_folder4MIA, 'MIA_processes'))
 
-                        members_to_extract = [member for member in zip_ref.namelist() if member.startswith(package_name)]
-                        zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
+                    if is_zipfile(filename):
+                        
+                        with ZipFile(filename, 'r') as zip_ref:
+                            members_to_extract = [member for member in zip_ref.namelist()
+                                                  if member.startswith(package_name)]
+                            zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
 
-                    else:
+                    elif os.path.isdir(filename):
+                        distutils.dir_util.copy_tree(os.path.join(filename, package_name), os.path.join('..', '..', 'processes', package_name))    
 
-                        temp_dir = tempfile.mkdtemp()
-                        members_to_extract = [member for member in zip_ref.namelist() if member.startswith(package_name)]
-                        zip_ref.extractall(temp_dir, members_to_extract)
-                        shutil.move(os.path.join(temp_dir, package_name), os.path.join('..', '..', 'processes', package_name + '_' + datetime.now().strftime("%Y%m%d%H%M%S")))
-                        package_name = package_name + '_' + datetime.now().strftime("%Y%m%d%H%M%S")
+                else:
+                    date = datetime.now().strftime("%Y%m%d%H%M%S")
 
-                    final_package_dic = add_package(packages, package_name)
+                    if is_zipfile(filename):
 
-                    # package_names contains all the extracted packages
-                    package_names.append(package_name)
+                        with ZipFile(filename, 'r') as zip_ref:
+                            temp_dir = tempfile.mkdtemp()
+                            members_to_extract = [member for member in zip_ref.namelist()
+                                                  if member.startswith(package_name)]
+                            zip_ref.extractall(temp_dir, members_to_extract)
+                            shutil.move(os.path.join(temp_dir, package_name),
+                                        os.path.join('..', '..', 'processes', package_name + '_' + date))
 
-                if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
-                    paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+                    elif os.path.isdir(filename):
+                        shutil.copytree(os.path.join(filename, package_name),
+                                        os.path.join('..', '..', 'processes', package_name + '_' + date))
 
-                process_dic["Packages"] = final_package_dic
-                process_dic["Paths"] = paths
+                    package_name = package_name + '_' + date
+
+                final_package_dic = add_package(packages, package_name)
+                package_names.append(package_name)# package_names contains all the extracted packages
+
+            if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
+                paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+
+            process_dic["Packages"] = final_package_dic
+            process_dic["Paths"] = paths
 
             # Idea: Should we encrypt the path ?
 
             with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
                 yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
-            # Cleaning the temporary folder
-            if not mia_processes_not_found:
-                if tmp_folder is not None:
-                    shutil.rmtree(os.path.join(tmp_folder))
-
-
             self.process_installed.emit()
+
+            # Cleaning the temporary folder
+            if 'tmp_folder4MIA' in locals():
+                shutil.rmtree(tmp_folder4MIA)
+                              
+            if 'tmp_dir' in locals():     
+                shutil.rmtree(tmp_dir)
 
         except Exception as e:  # Don't know which kind of exception can be raised yet
             msg = QMessageBox()
@@ -1329,7 +1373,6 @@ class InstallProcesses(QDialog):
                 yaml.dump(process_dic_orig, stream, default_flow_style=False, allow_unicode=True)
 
             # Deleting the extracted files
-            import shutil
             if package_names is None:
                 package_names = []
             for package_name in package_names:
@@ -1338,11 +1381,11 @@ class InstallProcesses(QDialog):
 
             # If the error comes from a MIA_process update, the old version is restored
             if not mia_processes_not_found:
-                if tmp_folder is not None:
-                    shutil.copytree(os.path.join(tmp_folder, 'MIA_processes'),
-                                    os.path.join('..', '..', 'processes', 'MIA_processes'))
-                    shutil.rmtree(os.path.join(tmp_folder))
 
+                if 'tmp_folder4MIA' in locals():
+                    shutil.copytree(os.path.join(tmp_folder4MIA, 'MIA_processes'),
+                                    os.path.join('..', '..', 'processes', 'MIA_processes'))
+                    shutil.rmtree(tmp_folder4MIA)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

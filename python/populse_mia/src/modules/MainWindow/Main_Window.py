@@ -127,7 +127,8 @@ class Main_Window(QMainWindow):
         self.action_redo = QAction('Redo', self)
         self.action_redo.setShortcut('Ctrl+Y')
 
-        self.action_install_processes = QAction('Install processes', self)
+        self.action_install_processes_folder = QAction('From folder', self)
+        self.action_install_processes_zip = QAction('From zip file', self)
         # if Config().get_clinical_mode() == 'yes':
         #     self.action_install_processes.setDisabled(True)
         # else:
@@ -146,7 +147,8 @@ class Main_Window(QMainWindow):
         self.action_package_library.triggered.connect(self.package_library_pop_up)
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
-        self.action_install_processes.triggered.connect(self.install_processes_pop_up)
+        self.action_install_processes_folder.triggered.connect(lambda: self.install_processes_pop_up(folder=True))
+        self.action_install_processes_zip.triggered.connect(lambda: self.install_processes_pop_up(folder=False))
 
     def create_menus(self):
         """ Create the menubar """
@@ -157,6 +159,8 @@ class Main_Window(QMainWindow):
         self.menu_help = self.menuBar().addMenu('Help')
         self.menu_about = self.menuBar().addMenu('About')
         self.menu_more = self.menuBar().addMenu('More')
+        self.menu_install_process = QMenu('Install processes', self)
+        self.menu_more.addMenu(self.menu_install_process)
 
         # Submenu of menu_file menu
         self.menu_saved_projects = QMenu('Saved projects', self)
@@ -190,8 +194,9 @@ class Main_Window(QMainWindow):
         self.menu_help.addAction('Documentations')
         self.menu_help.addAction('Credits')
 
-        # Actions in the "More" menu
-        self.menu_more.addAction(self.action_install_processes)
+        # Actions in the "More > Install processes" menu
+        self.menu_install_process.addAction(self.action_install_processes_folder)
+        self.menu_install_process.addAction(self.action_install_processes_zip)
 
     def undo(self):
         """
@@ -290,7 +295,6 @@ class Main_Window(QMainWindow):
     def check_unsaved_modifications(self):
         """ Check if there are differences between the current project and the data base
             Returns 1 if there are unsaved modifications, 0 otherwise
-
         """
         if self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
             return 1
@@ -654,10 +658,10 @@ class Main_Window(QMainWindow):
         self.pop_up_package_library.show()
         self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
 
-    def install_processes_pop_up(self):
+    def install_processes_pop_up(self, folder=False):
         """ Opens the install processes pop-up """
         from PipelineManager.process_library import InstallProcesses
-        self.pop_up_install_processes = InstallProcesses(self)
+        self.pop_up_install_processes = InstallProcesses(self, folder=folder)
         self.pop_up_install_processes.show()
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
@@ -681,7 +685,7 @@ class Main_Window(QMainWindow):
 
         if code_exit == 0:
 
-            import cProfile
+            #import cProfile
 
             # Database filled
             new_scans = controller.read_log(self.project, self)
