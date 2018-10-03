@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 
-# from __future__ import
-
 import datetime
 import os
-import sip
 import sys
 import uuid
 
@@ -12,14 +9,8 @@ from time import sleep
 
 from collections import OrderedDict
 
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import QByteArray, Qt, QStringListModel, QLineF, QPointF, \
-    QRectF, QSize, QThread, pyqtSignal
-from PyQt5.QtGui import QStandardItemModel, QPixmap, QPainter, QPainterPath, \
-    QCursor, QBrush, QIcon
-from PyQt5.QtWidgets import QMenuBar, QMenu, qApp, QGraphicsScene, \
-    QTextEdit, QGraphicsLineItem, QGraphicsRectItem, QGraphicsTextItem, \
-    QGraphicsEllipseItem, QDialog, QPushButton, QVBoxLayout, QWidget, QStackedWidget, \
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
 
 from matplotlib.backends.qt_compat import QtWidgets
@@ -35,7 +26,7 @@ from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
     BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
     TYPE_MAT
-from SoftwareProperties.Config import Config
+
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditorTabs
 from .process_library import ProcessLibraryWidget
@@ -1341,23 +1332,19 @@ class RunWorker(QThread):
         use_spm_standalone = config.get_use_spm_standalone()
         use_matlab = config.get_use_matlab()
         if use_spm_standalone == "yes" and os.path.exists(spm_standalone_path) \
-            and os.path.exists(matlab_standalone_path):
+                and os.path.exists(matlab_standalone_path):
             if os.path.exists(matlab_path):
-                study_config = StudyConfig(use_spm=True, spm_directory="{0}/".format(spm_standalone_path),
-                                           spm_exec="{0}/".format(matlab_standalone_path),
-                                           matlab_exec="{0}".format(matlab_path),
-                                           output_directory="{0}/".format(spm_standalone_path), use_spm_standalone=True)
+                study_config = StudyConfig(use_spm=True, spm_directory=spm_standalone_path,
+                                           spm_exec=matlab_standalone_path, matlab_exec=matlab_path,
+                                           output_directory=spm_standalone_path, spm_standalone=True)
             else:
-                study_config = StudyConfig(use_spm=True, spm_directory="{0}/".format(spm_standalone_path),
-                                           spm_exec="{0}/".format(matlab_standalone_path),
-                                           output_directory="{0}/".format(spm_standalone_path), use_spm_standalone=True)
+                study_config = StudyConfig(use_spm=True, spm_directory=spm_standalone_path,
+                                           spm_exec=matlab_standalone_path,
+                                           output_directory=spm_standalone_path, spm_standalone=True)
 
         elif use_spm == "yes" and use_matlab == "yes":  # Using without SPM standalone
-            study_config = StudyConfig(use_spm=True, use_spm_standalone=False,
-                                       matlab_exec="{0}".format(matlab_path),
-                                       spm_directory=spm_path,
-                                       spm_standalone=False,
-                                       use_matlab=True)
+            study_config = StudyConfig(use_spm=True, matlab_exec=matlab_path, spm_directory=spm_path,
+                                       spm_standalone=False, use_matlab=True)
 
         else:
             study_config = StudyConfig(use_spm=False)

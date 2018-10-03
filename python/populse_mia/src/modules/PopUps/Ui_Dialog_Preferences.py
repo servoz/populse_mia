@@ -403,7 +403,7 @@ class Ui_Dialog_Preferences(QDialog):
         # Matlab
         if self.use_matlab_checkbox.isChecked():
             matlab_input = self.matlab_choice.text()
-            if os.path.exists(matlab_input):
+            if os.path.exists(matlab_input) or matlab_input == "":
                 config.set_matlab_path(matlab_input)
             else:
                 self.msg = QMessageBox()
@@ -417,7 +417,7 @@ class Ui_Dialog_Preferences(QDialog):
                 return
 
             matlab_standalone_input = self.matlab_standalone_choice.text()
-            if os.path.exists(matlab_input):
+            if os.path.exists(matlab_standalone_input) or matlab_standalone_input == "":
                 config.set_matlab_standalone_path(matlab_standalone_input)
             else:
                 self.msg = QMessageBox()
