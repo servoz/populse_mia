@@ -1323,6 +1323,7 @@ class RunWorker(QThread):
 
         pipeline = get_process_instance(self.diagramView.get_current_pipeline())
 
+        # Reading config
         config = Config()
         spm_standalone_path = config.get_spm_standalone_path()
         spm_path = config.get_spm_path()
@@ -1331,8 +1332,15 @@ class RunWorker(QThread):
         use_spm = config.get_use_spm()
         use_spm_standalone = config.get_use_spm_standalone()
         use_matlab = config.get_use_matlab()
+
         if use_spm_standalone == "yes" and os.path.exists(spm_standalone_path) \
                 and os.path.exists(matlab_standalone_path):
+
+            # Setting environment variables to run SPM12 standalone correctly
+            os.environ["FORCE_SPMMCR"] = '1'
+            os.environ["SPMMCRCMD"] = os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' + matlab_standalone_path \
+                                      + os.sep + ' script'
+
             if os.path.exists(matlab_path):
                 study_config = StudyConfig(use_spm=True, spm_directory=spm_standalone_path,
                                            spm_exec=matlab_standalone_path, matlab_exec=matlab_path,
