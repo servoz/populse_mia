@@ -1383,8 +1383,7 @@ class RunWorker(QThread):
 
         elif use_spm == "yes" and use_matlab == "yes":  # Using without SPM standalone
             study_config = StudyConfig(use_spm=True, matlab_exec=matlab_path, spm_directory=spm_path,
-                                       spm_standalone=False, use_matlab=True)
-
+                                       spm_standalone=False, use_matlab=True, output_directory=spm_path)
         else:
             study_config = StudyConfig(use_spm=False)
 
