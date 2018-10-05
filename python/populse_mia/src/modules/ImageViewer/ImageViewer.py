@@ -34,8 +34,8 @@ class ImageViewer(QWidget):
        
         self.factor = 3.0
 
-        self.config=Config()
-        self.currentRep = self.config.getPathData()
+        self.config = Config()
+        self.currentRep = ""
 
         self.createActions()
         self.createToolbarMenus()
@@ -530,7 +530,6 @@ class ImageViewer(QWidget):
         self.browser = QTreeView()
                 
         model = QFileSystemModel()
-        model.setRootPath(self.currentRep)
         model.setNameFilters(['*.nii'])
         model.setNameFilterDisables(False)
         model.setReadOnly(True)
