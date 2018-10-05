@@ -153,5 +153,21 @@ def launch_mia():
 
 
 if __name__ == '__main__':
+
+    # WILL BE REMOVED WHEN ISSUE #27 WILL BE RESOLVED
+    """config = Config()
+    spm_standalone_path = config.get_spm_standalone_path()
+    matlab_standalone_path = config.get_matlab_standalone_path()
+
+    # OS.ENVRION TEST
+    _environ = os.environ.copy()
+    try:
+        _environ["FORCE_SPMMCR"] = '1'
+        _environ["SPMMCRCMD"] = os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' + \
+                                matlab_standalone_path + os.sep + " script"
+    finally:
+        os.environ.clear()
+        os.environ.update(_environ)"""
+
     verify_processes()
     launch_mia()

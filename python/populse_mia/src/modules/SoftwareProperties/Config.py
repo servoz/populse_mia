@@ -105,7 +105,10 @@ class Config:
         self.saveConfig()
 
     def get_matlab_path(self):
-        return self.config["matlab"]
+        try:
+            return self.config["matlab"]
+        except KeyError:
+            return ""
 
     def set_matlab_path(self, path):
         self.config["matlab"] = path
@@ -124,7 +127,10 @@ class Config:
         self.saveConfig()
 
     def get_spm_path(self):
-        return self.config["spm"]
+        try:
+            return self.config["spm"]
+        except KeyError:
+            return ""
 
     def set_spm_path(self, new_projects):
         self.config["spm"] = new_projects
