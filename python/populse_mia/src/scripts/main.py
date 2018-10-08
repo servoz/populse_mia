@@ -38,7 +38,7 @@ def clean_up():
     imageViewer.remove_raw_files_useless()
 
 
-class NipypePackages():
+class NipypePackages:
     def __init__(self):
         self.packages = {}
 
@@ -104,24 +104,26 @@ class NipypePackages():
   
             return self.packages
 
+
 def verify_processes():
     """
     When the software is launched, if Nipype's interfaces are yet unavailable,
     tries to make them available in the processes library
     """
 
-    procContentFlag = False
+    proc_content_flag = False
 
     if os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
                       
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
-            procContent = yaml.load(stream)
-            procContentFlag = True
+            proc_content = yaml.load(stream)
+            proc_content_flag = True
             
-    if (not procContentFlag) or (
-            procContentFlag and not procContent) or (
-                 procContentFlag and 'Packages' not in procContent.keys()) or (
-                    procContentFlag and 'Packages' in procContent.keys() and 'nipype' not in procContent['Packages'].keys()): # tester le short circuit
+    if (not proc_content_flag) or (
+            proc_content_flag and not proc_content) or (
+                 proc_content_flag and 'Packages' not in proc_content.keys()) or (
+                    proc_content_flag and 'Packages' in proc_content.keys()
+                    and 'nipype' not in proc_content['Packages'].keys()):  # test the short circuit
 
         try:
             __import__('nipype.interfaces')
@@ -131,15 +133,15 @@ def verify_processes():
             final_pkgs = {}
             final_pkgs["Packages"] = pkg_dic
             
-            if procContentFlag and procContent:
+            if proc_content_flag and proc_content:
 
-                if 'Packages' in procContent:
-                    for item in procContent['Packages']:
-                        final_pkgs['Packages'][item] = procContent['Packages'][item]
+                if 'Packages' in proc_content:
+                    for item in proc_content['Packages']:
+                        final_pkgs['Packages'][item] = proc_content['Packages'][item]
 
-                if 'Paths' in procContent:
-                    for item in procContent['Paths']:
-                        final_pkgs["Paths"]= procContent['Paths']
+                if 'Paths' in proc_content:
+                    for item in proc_content['Paths']:
+                        final_pkgs["Paths"] = proc_content['Paths']
             
         except ImportError as e:
             print('\n' + '*'*37)
@@ -156,8 +158,9 @@ def verify_processes():
             msg.exec()
             del app
                 
-            if  (procContentFlag) and (procContent) and ('Packages' in procContent.keys()) and (procContent['Packages'].keys()):
-                final_pkgs = procContent
+            if proc_content_flag and proc_content and ('Packages' in proc_content.keys()) \
+                    and (proc_content['Packages'].keys()):
+                final_pkgs = proc_content
 
             else:
                 final_pkgs = {}
@@ -165,6 +168,7 @@ def verify_processes():
 
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
             yaml.dump(final_pkgs, stream, default_flow_style=False, allow_unicode=True)
+
 
 def launch_mia():
     global imageViewer
@@ -202,6 +206,7 @@ def launch_mia():
     imageViewer = Main_Window(project)
     imageViewer.show()
     app.exec()
+
 
 if __name__ == '__main__':
 

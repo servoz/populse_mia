@@ -566,6 +566,10 @@ class PackageLibraryDialog(QDialog):
 
         self.package_library = PackageLibrary(self.packages, self.paths)
 
+        self.status_label = QLabel()
+        self.status_label.setText("")
+        self.status_label.setStyleSheet('QLabel{font-size:10pt;font:italic;text-align: center}')
+
         self.line_edit = QLineEdit()
         self.line_edit.setPlaceholderText('Type a Python package (ex. nipype.interfaces.spm)')
 
@@ -592,6 +596,11 @@ class PackageLibraryDialog(QDialog):
         # h_box_line_edit.addWidget(push_button_add_pkg)
         # h_box_browse.addWidget(push_button_browse)
 
+        h_box_label = QHBoxLayout()
+        h_box_label.addStretch(1)
+        h_box_label.addWidget(self.status_label)
+        h_box_label.addStretch(1)
+
         h_box_save = QHBoxLayout()
         h_box_save.addStretch(1)
         h_box_save.addWidget(push_button_save)
@@ -605,6 +614,7 @@ class PackageLibraryDialog(QDialog):
 
         v_box = QVBoxLayout()
         v_box.addStretch(1)
+        v_box.addLayout(h_box_label)
         v_box.addLayout(h_box_line_edit)
         v_box.addLayout(h_box_buttons)
         v_box.addStretch(1)
@@ -687,10 +697,10 @@ class PackageLibraryDialog(QDialog):
 
         # To select files or directories, we should use a proxy model
         # but mine is not working yet...
-        #file_dialog.setProxyModel(FileFilterProxyModel())
+        # file_dialog.setProxyModel(FileFilterProxyModel())
         file_dialog.setFileMode(QFileDialog.Directory)
-        #file_dialog.setFileMode(QFileDialog.Directory | QFileDialog.ExistingFile)
-        #file_dialog.setFilter("Processes (*.py *.xml)")
+        # file_dialog.setFileMode(QFileDialog.Directory | QFileDialog.ExistingFile)
+        # file_dialog.setFilter("Processes (*.py *.xml)")
 
         if file_dialog.exec_():
             file_name = file_dialog.selectedFiles()[0]
@@ -705,14 +715,20 @@ class PackageLibraryDialog(QDialog):
         :return:
         """
 
-        if self.is_path: # Currently the self.is_path = False (Need to pass by the method browse_package to initialise to True and the Browse button is commented. Could be interesting to permit a backdoor to pass the absolut path in the field for add package, to be continued... )
+        if self.is_path:  # Currently the self.is_path = False
+            # (Need to pass by the method browse_package to initialise to True and the Browse button is commented.
+            # Could be interesting to permit a backdoor to pass the absolut path in the field for add package,
+            # to be continued... )
             path, package = os.path.split(self.line_edit.text())
             # Adding the module path to the system path
             sys.path.append(path)
             self.add_package(package)
             self.paths.append(os.path.relpath(path))
         else:
+            self.status_label.setText("Installing {0}. Please wait.".format(self.line_edit.text()))
+            QApplication.processEvents()
             self.add_package(self.line_edit.text())
+            self.status_label.setText("{0} installed.".format(self.line_edit.text()))
 
     def add_package(self, module_name, class_name=None):
         """
