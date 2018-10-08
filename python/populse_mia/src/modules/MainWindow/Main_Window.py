@@ -57,7 +57,6 @@ class Main_Window(QMainWindow):
 
         ############### initial setting ############################################################
         config = Config()
-        self.currentRep = config.getPathData()
 
         self.saved_projects = SavedProjects()
         self.saved_projects_list = self.saved_projects.pathsList
@@ -308,7 +307,6 @@ class Main_Window(QMainWindow):
     def create_tabs(self):
         """ Creates the tabs """
         self.config = Config()
-        self.currentRep = self.config.getPathData()
 
         self.tabs = QTabWidget()
         self.tabs.setAutoFillBackground(False)

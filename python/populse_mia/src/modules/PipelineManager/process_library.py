@@ -37,7 +37,15 @@ class ProcessLibraryWidget(QWidget):
     Attributes:
         - process_library: library of the selected processes
         - pkg_library: widget to control which processes to show in the process library
-        - packages: tree-dictionary that is the representation of the process library. A dictionary, where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. Key can be a submodule. In this case the value is a dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. etc. ex. {'User_processes': {'Double_smooth': 'process_enabled', 'Filter_test': 'process_disabled'}, 'nipype': {'interfaces': {'BIDSDataGrabber': 'process_enabled', 'fsl': {'AR1Image': 'process_disabled'}}}}.
+        - packages: tree-dictionary that is the representation of the process library.
+                    A dictionary, where keys are the name of a module (brick) and values
+                    are 'process_enabled' or 'process_disabled'. Key can be a submodule. 
+                    In this case the value is a dictionary where keys are the name of a
+                    module (brick) and values are 'process_enabled' or 'process_disabled'.
+                    etc. ex. {'User_processes': {'Double_smooth': 'process_enabled',
+                    'Filter_test': 'process_disabled'}, 'nipype': {'interfaces':
+                    {'BIDSDataGrabber': 'process_enabled', 'fsl': {'AR1Image':
+                    'process_disabled'}}}}.
         - paths: list of path to add to the system path
 
     Methods:
@@ -55,7 +63,6 @@ class ProcessLibraryWidget(QWidget):
         """
 
         super(ProcessLibraryWidget, self).__init__(parent=main_window)
-
         self.setWindowTitle("Process Library")
         self.main_window = main_window
 
@@ -161,7 +168,9 @@ class ProcessLibraryWidget(QWidget):
 
         for path in self.paths:
             # Adding the module path to the system path
-            sys.path.insert(0, os.path.abspath(path))
+            #sys.path.insert(0, os.path.abspath(path))
+            if os.path.abspath(path) not in sys.path:
+                sys.path.append(os.path.abspath(path))
 
     def save_config(self):
         """
@@ -696,7 +705,7 @@ class PackageLibraryDialog(QDialog):
         :return:
         """
 
-        if self.is_path:
+        if self.is_path: # Currently the self.is_path = False (Need to pass by the method browse_package to initialise to True and the Browse button is commented. Could be interesting to permit a backdoor to pass the absolut path in the field for add package, to be continued... )
             path, package = os.path.split(self.line_edit.text())
             # Adding the module path to the system path
             sys.path.append(path)
@@ -718,7 +727,11 @@ class PackageLibraryDialog(QDialog):
         """
 
         self.packages = self.package_library.package_tree
+
         if module_name:
+
+            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
 
             # Reloading the package
             if module_name in sys.modules.keys():
@@ -786,7 +799,12 @@ class PackageLibraryDialog(QDialog):
         """
 
         self.packages = self.package_library.package_tree
+
         if package:
+
+            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+
             path_list = package.split('.')
             pkg_iter = self.packages
 
@@ -952,9 +970,15 @@ class PackageLibrary(QTreeWidget):
 
         :param item: item selected in the current tree
         :param state: checked or not checked
+        :Qt.Checked == 2. So if val == 2 -> checkbox is checked, 
+         and if val == 0 -> checkbox is not checked
+        :pkg_iter: dictionary where keys are the name of a module (brick)
+         and values are 'process_enabled' or 'process_disabled'.
+         Key can be a submodule. In this case the value is a dictionary
+         where keys are the name of a module (brick) and values are 'process_enabled'
+         or 'process_dsabled'. etc. pkg_iter take only the modules concerning the top
+         package where a change of status where done.
 
-        :Qt.Checked == 2. So if val == 2 -> checkbox is checked, and if val == 0 -> checkbox is not checked
-        :pkg_iter: dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_disabled'. Key can be a submodule. In this case the value is a dictionary where keys are the name of a module (brick) and values are 'process_enabled' or 'process_dsabled'. etc. pkg_iter take only the modules concerning the top package where a change of status where done. 
         :return:
         """
         
@@ -1182,7 +1206,22 @@ class InstallProcesses(QDialog):
                 if module_name in sys.modules.keys():
                     del sys.modules[module_name]
 
-                __import__(module_name)
+                try:
+                    __import__(module_name)
+
+                except ModuleNotFoundError as er:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Critical)
+                    msg.setText(('During the installation of {0}, '
+                                 'the folllowing exception was raised:'
+                                 '\n{1}: {2}.\nThis exception maybe '
+                                 'prevented the installation ...').format(module_name, er.__class__, er))
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+                    raise ModuleNotFoundError('The {0} brick may not been installed'.format(module_name))
+
                 pkg = sys.modules[module_name]
 
                 # Checking if there are subpackages
@@ -1214,6 +1253,25 @@ class InstallProcesses(QDialog):
 
                 return proc_dic
 
+        def change_pattern_in_folder(path, old_pattern, new_pattern):
+            """
+            Changing all "old_pattern" pattern to "new_pattern" in the "path" folder
+            :param path: path of the extracted or copied processes
+            :param old_pattern: old pattern
+            :param new_pattern: new pattern
+            :return:
+            """
+            for dname, dirs, files in os.walk(path):
+                for fname in files:
+                    # Modifying only .py files (pipelines are saved with this extension)
+                    if fname[-2:] == 'py':
+                        fpath = os.path.join(dname, fname)
+                        with open(fpath) as f:
+                            s = f.read()
+                        s = s.replace(old_pattern + '.', new_pattern + '.')
+                        with open(fpath, "w") as f:
+                            f.write(s)
+
         filename = self.path_edit.text()
 
         if not os.path.isdir(filename):
@@ -1239,7 +1297,9 @@ class InstallProcesses(QDialog):
                 return
 
         try:
-            sys.path.append(os.path.join('..', '..', 'processes')) ##############################################
+
+            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
 
             # Process config update
             if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
@@ -1276,7 +1336,6 @@ class InstallProcesses(QDialog):
             # Saving all the install packages names and checking if the MIA_processes are updated
             package_names = []
             mia_processes_not_found = True
-            tmp_folder = None
 
             # packages_already: packages already installed in populse_mia (populse_mia/processes)
             packages_already = [dire for dire in os.listdir(os.path.join('..', '..', 'processes'))
@@ -1288,22 +1347,23 @@ class InstallProcesses(QDialog):
                     packages_name = [member.split(os.sep)[0] for member in zip_ref.namelist()
                                      if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]
 
-            elif os.path.isdir(filename):#!!! careful: if filename is not a zip file, filename must be a directory that contains only the package(s) to install!!!
-                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename, member))]
+            elif os.path.isdir(filename):  # !!! careful: if filename is not a zip file, filename must be a directory
+                # that contains only the package(s) to install!!!
+                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename,
+                                                                                                         member))]
 
-            for package_name in packages_name:# package_name: package(s) in the zip file; one by one
-                
+            for package_name in packages_name:  # package_name: package(s) in the zip file or in folder; one by one
+
                 if (package_name not in packages_already) or (package_name == 'MIA_processes'):
                     # Copy MIA_processes in a temporary folder
                     if mia_processes_not_found:
 
-                        if package_name == "MIA_processes":
+                        if (package_name == "MIA_processes") and (
+                                os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes'))):
                             mia_processes_not_found = False
                             tmp_folder4MIA = tempfile.mkdtemp()
-                                    
-                            if os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes')):
-                                        shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
-                                                        os.path.join(tmp_folder4MIA, 'MIA_processes'))
+                            shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
+                                            os.path.join(tmp_folder4MIA, 'MIA_processes'))
 
                     if is_zipfile(filename):
                         
@@ -1313,7 +1373,8 @@ class InstallProcesses(QDialog):
                             zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
 
                     elif os.path.isdir(filename):
-                        distutils.dir_util.copy_tree(os.path.join(filename, package_name), os.path.join('..', '..', 'processes', package_name))    
+                        distutils.dir_util.copy_tree(os.path.join(filename, package_name),
+                                                     os.path.join('..', '..', 'processes', package_name))
 
                 else:
                     date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -1332,10 +1393,16 @@ class InstallProcesses(QDialog):
                         shutil.copytree(os.path.join(filename, package_name),
                                         os.path.join('..', '..', 'processes', package_name + '_' + date))
 
+                    original_package_name = package_name
                     package_name = package_name + '_' + date
 
+                    # Replacing the original package name pattern in all the extracted files by the package name
+                    # with the date
+                    change_pattern_in_folder(os.path.join('..', '..', 'processes', package_name),
+                                             original_package_name, package_name)
+
+                package_names.append(package_name)  # package_names contains all the extracted packages
                 final_package_dic = add_package(packages, package_name)
-                package_names.append(package_name)# package_names contains all the extracted packages
 
             if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
                 paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
@@ -1354,13 +1421,13 @@ class InstallProcesses(QDialog):
             if 'tmp_folder4MIA' in locals():
                 shutil.rmtree(tmp_folder4MIA)
                               
-            if 'tmp_dir' in locals():     
-                shutil.rmtree(tmp_dir)
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
 
         except Exception as e:  # Don't know which kind of exception can be raised yet
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
-            msg.setText(e)
+            msg.setText('{0}: {1}\nInstallation aborted ... !'.format(e.__class__, e))
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
@@ -1369,24 +1436,38 @@ class InstallProcesses(QDialog):
             # Resetting process_config.yml
             if process_dic_orig is None:
                 process_dic_orig = {}
+
             with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
                 yaml.dump(process_dic_orig, stream, default_flow_style=False, allow_unicode=True)
 
             # Deleting the extracted files
             if package_names is None:
                 package_names = []
+
             for package_name in package_names:
                 if os.path.exists(os.path.join('..', '..', 'processes', package_name)):
                     shutil.rmtree(os.path.join('..', '..', 'processes', package_name))
 
             # If the error comes from a MIA_process update, the old version is restored
             if not mia_processes_not_found:
+                distutils.dir_util.copy_tree(os.path.join(tmp_folder4MIA, 'MIA_processes'),
+                                             os.path.join('..', '..', 'processes', 'MIA_processes'))
 
-                if 'tmp_folder4MIA' in locals():
-                    shutil.copytree(os.path.join(tmp_folder4MIA, 'MIA_processes'),
-                                    os.path.join('..', '..', 'processes', 'MIA_processes'))
-                    shutil.rmtree(tmp_folder4MIA)
+            if 'tmp_folder4MIA' in locals():
+                shutil.rmtree(tmp_folder4MIA)
 
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
+
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Installation completed")
+            msg.setText("The package {0} has been correctly installed.".format(package_name))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
+                
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     print('using Qt backend:', qt_backend.get_qt_backend())

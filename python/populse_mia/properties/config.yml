@@ -1,17 +1,13 @@
 auto_save: 'no'
 background_color: ''
 chain_cursors: 'no'
-clinical_mode: 'yes'
-matlab: /usr/local/MATLAB/MATLAB_Runtime/v93
+clinical_mode: 'no'
 name: MIA2
 nb_slices_max: '10'
 opened_projects: []
-paths:
-  data: C:\Users\omonti\Documents\DataIRM\NifTI\testNifti\
-  modules: modules
-  projects: ..\data
 show_all_slices: 'no'
-spm: /home/lucie/spm12
 text_color: ''
-thumbnail_tag: BandWidth
+thumbnail_tag: SequenceName
+use_matlab: 'no'
 use_spm: 'no'
+use_spm_standalone: 'no'

@@ -1336,10 +1336,41 @@ class RunWorker(QThread):
         if use_spm_standalone == "yes" and os.path.exists(spm_standalone_path) \
                 and os.path.exists(matlab_standalone_path):
 
+            # WILL BE REMOVED WHEN ISSUE #27 WILL BE RESOLVED
+
             # Setting environment variables to run SPM12 standalone correctly
-            os.environ["FORCE_SPMMCR"] = '1'
-            os.environ["SPMMCRCMD"] = os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' + matlab_standalone_path \
-                                      + os.sep + ' script'
+            # print("force_spmmcr", os.environ["FORCE_SPMMCR"])
+            # print("spmmcrcmd", os.environ["SPMMCRCMD"])
+
+            """# OS.ENVIRON TEST
+            print("FORCE_SPMMCR in environ", "FORCE_SPMMCR" in os.environ.keys())
+            _environ = os.environ.copy()
+            try:
+                _environ["FORCE_SPMMCR"] = '1'
+                _environ["SPMMCRCMD"] = os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' + \
+                                        matlab_standalone_path + os.sep + " script"
+            finally:
+                os.environ.clear()
+                os.environ.update(_environ)"""
+
+            '''# SUBPROCESS TEST: DOES NOT WORK
+            import subprocess
+            subprocess.run(["export FORCE_SPMMCR=1"])
+            subprocess.run(["export SPMMCRCMD='" + os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' +
+                            matlab_standalone_path + os.sep + " script'"])'''
+
+            '''# putenv test
+            os.putenv("FORCE_SPMMCR", '1')
+            os.putenv("SPMMCRCMD", os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' +
+                      matlab_standalone_path + os.sep + ' script')'''
+
+            # print("os.environ", os.environ)
+            # os.environ["FORCE_SPMMCR"] = '1'
+            # os.environ["SPMMCRCMD"] = os.path.join(spm_standalone_path, 'run_spm12.sh') + ' ' + matlab_standalone_path \
+            #                          + os.sep + ' script'
+            #
+            # print("force_spmmcr", os.environ["FORCE_SPMMCR"])
+            # print("spmmcrcmd", os.environ["SPMMCRCMD"])
 
             if os.path.exists(matlab_path):
                 study_config = StudyConfig(use_spm=True, spm_directory=spm_standalone_path,
@@ -1352,8 +1383,7 @@ class RunWorker(QThread):
 
         elif use_spm == "yes" and use_matlab == "yes":  # Using without SPM standalone
             study_config = StudyConfig(use_spm=True, matlab_exec=matlab_path, spm_directory=spm_path,
-                                       spm_standalone=False, use_matlab=True)
-
+                                       spm_standalone=False, use_matlab=True, output_directory=spm_path)
         else:
             study_config = StudyConfig(use_spm=False)
 
