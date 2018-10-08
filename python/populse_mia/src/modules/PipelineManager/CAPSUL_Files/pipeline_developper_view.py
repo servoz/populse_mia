@@ -2334,6 +2334,10 @@ class PipelineDevelopperView(QGraphicsView):
 
         super(PipelineDevelopperView, self).__init__(parent)
 
+        # self.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
+        self.setAlignment(QtCore.Qt.AlignCenter)
+        self.centerOn(0,0)
+
         self.setRenderHints(Qt.QPainter.Antialiasing | Qt.QPainter.SmoothPixmapTransform)
         self.setBackgroundBrush(QtGui.QColor(60, 60, 60))
         self.scene = None
@@ -3659,6 +3663,13 @@ class PipelineDevelopperView(QGraphicsView):
         self.scene.update_pipeline()
 
     def _plug_right_clicked(self, name):
+
+        for node_name, gnode in six.iteritems(self.scene.gnodes):
+            if node_name in 'inputs':
+                self.inputYet = True
+            if node_name in 'outputs':
+                self.outputYet = False
+
         if self.is_logical_view() or not self.edition_enabled():
             # in logival view, links are not editable since they do not reflect
             # the details of reality
@@ -3736,6 +3747,8 @@ class PipelineDevelopperView(QGraphicsView):
 
         res = dial.exec_()
         if res:
+            # for node_name, gnode in six.iteritems(self.scene.gnodes):
+            #     print("list Nodes",node_name)
             try:
                 self.scene.pipeline.export_parameter(
                     self._temp_plug_name[0], self._temp_plug_name[1],
