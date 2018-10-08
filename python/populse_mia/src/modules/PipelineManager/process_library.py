@@ -1253,6 +1253,25 @@ class InstallProcesses(QDialog):
 
                 return proc_dic
 
+        def change_pattern_in_folder(path, old_pattern, new_pattern):
+            """
+            Changing all "old_pattern" pattern to "new_pattern" in the "path" folder
+            :param path: path of the extracted or copied processes
+            :param old_pattern: old pattern
+            :param new_pattern: new pattern
+            :return:
+            """
+            for dname, dirs, files in os.walk(path):
+                for fname in files:
+                    # Modifying only .py files (pipelines are saved with this extension)
+                    if fname[-2:] == 'py':
+                        fpath = os.path.join(dname, fname)
+                        with open(fpath) as f:
+                            s = f.read()
+                        s = s.replace(old_pattern + '.', new_pattern + '.')
+                        with open(fpath, "w") as f:
+                            f.write(s)
+
         filename = self.path_edit.text()
 
         if not os.path.isdir(filename):
@@ -1328,10 +1347,12 @@ class InstallProcesses(QDialog):
                     packages_name = [member.split(os.sep)[0] for member in zip_ref.namelist()
                                      if (len(member.split(os.sep)) is 2 and not member.split(os.sep)[-1])]
 
-            elif os.path.isdir(filename):#!!! careful: if filename is not a zip file, filename must be a directory that contains only the package(s) to install!!!
-                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename, member))]
+            elif os.path.isdir(filename):  # !!! careful: if filename is not a zip file, filename must be a directory
+                # that contains only the package(s) to install!!!
+                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename,
+                                                                                                         member))]
 
-            for package_name in packages_name:# package_name: package(s) in the zip file or in folder; one by one
+            for package_name in packages_name:  # package_name: package(s) in the zip file or in folder; one by one
 
                 if (package_name not in packages_already) or (package_name == 'MIA_processes'):
                     # Copy MIA_processes in a temporary folder
@@ -1352,7 +1373,8 @@ class InstallProcesses(QDialog):
                             zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
 
                     elif os.path.isdir(filename):
-                        distutils.dir_util.copy_tree(os.path.join(filename, package_name), os.path.join('..', '..', 'processes', package_name))
+                        distutils.dir_util.copy_tree(os.path.join(filename, package_name),
+                                                     os.path.join('..', '..', 'processes', package_name))
 
                 else:
                     date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -1371,9 +1393,15 @@ class InstallProcesses(QDialog):
                         shutil.copytree(os.path.join(filename, package_name),
                                         os.path.join('..', '..', 'processes', package_name + '_' + date))
 
+                    original_package_name = package_name
                     package_name = package_name + '_' + date
 
-                package_names.append(package_name)# package_names contains all the extracted packages
+                    # Replacing the original package name pattern in all the extracted files by the package name
+                    # with the date
+                    change_pattern_in_folder(os.path.join('..', '..', 'processes', package_name),
+                                             original_package_name, package_name)
+
+                package_names.append(package_name)  # package_names contains all the extracted packages
                 final_package_dic = add_package(packages, package_name)
 
             if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
@@ -1393,8 +1421,8 @@ class InstallProcesses(QDialog):
             if 'tmp_folder4MIA' in locals():
                 shutil.rmtree(tmp_folder4MIA)
                               
-            if 'tmp_dir' in locals():     
-                shutil.rmtree(tmp_dir)
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
 
         except Exception as e:  # Don't know which kind of exception can be raised yet
             msg = QMessageBox()
@@ -1428,8 +1456,16 @@ class InstallProcesses(QDialog):
             if 'tmp_folder4MIA' in locals():
                 shutil.rmtree(tmp_folder4MIA)
 
-            if 'tmp_dir' in locals():
-                shutil.rmtree(tmp_dir)
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
+
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Installation completed")
+            msg.setText("The package {0} has been correctly installed.".format(package_name))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
                 
 if __name__ == "__main__":
