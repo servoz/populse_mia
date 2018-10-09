@@ -12,10 +12,10 @@ pkgdata = {
     # format is:
     # <python module>: <file extensions list>
     # e.g:
-    # 'populse_db.icons': ['*.png']
+    # 'populse_mia.icons': ['*.png']
 }
 
-# Read the info.py file in populse_db module
+# Read the info.py file in populse_mia module
 release_info = {}
 python_dir = os.path.join(os.path.dirname(__file__), 'python')
 with open(os.path.join(python_dir, 'populse_mia', 'info.py')) as f:
