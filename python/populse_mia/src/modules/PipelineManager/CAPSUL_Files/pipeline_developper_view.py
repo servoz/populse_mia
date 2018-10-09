@@ -14,7 +14,7 @@ import os
 from pprint import pprint
 import weakref
 import tempfile
-import subprocess
+import soma.subprocess
 import distutils.spawn
 import importlib
 import sys
@@ -3067,7 +3067,7 @@ class PipelineDevelopperView(QGraphicsView):
         toutfile, toutfile_name = tempfile.mkstemp()
         os.close(toutfile)
         cmd = ['dot', '-Tplain', '-o', toutfile_name, tfile_name]
-        subprocess.check_call(cmd)
+        soma.subprocess.check_call(cmd)
 
         nodes_pos = self._read_dot_pos(toutfile_name)
 

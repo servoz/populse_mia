@@ -13,10 +13,7 @@ import os
 import logging
 import tempfile
 
-try:
-    import subprocess32 as subprocess
-except ImportError:
-    import subprocess
+import soma.subprocess
 import six
 import sys
 import json
@@ -532,7 +529,7 @@ def save_dot_image(pipeline, filename, nodes_sizes={}, use_nodes_pos=False,
         formats = {'txt': 'plain'}
         format = formats.get(ext, ext)
     cmd = ['dot', '-T%s' % ext, '-o', filename, dot_filename]
-    subprocess.check_call(cmd)
+    soma.subprocess.check_call(cmd)
     os.unlink(dot_filename)
 
 
