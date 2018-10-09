@@ -1,0 +1,41 @@
+environment:
+  
+  matrix:
+
+    - PYTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python37"
+
+build: off
+
+install:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-desktop.ps1'))
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "python -m pip install --upgrade pip"
+  - "pip install --upgrade cython"
+  - "pip install numpy"
+  - "pip install freetype-py"
+  - "pip install pypng"
+  - "pip install --upgrade pywavelets"
+  - "pip install pypiwin32"
+  - "python setup.py install"
+  - "echo y | pip uninstall PyQt5"
+  - "pip install PyQt5==5.9.2"
+  - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git C:\\projects\\populse-db"
+  - "cd C:\\projects\\populse-db"
+  - "pip install -e .[postgres]"
+  - "cd .."
+  - "cd populse-sandbox-rrm4w"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-sandbox-rrm4w\\python\\populse_mia\\src\\modules\\PipelineManager\\Processes\\;%PYTHONPATH%"
+
+test_script:
+  - "python --version"
+  - "python .\\python\\populse_mia\\src\\scripts\\test.py -v"
+
+notifications:
+  - provider: Email
+    to:
+      - '{{commitAuthorEmail}}'
+    on_build_failure: true
+    on_build_success: false
+    on_build_status_changed: true

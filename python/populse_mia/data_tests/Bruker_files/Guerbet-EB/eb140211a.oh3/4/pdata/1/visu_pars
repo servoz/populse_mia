@@ -1,0 +1,116 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=omontigo
+$$ Tue Feb 11 10:00:03 2014 CET (UT+1h)  omontigo
+$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh3/4/pdata/1/visu_pars
+##$VisuVersion=1
+##$VisuUid=( 65 )
+<2.16.756.5.5.100.3611280983.15701.1392109203.3>
+##$VisuCreator=( 65 )
+<ParaVision>
+##$VisuCreatorVersion=( 65 )
+<5.1>
+##$VisuCoreFrameCount=1
+$$ @vis= VisuVersion VisuUid VisuCreator VisuCreatorVersion VisuInstance
+##$VisuCoreDim=3
+##$VisuCoreSize=( 3 )
+256 256 16
+##$VisuCoreDimDesc=( 3 )
+spatial spatial spatial
+##$VisuCoreExtent=( 3 )
+26 26 6.4
+$$ @vis= VisuCoreFrameCount VisuCoreDim VisuCoreSize VisuCoreDimDesc
+##$VisuCoreFrameThickness=( 1 )
+6.4
+##$VisuCoreUnits=( 3, 65 )
+<mm> <mm> <mm>
+##$VisuCoreOrientation=( 1, 9 )
+1 0 0 0 1 0 0 0 1
+$$ @vis= VisuCoreExtent VisuCoreFrameThickness VisuCoreUnits
+##$VisuCorePosition=( 1, 3 )
+-13 -13 -3.4
+##$VisuCoreDataMin=( 1 )
+1.78942902569648
+##$VisuCoreDataMax=( 1 )
+32766.5
+##$VisuCoreDataOffs=( 1 )
+0
+$$ @vis= VisuCoreOrientation VisuCorePosition VisuCoreDataMin VisuCoreDataMax
+##$VisuCoreDataSlope=( 1 )
+24.7596989486975
+##$VisuCoreFrameType=MAGNITUDE_IMAGE
+##$VisuCoreWordType=_16BIT_SGN_INT
+$$ @vis= VisuCoreDataOffs VisuCoreDataSlope VisuCoreFrameType VisuCore
+##$VisuCoreByteOrder=littleEndian
+##$VisuCoreDiskSliceOrder=disk_normal_slice_order
+$$ @vis= VisuCoreWordType VisuCoreByteOrder VisuCoreDiskSliceOrder VisuPixel
+##$VisuSubjectName=( 65 )
+<Guerbet-C6-2014>
+##$VisuSubjectId=( 65 )
+<eb140211a>
+##$VisuSubjectBirthDate=( 9 )
+<>
+##$VisuSubjectSex=FEMALE
+$$ @vis= VisuFrameOrderDesc VisuSubjectName VisuSubjectId VisuSubjectBirthDate
+##$VisuSubjectComment=( 2048 )
+<>
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.3611280983.32251.1392107747.2497>
+##$VisuStudyDate=( 21 )
+<09:35:47 11 Feb 2014>
+$$ @vis= VisuSubjectSex VisuSubjectComment VisuSubject VisuStudyUid
+##$VisuStudyId=( 65 )
+<Rat-K44-Tube11>
+##$VisuStudyNumber=3
+##$VisuSubjectWeight=5
+##$VisuStudyReferringPhysician=( 65 )
+<>
+$$ @vis= VisuStudyDate VisuStudyId VisuStudyNumber VisuSubjectWeight
+##$VisuStudyDescription=( 65 )
+<>
+##$VisuSeriesNumber=262145
+$$ @vis= VisuStudyReferringPhysician VisuStudyDescription VisuStudy
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<ACQ_BRUKER_PVM>
+##$VisuInstitution=( 65 )
+<PIRMG-GIN>
+$$ @vis= VisuSeriesNumber VisuSubjectPosition VisuSeriesTypeId VisuSeries
+##$VisuStation=( 65 )
+<BioSpec 47/40>
+##$VisuAcqDate=( 21 )
+<09:50:15 11 Feb 2014>
+##$VisuAcqEchoTrainLength=49
+$$ @vis= VisuInstitution VisuStation VisuEquipment VisuAcqDate
+##$VisuAcqSequenceName=( 40 )
+<MDEFT (pvm)>
+##$VisuAcqNumberOfAverages=2
+##$VisuAcqImagingFrequency=200.342218514697
+$$ @vis= VisuAcqEchoTrainLength VisuAcqSequenceName VisuAcqNumberOfAverages
+##$VisuAcqImagedNucleus=( 8 )
+<1H>
+##$VisuAcqRepetitionTime=( 1 )
+4400
+##$VisuAcqInversionTime=( 1 )
+1150
+$$ @vis= VisuAcqImagingFrequency VisuAcqImagedNucleus VisuAcqRepetitionTime
+##$VisuAcqPhaseEncSteps=196
+##$VisuAcqPixelBandwidth=107.296137339056
+##$VisuAcqFlipAngle=24.436727353251
+$$ @vis= VisuAcqInversionTime VisuAcqPhaseEncSteps VisuAcqPixelBandwidth
+##$VisuAcqSize=( 3 )
+233 196 16
+##$VisuAcqImageSizeAccellerated=Yes
+##$VisuAcqImagePhaseEncDir=( 1 )
+col_slice_dir
+$$ @vis= VisuAcqFlipAngle VisuAcqSize VisuAcqImageSizeAccellerated
+##$VisuAcqEchoTime=( 1 )
+5.82399220482626
+##$VisuAcquisitionProtocol=( 65 )
+<G3_Guerbet_MDEFT>
+##$VisuAcqScanTime=580800
+$$ @vis= VisuAcqImagePhaseEncDir VisuAcqEchoTime VisuAcquisitionProtocol
+$$ @vis= VisuAcqScanTime VisuAcquisition Visu
+##END=
