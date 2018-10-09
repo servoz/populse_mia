@@ -725,7 +725,7 @@ class PackageLibraryDialog(QDialog):
 
         if self.is_path:  # Currently the self.is_path = False
             # (Need to pass by the method browse_package to initialise to True and the Browse button is commented.
-            # Could be interesting to permit a backdoor to pass the absolut path in the field for add package,
+            # Could be interesting to permit a backdoor to pass the absolute path in the field for add package,
             # to be continued... )
             path, package = os.path.split(self.line_edit.text())
             # Adding the module path to the system path
@@ -733,10 +733,14 @@ class PackageLibraryDialog(QDialog):
             self.add_package(package)
             self.paths.append(os.path.relpath(path))
         else:
-            self.status_label.setText("Installing {0}. Please wait.".format(self.line_edit.text()))
+            old_status = self.status_label.text()
+            self.status_label.setText("Adding {0}. Please wait.".format(self.line_edit.text()))
             QApplication.processEvents()
-            self.add_package(self.line_edit.text())
-            self.status_label.setText("{0} installed.".format(self.line_edit.text()))
+            package_added = self.add_package(self.line_edit.text())
+            if package_added is not None:
+                self.status_label.setText("{0} added to the Package Library.".format(self.line_edit.text()))
+            else:
+                self.status_label.setText(old_status)
 
     def add_package(self, module_name, class_name=None):
         """
@@ -798,6 +802,7 @@ class PackageLibraryDialog(QDialog):
 
                 self.package_library.package_tree = self.packages
                 self.package_library.generate_tree()
+                return True
 
             except Exception as err:
                 msg = QMessageBox()
@@ -812,7 +817,14 @@ class PackageLibraryDialog(QDialog):
         :return:
         """
 
-        self.remove_package(self.line_edit.text())
+        old_status = self.status_label.text()
+        self.status_label.setText("Removing {0}. Please wait.".format(self.line_edit.text()))
+        QApplication.processEvents()
+        package_removed = self.remove_package(self.line_edit.text())
+        if package_removed is not None:
+            self.status_label.setText("{0} removed from Package Library.".format(self.line_edit.text()))
+        else:
+            self.status_label.setText(old_status)
 
     def remove_package(self, package):
         """
@@ -846,10 +858,12 @@ class PackageLibraryDialog(QDialog):
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
-                    break
+                    return None
+                    # break
 
         self.package_library.package_tree = self.packages
         self.package_library.generate_tree()
+        return True
 
     def save(self):
         """
