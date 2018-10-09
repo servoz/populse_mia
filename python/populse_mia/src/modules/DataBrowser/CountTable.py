@@ -1,3 +1,11 @@
+##########################################################################
+# Populse_mia - Copyright (C) IRMaGe/CEA, 2018
+# Distributed under the terms of the CeCILL license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
+# for details.
+##########################################################################
+
 import PyQt5.QtCore as QtCore
 from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QFrame, \
     QVBoxLayout, QTableWidgetItem

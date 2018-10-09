@@ -13,7 +13,7 @@ __version__ = "{0}.{1}.{2}".format(version_major, version_minor, version_micro)
 # Expected by setup.py: the status of the project
 CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'Intended Audience :: Developers',
-                'License :: CeCILL-B Free Software License Agreement (CECILL-B)',
+                'License :: CeCILL Free Software License Agreement (CECILL)',
                 'Topic :: Software Development :: Libraries :: Python Modules',
                 'Operating System :: OS Independent',
                 'Programming Language :: Python',

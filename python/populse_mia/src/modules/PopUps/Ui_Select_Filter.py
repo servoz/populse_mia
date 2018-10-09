@@ -1,3 +1,11 @@
+##########################################################################
+# Populse_mia - Copyright (C) IRMaGe/CEA, 2018
+# Distributed under the terms of the CeCILL license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
+# for details.
+##########################################################################
+
 from PyQt5 import QtWidgets, QtCore
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Filter_Selection import Ui_Filter_Selection
