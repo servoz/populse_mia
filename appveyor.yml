@@ -24,7 +24,7 @@ install:
   - "cd C:\\projects\\populse-db"
   - "pip install -e .[postgres]"
   - "cd .."
-  - "cd populse-mia-rrm4w"
+  - "cd populse-mia"
   - "SET PYTHONPATH=C:\\projects\\populse-mia\\python\\populse_mia\\src\\modules\\;%PYTHONPATH%"
 
 test_script:
