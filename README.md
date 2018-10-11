@@ -4,7 +4,6 @@
   <img src="https://user-images.githubusercontent.com/1913468/38312384-eb8fd9ee-3821-11e8-870d-209673077223.jpg">
 </p>
 
-# 
 
 [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
 [![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)
