@@ -12,19 +12,28 @@ From PyPI:
 
     # Available soon
 
-From source:
+From source for Linux distributions:
 
     # A compatible version of Python must be installed
     sudo apt-get install git
-    git clone https://github.com/populse/populse_mia.git /tmp/populse_mia
-    cd /tmp/populse_mia
-    sudo python setup.py install # Beware that it is the good Python version (use pythonx.x to be sure)
-    cd /tmp
-    sudo rm -r /tmp/populse_mia
+    # Get source code from Github. Replace [mia_install_dir] with a directory of your choice
+    git clone https://github.com/populse/populse_mia.git [mia_install_dir]
+    cd [mia_install_dir]
+    sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)
+    # To run MIA from the source code, don't remove it. Otherwise:
+    cd ..
+    rm -r [mia_install_dir]
 
 # Usage
 
-Available soon             
+For Linux, launching from the source code directory via command line:
+
+    # Add the module directory to the python path. Replace [mia_install_dir] with installation directory
+    export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules
+    cd [mia_install_dir]/python/populse_mia/src/scripts
+    python3 main.py
+    
+Usage instructions for other platforms available soon.
 	
 # Tests
 
