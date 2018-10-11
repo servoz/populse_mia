@@ -34,7 +34,7 @@ Multiparametric Image Analysis
         % cd [mia_install_dir]  
         % sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
-  * To run MIA from the source code, don't remove it. Otherwise:
+  * To run populse_mia from the source code, don't remove it. Otherwise:
 
         % cd ..  
         % rm -r [mia_install_dir]  
@@ -60,19 +60,19 @@ Multiparametric Image Analysis
 
 # Tests
 
-Unit tests written thanks to the python module unittest
+* Unit tests written thanks to the python module unittest
 
-Continuous integration made with Travis (Linux, OSX), and AppVeyor (Windows)
+* Continuous integration made with Travis (Linux, OSX), and AppVeyor (Windows)
 
-Code coverage calculated by the python module codecov
+* Code coverage calculated by the python module codecov
 
-The module is ensured to work with Python >= 3.5
+* The module is ensured to work with Python >= 3.5
 
-The module is ensured to work on the platforms Linux, OSX and Windows
+* The module is ensured to work on the platforms Linux, OSX and Windows
 
-The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
+* The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
 	
-	python python/populse_mia/src/scripts/test.py (from populse_db root folder)
+      % python python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
 	
 # Requirements
 
@@ -95,16 +95,15 @@ The script of tests is python/populse_mia/src/scripts/test.py, so the following 
 
 
 # Other packages used
-  * copy
-  * os
-  * six
-  * tempfile
-  * unittest
+
+* copy
+* os
+* six
+* tempfile
+* unittest
   
 # License
   
-  The whole populse project is open source
-  
-  Populse_mia is precisely released under the CeCILL software license
-  
-  You can find all the details on the license [here](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html), or refer to the license file [here](https://github.com/populse/populse_mia/blob/master/LICENSE)
+* The whole populse project is open source
+* Populse_mia is precisely released under the CeCILL software license
+* You can find all the details on the license [here](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html), or refer to the license file [here](https://github.com/populse/populse_mia/blob/master/LICENSE)
