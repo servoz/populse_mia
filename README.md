@@ -1,6 +1,16 @@
-# populse_mia                                                                                                                            [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)        [![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)                                                                                                                          [![](https://codecov.io/github/populse/populse_mia/coverage.svg?branch=master)](https://codecov.io/github/populse/populse_mia) [![](https://img.shields.io/badge/license-CeCILL-blue.svg)](https://github.com/populse/populse_mia/blob/master/LICENSE) [![](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-yellow.svg)](#) [![](https://img.shields.io/badge/platform-Linux%2C%20OSX%2C%20Windows-orange.svg)](#)
+<p align="center" >
+  <b> Multiparametric Image Analysis </b><br>
+	<br>
+  <img src="https://user-images.githubusercontent.com/1913468/38312384-eb8fd9ee-3821-11e8-870d-209673077223.jpg">
+</p>
 
-Multiparametric Image Analysis
+# populse_mia
+[![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
+[![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)
+[![](https://codecov.io/github/populse/populse_mia/coverage.svg?branch=master)](https://codecov.io/github/populse/populse_mia)
+[![](https://img.shields.io/badge/license-CeCILL-blue.svg)](https://github.com/populse/populse_mia/blob/master/LICENSE)
+[![](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-yellow.svg)](#)
+[![](https://img.shields.io/badge/platform-Linux%2C%20OSX%2C%20Windows-orange.svg)](#)
 
 # Documentation
 
