@@ -274,7 +274,9 @@ class ImportWorker(QThread):
         self.project.undos.append(historyMaker)
         self.project.redos.clear()
 
-        print("read_log time: " + str(time() - begin))
+        print('\nData export duration in the database:')
+        print("read_log time: " + str(round(time() - begin, 2)) + ' s\n')
+        #print("read_log time: " + str(time() - begin))
 
         # pr.disable()
         # pr.print_stats(sort='time')
