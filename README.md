@@ -14,7 +14,7 @@
 
 # Documentation
 
-   > Available soon
+The documentation is available on populse_mia's website here: [https://populse.github.io/populse_mia](https://populse.github.io/populse_mia)
 
 # Installation
 
