@@ -76,9 +76,9 @@
 * The module is ensured to work with Python >= 3.5
 * The module is ensured to work on the platforms Linux, OSX and Windows
 * The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
-	
+
       % python python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
-	
+
 # Requirements
 
 * SIP
@@ -98,7 +98,6 @@
 * nipype
 * scikit-image
 
-
 # Other packages used
 
 * copy
@@ -106,9 +105,9 @@
 * six
 * tempfile
 * unittest
-  
+
 # License
-  
+
 * The whole populse project is open source
 * Populse_mia is precisely released under the CeCILL software license
 * You can find all the details on the license [here](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html), or refer to the license file [here](https://github.com/populse/populse_mia/blob/master/LICENSE)
