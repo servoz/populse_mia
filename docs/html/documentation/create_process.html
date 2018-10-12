@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Populse_MIA’s pipeline processes &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Populse_MIA’s pipeline processes</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="toctree-wrapper compound">
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="30%" />
+<col width="28%" />
+<col width="28%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="../index.html">Home</a></td>
+<td><a class="reference external" href="./documentation/documentation.html">Documentation</a></td>
+<td><a class="reference external" href="./installation/installation.html">Installation</a></td>
+<td><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="populse-mia-s-pipeline-processes">
+<h1>Populse_MIA’s pipeline processes<a class="headerlink" href="#populse-mia-s-pipeline-processes" title="Permalink to this headline">¶</a></h1>
+<p>This page explains how to create a process that can be used in Populse_MIA’s Pipeline Manager and how to install it to Populse_MIA.</p>
+<p>Populse_MIA uses <a class="reference external" href="http://brainvisa.info/capsul/index.html">Capsul</a> to handle Pipeline processing. During Populse_MIA installation, Nipype’s interfaces are stored in the package library and are directly available in the Process Library. However, any user can import its own processes in Populse_MIA following these next steps:</p>
+<div class="section" id="creating-a-mia-process">
+<h2>Creating a MIA process<a class="headerlink" href="#creating-a-mia-process" title="Permalink to this headline">¶</a></h2>
+<p>MIA processes are Capsul processes made specific for Populse_MIA. They need at least three methods to work properly: __init__, list_outputs and _run_process.</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>__init__()</strong></li>
+</ul>
+<p>Definition of the inputs/outputs of the process. Each input/output is typed using the <a class="reference external" href="https://docs.enthought.com/traits/">Enthought’s Traits library</a> and is either mandatory or optional.</p>
+<ul class="simple">
+<li><strong>list_outputs()</strong></li>
+</ul>
+<p>This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.</p>
+<ul class="simple">
+<li><strong>_run_processes()</strong></li>
+</ul>
+<p>This method is called during a pipeline run. It has to contain the desired processing and need no return value.</p>
+</div></blockquote>
+<p><strong>Example:</strong> creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy’s gaussian filtering function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">traits.api</span> <span class="k">as</span> <span class="nn">traits</span>  <span class="c1"># used to declare the inputs/outputs of the process</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>  <span class="c1"># used to read and save Nifti images</span>
+<span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>  <span class="c1"># used to use SPM&#39;s Smooth</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>  <span class="c1"># used to apply the smoothing on an array</span>
+<span class="c1"># from populse_mia import Process_mia  # to uncommented when populse_mia will be on Pypi</span>
+<span class="kn">from</span> <span class="nn">PipelineManager.Process_mia</span> <span class="k">import</span> <span class="n">Process_mia</span>  <span class="c1"># base class that the created process has to inherit from</span>
+
+
+<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">Process_mia</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;in_file&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;3D input file&#39;</span><span class="p">))</span>  <span class="c1"># Mandatory plug</span>
+
+        <span class="c1"># For inputs/outputs that are lists, it is possible to specify which the type of the list element (here</span>
+        <span class="c1"># traits.Float(). The second value ([1.0, 1.0, 1.0]) corresponds to the default value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;fwhm&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">traits</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;List of fwhm for each dimension (in mm)&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;out_prefix&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Output file prefix&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                             <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Method used (either &quot;SPM&quot; or &quot;Scipy&quot;)&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;smoothed_file&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Output file&#39;</span><span class="p">))</span>  <span class="c1"># Mandatory plug</span>
+
+    <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Depending on the chosen method, the output dictionary will be generated differently</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
+                <span class="c1"># Nipype interfaces have already a _list_outputs method that generates the output dictionary</span>
+                <span class="n">spm_smooth</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">{}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
+                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+                <span class="n">nipype_dict</span> <span class="o">=</span> <span class="n">spm_smooth</span><span class="o">.</span><span class="n">_list_outputs</span><span class="p">()</span>  <span class="c1"># Generates: {&#39;smoothed_files&#39; : [out_filename]}</span>
+                <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">:</span> <span class="n">nipype_dict</span><span class="p">[</span><span class="s1">&#39;smoothed_files&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Generating the filename by hand</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">{}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>
+                    <span class="n">out_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="n">filename</span>
+                    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">)}</span>
+
+            <span class="c1"># Generating the inheritance dictionary</span>
+            <span class="n">inheritance_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">output_dict</span><span class="p">,</span> <span class="n">inheritance_dict</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;method&quot; input has to be &quot;SPM&quot; or &quot;Scipy&quot; for a Smooth process&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_run_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Depending on the chosen method, the output file will be generated differently</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
+                <span class="n">spm_smooth</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
+                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>
+                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+
+                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># Running the interface</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">input_image</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>  <span class="c1"># Loading the nibabel image</span>
+                    <span class="n">input_image_header</span> <span class="o">=</span> <span class="n">input_image</span><span class="o">.</span><span class="n">header</span>
+                    <span class="n">input_array</span> <span class="o">=</span> <span class="n">input_image</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>  <span class="c1"># Getting the 3D volume as a numpy array</span>
+
+                    <span class="c1"># Getting the image resolution in x, y and z</span>
+                    <span class="n">x_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">y_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="n">z_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
+
+                    <span class="c1"># Convert the fwhm for each dimension from mm to pixel</span>
+                    <span class="n">x_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">x_resolution</span>
+                    <span class="n">y_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_resolution</span>
+                    <span class="n">z_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">z_resolution</span>
+                    <span class="n">pixel_fwhm</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_fwhm</span><span class="p">,</span> <span class="n">y_fwhm</span><span class="p">,</span> <span class="n">z_fwhm</span><span class="p">]</span>
+
+                    <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="n">pixel_fwhm_dim</span> <span class="o">/</span> <span class="mf">2.355</span> <span class="k">for</span> <span class="n">pixel_fwhm_dim</span> <span class="ow">in</span> <span class="n">pixel_fwhm</span><span class="p">]</span>  <span class="c1"># Converting fwmh to sigma</span>
+                    <span class="n">output_array</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>  <span class="c1"># Filtering the array</span>
+
+                    <span class="c1"># Creating a new Nifti image with the affine/header of the input_image</span>
+                    <span class="n">output_image</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">output_array</span><span class="p">,</span> <span class="n">input_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">input_image</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+                    <span class="c1"># Saving the image</span>
+                    <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>
+                    <span class="n">out_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="n">filename</span>
+                    <span class="n">nib</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_image</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;method&quot; input has to be &quot;SPM&quot; or &quot;Scipy&quot; for a Smooth process&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-python-package-containing-the-process">
+<h2>Creating a Python package containing the process<a class="headerlink" href="#creating-a-python-package-containing-the-process" title="Permalink to this headline">¶</a></h2>
+<p>Make sure that the file containing the Smooth class is contained in a Python package and add this to the __init__.py file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.name_of_file</span> <span class="k">import</span> <span class="n">SmoothSpmScipy</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-the-package-in-populse-mia">
+<h2>Installing the package in Populse_MIA<a class="headerlink" href="#installing-the-package-in-populse-mia" title="Permalink to this headline">¶</a></h2>
+<p>In the software menu bar, go to More &gt; Install processes &gt; From folder and browse to the package. Click on “Install package”. The package is now stored in the process library and the Smooth process can be used to create pipelines.</p>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.src.modules.ProjectManager package &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="populse_mia.src.modules.SoftwareProperties package" href="populse_mia.src.modules.SoftwareProperties.html" />
+    <link rel="prev" title="populse_mia.src.modules.Project package" href="populse_mia.src.modules.Project.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.src.modules.ProjectManager package</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="populse_mia.src.modules.Project.html">populse_mia.src.modules.Project package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="populse_mia.src.modules.SoftwareProperties.html">populse_mia.src.modules.SoftwareProperties package</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="populse-mia-src-modules-projectmanager-package">
+<h1>populse_mia.src.modules.ProjectManager package<a class="headerlink" href="#populse-mia-src-modules-projectmanager-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-populse_mia.src.modules.ProjectManager.Controller">
+<span id="populse-mia-src-modules-projectmanager-controller-module"></span><h2>populse_mia.src.modules.ProjectManager.Controller module<a class="headerlink" href="#module-populse_mia.src.modules.ProjectManager.Controller" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.ImportProgress">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">ImportProgress</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
+<p>Import progress bar</p>
+<dl class="method">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.ImportProgress.onProgress">
+<code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal to set the import progressbar value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.ImportWorker">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">ImportWorker</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportWorker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
+<p>Thread import</p>
+<dl class="attribute">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.ImportWorker.notifyProgress">
+<code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.ImportWorker.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.getJsonTagsFromFile">
+<code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">getJsonTagsFromFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.getJsonTagsFromFile" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> – file path of the Json file</li>
+<li><strong>path</strong> – project path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.read_log">
+<code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.read_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>From the log export file of the import software, the data base (here the current project) is loaded with
+the tags</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.save_project">
+<code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">save_project</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.save_project" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.src.modules.ProjectManager.Controller.verify_scans">
+<code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.verify_scans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-populse_mia.src.modules.ProjectManager">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.src.modules.ProjectManager" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="populse_mia.src.modules.Project.html">populse_mia.src.modules.Project package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="populse_mia.src.modules.SoftwareProperties.html">populse_mia.src.modules.SoftwareProperties package</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
