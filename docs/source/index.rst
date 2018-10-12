@@ -5,9 +5,9 @@
 
 .. toctree::
 
-+-----------------------+------------------------------------------------------+---------------------------------------------------+---------------------------------------------------+
-|`Home <./index.html>`_ |`Documentation <./documentation/documentation.html>`_ |`Installation <./installation/installation.html>`_ |`GitHub <https://github.com/populse/populse_mia>`_ |
-+-----------------------+------------------------------------------------------+---------------------------------------------------+---------------------------------------------------+
++----------------------+-----------------------------------------------------+--------------------------------------------------+--------------------------------------------------+
+|`Home <./index.html>`_|`Documentation <./documentation/documentation.html>`_|`Installation <./installation/installation.html>`_|`GitHub <https://github.com/populse/populse_mia>`_|
++----------------------+-----------------------------------------------------+--------------------------------------------------+--------------------------------------------------+
 
 
 Generalities
@@ -30,7 +30,7 @@ Installation
 ============
 
 * `User installation <./installation/user_installation.html>`_
-* `Developer installationn <./installation/developer_installation.html>`_
+* `Developer installation <./installation/developer_installation.html>`_
 
 
 Documentation
