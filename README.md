@@ -71,15 +71,10 @@
 # Tests
 
 * Unit tests written thanks to the python module unittest
-
 * Continuous integration made with Travis (Linux, OSX), and AppVeyor (Windows)
-
 * Code coverage calculated by the python module codecov
-
 * The module is ensured to work with Python >= 3.5
-
 * The module is ensured to work on the platforms Linux, OSX and Windows
-
 * The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
 	
       % python python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
