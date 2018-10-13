@@ -33,7 +33,7 @@ install:
   - cd populse_db
   - pip3 install -e .[postgres]
   - cd ..
-  - cd populse_sandbox
+  - cd populse_mia
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_mia/python/populse_mia/src/modules"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_mia/python/populse_mia/src/modules"; fi
   - "export DISPLAY=:99.0"
