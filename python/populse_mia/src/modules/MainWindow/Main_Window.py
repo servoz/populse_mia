@@ -6,12 +6,6 @@
 # for details.
 ##########################################################################
 
-'''
-Created on 11 janv. 2018
-
-@author: omonti
-
-'''
 import subprocess
 import os
 
