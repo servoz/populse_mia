@@ -107,3 +107,6 @@ src/modules/NodeEditor/Processes/processes.py
 src/modules/PipelineManager/Processes/processes.py
 python/populse_mia/src/modules/PipelineManager/Processes/*
 src/modules/PipelineManager/Processes/*
+
+# Test to ignore the config files
+python/populse_mia/properties/*
