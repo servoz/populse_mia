@@ -97,6 +97,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 * soma_workflow
 * nipype
 * scikit-image
+* populse-db
 
 # Other packages used
 
