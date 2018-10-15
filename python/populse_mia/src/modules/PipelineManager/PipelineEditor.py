@@ -1201,6 +1201,8 @@ class PipelineEditor(PipelineDevelopperView):
                 'Compatible files (*.py);; All (*)')[0]
             if os.path.splitext(filename)[1] == '':  # which means no extension
                 filename += '.py'
+            if not filename:                         # save widget was cancelled by the user
+                return ''
             elif os.path.splitext(filename)[1] != '.py':
                 msg = QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
