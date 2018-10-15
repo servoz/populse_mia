@@ -6,12 +6,6 @@
 # for details.
 ##########################################################################
 
-'''
-Created on 14 déc. 2017
-
-@author: omonti
-'''
-
 import os
 import yaml
 

@@ -1,47 +1,84 @@
-# populse_mia                                                                                                                            [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)        [![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/ouvrierl/populse-mia-rrm4w)                                                                                                                          [![](https://codecov.io/github/populse/populse_mia/coverage.svg?branch=master)](https://codecov.io/github/populse/populse_mia) [![](https://img.shields.io/badge/license-CeCILL-blue.svg)](https://github.com/populse/populse_mia/blob/master/LICENSE) [![](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-yellow.svg)](#) [![](https://img.shields.io/badge/platform-Linux%2C%20OSX%2C%20Windows-orange.svg)](#)
+<p align="center" >
+  <b> populse_mia: Multiparametric Image Analysis </b><br>
+	<br>
+  <img src="https://user-images.githubusercontent.com/1913468/38312384-eb8fd9ee-3821-11e8-870d-209673077223.jpg">
+</p>
 
-Multiparametric Image Analysis
+
+[![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
+[![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)
+[![](https://codecov.io/github/populse/populse_mia/coverage.svg?branch=master)](https://codecov.io/github/populse/populse_mia)
+[![](https://img.shields.io/badge/license-CeCILL-blue.svg)](https://github.com/populse/populse_mia/blob/master/LICENSE)
+[![](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-yellow.svg)](#)
+[![](https://img.shields.io/badge/platform-Linux%2C%20OSX%2C%20Windows-orange.svg)](#)
 
 # Documentation
 
-Available soon
-	
+The documentation is available on populse_mia's website here: [https://populse.github.io/populse_mia](https://populse.github.io/populse_mia)
+
 # Installation
 
-From PyPI:
+* From PyPI
 
-    # Available soon
+   > Available soon
 
-From source:
+* From source, for Linux distributions
+  * A compatible version of Python must be installed
+  * Install a Version Control System, for example [git](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control), and clone the source codes
+    * Depending of your distribution, [package management system](https://en.wikipedia.org/wiki/Package_manager) can be different
 
-    # A compatible version of Python must be installed
-    sudo apt-get install git
-    git clone https://github.com/populse/populse_mia.git /tmp/populse_mia
-    cd /tmp/populse_mia
-    sudo python setup.py install # Beware that it is the good Python version (use pythonx.x to be sure)
-    cd /tmp
-    sudo rm -r /tmp/populse_mia
+          sudo apt-get install git # Debian like
+          sudo dnf install git # Fedora 22 and later
+          # etc.
+
+    * Get source code from Github. Replace [mia_install_dir] with a directory of your choice
+
+          git clone https://github.com/populse/populse_mia.git [mia_install_dir]
+
+  * Or download the zip file of the project ([green button "Clone or download"](https://github.com/populse/populse_mia))
+  
+     * Extract the data in the directory of your choice [mia_install_dir]
+
+  * Then, install the Python module distribution
+
+        cd [mia_install_dir]  
+        sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
+
+  * To run populse_mia from the source code, don't remove it. Otherwise:
+
+        cd ..  
+        rm -r [mia_install_dir]  
 
 # Usage
 
-Available soon             
-	
+  * For Linux: launching from the source code directory via command line
+
+    * Add the module directory to the python path
+
+      * Depending of your command-line interpreter, [the environment variables management](https://en.wikipedia.org/wiki/Unix_shell) can be different
+
+            export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash  
+            setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  
+            # etc.  
+
+    * Then interprets the main.py file
+
+          cd [mia_install_dir]/python/populse_mia/src/scripts  
+          python3 main.py  
+
+> Usage instructions for other platforms available soon
+
 # Tests
 
-Unit tests written thanks to the python module unittest
+* Unit tests written thanks to the python module unittest
+* Continuous integration made with Travis (Linux, OSX), and AppVeyor (Windows)
+* Code coverage calculated by the python module codecov
+* The module is ensured to work with Python >= 3.5
+* The module is ensured to work on the platforms Linux, OSX and Windows
+* The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
 
-Continuous integration made with Travis (Linux, OSX), and AppVeyor (Windows)
+      python3 python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
 
-Code coverage calculated by the python module codecov
-
-The module is ensured to work with Python >= 3.5
-
-The module is ensured to work on the platforms Linux, OSX and Windows
-
-The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
-	
-	python python/populse_mia/src/scripts/test.py (from populse_db root folder)
-	
 # Requirements
 
 * SIP
@@ -60,19 +97,18 @@ The script of tests is python/populse_mia/src/scripts/test.py, so the following 
 * soma_workflow
 * nipype
 * scikit-image
-
+* populse-db
 
 # Other packages used
-  * copy
-  * os
-  * six
-  * tempfile
-  * unittest
-  
+
+* copy
+* os
+* six
+* tempfile
+* unittest
+
 # License
-  
-  The whole populse project is open source
-  
-  Populse_mia is precisely released under the CeCILL software license
-  
-  You can find all the details on the license [here](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html), or refer to the license file [here](https://github.com/populse/populse_mia/blob/master/LICENSE)
+
+* The whole populse project is open source
+* Populse_mia is precisely released under the CeCILL software license
+* You can find all the details on the license [here](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html), or refer to the license file [here](https://github.com/populse/populse_mia/blob/master/LICENSE)

@@ -578,14 +578,16 @@ class PipelineManagerTab(QWidget):
 
         self.disable_progress_bar = True
         if self.disable_progress_bar:
+            name = self.pipelineEditorTabs.get_current_filename()
+            self.main_window.statusBar().showMessage('Pipeline "{0}" is getting initialized. Please wait.'.format(name))
+            QApplication.processEvents()
             self.init_pipeline()
+            self.main_window.statusBar().showMessage(
+                'Pipeline "{0}" has been initialized.'.format(name))
         else:
             self.progress = InitProgress(self.project, self.pipelineEditorTabs, pipeline)
             self.progress.show()
             self.progress.exec()
-
-
-
 
         """sys.stdout = open('/home/david/profile.txt', 'w')
         pr.disable()
@@ -876,6 +878,10 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
+        name = self.pipelineEditorTabs.get_current_filename()
+        self.main_window.statusBar().showMessage('Pipeline "{0}" is getting run. Please wait.'.format(name))
+        QApplication.processEvents()
+
         if self.iterationTable.check_box_iterate.isChecked():
             iterated_tag = self.iterationTable.iterated_tag
             tag_values = self.iterationTable.tag_values_list
@@ -883,9 +889,13 @@ class PipelineManagerTab(QWidget):
             if ui_iteration.exec():
                 tag_values = ui_iteration.final_values
                 for tag_value in tag_values:
-                    print("#" * 50)
-                    print("Running pipeline for" + tag_value)
-                    print('#' * 50)
+
+                    # Status bar update
+                    self.main_window.statusBar().showMessage(
+                        'Pipeline "{0}" is getting run for {1} {2}. Please wait.'.format(name, iterated_tag,
+                                                                                          tag_value))
+                    QApplication.processEvents()
+
                     idx_combo_box = self.iterationTable.combo_box.findText(tag_value)
                     self.iterationTable.combo_box.setCurrentIndex(idx_combo_box)
                     self.iterationTable.update_table()
@@ -897,10 +907,21 @@ class PipelineManagerTab(QWidget):
                     self.progress = RunProgress(self.pipelineEditorTabs)
                     self.progress.show()
                     self.progress.exec()
+
+            self.main_window.statusBar().showMessage(
+                'Pipeline "{0}" has been run for {1} {2}. Please wait.'.format(name, iterated_tag, tag_values))
         else:
-            self.progress = RunProgress(self.pipelineEditorTabs)
-            self.progress.show()
-            self.progress.exec()
+            try:
+                self.progress = RunProgress(self.pipelineEditorTabs)
+                self.progress.show()
+                self.progress.exec()
+            except:
+                self.main_window.statusBar().showMessage(
+                    'Pipeline "{0}" has not been correctly run.'.format(name))
+            else:
+                self.main_window.statusBar().showMessage(
+                    'Pipeline "{0}" has been correctly run.'.format(name))
+
 
     def displayNodeParameters(self, node_name, process):
         """

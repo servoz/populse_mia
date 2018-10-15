@@ -1,0 +1,183 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Populse_MIA’s developer installation &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Populse_MIA’s developer installation</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="toctree-wrapper compound">
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="33%" />
+<col width="23%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="../index.html">Home</a></td>
+<td><a class="reference external" href="../documentation/documentation.html">Documentation</a></td>
+<td><a class="reference external" href="./installation.html">Installation</a></td>
+<td><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="populse-mia-s-developer-installation">
+<h1>Populse_MIA’s developer installation<a class="headerlink" href="#populse-mia-s-developer-installation" title="Permalink to this headline">¶</a></h1>
+<p>This page explains how to install Populse_MIA to use it as a developer. Note: A compatible version of Python must be installed (Python &gt; 3.5)</p>
+<div class="section" id="non-populse-member">
+<h2>Non-Populse member<a class="headerlink" href="#non-populse-member" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><a class="reference external" href="https://help.github.com/articles/fork-a-repo/">Fork</a> Populse_MIA on GitHub and clone your Populse_MIA repository</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Make sure to have git installed (<a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">git documentation</a>)</p>
+</li>
+<li><p class="first">If not, install it (depending of your distribution, <a class="reference external" href="https://en.wikipedia.org/wiki/Package_manager">package management system</a> can be different):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">git</span> <span class="c1"># Debian like</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span> <span class="c1"># Fedora 22 and later etc.</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Get source code from Github using HTTPS or SSH. Replace [mia_install_dir] with a directory of your choice:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">your_user_name</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">.</span><span class="n">git</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span> <span class="c1"># using HTTPS</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">your_user_name</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">.</span><span class="n">git</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span> <span class="c1"># using SSH</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Then, install the Python module distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span>
+<span class="n">sudo</span> <span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="c1"># Ensure that you use python &gt;= 3.5 (use python3.x to be sure)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add the module directory to the python path</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Depending of your command-line interpreter and the environment you are working in, <a class="reference external" href="https://en.wikipedia.org/wiki/Unix_shell">the environment variables management</a> can be different</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash
+setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  etc.
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Then interprets the main.py file to run Populse_MIA</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">scripts</span>
+<span class="n">python3</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">If you have made some changes to improve the code and want to share them, feel free to open pull requests:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Commit and push your changes to your personal repository</li>
+<li>Open a <a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">pull request</a> on GitHub</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="populse-member">
+<h2>Populse member<a class="headerlink" href="#populse-member" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Install Populse_MIA from source (for Linux distributions)</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Make sure to have git installed (<a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">git documentation</a>)</p>
+</li>
+<li><p class="first">If not, install it (depending of your distribution, <a class="reference external" href="https://en.wikipedia.org/wiki/Package_manager">package management system</a> can be different):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">git</span> <span class="c1"># Debian like</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span> <span class="c1"># Fedora 22 and later etc.</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Get source code from Github using HTTPS or SSH. Replace [mia_install_dir] with a directory of your choice:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">populse</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">.</span><span class="n">git</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span> <span class="c1"># using HTTPS</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">populse</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">.</span><span class="n">git</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span> <span class="c1"># using SSH</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Then, install the Python module distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span>
+<span class="n">sudo</span> <span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="c1"># Ensure that you use python &gt;= 3.5 (use python3.x to be sure)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add the module directory to the python path</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Depending of your command-line interpreter and the environment you are working in, <a class="reference external" href="https://en.wikipedia.org/wiki/Unix_shell">the environment variables management</a> can be different</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash
+setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  etc.
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Then interprets the main.py file to run Populse_MIA</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="p">[</span><span class="n">mia_install_dir</span><span class="p">]</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">populse_mia</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">scripts</span>
+<span class="n">python3</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make sure to work on your own branch</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">your_branch_name</span> <span class="c1"># creates your own branch locally</span>
+<span class="n">git</span> <span class="n">push</span> <span class="o">-</span><span class="n">u</span> <span class="n">origin</span> <span class="n">your_branch_name</span> <span class="c1"># creates your own branch remotely</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
