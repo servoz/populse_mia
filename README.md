@@ -27,13 +27,13 @@ The documentation is available on populse_mia's website here: [https://populse.g
   * Install a Version Control System, for example [git](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control), and clone the source codes
     * Depending of your distribution, [package management system](https://en.wikipedia.org/wiki/Package_manager) can be different
 
-          % sudo apt-get install git # Debian like
-          % sudo dnf install git # Fedora 22 and later
-          etc.
+          sudo apt-get install git # Debian like
+          sudo dnf install git # Fedora 22 and later
+          # etc.
 
     * Get source code from Github. Replace [mia_install_dir] with a directory of your choice
 
-          % git clone https://github.com/populse/populse_mia.git [mia_install_dir]
+          git clone https://github.com/populse/populse_mia.git [mia_install_dir]
 
   * Or download the zip file of the project ([green button "Clone or download"](https://github.com/populse/populse_mia))
   
@@ -41,13 +41,13 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
   * Then, install the Python module distribution
 
-        % cd [mia_install_dir]  
-        % sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
+        cd [mia_install_dir]  
+        sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
   * To run populse_mia from the source code, don't remove it. Otherwise:
 
-        % cd ..  
-        % rm -r [mia_install_dir]  
+        cd ..  
+        rm -r [mia_install_dir]  
 
 # Usage
 
@@ -57,14 +57,14 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
       * Depending of your command-line interpreter, [the environment variables management](https://en.wikipedia.org/wiki/Unix_shell) can be different
 
-            % export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash  
-            % setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  
-            etc.  
+            export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash  
+            setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  
+            # etc.  
 
     * Then interprets the main.py file
 
-          % cd [mia_install_dir]/python/populse_mia/src/scripts  
-          % python3 main.py  
+          cd [mia_install_dir]/python/populse_mia/src/scripts  
+          python3 main.py  
 
 > Usage instructions for other platforms available soon
 
@@ -77,7 +77,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 * The module is ensured to work on the platforms Linux, OSX and Windows
 * The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
 
-      % python python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
+      python3 python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
 
 # Requirements
 
