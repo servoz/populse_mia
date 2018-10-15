@@ -22,6 +22,8 @@ before_install:
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libpng-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install subversion; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install svn; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade numpy; fi
   - pip3 install --upgrade cython
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pywavelets; fi
@@ -32,6 +34,11 @@ install:
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_db
   - pip3 install -e .[postgres]
+  - cd ..
+  - svn checkout https://bioproj.extra.cea.fr/neurosvn/brainvisa/soma/soma-base/branches/bug_fix --username brainvisa --password Soma2009 soma-base
+  - cd soma-base
+  - sudo pip3 uninstall soma-base
+  - python3 setup.py develop
   - cd ..
   - cd populse_mia
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_mia/python/populse_mia/src/modules"; fi
