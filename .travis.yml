@@ -35,7 +35,7 @@ install:
   - cd populse_db
   - pip3 install -e .[postgres]
   - cd ..
-  - svn checkout https://bioproj.extra.cea.fr/neurosvn/brainvisa/soma/soma-base/branches/bug_fix --username brainvisa --password Soma2009 soma-base
+  - svn checkout https://bioproj.extra.cea.fr/neurosvn/brainvisa/soma/soma-base/branches/bug_fix --no-auth-cache --username brainvisa --password Soma2009 soma-base
   - cd soma-base
   - sudo pip3 uninstall soma-base
   - python3 setup.py develop
