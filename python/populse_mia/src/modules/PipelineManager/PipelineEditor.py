@@ -1199,6 +1199,8 @@ class PipelineEditor(PipelineDevelopperView):
             filename = QtWidgets.QFileDialog.getSaveFileName(
                 None, 'Save the pipeline', folder,
                 'Compatible files (*.py);; All (*)')[0]
+            if not filename:                         # save widget was cancelled by the user
+                return ''
             if os.path.splitext(filename)[1] == '':  # which means no extension
                 filename += '.py'
             elif os.path.splitext(filename)[1] != '.py':
