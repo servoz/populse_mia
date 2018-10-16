@@ -329,6 +329,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
+        called_from_edit_sub_pipeline = editor is not None
+
         if not editor:
             # If there is only one opened PipelineEditor
             if self.count() == 2:
@@ -349,16 +351,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         if editor:
             current_editor = self.get_current_editor()
-            # If the editor is already opened
-            if editor in list(self.undos.keys()):
+            # If the editor is already opened, but not the one just created
+            if editor in list(self.undos.keys()) and not called_from_edit_sub_pipeline:
                 self.close_tab(self.currentIndex())
                 self.set_current_editor_by_editor(editor)
             else:
-                self.setTabText(self.currentIndex(), editor._pipeline_filename)
-                self.undos[editor] = []
-                self.redos[editor] = []
+                self.setTabText(self.currentIndex(), os.path.basename(editor._pipeline_filename))
                 del self.undos[current_editor]
                 del self.redos[current_editor]
+                self.undos[editor] = []
+                self.redos[editor] = []
         else:
             if self.currentIndex() != 0:
                 self.close_tab(self.currentIndex())
@@ -486,26 +488,23 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         # Finding the real sub-pipeline filename
         sub_pipeline_filename = find_filename(dic['Paths'], sub_pipeline_list, sub_pipeline_name)
-        if sub_pipeline_filename:
+
+        # Checking if the sub-pipeline is not already opened in an editor tab
+        pipeline_open = False
+        for open_editor in list(self.widget(i) for i in range (self.count()-1)):
+            if open_editor.get_pipeline_filename() == os.path.relpath(sub_pipeline_filename):
+                pipeline_open = True
+
+        if pipeline_open:
+            self.set_current_editor_by_editor(open_editor)
+        elif sub_pipeline_filename:
             pipeline = get_process_instance(sub_pipeline_filename)
             if pipeline is not None:
-                sub_pipeline_basename = os.path.basename(sub_pipeline_filename)
-
-                # Checking if the sub-pipeline is not already opened in an editor tab
-                pipeline_opened = False
-                for opened_editor in self.undos.keys():
-                    if opened_editor.current_process == pipeline:
-                        pipeline_opened = True
-                        break
-
-                if pipeline_opened:
-                    self.set_current_editor_by_editor(opened_editor)
-                else:
-                    self.new_tab()
-                    self.setCurrentIndex(self.count() - 2)
-                    self.get_current_editor().set_pipeline(pipeline)
-                    self.get_current_editor()._pipeline_filename = sub_pipeline_filename
-                    self.load_pipeline(self.get_current_editor())
+                self.new_tab()
+                self.setCurrentIndex(self.count() - 2)
+                self.get_current_editor().set_pipeline(pipeline)
+                self.get_current_editor()._pipeline_filename = sub_pipeline_filename
+                self.load_pipeline(self.get_current_editor())
 
     def open_filter(self, node_name):
         """
@@ -1254,6 +1253,12 @@ class PipelineEditor(PipelineDevelopperView):
 
             self.pipeline_saved.emit(filename)
             return filename
+
+    def get_pipeline_filename(self):
+        if hasattr(self, '_pipeline_filename'):
+            return os.path.relpath(self._pipeline_filename)
+        else:
+            return ''
 
 
 def save_pipeline(pipeline, filename):
