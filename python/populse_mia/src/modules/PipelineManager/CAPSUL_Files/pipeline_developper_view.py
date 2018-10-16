@@ -3927,22 +3927,36 @@ class PipelineDevelopperView(QGraphicsView):
         Loading and setting pipeline parameters (inputs and outputs) from a Json file.
         :return:
         """
+
+        def hinted_tuple_hook(obj):
+            
+            if '__tuple__' in obj:
+                return tuple(obj['items'])
+            
+            else:
+                return obj
+
         filename = qt_backend.getOpenFileName(
-            None, 'Load the pipeline parameters', '',
-            'Compatible files (*.json)')
+                                              None, 'Load the pipeline parameters', '',
+                                              'Compatible files (*.json)')
 
         if filename:
-            with open(filename, 'r', encoding='utf8') as file:
-                dic = json.load(file)
+            with open(filename, 'r', encoding='utf8') as fileJson:
+                dic = json.load(fileJson)
+
+            dic = json.loads(dic, object_hook=hinted_tuple_hook)
 
             if "pipeline_parameters" not in dic.keys():
                 raise KeyError('No "pipeline_parameters" key found in {0}.'.format(filename))
 
             for trait_name, trait_value in dic["pipeline_parameters"].items():
+                
                 if trait_name not in self.scene.pipeline.user_traits().keys():
                     print('No "{0}" parameter in pipeline.'.format(trait_name))
+                    
                 try:
                     setattr(self.scene.pipeline, trait_name, trait_value)
+                    
                 except traits.TraitError:
                     print("Error for the plug {0}".format(trait_name))
 
@@ -3953,6 +3967,27 @@ class PipelineDevelopperView(QGraphicsView):
         Saving pipeline parameters (inputs and outputs) to a Json file.
         :return:
         """
+
+        class MultiDimensionalArrayEncoder(json.JSONEncoder):
+        
+            def encode(self, obj):
+                
+                def hint_tuples(item):
+
+                    if isinstance(item, tuple):
+                        return {'__tuple__': True, 'items': [hint_tuples(e) for e in item]}
+                    
+                    if isinstance(item, list):
+                        return [hint_tuples(e) for e in item]
+                
+                    if isinstance(item, dict):
+                        return {key: hint_tuples(value) for key, value in item.items()}
+                    
+                    else:
+                        return item
+
+                return super(MultiDimensionalArrayEncoder, self).encode(hint_tuples(obj))
+
         pipeline = self.scene.pipeline
 
         filename = qt_backend.getSaveFileName(
@@ -3963,18 +3998,24 @@ class PipelineDevelopperView(QGraphicsView):
             from traits.api import Undefined
             # Generating the dictionary
             param_dic = {}
+            
             for trait_name, trait in pipeline.user_traits().items():
+                
                 if trait_name in ["nodes_activation"]:
                     continue
+                
                 value = getattr(pipeline, trait_name)
+                
                 if value is Undefined:
                     value = ""
+                    
                 param_dic[trait_name] = value
 
             # In the future, more information may be added to this dictionary
             dic = {}
             dic["pipeline_parameters"] = param_dic
-
+            jsonstring = MultiDimensionalArrayEncoder().encode(dic)
+           
             # Saving the dictionary in the Json file
             with open(filename, 'w', encoding='utf8') as file:
-                json.dump(dic, file)
+                json.dump(jsonstring, file)

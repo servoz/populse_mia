@@ -6,13 +6,6 @@
 # for details.
 ##########################################################################
 
-'''
-Created on 19 déc. 2017
-Update on 08 jan. 2018
-
-@author:  Olivier MONTIGON - IRMaGe
-@mail:    olivier.montigon@univ-grenoble-alpes.fr
-'''
 import json
 import os, fnmatch
 
