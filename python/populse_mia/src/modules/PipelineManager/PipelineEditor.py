@@ -41,7 +41,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     Attributes:
         - project: current project in the software
         - scan_list: list of the selected database files
-        - undos: dictionary containing as values the undo list and as keys the name of the corresponding tab
+        - undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab
         - redos: dictionary containing as values the redo list and as keys the name of the corresponding tab
 
     Methods:
@@ -104,8 +104,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         # Setting a default editor called "New Pipeline"
         self.addTab(p_e, "New Pipeline")
-        self.undos["New Pipeline"] = []
-        self.redos["New Pipeline"] = []
+        self.undos[p_e] = []
+        self.redos[p_e] = []
 
         # Tool button to add a tab
         tb = QtWidgets.QToolButton()
@@ -141,14 +141,14 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         idx = 1
         while True and idx < 50:
             name = "New Pipeline {0}".format(idx)
-            if name in self.undos.keys():
+            if self.findChild(QtWidgets.QWidget, name):
                 idx += 1
                 continue
             else:
                 break
         if name is not None:
-            self.undos[name] = []
-            self.redos[name] = []
+            self.undos[p_e] = []
+            self.redos[p_e] = []
         else:
             print('Too many tabs in the Pipeline Editor')
             return
@@ -165,6 +165,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         filename = self.get_filename_by_index(idx)
+        editor = self.get_editor_by_index(idx)
 
         # If the pipeline has been modified and not saved
         if self.tabText(idx)[-2:] == " *":
@@ -186,8 +187,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         if not can_exit:
             return
 
-        del self.undos[filename]
-        del self.redos[filename]
+        del self.undos[editor]
+        del self.redos[editor]
 
         if idx == self.currentIndex():
             self.setCurrentIndex(max(0, self.currentIndex()-1))
@@ -207,8 +208,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             # Setting a default editor called "New Pipeline"
             self.insertTab(0, p_e, "New Pipeline")
             self.setCurrentIndex(0)
-            self.undos["New Pipeline"] = []
-            self.redos["New Pipeline"] = []
+            self.undos[p_e] = []
+            self.redos[p_e] = []
 
     def set_current_editor_by_name(self, tab_name):
         """
@@ -218,7 +219,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        self.setCurrentWidget(self.findChild(QtWidgets.QWidget, tab_name))
+        self.setCurrentIndex(self.get_index_by_filename(tab_name))
+
+    def set_current_editor_by_editor(self, editor):
+        """
+        Sets the current editor
+
+        :param editor: editor in the tab that should be made current
+        :return:
+        """
+
+        self.setCurrentIndex(self.get_index_by_editor(editor))
 
     def get_current_editor(self):
         """
@@ -228,6 +239,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         return self.widget(self.currentIndex())
+
+    def get_editor_by_index(self, idx):
+        """
+        Gets the instance of an editor from its index in the editors
+
+        :param idx: index of the editor
+        :return:
+        """
+
+        return self.widget(idx)
 
     def get_filename_by_index(self, idx):
         """
@@ -252,6 +273,18 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         for idx in range(self.count()):
             if self.tabText(idx) == filename or self.tabText(idx)[:-2] == filename:
+                return idx
+
+    def get_index_by_editor(self, editor):
+        """
+        Gets the index of the editor corresponding to the given editor
+
+        :param editor: searched pipeline editor
+        :return:
+        """
+
+        for idx in range(self.count()):
+            if self.get_editor_by_index(idx) == editor:
                 return idx
 
     def get_current_filename(self):
@@ -287,50 +320,45 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         if new_file_name and old_filename != os.path.basename(new_file_name):
             self.setTabText(self.currentIndex(), os.path.basename(new_file_name))
-            undos = self.undos[old_filename]
-            redos = self.redos[old_filename]
 
-            del self.undos[old_filename]
-            del self.redos[old_filename]
-
-            self.undos[new_file_name] = undos
-            self.redos[new_file_name] = redos
-
-    def load_pipeline(self, filename=None):
+    def load_pipeline(self, editor=None):
         """
         Loads a new pipeline
 
-        :param filename: not None only when this method is called from "edit_sub_pipeline"
+        :param editor: not None only when this method is called from "edit_sub_pipeline"
         :return:
         """
 
-        if not filename:
+        if not editor:
             # If there is only one opened PipelineEditor
             if self.count() == 2:
                 # If the PipelineEditor has been edited
                 if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
                     self.new_tab()
-                    filename = self.widget(1).load_pipeline()
+                    self.widget(1).load_pipeline()
+                    editor = self.get_editor_by_index()
                     self.setCurrentIndex(1)
                 else:
-                    filename = self.widget(0).load_pipeline()
+                    self.widget(0).load_pipeline()
+                    editor = self.get_editor_by_index(0)
             else:
                 self.new_tab()
-                filename = self.widget(self.count()-2).load_pipeline()
+                self.widget(self.count() - 2).load_pipeline()
+                editor = self.get_editor_by_index(self.count() - 2)
                 self.setCurrentIndex(self.count()-2)
 
-        if filename:
-            current_name = self.tabText(self.currentIndex())
-            # If the pipeline is already opened
-            if os.path.basename(filename) in list(self.undos.keys()):
+        if editor:
+            current_editor = self.get_current_editor()
+            # If the editor is already opened
+            if editor in list(self.undos.keys()):
                 self.close_tab(self.currentIndex())
-                self.setCurrentIndex(self.get_index_by_filename(os.path.basename(filename)))
+                self.set_current_editor_by_editor(editor)
             else:
-                self.setTabText(self.currentIndex(), os.path.basename(filename))
-                self.undos[os.path.basename(filename)] = []
-                self.redos[os.path.basename(filename)] = []
-                del self.undos[current_name]
-                del self.redos[current_name]
+                self.setTabText(self.currentIndex(), editor._pipeline_filename)
+                self.undos[editor] = []
+                self.redos[editor] = []
+                del self.undos[current_editor]
+                del self.redos[current_editor]
         else:
             if self.currentIndex() != 0:
                 self.close_tab(self.currentIndex())
@@ -405,8 +433,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :param editor: editor
         :return:
         """
-        self.undos[self.get_current_filename()] = editor.undos
-        self.redos[self.get_current_filename()] = editor.redos
+        self.undos[self.get_current_editor()] = editor.undos
+        self.redos[self.get_current_editor()] = editor.redos
         file_name = self.get_current_filename()
         if file_name[-2:] != " *":
             self.setTabText(self.currentIndex(), file_name + " *")
@@ -452,6 +480,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         sub_pipeline_name = sub_pipeline.name
 
         # get_path returns a list that is the package path to the sub_pipeline file
+        sub_pipeline_id = sub_pipeline.id
         sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
         sub_pipeline_name = sub_pipeline_list.pop()
 
@@ -464,19 +493,19 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
                 # Checking if the sub-pipeline is not already opened in an editor tab
                 pipeline_opened = False
-                for opened_filename in self.undos.keys():
-                    if opened_filename == sub_pipeline_basename:
+                for opened_editor in self.undos.keys():
+                    if opened_editor.current_process == pipeline:
                         pipeline_opened = True
                         break
 
                 if pipeline_opened:
-                    self.set_current_editor_by_name(sub_pipeline_basename)
+                    self.set_current_editor_by_editor(opened_editor)
                 else:
                     self.new_tab()
                     self.setCurrentIndex(self.count() - 2)
                     self.get_current_editor().set_pipeline(pipeline)
                     self.get_current_editor()._pipeline_filename = sub_pipeline_filename
-                    self.load_pipeline(sub_pipeline_basename)
+                    self.load_pipeline(self.get_current_editor())
 
     def open_filter(self, node_name):
         """
