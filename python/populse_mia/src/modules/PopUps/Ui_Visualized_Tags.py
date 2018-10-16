@@ -71,14 +71,23 @@ class Ui_Visualized_Tags(QWidget):
         vbox_top_left.addWidget(self.list_widget_tags)
 
         # List of the tags selected by the user
+        self.label_visualized_tags = QtWidgets.QLabel(self)
+        self.label_visualized_tags.setTextFormat(QtCore.Qt.AutoText)
+        self.label_visualized_tags.setObjectName("label_visualized_tags")
+        self.label_visualized_tags.setText("Visualized tags:")
+
         self.list_widget_selected_tags = QtWidgets.QListWidget(self)
         self.list_widget_selected_tags.setObjectName("listWidget_visualized_tags")
         self.list_widget_selected_tags.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
 
+        v_box_top_right = QVBoxLayout()
+        v_box_top_right.addWidget(self.label_visualized_tags)
+        v_box_top_right.addWidget(self.list_widget_selected_tags)
+
         hbox_tags = QHBoxLayout()
         hbox_tags.addLayout(vbox_top_left)
         hbox_tags.addLayout(vbox_tag_buttons)
-        hbox_tags.addWidget(self.list_widget_selected_tags)
+        hbox_tags.addLayout(v_box_top_right)
 
         self.setLayout(hbox_tags)
 

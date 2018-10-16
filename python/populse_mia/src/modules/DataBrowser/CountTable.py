@@ -96,6 +96,7 @@ class CountTable(QDialog):
         self.project = project
 
         self.setModal(True)
+        self.setWindowTitle("Count table")
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
