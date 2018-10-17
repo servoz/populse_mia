@@ -14,19 +14,15 @@ Tab presentation
 ----------------
 
 The Data Browser tab is composed of three main elements:
-  * A toolbar on the top
-      * Contains tools to query and to modify the database 
-  * A table
-      * Displays the content of the database
-  * An image viewer
-      * Displays the files contained in the database
+  * A toolbar on the top which contains tools to interact with the database 
+  * A table which displays the content of the database
+  * An image viewer which displays the files contained in the database
+
+Here is an overview of the Data Browser tab:
 
 .. image:: ../images/data_browser.png
    :align: center
    :name: Data browser tab
-
-*Data Browser tab*
-
 
 The toolbar
 ------------
@@ -173,8 +169,80 @@ Advanced search example:
 
 .. image:: ../images/advanced_search.png
    :align: center
-   :name: Rapid search example
+   :name: Advanced search example
 
+The table
+---------
 
+The table displays the documents contained in the database and their associated tags. Some information about it:
+
+  * Any cell can be selected and modified (except the FileName column). 
+  * To select several cells, drag onto them or use Ctrl or Shift. 
+  * A red cell means that the tag is a cloned or a user tag.
+  * A blue cell means that the original value of the tag has been modified.
+  * To sort the table depending a column, click one time on its header.
+  * To select an entire column, double click on its header.
+
+By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below:
+
+Reset cell(s)
+^^^^^^^^^^^^^
+Reset the selected cells to their original values.
+
+Reset column(s)
+^^^^^^^^^^^^^^^
+Reset the selected columns to their original values (no need to select the entire column).
+
+Reset row(s)
+^^^^^^^^^^^^
+Reset the selected rows to their original values (no need to select the entire row).
+
+Clear cell(s)
+^^^^^^^^^^^^^
+Set the `*Not Defined*` value to the selected cells.
+
+Add document
+^^^^^^^^^^^^
+Add a document to the database. This action can also be done using the green cross on the bottom left of the bottom left of the table.
+
+.. image:: ../images/add_document.png
+   :align: center
+   :name: Add document example
+
+Remove document(s)
+^^^^^^^^^^^^^^^^^^
+Remove the selected documents from the database.
+
+Select column(s)
+^^^^^^^^^^^^^^^^
+Select the entire column.
+
+Multiple sort
+^^^^^^^^^^^^^
+Sort the table on several tag values, in an ascending or descending way.
+
+Example:
+
+Sorting the table in a descending way, for all the Exp Type values and then the Patient values.
+
+.. image:: ../images/multiple_sort.png
+   :align: center
+   :name: Multiple sort example
+
+The table is now sorted depending on the Exp Type tag, in a descending way. For a same Exp Type value, the documents are sorted depending the Patient values, in a descending way too.
+
+.. image:: ../images/multiple_sort_result.png
+   :align: center
+   :name: Multiple sort result example
+
+Send documents to the Pipeline Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Use the selected documents to the Pipeline Manager.
+
+A pop-up is displayed to confirm the selected documents. Click on "OK" to use these documents in the follow-up of the analysis.
+
+.. image:: ../images/send_to_pipeline.png
+   :align: center
+   :name: Send documents to pipeline example
 
 

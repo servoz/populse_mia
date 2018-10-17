@@ -21,6 +21,7 @@ class Ui_Dialog_Multiple_Sort(QDialog):
         self.table_data_browser = table_data_browser
 
         self.setModal(True)
+        self.setWindowTitle("Multiple sort")
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]

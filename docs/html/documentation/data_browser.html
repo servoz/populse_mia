@@ -56,35 +56,14 @@
 <dl class="docutils">
 <dt>The Data Browser tab is composed of three main elements:</dt>
 <dd><ul class="first last simple">
-<li><dl class="first docutils">
-<dt>A toolbar on the top</dt>
-<dd><ul class="first last">
-<li>Contains tools to query and to modify the database</li>
+<li>A toolbar on the top which contains tools to interact with the database</li>
+<li>A table which displays the content of the database</li>
+<li>An image viewer which displays the files contained in the database</li>
 </ul>
 </dd>
 </dl>
-</li>
-<li><dl class="first docutils">
-<dt>A table</dt>
-<dd><ul class="first last">
-<li>Displays the content of the database</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>An image viewer</dt>
-<dd><ul class="first last">
-<li>Displays the files contained in the database</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
+<p>Here is an overview of the Data Browser tab:</p>
 <img alt="../_images/data_browser.png" class="align-center" id="data-browser-tab" src="../_images/data_browser.png" />
-<p><em>Data Browser tab</em></p>
 </div>
 <div class="section" id="the-toolbar">
 <h2>The toolbar<a class="headerlink" href="#the-toolbar" title="Permalink to this headline">¶</a></h2>
@@ -271,7 +250,66 @@ SequenceName).</p>
 </dd>
 </dl>
 <p>Advanced search example:</p>
-<img alt="../_images/advanced_search.png" class="align-center" id="id1" src="../_images/advanced_search.png" />
+<img alt="../_images/advanced_search.png" class="align-center" id="advanced-search-example" src="../_images/advanced_search.png" />
+</div>
+</div>
+<div class="section" id="the-table">
+<h2>The table<a class="headerlink" href="#the-table" title="Permalink to this headline">¶</a></h2>
+<p>The table displays the documents contained in the database and their associated tags. Some information about it:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Any cell can be selected and modified (except the FileName column).</li>
+<li>To select several cells, drag onto them or use Ctrl or Shift.</li>
+<li>A red cell means that the tag is a cloned or a user tag.</li>
+<li>A blue cell means that the original value of the tag has been modified.</li>
+<li>To sort the table depending a column, click one time on its header.</li>
+<li>To select an entire column, double click on its header.</li>
+</ul>
+</div></blockquote>
+<p>By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below:</p>
+<div class="section" id="reset-cell-s">
+<h3>Reset cell(s)<a class="headerlink" href="#reset-cell-s" title="Permalink to this headline">¶</a></h3>
+<p>Reset the selected cells to their original values.</p>
+</div>
+<div class="section" id="reset-column-s">
+<h3>Reset column(s)<a class="headerlink" href="#reset-column-s" title="Permalink to this headline">¶</a></h3>
+<p>Reset the selected columns to their original values (no need to select the entire column).</p>
+</div>
+<div class="section" id="reset-row-s">
+<h3>Reset row(s)<a class="headerlink" href="#reset-row-s" title="Permalink to this headline">¶</a></h3>
+<p>Reset the selected rows to their original values (no need to select the entire row).</p>
+</div>
+<div class="section" id="clear-cell-s">
+<h3>Clear cell(s)<a class="headerlink" href="#clear-cell-s" title="Permalink to this headline">¶</a></h3>
+<p>Set the <cite>*Not Defined*</cite> value to the selected cells.</p>
+</div>
+<div class="section" id="add-document">
+<h3>Add document<a class="headerlink" href="#add-document" title="Permalink to this headline">¶</a></h3>
+<p>Add a document to the database. This action can also be done using the green cross on the bottom left of the bottom left of the table.</p>
+<img alt="../_images/add_document.png" class="align-center" id="add-document-example" src="../_images/add_document.png" />
+</div>
+<div class="section" id="remove-document-s">
+<h3>Remove document(s)<a class="headerlink" href="#remove-document-s" title="Permalink to this headline">¶</a></h3>
+<p>Remove the selected documents from the database.</p>
+</div>
+<div class="section" id="select-column-s">
+<h3>Select column(s)<a class="headerlink" href="#select-column-s" title="Permalink to this headline">¶</a></h3>
+<p>Select the entire column.</p>
+</div>
+<div class="section" id="multiple-sort">
+<h3>Multiple sort<a class="headerlink" href="#multiple-sort" title="Permalink to this headline">¶</a></h3>
+<p>Sort the table on several tag values, in an ascending or descending way.</p>
+<p>Example:</p>
+<p>Sorting the table in a descending way, for all the Exp Type values and then the Patient values.</p>
+<img alt="../_images/multiple_sort.png" class="align-center" id="multiple-sort-example" src="../_images/multiple_sort.png" />
+<p>The table is now sorted depending on the Exp Type tag, in a descending way. For a same Exp Type value, the documents are sorted depending the Patient values, in a descending way too.</p>
+<img alt="../_images/multiple_sort_result.png" class="align-center" id="multiple-sort-result-example" src="../_images/multiple_sort_result.png" />
+</div>
+<div class="section" id="send-documents-to-the-pipeline-manager">
+<h3>Send documents to the Pipeline Manager<a class="headerlink" href="#send-documents-to-the-pipeline-manager" title="Permalink to this headline">¶</a></h3>
+<p>Use the selected documents to the Pipeline Manager.</p>
+<p>A pop-up is displayed to confirm the selected documents. Click on “OK” to use these documents in the follow-up of the analysis.</p>
+<img alt="../_images/send_to_pipeline.png" class="align-center" id="send-documents-to-pipeline-example" src="../_images/send_to_pipeline.png" />
 </div>
 </div>
 </div>
