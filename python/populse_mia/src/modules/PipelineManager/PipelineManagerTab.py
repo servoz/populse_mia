@@ -580,7 +580,7 @@ class PipelineManagerTab(QWidget):
 
         self.disable_progress_bar = True
         if self.disable_progress_bar:
-            name = self.pipelineEditorTabs.get_current_filename()
+            name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
             self.main_window.statusBar().showMessage('Pipeline "{0}" is getting initialized. Please wait.'.format(name))
             QApplication.processEvents()
             self.init_pipeline()
@@ -880,7 +880,7 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
-        name = self.pipelineEditorTabs.get_current_filename()
+        name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
         self.main_window.statusBar().showMessage('Pipeline "{0}" is getting run. Please wait.'.format(name))
         QApplication.processEvents()
 
