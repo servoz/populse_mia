@@ -435,9 +435,9 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :param editor: editor
         :return:
         """
-        self.undos[self.get_current_editor()] = editor.undos
-        self.redos[self.get_current_editor()] = editor.redos
         file_name = self.get_current_filename()
+        self.undos[editor] = editor.undos
+        self.redos[editor] = editor.redos
         if file_name[-2:] != " *":
             self.setTabText(self.currentIndex(), file_name + " *")
 

@@ -215,10 +215,11 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
+        c_e = self.pipelineEditorTabs.get_current_editor()
 
         # We can undo if we have an action to revert
-        if len(self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()]) > 0:
-            to_undo = self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.undos[c_e]) > 0:
+            to_undo = self.pipelineEditorTabs.undos[c_e].pop()
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
 
@@ -317,10 +318,11 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
+        c_e = self.pipelineEditorTabs.get_current_editor()
 
         # We can redo if we have an action to make again
-        if len(self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()]) > 0:
-            to_redo = self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.redos[c_e]) > 0:
+            to_redo = self.pipelineEditorTabs.redos[c_e].pop()
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
 
@@ -469,8 +471,8 @@ class PipelineManagerTab(QWidget):
             for element in signal_list:
                 history_maker.append(element)
 
-        self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].append(history_maker)
-        self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].clear()
+        self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_editor()].append(history_maker)
+        self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_editor()].clear()
 
     def updateProcessLibrary(self, filename):
         """
