@@ -18,7 +18,7 @@ Populse_MIA is composed of three main tabs:
       * Provides an overview of the data (image or non-image) available in the current analysis project (raw data and derived data) 
   * Data Viewer
       * An advanced viewer of up to 5-dimensional data, mostly but not exclusively MRI data, spectra,  plots linked to image and non-image data
-  * Pipeline Manager
+  * Pipeline Manager (`manual <./pipeline_manager.html>`_)
       * Advanced and graphical construction of processing pipelines
 
 
