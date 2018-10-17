@@ -210,8 +210,7 @@ class Project:
 
         for filename in glob.glob(os.path.join(filters_folder, '*')):
             filter, extension = os.path.splitext(os.path.basename(filename))
-            with open(filename, 'r') as f:   # make sure this gets closed automatically as soon as we are done reading
-                data = json.load(f)
+            data = json.load(open(filename))
             filterObject = Filter(filter, data["nots"], data["values"], data["fields"], data["links"],
                                   data["conditions"], data["search_bar_text"])
             self.filters.append(filterObject)
