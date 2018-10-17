@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Populse_MIA’s Pipeline Manager &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Populse_MIA’s Pipeline Manager</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="toctree-wrapper compound">
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="24%" />
+<col width="31%" />
+<col width="31%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="../index.html">Home</a></td>
+<td><a class="reference external" href="./documentation.html">Documentation</a></td>
+<td><a class="reference external" href="../installation/installation.html">Installation</a></td>
+<td><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="populse-mia-s-pipeline-manager">
+<h1>Populse_MIA’s Pipeline Manager<a class="headerlink" href="#populse-mia-s-pipeline-manager" title="Permalink to this headline">¶</a></h1>
+<p>This page is a user guide for Populse_MIA’s Pipeline Manager, a tool to build and run processing pipelines in a graphical way.</p>
+<div class="section" id="tab-presentation">
+<h2>Tab presentation<a class="headerlink" href="#tab-presentation" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>The Pipeline Manager tab is composed of four main elements:</dt>
+<dd><ul class="first last simple">
+<li>The process library</li>
+<li>The pipeline editor</li>
+<li>The iteration table</li>
+<li>The node controller</li>
+</ul>
+</dd>
+</dl>
+<p>Here is an overview of the Pipeline Manager tab:</p>
+<img alt="../_images/pipeline_manager.png" class="align-center" id="pipeline-manager-tab" src="../_images/pipeline_manager.png" />
+</div>
+<div class="section" id="the-process-library">
+<h2>The process library<a class="headerlink" href="#the-process-library" title="Permalink to this headline">¶</a></h2>
+<p>The process library contains all the available pipeline processes.</p>
+<p>When Populse_MIA is launched for the first time, Nipype’s interfaces are stored in the process library.</p>
+<p>To use any of the available processes, drag it from the process library and drop it to the pipeline editor.</p>
+<p>When a pipeline is saved, it is stored in the process library under “User_processes” and can be used as a process.</p>
+<p>Here is an overview of the process library:</p>
+<img alt="../_images/process_library.png" class="align-center" id="process-library" src="../_images/process_library.png" />
+</div>
+<div class="section" id="the-pipeline-editor">
+<h2>The pipeline editor<a class="headerlink" href="#the-pipeline-editor" title="Permalink to this headline">¶</a></h2>
+<p>The pipeline editor is a graphical tool to create pipelines. It is composed of several tabs to work on several pipelines at the same time. In the following, the current tab will be called “current editor”.</p>
+<p>The menu on the top left of the Pipeline Manager tab contains several actions impacting the current editor:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>Load pipeline</dt>
+<dd><ul class="first last">
+<li>Loads a saved pipeline in a new editor (or in the current editor if there is only one editor and it is empty)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Save pipeline</dt>
+<dd><ul class="first last">
+<li>Saves the pipeline of the current editor</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Load pipeline parameters</dt>
+<dd><ul class="first last">
+<li>Loads a parameters set and apply them to the pipeline global inputs/outputs</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Save pipeline parameters</dt>
+<dd><ul class="first last">
+<li>Saves the pipeline global inputs/outputs to a json file</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Initialize pipeline</dt>
+<dd><ul class="first last">
+<li>Creates the output file names for each process in the current pipeline and stores them to the database</li>
+<li>For the processes that interact with the database, verifies that the fields are filled</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Run pipeline</dt>
+<dd><ul class="first last">
+<li>Executes the current pipeline</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="how-to-use-the-pipeline-editor">
+<h3>How to use the pipeline editor<a class="headerlink" href="#how-to-use-the-pipeline-editor" title="Permalink to this headline">¶</a></h3>
+<p>The pipeline edtior uses the PipelineDevelopperView tool from <a class="reference external" href="http://brainvisa.info/capsul/index.html">Capsul</a> to create pipelines in a graphical way. Here is a tutorial to help you create and save a simple pipeline (no initialization and no run):</p>
+<ul class="simple">
+<li>Add a SPM smooth process by dragging it from the process library and dropping it into the pipeline editor</li>
+</ul>
+<img alt="../_images/pipeline_tuto_1.png" class="align-center" id="pipeline-tutorial-1" src="../_images/pipeline_tuto_1.png" />
+<ul class="simple">
+<li>Export the input and output plug(s) you want to be able to modify by right-clicking on them and click on “export plug”, rename it if you want and click on “OK”.</li>
+</ul>
+<p>Note 1: a plug is either mandatory or optional. When it is mandatory, it is represented as a triangle and has to be exported or connected to another plug to run the pipeline. When it is optional, it is represented as a rectangle and can be exported or connected or not. Usually optional plugs have default values, e.g. “fwhm” plug from SPM’s smooth is [6, 6, 6], so do not need to be exported and/or modified. It all depends if you want to have access to this plug when the pipeline will be used as a process.</p>
+<p>Note 2: to make a pipeline valid, you have to export plugs that are the pipeline global input/outputs. In this example, the “in_files” plug needs to be exported because it is mandatory. The only output plug has to be also exported. The node will then be activated and its color become lighter. It is also possible to export optional plug such as “fwhm” and “output_directory” even if they already have default value.</p>
+<p>Note 3: Nipype’s processes in Populse_MIA need an “output_directory” plug value to be run. It is important to always export it and to set it (e.g. “/tmp/”).</p>
+<p>Note 4: if you right-click on a node or on the pipeline editor background, you can also export plugs (mandatory or not, input, output or both). This method is usually faster to export plugs.</p>
+<img alt="../_images/pipeline_tuto_2.png" class="align-center" id="pipeline-tutorial-2" src="../_images/pipeline_tuto_2.png" />
+<p>Now the pipeline is only composed of one process with exported inputs/output. It is still possible to add another process to modify it.</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Add another SPM smooth process and make it follow the first one.</dt>
+<dd><ul class="first last">
+<li>Right-click on the link between the output of the “smooth1” node and the pipeline output and select “remove link”. The pipeline is disabled.</li>
+<li>Connect the “_smoothed_files” plug of the “smooth1” node to the “in_files” plug of the “smooth2” node by dragging from “_smoothed_files” and dropping to “in_files”.</li>
+<li>Connect the “_smoothed_files” plug of the “smooth2” node to the “_smoothed_files” global output by dragging from “_smoothed_files” and dropping to “in_files”. The pipeline in enabled.</li>
+<li>Connect the “output_directory” global input to the “output_directory” plug of the “smooth2” node by dragging from “output_directory” and dropping to “output_directory”.</li>
+<li>Connect the “fwhm” global input to the “fwhm” plug of the “smooth2” node by dragging from “fwhm” and dropping to “fwhm”.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<img alt="../_images/pipeline_tuto_3.png" class="align-center" id="pipeline-tutorial-3" src="../_images/pipeline_tuto_3.png" />
+<p>We know have a pipeline that can smooth an image twice with the same fwhm parameter.</p>
+<ul class="simple">
+<li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu</li>
+</ul>
+<img alt="../_images/pipeline_tuto_4.png" class="align-center" id="pipeline-tutorial-4" src="../_images/pipeline_tuto_4.png" />
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>The pipeline is now stored in the process library under “User_processes”. You can use it as a process and add it to a new pipeline editor.</dt>
+<dd><ul class="first last">
+<li>You can visualize the pipeline by double-clicking on the node.</li>
+<li>You can edit the pipeline by right-clicking on the node and selecting “Open sub-pipeline”. It will open “double_smooth.py” in a new editor tab.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<img alt="../_images/pipeline_tuto_5.png" class="align-center" id="pipeline-tutorial-5" src="../_images/pipeline_tuto_5.png" />
+</div>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
