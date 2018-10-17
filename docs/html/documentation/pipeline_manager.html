@@ -56,10 +56,10 @@
 <dl class="docutils">
 <dt>The Pipeline Manager tab is composed of four main elements:</dt>
 <dd><ul class="first last simple">
-<li>The process library</li>
-<li>The pipeline editor</li>
-<li>The iteration table</li>
-<li>The node controller</li>
+<li><a class="reference internal" href="#process-library-label"><span class="std std-ref">The process library</span></a></li>
+<li><a class="reference internal" href="#pipeline-editor-label"><span class="std std-ref">The pipeline editor</span></a></li>
+<li><a class="reference internal" href="#iteration-table-label"><span class="std std-ref">The iteration table</span></a></li>
+<li><a class="reference internal" href="#node-controller-label"><span class="std std-ref">The node controller</span></a></li>
 </ul>
 </dd>
 </dl>
@@ -67,7 +67,7 @@
 <img alt="../_images/pipeline_manager.png" class="align-center" id="pipeline-manager-tab" src="../_images/pipeline_manager.png" />
 </div>
 <div class="section" id="the-process-library">
-<h2>The process library<a class="headerlink" href="#the-process-library" title="Permalink to this headline">¶</a></h2>
+<span id="process-library-label"></span><h2>The process library<a class="headerlink" href="#the-process-library" title="Permalink to this headline">¶</a></h2>
 <p>The process library contains all the available pipeline processes.</p>
 <p>When Populse_MIA is launched for the first time, Nipype’s interfaces are stored in the process library.</p>
 <p>To use any of the available processes, drag it from the process library and drop it to the pipeline editor.</p>
@@ -76,7 +76,7 @@
 <img alt="../_images/process_library.png" class="align-center" id="process-library" src="../_images/process_library.png" />
 </div>
 <div class="section" id="the-pipeline-editor">
-<h2>The pipeline editor<a class="headerlink" href="#the-pipeline-editor" title="Permalink to this headline">¶</a></h2>
+<span id="pipeline-editor-label"></span><h2>The pipeline editor<a class="headerlink" href="#the-pipeline-editor" title="Permalink to this headline">¶</a></h2>
 <p>The pipeline editor is a graphical tool to create pipelines. It is composed of several tabs to work on several pipelines at the same time. In the following, the current tab will be called “current editor”.</p>
 <p>The menu on the top left of the Pipeline Manager tab contains several actions impacting the current editor:</p>
 <blockquote>
@@ -163,7 +163,7 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_tuto_3.png" class="align-center" id="pipeline-tutorial-3" src="../_images/pipeline_tuto_3.png" />
-<p>We know have a pipeline that can smooth an image twice with the same fwhm parameter.</p>
+<p>We now have a pipeline that can smooth an image twice with the same fwhm parameter.</p>
 <ul class="simple">
 <li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu</li>
 </ul>
@@ -181,6 +181,61 @@
 </ul>
 <img alt="../_images/pipeline_tuto_5.png" class="align-center" id="pipeline-tutorial-5" src="../_images/pipeline_tuto_5.png" />
 </div>
+</div>
+<div class="section" id="the-iteration-table">
+<span id="iteration-table-label"></span><h2>The iteration table<a class="headerlink" href="#the-iteration-table" title="Permalink to this headline">¶</a></h2>
+<p>The iteration table is a tool used to handle pipeline iteration. For now in Populse_MIA, iteration can only be done at a pipeline level. An iteration can only be made over one tag (e.g. a pipeline in run for each “Patient” value in the database).</p>
+<p>The iteration table is composed of several components that are described below in this tutorial.</p>
+<div class="section" id="how-to-use-the-iteration-table">
+<h3>How to use the iteration table<a class="headerlink" href="#how-to-use-the-iteration-table" title="Permalink to this headline">¶</a></h3>
+<p>Assume that the current project contains several patients, so several “Patient” tag values:</p>
+<img alt="../_images/data_browser.png" class="align-center" id="data-browser" src="../_images/data_browser.png" />
+<ul class="simple">
+<li>Go to the Pipeline Manager and check the “Iterate pipeline” check box to activate the iteration table.</li>
+<li><dl class="first docutils">
+<dt>Select on which tag to iterate the pipeline by clicking on the “Select” push button and select “Patient”.</dt>
+<dd><ul class="first last">
+<li>“Patient” is not a tag that comes from the data, it has been added manually.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>You can visualize for each “Patient” value which documents are associated thanks to the combo box</dt>
+<dd><ul class="first last">
+<li>The visualized tags are by default “SequenceName” and “AcquisitionDate” but can be changed at the bottom at the widget by clicking on the push buttons.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<img alt="../_images/iteration_table.png" class="align-center" id="iteration-table" src="../_images/iteration_table.png" />
+<ul class="simple">
+<li>When the “Iterate pipeline” check box is checked, before running a pipeline, a pop-up is displayed to let you choose on which value to iterate the pipeline.</li>
+</ul>
+<img alt="../_images/iterate_pipeline.png" class="align-center" id="iterate-pipeline" src="../_images/iterate_pipeline.png" />
+<p>Note: if you want to use pipeline iteration, you have to have a pipeline global input called “database_scans”. Only this plug will be updated for each iteration and will contain all the documents that have the correct tag value.</p>
+</div>
+</div>
+<div class="section" id="the-node-controller">
+<span id="node-controller-label"></span><h2>The node controller<a class="headerlink" href="#the-node-controller" title="Permalink to this headline">¶</a></h2>
+<p>The node controller is a controller that updates pipeline nodes. It can change their inputs/outputs values and their name.</p>
+<ul class="simple">
+<li>Note: to enable the node controller, click on a node. It will display its parameters.</li>
+<li>Note: when changing a value in the node controller, be sure to press Enter to validate the change.</li>
+</ul>
+<img alt="../_images/node_controller_1.png" class="align-center" id="node-controller" src="../_images/node_controller_1.png" />
+<ul class="simple">
+<li>When you have clicked on a pipeline global inputs/outputs node it is possible to filter each input plug to set documents directly from the database. For that, click on the “Filter” push button.</li>
+</ul>
+<img alt="../_images/node_controller_2.png" class="align-center" id="node-controller-inputs-outputs" src="../_images/node_controller_2.png" />
+<ul class="simple">
+<li>A pop-up similar to the Data Browser will be disaplayed and you will be able to choose which documents of the database to set on the plug by using Rapid or Advanced Search.</li>
+</ul>
+<img alt="../_images/plug_filter.png" class="align-center" id="plug-filter" src="../_images/plug_filter.png" />
+<ul class="simple">
+<li>Press “OK” to set the selected documents to the plug value.</li>
+</ul>
 </div>
 </div>
 

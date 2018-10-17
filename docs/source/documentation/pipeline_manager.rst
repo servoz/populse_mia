@@ -14,16 +14,19 @@ Tab presentation
 ----------------
 
 The Pipeline Manager tab is composed of four main elements:
-  * The process library
-  * The pipeline editor
-  * The iteration table
-  * The node controller
+  * :ref:`process-library-label`
+  * :ref:`pipeline-editor-label`
+  * :ref:`iteration-table-label`
+  * :ref:`node-controller-label`
 
 Here is an overview of the Pipeline Manager tab:
 
 .. image:: ../images/pipeline_manager.png
    :align: center
    :name: Pipeline Manager tab
+
+
+.. _process-library-label:
 
 The process library
 -------------------
@@ -41,6 +44,9 @@ Here is an overview of the process library:
 .. image:: ../images/process_library.png
    :align: center
    :name: Process library
+
+
+.. _pipeline-editor-label:
 
 The pipeline editor
 -------------------
@@ -116,6 +122,75 @@ We now have a pipeline that can smooth an image twice with the same fwhm paramet
 .. image:: ../images/pipeline_tuto_5.png
    :align: center
    :name: Pipeline tutorial 5
+
+
+.. _iteration-table-label:
+
+The iteration table
+-------------------
+
+The iteration table is a tool used to handle pipeline iteration. For now in Populse_MIA, iteration can only be done at a pipeline level. An iteration can only be made over one tag (e.g. a pipeline in run for each "Patient" value in the database).
+
+The iteration table is composed of several components that are described below in this tutorial.
+
+How to use the iteration table
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Assume that the current project contains several patients, so several "Patient" tag values:
+
+.. image:: ../images/data_browser.png
+   :align: center
+   :name: Data Browser
+
+- Go to the Pipeline Manager and check the "Iterate pipeline" check box to activate the iteration table.
+
+- Select on which tag to iterate the pipeline by clicking on the "Select" push button and select "Patient".
+      - "Patient" is not a tag that comes from the data, it has been added manually.
+
+- You can visualize for each "Patient" value which documents are associated thanks to the combo box
+      - The visualized tags are by default "SequenceName" and "AcquisitionDate" but can be changed at the bottom at the widget by clicking on the push buttons.
+
+.. image:: ../images/iteration_table.png
+   :align: center
+   :name: Iteration table
+
+- When the "Iterate pipeline" check box is checked, before running a pipeline, a pop-up is displayed to let you choose on which value to iterate the pipeline.
+
+.. image:: ../images/iterate_pipeline.png
+   :align: center
+   :name: Iterate pipeline
+
+Note: if you want to use pipeline iteration, you have to have a pipeline global input called "database_scans". Only this plug will be updated for each iteration and will contain all the documents that have the correct tag value.
+
+
+.. _node-controller-label:
+
+The node controller
+-------------------
+
+The node controller is a controller that updates pipeline nodes. It can change their inputs/outputs values and their name.
+
+* Note: to enable the node controller, click on a node. It will display its parameters.
+
+* Note: when changing a value in the node controller, be sure to press Enter to validate the change.
+
+.. image:: ../images/node_controller_1.png
+   :align: center
+   :name: Node controller
+
+* When you have clicked on a pipeline global inputs/outputs node it is possible to filter each input plug to set documents directly from the database. For that, click on the "Filter" push button.
+
+.. image:: ../images/node_controller_2.png
+   :align: center
+   :name: Node controller inputs/outputs
+
+* A pop-up similar to the Data Browser will be disaplayed and you will be able to choose which documents of the database to set on the plug by using Rapid or Advanced Search.
+
+.. image:: ../images/plug_filter.png
+   :align: center
+   :name: Plug filter
+
+* Press "OK" to set the selected documents to the plug value.
 
 
 
