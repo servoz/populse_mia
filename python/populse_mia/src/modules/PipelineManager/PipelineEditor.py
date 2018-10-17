@@ -144,7 +144,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         idx = 1
         while True and idx < 50:
             name = "New Pipeline {0}".format(idx)
-            if self.findChild(QtWidgets.QWidget, name):
+            if self.get_index_by_tab_name(name):
                 idx += 1
                 continue
             else:
@@ -167,7 +167,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        filename = os.path.basename(self.get_filename_by_idex(idx))
+        filename = os.path.basename(self.get_filename_by_index(idx))
         editor = self.get_editor_by_index(idx)
 
         # If the pipeline has been modified and not saved
