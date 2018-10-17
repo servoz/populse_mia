@@ -27,7 +27,7 @@ Here is an overview of the Data Browser tab:
 The toolbar
 ------------
 
-The toolbar contains several actions to interact with the database which are listed below:
+The toolbar contains several actions to interact with the database which are listed below.
 
 
 Add tag (from "Tags" menu, shortcut: Ctrl+A)
@@ -183,7 +183,7 @@ The table displays the documents contained in the database and their associated 
   * To sort the table depending a column, click one time on its header.
   * To select an entire column, double click on its header.
 
-By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below:
+By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below.
 
 Reset cell(s)
 ^^^^^^^^^^^^^
@@ -245,4 +245,51 @@ A pop-up is displayed to confirm the selected documents. Click on "OK" to use th
    :align: center
    :name: Send documents to pipeline example
 
+The image viewer
+----------------
+
+The Data Browser's image viewer is a simple tool to display MRI data contained in the database. It can be hidden using the splitter. The selected document(s) (up to 4) in the table are displayed. Several options are available and are described below.
+
+
+Chain cursors
+^^^^^^^^^^^^^
+When several documents are selected, moving a cursor moves the same cursors on all the images.
+
+Image viewer with chained cursors:
+
+.. image:: ../images/chain_cursors.png
+   :align: center
+   :name: Chain cursors example
+
+Image viewer with unchained cursors:
+
+.. image:: ../images/no_chain_cursors.png
+   :align: center
+   :name: No chain cursors example
+
+Show all slices
+^^^^^^^^^^^^^^^
+Display slices of a selected file (work with only one document) depending on the dimension of the image. The number of displayed slices can be modified.
+
+  * 3D: display all the slices.
+  * 4D: display the middle slice of the third dimension for each time of the fourth dimension.
+  * 5D: display the middle slice of the third dimension for the first time of the fourth dimension for each time of the fifth dimension.
+
+.. image:: ../images/show_all_slices.png
+   :align: center
+   :name: Show all slices example
+
+Change the visualized tag
+^^^^^^^^^^^^^^^^^^^^^^^^^
+By clicking on the label below the images, it is possible to change the tag that is visualized in the image viewer. By default, it is set to SequenceName.
+
+.. image:: ../images/viewer_tag_selection.png
+   :align: center
+   :name: Viewer tag selection example
+
+The visualized tag has been updated in the image viewer:
+
+.. image:: ../images/viewer_tag_selection_result.png
+   :align: center
+   :name: Viewer tag selection result example
 

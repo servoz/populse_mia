@@ -67,7 +67,7 @@
 </div>
 <div class="section" id="the-toolbar">
 <h2>The toolbar<a class="headerlink" href="#the-toolbar" title="Permalink to this headline">¶</a></h2>
-<p>The toolbar contains several actions to interact with the database which are listed below:</p>
+<p>The toolbar contains several actions to interact with the database which are listed below.</p>
 <div class="section" id="add-tag-from-tags-menu-shortcut-ctrl-a">
 <h3>Add tag (from “Tags” menu, shortcut: Ctrl+A)<a class="headerlink" href="#add-tag-from-tags-menu-shortcut-ctrl-a" title="Permalink to this headline">¶</a></h3>
 <p>Add a tag for all the documents in the database, specifying its name (mandatory), its default value, a short description, its unit and its type.</p>
@@ -266,7 +266,7 @@ SequenceName).</p>
 <li>To select an entire column, double click on its header.</li>
 </ul>
 </div></blockquote>
-<p>By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below:</p>
+<p>By right clicking in the table, a sub-menu is displayed and contains action to apply on the selected cells. These actions are listed below.</p>
 <div class="section" id="reset-cell-s">
 <h3>Reset cell(s)<a class="headerlink" href="#reset-cell-s" title="Permalink to this headline">¶</a></h3>
 <p>Reset the selected cells to their original values.</p>
@@ -310,6 +310,37 @@ SequenceName).</p>
 <p>Use the selected documents to the Pipeline Manager.</p>
 <p>A pop-up is displayed to confirm the selected documents. Click on “OK” to use these documents in the follow-up of the analysis.</p>
 <img alt="../_images/send_to_pipeline.png" class="align-center" id="send-documents-to-pipeline-example" src="../_images/send_to_pipeline.png" />
+</div>
+</div>
+<div class="section" id="the-image-viewer">
+<h2>The image viewer<a class="headerlink" href="#the-image-viewer" title="Permalink to this headline">¶</a></h2>
+<p>The Data Browser’s image viewer is a simple tool to display MRI data contained in the database. It can be hidden using the splitter. The selected document(s) (up to 4) in the table are displayed. Several options are available and are described below.</p>
+<div class="section" id="chain-cursors">
+<h3>Chain cursors<a class="headerlink" href="#chain-cursors" title="Permalink to this headline">¶</a></h3>
+<p>When several documents are selected, moving a cursor moves the same cursors on all the images.</p>
+<p>Image viewer with chained cursors:</p>
+<img alt="../_images/chain_cursors.png" class="align-center" id="chain-cursors-example" src="../_images/chain_cursors.png" />
+<p>Image viewer with unchained cursors:</p>
+<img alt="../_images/no_chain_cursors.png" class="align-center" id="no-chain-cursors-example" src="../_images/no_chain_cursors.png" />
+</div>
+<div class="section" id="show-all-slices">
+<h3>Show all slices<a class="headerlink" href="#show-all-slices" title="Permalink to this headline">¶</a></h3>
+<p>Display slices of a selected file (work with only one document) depending on the dimension of the image. The number of displayed slices can be modified.</p>
+<blockquote>
+<div><ul class="simple">
+<li>3D: display all the slices.</li>
+<li>4D: display the middle slice of the third dimension for each time of the fourth dimension.</li>
+<li>5D: display the middle slice of the third dimension for the first time of the fourth dimension for each time of the fifth dimension.</li>
+</ul>
+</div></blockquote>
+<img alt="../_images/show_all_slices.png" class="align-center" id="show-all-slices-example" src="../_images/show_all_slices.png" />
+</div>
+<div class="section" id="change-the-visualized-tag">
+<h3>Change the visualized tag<a class="headerlink" href="#change-the-visualized-tag" title="Permalink to this headline">¶</a></h3>
+<p>By clicking on the label below the images, it is possible to change the tag that is visualized in the image viewer. By default, it is set to SequenceName.</p>
+<img alt="../_images/viewer_tag_selection.png" class="align-center" id="viewer-tag-selection-example" src="../_images/viewer_tag_selection.png" />
+<p>The visualized tag has been updated in the image viewer:</p>
+<img alt="../_images/viewer_tag_selection_result.png" class="align-center" id="viewer-tag-selection-result-example" src="../_images/viewer_tag_selection_result.png" />
 </div>
 </div>
 </div>
