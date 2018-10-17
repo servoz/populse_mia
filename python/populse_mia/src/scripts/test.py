@@ -1550,7 +1550,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.open_sub_pipeline(process_instance)
 
         self.assertTrue(pipeline_editor_tabs.count(), 3)
-        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), "test_pipeline.py")
+        self.assertEqual(os.path.basename(pipeline_editor_tabs.get_filename_by_index(1)), "test_pipeline.py")
 
     def test_z_init_pipeline(self):
         """
