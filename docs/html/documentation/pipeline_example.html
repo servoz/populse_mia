@@ -65,7 +65,7 @@
 <li>Use SPM’s processes</li>
 <li>Iterate over each patient of the project</li>
 <li>Realign the FLASH scan</li>
-<li>Coregister the realign FLASH scan with the Anat scan</li>
+<li>Coregister the realigned FLASH scan with the Anat scan</li>
 <li>Smooth the MDEFT scan</li>
 </ul>
 </div></blockquote>
@@ -80,7 +80,11 @@
 <li><p class="first">Export the plugs that you want to be able to modify from outside the pipeline and add links between the realign and coregister nodes (<a class="reference external" href="./pipeline_manager.html#how-to-use-the-pipeline-editor">more information</a>)</p>
 <blockquote>
 <div><ul class="simple">
-<li>EXPLAIN WHAT WE ARE DOING</li>
+<li>The Realign process jobtype will be “write” so the output of the node will be a new file that will be contained in the “_realigned_files” plug.</li>
+<li>We will also choose to create the mean image of the FLASH scan. It will be contained in the ‘_mean_image’ file.</li>
+<li>The “target” of the Coregister process is the reference file to register to. In this case, this is the 3D Anat file.</li>
+<li>The “source” of the Coregister process is the file to register to the target. In this case, this will be the FLASH scan’s mean image.</li>
+<li>The transformation from “source” to “target” will be applied to “apply_to_files” which is, in this case, the realigned FLASH scan.</li>
 </ul>
 </div></blockquote>
 </li>
