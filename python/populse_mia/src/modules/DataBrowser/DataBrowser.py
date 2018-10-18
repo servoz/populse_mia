@@ -1059,13 +1059,14 @@ class TableDataBrowser(QTableWidget):
         self.action_reset_column = self.menu.addAction("Reset column(s)")
         self.action_reset_row = self.menu.addAction("Reset row(s)")
         self.action_clear_cell = self.menu.addAction("Clear cell(s)")
-        self.action_add_scan = self.menu.addAction("Add path")
-        self.action_remove_scan = self.menu.addAction("Remove path(s)")
+        self.action_add_scan = self.menu.addAction("Add document")
+        self.action_remove_scan = self.menu.addAction("Remove document(s)")
         self.action_sort_column = self.menu.addAction("Sort column")
         self.action_sort_column_descending = self.menu.addAction("Sort column (descending)")
         self.action_visualized_tags = self.menu.addAction("Visualized tags")
         self.action_select_column = self.menu.addAction("Select column(s)")
         self.action_multiple_sort = self.menu.addAction("Multiple sort")
+        self.action_send_documents_to_pipeline = self.menu.addAction("Send documents to the Pipeline Manager")
 
         action = self.menu.exec_(self.mapToGlobal(position))
         msg = QMessageBox()
@@ -1112,6 +1113,8 @@ class TableDataBrowser(QTableWidget):
             self.selectAllColumns()
         elif action == self.action_multiple_sort:
             self.multiple_sort_pop_up()
+        elif action == self.action_send_documents_to_pipeline:
+            self.data_browser.send_documents_to_pipeline()
 
         self.update_colors()
 
