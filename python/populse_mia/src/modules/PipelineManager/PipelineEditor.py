@@ -301,9 +301,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        for idx in range(self.count()):
-            if self.get_filename_by_index(idx) == filename:
-                return idx
+        if filename:
+            filename = os.path.relpath(filename)  # we always store file names as relative paths
+
+            for idx in range(self.count()):
+                if self.get_filename_by_index(idx) == filename:
+                    return idx
 
     def get_index_by_editor(self, editor):
         """
@@ -1269,7 +1272,7 @@ class PipelineEditor(PipelineDevelopperView):
             return filename
 
     def get_current_filename(self):
-        if hasattr(self, '_pipeline_filename'):
+        if hasattr(self, '_pipeline_filename') and self._pipeline_filename:
             return os.path.relpath(self._pipeline_filename)
         else:
             return ''
