@@ -36,20 +36,375 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="populse-mia-src-modules-databrowser-advancedsearch-module">
-<h2>populse_mia.src.modules.DataBrowser.AdvancedSearch module<a class="headerlink" href="#populse-mia-src-modules-databrowser-advancedsearch-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.src.modules.DataBrowser.AdvancedSearch">
+<span id="populse-mia-src-modules-databrowser-advancedsearch-module"></span><h2>populse_mia.src.modules.DataBrowser.AdvancedSearch module<a class="headerlink" href="#module-populse_mia.src.modules.DataBrowser.AdvancedSearch" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.DataBrowser.AdvancedSearch.</code><code class="descname">AdvancedSearch</code><span class="sig-paren">(</span><em>project</em>, <em>dataBrowser</em>, <em>scans_list=[]</em>, <em>tags_list=[]</em>, <em>from_pipeline=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.add_row">
+<code class="descname">add_row</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.add_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a row must be added</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.apply_filter">
+<code class="descname">apply_filter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.apply_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>To apply an open filter
+:param filter: Filter object opened to apply
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.clearLayout">
+<code class="descname">clearLayout</code><span class="sig-paren">(</span><em>layout</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.clearLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called to clear a layout
+:param layout: layout to clear</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayConditionRules">
+<code class="descname">displayConditionRules</code><span class="sig-paren">(</span><em>field</em>, <em>condition</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayConditionRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the list of condition choices, depending on the tag type
+:param field: field
+:param condition: condition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayValueRules">
+<code class="descname">displayValueRules</code><span class="sig-paren">(</span><em>choice</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayValueRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the condition choice is changed, to update the placeholder text
+:param choice: choice
+:param value: value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.get_filters">
+<code class="descname">get_filters</code><span class="sig-paren">(</span><em>replace_all_by_fields</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.get_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the filters in list form
+:param replace_all_by_fields: to replace All visualized tags by the list of visible fields
+:return: Lists of filters (fields, conditions, values, links, nots)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.launch_search">
+<code class="descname">launch_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.launch_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called to start the search</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters">
+<em class="property">static </em><code class="descname">prepare_filters</code><span class="sig-paren">(</span><em>links</em>, <em>fields</em>, <em>conditions</em>, <em>values</em>, <em>nots</em>, <em>scans</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the str representation of the filter
+:param links: list of links (AND/OR)
+:param fields: list of list of fields
+:param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+:param values: list of values
+:param nots: list of negations (“” or NOT)
+:param scans: list of scans to search in
+:return: str representation of the filter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.refresh_search">
+<code class="descname">refresh_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.refresh_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called to refresh the advanced search</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.remove_row">
+<code class="descname">remove_row</code><span class="sig-paren">(</span><em>rowLayout</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.remove_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a row must be removed
+:param rowLayout: Row to remove</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rowsContainsWidget">
+<code class="descname">rowsContainsWidget</code><span class="sig-paren">(</span><em>widget</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rowsContainsWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>To know if the widget is still used
+:param widget: Widget to check</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_added">
+<code class="descname">rows_borders_added</code><span class="sig-paren">(</span><em>links</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the links and the add row to the good rows
+:param links: Old links to reput</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_removed">
+<code class="descname">rows_borders_removed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link and add row removed from every row</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.show_search">
+<code class="descname">show_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.show_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the Advanced Search button is clicked, we reset the rows</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="populse-mia-src-modules-databrowser-counttable-module">
-<h2>populse_mia.src.modules.DataBrowser.CountTable module<a class="headerlink" href="#populse-mia-src-modules-databrowser-counttable-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.src.modules.DataBrowser.CountTable">
+<span id="populse-mia-src-modules-databrowser-counttable-module"></span><h2>populse_mia.src.modules.DataBrowser.CountTable module<a class="headerlink" href="#module-populse_mia.src.modules.DataBrowser.CountTable" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.DataBrowser.CountTable.</code><code class="descname">CountTable</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Tool to precisely verify the scans of the project.</p>
+<p>It is composed of push buttons on its top, each one corresponding to a tag selected by the user.
+When, the “Count scans” button is clicked, a table is created with all the combinations possible
+for the values of the first n-1 tags. Then, the m values that can take the last tag are displayed
+in the header of the m last columns of the table. The cells are then filled with a green plus or
+a red cross depending on if there is at least a scan that has all the tags values or not.</p>
+<p>Example:</p>
+<p>Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
+T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
+and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the table will be:</p>
+<p>P1          | T1        | v(2) | v(1)  | v(1)
+P1          | T2        | v(2) | v(1)  | v(1)
+P1          | T3        | v(2) | v(1)  | v(1)
+P2          | T1        | v(2) | v(1)  | v(1)
+P2          | T2        | v(2) | v(1)  | v(1)
+P2          | T3        | v(2) | v(1)  | v(1)
+———————————————–
+with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
+SequenceName).</p>
+<p>If no scans corresponds for a triplet value, a red cross will be displayed. For example, if the
+user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The table will be:</p>
+<p>P1          | T1        | v(2) | v(1)  | v(1)
+P1          | T2        | v(1) | v(1)  | v(1)
+P1          | T3        | v(2) | v(1)  | v(1)
+P2          | T1        | v(2) | v(1)  | v(1)
+P2          | T2        | v(2) | v(1)  | v(1)
+P2          | T3        | v(2) | v(1)  | x
+———————————————–</p>
+<p>Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><ul class="first last simple">
+<li>project: current project in the software</li>
+<li>values_list: list that contains lists of all the values that the visualized tags can take</li>
+</ul>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>refresh_layout: updates the layout of the widget</li>
+<li>add_tag: adds a tag to visualize in the count table</li>
+<li>remove_tag: removes a tag to visualize in the count table</li>
+<li>select_tag: opens a pop-up to select which tag to visualize in the count table</li>
+<li>fill_values: fill values_list depending on the visualized tags</li>
+<li>count_scans: counts the number of scans depending on the selected tags and displays the result in the table</li>
+<li>fill_headers: fills the headers of the table depending on the selected tags</li>
+<li>fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags</li>
+<li>fill_last_tag: fills the cells corresponding to the last selected tag</li>
+<li>prepare_filter: prepares the filter in order to fill the count table</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.add_tag">
+<code class="descname">add_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.add_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a tag to visualize in the count table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.count_scans">
+<code class="descname">count_scans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.count_scans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of scans depending on the selected tags and displays the result in the table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_first_tags">
+<code class="descname">fill_first_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_first_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the cells of the table corresponding to the (n-1) first selected tags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_headers">
+<code class="descname">fill_headers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the headers of the table depending on the selected tags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_last_tag">
+<code class="descname">fill_last_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_last_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the cells corresponding to the last selected tag</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_values">
+<code class="descname">fill_values</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.fill_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill values_list depending on the visualized tags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – index of the select tag</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.prepare_filter">
+<em class="property">static </em><code class="descname">prepare_filter</code><span class="sig-paren">(</span><em>couples</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.prepare_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the filter in order to fill the count table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>couples</strong> – (tag, value) couples</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Str query of the corresponding filter</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.refresh_layout">
+<code class="descname">refresh_layout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.refresh_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the layout of the widget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.remove_tag">
+<code class="descname">remove_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.remove_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a tag to visualize in the count table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.CountTable.CountTable.select_tag">
+<code class="descname">select_tag</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.CountTable.CountTable.select_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a pop-up to select which tag to visualize in the count table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="populse-mia-src-modules-databrowser-databrowser-module">
 <h2>populse_mia.src.modules.DataBrowser.DataBrowser module<a class="headerlink" href="#populse-mia-src-modules-databrowser-databrowser-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="populse-mia-src-modules-databrowser-modifytable-module">
-<h2>populse_mia.src.modules.DataBrowser.ModifyTable module<a class="headerlink" href="#populse-mia-src-modules-databrowser-modifytable-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.src.modules.DataBrowser.ModifyTable">
+<span id="populse-mia-src-modules-databrowser-modifytable-module"></span><h2>populse_mia.src.modules.DataBrowser.ModifyTable module<a class="headerlink" href="#module-populse_mia.src.modules.DataBrowser.ModifyTable" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.DataBrowser.ModifyTable.</code><code class="descname">ModifyTable</code><span class="sig-paren">(</span><em>project</em>, <em>value</em>, <em>types</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Is called when the user wants to verify precisely the scans of the project.</p>
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable.fill_table">
+<code class="descname">fill_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable.fill_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills the table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable.update_table_values">
+<code class="descname">update_table_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.ModifyTable.ModifyTable.update_table_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>To update the table in the Database after Ok is clicked</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="populse-mia-src-modules-databrowser-rapidsearch-module">
-<h2>populse_mia.src.modules.DataBrowser.RapidSearch module<a class="headerlink" href="#populse-mia-src-modules-databrowser-rapidsearch-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.src.modules.DataBrowser.RapidSearch">
+<span id="populse-mia-src-modules-databrowser-rapidsearch-module"></span><h2>populse_mia.src.modules.DataBrowser.RapidSearch module<a class="headerlink" href="#module-populse_mia.src.modules.DataBrowser.RapidSearch" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch">
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.DataBrowser.RapidSearch.</code><code class="descname">RapidSearch</code><span class="sig-paren">(</span><em>databrowser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QLineEdit</span></code></p>
+<dl class="staticmethod">
+<dt id="populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_filter">
+<em class="property">static </em><code class="descname">prepare_filter</code><span class="sig-paren">(</span><em>search</em>, <em>tags</em>, <em>scans</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the rapid search filter
+:param search: Search (str)
+:param tags: List of tags to take into account
+:param scans: List of scans to search into
+:return: str filter corresponding to the rapid search</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_not_defined_filter">
+<code class="descname">prepare_not_defined_filter</code><span class="sig-paren">(</span><em>tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_not_defined_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the rapid search filter for not defined values
+:param tags: list of tags to take into account
+:return: str filter corresponding to the rapid search for not defined values</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-populse_mia.src.modules.DataBrowser">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.src.modules.DataBrowser" title="Permalink to this headline">¶</a></h2>
