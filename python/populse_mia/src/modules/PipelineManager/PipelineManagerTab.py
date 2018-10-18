@@ -506,14 +506,22 @@ class PipelineManagerTab(QWidget):
 
         # Updating __init__.py
         init_file = os.path.join('..', '..', 'processes', 'User_processes', '__init__.py')
-        with open(init_file, 'a') as f:
-            print('from .{0} import {1}'.format(module_name, class_name), file=f)
+
+        # Checking that import line is not already in the file
+        pattern = 'from .{0} import {1}\n'.format(module_name, class_name)
+        file = open(init_file, 'r')
+        flines = file.readlines()
+        file.close()
+        if pattern not in flines:
+            with open(init_file, 'a') as f:
+                print('from .{0} import {1}'.format(module_name, class_name), file=f)
 
         package = 'User_processes'
         path = os.path.relpath(os.path.join(filename_folder, '..'))
 
         # Adding the module path to the system path
-        sys.path.append(path)
+        if path not in sys.path:
+            sys.path.append(path)
 
         self.processLibrary.pkg_library.add_package(package, class_name)
         if os.path.relpath(path) not in self.processLibrary.pkg_library.paths:
