@@ -504,7 +504,7 @@ class PipelineManagerTab(QWidget):
 
         # Updating __init__.py
         init_file = os.path.join('..', '..', 'processes', 'User_processes', '__init__.py')
-        with open(init_file, 'a') as f:
+        with open(init_file, 'a') as f:  ## JW TODO: Make sure we don't append the same class several times
             print('from .{0} import {1}'.format(module_name, class_name), file=f)
 
         package = 'User_processes'
