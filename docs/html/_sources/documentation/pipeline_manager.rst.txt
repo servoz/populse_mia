@@ -69,6 +69,14 @@ The menu on the top left of the Pipeline Manager tab contains several actions im
   * Run pipeline
       * Executes the current pipeline
 
+Shortcuts
+^^^^^^^^^
+
+* Hold Ctrl while using the mouse trackwheel to zoom/zoom out.
+* Click on a node to display its parameters in the node controller.
+* Hold Ctrl while clicking on a node to display it and its link in the foreground.
+* To add a link between two nodes, drag from an output plug to an input plug.
+
 How to use the pipeline editor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -129,7 +137,7 @@ We now have a pipeline that can smooth an image twice with the same fwhm paramet
 The iteration table
 -------------------
 
-The iteration table is a tool used to handle pipeline iteration. For now in Populse_MIA, iteration can only be done at a pipeline level. An iteration can only be made over one tag (e.g. a pipeline in run for each "Patient" value in the database).
+The iteration table is a tool used to handle pipeline iteration and is located on the top right of the Pipeline Manager tab. For now in Populse_MIA, iteration can only be done at a pipeline level. An iteration can only be made over one tag (e.g. a pipeline in run for each "Patient" value in the database).
 
 The iteration table is composed of several components that are described below in this tutorial.
 
@@ -168,7 +176,7 @@ Note: if you want to use pipeline iteration, you have to have a pipeline global 
 The node controller
 -------------------
 
-The node controller is a controller that updates pipeline nodes. It can change their inputs/outputs values and their name.
+The node controller is a controller that updates pipeline nodes and is located on the bottom right of the Pipeline Manager tab. It can change their inputs/outputs values and their name.
 
 * Note: to enable the node controller, click on a node. It will display its parameters.
 
