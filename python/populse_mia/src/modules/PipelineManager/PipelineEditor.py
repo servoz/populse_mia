@@ -365,7 +365,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        called_from_edit_sub_pipeline = editor is not None
+        called_with_existing_editor = editor is not None
 
         if not editor:
             # If there is only one opened PipelineEditor
@@ -388,11 +388,11 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         if editor:
             current_editor = self.get_current_editor()
             # If the editor is already opened, but not the one just created
-            if editor in list(self.undos.keys()) and not called_from_edit_sub_pipeline:
+            if editor in list(self.undos.keys()) and not called_with_existing_editor:
                 self.close_tab(self.currentIndex())
                 self.set_current_editor_by_editor(editor)
             else:
-                self.setTabText(self.currentIndex(), os.path.basename(editor._pipeline_filename))
+                self.setTabText(self.currentIndex(), os.path.basename(editor.get_current_filename()))
                 del self.undos[current_editor]
                 del self.redos[current_editor]
                 self.undos[editor] = []
