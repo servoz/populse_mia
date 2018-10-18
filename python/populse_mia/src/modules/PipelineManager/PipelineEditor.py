@@ -124,7 +124,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def new_tab(self):
         """
-        Creates a new tab and a new editor
+        Creates a new tab and a new editor and makes the new tab current
 
         :param loaded: True if the pipeline is loaded
         :return:
@@ -295,7 +295,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
     def get_index_by_filename(self, filename):
         """
-        Gets the index of the editor corresponding to the given pipeline filename
+        Gets the index of the first editor corresponding to the given pipeline filename
 
         :param filename: filename of the searched pipeline
         :return:
