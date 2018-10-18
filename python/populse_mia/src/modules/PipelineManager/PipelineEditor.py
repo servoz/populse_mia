@@ -289,7 +289,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        for idx in range(self.count()):
+        for idx in range(self.count()-1):
             if self.get_tab_name_by_index(idx) == tab_name:
                 return idx
 
@@ -304,7 +304,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         if filename:
             filename = os.path.relpath(filename)  # we always store file names as relative paths
 
-            for idx in range(self.count()):
+            for idx in range(self.count()-1):
                 if self.get_filename_by_index(idx) == filename:
                     return idx
 
@@ -316,7 +316,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        for idx in range(self.count()):
+        for idx in range(self.count()-1):
             if self.get_editor_by_index(idx) == editor:
                 return idx
 
