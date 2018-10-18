@@ -1406,6 +1406,7 @@ class RunWorker(QThread):
                                            spm_exec=matlab_standalone_path, matlab_exec=matlab_path,
                                            output_directory=spm_standalone_path, spm_standalone=True)
             else:
+                print('spm_exec', matlab_standalone_path)
                 study_config = StudyConfig(use_spm=True, spm_directory=spm_standalone_path,
                                            spm_exec=matlab_standalone_path,
                                            output_directory=spm_standalone_path, spm_standalone=True)
