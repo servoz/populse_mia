@@ -1514,11 +1514,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
 
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline = get_process_instance("User_processes.Test_pipeline")
-        c_e = pipeline_editor_tabs.get_current_editor()
-        c_e.set_pipeline(pipeline)
-        c_e._pipeline_filename = filename
-        pipeline_editor_tabs.load_pipeline(c_e)
+        pipeline_editor_tabs.load_pipeline(filename)
 
         pipeline = pipeline_editor_tabs.get_current_pipeline()
         self.assertTrue("smooth1" in pipeline.nodes.keys())
