@@ -203,10 +203,10 @@ class Main_Window(QMainWindow):
         """
         To undo the last action done by the user
         """
-        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
             # In Data Browser
             self.project.undo(self.data_browser.table_data)  # Action reverted in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.undo()
 
@@ -214,10 +214,10 @@ class Main_Window(QMainWindow):
         """
         To redo the last action made by the user
         """
-        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
             # In Data Browser
             self.project.redo(self.data_browser.table_data)  # Action remade in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.redo()
 
@@ -709,7 +709,7 @@ class Main_Window(QMainWindow):
         Method called when the tab is changed
         """
 
-        if self.tabs.tabText(self.tabs.currentIndex()) == 'Data Browser':
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
             # DataBrowser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
             documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
@@ -739,7 +739,7 @@ class Main_Window(QMainWindow):
                 self.data_browser.advanced_search.show_search()
                 self.data_browser.advanced_search.apply_filter(self.project.currentFilter)
 
-        elif self.tabs.tabText(self.tabs.currentIndex()) == 'Pipeline Manager':
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
             # Pipeline Manager
             # The pending modifications must be saved before working with pipelines (auto_commit)
             if self.project.hasUnsavedModifications():
