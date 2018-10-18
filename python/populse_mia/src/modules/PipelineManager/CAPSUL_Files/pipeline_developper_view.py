@@ -3853,7 +3853,7 @@ class PipelineDevelopperView(QGraphicsView):
             self.set_pipeline(pipeline)
             self._pipeline_filename = ''
 
-    def load_pipeline(self):
+    def load_pipeline(self, filename='', load_pipeline=True):
         class LoadProcessUi(Qt.QDialog):
             def __init__(self, parent=None, old_filename=''):
                 super(LoadProcessUi, self).__init__(parent)
@@ -3888,15 +3888,20 @@ class PipelineDevelopperView(QGraphicsView):
         if not self.confirm_erase_pipeline():
             return
 
-        old_filename = getattr(self, '_pipeline_filename', '')
-        dialog = LoadProcessUi(self, old_filename=old_filename)
-        dialog.setWindowTitle('Load pipeline')
-        dialog.setModal(True)
-        res = dialog.exec_()
+        if not filename:
+            old_filename = getattr(self, '_pipeline_filename', '')
+            dialog = LoadProcessUi(self, old_filename=old_filename)
+            dialog.setWindowTitle('Load pipeline')
+            dialog.setModal(True)
+            res = dialog.exec_()
 
-        if res:
-            filename = dialog.proc_edit.text()
-            if filename:
+            if res:
+                filename = dialog.proc_edit.text()
+
+        if filename:
+            if not load_pipeline:
+                return filename
+            else:
                 pipeline = get_process_instance(filename)
                 if pipeline is not None:
                     self.set_pipeline(pipeline)
