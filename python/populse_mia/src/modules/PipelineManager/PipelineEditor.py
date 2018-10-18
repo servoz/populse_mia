@@ -276,8 +276,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         filename = self.get_editor_by_index(idx).get_current_filename()
-        if not filename:     # The pipeline has never been saved
-            filename = self.get_tab_name_by_index(idx)
+        # if not filename:     # The pipeline has never been saved
+        #     filename = self.get_tab_name_by_index(idx)
 
         return filename
 
