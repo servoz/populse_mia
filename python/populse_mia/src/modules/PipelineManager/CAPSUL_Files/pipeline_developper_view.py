@@ -2346,6 +2346,7 @@ class PipelineDevelopperView(QGraphicsView):
         self._allow_open_controller = allow_open_controller
         self._logical_view = logical_view
         self._enable_edition = enable_edition
+        self._pipeline_filename = ""
 
         if pipeline is None:
             pipeline = Pipeline()
