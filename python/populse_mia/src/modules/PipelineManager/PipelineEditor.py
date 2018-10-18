@@ -357,51 +357,47 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         if new_file_name and os.path.basename(self.get_current_filename()) != new_file_name:
             self.setTabText(self.currentIndex(), new_file_name)
 
-    def load_pipeline(self, editor=None):
+    def load_pipeline(self, filename=None):
         """
         Loads a new pipeline
 
-        :param editor: not None only when this method is called from "edit_sub_pipeline"
+        :param filename: not None only when this method is called from "open_sub_pipeline"
         :return:
         """
 
-        called_with_existing_editor = editor is not None
+        current_tab_not_empty = len(self.get_current_editor().scene.pipeline.nodes.keys()) > 1
+        new_tab_opened = False
 
-        if not editor:
-            # If there is only one opened PipelineEditor
-            if self.count() == 2:
-                # If the PipelineEditor has been edited
-                if len(self.widget(0).scene.pipeline.nodes.keys()) > 1:
+        if filename is None:
+            # Open new tab if the current PipelineEditor is not empty
+            if current_tab_not_empty:
+                self.new_tab()  # create new tab with new editor and make it current
+                working_index = self.currentIndex()
+                new_tab_opened = True
+
+            filename = self.get_current_editor().load_pipeline('', False)  # get only the file name to load
+
+        if filename:
+            # Check if this pipeline is already open
+            existing_pipeline_tab = self.get_index_by_filename(filename)
+
+            if existing_pipeline_tab is not None:
+                self.setCurrentIndex(existing_pipeline_tab)
+            else:  # we need to actually load the pipeline
+                if current_tab_not_empty and not new_tab_opened:
                     self.new_tab()
-                    self.widget(1).load_pipeline()
-                    editor = self.get_editor_by_index()
-                    self.setCurrentIndex(1)
-                else:
-                    self.widget(0).load_pipeline()
-                    editor = self.get_editor_by_index(0)
-            else:
-                self.new_tab()
-                self.widget(self.count() - 2).load_pipeline()
-                editor = self.get_editor_by_index(self.count() - 2)
-                self.setCurrentIndex(self.count()-2)
+                    new_tab_opened = True
 
-        if editor:
-            current_editor = self.get_current_editor()
-            # If the editor is already opened, but not the one just created
-            if editor in list(self.undos.keys()) and not called_with_existing_editor:
-                self.close_tab(self.currentIndex())
-                self.set_current_editor_by_editor(editor)
-            else:
-                self.setTabText(self.currentIndex(), os.path.basename(editor.get_current_filename()))
-                del self.undos[current_editor]
-                del self.redos[current_editor]
-                self.undos[editor] = []
-                self.redos[editor] = []
-        else:
-            if self.currentIndex() != 0:
-                self.close_tab(self.currentIndex())
+                working_index = self.currentIndex()
+                editor = self.get_editor_by_index(working_index)
+                filename = editor.load_pipeline(filename)  # actually load the pipeline
+                if filename:
+                    self.setTabText(working_index, os.path.basename(filename))
+                    self.update_scans_list()
+                    return  # success
 
-        self.update_scans_list()
+        if new_tab_opened:  # if we're still here, something went wrong. clean up.
+            self.close_tab(working_index)
 
     def save_pipeline_parameters(self):
         """
@@ -516,29 +512,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         sub_pipeline_name = sub_pipeline.name
 
         # get_path returns a list that is the package path to the sub_pipeline file
-        sub_pipeline_id = sub_pipeline.id
         sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
         sub_pipeline_name = sub_pipeline_list.pop()
 
         # Finding the real sub-pipeline filename
         sub_pipeline_filename = find_filename(dic['Paths'], sub_pipeline_list, sub_pipeline_name)
-
-        # Checking if the sub-pipeline is not already opened in an editor tab
-        pipeline_open = False
-        for open_editor in list(self.widget(i) for i in range (self.count()-1)):
-            if open_editor.get_current_filename() == os.path.relpath(sub_pipeline_filename):
-                pipeline_open = True
-
-        if pipeline_open:
-            self.set_current_editor_by_editor(open_editor)
-        elif sub_pipeline_filename:
-            pipeline = get_process_instance(sub_pipeline_filename)
-            if pipeline is not None:
-                self.new_tab()
-                self.setCurrentIndex(self.count() - 2)
-                self.get_current_editor().set_pipeline(pipeline)
-                self.get_current_editor()._pipeline_filename = sub_pipeline_filename
-                self.load_pipeline(self.get_current_editor())
+        self.load_pipeline(sub_pipeline_filename)
 
     def open_filter(self, node_name):
         """
