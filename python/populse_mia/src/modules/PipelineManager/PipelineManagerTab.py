@@ -519,9 +519,14 @@ class PipelineManagerTab(QWidget):
         package = 'User_processes'
         path = os.path.relpath(os.path.join(filename_folder, '..'))
 
+        # If the pipeline has already been saved
+        if 'User_processes.' + module_name in sys.modules.keys():
+            del sys.modules['User_processes.' + module_name]  # removing the previous version of the module
+            __import__('User_processes')  # this adds the new module version to the sys.modules dictionary
+
         # Adding the module path to the system path
         if path not in sys.path:
-            sys.path.append(path)
+            sys.path.insert(0, path)
 
         self.processLibrary.pkg_library.add_package(package, class_name)
         if os.path.relpath(path) not in self.processLibrary.pkg_library.paths:
