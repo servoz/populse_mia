@@ -232,7 +232,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        self.setCurrentIndex(self.get_index_by_file_name(file_name))
+        self.setCurrentIndex(self.get_index_by_filename(file_name))
 
     def set_current_editor_by_editor(self, editor):
         """
@@ -282,7 +282,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :return:
         """
 
-        return self.get_editor_by_index(self.get_index_by_file_name(file_name))
+        return self.get_editor_by_index(self.get_index_by_filename(file_name))
 
     def get_tab_name_by_index(self, idx):
         """
