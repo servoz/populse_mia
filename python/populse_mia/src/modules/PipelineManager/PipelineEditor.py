@@ -729,43 +729,44 @@ class PipelineEditor(PipelineDevelopperView):
         # Collecting the links from the node that is being deleted
         links = []
         for plug_name, plug in node.plugs.items():
-            for link_to in plug.links_to:
-                (dest_node_name, dest_parameter, dest_node, dest_plug,
-                 weak_link) = link_to
-                active = plug.activated
+            if plug.output:
+                for link_to in plug.links_to:
+                    (dest_node_name, dest_parameter, dest_node, dest_plug,
+                     weak_link) = link_to
+                    active = plug.activated
 
-                # Looking for the name of dest_plug in dest_node
-                dest_plug_name = None
-                for plug_name_d, plug_d in dest_node.plugs.items():
-                    if plug_d == dest_plug:
-                        dest_plug_name = plug_name_d
-                        break
+                    # Looking for the name of dest_plug in dest_node
+                    dest_plug_name = None
+                    for plug_name_d, plug_d in dest_node.plugs.items():
+                        if plug_d == dest_plug:
+                            dest_plug_name = plug_name_d
+                            break
 
-                link_to_add = [(node_name, plug_name)]
-                link_to_add.append((dest_node_name, dest_plug_name))
-                link_to_add.append(active)
-                link_to_add.append(weak_link)
+                    link_to_add = [(node_name, plug_name)]
+                    link_to_add.append((dest_node_name, dest_plug_name))
+                    link_to_add.append(active)
+                    link_to_add.append(weak_link)
 
-                links.append(link_to_add)
+                    links.append(link_to_add)
+            else:
+                for link_from in plug.links_from:
+                    (source_node_name, source_parameter, source_node, source_plug,
+                     weak_link) = link_from
+                    active = plug.activated
 
-            for link_from in plug.links_from:
-                (source_node_name, source_parameter, source_node, source_plug,
-                 weak_link) = link_from
-                active = plug.activated
+                    # Looking for the name of source_plug in source_node
+                    source_plug_name = None
+                    for plug_name_d, plug_d in source_node.plugs.items():
+                        if plug_d == source_plug:
+                            source_plug_name = plug_name_d
+                            break
 
-                # Looking for the name of source_plug in source_node
-                source_plug_name = None
-                for plug_name_d, plug_d in source_node.plugs.items():
-                    if plug_d == source_plug:
-                        source_plug_name = plug_name_d
-                        break
+                    link_to_add = [(source_node_name, source_plug_name)]
+                    link_to_add.append((node_name, plug_name))
+                    link_to_add.append(active)
+                    link_to_add.append(weak_link)
 
-                link_to_add = [(source_node_name, source_plug_name)]
-                link_to_add.append((node_name, plug_name))
-                link_to_add.append(active)
-                link_to_add.append(weak_link)
-
-                links.append(link_to_add)
+                    links.append(link_to_add)
 
         # Calling the original method
         PipelineDevelopperView.del_node(self, node_name)
