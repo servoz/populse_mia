@@ -1514,13 +1514,133 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
 
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline = get_process_instance("User_processes.Test_pipeline")
-        pipeline_editor_tabs.get_current_editor().set_pipeline(pipeline)
-        pipeline_editor_tabs.get_current_editor()._pipeline_filename = filename
         pipeline_editor_tabs.load_pipeline(filename)
 
         pipeline = pipeline_editor_tabs.get_current_pipeline()
         self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+    def test_z_get_editor(self):
+        """
+        Gets the instance of an editor (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_editor_by_index
+         - PipelineEditorTabs.get_current_editor
+         - PipelineEditorTabs.get_editor_by_tab_name
+         - PipelineEditorTabs.get_editor_by_filename
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(0), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(1), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_current_editor(), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("test_pipeline.py"), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("New Pipeline 1"), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("dummy"), None)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name(filename), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name("dummy"), None)
+
+    def test_z_get_filename(self):
+        """
+        Gets the relative path to the file the pipeline in an editor
+        has been last saved to. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_filename_by_index
+         - PipelineEditorTabs.get_current_filename
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(0), filename)
+        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), None)
+        self.assertEqual(pipeline_editor_tabs.get_current_filename(), filename)
+
+    def test_z_get_tab_name(self):
+        """
+        Gets the tab name of the editor. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_tab_name_by_index
+         - PipelineEditorTabs.get_current_tab_name
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(0), "New Pipeline")
+        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(1), None)
+        self.assertEqual(pipeline_editor_tabs.get_current_tab_name(), "New Pipeline")
+
+    def test_z_get_index(self):
+        """
+        Gets the index of an editor. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_index_by_tab_name
+         - PipelineEditorTabs.get_index_by_filename
+         - PipelineEditorTabs.get_index_by_editor
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("test_pipeline.py"), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("New Pipeline 1"), 1)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("dummy"), None)
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_filename(filename), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_filename("dummy"), None)
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor0), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor1), 1)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor("dummy"), None)
+
+    def test_z_set_current_editor(self):
+        """
+        Sets the current editor (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.set_current_editor_by_tab_name
+         - PipelineEditorTabs.set_current_editor_by_file_name
+         - PipelineEditorTabs.set_current_editor_by_editor
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
+
+        pipeline_editor_tabs.set_current_editor_by_file_name(filename)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
+
+        pipeline_editor_tabs.set_current_editor_by_editor(editor1)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
+        pipeline_editor_tabs.set_current_editor_by_editor(editor0)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
 
     def test_z_open_sub_pipeline(self):
         """
@@ -1550,7 +1670,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.open_sub_pipeline(process_instance)
 
         self.assertTrue(pipeline_editor_tabs.count(), 3)
-        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), "test_pipeline.py")
+        self.assertEqual(os.path.basename(pipeline_editor_tabs.get_filename_by_index(1)), "test_pipeline.py")
 
     def test_z_init_pipeline(self):
         """

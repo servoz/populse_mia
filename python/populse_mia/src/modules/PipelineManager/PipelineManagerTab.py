@@ -215,41 +215,40 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
+        c_e = self.pipelineEditorTabs.get_current_editor()
 
         # We can undo if we have an action to revert
-        if len(self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()]) > 0:
-            to_undo = self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.undos[c_e]) > 0:
+            to_undo = self.pipelineEditorTabs.undos[c_e].pop()
             # The first element of the list is the type of action made by the user
             action = to_undo[0]
 
             if action == "add_process":
                 node_name = to_undo[1]
-                self.pipelineEditorTabs.get_current_editor().del_node(node_name, from_undo=True)
+                c_e.del_node(node_name, from_undo=True)
 
             elif action == "delete_process":
                 node_name = to_undo[1]
                 class_name = to_undo[2]
                 links = to_undo[3]
-                self.pipelineEditorTabs.get_current_editor().add_process(class_name, node_name, from_undo=True, links=links)
+                c_e.add_process(class_name, node_name, from_undo=True, links=links)
 
             elif action == "export_plug":
                 temp_plug_name = to_undo[1]
-                self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
-                                                                          from_undo=True)
+                c_e._remove_plug(_temp_plug_name=temp_plug_name, from_undo=True)
 
             elif action == "export_plugs":
                 parameter_list = to_undo[1]
                 node_name = to_undo[2]
                 for parameter in parameter_list:
                     temp_plug_name = ('inputs', parameter)
-                    self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
-                                                                              from_undo=True, from_export_plugs=True)
+                    c_e._remove_plug(_temp_plug_name=temp_plug_name, from_undo=True, from_export_plugs=True)
 
             elif action == "remove_plug":
                 temp_plug_name = to_undo[1]
                 new_temp_plugs = to_undo[2]
                 optional = to_undo[3]
-                self.pipelineEditorTabs.get_current_editor()._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
+                c_e._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
                                                                           optional=optional, from_undo=True,
                                                                           pipeline_parameter=temp_plug_name[1])
 
@@ -264,41 +263,41 @@ class PipelineManagerTab(QWidget):
                         source = plug_tuple
                         dest = ('', temp_plug_name[1])
 
-                    self.pipelineEditorTabs.get_current_editor().scene.add_link(source, dest, active=True, weak=False)
+                    c_e.scene.add_link(source, dest, active=True, weak=False)
 
                     # Writing a string to represent the link
                     source_parameters = ".".join(source)
                     dest_parameters = ".".join(dest)
                     link = "->".join((source_parameters, dest_parameters))
 
-                    self.pipelineEditorTabs.get_current_editor().scene.pipeline.add_link(link)
-                    self.pipelineEditorTabs.get_current_editor().scene.update_pipeline()
+                    c_e.scene.pipeline.add_link(link)
+                    c_e.scene.update_pipeline()
 
             elif action == "update_node_name":
                 node = to_undo[1]
                 new_node_name = to_undo[2]
                 old_node_name = to_undo[3]
-                self.pipelineEditorTabs.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_undo=True)
+                c_e.update_node_name(node, new_node_name, old_node_name, from_undo=True)
 
             elif action == "update_plug_value":
                 node_name = to_undo[1]
                 old_value = to_undo[2]
                 plug_name = to_undo[3]
                 value_type = to_undo[4]
-                self.pipelineEditorTabs.get_current_editor().update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
+                c_e.update_plug_value(node_name, old_value, plug_name, value_type, from_undo=True)
 
             elif action == "add_link":
                 link = to_undo[1]
-                self.pipelineEditorTabs.get_current_editor()._del_link(link, from_undo=True)
+                c_e._del_link(link, from_undo=True)
 
             elif action == "delete_link":
                 source = to_undo[1]
                 dest = to_undo[2]
                 active = to_undo[3]
                 weak = to_undo[4]
-                self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_undo=True)
+                c_e.add_link(source, dest, active, weak, from_undo=True)
 
-            self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
+            c_e.scene.pipeline.update_nodes_and_plugs_activation()
 
     def redo(self):
         """
@@ -317,10 +316,11 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
+        c_e = self.pipelineEditorTabs.get_current_editor()
 
         # We can redo if we have an action to make again
-        if len(self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()]) > 0:
-            to_redo = self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].pop()
+        if len(self.pipelineEditorTabs.redos[c_e]) > 0:
+            to_redo = self.pipelineEditorTabs.redos[c_e].pop()
             # The first element of the list is the type of action made by the user
             action = to_redo[0]
 
@@ -328,16 +328,15 @@ class PipelineManagerTab(QWidget):
                 node_name = to_redo[1]
                 class_process = to_redo[2]
                 links = to_redo[3]
-                self.pipelineEditorTabs.get_current_editor().add_process(class_process, node_name, from_redo=True, links=links)
+                c_e.add_process(class_process, node_name, from_redo=True, links=links)
 
             elif action == "add_process":
                 node_name = to_redo[1]
-                self.pipelineEditorTabs.get_current_editor().del_node(node_name, from_redo=True)
+                c_e.del_node(node_name, from_redo=True)
 
             elif action == "export_plug":
                 temp_plug_name = to_redo[1]
-                self.pipelineEditorTabs.get_current_editor()._remove_plug(_temp_plug_name=temp_plug_name,
-                                                                          from_redo=True)
+                c_e._remove_plug(_temp_plug_name=temp_plug_name, from_redo=True)
 
             elif action == "export_plugs":
                 # No redo possible
@@ -347,8 +346,7 @@ class PipelineManagerTab(QWidget):
                 temp_plug_name = to_redo[1]
                 new_temp_plugs = to_redo[2]
                 optional = to_redo[3]
-                self.pipelineEditorTabs.get_current_editor()._export_plug(temp_plug_name=new_temp_plugs[0],
-                                                                          weak_link=False,
+                c_e._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
                                                                           optional=optional, from_redo=True,
                                                                           pipeline_parameter=temp_plug_name[1])
 
@@ -363,41 +361,41 @@ class PipelineManagerTab(QWidget):
                         source = plug_tuple
                         dest = ('', temp_plug_name[1])
 
-                    self.pipelineEditorTabs.get_current_editor().scene.add_link(source, dest, active=True, weak=False)
+                    c_e.scene.add_link(source, dest, active=True, weak=False)
 
                     # Writing a string to represent the link
                     source_parameters = ".".join(source)
                     dest_parameters = ".".join(dest)
                     link = "->".join((source_parameters, dest_parameters))
 
-                    self.pipelineEditorTabs.get_current_editor().scene.pipeline.add_link(link)
-                    self.pipelineEditorTabs.get_current_editor().scene.update_pipeline()
+                    c_e.scene.pipeline.add_link(link)
+                    c_e.scene.update_pipeline()
 
             elif action == "update_node_name":
                 node = to_redo[1]
                 new_node_name = to_redo[2]
                 old_node_name = to_redo[3]
-                self.pipelineEditorTabs.get_current_editor().update_node_name(node, new_node_name, old_node_name, from_redo=True)
+                c_e.update_node_name(node, new_node_name, old_node_name, from_redo=True)
 
             elif action == "update_plug_value":
                 node_name = to_redo[1]
                 new_value = to_redo[2]
                 plug_name = to_redo[3]
                 value_type = to_redo[4]
-                self.pipelineEditorTabs.get_current_editor().update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
+                c_e.update_plug_value(node_name, new_value, plug_name, value_type, from_redo=True)
 
             elif action == "add_link":
                 link = to_redo[1]
-                self.pipelineEditorTabs.get_current_editor()._del_link(link, from_redo=True)
+                c_e._del_link(link, from_redo=True)
 
             elif action == "delete_link":
                 source = to_redo[1]
                 dest = to_redo[2]
                 active = to_redo[3]
                 weak = to_redo[4]
-                self.pipelineEditorTabs.get_current_editor().add_link(source, dest, active, weak, from_redo=True)
+                c_e.add_link(source, dest, active, weak, from_redo=True)
 
-            self.pipelineEditorTabs.get_current_editor().scene.pipeline.update_nodes_and_plugs_activation()
+            c_e.scene.pipeline.update_nodes_and_plugs_activation()
 
     def update_clinical_mode(self):
         """
@@ -469,8 +467,8 @@ class PipelineManagerTab(QWidget):
             for element in signal_list:
                 history_maker.append(element)
 
-        self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_filename()].append(history_maker)
-        self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_filename()].clear()
+        self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_editor()].append(history_maker)
+        self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_editor()].clear()
 
     def updateProcessLibrary(self, filename):
         """
@@ -591,7 +589,7 @@ class PipelineManagerTab(QWidget):
 
         self.disable_progress_bar = True
         if self.disable_progress_bar:
-            name = self.pipelineEditorTabs.get_current_filename()
+            name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
             self.main_window.statusBar().showMessage('Pipeline "{0}" is getting initialized. Please wait.'.format(name))
             QApplication.processEvents()
             self.init_pipeline()
@@ -891,7 +889,7 @@ class PipelineManagerTab(QWidget):
 
         :return:
         """
-        name = self.pipelineEditorTabs.get_current_filename()
+        name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
         self.main_window.statusBar().showMessage('Pipeline "{0}" is getting run. Please wait.'.format(name))
         QApplication.processEvents()
 
