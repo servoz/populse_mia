@@ -396,10 +396,8 @@ class MiniViewer(QWidget):
                         (str(value)[:self.nb_char_max])
                 else:
                     self.label_description[idx].setText \
-                        (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                        (DataBrowser.not_defined_value[:self.nb_char_max])
                 self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
-
-
 
     def clearLayouts(self):
         """ Method that clears the final layout.

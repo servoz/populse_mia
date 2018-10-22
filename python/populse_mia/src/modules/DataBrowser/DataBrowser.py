@@ -1196,7 +1196,7 @@ class TableDataBrowser(QTableWidget):
                         item.setData(Qt.BackgroundRole, QtCore.QVariant(color))
 
         # Auto-save
-        config = Config.Config()
+        config = Config()
         if config.isAutoSave() == "yes":
             save_project(self.project)
 

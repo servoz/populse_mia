@@ -12,11 +12,10 @@ import webbrowser
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QLineEdit, \
-    QMainWindow, QMessageBox, QMenu, QPushButton
+from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
-import DataBrowser.DataBrowser
+from DataBrowser import DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from PipelineManager.PipelineManagerTab import PipelineManagerTab
 from PipelineManager.process_library import InstallProcesses
@@ -317,11 +316,10 @@ class Main_Window(QMainWindow):
 
         self.tabs = QTabWidget()
         self.tabs.setAutoFillBackground(False)
-        #self.tabs.setStyleSheet('QTabBar{font-size:14pt;font-family:Helvetica;text-align: center;color:blue;}')
         self.tabs.setStyleSheet('QTabBar{font-size:16pt;text-align: center}')
         self.tabs.setMovable(True)
 
-        self.data_browser = DataBrowser.DataBrowser.DataBrowser(self.project, self)
+        self.data_browser = DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         self.image_viewer = ImageViewer()
