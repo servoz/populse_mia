@@ -6,11 +6,16 @@
 # for details.
 ##########################################################################
 
-from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
-from Utils.Utils import check_value_type
 from datetime import datetime
 
+# PyQt5 imports
+from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
+
+# Populse_MIA imports
+from Utils.Utils import check_value_type
 from Project.Project import COLLECTION_CURRENT
+
+# Populse_db imports
 from populse_db.database import FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_STRING, \
     FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
@@ -18,11 +23,23 @@ from populse_db.database import FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_FLOAT, 
 class ModifyTable(QDialog):
     """
     Is called when the user wants to verify precisely the scans of the project.
+
+    Attributes:
+        - project: current project in the software
+        - values: list of values of the cell
+        - types: value types
+        - scans: scans of the rows
+        - tags: tags of the columns
+        - table: table widget
+
+    Methods:
+        - fill_table: fills the table
+        - update_table_values: updates the table in the database
     """
 
     def __init__(self, project, value, types, scans, tags):
         """
-        ModifyTable init
+        Initialization of the ModifyTable class
         :param project: Instance of Project
         :param value: List of values of the cell
         :param types: Value types
@@ -99,7 +116,7 @@ class ModifyTable(QDialog):
 
     def update_table_values(self):
         """
-        To update the table in the Database after Ok is clicked
+        Updates the table in the database after Ok is clicked
         """
         valid = True
 

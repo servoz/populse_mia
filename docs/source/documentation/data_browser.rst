@@ -159,7 +159,7 @@ Advanced search
 ^^^^^^^^^^^^^^^
 Create a complex filter to extract the information in the table.
 
-The advanced search creates a complex query to the database and is a combination of several "query lines" which are linked with AND or OR are all composed of:
+The advanced search creates a complex query to the database and is a combination of several "query lines" which are linked with AND or OR and all composed of:
   * A negation or not
   * A tag name or all visible tags
   * A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN) 

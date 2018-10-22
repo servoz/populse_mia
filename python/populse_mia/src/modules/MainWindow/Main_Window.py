@@ -19,6 +19,7 @@ from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from PipelineManager.PipelineManagerTab import PipelineManagerTab
+from PipelineManager.process_library import InstallProcesses
 from PopUps.Ui_Dialog_New_Project import Ui_Dialog_New_Project
 from PopUps.Ui_Dialog_Open_Project import Ui_Dialog_Open_Project
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
@@ -673,12 +674,13 @@ class Main_Window(QMainWindow):
         self.pop_up_package_library.show()
         self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
 
-    def documentation(self):
+    @staticmethod
+    def documentation():
+        """ Opens the documentation in a web browser """
         webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
 
     def install_processes_pop_up(self, folder=False):
         """ Opens the install processes pop-up """
-        from PipelineManager.process_library import InstallProcesses
         self.pop_up_install_processes = InstallProcesses(self, folder=folder)
         self.pop_up_install_processes.show()
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)

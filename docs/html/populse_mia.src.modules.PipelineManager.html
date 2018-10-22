@@ -668,6 +668,7 @@ if hasattr(self.process, ‘filters’):</p>
 <li>_remove_plug: removes a plug</li>
 <li>save_pipeline: saves the pipeline</li>
 <li>check_modifications: checks if the nodes of the pipeline have been modified</li>
+<li>get_current_filename: returns the relative path the pipeline was last saved to. Empty if never saved.</li>
 </ul>
 </dd>
 </dl>
@@ -822,6 +823,11 @@ if hasattr(self.process, ‘filters’):</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor.get_current_filename">
+<code class="descname">get_current_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor.get_current_filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor.pipeline_modified">
 <code class="descname">pipeline_modified</code><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor.pipeline_modified" title="Permalink to this definition">¶</a></dt>
@@ -930,7 +936,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
 <li>scan_list: list of the selected database files</li>
-<li>undos: dictionary containing as values the undo list and as keys the name of the corresponding tab</li>
+<li>undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab</li>
 <li>redos: dictionary containing as values the redo list and as keys the name of the corresponding tab</li>
 </ul>
 </dd>
@@ -938,11 +944,14 @@ This method is called after each action in the PipelineEditor.</p>
 <dd><ul class="first last simple">
 <li>new_tab: creates a new tab and a new editor</li>
 <li>close_tab: closes the selected tab and editor</li>
-<li>set_current_editor_by_name: sets the current editor</li>
+<li>set_current_editor_by_tab_name: sets the current editor</li>
 <li>get_current_editor: gets the instance of the current editor</li>
+<li>get_tab_name_by_index: gets the tab title from its index in the editors</li>
 <li>get_filename_by_index: gets the pipeline filename from its index in the editors</li>
+<li>get_index_by_tab_name: gets the index of the editor corresponding to the given tab name</li>
 <li>get_index_by_filename: gets the index of the editor corresponding to the given pipeline filename</li>
-<li>get_current_filename: gets the file name of the current editor</li>
+<li>get_current_tab_name: gets the tab title of the current editor</li>
+<li>get_current_filename: gets the file name of the current pipeline</li>
 <li>get_current_pipeline: gets the instance of the current pipeline</li>
 <li>save_pipeline: saves the pipeline of the current editor</li>
 <li>load_pipeline: loads a new pipeline</li>
@@ -959,6 +968,7 @@ This method is called after each action in the PipelineEditor.</p>
 <li>open_filter: opens a filter widget</li>
 <li>export_to_db_scans: exports the input of a filter to “database_scans”</li>
 <li>check_modifications: checks if the nodes of the current pipeline have been modified</li>
+<li>has_pipeline_nodes: checks if any of the pipelines in the editor tabs have pipeline nodes</li>
 </ul>
 </dd>
 </dl>
@@ -1068,7 +1078,8 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_current_filename">
 <code class="descname">get_current_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_current_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the file name of the current editor</p>
+<dd><p>Gets the relative path to the file the pipeline in the current editor has been last saved to.
+If the pipeline has never been saved, returns the title of the tab.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1094,9 +1105,40 @@ This method is called after each action in the PipelineEditor.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_filename_by_index">
-<code class="descname">get_filename_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_filename_by_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the pipeline filename from its index in the editors</p>
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_current_tab_name">
+<code class="descname">get_current_tab_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_current_tab_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the tab name of the editor in the current tab.
+Trailing ” <a href="#id1"><span class="problematic" id="id2">*</span></a>” and ampersand (“&amp;”) characters are removed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_file_name">
+<code class="descname">get_editor_by_file_name</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the instance of an editor from its file name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – name of the file the pipeline was last saved to</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_index">
+<code class="descname">get_editor_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the instance of an editor from its index in the editors</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1110,9 +1152,58 @@ This method is called after each action in the PipelineEditor.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_tab_name">
+<code class="descname">get_editor_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_editor_by_tab_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the instance of an editor from its tab name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tab_name</strong> – name of the tab</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_filename_by_index">
+<code class="descname">get_filename_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_filename_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the relative path to the file the pipeline in the editor at the given index has been last saved to.
+If the pipeline has never been saved, returns the title of the tab.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – index of the editor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_editor">
+<code class="descname">get_index_by_editor</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the index of the editor corresponding to the given editor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>editor</strong> – searched pipeline editor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_filename">
 <code class="descname">get_index_by_filename</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the index of the editor corresponding to the given pipeline filename</p>
+<dd><p>Gets the index of the first editor corresponding to the given pipeline filename</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1126,6 +1217,53 @@ This method is called after each action in the PipelineEditor.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_tab_name">
+<code class="descname">get_index_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_index_by_tab_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the index of the editor corresponding to the given tab name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tab_name</strong> – name of the tab with the searched pipeline</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_tab_name_by_index">
+<code class="descname">get_tab_name_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.get_tab_name_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the tab name of the editor at the given index.
+Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” and ampersand (“&amp;”) characters are removed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – index of the editor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.has_pipeline_nodes">
+<code class="descname">has_pipeline_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.has_pipeline_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if any of the pipelines in the editor tabs have pipeline nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False depending on if there are nodes in the editors</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.load_pipeline">
 <code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.load_pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a new pipeline</p>
@@ -1133,7 +1271,7 @@ This method is called after each action in the PipelineEditor.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – not None only when this method is called from “edit_sub_pipeline”</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – not None only when this method is called from “open_sub_pipeline”</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
@@ -1151,7 +1289,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.new_tab">
 <code class="descname">new_tab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.new_tab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new tab and a new editor</p>
+<dd><p>Creates a new tab and a new editor and makes the new tab current</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1199,7 +1337,7 @@ This method is called after each action in the PipelineEditor.</p>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.save_pipeline">
-<code class="descname">save_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.save_pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save_pipeline</code><span class="sig-paren">(</span><em>new_file_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.save_pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the pipeline of the current editor</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1226,8 +1364,40 @@ This method is called after each action in the PipelineEditor.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_name">
-<code class="descname">set_current_editor_by_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_name" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_editor">
+<code class="descname">set_current_editor_by_editor</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current editor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>editor</strong> – editor in the tab that should be made current</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_file_name">
+<code class="descname">set_current_editor_by_file_name</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current editor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – name of the file the pipeline was last saved to</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_tab_name">
+<code class="descname">set_current_editor_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs.set_current_editor_by_tab_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the current editor</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1398,6 +1568,7 @@ This method is called after each action in the PipelineEditor.</p>
 <li>project: current project in the software</li>
 <li>scan_list: list of the selected database files</li>
 <li>iteration_table_scans_list: list of the scans contained in the iteration table</li>
+<li>main_window: main window of the software</li>
 </ul>
 </dd>
 <dt>Methods:</dt>
@@ -1411,6 +1582,7 @@ This method is called after each action in the PipelineEditor.</p>
 <li>updateProcessLibrary: updates the library of processes when a pipeline is saved</li>
 <li>loadPipeline: loads a pipeline to the pipeline editor</li>
 <li>savePipeline: saves the current pipeline of the pipeline editor</li>
+<li>savePipelineAs: saves the current pipeline of the pipeline editor under another name</li>
 <li>loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor</li>
 <li>saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor</li>
 <li>initPipeline: initializes the current pipeline of the pipeline editor</li>
@@ -1576,6 +1748,20 @@ the inputs and are stored in the database.</p>
 <dt id="populse_mia.src.modules.PipelineManager.PipelineManagerTab.PipelineManagerTab.savePipeline">
 <code class="descname">savePipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.PipelineManagerTab.savePipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the current pipeline of the pipeline editor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.PipelineManagerTab.PipelineManagerTab.savePipelineAs">
+<code class="descname">savePipelineAs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.PipelineManagerTab.savePipelineAs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the current pipeline of the pipeline editor under another name</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

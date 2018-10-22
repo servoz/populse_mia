@@ -8,27 +8,75 @@
 
 import os
 
-from PyQt5.QtCore import QObjectCleanupHandler, Qt
+# PyQt5 imports
+from PyQt5.QtCore import QObjectCleanupHandler
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, \
+    QMessageBox
 
+# Populse_MIA imports
 from Utils.Tools import ClickableLabel
-
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
+
+# Populse_db imports
 from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN
 
 
 class AdvancedSearch(QWidget):
+    """
+    Class that manages the widget of the advanced search
 
-    def __init__(self, project, dataBrowser, scans_list=[], tags_list=[], from_pipeline=False):
+        The advanced search creates a complex query to the database and is a combination of several "query lines" which
+        are linked with AND or OR and all composed of:
+          * A negation or not
+          * A tag name or all visible tags
+          * A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
+          * A value
+
+    Attributes:
+        - project: current project in the software
+        - data_browser: parent data browser widget
+        - scans_list: current list of the documents
+        - tags_list: list of the visualized tags
+        - from_pipeline: True if the widget is called from the pipeline manager
+
+    Methods:
+        - show_search: called when the Advanced Search button is clicked, reset the rows
+        - remove_row: removes a row
+        - add_row: adds a row
+        - displayConditionRules: sets the list of condition choices, depending on the tag type
+        - displayValueRules: called when the condition choice is changed, to update the placeholder text
+        - refresh_search: refreshes the widget
+        - rows_borders_removed: links and adds row removed from every row
+        - rows_borders_added: adds the links and the added row to the good rows
+        - clearLayout: called to clear a layout
+        - rowsContainsWidget: checks if the widget is still used
+        - launch_search: called to start the search
+        - prepare_filters: prepares the str representation of the filter
+        - get_filters: gets the filters in list form
+        - apply_filter: applies an opened filter
+    """
+
+    def __init__(self, project, data_browser, scans_list=None, tags_list=None, from_pipeline=False):
         """
-        Class that manages the widget of the advanced search
+        Initialization of the AdvancedSearch class
+        :param project: current project in the software
+        :param data_browser: parent data browser widget
+        :param scans_list: current list of the documents
+        :param tags_list: list of the visualized tags
+        :param from_pipeline: True if the widget is called from the pipeline manager
         """
 
         super().__init__()
 
+        if scans_list is None:
+            scans_list = []
+
+        if tags_list is None:
+            tags_list = []
+
         self.project = project
-        self.dataBrowser = dataBrowser
+        self.dataBrowser = data_browser
         self.rows = []
         self.scans_list = scans_list
         self.tags_list = tags_list
@@ -36,98 +84,98 @@ class AdvancedSearch(QWidget):
 
     def show_search(self):
         """
-        Called when the Advanced Search button is clicked, we reset the rows
+        Called when the Advanced Search button is clicked, reset the rows
         """
         self.rows = []
         self.add_row()
 
-    def remove_row(self, rowLayout):
+    def remove_row(self, row_layout):
         """
-        Called when a row must be removed
-        :param rowLayout: Row to remove
+        Removes a row
+        :param row_layout: Row to remove
         """
 
         # We remove the row only if there is at least 2 rows, because we always must keep at least one
-        if (len(self.rows) > 1):
-            self.rows.remove(rowLayout)
+        if len(self.rows) > 1:
+            self.rows.remove(row_layout)
 
         # We refresh the view
         self.refresh_search()
 
     def add_row(self):
         """
-        Called when a row must be added
+        Adds a row
         """
 
-        rowLayout = []
+        row_layout = []
 
         # NOT choice
-        notChoice = QComboBox()
-        notChoice.setObjectName('not')
-        notChoice.addItem("")
-        notChoice.addItem("NOT")
+        not_choice = QComboBox()
+        not_choice.setObjectName('not')
+        not_choice.addItem("")
+        not_choice.addItem("NOT")
 
         # Field choice
-        fieldChoice = QComboBox()
-        fieldChoice.setObjectName('field')
+        field_choice = QComboBox()
+        field_choice.setObjectName('field')
         if len(self.tags_list) > 0:
             for tag in self.tags_list:
-                fieldChoice.addItem(tag)
+                field_choice.addItem(tag)
         else:
             for tag in self.project.session.get_visibles():
-                fieldChoice.addItem(tag)
-        fieldChoice.model().sort(0)
-        fieldChoice.addItem("All visualized tags")
+                field_choice.addItem(tag)
+        field_choice.model().sort(0)
+        field_choice.addItem("All visualized tags")
 
         # Value choice
-        conditionValue = QLineEdit()
-        conditionValue.setObjectName('value')
+        condition_value = QLineEdit()
+        condition_value.setObjectName('value')
 
         # Condition choice
-        conditionChoice = QComboBox()
-        conditionChoice.setObjectName('condition')
-        conditionChoice.addItem("==")
-        conditionChoice.addItem("!=")
-        conditionChoice.addItem(">=")
-        conditionChoice.addItem("<=")
-        conditionChoice.addItem(">")
-        conditionChoice.addItem("<")
-        conditionChoice.addItem("BETWEEN")
-        conditionChoice.addItem("IN")
-        conditionChoice.addItem("CONTAINS")
-        conditionChoice.addItem("HAS VALUE")
-        conditionChoice.addItem("HAS NO VALUE")
-        conditionChoice.model().sort(0)
+        condition_choice = QComboBox()
+        condition_choice.setObjectName('condition')
+        condition_choice.addItem("==")
+        condition_choice.addItem("!=")
+        condition_choice.addItem(">=")
+        condition_choice.addItem("<=")
+        condition_choice.addItem(">")
+        condition_choice.addItem("<")
+        condition_choice.addItem("BETWEEN")
+        condition_choice.addItem("IN")
+        condition_choice.addItem("CONTAINS")
+        condition_choice.addItem("HAS VALUE")
+        condition_choice.addItem("HAS NO VALUE")
+        condition_choice.model().sort(0)
 
         # Signal to update the placeholder text of the value
-        conditionChoice.currentTextChanged.connect(lambda: self.displayValueRules(conditionChoice, conditionValue))
+        condition_choice.currentTextChanged.connect(lambda: self.displayValueRules(condition_choice, condition_value))
 
         # Signal to update the list of conditions, depending on the tag type
-        fieldChoice.currentTextChanged.connect(lambda: self.displayConditionRules(fieldChoice, conditionChoice))
+        field_choice.currentTextChanged.connect(lambda: self.displayConditionRules(field_choice, condition_choice))
 
         # Minus to remove the row
-        removeRowLabel = ClickableLabel()
-        removeRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
-        removeRowPicture = removeRowPicture.scaledToHeight(30)
-        removeRowLabel.setPixmap(removeRowPicture)
+        remove_row_label = ClickableLabel()
+        remove_row_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
+        remove_row_picture = remove_row_picture.scaledToHeight(30)
+        remove_row_label.setPixmap(remove_row_picture)
 
         # Everything appended to the row
-        rowLayout.append(None)  # Link room
-        rowLayout.append(notChoice)
-        rowLayout.append(fieldChoice)
-        rowLayout.append(conditionChoice)
-        rowLayout.append(conditionValue)
-        rowLayout.append(removeRowLabel)
-        rowLayout.append(None)  # Add row room
+        row_layout.append(None)  # Link room
+        row_layout.append(not_choice)
+        row_layout.append(field_choice)
+        row_layout.append(condition_choice)
+        row_layout.append(condition_value)
+        row_layout.append(remove_row_label)
+        row_layout.append(None)  # Add row room
 
         # Signal to remove the row
-        removeRowLabel.clicked.connect(lambda: self.remove_row(rowLayout))
+        remove_row_label.clicked.connect(lambda: self.remove_row(row_layout))
 
-        self.rows.append(rowLayout)
+        self.rows.append(row_layout)
 
         self.refresh_search()
 
-        self.displayConditionRules(fieldChoice, conditionChoice)
+        self.displayConditionRules(field_choice, condition_choice)
 
     def displayConditionRules(self, field, condition):
         """
@@ -194,7 +242,7 @@ class AdvancedSearch(QWidget):
 
     def refresh_search(self):
         """
-        Called to refresh the advanced search
+        Refreshes the widget
         """
 
         # Old values stored
@@ -221,62 +269,62 @@ class AdvancedSearch(QWidget):
                     main_layout.addWidget(widget, i, j)
 
         # Search button added at the end
-        searchLayout = QHBoxLayout(None)
-        searchLayout.setObjectName("search layout")
+        search_layout = QHBoxLayout(None)
+        search_layout.setObjectName("search layout")
         self.search = QPushButton("Search")
         self.search.setFixedWidth(100)
         self.search.clicked.connect(self.launch_search)
-        searchLayout.addWidget(self.search)
-        searchLayout.setParent(None)
+        search_layout.addWidget(self.search)
+        search_layout.setParent(None)
 
         # New layout added
         master_layout.addLayout(main_layout)
-        master_layout.addLayout(searchLayout)
+        master_layout.addLayout(search_layout)
         self.setLayout(master_layout)
 
     def rows_borders_removed(self):
         """
-        Link and add row removed from every row
+        inks and adds row removed from every row
         """
 
         # We remove all the links and the add rows
         for i in range (0, len(self.rows)):
             # Plus removed from every row
-            if self.rows[i][6] != None:
+            if self.rows[i][6] is not None:
                 self.rows[i][6].setParent(None)
                 self.rows[i][6].deleteLater()
                 self.rows[i][6] = None
             # Link removed from every row
-            if self.rows[i][0] != None:
+            if self.rows[i][0] is not None:
                 self.rows[i][0].setParent(None)
                 self.rows[i][0].deleteLater()
                 self.rows[i][0] = None
 
     def rows_borders_added(self, links):
         """
-        Adds the links and the add row to the good rows
+        Adds the links and the added row to the good rows
         :param links: Old links to reput
         """
 
         # Plus added to the last row
-        addRowLabel = ClickableLabel()
-        addRowLabel.setObjectName('plus')
-        addRowPicture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
-        addRowPicture = addRowPicture.scaledToHeight(20)
-        addRowLabel.setPixmap(addRowPicture)
-        addRowLabel.clicked.connect(self.add_row)
-        self.rows[len(self.rows) - 1][6] = addRowLabel
+        add_row_label = ClickableLabel()
+        add_row_label.setObjectName('plus')
+        add_row_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
+        add_row_picture = add_row_picture.scaledToHeight(20)
+        add_row_label.setPixmap(add_row_picture)
+        add_row_label.clicked.connect(self.add_row)
+        self.rows[len(self.rows) - 1][6] = add_row_label
 
         # Link added to every row, except the first one
-        for i in range (1, len(self.rows)):
+        for i in range(1, len(self.rows)):
             row = self.rows[i]
-            linkChoice = QComboBox()
-            linkChoice.setObjectName('link')
-            linkChoice.addItem("AND")
-            linkChoice.addItem("OR")
+            link_choice = QComboBox()
+            link_choice.setObjectName('link')
+            link_choice.addItem("AND")
+            link_choice.addItem("OR")
             if len(links) >= i:
-                linkChoice.setCurrentText(links[i - 1])
-            row[0] = linkChoice
+                link_choice.setCurrentText(links[i - 1])
+            row[0] = link_choice
 
     def clearLayout(self, layout):
         """
@@ -296,11 +344,12 @@ class AdvancedSearch(QWidget):
 
     def rowsContainsWidget(self, widget):
         """
-        To know if the widget is still used
-        :param widget: Widget to check
+        Checks if the widget is still used
+        :param widget: widget to check
+        :return: True or False
         """
         for row in self.rows:
-            if (widget in row):
+            if widget in row:
                 return True
         return False
 
@@ -344,8 +393,6 @@ class AdvancedSearch(QWidget):
             msg.exec()
             result_names = self.scans_list
 
-        #print(result_names)
-
         self.dataBrowser.table_data.scans_to_visualize = result_names
         self.dataBrowser.table_data.scans_to_search = result_names
         self.dataBrowser.table_data.update_visualized_rows(old_scans_list)
@@ -378,9 +425,11 @@ class AdvancedSearch(QWidget):
             or_to_write = False
             for row_field in row_fields:
                 if row_condition == "IN":
-                    row_field_query = "({" + row_field + "} " + row_condition + " " + str(row_value).replace("'", "\"") + ")"
+                    row_field_query = "({" + row_field + "} " + row_condition + " " + \
+                                      str(row_value).replace("'", "\"") + ")"
                 elif row_condition == "BETWEEN":
-                    row_field_query = "(({" + row_field + "} >= \"" + row_value[0] + "\") AND (" + row_field + " <= \"" + row_value[1] + "\"))"
+                    row_field_query = "(({" + row_field + "} >= \"" + row_value[0] + "\") AND (" + \
+                                      row_field + " <= \"" + row_value[1] + "\"))"
                 elif row_condition == "HAS VALUE":
                     row_field_query = "({" + row_field + "} != null)"
                 elif row_condition == "HAS NO VALUE":
@@ -403,7 +452,7 @@ class AdvancedSearch(QWidget):
 
             # Negation added if needed
             if row_not == "NOT":
-                row_queries[row]  = "(NOT " + row_queries[row] + ")"
+                row_queries[row] = "(NOT " + row_queries[row] + ")"
 
         final_query += row_queries[0]
 
@@ -417,13 +466,11 @@ class AdvancedSearch(QWidget):
 
         final_query = "(" + final_query + ")"
 
-        #print(final_query)
-
         return final_query
 
     def get_filters(self, replace_all_by_fields):
         """
-        To get the filters in list form
+        Gets the filters in list form
         :param replace_all_by_fields: to replace All visualized tags by the list of visible fields
         :return: Lists of filters (fields, conditions, values, links, nots)
         """
@@ -436,14 +483,14 @@ class AdvancedSearch(QWidget):
         nots = []
         for row in self.rows:
             for widget in row:
-                if widget != None:
+                if widget is not None:
                     child = widget
-                    childName = child.objectName()
-                    if childName == 'link':
+                    child_name = child.objectName()
+                    if child_name == 'link':
                         links.append(child.currentText())
-                    elif childName == 'condition':
+                    elif child_name == 'condition':
                         conditions.append(child.currentText())
-                    elif childName == 'field':
+                    elif child_name == 'field':
                         if child.currentText() != "All visualized tags":
                             fields.append([child.currentText()])
                         else:
@@ -451,9 +498,9 @@ class AdvancedSearch(QWidget):
                                 fields.append(self.project.database.get_visibles())
                             else:
                                 fields.append([child.currentText()])
-                    elif childName == 'value':
+                    elif child_name == 'value':
                         values.append(child.displayText())
-                    elif childName == 'not':
+                    elif child_name == 'not':
                         nots.append(child.currentText())
 
         operators = ["<", ">", "<=", ">=", "BETWEEN"]
@@ -482,9 +529,8 @@ class AdvancedSearch(QWidget):
 
     def apply_filter(self, filter):
         """
-        To apply an open filter
+        Applies an opened filter
         :param filter: Filter object opened to apply
-        :return:
         """
         self.rows = []
 
@@ -495,7 +541,7 @@ class AdvancedSearch(QWidget):
         links = filter.links
         fields = filter.fields
 
-        for i in range (0, len(nots)):
+        for i in range(0, len(nots)):
             self.add_row()
             row = self.rows[i]
             if i > 0:
@@ -526,7 +572,7 @@ class AdvancedSearch(QWidget):
             except Exception as e:
                 print(e)
 
-                # Error message if the search can't be done, and visualization of all scans in the databrowser
+                # Error message if the search can't be done, and visualization of all scans in the DataBrowser
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText(

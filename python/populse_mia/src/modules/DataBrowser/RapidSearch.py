@@ -6,20 +6,36 @@
 # for details.
 ##########################################################################
 
+# PyQt5 import
 from PyQt5.QtWidgets import QLineEdit
+
+# Populse_MIA imports
 from Project.Project import TAG_FILENAME, TAG_BRICKS
 
 
 class RapidSearch(QLineEdit):
+    """
+    Widget used to search for a pattern in the table (for all the visualized tags).
+
+    Enter % to replace any string, _ to replace any character , *Not Defined* for the scans with missing value(s).
+    Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”
+
+    Attributes:
+        - databrowser: parent data browser widget
+
+    Methods:
+        - prepare_not_defined_filter: prepares the rapid search filter for not defined values
+        - prepare_filter: prepares the rapid search filter
+    """
 
     def __init__(self, databrowser):
 
         super().__init__()
 
         self.databrowser = databrowser
-        self.setPlaceholderText(
-            "Rapid search, enter % to replace any string, _ to replace any character , *Not Defined* for the scans with missing value(s),  dates are in the following format: yyyy-mm-dd hh:mm:ss.fff")
-
+        self.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character ," +
+                                " *Not Defined* for the scans with missing value(s),  " +
+                                "dates are in the following format: yyyy-mm-dd hh:mm:ss.fff")
 
     def prepare_not_defined_filter(self, tags):
         """
@@ -46,8 +62,6 @@ class RapidSearch(QLineEdit):
         query += " AND ({" + TAG_FILENAME + "} IN " + str(self.databrowser.table_data.scans_to_search).replace("'", "\"") + ")"
 
         query = "(" + query + ")"
-
-        #print(query)
 
         return query
 
@@ -79,7 +93,5 @@ class RapidSearch(QLineEdit):
         query += " AND ({" + TAG_FILENAME + "} IN " + str(scans).replace("'", "\"") + ")"
 
         query = "(" + query + ")"
-
-        # print(query)
 
         return query

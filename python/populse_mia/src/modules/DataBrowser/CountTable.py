@@ -6,19 +6,21 @@
 # for details.
 ##########################################################################
 
+
+import os
+import operator
+from functools import reduce  # Valid in Python 2.6+, required in Python 3
+
+# PyQt5 imports
 import PyQt5.QtCore as QtCore
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QFrame, \
-    QVBoxLayout, QTableWidgetItem
+from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QVBoxLayout, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt
-import os
+
+# Populse_MIA imports
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
 from Utils.Tools import ClickableLabel
 from Utils.Utils import set_item_data, table_to_database
-
-from functools import reduce  # Valid in Python 2.6+, required in Python 3
-import operator
-
 from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
 
 
@@ -38,30 +40,42 @@ class CountTable(QDialog):
     T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
     and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the table will be:
 
-    PatientName | TimePoint | RARE | MDEFT | FLASH
-    -----------------------------------------------
-    P1          | T1        | v(2) | v(1)  | v(1)
-    P1          | T2        | v(2) | v(1)  | v(1)
-    P1          | T3        | v(2) | v(1)  | v(1)
-    P2          | T1        | v(2) | v(1)  | v(1)
-    P2          | T2        | v(2) | v(1)  | v(1)
-    P2          | T3        | v(2) | v(1)  | v(1)
-    -----------------------------------------------
+    +-------------+-----------+------+-------+-------+
+    | PatientName | TimePoint | RARE | MDEFT | FLASH |
+    +=============+===========+======+=======+=======+
+    | P1          | T1        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P1          | T2        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P1          | T3        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T1        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T2        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T3        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
     with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
     SequenceName).
 
     If no scans corresponds for a triplet value, a red cross will be displayed. For example, if the
     user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The table will be:
 
-    PatientName | TimePoint | RARE | MDEFT | FLASH
-    -----------------------------------------------
-    P1          | T1        | v(2) | v(1)  | v(1)
-    P1          | T2        | v(1) | v(1)  | v(1)
-    P1          | T3        | v(2) | v(1)  | v(1)
-    P2          | T1        | v(2) | v(1)  | v(1)
-    P2          | T2        | v(2) | v(1)  | v(1)
-    P2          | T3        | v(2) | v(1)  | x
-    -----------------------------------------------
+    +-------------+-----------+------+-------+-------+
+    | PatientName | TimePoint | RARE | MDEFT | FLASH |
+    +=============+===========+======+=======+=======+
+    | P1          | T1        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P1          | T2        | v(1) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P1          | T3        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T1        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T2        | v(2) | v(1)  | v(1)  |
+    +-------------+-----------+------+-------+-------+
+    | P2          | T3        | v(2) | v(1)  | x     |
+    +-------------+-----------+------+-------+-------+
 
     Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.
 
@@ -97,6 +111,10 @@ class CountTable(QDialog):
 
         self.setModal(True)
         self.setWindowTitle("Count table")
+
+        # Font
+        self.font = QFont()
+        self.font.setBold(True)
 
         # values_list will contain the different values of each selected tag
         self.values_list = [[], []]
@@ -147,8 +165,6 @@ class CountTable(QDialog):
     def refresh_layout(self):
         """
         Updates the layout of the widget
-
-        :return:
         """
 
         self.h_box_top = QHBoxLayout()
@@ -169,8 +185,6 @@ class CountTable(QDialog):
     def add_tag(self):
         """
         Adds a tag to visualize in the count table
-
-        :return:
         """
 
         idx = len(self.push_buttons)
@@ -183,8 +197,6 @@ class CountTable(QDialog):
     def remove_tag(self):
         """
         Removes a tag to visualize in the count table
-
-        :return:
         """
 
         push_button = self.push_buttons[-1]
@@ -198,14 +210,14 @@ class CountTable(QDialog):
         """
         Opens a pop-up to select which tag to visualize in the count table
 
-        :param idx:
-        :return:
+        :param idx: the index of the selected push button
         """
 
-        popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT), self.push_buttons[idx].text())
-        if popUp.exec_():
-            if popUp.selected_tag is not None:
-                self.push_buttons[idx].setText(popUp.selected_tag)
+        pop_up = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
+                                           self.push_buttons[idx].text())
+        if pop_up.exec_():
+            if pop_up.selected_tag is not None:
+                self.push_buttons[idx].setText(pop_up.selected_tag)
                 self.fill_values(idx)
 
     def fill_values(self, idx):
@@ -213,7 +225,6 @@ class CountTable(QDialog):
         Fill values_list depending on the visualized tags
 
         :param idx: index of the select tag
-        :return:
         """
 
         tag_name = self.push_buttons[idx].text()
@@ -238,8 +249,6 @@ class CountTable(QDialog):
     def count_scans(self):
         """
         Counts the number of scans depending on the selected tags and displays the result in the table
-
-        :return:
         """
 
         for tag_values in self.values_list:
@@ -250,10 +259,6 @@ class CountTable(QDialog):
 
         # Clearing the table
         self.table.clear()
-
-        # Font
-        self.font = QFont()
-        self.font.setBold(True)
 
         # nb_values will contain, for each index, the number of
         # different values that a tag can take
@@ -282,8 +287,6 @@ class CountTable(QDialog):
     def fill_headers(self):
         """
         Fills the headers of the table depending on the selected tags
-
-        :return:
         """
 
         idx_end = 0
@@ -317,8 +320,6 @@ class CountTable(QDialog):
     def fill_first_tags(self):
         """
         Fills the cells of the table corresponding to the (n-1) first selected tags
-
-        :return:
         """
 
         cell_text = []
@@ -381,8 +382,6 @@ class CountTable(QDialog):
     def fill_last_tag(self):
         """
         Fills the cells corresponding to the last selected tag
-
-        :return:
         """
 
         # Cells of the last tag

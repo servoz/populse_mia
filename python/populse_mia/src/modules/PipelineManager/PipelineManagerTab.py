@@ -62,6 +62,7 @@ class PipelineManagerTab(QWidget):
         - project: current project in the software
         - scan_list: list of the selected database files
         - iteration_table_scans_list: list of the scans contained in the iteration table
+        - main_window: main window of the software
 
     Methods:
         - undo: undo the last action made on the current pipeline editor
