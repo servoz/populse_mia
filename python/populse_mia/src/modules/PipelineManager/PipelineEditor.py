@@ -381,17 +381,32 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         return self.get_current_editor().scene.pipeline
 
-    def save_pipeline(self):
+    def save_pipeline(self, new_file_name=None):
         """
         Saves the pipeline of the current editor
 
         :return:
         """
 
-        new_file_name = os.path.basename(self.get_current_editor().save_pipeline())
+        if new_file_name is None:
+            # Doing a "Save as" action
+            new_file_name = os.path.basename(self.get_current_editor().save_pipeline())
 
-        if new_file_name and os.path.basename(self.get_current_filename()) != new_file_name:
-            self.setTabText(self.currentIndex(), new_file_name)
+            if new_file_name and os.path.basename(self.get_current_filename()) != new_file_name:
+                self.setTabText(self.currentIndex(), new_file_name)
+        else:
+            # Saving the current pipeline
+            pipeline = self.get_current_pipeline()
+            posdict = dict([(key, (value.x(), value.y())) \
+                            for key, value in six.iteritems(self.get_current_editor().scene.pos)])
+            old_pos = pipeline.node_position
+            pipeline.node_position = posdict
+            save_pipeline(pipeline, new_file_name)
+            self.get_current_editor()._pipeline_filename = unicode(new_file_name)
+            pipeline.node_position = old_pos
+
+            self.pipeline_saved.emit(new_file_name)
+            self.setTabText(self.currentIndex(), os.path.basename(new_file_name))
 
     def load_pipeline(self, filename=None):
         """

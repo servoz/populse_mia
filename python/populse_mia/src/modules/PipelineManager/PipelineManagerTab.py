@@ -132,6 +132,9 @@ class PipelineManagerTab(QWidget):
         self.save_pipeline_action = QAction("Save pipeline", self)
         self.save_pipeline_action.triggered.connect(self.savePipeline)
 
+        self.save_pipeline_as_action = QAction("Save pipeline as", self)
+        self.save_pipeline_as_action.triggered.connect(self.savePipelineAs)
+
         self.load_pipeline_parameters_action = QAction("Load pipeline parameters", self)
         self.load_pipeline_parameters_action.triggered.connect(self.loadParameters)
 
@@ -150,6 +153,7 @@ class PipelineManagerTab(QWidget):
         self.tags_menu = QMenu()
         self.tags_menu.addAction(self.load_pipeline_action)
         self.tags_menu.addAction(self.save_pipeline_action)
+        self.tags_menu.addAction(self.save_pipeline_as_action)
         self.tags_menu.addSeparator()
         self.tags_menu.addAction(self.load_pipeline_parameters_action)
         self.tags_menu.addAction(self.save_pipeline_parameters_action)
@@ -159,6 +163,7 @@ class PipelineManagerTab(QWidget):
 
         if config.get_clinical_mode() == 'yes':
             self.save_pipeline_action.setDisabled(True)
+            self.save_pipeline_as_action.setDisabled(True)
 
         self.tags_tool_button = QtWidgets.QToolButton()
         self.tags_tool_button.setText('Pipeline')
@@ -410,9 +415,11 @@ class PipelineManagerTab(QWidget):
         if config.get_clinical_mode() == 'yes':
             self.processLibrary.setHidden(True)
             self.save_pipeline_action.setDisabled(True)
+            self.save_pipeline_as_action.setDisabled(True)
         else:
             self.processLibrary.setHidden(False)
             self.save_pipeline_action.setDisabled(False)
+            self.save_pipeline_as_action.setDisabled(False)
 
     def update_scans_list(self, iteration_list):
         """
@@ -542,6 +549,18 @@ class PipelineManagerTab(QWidget):
     def savePipeline(self):
         """
         Saves the current pipeline of the pipeline editor
+
+        :return:
+        """
+        filename = self.pipelineEditorTabs.get_current_filename()
+        if filename:
+            self.pipelineEditorTabs.save_pipeline(new_file_name=filename)
+        else:
+            self.pipelineEditorTabs.save_pipeline()
+
+    def savePipelineAs(self):
+        """
+        Saves the current pipeline of the pipeline editor under another name
 
         :return:
         """
