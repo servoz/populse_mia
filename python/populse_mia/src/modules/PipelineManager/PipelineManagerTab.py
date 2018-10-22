@@ -73,6 +73,7 @@ class PipelineManagerTab(QWidget):
         - updateProcessLibrary: updates the library of processes when a pipeline is saved
         - loadPipeline: loads a pipeline to the pipeline editor
         - savePipeline: saves the current pipeline of the pipeline editor
+        - savePipelineAs: saves the current pipeline of the pipeline editor under another name
         - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
         - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
         - initPipeline: initializes the current pipeline of the pipeline editor
@@ -951,7 +952,6 @@ class PipelineManagerTab(QWidget):
             else:
                 self.main_window.statusBar().showMessage(
                     'Pipeline "{0}" has been correctly run.'.format(name))
-
 
     def displayNodeParameters(self, node_name, process):
         """

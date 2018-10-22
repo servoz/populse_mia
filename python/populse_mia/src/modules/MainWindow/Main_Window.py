@@ -413,6 +413,17 @@ class Main_Window(QMainWindow):
 
             self.update_project(file_name, call_update_table=False) # Project updated everywhere
 
+            # If some files have been set in the pipeline editors, display a warning message
+            if self.pipeline_manager.pipelineEditorTabs.has_pipeline_nodes():
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("This action moves the current database. All pipelines will need to be initialized "
+                            "again before they can run.")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
     def create_project_pop_up(self):
 
         if self.check_unsaved_modifications():

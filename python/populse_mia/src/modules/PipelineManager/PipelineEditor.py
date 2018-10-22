@@ -71,6 +71,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         - open_filter: opens a filter widget
         - export_to_db_scans: exports the input of a filter to "database_scans"
         - check_modifications: checks if the nodes of the current pipeline have been modified
+        - has_pipeline_nodes: checks if any of the pipelines in the editor tabs have pipeline nodes
 
     """
 
@@ -518,6 +519,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :param editor: editor
         :return:
         """
+        self.has_pipeline_nodes()
         self.undos[editor] = editor.undos
         self.redos[editor] = editor.redos
         self.setTabText(self.currentIndex(), self.get_current_tab_name() + " *")  # make sure the " *" is there
@@ -608,6 +610,21 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             self.widget(current_index).check_modifications()
         except AttributeError:
             pass
+
+    def has_pipeline_nodes(self):
+        """
+        Checks if any of the pipelines in the editor tabs have pipeline nodes
+
+        :return: True or False depending on if there are nodes in the editors
+        """
+        for idx in range(self.count()):
+            p_e = self.widget(idx)
+            if hasattr(p_e, 'scene'):
+                # if the widget is a tab editor
+                if p_e.scene.pipeline.nodes[''].plugs:
+                    return True
+
+        return False
 
 
 class PipelineEditor(PipelineDevelopperView):
