@@ -8,6 +8,7 @@
 
 import subprocess
 import os
+import webbrowser
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -128,6 +129,8 @@ class Main_Window(QMainWindow):
         self.action_redo = QAction('Redo', self)
         self.action_redo.setShortcut('Ctrl+Y')
 
+        self.action_documentation = QAction('Documentation', self)
+
         self.action_install_processes_folder = QAction('From folder', self)
         self.action_install_processes_zip = QAction('From zip file', self)
         # if Config().get_clinical_mode() == 'yes':
@@ -148,6 +151,7 @@ class Main_Window(QMainWindow):
         self.action_package_library.triggered.connect(self.package_library_pop_up)
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
+        self.action_documentation.triggered.connect(self.documentation)
         self.action_install_processes_folder.triggered.connect(lambda: self.install_processes_pop_up(folder=True))
         self.action_install_processes_zip.triggered.connect(lambda: self.install_processes_pop_up(folder=False))
 
@@ -192,7 +196,7 @@ class Main_Window(QMainWindow):
         self.menu_edition.addAction(self.action_redo)
 
         # Actions in the "Help" menu
-        self.menu_help.addAction('Documentations')
+        self.menu_help.addAction(self.action_documentation)
         self.menu_help.addAction('Credits')
 
         # Actions in the "More > Install processes" menu
@@ -668,6 +672,9 @@ class Main_Window(QMainWindow):
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
         self.pop_up_package_library.show()
         self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
+
+    def documentation(self):
+        webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
 
     def install_processes_pop_up(self, folder=False):
         """ Opens the install processes pop-up """

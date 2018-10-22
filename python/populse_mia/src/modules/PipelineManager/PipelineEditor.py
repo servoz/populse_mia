@@ -519,7 +519,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :param editor: editor
         :return:
         """
-        self.has_pipeline_nodes()
+
         self.undos[editor] = editor.undos
         self.redos[editor] = editor.redos
         self.setTabText(self.currentIndex(), self.get_current_tab_name() + " *")  # make sure the " *" is there
