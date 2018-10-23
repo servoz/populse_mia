@@ -35,7 +35,7 @@ install:
   - cd populse_db
   - pip3 install -e .[postgres]
   - cd ..
-  - svn checkout https://bioproj.extra.cea.fr/neurosvn/brainvisa/soma/soma-base/branches/bug_fix --no-auth-cache --username brainvisa --password Soma2009 soma-base
+  - svn --non-interactive --username brainvisa --password Soma2009 export  https://bioproj.extra.cea.fr/neurosvn/brainvisa/soma/soma-base/branches/bug_fix soma-base
   - cd soma-base
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip3 uninstall --yes soma-base; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip3 uninstall --yes soma-base; fi
