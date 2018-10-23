@@ -6,7 +6,10 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog, QApplication
+
+# Populse_MIA imports
 import DataBrowser.DataBrowser
 from Project.Project import TAG_FILENAME
 
@@ -14,6 +17,15 @@ from Project.Project import TAG_FILENAME
 class Ui_DataBrowser_Current_Selection(QDialog):
     """
     Is called to display the current DataBrowser selection
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+        - filter: list of the current documents in the data browser
+        - main_window: main window of the software
+
+    Methods:
+        - ok_clicked: updates the "scan_list" attribute of several widgets
     """
 
     def __init__(self, project, databrowser, filter, main_window):
@@ -29,7 +41,8 @@ class Ui_DataBrowser_Current_Selection(QDialog):
         vbox_layout = QVBoxLayout()
 
         # Adding databrowser table
-        databrowser_table = DataBrowser.DataBrowser.TableDataBrowser(self.project, self.databrowser, [TAG_FILENAME], False, False)
+        databrowser_table = DataBrowser.DataBrowser.TableDataBrowser(self.project, self.databrowser,
+                                                                     [TAG_FILENAME], False, False)
         old_scan_list = databrowser_table.scans_to_visualize
         databrowser_table.scans_to_visualize = self.filter
         databrowser_table.update_visualized_rows(old_scan_list)
@@ -46,7 +59,7 @@ class Ui_DataBrowser_Current_Selection(QDialog):
 
     def ok_clicked(self):
         """
-        Called when ok is clicked
+        Updates the "scan_list" attribute of several widgets
         """
 
         self.main_window.pipeline_manager.scan_list = self.filter

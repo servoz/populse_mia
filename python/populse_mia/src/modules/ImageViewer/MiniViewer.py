@@ -635,7 +635,6 @@ class MiniViewer(QWidget):
 
         :param idx: the selected index
         :param cursor_to_change: the cursor to change (1, 2 or 3)
-        :return:
         """
         # If the "Chain cursors" mode is not selected, there is nothing to do
         if self.check_box_cursors.checkState() == Qt.Unchecked:
@@ -659,11 +658,12 @@ class MiniViewer(QWidget):
                         value = cursor[idx_loop].maximum()
 
                     elif cursor[idx].value() == cursor[idx].minimum():
-                        value =cursor[idx_loop].minimum()
+                        value = cursor[idx_loop].minimum()
 
                     else:
                         # Updating the new value as the value of the cursor that has been changed by the user
-                        value = round((cursor[idx_loop].maximum() + 1) * (cursor[idx].value() + 1) / max(1, cursor[idx].maximum() + 1))
+                        value = round((cursor[idx_loop].maximum() + 1) * (cursor[idx].value() + 1) /
+                                      max(1, cursor[idx].maximum() + 1))
                         value = min(cursor[idx_loop].maximum(), value - 1)
                         value = max(0, int(value))
                     cursor[idx_loop].setValue(value)

@@ -6,8 +6,6 @@
 # for details.
 ##########################################################################
 
-#!/usr/bin/python3
-
 import os
 
 # PyQt5 imports
@@ -136,7 +134,6 @@ class IterationTable(QWidget):
         Updates the layout of the widget
         Called in widget's initialization and when a tag push button is added or removed.
 
-        :return:
         """
 
         first_v_layout = QVBoxLayout()
@@ -175,7 +172,6 @@ class IterationTable(QWidget):
         """
         Adds a tag to visualize in the iteration table
 
-        :return:
         """
 
         idx = len(self.push_buttons)
@@ -190,7 +186,6 @@ class IterationTable(QWidget):
         Removes a tag to visualize in the iteration table
         Removes also the corresponding values in values_list
 
-        :return:
         """
 
         push_button = self.push_buttons[-1]
@@ -204,7 +199,6 @@ class IterationTable(QWidget):
         """
         Updates the iteration table
 
-        :return:
         """
 
         # Updating the scan list
@@ -254,7 +248,6 @@ class IterationTable(QWidget):
         Opens a pop-up to let the user select which tag to visualize in the iteration table
 
         :param idx: index of the clicked push button
-        :return:
         """
 
         popUp = Ui_Select_Tag_Count_Table(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
@@ -269,7 +262,6 @@ class IterationTable(QWidget):
         Fill values_list depending on the visualized tags
 
         :param idx:
-        :return:
         """
 
         """ Method that fills the values list when a tag is added
@@ -297,7 +289,6 @@ class IterationTable(QWidget):
         """
         Opens a pop-up to let the user select on which tag to iterate
 
-        :return:
         """
 
         ui_select = Ui_Select_Tag_Count_Table(self.project,
@@ -311,7 +302,6 @@ class IterationTable(QWidget):
         Updates the widget when the iterated tag is modified
 
         :param tag_name: name of the iterated tag
-        :return:
         """
 
         if not self.scan_list:
@@ -341,7 +331,6 @@ class IterationTable(QWidget):
         """
         Emits a signal when the iteration scans have been updated
 
-        :return:
         """
 
         if self.check_box_iterate.checkState():

@@ -6,17 +6,30 @@
 # for details.
 ##########################################################################
 
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
 import os
 import shutil
 import hashlib
 
+# PyQt5 imports
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
+
+# Populse_MIA imports
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
 
 
 class Ui_Dialog_add_path(QDialog):
     """
-    Is called when the user wants to add a path to the project
+    Is called when the user wants to add a document to the project without importing from the MRI File Manager
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+
+    Methods:
+        - ok_clicked: updates the "scan_list" attribute of several widgets
+        - find_type: tries to find the document type when the document is changed
+        - file_to_choose: lets the user choose a file to import
+        - save_path: adds the path to the database and the data browser
     """
 
     def __init__(self, project, databrowser):
@@ -83,6 +96,9 @@ class Ui_Dialog_add_path(QDialog):
             self.file_line_edit.setText(fname[0])
 
     def save_path(self):
+        """
+        Adds the path to the database and the data browser
+        """
 
         path = self.file_line_edit.text()
         path_type = self.type_line_edit.text()

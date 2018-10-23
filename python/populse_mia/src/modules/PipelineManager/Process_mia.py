@@ -7,11 +7,13 @@
 ##########################################################################
 
 import datetime
-
-from capsul.process.process import Process
 from traits.trait_base import Undefined
 from traits.trait_handlers import TraitListObject
 
+# Capsul imports
+from capsul.process.process import Process
+
+# Populse_MIA imports
 from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
     COLLECTION_CURRENT, BRICK_OUTPUTS
 
@@ -19,6 +21,18 @@ from Project.Project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_B
 class Process_mia(Process):
     """
     Class overriding the default capsul Process class, in order to personalize the run in MIA
+
+    Methods:
+        - list_outputs: generates the outputs of the process (need to be overridden)
+        - _before_run_process: method called before running the process
+        - _after_run_process: method called after the process being run
+        - manage_brick_before_run: updates process history, before running the process
+        - manage_brick_after_run: manages the brick history after the run (Done status)
+        - get_scan_bricks: gives the list of bricks, given an output value
+        - get_brick_to_update: gives the brick to update, given the scan list of bricks
+        - remove_brick_output: removes the bricks from the outputs
+        - manage_brick_output_before_run: manages the bricks history before the run
+        - manage_brick_output_after_run: manages the bricks history before the run
     """
 
     def __init__(self):
@@ -26,6 +40,9 @@ class Process_mia(Process):
         # self.filters = {}  # use if the filters are set on plugs
 
     def list_outputs(self):
+        """
+        Generates the outputs of the process (need to be overridden)
+        """
         pass
 
     def _before_run_process(self):
@@ -39,6 +56,7 @@ class Process_mia(Process):
     def _after_run_process(self, run_process_result):
         """
         Method called after the process being run
+
         :param run_process_result: Result of the run process
         :return: the result of the run process
         """
@@ -79,6 +97,7 @@ class Process_mia(Process):
     def get_scan_bricks(self, output_value):
         """
         Gives the list of bricks, given an output value
+
         :param output_value: output value
         :return: list of bricks related to the output
         """
@@ -90,6 +109,7 @@ class Process_mia(Process):
     def get_brick_to_update(self, bricks):
         """
         Gives the brick to update, given the scan list of bricks
+
         :param bricks: list of scan bricks
         :return: Brick to update
         """
@@ -119,6 +139,7 @@ class Process_mia(Process):
     def remove_brick_output(self, brick, output):
         """
         Removes the bricks from the outputs
+
         :param output: output
         :param brick: brick
         """
@@ -139,6 +160,7 @@ class Process_mia(Process):
     def manage_brick_output_before_run(self, output_value):
         """
         Manages the bricks history before the run
+
         :param output_value: output value
         """
 
@@ -153,6 +175,7 @@ class Process_mia(Process):
     def manage_brick_output_after_run(self, output_value):
         """
         Manages the bricks history before the run
+
         :param output_value: output value
         """
 

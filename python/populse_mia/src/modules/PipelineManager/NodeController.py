@@ -6,29 +6,27 @@
 # for details.
 ##########################################################################
 
-#!/usr/bin/python3
-
 import sys
 import sip
 import six
 import os
+from matplotlib.backends.qt_compat import QtWidgets
+from functools import partial
+from traits.api import Undefined, TraitError
 
+# PyQt5 imports
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QFileDialog, QMessageBox, QToolButton, QDialog, QDialogButtonBox, QApplication
+    QLabel, QLineEdit, QGroupBox, QMessageBox, QToolButton, QDialog, QDialogButtonBox, QApplication
 
-from matplotlib.backends.qt_compat import QtWidgets
-from functools import partial
-
-from traits.api import TraitListObject, List, Undefined, TraitError
-
+# soma-base imports
 from soma.controller import trait_ids
 
+# Populse_MIA imports
 from DataBrowser.AdvancedSearch import AdvancedSearch
-from DataBrowser.DataBrowser import TableDataBrowser
+from DataBrowser.DataBrowser import TableDataBrowser, not_defined_value
 from PopUps.Ui_Select_Tag_Count_Table import Ui_Select_Tag_Count_Table
-
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from Project.Project import TAG_FILENAME, COLLECTION_CURRENT
 from Project.Filter import Filter
@@ -36,6 +34,7 @@ from PipelineManager.Process_mia import Process_mia
 
 if sys.version_info[0] >= 3:
     unicode = str
+
     def values(d):
         return list(d.values())
 else:
@@ -96,7 +95,6 @@ class NodeController(QWidget):
         :param node_name: name of the node
         :param process: process of the node
         :param pipeline: current pipeline
-        :return:
         """
 
         self.node_name = node_name
@@ -209,7 +207,7 @@ class NodeController(QWidget):
 
         :param plug_name: name of the plug
         :param in_or_out: "in" if the plug is an input plug, "out" else
-        :return:
+        :return: the corresponding index
         """
         if in_or_out == "in":
             for idx, label in enumerate(self.labels_input):
@@ -232,7 +230,6 @@ class NodeController(QWidget):
         :param pipeline: current pipeline
         :param new_node_name: new node name (is None except when this method
         is called from an undo/redo)
-        :return:
         """
 
         # Copying the old node
@@ -297,7 +294,6 @@ class NodeController(QWidget):
         :param value_type: type of the plug value
         :param new_value: new value for the plug (is None except when this method is
         called from an undo/redo)
-        :return:
         """
 
         index = self.get_index_from_plug_name(plug_name, in_or_out)
@@ -371,7 +367,6 @@ class NodeController(QWidget):
         :param parameters: tuple containing the index of the plug, the current
         pipeline instance and the type of the plug value
         :param process: process of the node
-        :return:
         """
         self.pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
         self.pop_up.show()
@@ -385,7 +380,6 @@ class NodeController(QWidget):
         :param parameters: tuple containing the index of the plug, the current
         pipeline instance and the type of the plug value
         :param filter_res_list: list of the filtered files
-        :return:
         """
 
         index = parameters[0]
@@ -567,7 +561,6 @@ class PlugFilter(QWidget):
         """
         Updates the tag to Filter
 
-        :return:
         """
 
         popUp = Ui_Select_Tag_Count_Table(self.project, self.node_controller.visibles_tags, self.push_button_tag_filter.text())
@@ -578,7 +571,6 @@ class PlugFilter(QWidget):
         """
         Updates the list of visualized tags
 
-        :return:
         """
 
         dialog = QDialog()
@@ -615,7 +607,6 @@ class PlugFilter(QWidget):
         """
         Reset the search bar of the rapid search
 
-        :return:
         """
         self.rapid_search.setText("")
         self.advanced_search.rows = []
@@ -631,7 +622,6 @@ class PlugFilter(QWidget):
         """
         Updates the files to display in the browser
         :param str_search: string typed in the rapid search
-        :return:
         """
 
         from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
@@ -665,18 +655,18 @@ class PlugFilter(QWidget):
     def ok_clicked(self):
         """
         Sets the new value to the node plug and closes the widget
-        :return:
+
         """
 
         # To use if the filters are set on plugs, which is not the case
-        """
+        '''
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
 
 
             plug_filter = Filter(None, nots, values, fields, links, conditions, "")
             self.process.filters[self.plug_name] = plug_filter
-        """
+        '''
 
         self.set_plug_value()
         self.close()
@@ -684,7 +674,7 @@ class PlugFilter(QWidget):
     def set_plug_value(self):
         """
         Emits a signal to set the file names to the node plug
-        :return:
+
         """
 
         result_names = []
@@ -833,17 +823,16 @@ class FilterWidget(QWidget):
         """
         Updates the tag to Filter
 
-        :return:
         """
 
-        popUp = Ui_Select_Tag_Count_Table(self.project, self.visible_tags, self.push_button_tag_filter.text())
-        if popUp.exec_():
-            self.push_button_tag_filter.setText(popUp.selected_tag)
+        pop_up = Ui_Select_Tag_Count_Table(self.project, self.visible_tags, self.push_button_tag_filter.text())
+        if pop_up.exec_():
+            self.push_button_tag_filter.setText(pop_up.selected_tag)
 
     def update_tags(self):
         """
         Updates the list of visualized tags
-        :return:
+
         """
 
         dialog = QDialog()
@@ -880,7 +869,6 @@ class FilterWidget(QWidget):
         """
         Reset the search bar of the rapid search
 
-        :return:
         """
         self.rapid_search.setText("")
         self.advanced_search.rows = []
@@ -897,11 +885,7 @@ class FilterWidget(QWidget):
         Updates the files to display in the browser
 
         :param str_search: string typed in the rapid search
-        :return:
         """
-
-        from Project.Project import COLLECTION_CURRENT, TAG_FILENAME
-        from DataBrowser.DataBrowser import not_defined_value
 
         old_scan_list = self.table_data.scans_to_visualize
 
@@ -931,7 +915,6 @@ class FilterWidget(QWidget):
         """
         Sets the filter to the process and closes the widget
 
-        :return:
         """
         if isinstance(self.process, Process_mia):
             (fields, conditions, values, links, nots) = self.advanced_search.get_filters(False)
@@ -945,7 +928,6 @@ class FilterWidget(QWidget):
         """
         Sets the output of the filter to the output of the node
 
-        :return:
         """
 
         result_names = []

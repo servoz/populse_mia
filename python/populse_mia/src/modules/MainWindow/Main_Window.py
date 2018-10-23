@@ -495,7 +495,7 @@ class Main_Window(QMainWindow):
                 self.remove_raw_files_useless()  # We remove the useless files from the old project
 
                 file_name = self.exPopup.selectedFiles()
-                self.exPopup.retranslateUi(self.exPopup.selectedFiles())
+                self.exPopup.get_filename(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
 
                 # Removing the old project from the list of currently opened projects
@@ -519,7 +519,7 @@ class Main_Window(QMainWindow):
         if self.exPopup.exec_():
 
             file_name = self.exPopup.selectedFiles()
-            self.exPopup.retranslateUi(file_name)
+            self.exPopup.get_filename(file_name)
             file_name = self.exPopup.relative_path
 
             self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project

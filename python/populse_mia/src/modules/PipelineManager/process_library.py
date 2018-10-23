@@ -8,7 +8,6 @@
 
 import sys
 import os
-from glob import glob
 import yaml
 import inspect
 import pkgutil
@@ -23,7 +22,6 @@ from PyQt5.QtCore import QSortFilterProxyModel
 
 # PyQt / PySide import, via soma
 from soma.qt_gui import qt_backend
-#qt_backend.set_qt_backend('PySide', pyqt_api=2, compatible_qt5=True)
 from soma.qt_gui.qt_backend.QtCore import Qt, Signal, QModelIndex, \
     QAbstractItemModel, QByteArray, QMimeData
 from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
@@ -31,10 +29,7 @@ from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QLineEdit, QApplication, QSplitter, QFileDialog, QTreeView, \
     QMessageBox
 
-# CAPSUL import
-from capsul.api import get_process_instance, StudyConfig
-
-# Soma import
+# soma-base import
 from soma.path import find_in_path
 
 
@@ -111,7 +106,6 @@ class ProcessLibraryWidget(QWidget):
         """
         Updates the config and loads the corresponding packages
 
-        :return:
         """
 
         self.process_config = self.load_config()
@@ -121,7 +115,6 @@ class ProcessLibraryWidget(QWidget):
         """
         Updates the tree of the process library
 
-        :return:
         """
 
         self.update_config()
@@ -132,7 +125,6 @@ class ProcessLibraryWidget(QWidget):
         """
         Opens the package library
 
-        :return:
         """
 
         self.pkg_library.show()
@@ -157,7 +149,6 @@ class ProcessLibraryWidget(QWidget):
         """
         Sets packages and paths to the widget and to the system paths
 
-        :return:
         """
 
         try:
@@ -176,7 +167,7 @@ class ProcessLibraryWidget(QWidget):
 
         for path in self.paths:
             # Adding the module path to the system path
-            #sys.path.insert(0, os.path.abspath(path))
+            # sys.path.insert(0, os.path.abspath(path))
             if os.path.abspath(path) not in sys.path:
                 sys.path.append(os.path.abspath(path))
 
@@ -184,7 +175,6 @@ class ProcessLibraryWidget(QWidget):
         """
         Saves the current config to process_config.yml
 
-        :return:
         """
 
         self.process_config["Packages"] = self.packages
@@ -446,6 +436,7 @@ class DictionaryTreeModel(QAbstractItemModel):
     def to_dict(self):
         return self._rootNode.to_dict()
 
+
 def node_structure_from_dict(datadict, parent=None, root_node=None):
     """returns a hierarchical node stucture required by the TreeModel"""
     
@@ -489,6 +480,7 @@ def node_structure_from_dict(datadict, parent=None, root_node=None):
 
     return root_node
 
+
 class ProcessLibrary(QTreeView):
     """
     Tree to display the available Capsul's processes
@@ -512,7 +504,6 @@ class ProcessLibrary(QTreeView):
         Loads a dictionary to the tree
 
         :param d: dictionary to load. See the packages attribut in the ProcessLibraryWidget class.
-        :return:
         """
         
         self.dictionary = d
@@ -602,7 +593,7 @@ class PackageLibraryDialog(QDialog):
         h_box_line_edit = QHBoxLayout()
         h_box_line_edit.addWidget(self.line_edit)
         # h_box_line_edit.addWidget(push_button_add_pkg)
-        # h_box_browse.addWidget(push_button_browse)
+        # h_box_browse.addWidget(push_button_browse)
 
         h_box_label = QHBoxLayout()
         h_box_label.addStretch(1)
@@ -639,7 +630,7 @@ class PackageLibraryDialog(QDialog):
         """
         Updates the config and loads the corresponding packages
 
-        :return:
+        :return: the config as a dictionary
         """
 
         with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
@@ -652,7 +643,6 @@ class PackageLibraryDialog(QDialog):
         """
         Updates the process_config and package_library attributes
 
-        :return:
         """
         self.process_config = self.load_config()
         self.load_packages()
@@ -664,7 +654,6 @@ class PackageLibraryDialog(QDialog):
         """
         Updates the tree of the process library
 
-        :return:
         """
 
         try:
@@ -685,7 +674,6 @@ class PackageLibraryDialog(QDialog):
         """
         Saves the current config to process_config.yml
 
-        :return:
         """
 
         self.process_config["Packages"] = self.packages
@@ -697,7 +685,6 @@ class PackageLibraryDialog(QDialog):
         """
         Opens a browser to select a package
 
-        :return:
         """
 
         file_dialog = QFileDialog()
@@ -720,7 +707,6 @@ class PackageLibraryDialog(QDialog):
         """
         Adds a package from the line edit's text
 
-        :return:
         """
 
         if self.is_path:  # Currently the self.is_path = False
@@ -751,7 +737,6 @@ class PackageLibraryDialog(QDialog):
 
         :package_library: PipelineManager.process_library.PackageLibrary object
         :package_library.package_tree: current package tree known in Package Library window
-        :return:
         """
 
         self.packages = self.package_library.package_tree
@@ -814,7 +799,6 @@ class PackageLibraryDialog(QDialog):
         """
         Removes the package in the line edit from the package tree
 
-        :return:
         """
 
         old_status = self.status_label.text()
@@ -831,7 +815,7 @@ class PackageLibraryDialog(QDialog):
         Removes a package from the package tree
 
         :param package: module's representation as a string (e.g.: nipype.interfaces.spm)
-        :return:
+        :return: True if the package has been removed correctly
         """
 
         self.packages = self.package_library.package_tree
@@ -869,7 +853,6 @@ class PackageLibraryDialog(QDialog):
         """
         Saves the tree to the process_config.yml file
 
-        :return:
         """
 
         # Updating the packages and the paths according to the package library tree
@@ -900,7 +883,7 @@ def import_file(full_name, path):
 
     :param full_name: name of the package
     :param path: path of the package
-    :return: module
+    :return: the corresponding module
     """
 
     from importlib import util
@@ -971,6 +954,7 @@ class PackageLibrary(QTreeWidget):
     def __init__(self, package_tree, paths):
         """
         Initialization of the PackageLibrary widget
+
         :param package_tree: representation of the packages as a tree-dictionary
         :param paths: list of paths to add to the system to import the packages
         """
@@ -990,7 +974,6 @@ class PackageLibrary(QTreeWidget):
 
         :param item: item on which to begin
         :param column: column from the check (should always be 0)
-        :return:
         """
         # Checked state is stored on column 0
         if column == 0:
@@ -1016,8 +999,6 @@ class PackageLibrary(QTreeWidget):
          where keys are the name of a module (brick) and values are 'process_enabled'
          or 'process_dsabled'. etc. pkg_iter take only the modules concerning the top
          package where a change of status where done.
-
-        :return:
         """
         
         if state == Qt.Checked:
@@ -1050,7 +1031,6 @@ class PackageLibrary(QTreeWidget):
         Checks/unchecks all child items
 
         :param parent: parent item
-        :return:
         """
 
         check_state = parent.checkState(0)
@@ -1067,7 +1047,6 @@ class PackageLibrary(QTreeWidget):
         Checks/unchecks all parent items
 
         :param child: child item
-        :return:
         """
 
         check_state = child.checkState(0)
@@ -1098,7 +1077,6 @@ class PackageLibrary(QTreeWidget):
         """
         Generates the package tree
 
-        :return:
         """
 
         self.itemChanged.disconnect()
@@ -1112,7 +1090,6 @@ class PackageLibrary(QTreeWidget):
 
         :param item: current item to fill
         :param value: value of the item in the tree
-        :return:
         """
 
         item.setExpanded(True)
@@ -1168,6 +1145,10 @@ class InstallProcesses(QDialog):
     """
     A widget that allows to browse a Python package or a zip file to install the
     processes that it is containing.
+
+    Methods:
+        - get_filename: opens a file dialog to get the folder or zip file to install
+        - install: installs the selected file/folder on Populse_MIA
     """
 
     process_installed = Signal()
@@ -1210,6 +1191,11 @@ class InstallProcesses(QDialog):
         self.browser_button.clicked.connect(lambda: self.get_filename(folder=folder))
 
     def get_filename(self, folder):
+        """
+        Opens a file dialog to get the folder or zip file to install
+
+        :param folder: True if the dialog installs from folder, False if from zip file
+        """
 
         if folder is True:
             filename = QFileDialog.getExistingDirectory(self, caption='Select a directory',
@@ -1228,6 +1214,9 @@ class InstallProcesses(QDialog):
             self.path_edit.setText(filename[0])
 
     def install(self):
+        """
+        Installs the selected file/folder on Populse_MIA
+        """
 
         def add_package(proc_dic, module_name):
             """

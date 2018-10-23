@@ -6,13 +6,28 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel
 
 
 class Ui_Dialog_Close_Pipeline(QDialog):
     """
-    Is called when the user closes a pipeline and it has been modified
+    Is called when the user closes a pipeline editor that has been modified
+
+    Attributes:
+        - pipeline_name: name of the pipeline (basename)
+        - bool_save_as: boolean to True if the pipeline needs to be saved
+        - bool_exit: boolean to True if we can exit the editor
+        - save_as_signal: signal emitted to save the pipeline under another name
+        - do_not_save_signal: signal emitted to close the editor
+        - cancel_signal: signal emitted to cancel the action
+
+    Methods:
+        - save_as_clicked: makes the actions to save the pipeline
+        - do_not_save_clicked: makes the actions not to save the pipeline
+        - cancel_clicked: makes the actions to cancel the action
+        - can_exit: returns the value of bool_exit
     """
 
     save_as_signal = pyqtSignal()
@@ -21,8 +36,6 @@ class Ui_Dialog_Close_Pipeline(QDialog):
 
     def __init__(self, pipeline_name):
         super().__init__()
-
-        #self.setModal(True)
 
         self.pipeline_name = pipeline_name
 
@@ -55,18 +68,32 @@ class Ui_Dialog_Close_Pipeline(QDialog):
         self.push_button_cancel.clicked.connect(self.cancel_clicked)
 
     def save_as_clicked(self):
+        """
+        Makes the actions to save the pipeline
+        """
         self.save_as_signal.emit()
         self.bool_save_as = True
         self.bool_exit = True
         self.close()
 
     def do_not_save_clicked(self):
+        """
+        Makes the actions not to save the pipeline
+        """
         self.bool_exit = True
         self.close()
 
     def cancel_clicked(self):
+        """
+        Makes the actions to cancel the action
+        """
         self.bool_exit = False
         self.close()
 
     def can_exit(self):
+        """
+        Returns the value of bool_exit
+
+        :return: bool_exit value
+        """
         return self.bool_exit
