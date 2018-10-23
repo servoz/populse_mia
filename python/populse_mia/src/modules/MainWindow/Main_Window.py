@@ -15,7 +15,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
-from DataBrowser import DataBrowser
+from DataBrowser.DataBrowser import DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from PipelineManager.PipelineManagerTab import PipelineManagerTab
 from PipelineManager.process_library import InstallProcesses
