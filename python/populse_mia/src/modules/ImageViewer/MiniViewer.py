@@ -6,36 +6,88 @@
 # for details.
 ##########################################################################
 
+import os
+from functools import partial
+import nibabel as nib
+from scipy.ndimage import rotate  # to work with NumPy arrays
+import numpy as np  # a N-dimensional array object
+from skimage.transform import resize
+
+# PyQt5 imports
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5 import QtCore
 from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox
-import os
-from functools import partial
 
+# Populse_MIA imports
 from Utils.Tools import ClickableLabel
-
 from PopUps.Ui_Select_Tag import Ui_Select_Tag
-
 from SoftwareProperties import Config
-from skimage.transform import resize
-
-import nibabel as nib
-from scipy.ndimage import rotate  # to work with NumPy arrays
-import numpy as np  # a N-dimensional array object
 from SoftwareProperties.Config import Config
 import DataBrowser.DataBrowser
-
 from Project.Project import COLLECTION_CURRENT
 
+
 class MiniViewer(QWidget):
-    """ MiniViewer that allows to rapidly visualize scans either with a single image per scan
+    """
+    MiniViewer that allows to rapidly visualize scans either with a single image per scan
     with cursors to move in five dimensions or with all images of the greater dimension of the scan.
+
+    When the latter is selected, the displayed images depends on their dimension:
+
+        - 3D: display all the slices.
+        - 4D: display the middle slice of the third dimension for each time of the fourth dimension.
+        - 5D: display the middle slice of the third dimension for the first time of the fourth dimension for each time of the fifth dimension.
+
+
+
+    Note:
+        - idx corresponds to the index of the displayed image
+        - idx in [0, self.max_scans]
+        - most of the class's attributes are lists of 0 to self.max_scans elements
+
+    Attributes:
+        - project: current project in the software
+        - img: list of the selected images (as 3, 4 or 5D arrays)
+        - a1: list of the "3D" sliders
+        - a2: list of the "4D" sliders
+        - a3: list of the "5D" sliders
+        - imageLabel: list of labels on which to set the current image as a QPixmap
+        - txta1: list of labels "m/n" on the side of a1 sliders
+        - txta2: list of labels "m/n" on the side of a2 sliders
+        - txta3: list of labels "m/n" on the side of a3 sliders
+        - label3d: list of "3D: " labels
+        - label4d: list of "5D: " labels
+        - label5d: list of "5D: " labels
+        - im_2D: list of the current 2D images to display
+        - label_description: list of the tag values to display
+
+    Methods:
+        - update_nb_slices: updates the config file and the thumbnails
+        - check_box_slices_state_changed: updates the config file and the thumbnails
+        - check_box_cursors_state_changed: updates the config file
+        - verify_slices: verifies the number of selected documents
+        - show_slices: creates the thumbnails from the selected file paths
+        - setThumbnail: sets the thumbnail tag value under the image frame
+        - clearLayouts: clears the final layout
+        - createLayouts: creates the layouts
+        - image_to_pixmap: creates a 2D pixmap from a N-D Nifti image
+        - createSlider: creates a slider
+        - enableSliders: enables each slider of the selected index
+        - boxSlider: creates sliders, their connections and thumbnail labels for a selected index
+        - displayPosValue: displays the position of each cursor for the selected index
+        - createFieldValue: creates a field where will be displayed the position of a cursor
+        - createDimensionLabels: creates the dimension labels for the selected index
+        - changePosValue: changes the value of a cursor for the selected index
+        - navigImage: displays the 2D image for the selected index
+        - indexImage: updates the sliders values depending on the size of the selected image
+        - openTagsPopUp: opens a pop-up to select the legend of the thumbnails
+        - image2DModifications: applies modifications to the image to display it correctly
+
     """
 
     def __init__(self, project):
-        """ Method to initialize the MiniViewer class. """
 
         super().__init__()
 
@@ -102,16 +154,20 @@ class MiniViewer(QWidget):
         self.file_paths = ""
 
     def update_nb_slices(self):
-        """ Method to update the config file and the thumbnails
-        when the number of slices to visualize changes.
+        """
+        Updates the config file and the thumbnails
+
+        Called when the number of slices to visualize changes.
         """
         nb_slices = self.line_edit_nb_slices.text()
         self.config.setNbAllSlicesMax(nb_slices)
         self.verify_slices(self.file_paths)
 
     def check_box_slices_state_changed(self):
-        """ Method to update the config file and the thumbnails
-        when the state of the checkbox of the visualization method changes.
+        """
+        Updates the config file and the thumbnails
+
+        Called when the state of the checkbox of the visualization method changes.
         """
         if self.check_box_slices.checkState() == Qt.Checked:
             self.config.setShowAllSlices('yes')
@@ -120,8 +176,10 @@ class MiniViewer(QWidget):
         self.verify_slices(self.file_paths)
 
     def check_box_cursors_state_changed(self):
-        """ Method to update the config file when the state of the checkbox
-        to chain the cursors changes.
+        """
+        Updates the config file
+
+        Called when the state of the checkbox to chain the cursors changes.
         """
         if self.check_box_cursors.checkState() == Qt.Checked:
             self.config.setChainCursors('yes')
@@ -129,9 +187,10 @@ class MiniViewer(QWidget):
             self.config.setChainCursors('no')
 
     def verify_slices(self, file_paths):
-        """ Method to verify that if the user selects more that one scan
-        to visualize, the state of the checkbox of the visualization method
-        remains unchecked.
+        """
+        Verifies the number of selected documents
+
+        :param file_paths: the selected documents
         """
         # Updating the config
         self.config = Config()
@@ -144,7 +203,11 @@ class MiniViewer(QWidget):
         self.show_slices(file_paths)
 
     def show_slices(self, file_paths):
-        """ Method that creates the thumbnails from the selected file paths. """
+        """
+        Creates the thumbnails from the selected file paths
+
+        :param file_paths: the selected file paths
+        """
 
         # If it's the first time that this function is called, the MiniViewer has
         # to be shown
@@ -387,20 +450,26 @@ class MiniViewer(QWidget):
                 w.deleteLater()"""
 
     def setThumbnail(self, file_path_base_name, idx):
+        """
+        Sets the thumbnail tag value under the image frame
+
+        :param file_path_base_name: basename of the selected path
+        :param idx: index of the image
+        :return:
+        """
         # Looking for the tag value to display as a legend of the thumbnail
         for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
             if scan == file_path_base_name:
                 value = self.project.session.get_value(COLLECTION_CURRENT, scan, self.config.getThumbnailTag())
                 if value is not None:
-                    self.label_description[idx].setText \
-                        (str(value)[:self.nb_char_max])
+                    self.label_description[idx].setText(str(value)[:self.nb_char_max])
                 else:
-                    self.label_description[idx].setText \
-                        (DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
+                    self.label_description[idx].setText(DataBrowser.DataBrowser.not_defined_value[:self.nb_char_max])
                 self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
     def clearLayouts(self):
-        """ Method that clears the final layout.
+        """
+        Clears the final layout
         """
 
         for i in reversed(range(self.v_box_final.count())):
@@ -408,7 +477,8 @@ class MiniViewer(QWidget):
                 self.v_box_final.itemAt(i).widget().setParent(None)
 
     def createLayouts(self):
-        """ Method that creates the layouts of the MiniViewer.
+        """
+        Creates the layouts
         """
 
         self.h_box_images = QHBoxLayout()
@@ -425,7 +495,12 @@ class MiniViewer(QWidget):
         self.h_box_thumb = QHBoxLayout()
 
     def image_to_pixmap(self, im, i):
-        """ Method that creates a pixmap from a N-D Nifti image.
+        """
+        Creates a 2D pixmap from a N-D Nifti image
+
+        :param im: Nifti image
+        :param i: index of the slide
+        :return: the corresponding pixmap
         """
 
         # The image to display depends on the dimension of the image
@@ -462,7 +537,13 @@ class MiniViewer(QWidget):
         return pixm
 
     def createSlider(self, maxm=0, minm=0, pos=0):
-        """ Method that creates a slider.
+        """
+        Creates a slider
+
+        :param maxm: slider's maximum
+        :param minm: slider's minimum
+        :param pos: slider's initial value
+        :return: the slider object
         """
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
@@ -474,15 +555,20 @@ class MiniViewer(QWidget):
         return slider
 
     def enableSliders(self, idx):
-        """ Method that enables each slider of the index idx.
+        """
+        Enables each slider of the selected index
+
+        :param idx: the selected index
         """
         self.a1[idx].setEnabled(True)
         self.a2[idx].setEnabled(True)
         self.a3[idx].setEnabled(True)
 
     def boxSlider(self, idx):
-        """ Methods that creates sliders and its connections and labels
-        for the idxth thumbnail.
+        """
+        Creates sliders, their connections and thumbnail labels for a selected index
+
+        :param idx: the selected index
         """
         self.a1.insert(idx, self.createSlider(0, 0, 0))
         self.a2.insert(idx, self.createSlider(0, 0, 0))
@@ -497,14 +583,20 @@ class MiniViewer(QWidget):
         self.txta3.insert(idx, self.createFieldValue())
 
     def displayPosValue(self, idx):
-        """ Method that displays the position of each cursor of the idxth thumbnail.
+        """
+        Displays the position of each cursor for the selected index
+
+        :param idx: the selected index
         """
         self.txta1[idx].setText(str(self.a1[idx].value() + 1) + ' / ' + str(self.a1[idx].maximum() + 1))
         self.txta2[idx].setText(str(self.a2[idx].value() + 1) + ' / ' + str(self.a2[idx].maximum() + 1))
         self.txta3[idx].setText(str(self.a3[idx].value() + 1) + ' / ' + str(self.a3[idx].maximum() + 1))
 
     def createFieldValue(self):
-        """ Method that create a field where will be displayed the position of a cursor.
+        """
+        Creates a field where will be displayed the position of a cursor
+
+        :return: the corresponding field
         """
         fieldValue = QLineEdit()
         fieldValue.setEnabled(False)
@@ -517,7 +609,10 @@ class MiniViewer(QWidget):
         return fieldValue
 
     def createDimensionLabels(self, idx):
-        """ Method that create the dimension labels.
+        """
+        Creates the dimension labels for the selected index
+
+        :param idx: the selected index
         """
         font = QFont()
         font.setPointSize(9)
@@ -535,7 +630,12 @@ class MiniViewer(QWidget):
         self.label5D[idx].setText('5D: ')
 
     def changePosValue(self, idx, cursor_to_change):
-        """ Method that changes the value of the cursors.
+        """
+        Changes the value of a cursor for the selected index
+
+        :param idx: the selected index
+        :param cursor_to_change: the cursor to change (1, 2 or 3)
+        :return:
         """
         # If the "Chain cursors" mode is not selected, there is nothing to do
         if self.check_box_cursors.checkState() == Qt.Unchecked:
@@ -574,7 +674,10 @@ class MiniViewer(QWidget):
                 cursor[idx_loop].valueChanged.connect(partial(self.changePosValue, idx_loop, cursor_to_change))
 
     def navigImage(self, idx):
-        """ Method that displays the thumbnail image.
+        """
+        Displays the 2D image for the selected index
+
+        :param idx: the selected index
         """
         self.indexImage(idx)
         self.displayPosValue(idx)
@@ -587,8 +690,10 @@ class MiniViewer(QWidget):
         self.imageLabel[idx].setPixmap(pixm)
 
     def indexImage(self, idx):
-        """ Method that changes the sliders values depending on the
-        size of the image.
+        """
+        Updates the sliders values depending on the size of the selected image
+
+        :param idx: the selected index
         """
         # Getting the sliders value
         sl1 = self.a1[idx].value()
@@ -613,7 +718,8 @@ class MiniViewer(QWidget):
             self.a3[idx].setMaximum(self.img[idx].shape[4] - 1)
 
     def openTagsPopUp(self):
-        """ Method that calls the pop-up to select the legend of the thumbnails.
+        """
+        Opens a pop-up to select the legend of the thumbnails
         """
         self.popUp = Ui_Select_Tag(self.project)
         self.popUp.setWindowTitle("Select the image viewer tag")
@@ -622,7 +728,12 @@ class MiniViewer(QWidget):
             self.verify_slices(self.file_paths)
 
     def image2DModifications(self, idx, im2D=None):
-        """ Method that applies modifications to the image to display it correctly."""
+        """
+        Applies modifications to the image to display it correctly
+
+        :param idx: the selected index
+        :param im2D: image to modify
+        """
         if im2D is not None:
             im2D = rotate(im2D, -90, reshape=False)
             im2D = np.uint8((im2D - im2D.min()) / im2D.ptp() * 255.0)

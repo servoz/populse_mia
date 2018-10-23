@@ -165,6 +165,7 @@ class DataBrowser(QWidget):
     def __init__(self, project, main_window):
         """
         Initialization of the DataBrowser class
+
         :param project: current project in the software
         :param main_window: main window of the software
         """
@@ -278,6 +279,7 @@ class DataBrowser(QWidget):
     def update_database(self, database):
         """
         Updates the database in the software. Called when switching project (new, open, and save as)
+
         :param database: New instance of Database
         """
 
@@ -413,6 +415,7 @@ class DataBrowser(QWidget):
     def search_str(self, str_search):
         """
         Searches a string in the table and updates the visualized documents
+
         :param str_search: string to search
         """
 
@@ -512,6 +515,7 @@ class DataBrowser(QWidget):
     def add_tag_infos(self, new_tag_name, new_default_value, tag_type, new_tag_description,new_tag_unit):
         """
         Adds the tag after add tag pop-up
+
         :param new_tag_name: New tag name
         :param new_default_value:  New default value
         :param tag_type: New tag type
@@ -548,6 +552,7 @@ class DataBrowser(QWidget):
     def add_tag_pop_up(self):
         """
         Displays the add tag pop-up
+
         :return:
         """
 
@@ -558,6 +563,7 @@ class DataBrowser(QWidget):
     def clone_tag_infos(self, tag_to_clone, new_tag_name):
         """
         Clones the tag after the clone tag pop-up
+
         :param tag_to_clone: Tag to clone
         :param new_tag_name: New tag name
         """
@@ -608,6 +614,7 @@ class DataBrowser(QWidget):
     def remove_tag_infos(self, tag_names_to_remove):
         """
         Removes user tags after the pop-up
+
         :param tag_names_to_remove: list of tags to remove
         """
 
@@ -710,6 +717,7 @@ class TableDataBrowser(QTableWidget):
     def __init__(self, project, data_browser, tags_to_display, update_values, activate_selection):
         """
         Initialization of the TableDataBrowser class
+
         :param project: current project in the software
         :param data_browser: parent data browser widget
         :param tags_to_display: list of tags to display
@@ -765,6 +773,7 @@ class TableDataBrowser(QTableWidget):
     def add_column(self, column, tag):
         """
         Adds a column to the table
+
         :param column: index of the column to add
         :param tag: tag name to add
         """
@@ -820,6 +829,7 @@ class TableDataBrowser(QTableWidget):
     def sort_updated(self, column, order):
         """
         Called when the sort is updated
+
         :param column: column being sorted
         :param order: new order
         """
@@ -842,6 +852,7 @@ class TableDataBrowser(QTableWidget):
         Get the current data browser selection (list of paths)
         If there is a current selection, the list of selected scans is returned,
         otherwise the list of the visible paths in the data browser is returned
+
         :return: the list of scans corresponding to the current selection in the data browser
         """
 
@@ -903,6 +914,7 @@ class TableDataBrowser(QTableWidget):
         """
         Called when the columns of the DataBrowser are moved
         We have to ensure FileName column stays at index 0
+
         :param logicalIndex:
         :param oldVisualIndex: from index
         :param newVisualIndex: to index
@@ -930,6 +942,7 @@ class TableDataBrowser(QTableWidget):
     def select_all_column(self, col):
         """
         Called when single clicking on the column header to select the whole column
+
         :param col: column to select
         """
 
@@ -1203,6 +1216,7 @@ class TableDataBrowser(QTableWidget):
     def context_menu_table(self, position):
         """
         Creates the context menu of the table
+
         :param position: position of the mouse cursor
         """
 
@@ -1279,6 +1293,7 @@ class TableDataBrowser(QTableWidget):
     def sort_column(self, order):
         """
         Sorts the current column
+
         :param order: order of sort (0 for ascending, 1 for descending)
         """
 
@@ -1291,6 +1306,7 @@ class TableDataBrowser(QTableWidget):
     def get_tag_column(self, tag):
         """
         Returns the column index of the tag
+
         :param tag: tag name
         :return: index of the column of the tag
         """
@@ -1304,6 +1320,7 @@ class TableDataBrowser(QTableWidget):
     def get_scan_row(self, scan):
         """
         Returns the row index of the scan
+
         :param scan: scan filename
         :return: index of the row of the scan
         """
@@ -1556,6 +1573,7 @@ class TableDataBrowser(QTableWidget):
     def multiple_sort_infos(self, list_tags, order):
         """
         Sorts the table according to the tags specify in list_tags
+
         :param list_tags: list of the tags on which to sort the documents
         :param order: "Ascending" or "Descending"
         """
@@ -1610,6 +1628,7 @@ class TableDataBrowser(QTableWidget):
     def update_visualized_rows(self, old_scans):
         """
         Updates the list of documents (scans) in the table
+
         :param old_scans: old list of scans
         """
 
@@ -1643,6 +1662,7 @@ class TableDataBrowser(QTableWidget):
     def update_visualized_columns(self, old_tags, visibles):
         """
         Updates the visualized tags in the table
+
         :param old_tags: old list of visualized tags
         :param visibles: list of tags to display
         """
@@ -1777,6 +1797,7 @@ class TableDataBrowser(QTableWidget):
     def add_rows(self, rows):
         """
         Inserts rows if they are not already in the table
+
         :param rows: list of all scans
         """
 
@@ -1873,6 +1894,7 @@ class TableDataBrowser(QTableWidget):
     def get_index_insertion(self, to_insert):
         """
         Gets index insertion of a new column, since it's already sorted in alphabetical order
+
         :param to_insert: tag to insert
         """
 
@@ -1884,6 +1906,7 @@ class TableDataBrowser(QTableWidget):
     def mouseReleaseEvent(self, e):
         """
         Called when clicking released on cells, for list values changes
+
         :param e: event
         """
 
@@ -2003,6 +2026,7 @@ class TableDataBrowser(QTableWidget):
         """
         Changes the background color and the value of cells when edited by the user
         Handles the multi-selection case
+
         :param item_origin: item from where the call comes from
         """
 

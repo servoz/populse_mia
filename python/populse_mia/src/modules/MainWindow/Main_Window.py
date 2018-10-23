@@ -9,16 +9,23 @@
 import subprocess
 import os
 import webbrowser
+import shutil
+from datetime import datetime
+import glob
 
-from PyQt5.QtCore import Qt
+# PyQt5 imports
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton
+
+# Populse_MIA imports
 from SoftwareProperties.SavedProjects import SavedProjects
 from SoftwareProperties.Config import Config
 from DataBrowser.DataBrowser import DataBrowser
 from ImageViewer.ImageViewer import ImageViewer
 from PipelineManager.PipelineManagerTab import PipelineManagerTab
-from PipelineManager.process_library import InstallProcesses
+from PipelineManager.process_library import InstallProcesses, PackageLibraryDialog
+import ProjectManager.Controller as controller
+from Project.Project import Project, COLLECTION_CURRENT
 from PopUps.Ui_Dialog_New_Project import Ui_Dialog_New_Project
 from PopUps.Ui_Dialog_Open_Project import Ui_Dialog_Open_Project
 from PopUps.Ui_Dialog_Preferences import Ui_Dialog_Preferences
@@ -27,29 +34,48 @@ from PopUps.Ui_Dialog_Save_Project_As import Ui_Dialog_Save_Project_As
 from PopUps.Ui_Dialog_Quit import Ui_Dialog_Quit
 from PopUps.Ui_Dialog_See_All_Projects import Ui_Dialog_See_All_Projects
 
-import ProjectManager.Controller as controller
-import shutil
-from Project.Project import Project, COLLECTION_CURRENT
-
-from datetime import datetime
-
 
 class Main_Window(QMainWindow):
     """
     Primary master class
 
-    Attributes
-    ----------
+    Attributes:
+        - project: current project in the software
+        - test: boolean if the widget is launched from unit tests or not
+        - force_exit: boolean if we need to force exit (used in unit tests)
+        - saved_projects: projects that have already been saved
 
-
-    Methods
-    -------
-
+    Methods:
+        - create_actions: creates the actions in each menu
+        - create_menus: creates the menu-bar
+        - undo: undoes the last action made by the user
+        - redo: redoes the last action made by the user
+        - closeEvent: overrides the closing event to check if there are unsaved modifications
+        - remove_raw_files_useless: removes the useless raw files of the current project
+        - saveChoice: checks if the project needs to be saved as or just saved
+        - check_unsaved_modifications: checks if there are differences between the current project and the database
+        - create_tabs: creates the tabs
+        - save_project_as: opens a pop-up to save the current project as
+        - create_project_pop_up: creates a new project
+        - open_project_pop_up: opens a pop-up to open a project and updates the recent projects
+        - open_recent_project: opens a recent project
+        - switch_project: switches project if it's possible
+        - update_project: updates the project once the database has been updated
+        - update_recent_projects_actions: updates the list of recent projects
+        - see_all_projects: opens a pop-up to show the recent projects
+        - project_properties_pop_up: opens the Project properties pop-up
+        - software_preferences_pop_up: opens the MIA2 preferences pop-up
+        - update_package_library_action: updates the package library action depending on the mode
+        - package_library_pop_up: opens the package library pop-up
+        - documentation: opens the documentation in a web browser
+        - install_processes_pop_up: opens the install processes pop-up
+        - add_clinical_tags: adds the clinical tags to the database and the data browser
+        - import_data: calls the import software (MRI File Manager)
+        - tab_changed: method called when the tab is changed
 
     """
     def __init__(self, project, test=False):
 
-        ############### Main Window ################################################################
         super(Main_Window, self).__init__()
 
         self.project = project
@@ -58,36 +84,35 @@ class Main_Window(QMainWindow):
         app_icon = QIcon(os.path.join('..', 'sources_images', 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
-        ############### initial setting ############################################################
-        config = Config()
-
         self.saved_projects = SavedProjects()
         self.saved_projects_list = self.saved_projects.pathsList
 
         self.saved_projects_actions = []
-
-        ################ Create actions & menus ####################################################
 
         config = Config()
         background_color = config.getBackgroundColor()
         text_color = config.getTextColor()
         self.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
 
+        # Create actions & menus
         self.create_actions()
         self.create_menus()
 
         self.setWindowTitle('MIA - Multiparametric Image Analysis')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
 
-        # BELOW : WAS AT THE END OF MODIFY_UI
         self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
-        ################ Create Tabs ###############################################################
+
+        # Create Tabs
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
         self.showMaximized()
 
     def create_actions(self):
-        """ Create the actions in each menu """
+        """
+        Creates the actions in each menu
+
+        """
 
         self.action_create = QAction('New project', self)
         self.action_create.setShortcut('Ctrl+N')
@@ -156,7 +181,10 @@ class Main_Window(QMainWindow):
         self.action_install_processes_zip.triggered.connect(lambda: self.install_processes_pop_up(folder=False))
 
     def create_menus(self):
-        """ Create the menubar """
+        """
+        Creates the menu-bar
+
+        """
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
@@ -205,7 +233,8 @@ class Main_Window(QMainWindow):
 
     def undo(self):
         """
-        To undo the last action done by the user
+        Undoes the last action made by the user
+
         """
         if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
             # In Data Browser
@@ -216,7 +245,8 @@ class Main_Window(QMainWindow):
 
     def redo(self):
         """
-        To redo the last action made by the user
+        Redoes the last action made by the user
+
         """
         if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
             # In Data Browser
@@ -226,7 +256,11 @@ class Main_Window(QMainWindow):
             self.pipeline_manager.redo()
 
     def closeEvent(self, event):
-        """ Overriding the closing event to check if there are unsaved modifications """
+        """
+        Overrides the closing event to check if there are unsaved modifications
+
+        :param event: closing event
+        """
 
         if self.force_exit:
             event.accept()
@@ -257,8 +291,8 @@ class Main_Window(QMainWindow):
     def remove_raw_files_useless(self):
         """
         Removes the useless raw files of the current project
+
         """
-        import glob
 
         # If it's unnamed project, we can remove the whole project
         if self.project.isTempProject:
@@ -291,15 +325,20 @@ class Main_Window(QMainWindow):
             self.project.database.__exit__(None, None, None)
 
     def saveChoice(self):
-        """ Checks if the project needs to be saved as or just saved """
+        """
+        Checks if the project needs to be saved as or just saved
+
+        """
         if self.project.isTempProject:
             self.save_project_as()
         else:
             controller.save_project(self.project)
 
     def check_unsaved_modifications(self):
-        """ Check if there are differences between the current project and the data base
-            Returns 1 if there are unsaved modifications, 0 otherwise
+        """
+        Checks if there are differences between the current project and the database
+
+        :return: 1 if there are unsaved modifications, 0 otherwise
         """
         if self.project.isTempProject and len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
             return 1
@@ -311,7 +350,9 @@ class Main_Window(QMainWindow):
             return 0
 
     def create_tabs(self):
-        """ Creates the tabs """
+        """
+        Creates the tabs
+        """
         self.config = Config()
 
         self.tabs = QTabWidget()
@@ -336,9 +377,11 @@ class Main_Window(QMainWindow):
         self.centralWindow.setLayout(vertical_layout)
 
     def save_project_as(self):
-        """ Open a pop-up to save the current project as """
+        """
+        Opens a pop-up to save the current project as
 
-        import glob
+        """
+
         self.exPopup = Ui_Dialog_Save_Project_As()
         if self.exPopup.exec_():
 
@@ -428,6 +471,10 @@ class Main_Window(QMainWindow):
                 msg.exec()
 
     def create_project_pop_up(self):
+        """
+        Creates a new project
+
+        """
 
         if self.check_unsaved_modifications():
             self.pop_up_close = Ui_Dialog_Quit(self.project)
@@ -459,10 +506,13 @@ class Main_Window(QMainWindow):
 
                 self.project = Project(self.exPopup.relative_path, True)
 
-                self.update_project(file_name) # Project updated everywhere
+                self.update_project(file_name)  # Project updated everywhere
 
     def open_project_pop_up(self):
-        """ Opens a pop-up when the 'Open Project' action is clicked and updates the recent projects """
+        """
+        Opens a pop-up to open a project and updates the recent projects
+
+        """
         # Ui_Dialog() is defined in pop_ups.py
 
         self.exPopup = Ui_Dialog_Open_Project()
@@ -472,10 +522,13 @@ class Main_Window(QMainWindow):
             self.exPopup.retranslateUi(file_name)
             file_name = self.exPopup.relative_path
 
-            self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch project
+            self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
 
     def open_recent_project(self):
-        """ Opens a recent project """
+        """
+        Opens a recent project
+
+        """
         action = self.sender()
         if action:
             file_name = action.data()
@@ -483,11 +536,12 @@ class Main_Window(QMainWindow):
             path, name = os.path.split(entire_path)
             relative_path = os.path.relpath(file_name)
 
-            self.switch_project(relative_path, file_name, name) # We switch project
+            self.switch_project(relative_path, file_name, name)  # We switch the project
 
     def switch_project(self, path, file_name, name):
         """
-        Called to switch project if it's possible
+        Switches project if it's possible
+
         :param path: relative path of the new project
         :param file_name: raw file_name
         :param name: project name
@@ -499,7 +553,12 @@ class Main_Window(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(path)):
 
-                if os.path.exists(os.path.join(path, "properties", "properties.yml")) and os.path.exists(os.path.join(path, "database", "mia.db")) and os.path.exists(os.path.join(path, "data", "raw_data")) and os.path.exists(os.path.join(path, "data", "derived_data")) and os.path.exists(os.path.join(path, "data", "downloaded_data")) and os.path.exists(os.path.join(path, "filters")):
+                if os.path.exists(os.path.join(path, "properties", "properties.yml")) \
+                        and os.path.exists(os.path.join(path, "database", "mia.db")) \
+                        and os.path.exists(os.path.join(path, "data", "raw_data")) \
+                        and os.path.exists(os.path.join(path, "data", "derived_data")) \
+                        and os.path.exists(os.path.join(path, "data", "downloaded_data")) \
+                        and os.path.exists(os.path.join(path, "filters")):
 
                     # We check for unsaved modifications
                     if self.check_unsaved_modifications():
@@ -519,30 +578,32 @@ class Main_Window(QMainWindow):
                         # We check for invalid scans in the project
 
                         try:
-                            tempDatabase = Project(path, False)
+                            temp_database = Project(path, False)
                         except IOError:
                             msg = QMessageBox()
                             msg.setIcon(QMessageBox.Warning)
                             msg.setText(
                                 "Project already opened")
                             msg.setInformativeText(
-                                "The project at " + str(path) + " is already opened in another instance of the software.")
+                                "The project at " + str(path) +
+                                " is already opened in another instance of the software.")
                             msg.setWindowTitle("Warning")
                             msg.setStandardButtons(QMessageBox.Ok)
                             msg.buttonClicked.connect(msg.close)
                             msg.exec()
                             return False
-                        problem_list = controller.verify_scans(tempDatabase, path)
+                        problem_list = controller.verify_scans(temp_database, path)
 
                         # Message if invalid files
-                        if problem_list != []:
+                        if problem_list:
                             str_msg = ""
                             for element in problem_list:
                                 str_msg += element + "\n\n"
                             msg = QMessageBox()
                             msg.setIcon(QMessageBox.Warning)
                             msg.setText(
-                                "These files have been modified or removed since they have been converted for the first time:")
+                                "These files have been modified or removed since "
+                                "they have been converted for the first time:")
                             msg.setInformativeText(str_msg)
                             msg.setWindowTitle("Warning")
                             msg.setStandardButtons(QMessageBox.Ok)
@@ -558,9 +619,9 @@ class Main_Window(QMainWindow):
                     opened_projects.remove(self.project.folder)
                     config.set_opened_projects(opened_projects)
 
-                    self.project = tempDatabase  # New Database
+                    self.project = temp_database  # New Database
 
-                    self.update_project(file_name) # Project updated everywhere
+                    self.update_project(file_name)  # Project updated everywhere
 
                     return True
 
@@ -592,15 +653,17 @@ class Main_Window(QMainWindow):
 
     def update_project(self, file_name, call_update_table=True):
         """
-        Updates the project once the Database has been updated
+        Updates the project once the database has been updated
+
         :param file_name: File name of the new project
+        :param call_update_table: boolean, True if we need to call update_table's method
         """
 
         self.data_browser.update_database(self.project)  # Database update DataBrowser
         self.pipeline_manager.update_project(self.project)
 
         if call_update_table:
-            self.data_browser.table_data.update_table() # Table updated
+            self.data_browser.table_data.update_table()  # Table updated
 
         # Window name updated
         if self.project.isTempProject:
@@ -614,8 +677,11 @@ class Main_Window(QMainWindow):
         self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
-        """ Updates the list of recent projects """
-        if self.saved_projects_list != []:
+        """
+        Updates the list of recent projects
+
+        """
+        if self.saved_projects_list:
             for i in range(min(len(self.saved_projects_list), self.saved_projects.maxProjects)):
                 text = os.path.basename(self.saved_projects_list[i])
                 self.saved_projects_actions[i].setText(text)
@@ -623,7 +689,10 @@ class Main_Window(QMainWindow):
                 self.saved_projects_actions[i].setVisible(True)
 
     def see_all_projects(self):
-        """ Opens a pop-up when the 'See all projects' action is clicked and show the recent projects """
+        """
+        Opens a pop-up to show the recent projects
+
+        """
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = Ui_Dialog_See_All_Projects(self.saved_projects, self)
         if self.exPopup.exec_():
@@ -633,7 +702,10 @@ class Main_Window(QMainWindow):
             self.update_recent_projects_actions()
 
     def project_properties_pop_up(self):
-        """ Opens the Project properties pop-up """
+        """
+        Opens the Project properties pop-up
+
+        """
 
         old_tags = self.project.session.get_visibles()
         self.pop_up_settings = Ui_Dialog_Settings(self.project, self.data_browser, old_tags)
@@ -644,7 +716,10 @@ class Main_Window(QMainWindow):
             self.data_browser.table_data.update_visualized_columns(old_tags, self.project.session.get_visibles())
 
     def software_preferences_pop_up(self):
-        """ Opens the MIA2 preferences pop-up """
+        """
+        Opens the MIA2 preferences pop-up
+
+        """
 
         self.pop_up_preferences = Ui_Dialog_Preferences(self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
@@ -656,7 +731,10 @@ class Main_Window(QMainWindow):
         self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
 
     def update_package_library_action(self):
-        """ Updates the package library action depending on the mode """
+        """
+        Updates the package library action depending on the mode
+
+        """
         if Config().get_clinical_mode() == 'yes':
             self.action_package_library.setDisabled(True)
             # self.action_install_processes.setDisabled(True)
@@ -665,8 +743,11 @@ class Main_Window(QMainWindow):
             # self.action_install_processes.setEnabled(True)
 
     def package_library_pop_up(self):
-        """ Opens the package library pop-up """
-        from PipelineManager.process_library import PackageLibraryDialog
+        """
+        Opens the package library pop-up
+
+        """
+
         self.pop_up_package_library = PackageLibraryDialog(self)
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
         self.pop_up_package_library.show()
@@ -674,36 +755,48 @@ class Main_Window(QMainWindow):
 
     @staticmethod
     def documentation():
-        """ Opens the documentation in a web browser """
+        """
+        Opens the documentation in a web browser
+
+        """
         webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
 
     def install_processes_pop_up(self, folder=False):
-        """ Opens the install processes pop-up """
+        """
+        Opens the install processes pop-up
+
+        :param folder: boolean, True if installing from a folder
+        """
         self.pop_up_install_processes = InstallProcesses(self, folder=folder)
         self.pop_up_install_processes.show()
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
         self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
 
     def add_clinical_tags(self):
-        """ Adds the clinical tags to the database and the data browser """
+        """
+        Adds the clinical tags to the database and the data browser
+
+        """
         added_tags = self.project.add_clinical_tags()
         for tag in added_tags:
             column = self.data_browser.table_data.get_index_insertion(tag)
             self.data_browser.table_data.add_column(column, tag)
 
     def import_data(self):
-        """ Calls the import software (MRI File Manager), reads the imported files and loads them into the
-         data base """
+        """
+        Calls the import software (MRI File Manager), reads the imported files and loads them into the database
+
+        """
         # Opens the conversion software to convert the MRI files in Nifti/Json
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'mia', 'MRIFileManager', 'MRIManager.jar'),
-                         '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
-                         '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-AcquisitionTime',
-                         'CloseAfterExport'])
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'mia',
+                                                                               'MRIFileManager', 'MRIManager.jar'),
+                                     '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
+                                     '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
+                                     'AcquisitionTime',
+                                     'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
 
         if code_exit == 0:
-
-            #import cProfile
 
             # Database filled
             new_scans = controller.read_log(self.project, self)
@@ -725,6 +818,7 @@ class Main_Window(QMainWindow):
     def tab_changed(self):
         """
         Method called when the tab is changed
+
         """
 
         if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':

@@ -40,6 +40,7 @@ class RapidSearch(QLineEdit):
     def prepare_not_defined_filter(self, tags):
         """
         Prepares the rapid search filter for not defined values
+
         :param tags: list of tags to take into account
         :return: str filter corresponding to the rapid search for not defined values
         """
@@ -69,6 +70,7 @@ class RapidSearch(QLineEdit):
     def prepare_filter(search, tags, scans):
         """
         Prepares the rapid search filter
+
         :param search: Search (str)
         :param tags: List of tags to take into account
         :param scans: List of scans to search into

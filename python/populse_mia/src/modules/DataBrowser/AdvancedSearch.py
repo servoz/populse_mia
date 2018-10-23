@@ -60,6 +60,7 @@ class AdvancedSearch(QWidget):
     def __init__(self, project, data_browser, scans_list=None, tags_list=None, from_pipeline=False):
         """
         Initialization of the AdvancedSearch class
+
         :param project: current project in the software
         :param data_browser: parent data browser widget
         :param scans_list: current list of the documents
@@ -92,6 +93,7 @@ class AdvancedSearch(QWidget):
     def remove_row(self, row_layout):
         """
         Removes a row
+
         :param row_layout: Row to remove
         """
 
@@ -180,6 +182,7 @@ class AdvancedSearch(QWidget):
     def displayConditionRules(self, field, condition):
         """
         Sets the list of condition choices, depending on the tag type
+
         :param field: field
         :param condition: condition
         """
@@ -222,6 +225,7 @@ class AdvancedSearch(QWidget):
     def displayValueRules(self, choice, value):
         """
         Called when the condition choice is changed, to update the placeholder text
+
         :param choice: choice
         :param value: value
         """
@@ -303,6 +307,7 @@ class AdvancedSearch(QWidget):
     def rows_borders_added(self, links):
         """
         Adds the links and the added row to the good rows
+
         :param links: Old links to reput
         """
 
@@ -329,6 +334,7 @@ class AdvancedSearch(QWidget):
     def clearLayout(self, layout):
         """
         Called to clear a layout
+
         :param layout: layout to clear
         """
         if layout is not None:
@@ -345,6 +351,7 @@ class AdvancedSearch(QWidget):
     def rowsContainsWidget(self, widget):
         """
         Checks if the widget is still used
+
         :param widget: widget to check
         :return: True or False
         """
@@ -401,6 +408,7 @@ class AdvancedSearch(QWidget):
     def prepare_filters(links, fields, conditions, values, nots, scans):
         """
         Prepares the str representation of the filter
+
         :param links: list of links (AND/OR)
         :param fields: list of list of fields
         :param conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
@@ -471,6 +479,7 @@ class AdvancedSearch(QWidget):
     def get_filters(self, replace_all_by_fields):
         """
         Gets the filters in list form
+
         :param replace_all_by_fields: to replace All visualized tags by the list of visible fields
         :return: Lists of filters (fields, conditions, values, links, nots)
         """
@@ -530,6 +539,7 @@ class AdvancedSearch(QWidget):
     def apply_filter(self, filter):
         """
         Applies an opened filter
+
         :param filter: Filter object opened to apply
         """
         self.rows = []

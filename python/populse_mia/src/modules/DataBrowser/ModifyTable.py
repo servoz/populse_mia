@@ -40,6 +40,7 @@ class ModifyTable(QDialog):
     def __init__(self, project, value, types, scans, tags):
         """
         Initialization of the ModifyTable class
+
         :param project: Instance of Project
         :param value: List of values of the cell
         :param types: Value types

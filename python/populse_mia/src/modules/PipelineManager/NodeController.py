@@ -478,13 +478,13 @@ class PlugFilter(QWidget):
         self.process = process
         self.plug_name = plug_name
 
-        """
+        '''
         # If the filter is saved in the node plug (not the case now)
         if hasattr(self.process, 'filters'):
             if self.plug_name in self.process.filters.keys():
                 print("Already a filter for {0} plug of {1} process".format(self.plug_name, self.process.name))
                 # TODO: fill the advanced search with the corresponding filter
-        """
+        '''
 
         # Verifying that the scan names begin not with a "/" or a "\"
         if scans_list:

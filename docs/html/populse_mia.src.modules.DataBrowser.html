@@ -93,39 +93,81 @@ are linked with AND or OR and all composed of:</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.apply_filter">
 <code class="descname">apply_filter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.apply_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies an opened filter
-:param filter: Filter object opened to apply</p>
+<dd><p>Applies an opened filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filter</strong> – Filter object opened to apply</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.clearLayout">
 <code class="descname">clearLayout</code><span class="sig-paren">(</span><em>layout</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.clearLayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called to clear a layout
-:param layout: layout to clear</p>
+<dd><p>Called to clear a layout</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> – layout to clear</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayConditionRules">
 <code class="descname">displayConditionRules</code><span class="sig-paren">(</span><em>field</em>, <em>condition</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayConditionRules" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the list of condition choices, depending on the tag type
-:param field: field
-:param condition: condition</p>
+<dd><p>Sets the list of condition choices, depending on the tag type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>field</strong> – field</li>
+<li><strong>condition</strong> – condition</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayValueRules">
 <code class="descname">displayValueRules</code><span class="sig-paren">(</span><em>choice</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.displayValueRules" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the condition choice is changed, to update the placeholder text
-:param choice: choice
-:param value: value</p>
+<dd><p>Called when the condition choice is changed, to update the placeholder text</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>choice</strong> – choice</li>
+<li><strong>value</strong> – value</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.get_filters">
 <code class="descname">get_filters</code><span class="sig-paren">(</span><em>replace_all_by_fields</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.get_filters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the filters in list form
-:param replace_all_by_fields: to replace All visualized tags by the list of visible fields
-:return: Lists of filters (fields, conditions, values, links, nots)</p>
+<dd><p>Gets the filters in list form</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>replace_all_by_fields</strong> – to replace All visualized tags by the list of visible fields</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Lists of filters (fields, conditions, values, links, nots)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -137,14 +179,26 @@ are linked with AND or OR and all composed of:</p>
 <dl class="staticmethod">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters">
 <em class="property">static </em><code class="descname">prepare_filters</code><span class="sig-paren">(</span><em>links</em>, <em>fields</em>, <em>conditions</em>, <em>values</em>, <em>nots</em>, <em>scans</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.prepare_filters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares the str representation of the filter
-:param links: list of links (AND/OR)
-:param fields: list of list of fields
-:param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
-:param values: list of values
-:param nots: list of negations (“” or NOT)
-:param scans: list of scans to search in
-:return: str representation of the filter</p>
+<dd><p>Prepares the str representation of the filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>links</strong> – list of links (AND/OR)</li>
+<li><strong>fields</strong> – list of list of fields</li>
+<li><strong>conditions</strong> – list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</li>
+<li><strong>values</strong> – list of values</li>
+<li><strong>nots</strong> – list of negations (“” or NOT)</li>
+<li><strong>scans</strong> – list of scans to search in</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str representation of the filter</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -156,23 +210,45 @@ are linked with AND or OR and all composed of:</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.remove_row">
 <code class="descname">remove_row</code><span class="sig-paren">(</span><em>row_layout</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.remove_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes a row
-:param row_layout: Row to remove</p>
+<dd><p>Removes a row</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row_layout</strong> – Row to remove</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rowsContainsWidget">
 <code class="descname">rowsContainsWidget</code><span class="sig-paren">(</span><em>widget</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rowsContainsWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the widget is still used
-:param widget: widget to check
-:return: True or False</p>
+<dd><p>Checks if the widget is still used</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>widget</strong> – widget to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_added">
 <code class="descname">rows_borders_added</code><span class="sig-paren">(</span><em>links</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch.rows_borders_added" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the links and the added row to the good rows
-:param links: Old links to reput</p>
+<dd><p>Adds the links and the added row to the good rows</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>links</strong> – Old links to reput</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -500,19 +576,39 @@ Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</p>
 <dl class="staticmethod">
 <dt id="populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_filter">
 <em class="property">static </em><code class="descname">prepare_filter</code><span class="sig-paren">(</span><em>search</em>, <em>tags</em>, <em>scans</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares the rapid search filter
-:param search: Search (str)
-:param tags: List of tags to take into account
-:param scans: List of scans to search into
-:return: str filter corresponding to the rapid search</p>
+<dd><p>Prepares the rapid search filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>search</strong> – Search (str)</li>
+<li><strong>tags</strong> – List of tags to take into account</li>
+<li><strong>scans</strong> – List of scans to search into</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str filter corresponding to the rapid search</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_not_defined_filter">
 <code class="descname">prepare_not_defined_filter</code><span class="sig-paren">(</span><em>tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.RapidSearch.RapidSearch.prepare_not_defined_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares the rapid search filter for not defined values
-:param tags: list of tags to take into account
-:return: str filter corresponding to the rapid search for not defined values</p>
+<dd><p>Prepares the rapid search filter for not defined values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tags</strong> – list of tags to take into account</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str filter corresponding to the rapid search for not defined values</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
