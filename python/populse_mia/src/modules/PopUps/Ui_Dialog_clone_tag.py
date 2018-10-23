@@ -6,17 +6,28 @@
 # for details.
 ##########################################################################
 
+from functools import partial
+
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from functools import partial
 
+# Populse_MIA imports
 from Project.Project import COLLECTION_CURRENT, TAG_CHECKSUM
 
 
 class Ui_Dialog_clone_tag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+
+    Methods:
+        - search_str: matches the searched pattern with the tags of the project
+        - ok_action: verifies the specified name is correct and send the information to the data browser
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -25,12 +36,11 @@ class Ui_Dialog_clone_tag(QDialog):
     def __init__(self, databrowser, project):
         super().__init__()
         self.setWindowTitle("Clone a tag")
-        self.pop_up(project)
+
         self.databrowser = databrowser
         self.project = project
         self.setModal(True)
 
-    def pop_up(self, project):
         _translate = QtCore.QCoreApplication.translate
         self.setObjectName("Clone a tag")
 
@@ -97,6 +107,12 @@ class Ui_Dialog_clone_tag(QDialog):
         self.push_button_ok.clicked.connect(lambda: self.ok_action(project))
 
     def search_str(self, project, str_search):
+        """
+        Matches the searched pattern with the tags of the project
+
+        :param project: current project
+        :param str_search: string pattern to search
+        """
         _translate = QtCore.QCoreApplication.translate
         return_list = []
         tags_lists = project.session.get_fields_names(COLLECTION_CURRENT)
@@ -117,6 +133,11 @@ class Ui_Dialog_clone_tag(QDialog):
         self.list_widget_tags.sortItems()
 
     def ok_action(self, project):
+        """
+        Verifies the specified name is correct and send the information to the data browser
+
+        :param project: current project
+        """
         name_already_exists = False
         for tag in project.session.get_fields(COLLECTION_CURRENT):
             if tag.field_name == self.line_edit_new_tag_name.text():

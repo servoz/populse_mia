@@ -6,35 +6,31 @@
 # for details.
 ##########################################################################
 
-#!/usr/bin/python3
-
 import datetime
 import os
 import sys
 import uuid
-
 from time import sleep
-
 from collections import OrderedDict
+from matplotlib.backends.qt_compat import QtWidgets
+from traits.trait_errors import TraitError
+from traits.api import TraitListObject, Undefined
 
+# PyQt5 imports
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
     QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
 
-from matplotlib.backends.qt_compat import QtWidgets
-from traits.trait_errors import TraitError
-
-from PipelineManager.Process_mia import Process_mia
-from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
-
-from traits.api import TraitListObject, Undefined
+# Capsul imports
 from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess, Pipeline
 
+# Populse_MIA imports
+from PipelineManager.Process_mia import Process_mia
+from PopUps.Ui_Select_Iteration import Ui_Select_Iteration
 from PipelineManager.IterationTable import IterationTable
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
     BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, \
     TYPE_MAT
-
 from .NodeController import NodeController
 from .PipelineEditor import PipelineEditorTabs
 from .process_library import ProcessLibraryWidget
@@ -78,13 +74,15 @@ class PipelineManagerTab(QWidget):
         - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
         - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
         - initPipeline: initializes the current pipeline of the pipeline editor
-        - runPipeline: run the current pipeline of the pipeline editor
+        - init_pipeline: initializes the current pipeline of the pipeline editor (without progress bar)
+        - runPipeline: runs the current pipeline of the pipeline editor
         - displayNodeParameters: displays the node controller when a node is clicked
     """
 
     def __init__(self, project, scan_list, main_window):
         """
         Initialization of the Pipeline Manager tab
+
         :param project: current project in the software
         :param scan_list: list of the selected database files
         :param main_window: main window of the software
@@ -198,8 +196,6 @@ class PipelineManagerTab(QWidget):
         self.verticalLayout.addLayout(self.hLayout)
         self.verticalLayout.addWidget(self.splitter2)
 
-        #self.update_layouts()
-
         self.startedConnection = None
 
         # To undo/redo
@@ -220,7 +216,6 @@ class PipelineManagerTab(QWidget):
             - add_link
             - delete_link
 
-        :return:
         """
         c_e = self.pipelineEditorTabs.get_current_editor()
 
@@ -321,7 +316,6 @@ class PipelineManagerTab(QWidget):
             - add_link
             - delete_link
 
-        :return:
         """
         c_e = self.pipelineEditorTabs.get_current_editor()
 
@@ -408,7 +402,6 @@ class PipelineManagerTab(QWidget):
         """
         Updates the visibility of widgets/actions depending of the chosen mode
 
-        :return:
         """
         config = Config()
 
@@ -428,7 +421,6 @@ class PipelineManagerTab(QWidget):
         Updates the user-selected list of scans
 
         :param iteration_list: current list of scans in the iteration table
-        :return:
         """
         if self.iterationTable.check_box_iterate.isChecked():
             self.iteration_table_scans_list = iteration_list
@@ -445,7 +437,6 @@ class PipelineManagerTab(QWidget):
         Updates the project attribute of several objects
 
         :param project: current project in the software
-        :return:
         """
         self.project = project
         self.nodeController.project = project
@@ -459,7 +450,6 @@ class PipelineManagerTab(QWidget):
         Updates history when a pipeline node is changed
 
         :param signal_list: list of the needed parameters to update history
-        :return:
         """
         case = signal_list.pop(0)
 
@@ -484,7 +474,6 @@ class PipelineManagerTab(QWidget):
         Updates the library of processes when a pipeline is saved
 
         :param filename: file name of the pipeline that has been saved
-        :return:
         """
         filename_folder, file_name = os.path.split(filename)
         module_name = os.path.splitext(file_name)[0]
@@ -544,7 +533,6 @@ class PipelineManagerTab(QWidget):
         """
         Loads a pipeline to the pipeline editor
 
-        :return:
         """
         self.pipelineEditorTabs.load_pipeline()
 
@@ -552,7 +540,6 @@ class PipelineManagerTab(QWidget):
         """
         Saves the current pipeline of the pipeline editor
 
-        :return:
         """
         filename = self.pipelineEditorTabs.get_current_filename()
         if filename:
@@ -564,7 +551,6 @@ class PipelineManagerTab(QWidget):
         """
         Saves the current pipeline of the pipeline editor under another name
 
-        :return:
         """
         self.pipelineEditorTabs.save_pipeline()
 
@@ -572,7 +558,6 @@ class PipelineManagerTab(QWidget):
         """
         Loads pipeline parameters to the current pipeline of the pipeline editor
 
-        :return:
         """
         self.pipelineEditorTabs.load_pipeline_parameters()
 
@@ -580,7 +565,6 @@ class PipelineManagerTab(QWidget):
         """
         Save the pipeline parameters of the the current pipeline of the pipeline editor
 
-        :return:
         """
         self.pipelineEditorTabs.save_pipeline_parameters()
 
@@ -592,7 +576,6 @@ class PipelineManagerTab(QWidget):
         the inputs and are stored in the database.
 
         :param pipeline: used to initialize a sub-pipeline
-        :return:
         """
 
         # TODO: TO REMOVE
@@ -601,14 +584,7 @@ class PipelineManagerTab(QWidget):
         spm_mat_file = os.path.join('..', '..', 'ressources', 'SPM.mat')
         shutil.copy2(spm_mat_file, data_folder)"""
 
-        """import pprofile
-        prof = pprofile.Profile()
-        with prof():
-            import cProfile
-            pr = cProfile.Profile()
-            pr.enable()"""
-
-        self.disable_progress_bar = True
+        self.disable_progress_bar = True  # Should we add a progress bar for the initialization?
         if self.disable_progress_bar:
             name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
             self.main_window.statusBar().showMessage('Pipeline "{0}" is getting initialized. Please wait.'.format(name))
@@ -621,14 +597,10 @@ class PipelineManagerTab(QWidget):
             self.progress.show()
             self.progress.exec()
 
-        """sys.stdout = open('/home/david/profile.txt', 'w')
-        pr.disable()
-        pr.print_stats(sort='time')
-        prof.print_stats()"""
-
     def add_plug_value_to_database(self, p_value, brick):
         """
         Adds the plug value to the database.
+
         :param p_value: plug value, a file name or a list of file names
         :param brick: brick of the value
         """
@@ -697,6 +669,11 @@ class PipelineManagerTab(QWidget):
             self.project.saveModifications()
 
     def init_pipeline(self, pipeline=None):
+        """
+        Initializes the current pipeline of the pipeline editor
+
+        :param pipeline: not None if this method is called from a sub-pipeline
+        """
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(self.pipelineEditorTabs.get_current_pipeline())
@@ -906,9 +883,8 @@ class PipelineManagerTab(QWidget):
 
     def runPipeline(self):
         """
-        Run the current pipeline of the pipeline editor
+        Runs the current pipeline of the pipeline editor
 
-        :return:
         """
         name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
         self.main_window.statusBar().showMessage('Pipeline "{0}" is getting run. Please wait.'.format(name))

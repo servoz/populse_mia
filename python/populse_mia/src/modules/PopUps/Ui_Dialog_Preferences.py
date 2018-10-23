@@ -6,20 +6,32 @@
 # for details.
 ##########################################################################
 
+import os
+from functools import partial
+
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QLineEdit, QPushButton, \
     QFileDialog, QMessageBox
-from functools import partial
 
+# Populse_MIA imports
 from SoftwareProperties.Config import Config
-
-import os
 
 
 class Ui_Dialog_Preferences(QDialog):
     """
     Is called when the user wants to change the software preferences
+
+    Methods:
+        - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed
+        - use_spm_changed: called when the use_spm checkbox is changed
+        - use_matlab_changed: called when the use_matlab checkbox is changed
+        - browse_matlab: called when matlab browse button is clicked
+        - browse_matlab_standalone: called when matlab browse button is clicked
+        - browse_spm_standalone: called when spm standalone browse button is clicked
+        - browse_spm: called when spm browse button is clicked
+        - ok_clicked: saves the modifications to the config file and apply them
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -29,9 +41,7 @@ class Ui_Dialog_Preferences(QDialog):
     def __init__(self, main_window):
         super().__init__()
         self.setModal(True)
-        self.pop_up(main_window)
 
-    def pop_up(self, main_window):
         _translate = QtCore.QCoreApplication.translate
 
         self.setObjectName("Dialog")
@@ -374,7 +384,12 @@ class Ui_Dialog_Preferences(QDialog):
         if fname:
             self.spm_choice.setText(fname)
 
-    def ok_clicked(self, main):
+    def ok_clicked(self, main_window):
+        """
+        Saves the modifications to the config file and apply them
+
+        :param main_window: main window of the software
+        """
         config = Config()
 
         # Auto-save
@@ -468,12 +483,12 @@ class Ui_Dialog_Preferences(QDialog):
                 self.msg.show()
                 return
 
-        #Colors
+        # Colors
         background_color = self.background_color_combo.currentText()
         text_color = self.text_color_combo.currentText()
         config.setBackgroundColor(background_color)
         config.setTextColor(text_color)
-        main.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
+        main_window.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
 
         self.signal_preferences_change.emit()
         self.accept()

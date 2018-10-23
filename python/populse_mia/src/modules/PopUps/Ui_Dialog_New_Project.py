@@ -6,15 +6,27 @@
 # for details.
 ##########################################################################
 
+import os
+
+# PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
-import os
+
+# Populse_MIA imports
 import Utils.Utils as utils
 
 
 class Ui_Dialog_New_Project(QFileDialog):
     """
     Is called when the user wants to create a new project
+
+    Attributes:
+        - path: absolute path to the project's folder (without the project folder)
+        - name: name of the project
+        - relative_path: relative path to the new project (with the project folder)
+        - relative_subpath: relative path to the new project (without the project folder)
+    Method:
+        - get_filename: sets the widget's attribute depending on the selected file name
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -28,8 +40,14 @@ class Ui_Dialog_New_Project(QFileDialog):
         # Setting the projects directory as default
         utils.set_projects_directory_as_default(self)
 
-    def retranslateUi(self, file_name):
-        file_name = file_name[0]
+    def get_filename(self, file_name_tuple):
+        """
+        Sets the widget's attribute depending on the selected file name
+
+        :param file_name_tuple: tuple obtained with the selectedFiles method
+        :return: real file name
+        """
+        file_name = file_name_tuple[0]
         if file_name:
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)

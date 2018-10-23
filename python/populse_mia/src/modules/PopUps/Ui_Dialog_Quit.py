@@ -6,14 +6,24 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QLabel
 
 
 class Ui_Dialog_Quit(QDialog):
     """
-    Is called when the user closes the software and the current project
-    has been modified
+    Is called when the user closes the software and the current project has been modified
+
+    Attributes:
+        - database: current database in the project
+        - bool_exit: boolean equals to True if we can exit the software
+
+    Methods:
+        - save_as_clicked: makes the actions to save the project
+        - do_not_save_clicked: makes the actions not to save the project
+        - cancel_clicked: makes the actions to cancel the action
+        - can_exit: returns the value of bool_exit
     """
 
     save_as_signal = pyqtSignal()
@@ -53,17 +63,31 @@ class Ui_Dialog_Quit(QDialog):
         push_button_cancel.clicked.connect(self.cancel_clicked)
 
     def save_as_clicked(self):
+        """
+        Makes the actions to save the project
+        """
         self.save_as_signal.emit()
         self.bool_exit = True
         self.close()
 
     def do_not_save_clicked(self):
+        """
+        Makes the actions not to save the project
+        """
         self.bool_exit = True
         self.close()
 
     def cancel_clicked(self):
+        """
+        Makes the actions to cancel the action
+        """
         self.bool_exit = False
         self.close()
 
     def can_exit(self):
+        """
+        Returns the value of bool_exit
+
+        :return: bool_exit value
+        """
         return self.bool_exit

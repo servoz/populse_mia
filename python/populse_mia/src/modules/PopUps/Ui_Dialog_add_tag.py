@@ -6,16 +6,22 @@
 # for details.
 ##########################################################################
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
-from Utils.Tools import ClickableLabel
-from Utils.Utils import check_value_type
 import os
 import ast
 from datetime import datetime
+
+# PyQt5 imports
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
+
+# Populse_MIA imports
+from Utils.Tools import ClickableLabel
+from Utils.Utils import check_value_type
 from Project.database_mia import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
 from Project.Project import COLLECTION_CURRENT
+
+# Populse_db imports
 from populse_db.database import FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, \
     FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_INTEGER, LIST_TYPES, \
     FIELD_TYPE_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_BOOLEAN, FIELD_TYPE_TIME, FIELD_TYPE_DATETIME, \
@@ -23,6 +29,20 @@ from populse_db.database import FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATETIME, 
 
 
 class Default_value_list_creation(QDialog):
+    """
+    Widget that is called when to create a list's default value
+
+    Attributes:
+        - type: type of the list (e.g. list of int, list of float, etc.)
+        - parent: the Default_Value_QLine_Edit parent object
+
+    Methods:
+        - default_init_table: default init table when no previous value
+        - update_default_value: checks if the values are correct and updates the parent value
+        - add_element: one more element added to the list
+        - remove_element: removes the last element of the list
+        - resize_table: to resize the pop up depending on the table
+    """
 
     def __init__(self, parent, type):
         super().__init__()
@@ -33,6 +53,7 @@ class Default_value_list_creation(QDialog):
         self.type = type
 
         self.parent = parent
+        self.setWindowTitle("Adding a " + self.type.replace("_", " of "))
 
         # The table that will be filled
         self.table = QtWidgets.QTableWidget()
@@ -116,6 +137,9 @@ class Default_value_list_creation(QDialog):
         self.table.setItem(0, 0, item)
 
     def update_default_value(self):
+        """
+        Checks if the values are correct and updates the parent value
+        """
 
         database_value = []
         valid_values = True
@@ -232,6 +256,15 @@ class Default_Value_QLine_Edit(QtWidgets.QLineEdit):
 class Ui_Dialog_add_tag(QDialog):
     """
     Is called when the user wants to add a tag to the project
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+        - type: type of the tag to add
+
+    Methods:
+        - on_activated: type updated
+        - ok_action: verifies that each field is correct and send the new tag to the data browser
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -241,13 +274,8 @@ class Ui_Dialog_add_tag(QDialog):
         super().__init__()
         self.project = project
         self.databrowser = databrowser
-        self.type = FIELD_TYPE_STRING # Type is string by default
-        self.pop_up()
-        self.setMinimumWidth(700)
-        self.setWindowTitle("Add a tag")
-        self.setModal(True)
+        self.type = FIELD_TYPE_STRING  # Type is string by default
 
-    def pop_up(self):
         self.setObjectName("Add a tag")
 
         # The 'OK' push button
@@ -364,9 +392,15 @@ class Ui_Dialog_add_tag(QDialog):
         # Connecting the OK push button
         self.push_button_ok.clicked.connect(self.ok_action)
 
+
+        self.setMinimumWidth(700)
+        self.setWindowTitle("Add a tag")
+        self.setModal(True)
+
     def on_activated(self, text):
         """
         Type updated
+
         :param text: New type
         """
 
@@ -386,7 +420,8 @@ class Ui_Dialog_add_tag(QDialog):
             self.text_edit_default_value.setPlaceholderText("Please enter a date in the following format: dd/mm/yyyy")
         elif text == "Datetime":
             self.type = FIELD_TYPE_DATETIME
-            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: dd/mm/yyyy hh:mm:ss.zzz")
+            self.text_edit_default_value.setPlaceholderText("Please enter a datetime in the following format: "
+                                                            "dd/mm/yyyy hh:mm:ss.zzz")
         elif text == "Time":
             self.type = FIELD_TYPE_TIME
             self.text_edit_default_value.setPlaceholderText("Please enter a time in the following format: hh:mm:ss.zzz")
@@ -406,6 +441,9 @@ class Ui_Dialog_add_tag(QDialog):
             self.type = FIELD_TYPE_LIST_TIME
 
     def ok_action(self):
+        """
+        Verifies that each field is correct and send the new tag to the data browser
+        """
 
         # Tag name checked
         name_already_exists = False
@@ -443,7 +481,8 @@ class Ui_Dialog_add_tag(QDialog):
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
             self.msg.setText("Invalid default value")
-            self.msg.setInformativeText("The default value " + default_value + " is invalid with the type " + self.type + ".")
+            self.msg.setInformativeText("The default value " + default_value + " is invalid with the type " +
+                                        self.type + ".")
             self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
@@ -458,5 +497,6 @@ class Ui_Dialog_add_tag(QDialog):
             self.new_tag_unit = self.combo_box_unit.currentText()
             if self.new_tag_unit == '':
                 self.new_tag_unit = None
-            self.databrowser.add_tag_infos(self.new_tag_name, self.new_default_value, self.type, self.new_tag_description, self.new_tag_unit)
+            self.databrowser.add_tag_infos(self.new_tag_name, self.new_default_value, self.type,
+                                           self.new_tag_description, self.new_tag_unit)
             self.close()
