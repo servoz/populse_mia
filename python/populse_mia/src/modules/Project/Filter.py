@@ -6,13 +6,34 @@
 # for details.
 ##########################################################################
 
+# Populse_MIA imports
 import DataBrowser
 import Project
 
 
 class Filter:
     """
-    Class that represents a Filter
+    Class that represents a Filter, containing the results of both rapid and advanced search
+
+    The advanced search creates a complex query to the database and is a combination of several "query lines" which
+    are linked with AND or OR and all composed of:
+    - A negation or not
+    - A tag name or all visible tags
+    - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
+    - A value
+
+    Attributes:
+        - nots: list of negations ("" or NOT)
+        - values: list of values
+        - fields: list of list of fields
+        - links: list of links (AND/OR)
+        - conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+        - search_bar: value in the rapid search bar
+        - name: filter's name
+
+    Methods:
+        - json_format: returns the filter as a dictionary
+        - generate_filter: apply the filter to the given list of scans
     """
 
     def __init__(self, name, nots, values, fields, links, conditions, search_bar):
@@ -26,6 +47,11 @@ class Filter:
         self.name = name
 
     def json_format(self):
+        """
+        Returns the filter as a dictionary
+
+        :return: the filter as a dictionary
+        """
 
         # Filter dictionary
         data = {
@@ -41,7 +67,8 @@ class Filter:
 
     def generate_filter(self, project, scans, tags):
         """
-        Apply the filter to the list of scans given
+        Apply the filter to the given list of scans
+
         :param project: Current project
         :param scans: List of scans to apply the filter into
         :param tags: List of tags to search in
