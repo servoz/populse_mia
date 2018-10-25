@@ -6,18 +6,28 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
+
+# Populse_MIA imports
 from PopUps.Ui_Visualized_Tags import Ui_Visualized_Tags
 from PopUps.Ui_Informations import Ui_Informations
-
 from Project.Project import TAG_FILENAME
 
 
 class Ui_Dialog_Settings(QDialog):
     """
-    Is called when the user wants to change the software settings
+    Is called when the user wants to change the current project's properties
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+        - old_tags: visualized tags before opening this dialog
+
+    Methods:
+        - ok_clicked: saves the modifications and updates the data browser
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -29,7 +39,6 @@ class Ui_Dialog_Settings(QDialog):
         self.project = project
         self.databrowser = databrowser
         self.old_tags = old_tags
-        self.old_visibles_tags = project.session.get_visibles()
 
         _translate = QtCore.QCoreApplication.translate
 
@@ -71,7 +80,10 @@ class Ui_Dialog_Settings(QDialog):
         self.setLayout(vbox)
 
     def ok_clicked(self):
-        history_maker = ["modified_visibilities", self.old_visibles_tags]
+        """
+        Saves the modifications and updates the data browser
+        """
+        history_maker = ["modified_visibilities", self.old_tags]
         new_visibilities = []
 
         for x in range(self.tab_tags.list_widget_selected_tags.count()):
@@ -85,7 +97,8 @@ class Ui_Dialog_Settings(QDialog):
         self.project.undos.append(history_maker)
         self.project.redos.clear()
 
-        self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_visibles())  # Columns updated
+        # Columns updated
+        self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_visibles())
         self.accept()
         self.close()
 

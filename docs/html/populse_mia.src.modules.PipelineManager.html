@@ -290,14 +290,13 @@ filtering is done, the filter is saved in the process.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>node_name</strong> – name of the node</li>
 <li><strong>plug_name</strong> – name of the plug</li>
-<li><strong>parameters</strong> – tuple containing the index of the plug, the current</li>
+<li><strong>parameters</strong> – tuple containing the index of the plug, the current pipeline instance and the type of the plug value</li>
+<li><strong>process</strong> – process of the node</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>pipeline instance and the type of the plug value
-:param process: process of the node</p>
 </dd></dl>
 
 <dl class="method">
@@ -356,13 +355,12 @@ new links that are the same than the selected node.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>pipeline</strong> – current pipeline</li>
-<li><strong>new_node_name</strong> – new node name (is None except when this method</li>
+<li><strong>new_node_name</strong> – new node name (is None except when this method is called from an undo/redo)</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>is called from an undo/redo)</p>
 </dd></dl>
 
 <dl class="method">
@@ -378,13 +376,12 @@ new links that are the same than the selected node.</p>
 <li><strong>plug_name</strong> – name of the plug</li>
 <li><strong>pipeline</strong> – current pipeline</li>
 <li><strong>value_type</strong> – type of the plug value</li>
-<li><strong>new_value</strong> – new value for the plug (is None except when this method is</li>
+<li><strong>new_value</strong> – new value for the plug (is None except when this method is called from an undo/redo)</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>called from an undo/redo)</p>
 </dd></dl>
 
 <dl class="method">
@@ -397,14 +394,13 @@ new links that are the same than the selected node.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>plug_name</strong> – name of the plug</li>
-<li><strong>parameters</strong> – tuple containing the index of the plug, the current</li>
+<li><strong>parameters</strong> – tuple containing the index of the plug, the current pipeline instance and the type of the plug value</li>
+<li><strong>filter_res_list</strong> – list of the filtered files</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>pipeline instance and the type of the plug value
-:param filter_res_list: list of the filtered files</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1403,7 +1399,7 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineManagerTab.InitWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.InitWorker.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.InitWorker.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1672,7 +1668,7 @@ the inputs and are stored in the database.</p>
 <p>Thread doing the pipeline run</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineManagerTab.RunWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.RunWorker.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineManagerTab.RunWorker.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1864,12 +1860,12 @@ the inputs and are stored in the database.</p>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeData">
-<code class="descname">mimeData</code><span class="sig-paren">(</span><em>list-of-QModelIndex</em><span class="sig-paren">)</span> &#x2192; QMimeData<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeData" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mimeData</code><span class="sig-paren">(</span><em>self, Iterable[QModelIndex]</em><span class="sig-paren">)</span> &#x2192; QMimeData<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeTypes">
-<code class="descname">mimeTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list-of-str<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeTypes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mimeTypes</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.DictionaryTreeModel.mimeTypes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1910,7 +1906,7 @@ the inputs and are stored in the database.</p>
 <p>Just a test for the moment. Should be useful to use in the file dialog.</p>
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.process_library.FileFilterProxyModel.filterAcceptsRow">
-<code class="descname">filterAcceptsRow</code><span class="sig-paren">(</span><em>int</em>, <em>QModelIndex</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.FileFilterProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filterAcceptsRow</code><span class="sig-paren">(</span><em>self</em>, <em>int</em>, <em>QModelIndex</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#populse_mia.src.modules.PipelineManager.process_library.FileFilterProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2126,28 +2122,20 @@ The user can check or not each module/package</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>item</strong> – item selected in the current tree</li>
-<li><strong>state</strong> – checked or not checked</li>
+<li><strong>state</strong> – checked or not checked (Qt.Checked == 2. So if val == 2 -&gt; checkbox is checked,
+and if val == 0 -&gt; checkbox is not checked)</li>
 </ul>
 </td>
 </tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>:Qt.Checked == 2. So if val == 2 -&gt; checkbox is checked, </dt>
-<dd>and if val == 0 -&gt; checkbox is not checked</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Pkg_iter:</th><td class="field-body">dictionary where keys are the name of a module (brick)
+<tr class="field-even field"><th class="field-name">Pkg_iter:</th><td class="field-body"><p class="first last">dictionary where keys are the name of a module (brick)
 and values are ‘process_enabled’ or ‘process_disabled’.
 Key can be a submodule. In this case the value is a dictionary
 where keys are the name of a module (brick) and values are ‘process_enabled’
-or ‘process_dsabled’. etc. pkg_iter take only the modules concerning the top
-package where a change of status where done.</td>
+or ‘process_disabled’. etc. pkg_iter take only the modules concerning the top
+package where a change of status where done.</p>
+</td>
 </tr>
 </tbody>
 </table>

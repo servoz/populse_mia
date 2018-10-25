@@ -6,15 +6,27 @@
 # for details.
 ##########################################################################
 
+import os
+
+# PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
-import os
+
+# Populse_MIA imports
 import Utils.Utils as utils
 
 
 class Ui_Dialog_Save_Project_As(QFileDialog):
     """
     Is called when the user wants to save a project under another name
+
+    Attributes:
+        - path: absolute path to the project's folder (without the project folder)
+        - name: name of the project
+        - relative_path: relative path to the new project (with the project folder)
+        - relative_subpath: relative path to the new project (without the project folder)
+    Method:
+        - return_value: sets the widget's attributes depending on the selected file name
     """
 
     # Signal that will be emitted at the end to tell that the new file name has been chosen
@@ -33,10 +45,14 @@ class Ui_Dialog_Save_Project_As(QFileDialog):
         self.finished.connect(self.return_value)
 
     def return_value(self):
-        file_name = self.selectedFiles()
-        if len(file_name) > 0:
-            file_name = file_name[0]
-            #file_name = Utils.remove_accents(file_name.replace(" ", "_"))
+        """
+        Sets the widget's attributes depending on the selected file name
+
+        :return: new project's file name
+        """
+        file_name_tuple = self.selectedFiles()
+        if len(file_name_tuple) > 0:
+            file_name = file_name_tuple[0]
             projects_folder = os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')
             projects_folder = os.path.abspath(projects_folder)
             if file_name and file_name != projects_folder:

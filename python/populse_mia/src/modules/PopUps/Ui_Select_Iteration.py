@@ -6,6 +6,7 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QCheckBox, QLabel
 from PyQt5.QtCore import Qt
@@ -14,6 +15,14 @@ from PyQt5.QtCore import Qt
 class Ui_Select_Iteration(QDialog):
     """
     Is called when the user wants to run an iterated pipeline
+
+    Attributes:
+        - iterated_tag: name of the iterated tag
+        - tag_values: values that can take the iterated tag
+        - final_values: selected values on which to iterate the pipeline
+
+    Methods:
+        - ok_clicked: sends the selected values to the pipeline manager
     """
 
     def __init__(self, iterated_tag, tag_values):
@@ -21,7 +30,8 @@ class Ui_Select_Iteration(QDialog):
 
         self.iterated_tag = iterated_tag
         self.tag_values = tag_values
-        self.setWindowTitle("Iterate pipeline run over tag {0}".format(iterated_tag))
+        self.final_values = []
+        self.setWindowTitle("Iterate pipeline run over tag {0}".format(self.iterated_tag))
 
         self.v_box = QVBoxLayout()
 
@@ -30,7 +40,7 @@ class Ui_Select_Iteration(QDialog):
         self.v_box.addWidget(self.label)
 
         self.check_boxes = []
-        for tag_value in tag_values:
+        for tag_value in self.tag_values:
             check_box = QCheckBox(tag_value)
             check_box.setCheckState(Qt.Checked)
             self.check_boxes.append(check_box)
@@ -57,6 +67,9 @@ class Ui_Select_Iteration(QDialog):
         self.setLayout(self.final_layout)
 
     def ok_clicked(self):
+        """
+        Sends the selected values to the pipeline manager
+        """
         final_values = []
         for check_box in self.check_boxes:
             if check_box.isChecked():

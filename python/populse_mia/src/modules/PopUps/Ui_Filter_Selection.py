@@ -6,18 +6,27 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 
 
 class Ui_Filter_Selection(QDialog):
     """
-    Is called when the user wants to open a filter saved before
+    Is called when the user wants to open a filter that has already been saved
+
+    Attributes:
+        - project: current project in the software
+
+    Methods:
+        - search_str: matches the searched pattern with the saved filters
+        - ok_clicked: actions when the "OK" button is clicked
+        - cancel_clicked: closes the pop-up
     """
 
-    def __init__(self, database):
+    def __init__(self, project):
         super().__init__()
-        self.project = database
+        self.project = project
         self.setModal(True)
 
         _translate = QtCore.QCoreApplication.translate
@@ -69,6 +78,11 @@ class Ui_Filter_Selection(QDialog):
         self.setLayout(vbox_final)
 
     def search_str(self, str_search):
+        """
+        Matches the searched pattern with the saved filters
+
+        :param str_search: string pattern to search
+        """
         return_list = []
         if str_search != "":
             for filter in self.project.filters:
@@ -86,8 +100,14 @@ class Ui_Filter_Selection(QDialog):
                 item.setHidden(True)
 
     def ok_clicked(self):
+        """
+        Actions when the "OK" button is clicked
+        """
         # Has to be override in the Ui_Select_Filter* classes
         pass
 
     def cancel_clicked(self):
+        """
+        Closes the pop-up
+        """
         self.close()

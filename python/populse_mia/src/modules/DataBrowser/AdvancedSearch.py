@@ -26,12 +26,12 @@ class AdvancedSearch(QWidget):
     """
     Class that manages the widget of the advanced search
 
-        The advanced search creates a complex query to the database and is a combination of several "query lines" which
-        are linked with AND or OR and all composed of:
-          * A negation or not
-          * A tag name or all visible tags
-          * A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
-          * A value
+    The advanced search creates a complex query to the database and is a combination of several "query lines" which
+    are linked with AND or OR and all composed of:
+    - A negation or not
+    - A tag name or all visible tags
+    - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
+    - A value
 
     Attributes:
         - project: current project in the software

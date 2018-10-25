@@ -6,16 +6,25 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
+
+# Populse_MIA imports
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
-
 from Project.Project import COLLECTION_CURRENT, TAG_CHECKSUM
 
 
 class Ui_Select_Tag(Ui_Tag_Selection):
     """
-    Is called when the user wants to update the tag to display in the MiniViewer
+    Is called when the user wants to update the tag to display in the mini viewer
+
+    Attributes:
+        - project: current project in the software
+        - config: current config of the software
+
+    Methods:
+        - ok_clicked: saves the modifications and updates the mini viewer
     """
 
     def __init__(self, project):
@@ -37,6 +46,9 @@ class Ui_Select_Tag(Ui_Tag_Selection):
         self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
+        """
+        Saves the modifications and updates the mini viewer
+        """
         for idx in range(self.list_widget_tags.count()):
             item = self.list_widget_tags.item(idx)
             if item.checkState() == QtCore.Qt.Checked:

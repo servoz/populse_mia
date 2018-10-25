@@ -55,6 +55,7 @@ class CountTable(QDialog):
     +-------------+-----------+------+-------+-------+
     | P2          | T3        | v(2) | v(1)  | v(1)  |
     +-------------+-----------+------+-------+-------+
+
     with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
     SequenceName).
 

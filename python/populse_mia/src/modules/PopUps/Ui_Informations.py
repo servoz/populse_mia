@@ -6,13 +6,14 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit
 
 
 class Ui_Informations(QWidget):
     """
-    Is called when the user wants to show the software's information
+    Is called when the user wants to display the current project's information
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -20,14 +21,10 @@ class Ui_Informations(QWidget):
 
     def __init__(self, project):
         super().__init__()
-        self.retranslate_Ui(project)
-
-    def retranslate_Ui(self, database):
-
         name_label = QLabel("Name: ")
-        self.name_value = QLineEdit(database.getName())
-        folder_label = QLabel("Root folder: " + database.folder)
-        date_label = QLabel("Date of creation: " + database.getDate())
+        self.name_value = QLineEdit(project.getName())
+        folder_label = QLabel("Root folder: " + project.folder)
+        date_label = QLabel("Date of creation: " + project.getDate())
 
         box = QVBoxLayout()
         row = QHBoxLayout()

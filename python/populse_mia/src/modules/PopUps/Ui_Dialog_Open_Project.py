@@ -25,7 +25,7 @@ class Ui_Dialog_Open_Project(QFileDialog):
         - name: name of the project
         - relative_path: relative path to the new project (with the project folder)
     Method:
-        - get_filename: sets the widget's attribute depending on the selected file name
+        - get_filename: sets the widget's attributes depending on the selected file name
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -42,7 +42,7 @@ class Ui_Dialog_Open_Project(QFileDialog):
 
     def get_filename(self, file_name_tuple):
         """
-        Sets the widget's attribute depending on the selected file name
+        Sets the widget's attributes depending on the selected file name
 
         :param file_name_tuple: tuple obtained with the selectedFiles method
         """

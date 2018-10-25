@@ -6,20 +6,29 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
-from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
 
+# Populse_MIA imports
+from PopUps.Ui_Tag_Selection import Ui_Tag_Selection
 from Project.Project import TAG_CHECKSUM
 
 
 class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
     """
-    Is called when the user wants to update the tags that are visualized in the count table
+    Is called when the user wants to update a visualized tag of the count table
+
+    Attributes:
+        - selected_tag: the selected tag
+
+    Methods:
+        - ok_clicked: updates the selected tag and closes the pop-up
     """
 
     def __init__(self, project, tags_to_display, tag_name_checked=None):
         super(Ui_Select_Tag_Count_Table, self).__init__(project)
 
+        self.selected_tag = None
         for tag in tags_to_display:
             if tag != TAG_CHECKSUM:
                 item = QtWidgets.QListWidgetItem()
@@ -33,7 +42,9 @@ class Ui_Select_Tag_Count_Table(Ui_Tag_Selection):
         self.list_widget_tags.sortItems()
 
     def ok_clicked(self):
-        self.selected_tag = None
+        """
+        Updates the selected tag and closes the pop-up
+        """
         for idx in range(self.list_widget_tags.count()):
             item = self.list_widget_tags.item(idx)
             if item.checkState() == QtCore.Qt.Checked:

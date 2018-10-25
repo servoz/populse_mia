@@ -43,18 +43,12 @@
 <em class="property">class </em><code class="descclassname">populse_mia.src.modules.DataBrowser.AdvancedSearch.</code><code class="descname">AdvancedSearch</code><span class="sig-paren">(</span><em>project</em>, <em>data_browser</em>, <em>scans_list=None</em>, <em>tags_list=None</em>, <em>from_pipeline=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.DataBrowser.AdvancedSearch.AdvancedSearch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>Class that manages the widget of the advanced search</p>
-<blockquote>
-<div><p>The advanced search creates a complex query to the database and is a combination of several “query lines” which
-are linked with AND or OR and all composed of:</p>
-<blockquote>
-<div><ul class="simple">
-<li>A negation or not</li>
-<li>A tag name or all visible tags</li>
-<li>A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)</li>
-<li>A value</li>
-</ul>
-</div></blockquote>
-</div></blockquote>
+<p>The advanced search creates a complex query to the database and is a combination of several “query lines” which
+are linked with AND or OR and all composed of:
+- A negation or not
+- A tag name or all visible tags
+- A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
+- A value</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">

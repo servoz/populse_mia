@@ -990,15 +990,14 @@ class PackageLibrary(QTreeWidget):
         Sets if a module has to be enabled or disabled in the process library
 
         :param item: item selected in the current tree
-        :param state: checked or not checked
-        :Qt.Checked == 2. So if val == 2 -> checkbox is checked, 
-         and if val == 0 -> checkbox is not checked
+        :param state: checked or not checked (Qt.Checked == 2. So if val == 2 -> checkbox is checked,
+            and if val == 0 -> checkbox is not checked)
         :pkg_iter: dictionary where keys are the name of a module (brick)
-         and values are 'process_enabled' or 'process_disabled'.
-         Key can be a submodule. In this case the value is a dictionary
-         where keys are the name of a module (brick) and values are 'process_enabled'
-         or 'process_dsabled'. etc. pkg_iter take only the modules concerning the top
-         package where a change of status where done.
+            and values are 'process_enabled' or 'process_disabled'.
+            Key can be a submodule. In this case the value is a dictionary
+            where keys are the name of a module (brick) and values are 'process_enabled'
+            or 'process_disabled'. etc. pkg_iter take only the modules concerning the top
+            package where a change of status where done.
         """
         
         if state == Qt.Checked:

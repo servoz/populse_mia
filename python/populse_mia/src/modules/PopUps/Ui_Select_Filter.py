@@ -6,14 +6,25 @@
 # for details.
 ##########################################################################
 
-from PyQt5 import QtWidgets, QtCore
+# PyQt5 imports
+from PyQt5 import QtWidgets
+
+# Populse_MIA imports
 from SoftwareProperties.Config import Config
 from PopUps.Ui_Filter_Selection import Ui_Filter_Selection
 
 
 class Ui_Select_Filter(Ui_Filter_Selection):
     """
-    Is called when the user wants to open a filter saved before
+    Is called when the user wants to open a filter that has already been saved
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+        - config: current config of the software
+
+    Methods:
+        - ok_clicked: saves the modifications and updates the data browser
     """
 
     def __init__(self, project, databrowser):
@@ -30,6 +41,9 @@ class Ui_Select_Filter(Ui_Filter_Selection):
             item.setText(filter.name)
 
     def ok_clicked(self):
+        """
+        Saves the modifications and updates the data browser
+        """
         for item in self.list_widget_filters.selectedItems():
 
             # Current filter updated

@@ -6,27 +6,38 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
-# MIA import
+# Populse_MIA imports
 from Project.Project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
 
 
 class Ui_Visualized_Tags(QWidget):
     """
     Is called when the user wants to update the tags that are visualized
+
+    Attributes:
+        - project: current project in the software
+        - visualized_tags: project's visualized tags before opening this widget
+
+    Methods:
+        - search_str: matches the searched pattern with the tags of the project
+        - click_select_tag: puts the selected tags in the "selected tag" table
+        - click_unselect_tag: removes the unselected tags from the "selected tag" table
     """
 
     # Signal that will be emitted at the end to tell that the preferences have been changed
     signal_preferences_change = pyqtSignal()
 
-    def __init__(self, database, tags):
+    def __init__(self, project, visualized_tags):
         super().__init__()
-        self.retranslate_Ui(database, tags)
 
-    def retranslate_Ui(self, project, tags):
+        self.project = project
+        self.visualized_tags = visualized_tags
+
         _translate = QtCore.QCoreApplication.translate
 
         # Two buttons to select or unselect tags
@@ -96,7 +107,7 @@ class Ui_Visualized_Tags(QWidget):
         for tag in project.session.get_fields_names(COLLECTION_CURRENT):
             if tag != TAG_CHECKSUM and tag != TAG_FILENAME:
                 item = QtWidgets.QListWidgetItem()
-                if not tag in tags:
+                if tag not in self.visualized_tags:
                     # Tag not visible: left side
                     self.list_widget_tags.addItem(item)
                     self.left_tags.append(tag)
@@ -107,6 +118,11 @@ class Ui_Visualized_Tags(QWidget):
         self.list_widget_tags.sortItems()
 
     def search_str(self, str_search):
+        """
+        Matches the searched pattern with the tags of the project
+
+        :param str_search: string pattern to search
+        """
         return_list = []
         if str_search != "":
             for tag in self.left_tags:
@@ -127,7 +143,6 @@ class Ui_Visualized_Tags(QWidget):
     def click_select_tag(self):
         """
         Puts the selected tags in the "selected tag" table
-        :return:
         """
 
         rows = sorted([index.row() for index in self.list_widget_tags.selectedIndexes()],
@@ -140,7 +155,6 @@ class Ui_Visualized_Tags(QWidget):
     def click_unselect_tag(self):
         """
         Removes the unselected tags from the "selected tag" table
-        :return:
         """
 
         rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],

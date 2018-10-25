@@ -228,8 +228,7 @@ class NodeController(QWidget):
         new links that are the same than the selected node.
 
         :param pipeline: current pipeline
-        :param new_node_name: new node name (is None except when this method
-        is called from an undo/redo)
+        :param new_node_name: new node name (is None except when this method is called from an undo/redo)
         """
 
         # Copying the old node
@@ -292,8 +291,7 @@ class NodeController(QWidget):
         :param plug_name: name of the plug
         :param pipeline: current pipeline
         :param value_type: type of the plug value
-        :param new_value: new value for the plug (is None except when this method is
-        called from an undo/redo)
+        :param new_value: new value for the plug (is None except when this method is called from an undo/redo)
         """
 
         index = self.get_index_from_plug_name(plug_name, in_or_out)
@@ -364,8 +362,7 @@ class NodeController(QWidget):
 
         :param node_name: name of the node
         :param plug_name: name of the plug
-        :param parameters: tuple containing the index of the plug, the current
-        pipeline instance and the type of the plug value
+        :param parameters: tuple containing the index of the plug, the current pipeline instance and the type of the plug value
         :param process: process of the node
         """
         self.pop_up = PlugFilter(self.project, self.scan_list, process, node_name, plug_name, self, self.main_window)
@@ -377,8 +374,7 @@ class NodeController(QWidget):
         Updates the plug value from a filter result
 
         :param plug_name: name of the plug
-        :param parameters: tuple containing the index of the plug, the current
-        pipeline instance and the type of the plug value
+        :param parameters: tuple containing the index of the plug, the current pipeline instance and the type of the plug value
         :param filter_res_list: list of the filtered files
         """
 

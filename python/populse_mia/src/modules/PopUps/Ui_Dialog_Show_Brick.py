@@ -6,26 +6,37 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem, QWidget, QLabel, QPushButton, \
     QApplication
 
+# Populse_MIA imports
 from Project.Project import COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT, BRICK_INIT_TIME, \
     BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_CURRENT
 
 
 class Ui_Dialog_Show_Brick(QDialog):
     """
-    Class to display the brick history
+    Class to display the brick history of a document
+
+    Attributes:
+        - project: current project in the software
+        - databrowser: data browser instance of the software
+        - main_window: main window of the software
+
+    Methods:
+        - io_value_is_scan: checks if the I/O value is a scan
+        - file_clicked: called when a file is clicked
     """
 
-    def __init__(self, project, brick_uuid, databrowser, imageViewer):
+    def __init__(self, project, brick_uuid, databrowser, main_window):
         """
         Prepares the brick history popup
         :param project: project
         :param brick_uuid: brick to display
-        :param databrowser; databrowser that made the call
-        :param imageViewer: main window
+        :param databrowser; data browser that made the call
+        :param main_window: main window of the software
         """
 
         super().__init__()
@@ -33,7 +44,7 @@ class Ui_Dialog_Show_Brick(QDialog):
         self.setModal(True)
 
         self.databrowser = databrowser
-        self.imageViewer = imageViewer
+        self.main_window = main_window
         self.project = project
         brick_row = project.session.get_document(COLLECTION_BRICK, brick_uuid)
         self.setWindowTitle("Brick " + getattr(brick_row, BRICK_NAME) + " history")
@@ -185,6 +196,7 @@ class Ui_Dialog_Show_Brick(QDialog):
     def io_value_is_scan(self, value):
         """
         Checks if the I/O value is a scan
+
         :param value: I/O value
         :return: The scan corresponding to the value if it exists, None otherwise
         """

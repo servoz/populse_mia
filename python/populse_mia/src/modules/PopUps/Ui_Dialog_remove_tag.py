@@ -6,9 +6,12 @@
 # for details.
 ##########################################################################
 
+# PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
+
+# Populse_MIA imports
 from Project.Project import COLLECTION_CURRENT
 from Project.database_mia import TAG_ORIGIN_USER
 
@@ -16,6 +19,14 @@ from Project.database_mia import TAG_ORIGIN_USER
 class Ui_Dialog_remove_tag(QDialog):
     """
      Is called when the user wants to remove a user tag from the project
+
+     Attributes:
+         - project: current project in the software
+         - databrowser: data browser instance of the software
+
+     Methods:
+         - search_str: matches the searched pattern with the tags of the project
+         - ok_action: verifies the selected tags and send the information to the data browser
      """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -26,10 +37,7 @@ class Ui_Dialog_remove_tag(QDialog):
         self.databrowser = databrowser
         self.project = project
         self.setWindowTitle("Remove a tag")
-        self.pop_up()
         self.setModal(True)
-
-    def pop_up(self):
 
         _translate = QtCore.QCoreApplication.translate
         self.setObjectName("Remove a tag")
@@ -38,7 +46,6 @@ class Ui_Dialog_remove_tag(QDialog):
         self.push_button_ok = QtWidgets.QPushButton(self)
         self.push_button_ok.setObjectName("push_button_ok")
         self.push_button_ok.setText(_translate("Remove a tag", "OK"))
-
 
         hbox_buttons = QHBoxLayout()
         hbox_buttons.addStretch(1)
@@ -84,6 +91,11 @@ class Ui_Dialog_remove_tag(QDialog):
         self.push_button_ok.clicked.connect(self.ok_action)
 
     def search_str(self, str_search):
+        """
+        Matches the searched pattern with the tags of the project
+
+        :param str_search: string pattern to search
+        """
 
         _translate = QtCore.QCoreApplication.translate
 
@@ -105,6 +117,9 @@ class Ui_Dialog_remove_tag(QDialog):
             item.setText(_translate("Dialog", tag_name))
 
     def ok_action(self):
+        """
+        Verifies the selected tags and send the information to the data browser
+        """
 
         self.accept()
         self.tag_names_to_remove = []
