@@ -42,6 +42,57 @@
 <dt id="populse_mia.src.modules.SoftwareProperties.Config.Config">
 <em class="property">class </em><code class="descclassname">populse_mia.src.modules.SoftwareProperties.Config.</code><code class="descname">Config</code><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object that handles the configuration of the software</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><ul class="first last simple">
+<li>config: dictionary containing the several elements of the config</li>
+</ul>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>loadConfig: reads the config in the config.yml file</li>
+<li>saveConfig: saves the config to the config.yml file</li>
+<li>getPathToProjectsFolder: returns the project’s path</li>
+<li>getPathData: returns the data’s path</li>
+<li>getPathToProjectsDBFile: returns the already-saved projects’s path</li>
+<li>setPathToData: sets the data’s path</li>
+<li>isAutoSave: checks if auto-save mode is activated</li>
+<li>setAutoSave: sets the auto-save mode</li>
+<li>getBackgroundColor: returns the background color</li>
+<li>setBackgroundColor: sets the background color</li>
+<li>getTextColor: return the text color</li>
+<li>setTextColor: sets the text color</li>
+<li>getShowAllSlices: returns if the “show all slices” checkbox of the mini viewer is activated</li>
+<li>setShowAllSlices: sets the “show all slices” checkbox of the mini viewer</li>
+<li>getNbAllSlicesMax: returns the maximum number of slices to display in the mini viewer</li>
+<li>setNbAllSlicesMax: sets the maximum number of slices to display in the mini viewer</li>
+<li>getThumbnailTag: returns the tag that is displayed in the mini viewer</li>
+<li>setThumbnailTag: sets the tag that is displayed in the mini viewer</li>
+<li>getChainCursors: returns if the “chain cursors” checkbox of the mini viewer is activated</li>
+<li>setChainCursors: sets the “chain cursors” checkbox of the mini viewer</li>
+<li>get_opened_projects: returns the opened projects</li>
+<li>set_opened_projects: sets the opened projects</li>
+<li>get_matlab_path: returns the path of Matlab’s executable</li>
+<li>set_matlab_path: sets the path of Matlab’s executable</li>
+<li>get_matlab_standalone_path: returns the path of Matlab Compiler Runtime</li>
+<li>set_matlab_standalone_path: sets the path of Matlab Compiler Runtime</li>
+<li>get_spm_path: returns the path of SPM12 (license version)</li>
+<li>set_spm_path: sets the path of SPM12 (license version)</li>
+<li>get_spm_standalone_path: returns the path of SPM12 (standalone version)</li>
+<li>set_spm_standalone_path: sets the path of SPM12 (standalone version)</li>
+<li>get_matlab_command: return Matlab command</li>
+<li>set_use_spm: sets the value of “use spm” checkbox in the preferences</li>
+<li>get_use_spm: returns the value of “use spm” checkbox in the preferences</li>
+<li>set_use_spm_standalone: sets the value of “use spm standalone” checkbox in the preferences</li>
+<li>get_use_spm_standalone: returns the value of “use spm standalone” checkbox in the preferences</li>
+<li>set_use_matlab: sets the value of “use matlab” checkbox in the preferences</li>
+<li>get_use_matlab: returns the value of “use matlab” checkbox in the preferences</li>
+<li>set_clinical_mode: sets the value of “clinical mode” checkbox in the preferences</li>
+<li>get_clinical_mode: returns the value of “clinical mode” checkbox in the preferences</li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.getBackgroundColor">
 <code class="descname">getBackgroundColor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.getBackgroundColor" title="Permalink to this definition">¶</a></dt>
@@ -246,25 +297,73 @@
 <dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects">
 <em class="property">class </em><code class="descclassname">populse_mia.src.modules.SoftwareProperties.SavedProjects.</code><code class="descname">SavedProjects</code><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that handles all the projects that have been saved in the software</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><ul class="first last simple">
+<li>savedProjects: dictionary of all the saved projects</li>
+<li>maxProjects: maximum projects to display in the “See all project” menu</li>
+<li>pathsList: list of all the saved projects</li>
+</ul>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>loadSavedProjects: loads the dictionary from the saved_projects.yml file</li>
+<li>saveSavedProjects: saves the dictionary to the saved_projects.yml file</li>
+<li>addSavedProject: adds a new saved project</li>
+<li>getList: returns the list of the saved projects</li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.addSavedProject">
 <code class="descname">addSavedProject</code><span class="sig-paren">(</span><em>newPath</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.addSavedProject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds a new saved project</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newPath</strong> – new project’s path to add</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the new path’s list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.getList">
 <code class="descname">getList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.getList" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the list of the saved projects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of the saved projects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.loadSavedProjects">
 <code class="descname">loadSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.loadSavedProjects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Loads the dictionary from the saved_projects.yml file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.saveSavedProjects">
 <code class="descname">saveSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.saveSavedProjects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Saves the dictionary to the saved_projects.yml file</p>
+</dd></dl>
 
 </dd></dl>
 

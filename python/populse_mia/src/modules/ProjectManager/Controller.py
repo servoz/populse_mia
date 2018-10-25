@@ -12,13 +12,17 @@ import json
 import hashlib  # To generate the md5 of each path
 import datetime
 from time import time, sleep
+from datetime import datetime
 
+# PyQt5 imports
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QProgressDialog
-from datetime import datetime
+
+# Populse_MIA imports
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, TYPE_NII
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
+# Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, FIELD_TYPE_TIME, \
     FIELD_TYPE_LIST_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_LIST_FLOAT, \
     FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME

@@ -7,11 +7,24 @@
 ##########################################################################
 
 import os
-
 import yaml
 
 
 class SavedProjects:
+    """
+    Class that handles all the projects that have been saved in the software
+
+    Attributes:
+        - savedProjects: dictionary of all the saved projects
+        - maxProjects: maximum projects to display in the "See all project" menu
+        - pathsList: list of all the saved projects
+
+    Methods:
+        - loadSavedProjects: loads the dictionary from the saved_projects.yml file
+        - saveSavedProjects: saves the dictionary to the saved_projects.yml file
+        - addSavedProject: adds a new saved project
+        - getList: returns the list of the saved projects
+    """
 
     def __init__(self):
         self.savedProjects = self.loadSavedProjects()
@@ -21,6 +34,11 @@ class SavedProjects:
             self.pathsList = []
 
     def loadSavedProjects(self):
+        """
+        Loads the dictionary from the saved_projects.yml file
+
+        :return: the dictionary
+        """
         with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
@@ -28,18 +46,25 @@ class SavedProjects:
                 print(exc)
 
     def saveSavedProjects(self):
+        """
+        Saves the dictionary to the saved_projects.yml file
+        """
         with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.savedProjects, configfile, default_flow_style=False, allow_unicode=True)
 
     def addSavedProject(self, newPath):
+        """
+        Adds a new saved project
+
+        :param newPath: new project's path to add
+        :return: the new path's list
+        """
         if self.pathsList:
             if newPath not in self.pathsList:
                 self.pathsList.insert(0, newPath)
-                #self.pathsList = self.pathsList[:self.maxProjects]
             elif newPath != self.pathsList[0]:
                 self.pathsList.remove(newPath)
                 self.pathsList.insert(0, newPath)
-                #self.pathsList = self.pathsList[:self.maxProjects]
         else:
             self.pathsList.insert(0, newPath)
         self.savedProjects["paths"] = self.pathsList
@@ -47,4 +72,9 @@ class SavedProjects:
         return self.pathsList
 
     def getList(self):
+        """
+        Returns the list of the saved projects
+
+        :return: the list of the saved projects
+        """
         return self.savedProjects["paths"]

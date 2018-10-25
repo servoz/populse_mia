@@ -11,6 +11,53 @@ import yaml
 
 
 class Config:
+    """
+    Object that handles the configuration of the software
+
+    Attributes:
+        - config: dictionary containing the several elements of the config
+
+    Methods:
+        - loadConfig: reads the config in the config.yml file
+        - saveConfig: saves the config to the config.yml file
+        - getPathToProjectsFolder: returns the project's path
+        - getPathData: returns the data's path
+        - getPathToProjectsDBFile: returns the already-saved projects's path
+        - setPathToData: sets the data's path
+        - isAutoSave: checks if auto-save mode is activated
+        - setAutoSave: sets the auto-save mode
+        - getBackgroundColor: returns the background color
+        - setBackgroundColor: sets the background color
+        - getTextColor: return the text color
+        - setTextColor: sets the text color
+        - getShowAllSlices: returns if the "show all slices" checkbox of the mini viewer is activated
+        - setShowAllSlices: sets the "show all slices" checkbox of the mini viewer
+        - getNbAllSlicesMax: returns the maximum number of slices to display in the mini viewer
+        - setNbAllSlicesMax: sets the maximum number of slices to display in the mini viewer
+        - getThumbnailTag: returns the tag that is displayed in the mini viewer
+        - setThumbnailTag: sets the tag that is displayed in the mini viewer
+        - getChainCursors: returns if the "chain cursors" checkbox of the mini viewer is activated
+        - setChainCursors: sets the "chain cursors" checkbox of the mini viewer
+        - get_opened_projects: returns the opened projects
+        - set_opened_projects: sets the opened projects
+        - get_matlab_path: returns the path of Matlab's executable
+        - set_matlab_path: sets the path of Matlab's executable
+        - get_matlab_standalone_path: returns the path of Matlab Compiler Runtime
+        - set_matlab_standalone_path: sets the path of Matlab Compiler Runtime
+        - get_spm_path: returns the path of SPM12 (license version)
+        - set_spm_path: sets the path of SPM12 (license version)
+        - get_spm_standalone_path: returns the path of SPM12 (standalone version)
+        - set_spm_standalone_path: sets the path of SPM12 (standalone version)
+        - get_matlab_command: return Matlab command
+        - set_use_spm: sets the value of "use spm" checkbox in the preferences
+        - get_use_spm: returns the value of "use spm" checkbox in the preferences
+        - set_use_spm_standalone: sets the value of "use spm standalone" checkbox in the preferences
+        - get_use_spm_standalone: returns the value of "use spm standalone" checkbox in the preferences
+        - set_use_matlab: sets the value of "use matlab" checkbox in the preferences
+        - get_use_matlab: returns the value of "use matlab" checkbox in the preferences
+        - set_clinical_mode: sets the value of "clinical mode" checkbox in the preferences
+        - get_clinical_mode: returns the value of "clinical mode" checkbox in the preferences
+    """
 
     def __init__(self):
         self.config = self.loadConfig()
@@ -34,12 +81,12 @@ class Config:
     
     def getPathToProjectsDBFile(self):
         folder = self.getPathToProjectsFolder()
-        return os.path.join(folder,'projects.json')
+        return os.path.join(folder, 'projects.json')
     
     def setPathToData(self,path):
-        if(path is not None and path != ''):
+        if path is not None and path != '':
             self.config["paths"]["data"] = path
-            #Then save the modification
+            # Then save the modification
             self.saveConfig()
 
     def isAutoSave(self):
@@ -47,7 +94,7 @@ class Config:
 
     def setAutoSave(self, save):
         self.config["auto_save"] = save
-        #Then save the modification
+        # Then save the modification
         self.saveConfig()
 
     def getBackgroundColor(self):
