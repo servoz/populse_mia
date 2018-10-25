@@ -9,41 +9,52 @@
 import glob
 import os.path
 import json
-import hashlib # To generate the md5 of each path
+import hashlib  # To generate the md5 of each path
 import datetime
 from time import time, sleep
+
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtWidgets import QProgressDialog, QApplication
+from PyQt5.QtWidgets import QProgressDialog
 from datetime import datetime
 from Project.Project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, TYPE_NII
 from Project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, FIELD_TYPE_TIME, \
     FIELD_TYPE_LIST_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_LIST_FLOAT, \
     FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
 
 def getJsonTagsFromFile(file_path, path):
-   """
-    :return:
-    :param file_path: file path of the Json file
+    """
+    Returns a list of [tag, value] contained in a Json file
+
+    :param file_path: file path of the Json file (without the extension)
     :param path: project path
-    :return: a list of the Json tags of the file"""
-   json_tags = []
-   with open(os.path.join(path, file_path) + ".json") as f:
-       for name,value in json.load(f).items():
+    :return: a list of the Json tags of the file
+    """
+    json_tags = []
+    with open(os.path.join(path, file_path) + ".json") as f:
+        for name, value in json.load(f).items():
             json_tags.append([name, value])
-   return json_tags
+    return json_tags
+
 
 def read_log(project, main_window):
 
-    """ From the log export file of the import software, the data base (here the current project) is loaded with
-    the tags"""
+    """
+    From the log export file of the import software, the data base (here the current project) is loaded with the tags
+
+    :param project: current project in the software
+    :param main_window: software's main window
+    :return: the scans that have been added
+    """
 
     main_window.progress = ImportProgress(project)
     main_window.progress.show()
     main_window.progress.exec()
 
     return main_window.progress.worker.scans_added
+
 
 class ImportProgress(QProgressDialog):
     """
@@ -71,6 +82,7 @@ class ImportProgress(QProgressDialog):
         """
 
         self.setValue(i)
+
 
 class ImportWorker(QThread):
     """
@@ -170,7 +182,8 @@ class ImportWorker(QThread):
                             format = format.replace("mm", "%M")
                             format = format.replace("ss", "%S")
                             format = format.replace("SSS", "%f")
-                            if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and "%M" in format and "%S" in format:
+                            if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and \
+                                    "%M" in format and "%S" in format:
                                 tag_type = FIELD_TYPE_DATETIME
                             elif "%Y" in format and "%m" in format and "%d" in format:
                                 tag_type = FIELD_TYPE_DATE
@@ -201,7 +214,8 @@ class ImportWorker(QThread):
                                     value_prepared.append(value_single[0])
                                 value = value_prepared
 
-                        if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or tag_type == FIELD_TYPE_TIME:
+                        if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or \
+                                tag_type == FIELD_TYPE_TIME:
                             if value is not None and value != "":
                                 value = datetime.strptime(value, format)
                                 if tag_type == FIELD_TYPE_TIME:
@@ -242,7 +256,7 @@ class ImportWorker(QThread):
             if tag.origin == TAG_ORIGIN_USER:
                 for scan in self.scans_added:
                     if tag.default_value is not None and self.project.session.get_value(COLLECTION_CURRENT, scan[0],
-                                                                                   tag.name) is None:
+                                                                                        tag.name) is None:
                         values_added.append(
                             [scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
                         documents[scan][tag.name] = tag.default_value
@@ -276,13 +290,21 @@ class ImportWorker(QThread):
 
         print('\nData export duration in the database:')
         print("read_log time: " + str(round(time() - begin, 2)) + ' s\n')
-        #print("read_log time: " + str(time() - begin))
+        # print("read_log time: " + str(time() - begin))
 
         # pr.disable()
         # pr.print_stats(sort='time')
         # prof.print_stats()
 
+
 def verify_scans(project, path):
+    """
+    Checks if the project's scans have been modified
+
+    :param project: current project in the software
+    :param path:
+    :return: the list of scans that have been modified
+    """
     # Returning the files that are problematic
     return_list = []
     for scan in project.session.get_documents_names(COLLECTION_CURRENT):
@@ -306,5 +328,11 @@ def verify_scans(project, path):
 
     return return_list
 
+
 def save_project(project):
+    """
+    Saves the modifications of the project
+    
+    :param project: current project in the software
+    """
     project.saveModifications()

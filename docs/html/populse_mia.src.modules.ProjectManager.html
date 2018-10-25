@@ -63,7 +63,7 @@
 
 <dl class="method">
 <dt id="populse_mia.src.modules.ProjectManager.Controller.ImportWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -71,20 +71,18 @@
 <dl class="function">
 <dt id="populse_mia.src.modules.ProjectManager.Controller.getJsonTagsFromFile">
 <code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">getJsonTagsFromFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.getJsonTagsFromFile" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Returns a list of [tag, value] contained in a Json file</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_path</strong> – file path of the Json file</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> – file path of the Json file (without the extension)</li>
 <li><strong>path</strong> – project path</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
 </td>
 </tr>
 </tbody>
@@ -94,19 +92,58 @@
 <dl class="function">
 <dt id="populse_mia.src.modules.ProjectManager.Controller.read_log">
 <code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.read_log" title="Permalink to this definition">¶</a></dt>
-<dd><p>From the log export file of the import software, the data base (here the current project) is loaded with
-the tags</p>
+<dd><p>From the log export file of the import software, the data base (here the current project) is loaded with the tags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>main_window</strong> – software’s main window</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scans that have been added</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.ProjectManager.Controller.save_project">
 <code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">save_project</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.save_project" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Saves the modifications of the project</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.ProjectManager.Controller.verify_scans">
 <code class="descclassname">populse_mia.src.modules.ProjectManager.Controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.ProjectManager.Controller.verify_scans" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the project’s scans have been modified</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>path</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the list of scans that have been modified</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-populse_mia.src.modules.ProjectManager">
