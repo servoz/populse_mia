@@ -674,9 +674,13 @@ class PipelineManagerTab(QWidget):
 
         :param pipeline: not None if this method is called from a sub-pipeline
         """
+
+        main_pipeline = False
+
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(self.pipelineEditorTabs.get_current_pipeline())
+            main_pipeline = True
 
         # Test, if it works, comment.
         if hasattr(pipeline, 'pipeline_steps'):
@@ -880,6 +884,15 @@ class PipelineManagerTab(QWidget):
         if hasattr(pipeline, 'pipeline_steps'):
             pipeline.pipeline_steps.on_trait_change(
                 self.pipelineEditorTabs.get_current_editor()._reset_pipeline, dispatch='ui')
+
+        # Updating the node controller
+        if main_pipeline:
+            node_controller_node_name = self.nodeController.node_name
+            if node_controller_node_name in ['inputs', 'outputs']:
+                node_controller_node_name = ''
+            self.nodeController.display_parameters(self.nodeController.node_name,
+                                                   pipeline.nodes[node_controller_node_name].process,
+                                                   pipeline)
 
     def runPipeline(self):
         """
@@ -1091,9 +1104,13 @@ class InitWorker(QThread):
             self.project.saveModifications()
 
     def init_pipeline(self, pipeline):
+
+        main_pipeline = False
+
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(self.diagramView.get_current_pipeline())
+            main_pipeline = True
 
         # Test, if it works, comment.
         if hasattr(pipeline, 'pipeline_steps'):
@@ -1304,6 +1321,15 @@ class InitWorker(QThread):
         if hasattr(pipeline, 'pipeline_steps'):
             pipeline.pipeline_steps.on_trait_change(
                 self.diagramView.get_current_editor()._reset_pipeline, dispatch='ui')
+
+        # Updating the node controller
+        if main_pipeline:
+            node_controller_node_name = self.nodeController.node_name
+            if node_controller_node_name in ['inputs', 'outputs']:
+                node_controller_node_name = ''
+            self.nodeController.display_parameters(self.nodeController.node_name,
+                                                   pipeline.nodes[node_controller_node_name].process,
+                                                   pipeline)
 
     def run(self):
         self.init_pipeline(self.pipeline)
