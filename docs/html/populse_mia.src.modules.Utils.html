@@ -42,7 +42,19 @@
 <dt id="populse_mia.src.modules.Utils.Tools.ClickableLabel">
 <em class="property">class </em><code class="descclassname">populse_mia.src.modules.Utils.Tools.</code><code class="descname">ClickableLabel</code><a class="headerlink" href="#populse_mia.src.modules.Utils.Tools.ClickableLabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QLabel</span></code></p>
-<p>Is called when the user wants to update the tags that are visualized in the data browser</p>
+<p>QLabel with a clicked signal</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><ul class="first last simple">
+<li>clicked: signal to emit when the label is clicked</li>
+</ul>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>mousePressEvent: overrides the mousePressEvent method by emitting the clicked signal</li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="populse_mia.src.modules.Utils.Tools.ClickableLabel.clicked">
 <code class="descname">clicked</code><a class="headerlink" href="#populse_mia.src.modules.Utils.Tools.ClickableLabel.clicked" title="Permalink to this definition">¶</a></dt>
@@ -50,8 +62,17 @@
 
 <dl class="method">
 <dt id="populse_mia.src.modules.Utils.Tools.ClickableLabel.mousePressEvent">
-<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>QMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Tools.ClickableLabel.mousePressEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Tools.ClickableLabel.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides the mousePressEvent method by emitting the clicked signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> – clicked event</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -61,44 +82,97 @@
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.check_value_type">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">check_value_type</code><span class="sig-paren">(</span><em>value</em>, <em>value_type</em>, <em>is_subvalue=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.check_value_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the type of the new value
-:param value: Value of the cell
-:param value_type: Type expected
-:param is_subvalue: To know if the value is a subvalue of a list
-:return: True if the value is valid to replace the old one, False otherwise</p>
+<dd><p>Checks the type of a new value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> – Value of the cell</li>
+<li><strong>value_type</strong> – Type expected</li>
+<li><strong>is_subvalue</strong> – To know if the value is a subvalue of a list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the value is valid to replace the old one, False otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.message_already_exists">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">message_already_exists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.message_already_exists" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Displays a message box to tell that a name already exists</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.set_filters_directory_as_default">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">set_filters_directory_as_default</code><span class="sig-paren">(</span><em>dialog</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.set_filters_directory_as_default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sets the filters directory as default (Json files)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dialog</strong> – current file dialog</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.set_item_data">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">set_item_data</code><span class="sig-paren">(</span><em>item</em>, <em>value</em>, <em>value_type</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.set_item_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the item data
-:param item: item to set
-:param value: new item value
-:param value_type: new value type</p>
+<dd><p>Sets the item data in the data browser</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>item</strong> – item to set</li>
+<li><strong>value</strong> – new item value</li>
+<li><strong>value_type</strong> – new value type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.set_projects_directory_as_default">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">set_projects_directory_as_default</code><span class="sig-paren">(</span><em>dialog</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.set_projects_directory_as_default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sets the projects directory as default</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dialog</strong> – current file dialog</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.src.modules.Utils.Utils.table_to_database">
 <code class="descclassname">populse_mia.src.modules.Utils.Utils.</code><code class="descname">table_to_database</code><span class="sig-paren">(</span><em>value</em>, <em>value_type</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.Utils.Utils.table_to_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares the value to the database
-:param value: Value to convert
-:param value_type: Value type
-:return: The value converted for the database</p>
+<dd><p>Prepares the value to the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> – Value to convert</li>
+<li><strong>value_type</strong> – Value type</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The value converted for the database</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

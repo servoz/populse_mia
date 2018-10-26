@@ -9,11 +9,13 @@
 import ast
 import os
 from datetime import datetime, date, time
-
 import dateutil.parser
+
+# PyQt5 imports
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from PyQt5.QtWidgets import QMessageBox
 
+# Populse_db imports
 from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN, \
     FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, \
     FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, LIST_TYPES, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_BOOLEAN, \
@@ -22,7 +24,8 @@ from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIE
 
 def set_item_data(item, value, value_type):
     """
-    Sets the item data
+    Sets the item data in the data browser
+
     :param item: item to set
     :param value: new item value
     :param value_type: new value type
@@ -91,7 +94,8 @@ def set_item_data(item, value, value_type):
 
 def check_value_type(value, value_type, is_subvalue=False):
     """
-    Checks the type of the new value
+    Checks the type of a new value
+
     :param value: Value of the cell
     :param value_type: Type expected
     :param is_subvalue: To know if the value is a subvalue of a list
@@ -162,6 +166,7 @@ def check_value_type(value, value_type, is_subvalue=False):
 def table_to_database(value, value_type):
     """
     Prepares the value to the database
+
     :param value: Value to convert
     :param value_type: Value type
     :return: The value converted for the database
@@ -210,6 +215,9 @@ def table_to_database(value, value_type):
 
 
 def message_already_exists():
+    """
+    Displays a message box to tell that a name already exists
+    """
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Warning)
     msg.setText("This name already exists in this parent folder")
@@ -220,7 +228,11 @@ def message_already_exists():
 
 
 def set_projects_directory_as_default(dialog):
-    # Setting the projects directory as default
+    """
+    Sets the projects directory as default
+
+    :param dialog: current file dialog
+    """
     if not (os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
         os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
     dialog.setDirectory(
@@ -228,7 +240,11 @@ def set_projects_directory_as_default(dialog):
 
 
 def set_filters_directory_as_default(dialog):
-    # Setting the filters directory as default (Json files)
+    """
+    Sets the filters directory as default (Json files)
+
+    :param dialog: current file dialog
+    """
     if not (os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'filters'))):
         os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'filters'))
     dialog.setDirectory(

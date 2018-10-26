@@ -6,23 +6,28 @@
 # for details.
 ##########################################################################
 
-#! /usr/bin/python3
 # -*- coding: utf-8 -*- # Character encoding, recommended
 
 import sys
 import os
+import yaml
+import pkgutil
+import inspect
 
+# PyQt5 imports
 from PyQt5.QtCore import QDir, QLockFile
 from PyQt5.QtWidgets import QApplication
+
+# Populse_MIA imports
 from MainWindow.Main_Window import Main_Window
 from Project.Project import Project
 from SoftwareProperties.Config import Config
-import pkgutil
-import inspect
+
+# soma-base imports
 from soma.path import find_in_path
-import yaml
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
+# Warning: the "imageViewer" variable corresponds to a MainWindow object
 imageViewer = None
 
 """
