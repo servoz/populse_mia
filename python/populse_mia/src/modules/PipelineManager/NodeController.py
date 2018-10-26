@@ -356,7 +356,7 @@ class NodeController(QWidget):
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
 
-        self.display_parameters(self.node_name, pipeline.nodes[node_name].process, pipeline)
+        # self.display_parameters(self.node_name, pipeline.nodes[node_name].process, pipeline)
 
     def display_filter(self, node_name, plug_name, parameters, process):
         """
