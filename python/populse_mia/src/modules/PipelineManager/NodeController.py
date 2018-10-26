@@ -53,6 +53,7 @@ class NodeController(QWidget):
 
     Methods:
         - display_parameters: displays the parameters of the selected node
+        - update_parameters: updates the parameters values
         - get_index_from_plug_name: returns the index of the plug label
         - update_node_name: updates the name of the selected node
         - update_plug_value: updates the value of a node plug
@@ -103,9 +104,9 @@ class NodeController(QWidget):
         self.line_edit_output = []
         self.labels_input = []
         self.labels_output = []
-        if len(self.children()) > 0:
-            self.clearLayout(self)
 
+        if len(self.v_box_final.children()) > 0:
+            self.clearLayout(self.v_box_final)
         self.v_box_final = QVBoxLayout()
 
         # Node name
@@ -201,6 +202,33 @@ class NodeController(QWidget):
 
         self.setLayout(self.v_box_final)
 
+    def update_parameters(self, process):
+        """
+        Updates the parameters values
+
+        :param process: process of the node
+        """
+        idx = 0
+        for name, trait in process.user_traits().items():
+            if name == 'nodes_activation':
+                continue
+            if not trait.output:
+                try:
+                    value = getattr(process, name)
+                except TraitError:
+                    value = Undefined
+                self.line_edit_input[idx].setText(str(value))
+                idx += 1
+
+        idx = 0
+
+        for name, trait in process.traits(output=True).items():
+            value = getattr(process, name)
+            self.line_edit_output[idx].setText(str(value))
+            idx += 1
+
+        QApplication.processEvents()
+
     def get_index_from_plug_name(self, plug_name, in_or_out):
         """
         Returns the index of the plug label.
@@ -278,8 +306,6 @@ class NodeController(QWidget):
             # Updating the pipeline
             pipeline.update_nodes_and_plugs_activation()
 
-            self.display_parameters(new_node_name, pipeline.nodes[new_node_name].process, pipeline)
-
             # To undo/redo
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
@@ -351,12 +377,8 @@ class NodeController(QWidget):
         elif in_or_out == 'out':
             self.line_edit_output[index].setText(str(new_value))
 
-        # self.display_parameters(node_name, pipeline.nodes[node_name].process, pipeline)
-
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
-
-        # self.display_parameters(self.node_name, pipeline.nodes[node_name].process, pipeline)
 
     def display_filter(self, node_name, plug_name, parameters, process):
         """

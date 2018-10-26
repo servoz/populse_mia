@@ -469,6 +469,28 @@ class PipelineManagerTab(QWidget):
         self.pipelineEditorTabs.undos[self.pipelineEditorTabs.get_current_editor()].append(history_maker)
         self.pipelineEditorTabs.redos[self.pipelineEditorTabs.get_current_editor()].clear()
 
+        if case == "plug_value":
+            node_name = signal_list[0]
+            if node_name in ['inputs', 'outputs']:
+                node_name = ''
+
+        if case == "node_name":
+            node_name = signal_list[1]
+
+        self.nodeController.update_parameters(self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)
+        '''if case == "plug_value":
+            node_name = signal_list[0]
+            if node_name in ['inputs', 'outputs']:
+                node_name = ''
+
+            self.displayNodeParameters(node_name,
+                                       self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)
+
+        if case == "node_name":
+            node_name = signal_list[1]
+            self.displayNodeParameters(node_name,
+                                       self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)'''
+
     def updateProcessLibrary(self, filename):
         """
         Updates the library of processes when a pipeline is saved

@@ -254,6 +254,7 @@ filtering is done, the filter is saved in the process.</p>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>display_parameters: displays the parameters of the selected node</li>
+<li>update_parameters: updates the parameters values</li>
 <li>get_index_from_plug_name: returns the index of the plug label</li>
 <li>update_node_name: updates the name of the selected node</li>
 <li>update_plug_value: updates the value of a node plug</li>
@@ -358,6 +359,20 @@ new links that are the same than the selected node.</p>
 <li><strong>new_node_name</strong> – new node name (is None except when this method is called from an undo/redo)</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.PipelineManager.NodeController.NodeController.update_parameters">
+<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.NodeController.NodeController.update_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the parameters values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>process</strong> – process of the node</td>
 </tr>
 </tbody>
 </table>
