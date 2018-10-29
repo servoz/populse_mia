@@ -58,7 +58,9 @@ The menu on the top left of the Pipeline Manager tab contains several actions im
   * Load pipeline
       * Loads a saved pipeline in a new editor (or in the current editor if there is only one editor and it is empty)
   * Save pipeline
-      * Saves the pipeline of the current editor
+      * Saves the pipeline of the current editor (shortcut: Ctrl+S)
+  * Save pipeline as
+      * Saves the pipeline of the current editor under another name (shortcut: Ctrl+Shift+S)
   * Load pipeline parameters
       * Loads a parameters set and apply them to the pipeline global inputs/outputs
   * Save pipeline parameters

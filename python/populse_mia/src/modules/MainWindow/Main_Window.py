@@ -52,6 +52,8 @@ class Main_Window(QMainWindow):
         - redo: redoes the last action made by the user
         - closeEvent: overrides the closing event to check if there are unsaved modifications
         - remove_raw_files_useless: removes the useless raw files of the current project
+        - save: saves either the current project or the current pipeline
+        - save_as: saves either the current project or the current pipeline under a new name
         - saveChoice: checks if the project needs to be saved as or just saved
         - check_unsaved_modifications: checks if there are differences between the current project and the database
         - create_tabs: creates the tabs
@@ -136,11 +138,13 @@ class Main_Window(QMainWindow):
         self.action_open = QAction('Open project', self)
         self.action_open.setShortcut('Ctrl+O')
 
-        self.action_save = QAction('Save project', self)
+        self.action_save = QAction('Save', self)
         self.action_save.setShortcut('Ctrl+S')
+        self.addAction(self.action_save)
 
-        self.action_save_as = QAction('Save project as', self)
+        self.action_save_as = QAction('Save as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
+        self.addAction(self.action_save_as)
 
         self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
@@ -183,8 +187,8 @@ class Main_Window(QMainWindow):
         self.action_create.triggered.connect(self.create_project_pop_up)
         self.action_open.triggered.connect(self.open_project_pop_up)
         self.action_exit.triggered.connect(self.close)
-        self.action_save.triggered.connect(self.saveChoice)
-        self.action_save_as.triggered.connect(self.save_project_as)
+        self.action_save.triggered.connect(self.save)
+        self.action_save_as.triggered.connect(self.save_as)
         self.action_import.triggered.connect(self.import_data)
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(self.project_properties_pop_up)
@@ -217,8 +221,12 @@ class Main_Window(QMainWindow):
         # Actions in the "File" menu
         self.menu_file.addAction(self.action_create)
         self.menu_file.addAction(self.action_open)
-        self.menu_file.addAction(self.action_save)
-        self.menu_file.addAction(self.action_save_as)
+
+        self.action_save_project = self.menu_file.addAction("Save project")
+        self.action_save_project_as = self.menu_file.addAction("Save project as")
+        self.action_save_project.triggered.connect(self.saveChoice)
+        self.action_save_project_as.triggered.connect(self.save_project_as)
+
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
@@ -339,6 +347,27 @@ class Main_Window(QMainWindow):
                 if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
                     os.remove(filename)
             self.project.database.__exit__(None, None, None)
+
+    def save(self):
+        """
+        Saves either the current project or the current pipeline
+        """
+
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.saveChoice()
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            self.pipeline_manager.savePipeline()
+
+    def save_as(self):
+        """
+        Saves either the current project or the current pipeline under a new name
+        """
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.save_project_as()
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            self.pipeline_manager.savePipelineAs()
 
     def saveChoice(self):
         """
