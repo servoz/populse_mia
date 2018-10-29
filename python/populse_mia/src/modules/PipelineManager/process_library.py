@@ -1375,8 +1375,7 @@ class InstallProcesses(QDialog):
 
             elif os.path.isdir(filename):  # !!! careful: if filename is not a zip file, filename must be a directory
                 # that contains only the package(s) to install!!!
-                packages_name = [member for member in os.listdir(filename) if os.path.isdir(os.path.join(filename,
-                                                                                                         member))]
+                packages_name = [os.path.basename(filename)]
 
             for package_name in packages_name:  # package_name: package(s) in the zip file or in folder; one by one
 
@@ -1399,7 +1398,7 @@ class InstallProcesses(QDialog):
                             zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
 
                     elif os.path.isdir(filename):
-                        distutils.dir_util.copy_tree(os.path.join(filename, package_name),
+                        distutils.dir_util.copy_tree(os.path.join(filename),
                                                      os.path.join('..', '..', 'processes', package_name))
 
                 else:
@@ -1416,7 +1415,7 @@ class InstallProcesses(QDialog):
                                         os.path.join('..', '..', 'processes', package_name + '_' + date))
 
                     elif os.path.isdir(filename):
-                        shutil.copytree(os.path.join(filename, package_name),
+                        shutil.copytree(os.path.join(filename),
                                         os.path.join('..', '..', 'processes', package_name + '_' + date))
 
                     original_package_name = package_name
