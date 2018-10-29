@@ -15,6 +15,9 @@ import dateutil.parser
 from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from PyQt5.QtWidgets import QMessageBox
 
+# Populse_MIA imports
+from SoftwareProperties.Config import Config
+
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN, \
     FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_DATE, FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME, \
@@ -233,10 +236,11 @@ def set_projects_directory_as_default(dialog):
 
     :param dialog: current file dialog
     """
-    if not (os.path.exists(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))):
-        os.makedirs(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects'))
-    dialog.setDirectory(
-        os.path.expanduser(os.path.join(os.path.join(os.path.relpath(os.curdir), '..', '..'), 'projects')))
+    config = Config()
+    projects_directory = config.get_projects_save_path()
+    if not os.path.exists(projects_directory):
+        os.makedirs(projects_directory)
+    dialog.setDirectory(projects_directory)
 
 
 def set_filters_directory_as_default(dialog):
