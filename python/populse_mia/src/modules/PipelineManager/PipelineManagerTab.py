@@ -583,6 +583,8 @@ class PipelineManagerTab(QWidget):
         """
         self.pipelineEditorTabs.load_pipeline_parameters()
 
+        self.nodeController.update_parameters()
+
     def saveParameters(self):
         """
         Save the pipeline parameters of the the current pipeline of the pipeline editor

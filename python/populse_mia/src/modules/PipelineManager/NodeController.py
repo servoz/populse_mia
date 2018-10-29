@@ -99,14 +99,17 @@ class NodeController(QWidget):
         """
 
         self.node_name = node_name
+        self.current_process = process
 
         self.line_edit_input = []
         self.line_edit_output = []
         self.labels_input = []
         self.labels_output = []
 
-        if len(self.v_box_final.children()) > 0:
-            self.clearLayout(self.v_box_final)
+        # Refreshing the layouts
+        if len(self.children()) > 0:
+            self.clearLayout(self)
+
         self.v_box_final = QVBoxLayout()
 
         # Node name
@@ -202,12 +205,19 @@ class NodeController(QWidget):
 
         self.setLayout(self.v_box_final)
 
-    def update_parameters(self, process):
+    def update_parameters(self, process=None):
         """
         Updates the parameters values
 
         :param process: process of the node
         """
+
+        if process is None:
+            try:
+                process = self.current_process
+            except AttributeError:
+                return  # if no node has been clicked, no need to update the widget
+
         idx = 0
         for name, trait in process.user_traits().items():
             if name == 'nodes_activation':
