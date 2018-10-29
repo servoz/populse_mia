@@ -2976,7 +2976,11 @@ class PipelineDevelopperView(QGraphicsView):
         del self.click_pos
 
     def enableNode(self, checked):
-        self.scene.pipeline.nodes[self.current_node_name].enabled = checked
+        if self.current_node_name in ['inputs', 'outputs']:
+            node_name = ''
+        else:
+            node_name = self.current_node_name
+        self.scene.pipeline.nodes[node_name].enabled = checked
 
     def enable_step(self, step_name, state):
         setattr(self.scene.pipeline.pipeline_steps, step_name, state)

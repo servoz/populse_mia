@@ -357,6 +357,7 @@ class Main_Window(QMainWindow):
             # In Data Browser
             self.saveChoice()
         elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
             self.pipeline_manager.savePipeline()
 
     def save_as(self):
@@ -367,6 +368,7 @@ class Main_Window(QMainWindow):
             # In Data Browser
             self.save_project_as()
         elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
             self.pipeline_manager.savePipelineAs()
 
     def saveChoice(self):
