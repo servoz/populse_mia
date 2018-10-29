@@ -15,7 +15,7 @@ import pkgutil
 import inspect
 
 # PyQt5 imports
-from PyQt5.QtCore import QDir, QLockFile
+from PyQt5.QtCore import QDir, QLockFile, Qt
 from PyQt5.QtWidgets import QApplication
 
 # Populse_MIA imports
@@ -187,6 +187,7 @@ def verify_processes():
 def verify_saved_projects():
     """
     Verifies if the projects saved in saved_projects.yml are still on the disk
+
     :return: the list of the deleted projects
     """
     saved_projects_object = SavedProjects()
@@ -199,8 +200,12 @@ def verify_saved_projects():
 
     return deleted_projects
 
+
 def launch_mia():
     global imageViewer
+
+    app = QApplication(sys.argv)
+    QApplication.setOverrideCursor(Qt.WaitCursor)
 
     def my_excepthook(type, value, tback):
         # log the exception here
@@ -232,7 +237,6 @@ def launch_mia():
 
     deleted_projects = verify_saved_projects()
 
-    app = QApplication(sys.argv)
     project = Project(None, True)
     imageViewer = Main_Window(project, deleted_projects=deleted_projects)
     imageViewer.show()

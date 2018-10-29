@@ -15,7 +15,7 @@ import glob
 
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton
+from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton, QApplication
 
 # Populse_MIA imports
 from SoftwareProperties.SavedProjects import SavedProjects
@@ -77,6 +77,8 @@ class Main_Window(QMainWindow):
     def __init__(self, project, test=False, deleted_projects=None):
 
         super(Main_Window, self).__init__()
+
+        QApplication.restoreOverrideCursor()
 
         if deleted_projects is not None and deleted_projects:
             message = "These projects have been deleted:\n"
