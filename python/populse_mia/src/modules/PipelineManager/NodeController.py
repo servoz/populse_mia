@@ -237,8 +237,6 @@ class NodeController(QWidget):
             self.line_edit_output[idx].setText(str(value))
             idx += 1
 
-        QApplication.processEvents()
-
     def get_index_from_plug_name(self, plug_name, in_or_out):
         """
         Returns the index of the plug label.

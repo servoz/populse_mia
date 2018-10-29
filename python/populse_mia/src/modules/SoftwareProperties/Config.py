@@ -57,6 +57,8 @@ class Config:
         - get_use_matlab: returns the value of "use matlab" checkbox in the preferences
         - set_clinical_mode: sets the value of "clinical mode" checkbox in the preferences
         - get_clinical_mode: returns the value of "clinical mode" checkbox in the preferences
+        - set_projects_save_path: sets the folder where the projects are saved
+        - get_projects_save_path: returns the folder where the projects are saved
     """
 
     def __init__(self):
@@ -246,3 +248,27 @@ class Config:
             return self.config["clinical_mode"]
         except KeyError:
             return "yes"
+
+    def set_projects_save_path(self, path):
+        self.config["projects_save_path"] = path
+        # Then save the modification
+        self.saveConfig()
+
+    def get_projects_save_path(self):
+        try:
+            return self.config["projects_save_path"]
+        except KeyError:
+            if not os.path.isdir(os.path.join('..', '..', 'projects')):
+                os.mkdir(os.path.join('..', '..', 'projects'))
+            return os.path.join('..', '..', 'projects')
+
+    def set_max_projects(self, max_projects):
+        self.config["max_projects"] = max_projects
+        # Then save the modification
+        self.saveConfig()
+
+    def get_max_projects(self):
+        try:
+            return float(self.config["max_projects"])
+        except KeyError:
+            return 5.0

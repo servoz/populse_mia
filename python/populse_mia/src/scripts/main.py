@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QApplication
 from MainWindow.Main_Window import Main_Window
 from Project.Project import Project
 from SoftwareProperties.Config import Config
+from SoftwareProperties.SavedProjects import SavedProjects
 
 # soma-base imports
 from soma.path import find_in_path
@@ -183,6 +184,21 @@ def verify_processes():
             yaml.dump(final_pkgs, stream, default_flow_style=False, allow_unicode=True)
 
 
+def verify_saved_projects():
+    """
+    Verifies if the projects saved in saved_projects.yml are still on the disk
+    :return: the list of the deleted projects
+    """
+    saved_projects_object = SavedProjects()
+    saved_projects_list = saved_projects_object.pathsList
+    deleted_projects = []
+    for saved_project in saved_projects_list:
+        if not os.path.isdir(saved_project):
+            deleted_projects.append(saved_project)
+            saved_projects_object.removeSavedProject(saved_project)
+
+    return deleted_projects
+
 def launch_mia():
     global imageViewer
 
@@ -214,9 +230,11 @@ def launch_mia():
         config = Config()
         config.set_opened_projects([])
 
+    deleted_projects = verify_saved_projects()
+
     app = QApplication(sys.argv)
     project = Project(None, True)
-    imageViewer = Main_Window(project)
+    imageViewer = Main_Window(project, deleted_projects=deleted_projects)
     imageViewer.show()
     app.exec()
 

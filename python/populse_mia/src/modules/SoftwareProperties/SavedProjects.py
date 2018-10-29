@@ -23,6 +23,7 @@ class SavedProjects:
         - loadSavedProjects: loads the dictionary from the saved_projects.yml file
         - saveSavedProjects: saves the dictionary to the saved_projects.yml file
         - addSavedProject: adds a new saved project
+        - removeSavedProject: removes a saved project from the config file
         - getList: returns the list of the saved projects
     """
 
@@ -70,6 +71,18 @@ class SavedProjects:
         self.savedProjects["paths"] = self.pathsList
         self.saveSavedProjects()
         return self.pathsList
+
+    def removeSavedProject(self, path):
+        """
+        Removes a saved project from the config file
+
+        :param path: path of the saved project to remove
+        """
+
+        if path in self.savedProjects["paths"]:
+            self.savedProjects["paths"].remove(path)
+
+        self.saveSavedProjects()
 
     def getList(self):
         """

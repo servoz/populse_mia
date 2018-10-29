@@ -300,6 +300,7 @@ class PipelineManagerTab(QWidget):
                 c_e.add_link(source, dest, active, weak, from_undo=True)
 
             c_e.scene.pipeline.update_nodes_and_plugs_activation()
+            self.nodeController.update_parameters()
 
     def redo(self):
         """
@@ -397,6 +398,7 @@ class PipelineManagerTab(QWidget):
                 c_e.add_link(source, dest, active, weak, from_redo=True)
 
             c_e.scene.pipeline.update_nodes_and_plugs_activation()
+            self.nodeController.update_parameters()
 
     def update_clinical_mode(self):
         """

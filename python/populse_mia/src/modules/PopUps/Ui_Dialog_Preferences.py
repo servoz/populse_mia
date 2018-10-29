@@ -91,6 +91,83 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.groupbox_global.setLayout(v_box_global)
 
+        # Groupbox "Projects preferences"
+        self.groupbox_projects = QtWidgets.QGroupBox("Projects preferences")
+
+        # Projects folder label/line edit
+        self.projects_save_path_label = QLabel("Projects folder:")
+        self.projects_save_path_line_edit = QLineEdit(config.get_projects_save_path())
+        self.projects_save_path_browse = QPushButton("Browse")
+        self.projects_save_path_browse.clicked.connect(self.browse_projects_save_path)
+
+        # Max projects in "Saved projects"
+        self.max_projects_label = QLabel('Number of projects in "Saved projects":')
+        self.max_projects_box = QtWidgets.QDoubleSpinBox()
+        self.max_projects_box.setMinimum(1.0)
+        self.max_projects_box.setMaximum(20.0)
+        self.max_projects_box.setValue(config.get_max_projects())
+        self.max_projects_box.setDecimals(0)
+        self.max_projects_box.setSingleStep(1.0)
+
+        # Projects preferences layouts
+        h_box_projects_save = QtWidgets.QHBoxLayout()
+        h_box_projects_save.addWidget(self.projects_save_path_line_edit)
+        h_box_projects_save.addWidget(self.projects_save_path_browse)
+
+        v_box_projects_save = QtWidgets.QVBoxLayout()
+        v_box_projects_save.addWidget(self.projects_save_path_label)
+        v_box_projects_save.addLayout(h_box_projects_save)
+
+        h_box_max_projects = QtWidgets.QHBoxLayout()
+        h_box_max_projects.addWidget(self.max_projects_box)
+        h_box_max_projects.addStretch(1)
+
+        v_box_max_projects = QtWidgets.QVBoxLayout()
+        v_box_max_projects.addWidget(self.max_projects_label)
+        v_box_max_projects.addLayout(h_box_max_projects)
+
+        projects_layout = QVBoxLayout()
+        projects_layout.addLayout(v_box_projects_save)
+        projects_layout.addLayout(v_box_max_projects)
+
+        self.groupbox_projects.setLayout(projects_layout)
+
+        # Final tab layouts
+        h_box_top = QtWidgets.QHBoxLayout()
+        h_box_top.addWidget(self.groupbox_global)
+        h_box_top.addStretch(1)
+
+        self.tab_tools_layout = QtWidgets.QVBoxLayout()
+        self.tab_tools_layout.addLayout(h_box_top)
+        self.tab_tools_layout.addWidget(self.groupbox_projects)
+        self.tab_tools_layout.addStretch(1)
+        self.tab_tools.setLayout(self.tab_tools_layout)
+
+        # The 'OK' push button
+        self.push_button_ok = QtWidgets.QPushButton("OK")
+        self.push_button_ok.setObjectName("pushButton_ok")
+        self.push_button_ok.clicked.connect(partial(self.ok_clicked, main_window))
+
+        # The 'Cancel' push button
+        self.push_button_cancel = QtWidgets.QPushButton("Cancel")
+        self.push_button_cancel.setObjectName("pushButton_cancel")
+        self.push_button_cancel.clicked.connect(self.close)
+
+        # Buttons layouts
+        hbox_buttons = QHBoxLayout()
+        hbox_buttons.addStretch(1)
+        hbox_buttons.addWidget(self.push_button_ok)
+        hbox_buttons.addWidget(self.push_button_cancel)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.tab_widget)
+        vbox.addLayout(hbox_buttons)
+
+        # The 'Pipeline' tab
+        self.tab_pipeline = QtWidgets.QWidget()
+        self.tab_pipeline.setObjectName("tab_appearance")
+        self.tab_widget.addTab(self.tab_pipeline, _translate("Dialog", "Pipeline"))
+
         # Groupbox "Matlab"
         self.groupbox_matlab = QtWidgets.QGroupBox("Matlab")
         self.use_matlab_label = QLabel("Use Matlab")
@@ -202,39 +279,13 @@ class Ui_Dialog_Preferences(QDialog):
 
         self.groupbox_spm.setLayout(v_box_spm)
 
-        # Final tab layouts
-        h_box_top = QtWidgets.QHBoxLayout()
-        h_box_top.addWidget(self.groupbox_global)
-        h_box_top.addStretch(1)
+        self.tab_pipeline_layout = QtWidgets.QVBoxLayout()
+        self.tab_pipeline_layout.addWidget(self.groupbox_matlab)
+        self.tab_pipeline_layout.addWidget(self.groupbox_spm)
+        self.tab_pipeline_layout.addStretch(1)
+        self.tab_pipeline.setLayout(self.tab_pipeline_layout)
 
-        self.tab_tools_layout = QtWidgets.QVBoxLayout()
-        self.tab_tools_layout.addLayout(h_box_top)
-        self.tab_tools_layout.addWidget(self.groupbox_matlab)
-        self.tab_tools_layout.addWidget(self.groupbox_spm)
-        self.tab_tools_layout.addStretch(1)
-        self.tab_tools.setLayout(self.tab_tools_layout)
-
-        # The 'OK' push button
-        self.push_button_ok = QtWidgets.QPushButton("OK")
-        self.push_button_ok.setObjectName("pushButton_ok")
-        self.push_button_ok.clicked.connect(partial(self.ok_clicked, main_window))
-
-        # The 'Cancel' push button
-        self.push_button_cancel = QtWidgets.QPushButton("Cancel")
-        self.push_button_cancel.setObjectName("pushButton_cancel")
-        self.push_button_cancel.clicked.connect(self.close)
-
-        # Buttons ayouts
-        hbox_buttons = QHBoxLayout()
-        hbox_buttons.addStretch(1)
-        hbox_buttons.addWidget(self.push_button_ok)
-        hbox_buttons.addWidget(self.push_button_cancel)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.tab_widget)
-        vbox.addLayout(hbox_buttons)
-
-        # The 'Appearance" tab
+        # The 'Appearance' tab
         self.tab_appearance = QtWidgets.QWidget()
         self.tab_appearance.setObjectName("tab_appearance")
         self.tab_widget.addTab(self.tab_appearance, _translate("Dialog", "Appearance"))
@@ -283,6 +334,15 @@ class Ui_Dialog_Preferences(QDialog):
         self.use_matlab_checkbox.stateChanged.connect(self.use_matlab_changed)
         self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
         self.use_spm_standalone_checkbox.stateChanged.connect(self.use_spm_standalone_changed)
+
+    def browse_projects_save_path(self):
+        """
+        Called when "Projects folder" browse button is clicked
+        """
+
+        fname = QFileDialog.getExistingDirectory(self, 'Select a folder where to save the projects')
+        if fname:
+            self.projects_save_path_line_edit.setText(fname)
 
     def use_spm_standalone_changed(self):
         """
@@ -397,6 +457,25 @@ class Ui_Dialog_Preferences(QDialog):
             config.setAutoSave("yes")
         else:
             config.setAutoSave("no")
+
+        # Projects folder
+        projects_folder = self.projects_save_path_line_edit.text()
+        if os.path.isdir(projects_folder):
+            config.set_projects_save_path(projects_folder)
+        else:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Invalid projects folder path")
+            self.msg.setInformativeText("The projects folder path entered {0} is invalid.".format(projects_folder))
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
+        # Max projects in "Saved projects"
+        max_projects = min(max(self.max_projects_box.value(), 1.0), 20.0)
+        config.set_max_projects(max_projects)
 
         # Use Matlab
         if self.use_matlab_checkbox.isChecked():

@@ -974,6 +974,10 @@ class TestMIADataBrowser(unittest.TestCase):
         auto_save = config.isAutoSave()
         self.assertEqual(auto_save, "no")
 
+        # Checking that the values for the "Projects preferences" are well set
+        self.assertEqual(config.get_max_projects(), 5.0)
+        self.assertEqual(config.get_projects_save_path(), os.path.join('..', '..', 'projects'))
+
     def test_undo_redo_databrowser(self):
         """
         Tests the databrowser undo/redo

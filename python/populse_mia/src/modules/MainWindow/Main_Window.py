@@ -74,9 +74,23 @@ class Main_Window(QMainWindow):
         - tab_changed: method called when the tab is changed
 
     """
-    def __init__(self, project, test=False):
+    def __init__(self, project, test=False, deleted_projects=None):
 
         super(Main_Window, self).__init__()
+
+        if deleted_projects is not None and deleted_projects:
+            message = "These projects have been deleted:\n"
+            for deleted_project in deleted_projects:
+                message += "- {0}\n".format(deleted_project)
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Deleted projects")
+            msg.setInformativeText(message)
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
         self.project = project
         self.test = test
