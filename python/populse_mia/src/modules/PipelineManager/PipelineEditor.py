@@ -43,6 +43,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     Attributes:
         - project: current project in the software
         - scan_list: list of the selected database files
+        - main_window: main window of the software
         - undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab
         - redos: dictionary containing as values the redo list and as keys the name of the corresponding tab
 
@@ -81,16 +82,18 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     node_clicked = QtCore.pyqtSignal(str, Process)
     switch_clicked = QtCore.pyqtSignal(str, Switch)
 
-    def __init__(self, project, scan_list):
+    def __init__(self, project, scan_list, main_window):
         """
         Initialization of the Pipeline Editor tabs
 
         :param project: current project in the software
         :param scan_list: list of the selected database files
+        :param main_window: main window of the software
         """
         super(PipelineEditorTabs, self).__init__()
 
         self.project = project
+        self.main_window = main_window
         self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;text-align: center;color:black;}')
         self.setTabsClosable(True)
         self.tabCloseRequested.connect(self.close_tab)
@@ -99,7 +102,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.undos = {}
         self.redos = {}
 
-        p_e = PipelineEditor(self.project)
+        p_e = PipelineEditor(self.project, self.main_window)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.switch_clicked.connect(self.emit_switch_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
@@ -132,7 +135,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         # Creating a new editor
-        p_e = PipelineEditor(self.project)
+        p_e = PipelineEditor(self.project, self.main_window)
         p_e.node_clicked.connect(self.emit_node_clicked)
         p_e.switch_clicked.connect(self.emit_switch_clicked)
         p_e.pipeline_saved.connect(self.emit_pipeline_saved)
@@ -199,7 +202,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         # If there is no more editor, adding one
         if self.count() == 1:
-            p_e = PipelineEditor(self.project)
+            p_e = PipelineEditor(self.project, self.main_window)
             p_e.node_clicked.connect(self.emit_node_clicked)
             p_e.switch_clicked.connect(self.emit_switch_clicked)
             p_e.pipeline_saved.connect(self.emit_pipeline_saved)
@@ -618,6 +621,8 @@ class PipelineEditor(PipelineDevelopperView):
     View to edit a pipeline graphically
 
     Attributes:
+        - project: current project in the software
+        - main_window: main window of the software
         - undos: list of actions to undo
         - redos: list of actions to redo
 
@@ -645,7 +650,7 @@ class PipelineEditor(PipelineDevelopperView):
     pipeline_saved = QtCore.pyqtSignal(str)
     pipeline_modified = QtCore.pyqtSignal(PipelineDevelopperView)
 
-    def __init__(self, project):
+    def __init__(self, project, main_window):
         """
         Initialization of the PipelineEditor
 
@@ -656,6 +661,7 @@ class PipelineEditor(PipelineDevelopperView):
                                         show_sub_pipelines=True, enable_edition=True)
 
         self.project = project
+        self.main_window = main_window
 
         # Undo/Redo
         self.undos = []
@@ -711,7 +717,9 @@ class PipelineEditor(PipelineDevelopperView):
                     print(e)
                     return
                 else:
+                    QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
                     self.add_process(instance)
+                    QtGui.QApplication.restoreOverrideCursor()
 
     def update_history(self, history_maker, from_undo, from_redo):
         """
@@ -803,6 +811,8 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+        self.main_window.statusBar().showMessage("Node {0} has been added.".format(node_name))
+
     def del_node(self, node_name=None, from_undo=False, from_redo=False):
         """
         Deletes a node
@@ -867,6 +877,8 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+        self.main_window.statusBar().showMessage("Node {0} has been deleted.".format(node_name))
+
     def _release_grab_link(self, event, ret=False):
         """
         Method called when a link is released
@@ -881,6 +893,8 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = ["add_link", link]
 
         self.update_history(history_maker, from_undo=False, from_redo=False)
+
+        self.main_window.statusBar().showMessage('Link {0} has been added.'.format(link))
 
     def add_link(self, source, dest, active, weak, from_undo=False, from_redo=False):
         """
@@ -908,6 +922,8 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = ["add_link", link]
 
         self.update_history(history_maker, from_undo, from_redo)
+
+        self.main_window.statusBar().showMessage('Link {0} has been added.'.format(link))
 
     def _del_link(self, link=None, from_undo=False, from_redo=False):
         """
@@ -940,6 +956,8 @@ class PipelineEditor(PipelineDevelopperView):
                          (dest_node_name, dest_plug_name), active, weak_link]
 
         self.update_history(history_maker, from_undo, from_redo)
+
+        self.main_window.statusBar().showMessage('Link {0} has been deleted.'.format(link))
 
     def update_node_name(self, old_node, old_node_name, new_node_name, from_undo=False, from_redo=False):
         """
@@ -992,6 +1010,9 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+        self.main_window.statusBar().showMessage('Node name "{0}" has been changed to "{1}".'.format(old_node_name,
+                                                                                                     new_node_name))
+
     def update_plug_value(self, node_name, new_value, plug_name, value_type, from_undo=False, from_redo=False):
         """
         Updates a plug value
@@ -1011,6 +1032,9 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = ["update_plug_value", node_name, old_value, plug_name, value_type]
 
         self.update_history(history_maker, from_undo, from_redo)
+
+        self.main_window.statusBar().showMessage(
+            'Plug "{0}" of node "{1}" has been changed to "{2}".'.format(plug_name, node_name, new_value))
 
     def _export_plug(self, pipeline_parameter=False, optional=None,
                      weak_link=None, from_undo=False, from_redo=False,
@@ -1071,6 +1095,8 @@ class PipelineEditor(PipelineDevelopperView):
 
         self.update_history(history_maker, from_undo, from_redo)
 
+        self.main_window.statusBar().showMessage("Plug {0} has been exported.".format(temp_plug_name[1]))
+
     def export_node_plugs(self, node_name, inputs=True, outputs=True,
                           optional=False, from_undo=False, from_redo=False):
         """
@@ -1093,7 +1119,7 @@ class PipelineEditor(PipelineDevelopperView):
             if (((node_name, parameter_name) not in pipeline.do_not_export and
                 ((outputs and plug.output and not plug.links_to) or
                     (inputs and not plug.output and not plug.links_from)) and
-                (optional or not node.get_trait(parameter_name).optional))):
+                 (optional or not node.get_trait(parameter_name).optional))):
                 try:
                     pipeline.export_parameter(node_name, parameter_name)
                     parameter_list.append(parameter_name)
@@ -1104,6 +1130,8 @@ class PipelineEditor(PipelineDevelopperView):
         history_maker = ["export_plugs", parameter_list, node_name]
 
         self.update_history(history_maker, from_undo, from_redo)
+
+        self.main_window.statusBar().showMessage("Plugs {0} have been exported.".format(str(parameter_list)))
 
     def _remove_plug(self, _temp_plug_name=None, from_undo=False, from_redo=False, from_export_plugs=False):
         """
@@ -1144,6 +1172,8 @@ class PipelineEditor(PipelineDevelopperView):
                 history_maker = ["remove_plug", _temp_plug_name, new_temp_plugs, optional]
 
                 self.update_history(history_maker, from_undo, from_redo)
+
+                self.main_window.statusBar().showMessage("Plug {0} has been removed.".format(_temp_plug_name[1]))
 
     def check_modifications(self):
         """

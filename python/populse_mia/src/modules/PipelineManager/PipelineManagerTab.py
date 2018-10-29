@@ -110,7 +110,7 @@ class PipelineManagerTab(QWidget):
         self.processLibrary = ProcessLibraryWidget(self.main_window)
 
         # self.diagramScene = DiagramScene(self)
-        self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list)
+        self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list, self.main_window)
         self.pipelineEditorTabs.node_clicked.connect(self.displayNodeParameters)
         self.pipelineEditorTabs.switch_clicked.connect(self.displayNodeParameters)
         self.pipelineEditorTabs.pipeline_saved.connect(self.updateProcessLibrary)
@@ -245,14 +245,15 @@ class PipelineManagerTab(QWidget):
                 for parameter in parameter_list:
                     temp_plug_name = ('inputs', parameter)
                     c_e._remove_plug(_temp_plug_name=temp_plug_name, from_undo=True, from_export_plugs=True)
+                self.main_window.statusBar().showMessage("Plugs {0} have been removed.".format(str(parameter_list)))
 
             elif action == "remove_plug":
                 temp_plug_name = to_undo[1]
                 new_temp_plugs = to_undo[2]
                 optional = to_undo[3]
                 c_e._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
-                                                                          optional=optional, from_undo=True,
-                                                                          pipeline_parameter=temp_plug_name[1])
+                                 optional=optional, from_undo=True,
+                                 pipeline_parameter=temp_plug_name[1])
 
                 # Connecting all the plugs that were connected to the original plugs
                 for plug_tuple in new_temp_plugs:
@@ -298,6 +299,7 @@ class PipelineManagerTab(QWidget):
                 active = to_undo[3]
                 weak = to_undo[4]
                 c_e.add_link(source, dest, active, weak, from_undo=True)
+                link = source[0] + "." + source[1] + "->" + dest[0] + "." + dest[1]
 
             c_e.scene.pipeline.update_nodes_and_plugs_activation()
             self.nodeController.update_parameters()
@@ -349,8 +351,8 @@ class PipelineManagerTab(QWidget):
                 new_temp_plugs = to_redo[2]
                 optional = to_redo[3]
                 c_e._export_plug(temp_plug_name=new_temp_plugs[0], weak_link=False,
-                                                                          optional=optional, from_redo=True,
-                                                                          pipeline_parameter=temp_plug_name[1])
+                                 optional=optional, from_redo=True,
+                                 pipeline_parameter=temp_plug_name[1])
 
                 # Connecting all the plugs that were connected to the original plugs
                 for plug_tuple in new_temp_plugs:
@@ -396,6 +398,7 @@ class PipelineManagerTab(QWidget):
                 active = to_redo[3]
                 weak = to_redo[4]
                 c_e.add_link(source, dest, active, weak, from_redo=True)
+                link = source[0] + "." + source[1] + "->" + dest[0] + "." + dest[1]
 
             c_e.scene.pipeline.update_nodes_and_plugs_activation()
             self.nodeController.update_parameters()
@@ -480,18 +483,6 @@ class PipelineManagerTab(QWidget):
             node_name = signal_list[1]
 
         self.nodeController.update_parameters(self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)
-        '''if case == "plug_value":
-            node_name = signal_list[0]
-            if node_name in ['inputs', 'outputs']:
-                node_name = ''
-
-            self.displayNodeParameters(node_name,
-                                       self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)
-
-        if case == "node_name":
-            node_name = signal_list[1]
-            self.displayNodeParameters(node_name,
-                                       self.pipelineEditorTabs.get_current_pipeline().nodes[node_name].process)'''
 
     def updateProcessLibrary(self, filename):
         """

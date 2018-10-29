@@ -317,6 +317,9 @@ class NodeController(QWidget):
             # To undo/redo
             self.value_changed.emit(["node_name", pipeline.nodes[new_node_name], new_node_name, old_node_name])
 
+            self.main_window.statusBar().showMessage('Node name "{0}" has been changed to "{1}".'.format(old_node_name,
+                                                                                                         new_node_name))
+
     def update_plug_value(self, in_or_out, plug_name, pipeline, value_type, new_value=None):
         """
         Updates the value of a node plug
@@ -387,6 +390,9 @@ class NodeController(QWidget):
 
         # To undo/redo
         self.value_changed.emit(["plug_value", self.node_name, old_value, plug_name, value_type, new_value])
+
+        self.main_window.statusBar().showMessage(
+            'Plug "{0}" of node "{1}" has been changed to "{2}".'.format(plug_name, node_name, new_value))
 
     def display_filter(self, node_name, plug_name, parameters, process):
         """

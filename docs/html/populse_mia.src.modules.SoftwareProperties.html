@@ -90,6 +90,10 @@
 <li>get_use_matlab: returns the value of “use matlab” checkbox in the preferences</li>
 <li>set_clinical_mode: sets the value of “clinical mode” checkbox in the preferences</li>
 <li>get_clinical_mode: returns the value of “clinical mode” checkbox in the preferences</li>
+<li>set_projects_save_path: sets the folder where the projects are saved</li>
+<li>get_projects_save_path: returns the folder where the projects are saved</li>
+<li>set_max_projects: sets the maximum number of projects displayed in the “Saved projects” menu</li>
+<li>get_max_projects: returns the maximum number of projects displayed in the “Saved projects” menu</li>
 </ul>
 </dd>
 </dl>
@@ -159,8 +163,18 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.get_max_projects">
+<code class="descname">get_max_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.get_max_projects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.get_opened_projects">
 <code class="descname">get_opened_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.get_opened_projects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.get_projects_save_path">
+<code class="descname">get_projects_save_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.get_projects_save_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -259,8 +273,18 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.set_max_projects">
+<code class="descname">set_max_projects</code><span class="sig-paren">(</span><em>max_projects</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.set_max_projects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.set_opened_projects">
 <code class="descname">set_opened_projects</code><span class="sig-paren">(</span><em>new_projects</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.set_opened_projects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.SoftwareProperties.Config.Config.set_projects_save_path">
+<code class="descname">set_projects_save_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.Config.Config.set_projects_save_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -311,6 +335,7 @@
 <li>loadSavedProjects: loads the dictionary from the saved_projects.yml file</li>
 <li>saveSavedProjects: saves the dictionary to the saved_projects.yml file</li>
 <li>addSavedProject: adds a new saved project</li>
+<li>removeSavedProject: removes a saved project from the config file</li>
 <li>getList: returns the list of the saved projects</li>
 </ul>
 </dd>
@@ -354,6 +379,20 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.removeSavedProject">
+<code class="descname">removeSavedProject</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.SoftwareProperties.SavedProjects.SavedProjects.removeSavedProject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a saved project from the config file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path of the saved project to remove</td>
 </tr>
 </tbody>
 </table>

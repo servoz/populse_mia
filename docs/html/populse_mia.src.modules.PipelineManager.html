@@ -366,7 +366,7 @@ new links that are the same than the selected node.</p>
 
 <dl class="method">
 <dt id="populse_mia.src.modules.PipelineManager.NodeController.NodeController.update_parameters">
-<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.NodeController.NodeController.update_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>process=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.NodeController.NodeController.update_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the parameters values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -527,12 +527,14 @@ if hasattr(self.process, ‘filters’):</p>
 <span id="populse-mia-src-modules-pipelinemanager-pipelineeditor-module"></span><h2>populse_mia.src.modules.PipelineManager.PipelineEditor module<a class="headerlink" href="#module-populse_mia.src.modules.PipelineManager.PipelineEditor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.PipelineManager.PipelineEditor.</code><code class="descname">PipelineEditor</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.PipelineManager.PipelineEditor.</code><code class="descname">PipelineEditor</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.src.modules.PipelineManager.CAPSUL_Files.pipeline_developper_view.PipelineDevelopperView</span></code></p>
 <p>View to edit a pipeline graphically</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
+<li>project: current project in the software</li>
+<li>main_window: main window of the software</li>
 <li>undos: list of actions to undo</li>
 <li>redos: list of actions to redo</li>
 </ul>
@@ -804,7 +806,7 @@ This method is called after each action in the PipelineEditor.</p>
 
 <dl class="class">
 <dt id="populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.PipelineManager.PipelineEditor.</code><code class="descname">PipelineEditorTabs</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">populse_mia.src.modules.PipelineManager.PipelineEditor.</code><code class="descname">PipelineEditorTabs</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.PipelineManager.PipelineEditor.PipelineEditorTabs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QTabWidget</span></code></p>
 <p>Tab widget that contains pipeline editors</p>
 <dl class="docutils">
@@ -812,6 +814,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
 <li>scan_list: list of the selected database files</li>
+<li>main_window: main window of the software</li>
 <li>undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab</li>
 <li>redos: dictionary containing as values the redo list and as keys the name of the corresponding tab</li>
 </ul>
