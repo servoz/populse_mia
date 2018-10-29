@@ -675,6 +675,7 @@ class TableDataBrowser(QTableWidget):
         - tags_to_display: list tags to display
         - update_values: boolean to specify if edition is enabled
         - activate_selection: boolean to specify if selection is enabled
+        - link_viewer: boolean to specify if the table is linked to a viewer
         - bricks: dictionary containing information about the processes that has been run to generate documents
 
     Methods:
@@ -714,7 +715,7 @@ class TableDataBrowser(QTableWidget):
         - change_cell_color: changes the background color and the value of cells when edited by the user
     """
 
-    def __init__(self, project, data_browser, tags_to_display, update_values, activate_selection):
+    def __init__(self, project, data_browser, tags_to_display, update_values, activate_selection, link_viewer=True):
         """
         Initialization of the TableDataBrowser class
 
@@ -724,6 +725,7 @@ class TableDataBrowser(QTableWidget):
         :param update_values: boolean to specify if edition is enabled
         :param activate_selection: dictionary containing information about the processes that has been run to generate
         documents
+        :param link_viewer: boolean to specify if the table is linked to a viewer
         """
 
         super().__init__()
@@ -733,6 +735,7 @@ class TableDataBrowser(QTableWidget):
         self.tags_to_display = tags_to_display
         self.update_values = update_values
         self.activate_selection = activate_selection
+        self.link_viewer = link_viewer
         self.bricks = {}
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -908,7 +911,8 @@ class TableDataBrowser(QTableWidget):
                 self.scans.append([scan_name, [tag_name]])
 
         # ImageViewer updated
-        self.data_browser.connect_viewer()
+        if self.link_viewer:
+            self.data_browser.connect_viewer()
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
         """
@@ -1351,7 +1355,7 @@ class TableDataBrowser(QTableWidget):
             current_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
             modified_values.append([scan_name, tag_name, current_value, None])  # For history
             self.project.session.remove_value(COLLECTION_CURRENT, scan_name, tag_name)
-            item  = self.item(row, col)
+            item = self.item(row, col)
             set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
             font = item.font()
             font.setItalic(True)

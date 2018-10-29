@@ -533,7 +533,8 @@ class PlugFilter(QWidget):
         self.setWindowTitle("Filter - " + node_name + " - " + plug_name)
 
         # Graphical components
-        self.table_data = TableDataBrowser(self.project, self, self.node_controller.visibles_tags, False, False)
+        self.table_data = TableDataBrowser(self.project, self, self.node_controller.visibles_tags,
+                                           False, True, link_viewer=False)
 
         # Reducing the list of scans to selection
         all_scans = self.table_data.scans_to_visualize
@@ -673,7 +674,8 @@ class PlugFilter(QWidget):
 
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles(), self.table_data.scans_to_search)
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_visibles(),
+                                                          self.table_data.scans_to_search)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
@@ -712,14 +714,27 @@ class PlugFilter(QWidget):
         """
 
         result_names = []
-        filter = self.table_data.get_current_filter()
-        for i in range(len(filter)):
-            scan_name = filter[i]
-            tag_name = self.push_button_tag_filter.text()
-            value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
-            if tag_name == TAG_FILENAME:
-                value = os.path.abspath(os.path.join(self.project.folder, value))
-            result_names.append(value)
+        points = self.table_data.selectedIndexes()
+
+        # If the use has selected some items
+        if points:
+            for point in points:
+                row = point.row()
+                tag_name = self.push_button_tag_filter.text()
+                scan_name = self.table_data.item(row, 0).text()  # We get the FileName of the scan from the first row
+                value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+                if tag_name == TAG_FILENAME:
+                    value = os.path.abspath(os.path.join(self.project.folder, value))
+                result_names.append(value)
+        else:
+            filter = self.table_data.get_current_filter()
+            for i in range(len(filter)):
+                scan_name = filter[i]
+                tag_name = self.push_button_tag_filter.text()
+                value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+                if tag_name == TAG_FILENAME:
+                    value = os.path.abspath(os.path.join(self.project.folder, value))
+                result_names.append(value)
 
         self.plug_value_changed.emit(result_names)
 
