@@ -16,8 +16,8 @@ Tab presentation
 The Pipeline Manager tab is composed of four main elements:
   * :ref:`process-library-label`
   * :ref:`pipeline-editor-label`
-  * :ref:`iteration-table-label`
   * :ref:`node-controller-label`
+  * :ref:`iteration-table-label`
 
 Here is an overview of the Pipeline Manager tab:
 
@@ -131,6 +131,67 @@ We now have a pipeline that can smooth an image twice with the same fwhm paramet
    :align: center
    :name: Pipeline tutorial 5
 
+- To set input values and to run the pipeline, follow the steps of :ref:`node-controller-label`
+
+
+.. _node-controller-label:
+
+The node controller
+-------------------
+
+The node controller is a controller that updates pipeline nodes and is located on the bottom right of the Pipeline Manager tab. It can change their inputs/outputs values and their name.
+
+* Note: to enable the node controller, click on a node. It will display its parameters.
+
+* Note: when changing a value in the node controller, be sure to press Enter to validate the change.
+
+.. image:: ../images/node_controller_1.png
+   :align: center
+   :name: Node controller
+
+How to use the node controller 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This part is based on the Double_smooth.py file created in :ref:`pipeline-editor-label`.
+
+* When you have clicked on a pipeline global inputs/outputs node (blue node) it is possible to filter each input plug to set documents directly from the database. For that, click on the "Filter" push button.
+
+.. image:: ../images/node_controller_2.png
+   :align: center
+   :name: Node controller inputs/outputs
+
+* A pop-up similar to the Data Browser will be displayed and you will be able to choose which documents of the database to set on the plug by using Rapid or Advanced Search.
+* You can either filter the database (by setting the filter parameters and clicking on "Search") or click on the selected documents.
+* The second push button at the bottom left of the window specifies which tag values to set on the selected plug.
+
+.. image:: ../images/plug_filter.png
+   :align: center
+   :name: Plug filter
+
+* Press "OK" to set the selected documents to the plug value. The plug value has been updated in the node controller
+
+.. image:: ../images/node_controller_3.png
+   :align: center
+   :name: Node controller inputs/outputs 2
+
+* You can also modify the plug values by hand
+    * Note: the "output_directory" of a Nipype process corresponds to the folder where Nipype writes the Matlab scripts during execution and has to be set.
+
+.. image:: ../images/node_controller_4.png
+   :align: center
+   :name: Node controller inputs/outputs 3
+
+* The pipeline inputs are now correctly set and it can be initialized. Select "Initialize pipeline" in the Pipeline Manager's "Pipeline" menu.
+    * During the initialization step, the output files are created (but still empty) and stored in the database with information about their ancestors (their input files and parameters)
+
+.. image:: ../images/node_controller_5.png
+   :align: center
+   :name: Node controller inputs/outputs 4
+
+* The output file names are generated and updated in the node controller (in this example the file names begin with "ss" which means that they have been smoothed twice).
+* The pipeline can now be run by selecting "Run pipeline" in the Pipeline Manager's "Pipeline" menu.
+* At the end of the run, 'Pipeline "Double_smooth.py" been correctly run' should be run in the bottom left's status bar of the software.
+
 
 .. _iteration-table-label:
 
@@ -170,35 +231,6 @@ Assume that the current project contains several patients, so several "Patient" 
 
 Note: if you want to use pipeline iteration, you have to have a pipeline global input called "database_scans". Only this plug will be updated for each iteration and will contain all the documents that have the correct tag value.
 
-
-.. _node-controller-label:
-
-The node controller
--------------------
-
-The node controller is a controller that updates pipeline nodes and is located on the bottom right of the Pipeline Manager tab. It can change their inputs/outputs values and their name.
-
-* Note: to enable the node controller, click on a node. It will display its parameters.
-
-* Note: when changing a value in the node controller, be sure to press Enter to validate the change.
-
-.. image:: ../images/node_controller_1.png
-   :align: center
-   :name: Node controller
-
-* When you have clicked on a pipeline global inputs/outputs node it is possible to filter each input plug to set documents directly from the database. For that, click on the "Filter" push button.
-
-.. image:: ../images/node_controller_2.png
-   :align: center
-   :name: Node controller inputs/outputs
-
-* A pop-up similar to the Data Browser will be disaplayed and you will be able to choose which documents of the database to set on the plug by using Rapid or Advanced Search.
-
-.. image:: ../images/plug_filter.png
-   :align: center
-   :name: Plug filter
-
-* Press "OK" to set the selected documents to the plug value.
 
 
 
