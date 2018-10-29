@@ -59,6 +59,8 @@ class Config:
         - get_clinical_mode: returns the value of "clinical mode" checkbox in the preferences
         - set_projects_save_path: sets the folder where the projects are saved
         - get_projects_save_path: returns the folder where the projects are saved
+        - set_max_projects: sets the maximum number of projects displayed in the "Saved projects" menu
+        - get_max_projects: returns the maximum number of projects displayed in the "Saved projects" menu
     """
 
     def __init__(self):
