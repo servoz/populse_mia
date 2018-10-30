@@ -20,7 +20,7 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                 'Topic :: Scientific/Engineering',
                 'Topic :: Utilities']
 
-# Project descriptions
+# project descriptions
 NAME = 'populse_mia'
 DESCRIPTION = 'populse mia'
 LONG_DESCRIPTION = '''

@@ -19,16 +19,16 @@ from PyQt5.QtCore import QDir, QLockFile, Qt
 from PyQt5.QtWidgets import QApplication
 
 # Populse_MIA imports
-from MainWindow.Main_Window import Main_Window
-from Project.Project import Project
-from SoftwareProperties.Config import Config
-from SoftwareProperties.SavedProjects import SavedProjects
+from main_window.main_window import MainWindow
+from project.project import Project
+from software_properties.config import Config
+from software_properties.saved_projects import SavedProjects
 
 # soma-base imports
 from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
-# Warning: the "imageViewer" variable corresponds to a MainWindow object
+# Warning: the "imageViewer" variable corresponds to a main_window object
 main_window = None
 
 """
@@ -238,7 +238,7 @@ def launch_mia():
     deleted_projects = verify_saved_projects()
 
     project = Project(None, True)
-    main_window = Main_Window(project, deleted_projects=deleted_projects)
+    main_window = MainWindow(project, deleted_projects=deleted_projects)
     main_window.show()
     app.exec()
 

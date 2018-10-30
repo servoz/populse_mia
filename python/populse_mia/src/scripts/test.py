@@ -20,10 +20,10 @@ import unittest
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from Project.Project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, \
+from project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, \
     TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
-from MainWindow.Main_Window import Main_Window
-from SoftwareProperties.Config import Config
+from main_window.main_window import MainWindow
+from software_properties.config import Config
 from capsul.api import get_process_instance
 
 
@@ -40,7 +40,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app = QApplication([])
         self.project = Project(None, True)
-        self.main_window = Main_Window(self.project, test=True)
+        self.main_window = MainWindow(self.project, test=True)
 
     def tearDown(self):
         """
@@ -1250,7 +1250,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         self.app = QApplication([])
         self.project = Project(None, True)
-        self.main_window = Main_Window(self.project, test=True)
+        self.main_window = MainWindow(self.project, test=True)
 
     def tearDown(self):
         """
@@ -1505,7 +1505,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
         pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
-        from PipelineManager.PipelineEditor import save_pipeline
+        from PipelineManager.pipeline_editor import save_pipeline
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)

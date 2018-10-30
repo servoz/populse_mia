@@ -17,7 +17,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../../python'))
 
 
-# -- Project information -----------------------------------------------------
+# -- project information -----------------------------------------------------
 
 project = 'populse_mia'
 copyright = '2018, populse'
