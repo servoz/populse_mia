@@ -29,7 +29,7 @@ from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 # Warning: the "imageViewer" variable corresponds to a MainWindow object
-imageViewer = None
+main_window = None
 
 """
 @atexit.register
@@ -41,15 +41,15 @@ def clean_up():
     Cleans up the software during "normal" closing
     """
 
-    global imageViewer
+    global main_window
 
     print("clean up done")
 
     config = Config()
     opened_projects = config.get_opened_projects()
-    opened_projects.remove(imageViewer.project.folder)
+    opened_projects.remove(main_window.project.folder)
     config.set_opened_projects(opened_projects)
-    imageViewer.remove_raw_files_useless()
+    main_window.remove_raw_files_useless()
 
 
 class NipypePackages:
@@ -202,7 +202,7 @@ def verify_saved_projects():
 
 
 def launch_mia():
-    global imageViewer
+    global main_window
 
     app = QApplication(sys.argv)
     QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -238,8 +238,8 @@ def launch_mia():
     deleted_projects = verify_saved_projects()
 
     project = Project(None, True)
-    imageViewer = Main_Window(project, deleted_projects=deleted_projects)
-    imageViewer.show()
+    main_window = Main_Window(project, deleted_projects=deleted_projects)
+    main_window.show()
     app.exec()
 
 
