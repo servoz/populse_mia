@@ -76,10 +76,10 @@
 <span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>  <span class="c1"># used to use SPM&#39;s Smooth</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>  <span class="c1"># used to apply the smoothing on an array</span>
 <span class="c1"># from populse_mia import Process_mia  # to uncommented when populse_mia will be on Pypi</span>
-<span class="kn">from</span> <span class="nn">PipelineManager.Process_mia</span> <span class="k">import</span> <span class="n">Process_mia</span>  <span class="c1"># base class that the created process has to inherit from</span>
+<span class="kn">from</span> <span class="nn">pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>  <span class="c1"># base class that the created process has to inherit from</span>
 
 
-<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">Process_mia</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">ProcessMIA</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>

@@ -39,10 +39,10 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     from nipype.interfaces import spm  # used to use SPM's Smooth
     from scipy.ndimage.filters import gaussian_filter  # used to apply the smoothing on an array
     # from populse_mia import Process_mia  # to uncommented when populse_mia will be on Pypi
-    from PipelineManager.Process_mia import Process_mia  # base class that the created process has to inherit from
+    from pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
     
     
-    class SmoothSpmScipy(Process_mia):
+    class SmoothSpmScipy(ProcessMIA):
     
         def __init__(self):
             super(SmoothSpmScipy, self).__init__()
