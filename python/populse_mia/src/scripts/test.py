@@ -1505,7 +1505,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
         pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
-        from PipelineManager.pipeline_editor import save_pipeline
+        from pipeline_manager.pipeline_editor import save_pipeline
         filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)
