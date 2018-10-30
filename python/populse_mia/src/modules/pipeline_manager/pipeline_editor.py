@@ -1675,7 +1675,7 @@ def save_py_pipeline(pipeline, py_file):
     pyf = open(py_file, 'w')
 
     print('from capsul.api import Pipeline', file=pyf)
-    print('from project.Filter import Filter', file=pyf)
+    print('from project.filter import Filter', file=pyf)
     print(file=pyf)
     print(file=pyf)
     print('class %s(Pipeline):' % class_name, file=pyf)
