@@ -1,21 +1,21 @@
-populse\_mia.src.modules.Utils package
+populse\_mia.src.modules.utils package
 ======================================
 
 Submodules
 ----------
 
-populse\_mia.src.modules.Utils.Tools module
+populse\_mia.src.modules.utils.tools module
 -------------------------------------------
 
-.. automodule:: populse_mia.src.modules.Utils.Tools
+.. automodule:: populse_mia.src.modules.utils.tools
     :members:
     :undoc-members:
     :show-inheritance:
 
-populse\_mia.src.modules.Utils.Utils module
+populse\_mia.src.modules.utils.utils module
 -------------------------------------------
 
-.. automodule:: populse_mia.src.modules.Utils.Utils
+.. automodule:: populse_mia.src.modules.utils.utils
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ populse\_mia.src.modules.Utils.Utils module
 Module contents
 ---------------
 
-.. automodule:: populse_mia.src.modules.Utils
+.. automodule:: populse_mia.src.modules.utils
     :members:
     :undoc-members:
     :show-inheritance:
