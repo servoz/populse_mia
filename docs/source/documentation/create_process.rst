@@ -26,7 +26,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.
 
 
-    * **_run_processes()**
+    * **_run_process()**
 
     This method is called during a pipeline run. It has to contain the desired processing and need no return value.
 

@@ -65,7 +65,7 @@
 </ul>
 <p>This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.</p>
 <ul class="simple">
-<li><strong>_run_processes()</strong></li>
+<li><strong>_run_process()</strong></li>
 </ul>
 <p>This method is called during a pipeline run. It has to contain the desired processing and need no return value.</p>
 </div></blockquote>
