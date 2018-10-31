@@ -1325,6 +1325,16 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # TODO: HOW TO TEST "SAVE AS" ACTION ?
 
+    def test_find_process(self):
+        """
+        Adds a Nipype SPM's Smooth process using the find_process method
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().find_process('nipype.interfaces.spm.Smooth')
+
+        self.assertTrue('smooth1' in pipeline_editor_tabs.get_current_pipeline().nodes.keys())
+
     def test_update_node_name(self):
         """
         Displays parameters of a node and updates its name
@@ -2062,6 +2072,67 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         pipeline_manager.redo()
         self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+    def test_delete_processes(self):
+        """
+        Deletes a process and makes the undo/redo action
+        """
+
+        pipeline_manager = self.main_window.pipeline_manager
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding processes
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth3"
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth2", "_smoothed_files"),
+                                                           ("smooth3", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth2"
+        pipeline_editor_tabs.get_current_editor().del_node()
+
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+
+        pipeline_manager.undo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
 
 
 if __name__ == '__main__':
