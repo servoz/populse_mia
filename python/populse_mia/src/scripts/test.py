@@ -2134,6 +2134,60 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
         self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
 
+    def test_zz_check_modifications(self):
+        """
+        Opens a pipeline, opens it as a process in another tab, modifies it and check the modifications
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.new_tab()
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        pipeline_editor_tabs.get_current_editor().find_process("User_processes.Test_pipeline")
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        self.assertTrue("test_pipeline1" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
+        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("test_pipeline1", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().add_link(("test_pipeline1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        pipeline_editor_tabs.get_current_editor().export_node_plugs("smooth1", optional=True)
+        self.main_window.pipeline_manager.savePipeline()
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        pipeline_editor_tabs.get_current_editor().scene.pos["test_pipeline1"] = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().check_modifications()
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("fwhm" in pipeline.nodes["test_pipeline1"].plugs.keys())
+
 
 if __name__ == '__main__':
     unittest.main()

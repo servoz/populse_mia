@@ -22,7 +22,7 @@ from capsul.api import get_process_instance, Process, PipelineNode, Switch
 from soma.utils.weak_proxy import weak_proxy
 
 # Populse_MIA imports
-from .capsul_files.pipeline_developper_view import PipelineDevelopperView
+from .capsul_files.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
 from pipeline_manager.node_controller import FilterWidget
 from pop_ups.pop_up_close_pipeline import PopUpClosePipeline
 
@@ -1239,7 +1239,6 @@ class PipelineEditor(PipelineDevelopperView):
                     pipeline.nodes[node_name] = new_node
 
                     # Creating a new graphical node
-                    from PipelineManager.capsul_files.pipeline_developper_view import NodeGWidget
                     gnode = NodeGWidget(
                         node_name, new_node.plugs, pipeline,
                         sub_pipeline=saved_process, process=saved_process,
