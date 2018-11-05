@@ -793,6 +793,7 @@ class TableDataBrowser(QTableWidget):
         item.setToolTip(
             "Description: " + str(tag_object.description) + "\nUnit: " + str(tag_object.unit) + "\nType: " + str(
                 tag_object.type))
+
         # Set column type
         if tag_object.type == FIELD_TYPE_FLOAT:
             self.setItemDelegateForColumn(column, NumberFormatDelegate(self))
@@ -802,6 +803,8 @@ class TableDataBrowser(QTableWidget):
             self.setItemDelegateForColumn(column, DateFormatDelegate(self))
         elif tag_object.type == FIELD_TYPE_TIME:
             self.setItemDelegateForColumn(column, TimeFormatDelegate(self))
+        else:
+            self.setItemDelegateForColumn(column, None)
 
         for row in range(0, self.rowCount()):
             item = QtWidgets.QTableWidgetItem()
@@ -880,7 +883,7 @@ class TableDataBrowser(QTableWidget):
             # We select the columns of the row if it was selected
             tags = scan[1]
             for tag in tags:
-                if self.get_tag_column(tag) != None:
+                if self.get_tag_column(tag) is not None:
                     item_to_select = self.item(row, self.get_tag_column(tag))
                     item_to_select.setSelected(True)
 
@@ -1730,39 +1733,39 @@ class TableDataBrowser(QTableWidget):
 
             if self.get_tag_column(tag) is None:
 
-                columnIndex = self.get_index_insertion(tag)
-                self.insertColumn(columnIndex)
+                column_index = self.get_index_insertion(tag)
+                self.insertColumn(column_index)
 
                 item = QtWidgets.QTableWidgetItem()
-                self.setHorizontalHeaderItem(columnIndex, item)
+                self.setHorizontalHeaderItem(column_index, item)
                 item.setText(tag)
                 tag_object = self.project.session.get_field(COLLECTION_CURRENT, tag)
 
                 if tag_object is not None:
                     item.setToolTip("Description: " + str(tag_object.description) + "\nUnit: " + str(
-                    tag_object.unit) + "\nType: " + str(tag_object.type))
+                        tag_object.unit) + "\nType: " + str(tag_object.type))
 
                 # Set column type
 
                 if tag_object.type == FIELD_TYPE_FLOAT:
-                    self.setItemDelegateForColumn(columnIndex, NumberFormatDelegate(self))
+                    self.setItemDelegateForColumn(column_index, NumberFormatDelegate(self))
                 elif tag_object.type == FIELD_TYPE_DATETIME:
-                    self.setItemDelegateForColumn(columnIndex, DateTimeFormatDelegate(self))
+                    self.setItemDelegateForColumn(column_index, DateTimeFormatDelegate(self))
                 elif tag_object.type == FIELD_TYPE_DATE:
-                    self.setItemDelegateForColumn(columnIndex, DateFormatDelegate(self))
+                    self.setItemDelegateForColumn(column_index, DateFormatDelegate(self))
                 elif tag_object.type == FIELD_TYPE_TIME:
-                    self.setItemDelegateForColumn(columnIndex, TimeFormatDelegate(self))
+                    self.setItemDelegateForColumn(column_index, TimeFormatDelegate(self))
 
                 # Hide the column if not visible
 
                 if tag in visibles:
-                    self.setColumnHidden(columnIndex, True)
+                    self.setColumnHidden(column_index, True)
 
                 # Rows filled for the column being added
 
                 for row in range(0, self.rowCount()):
                     item = QtWidgets.QTableWidgetItem()
-                    self.setItem(row, columnIndex, item)
+                    self.setItem(row, column_index, item)
                     scan = self.item(row, 0).text()
                     cur_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
 
@@ -2055,12 +2058,14 @@ class TableDataBrowser(QTableWidget):
                 return
 
             # Type added to types list
-            if not tag_type in cells_types:
+            if tag_type not in cells_types:
                 cells_types.append(tag_type)
 
         # Error if list with other types
-        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types or FIELD_TYPE_LIST_BOOLEAN in cells_types and len(
-                cells_types) > 1:
+        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or \
+                FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or \
+                FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types or \
+                FIELD_TYPE_LIST_BOOLEAN in cells_types and len(cells_types) > 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText("Incompatible types")
@@ -2073,7 +2078,10 @@ class TableDataBrowser(QTableWidget):
             return
 
         # Nothing to do if list
-        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types or FIELD_TYPE_LIST_BOOLEAN in cells_types:
+        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME in cells_types or \
+                FIELD_TYPE_LIST_TIME in cells_types or FIELD_TYPE_LIST_INTEGER in cells_types or \
+                FIELD_TYPE_LIST_STRING in cells_types or FIELD_TYPE_LIST_FLOAT in cells_types or \
+                FIELD_TYPE_LIST_BOOLEAN in cells_types:
             self.itemChanged.connect(self.change_cell_color)
             return
 
