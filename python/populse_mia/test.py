@@ -1737,7 +1737,6 @@ class TestMIAPipelineManager(unittest.TestCase):
         config = Config()
 
         # Adding the processes path to the system path
-        import sys
         sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
 
         # Importing the package
@@ -1772,7 +1771,6 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.main_window.pipeline_manager.disable_progress_bar = True
 
         # Adding the processes path to the system path
-        import sys
         sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
 
         # Importing the package
