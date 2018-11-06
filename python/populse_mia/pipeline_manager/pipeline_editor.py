@@ -24,8 +24,8 @@ from soma.utils.weak_proxy import weak_proxy
 # Populse_MIA imports
 from .capsul_files.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
 from .node_controller import FilterWidget
-from ..pop_ups.pop_up_close_pipeline import PopUpClosePipeline
-from ..software_properties.config import Config
+from populse_mia.pop_ups.pop_up_close_pipeline import PopUpClosePipeline
+from populse_mia.software_properties.config import Config
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -1195,7 +1195,7 @@ class PipelineEditor(PipelineDevelopperView):
                 current_process_id = sub_pipeline_process.id
 
                 # Reading the process configuration file
-                with open(os.path.join(config.set_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
+                with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
                     try:
                         dic = yaml.load(stream)
                     except yaml.YAMLError as exc:

@@ -7,6 +7,7 @@
 ##########################################################################
 
 import os
+import sys
 
 # Working from the scripts directory
 from PyQt5.QtCore import Qt
@@ -22,8 +23,8 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_ORIGIN_USER, \
     TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
-from main_window.main_window import MainWindow
-from software_properties.config import Config
+from populse_mia.main_window.main_window import MainWindow
+from populse_mia.software_properties.config import Config
 from capsul.api import get_process_instance
 
 
@@ -38,7 +39,9 @@ class TestMIADataBrowser(unittest.TestCase):
         config = Config()
         config.set_clinical_mode("no")
 
-        self.app = QApplication([])
+        self.app = QApplication.instance()
+        if self.app is None:
+            self.app = QApplication(sys.argv)
         self.project = Project(None, True)
         self.main_window = MainWindow(self.project, test=True)
 
@@ -54,6 +57,8 @@ class TestMIADataBrowser(unittest.TestCase):
         config = Config()
         config.set_opened_projects([])
         config.saveConfig()
+
+        self.app.exit()
 
     def test_unnamed_project_software_opening(self):
         """
@@ -1306,7 +1311,9 @@ class TestMIAPipelineManager(unittest.TestCase):
         config = Config()
         config.set_clinical_mode("no")
 
-        self.app = QApplication([])
+        self.app = QApplication.instance()
+        if self.app is None:
+            self.app = QApplication(sys.argv)
         self.project = Project(None, True)
         self.main_window = MainWindow(self.project, test=True)
 
@@ -1322,6 +1329,8 @@ class TestMIAPipelineManager(unittest.TestCase):
         config = Config()
         config.set_opened_projects([])
         config.saveConfig()
+
+        self.app.exit()
 
     def test_add_tab(self):
         """
@@ -1574,7 +1583,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
         pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
-        from .pipeline_manager.pipeline_editor import save_pipeline
+        from populse_mia.pipeline_manager.pipeline_editor import save_pipeline
         filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)
@@ -1639,9 +1648,9 @@ class TestMIAPipelineManager(unittest.TestCase):
         filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
-        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(0), filename)
+        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_filename_by_index(0)), filename)
         self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), None)
-        self.assertEqual(pipeline_editor_tabs.get_current_filename(), filename)
+        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_current_filename()), filename)
 
     def test_z_get_tab_name(self):
         """

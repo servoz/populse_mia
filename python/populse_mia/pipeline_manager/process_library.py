@@ -30,7 +30,7 @@ from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QMessageBox
 
 # Populse_MIA import
-from ..software_properties.config import Config
+from populse_mia.software_properties.config import Config
 
 # soma-base import
 from soma.path import find_in_path

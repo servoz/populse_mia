@@ -26,15 +26,15 @@ from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, 
 
 # Populse_MIA imports
 from .process_mia import ProcessMIA
-from ..pop_ups.pop_up_select_iteration import PopUpSelectIteration
+from populse_mia.pop_ups.pop_up_select_iteration import PopUpSelectIteration
 from .iteration_table import IterationTable
-from ..project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
-    BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, \
-    TYPE_NII, TYPE_MAT
+from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, \
+    BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, \
+    TAG_CHECKSUM, TYPE_NII, TYPE_MAT
 from .node_controller import NodeController
 from .pipeline_editor import PipelineEditorTabs
 from .process_library import ProcessLibraryWidget
-from ..software_properties.config import Config
+from populse_mia.software_properties.config import Config
 
 if sys.version_info[0] >= 3:
     unicode = str

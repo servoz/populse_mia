@@ -24,22 +24,22 @@ from .advanced_search import AdvancedSearch
 from .count_table import CountTable
 from .modify_table import ModifyTable
 from .mini_viewer import MiniViewer
-from ..pop_ups.pop_up_multiple_sort import PopUpMultipleSort
-from ..pop_ups.pop_up_properties import PopUpProperties
-from ..pop_ups.pop_up_show_brick import PopUpShowBrick
-from ..pop_ups.pop_up_add_path import PopUpAddPath
-from ..pop_ups.pop_up_add_tag import PopUpAddTag
-from ..pop_ups.pop_up_clone_tag import PopUpCloneTag
-from ..pop_ups.pop_up_remove_tag import PopUpRemoveTag
-from ..pop_ups.pop_up_select_filter import PopUpSelectFilter
-from ..pop_ups.pop_up_data_browser_current_selection import PopUpDataBrowserCurrentSelection
-from ..project.controller import save_project
-from ..utils.tools import ClickableLabel
-from ..utils.utils import check_value_type, set_item_data, table_to_database
-from ..project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, TAG_FILENAME, \
-    TAG_BRICKS, BRICK_NAME
-from ..project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
-from ..software_properties.config import Config
+from populse_mia.pop_ups.pop_up_multiple_sort import PopUpMultipleSort
+from populse_mia.pop_ups.pop_up_properties import PopUpProperties
+from populse_mia.pop_ups.pop_up_show_brick import PopUpShowBrick
+from populse_mia.pop_ups.pop_up_add_path import PopUpAddPath
+from populse_mia.pop_ups.pop_up_add_tag import PopUpAddTag
+from populse_mia.pop_ups.pop_up_clone_tag import PopUpCloneTag
+from populse_mia.pop_ups.pop_up_remove_tag import PopUpRemoveTag
+from populse_mia.pop_ups.pop_up_select_filter import PopUpSelectFilter
+from populse_mia.pop_ups.pop_up_data_browser_current_selection import PopUpDataBrowserCurrentSelection
+from populse_mia.project.controller import save_project
+from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils.utils import check_value_type, set_item_data, table_to_database
+from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, \
+    TAG_FILENAME, TAG_BRICKS, BRICK_NAME
+from populse_mia.project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from populse_mia.software_properties.config import Config
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, \

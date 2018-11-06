@@ -21,11 +21,11 @@ from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox
 
 # Populse_MIA imports
-from ..utils.tools import ClickableLabel
-from ..pop_ups.pop_up_select_tag import PopUpSelectTag
-from ..software_properties.config import Config
+from populse_mia.utils.tools import ClickableLabel
+from populse_mia.pop_ups.pop_up_select_tag import PopUpSelectTag
+from populse_mia.software_properties.config import Config
 from . import data_browser
-from ..project.project import COLLECTION_CURRENT
+from populse_mia.project.project import COLLECTION_CURRENT
 
 
 class MiniViewer(QWidget):
