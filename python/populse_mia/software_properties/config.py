@@ -67,6 +67,8 @@ class Config:
 
     def __init__(self):
         self.config = self.loadConfig()
+        if "mia_path" not in self.config.keys():
+            self.config["mia_path"] = self.get_mia_path()
 
     def loadConfig(self):
         with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'r') as stream:
@@ -287,3 +289,6 @@ class Config:
             return self.config["mia_path"]
         except KeyError:
             return os.path.abspath(os.path.join(os.getcwd(), '..', '..'))
+        except AttributeError:
+            return os.path.abspath(os.path.join(os.getcwd(), '..', '..'))
+
