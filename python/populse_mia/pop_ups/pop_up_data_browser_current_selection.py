@@ -10,8 +10,8 @@
 from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog, QApplication
 
 # Populse_MIA imports
-import data_browser.data_browser
-from project.project import TAG_FILENAME
+from ..data_browser import data_browser
+from ..project.project import TAG_FILENAME
 
 
 class PopUpDataBrowserCurrentSelection(QDialog):
@@ -41,7 +41,7 @@ class PopUpDataBrowserCurrentSelection(QDialog):
         vbox_layout = QVBoxLayout()
 
         # Adding databrowser table
-        databrowser_table = data_browser.data_browser.TableDataBrowser(self.project, self.databrowser,
+        databrowser_table = data_browser.TableDataBrowser(self.project, self.databrowser,
                                                                        [TAG_FILENAME], False, False)
         old_scan_list = databrowser_table.scans_to_visualize
         databrowser_table.scans_to_visualize = self.filter

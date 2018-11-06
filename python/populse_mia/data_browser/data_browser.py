@@ -19,27 +19,27 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButt
     QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
 
 # Populse_MIA imports
-from data_browser.rapid_search import RapidSearch
-from data_browser.advanced_search import AdvancedSearch
-from data_browser.count_table import CountTable
-from data_browser.modify_table import ModifyTable
-from data_browser.mini_viewer import MiniViewer
-from pop_ups.pop_up_multiple_sort import PopUpMultipleSort
-from pop_ups.pop_up_properties import PopUpProperties
-from pop_ups.pop_up_show_brick import PopUpShowBrick
-from pop_ups.pop_up_add_path import PopUpAddPath
-from pop_ups.pop_up_add_tag import PopUpAddTag
-from pop_ups.pop_up_clone_tag import PopUpCloneTag
-from pop_ups.pop_up_remove_tag import PopUpRemoveTag
-from pop_ups.pop_up_select_filter import PopUpSelectFilter
-from pop_ups.pop_up_data_browser_current_selection import PopUpDataBrowserCurrentSelection
-from project.controller import save_project
-from utils.tools import ClickableLabel
-from utils.utils import check_value_type, set_item_data, table_to_database
-from project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, TAG_FILENAME, \
+from .rapid_search import RapidSearch
+from .advanced_search import AdvancedSearch
+from .count_table import CountTable
+from .modify_table import ModifyTable
+from .mini_viewer import MiniViewer
+from ..pop_ups.pop_up_multiple_sort import PopUpMultipleSort
+from ..pop_ups.pop_up_properties import PopUpProperties
+from ..pop_ups.pop_up_show_brick import PopUpShowBrick
+from ..pop_ups.pop_up_add_path import PopUpAddPath
+from ..pop_ups.pop_up_add_tag import PopUpAddTag
+from ..pop_ups.pop_up_clone_tag import PopUpCloneTag
+from ..pop_ups.pop_up_remove_tag import PopUpRemoveTag
+from ..pop_ups.pop_up_select_filter import PopUpSelectFilter
+from ..pop_ups.pop_up_data_browser_current_selection import PopUpDataBrowserCurrentSelection
+from ..project.controller import save_project
+from ..utils.tools import ClickableLabel
+from ..utils.utils import check_value_type, set_item_data, table_to_database
+from ..project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, TAG_FILENAME, \
     TAG_BRICKS, BRICK_NAME
-from project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
-from software_properties.config import Config
+from ..project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from ..software_properties.config import Config
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, \

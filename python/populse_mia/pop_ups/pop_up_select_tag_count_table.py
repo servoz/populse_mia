@@ -10,8 +10,8 @@
 from PyQt5 import QtWidgets, QtCore
 
 # Populse_MIA imports
-from pop_ups.pop_up_tag_selection import PopUpTagSelection
-from project.project import TAG_CHECKSUM
+from .pop_up_tag_selection import PopUpTagSelection
+from ..project.project import TAG_CHECKSUM
 
 
 class PopUpSelectTagCountTable(PopUpTagSelection):

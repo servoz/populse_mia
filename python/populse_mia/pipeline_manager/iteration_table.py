@@ -15,10 +15,10 @@ from PyQt5.QtWidgets import  QTableWidgetItem, QPushButton, QVBoxLayout, QWidget
     QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
 
 # MIA imports
-from pipeline_manager.process_mia import ProcessMIA
-from pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
-from project.project import COLLECTION_CURRENT, TAG_FILENAME
-from utils.tools import ClickableLabel
+from .process_mia import ProcessMIA
+from ..pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from ..project.project import COLLECTION_CURRENT, TAG_FILENAME
+from ..utils.tools import ClickableLabel
 
 
 class IterationTable(QWidget):

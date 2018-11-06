@@ -12,8 +12,8 @@ from datetime import datetime
 from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
 
 # Populse_MIA imports
-from utils.utils import check_value_type
-from project.project import COLLECTION_CURRENT
+from ..utils.utils import check_value_type
+from ..project.project import COLLECTION_CURRENT
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_STRING, \

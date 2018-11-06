@@ -19,16 +19,15 @@ from PyQt5.QtCore import QDir, QLockFile, Qt
 from PyQt5.QtWidgets import QApplication
 
 # Populse_MIA imports
-from main_window.main_window import MainWindow
-from project.project import Project
-from software_properties.config import Config
-from software_properties.saved_projects import SavedProjects
+from populse_mia.main_window.main_window import MainWindow
+from populse_mia.project.project import Project
+from populse_mia.software_properties.config import Config
+from populse_mia.software_properties.saved_projects import SavedProjects
 
 # soma-base imports
 from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
-# Warning: the "imageViewer" variable corresponds to a main_window object
 main_window = None
 
 """

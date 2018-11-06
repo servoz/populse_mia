@@ -12,7 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 # Populse_MIA imports
-from project.project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
+from ..project.project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
 
 
 class PopUpVisualizedTags(QWidget):

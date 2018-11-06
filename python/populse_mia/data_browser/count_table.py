@@ -18,10 +18,10 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt
 
 # Populse_MIA imports
-from pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
-from utils.tools import ClickableLabel
-from utils.utils import set_item_data, table_to_database
-from project.project import COLLECTION_CURRENT, TAG_FILENAME
+from ..pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from ..utils.tools import ClickableLabel
+from ..utils.utils import set_item_data, table_to_database
+from ..project.project import COLLECTION_CURRENT, TAG_FILENAME
 
 
 class CountTable(QDialog):

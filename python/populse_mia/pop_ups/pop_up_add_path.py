@@ -14,7 +14,7 @@ import hashlib
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
 
 # Populse_MIA imports
-from project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
+from ..project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
 
 
 class PopUpAddPath(QDialog):

@@ -10,7 +10,7 @@
 from PyQt5.QtWidgets import QLineEdit
 
 # Populse_MIA imports
-from project.project import TAG_FILENAME, TAG_BRICKS
+from ..project.project import TAG_FILENAME, TAG_BRICKS
 
 
 class RapidSearch(QLineEdit):

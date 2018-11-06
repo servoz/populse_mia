@@ -17,10 +17,10 @@ import glob
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 # Populse_MIA imports
-from project.filter import Filter
-from software_properties.config import Config
-from utils.utils import set_item_data
-from project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from .filter import Filter
+from ..software_properties.config import Config
+from ..utils.utils import set_item_data
+from ..project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_LIST_STRING, FIELD_TYPE_JSON, FIELD_TYPE_DATETIME, \
@@ -463,7 +463,7 @@ class Project:
         """
 
         # To avoid circular imports
-        from data_browser.data_browser import not_defined_value
+        from ..data_browser.data_browser import not_defined_value
         
         # We can undo if we have an action to revert
         if len(self.undos) > 0:
@@ -575,7 +575,7 @@ class Project:
         """
 
         # To avoid circular imports
-        from data_browser.data_browser import not_defined_value
+        from ..data_browser.data_browser import not_defined_value
 
         # We can redo if we have an action to make again
         if len(self.redos) > 0:

@@ -23,8 +23,8 @@ from soma.utils.weak_proxy import weak_proxy
 
 # Populse_MIA imports
 from .capsul_files.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
-from pipeline_manager.node_controller import FilterWidget
-from pop_ups.pop_up_close_pipeline import PopUpClosePipeline
+from .node_controller import FilterWidget
+from ..pop_ups.pop_up_close_pipeline import PopUpClosePipeline
 
 if sys.version_info[0] >= 3:
     unicode = str

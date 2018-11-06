@@ -18,21 +18,21 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton, QApplication
 
 # Populse_MIA imports
-from software_properties.saved_projects import SavedProjects
-from software_properties.config import Config
-from data_browser.data_browser import DataBrowser
-from image_viewer.image_viewer import ImageViewer
-from pipeline_manager.pipeline_manager_tab import PipelineManagerTab
-from pipeline_manager.process_library import InstallProcesses, PackageLibraryDialog
-import project.controller as controller
-from project.project import Project, COLLECTION_CURRENT
-from pop_ups.pop_up_new_project import PopUpNewProject
-from pop_ups.pop_up_open_project import PopUpOpenProject
-from pop_ups.pop_up_preferences import PopUpPreferences
-from pop_ups.pop_up_properties import PopUpProperties
-from pop_ups.pop_up_save_project_as import PopUpSaveProjectAs
-from pop_ups.pop_up_quit import PopUpQuit
-from pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
+from ..software_properties.saved_projects import SavedProjects
+from ..software_properties.config import Config
+from ..data_browser.data_browser import DataBrowser
+from ..image_viewer.image_viewer import ImageViewer
+from ..pipeline_manager.pipeline_manager_tab import PipelineManagerTab
+from ..pipeline_manager.process_library import InstallProcesses, PackageLibraryDialog
+import populse_mia.project.controller as controller
+from ..project.project import Project, COLLECTION_CURRENT
+from ..pop_ups.pop_up_new_project import PopUpNewProject
+from ..pop_ups.pop_up_open_project import PopUpOpenProject
+from ..pop_ups.pop_up_preferences import PopUpPreferences
+from ..pop_ups.pop_up_properties import PopUpProperties
+from ..pop_ups.pop_up_save_project_as import PopUpSaveProjectAs
+from ..pop_ups.pop_up_quit import PopUpQuit
+from ..pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
 
 
 class MainWindow(QMainWindow):

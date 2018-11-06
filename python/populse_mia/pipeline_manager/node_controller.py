@@ -24,13 +24,13 @@ from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
 from soma.controller import trait_ids
 
 # Populse_MIA imports
-from data_browser.advanced_search import AdvancedSearch
-from data_browser.data_browser import TableDataBrowser, not_defined_value
-from pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
-from pop_ups.pop_up_visualized_tags import PopUpVisualizedTags
-from project.project import TAG_FILENAME, COLLECTION_CURRENT
-from project.filter import Filter
-from pipeline_manager.process_mia import ProcessMIA
+from ..data_browser.advanced_search import AdvancedSearch
+from ..data_browser.data_browser import TableDataBrowser, not_defined_value
+from ..pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from ..pop_ups.pop_up_visualized_tags import PopUpVisualizedTags
+from ..project.project import TAG_FILENAME, COLLECTION_CURRENT
+from ..project.filter import Filter
+from .process_mia import ProcessMIA
 
 if sys.version_info[0] >= 3:
     unicode = str

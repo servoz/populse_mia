@@ -16,7 +16,7 @@ from PyQt5.QtCore import Qt, QVariant, QDateTime, QTime, QDate
 from PyQt5.QtWidgets import QMessageBox
 
 # Populse_MIA imports
-from software_properties.config import Config
+from populse_mia.software_properties.config import Config
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN, \

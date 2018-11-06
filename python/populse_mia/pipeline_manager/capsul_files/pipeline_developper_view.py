@@ -41,8 +41,8 @@ from capsul.study_config import process_instance
 from soma.controller import Controller
 from soma.utils.functiontools import SomaPartial
 
-# MIA import
-from pipeline_manager.capsul_files import pipeline_tools
+# Populse_MIA import
+from populse_mia.pipeline_manager.capsul_files import pipeline_tools
 
 try:
     from traits import api as traits

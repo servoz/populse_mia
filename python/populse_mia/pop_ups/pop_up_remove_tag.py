@@ -12,8 +12,8 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 
 # Populse_MIA imports
-from project.project import COLLECTION_CURRENT
-from project.database_mia import TAG_ORIGIN_USER
+from ..project.project import COLLECTION_CURRENT
+from ..project.database_mia import TAG_ORIGIN_USER
 
 
 class PopUpRemoveTag(QDialog):

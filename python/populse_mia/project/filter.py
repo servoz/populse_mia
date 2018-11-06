@@ -7,8 +7,8 @@
 ##########################################################################
 
 # Populse_MIA imports
-import data_browser
-import project
+from .. import data_browser
+from . import project
 
 
 class Filter:
@@ -75,12 +75,12 @@ class Filter:
         :return: The list of scans matching the filter
         """
 
-        rapid_filter = data_browser.RapidSearch.RapidSearch.prepare_filter(self.search_bar, tags, scans)
-        rapid_result = current_project.session.filter_documents(project.Project.COLLECTION_CURRENT, rapid_filter)
-        rapid_list = [getattr(scan, project.Project.TAG_FILENAME) for scan in rapid_result]
-        advanced_filter = data_browser.AdvancedSearch.AdvancedSearch.prepare_filters(self.links, self.fields,
-                                                                                     self.conditions, self.values,
-                                                                                     self.nots, rapid_list)
-        advanced_result = current_project.session.filter_documents(project.Project.COLLECTION_CURRENT, advanced_filter)
-        final_result = [getattr(scan, project.Project.TAG_FILENAME) for scan in advanced_result]
+        rapid_filter = data_browser.rapid_search.RapidSearch.prepare_filter(self.search_bar, tags, scans)
+        rapid_result = current_project.session.filter_documents(project.COLLECTION_CURRENT, rapid_filter)
+        rapid_list = [getattr(scan, project.TAG_FILENAME) for scan in rapid_result]
+        advanced_filter = data_browser.advanced_search.AdvancedSearch.prepare_filters(self.links, self.fields,
+                                                                                      self.conditions, self.values,
+                                                                                      self.nots, rapid_list)
+        advanced_result = current_project.session.filter_documents(project.COLLECTION_CURRENT, advanced_filter)
+        final_result = [getattr(scan, project.TAG_FILENAME) for scan in advanced_result]
         return final_result

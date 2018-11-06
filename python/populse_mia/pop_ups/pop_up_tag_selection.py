@@ -11,7 +11,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout
 
 # Populse_MIA imports
-from project.project import TAG_CHECKSUM, COLLECTION_CURRENT
+from ..project.project import TAG_CHECKSUM, COLLECTION_CURRENT
 
 
 class PopUpTagSelection(QDialog):

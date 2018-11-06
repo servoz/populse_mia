@@ -21,12 +21,11 @@ from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox
 
 # Populse_MIA imports
-from utils.tools import ClickableLabel
-from pop_ups.pop_up_select_tag import PopUpSelectTag
-from software_properties import config
-from software_properties.config import Config
-import data_browser.data_browser
-from project.project import COLLECTION_CURRENT
+from ..utils.tools import ClickableLabel
+from ..pop_ups.pop_up_select_tag import PopUpSelectTag
+from ..software_properties.config import Config
+from . import data_browser
+from ..project.project import COLLECTION_CURRENT
 
 
 class MiniViewer(QWidget):
@@ -464,7 +463,7 @@ class MiniViewer(QWidget):
                 if value is not None:
                     self.label_description[idx].setText(str(value)[:self.nb_char_max])
                 else:
-                    self.label_description[idx].setText(data_browser.data_browser.not_defined_value[:self.nb_char_max])
+                    self.label_description[idx].setText(data_browser.not_defined_value[:self.nb_char_max])
                 self.label_description[idx].setToolTip(os.path.basename(self.config.getThumbnailTag()))
 
     def clearLayouts(self):

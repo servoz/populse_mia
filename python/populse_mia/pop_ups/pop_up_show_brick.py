@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QTableWidgetItem
     QApplication
 
 # Populse_MIA imports
-from project.project import COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT, BRICK_INIT_TIME, \
+from ..project.project import COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT, BRICK_INIT_TIME, \
     BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_CURRENT
 
 
