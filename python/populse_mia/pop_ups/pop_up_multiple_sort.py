@@ -66,14 +66,14 @@ class PopUpMultipleSort(QDialog):
 
         # Labels to add/remove a tag (a push button)
         self.remove_tag_label = ClickableLabel()
-        remove_tag_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
+        remove_tag_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "red_minus.png")))
         remove_tag_picture = remove_tag_picture.scaledToHeight(20)
         self.remove_tag_label.setPixmap(remove_tag_picture)
         self.remove_tag_label.clicked.connect(self.remove_tag)
 
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
-        add_tag_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
+        add_tag_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
         add_tag_picture = add_tag_picture.scaledToHeight(15)
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)

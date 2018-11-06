@@ -8,6 +8,7 @@
 
 import os
 import yaml
+from .config import Config
 
 
 class SavedProjects:
@@ -40,7 +41,8 @@ class SavedProjects:
 
         :return: the dictionary
         """
-        with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'r') as stream:
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties', 'saved_projects.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
@@ -50,7 +52,9 @@ class SavedProjects:
         """
         Saves the dictionary to the saved_projects.yml file
         """
-        with open(os.path.join('..', '..', 'properties', 'saved_projects.yml'), 'w', encoding='utf8') as configfile:
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties', 'saved_projects.yml'), 'w', encoding='utf8') \
+                as configfile:
             yaml.dump(self.savedProjects, configfile, default_flow_style=False, allow_unicode=True)
 
     def addSavedProject(self, newPath):

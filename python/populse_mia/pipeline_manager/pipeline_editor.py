@@ -25,6 +25,7 @@ from soma.utils.weak_proxy import weak_proxy
 from .capsul_files.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
 from .node_controller import FilterWidget
 from ..pop_ups.pop_up_close_pipeline import PopUpClosePipeline
+from ..software_properties.config import Config
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -544,7 +545,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         """
 
         # Reading the process configuration file
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
                 dic = yaml.load(stream)
             except yaml.YAMLError as exc:
@@ -1181,6 +1183,7 @@ class PipelineEditor(PipelineDevelopperView):
         """
 
         pipeline = self.scene.pipeline
+        config = Config()
 
         # List to store the removed links
         removed_links = []
@@ -1192,7 +1195,7 @@ class PipelineEditor(PipelineDevelopperView):
                 current_process_id = sub_pipeline_process.id
 
                 # Reading the process configuration file
-                with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+                with open(os.path.join(config.set_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
                     try:
                         dic = yaml.load(stream)
                     except yaml.YAMLError as exc:
@@ -1305,9 +1308,10 @@ class PipelineEditor(PipelineDevelopperView):
 
         :return: the pipeline file name
         """
+        config = Config()
         if not filename:
             pipeline = self.scene.pipeline
-            folder = os.path.abspath(os.path.join('..', '..', 'processes', 'User_processes'))
+            folder = os.path.abspath(os.path.join(config.get_mia_path(), 'processes', 'User_processes'))
             filename = QtWidgets.QFileDialog.getSaveFileName(
                 None, 'Save the pipeline', folder,
                 'Compatible files (*.py);; All (*)')[0]

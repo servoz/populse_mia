@@ -511,12 +511,13 @@ class PipelineManagerTab(QWidget):
                     f.write(line)
 
         os.remove(tmp_file)
+        config = Config()
 
-        if os.path.relpath(filename_folder) != os.path.join('..', '..', 'processes', 'User_processes'):
+        if os.path.relpath(filename_folder) != os.path.join(config.get_mia_path(), 'processes', 'User_processes'):
             return
 
         # Updating __init__.py
-        init_file = os.path.join('..', '..', 'processes', 'User_processes', '__init__.py')
+        init_file = os.path.join(config.get_mia_path(), 'processes', 'User_processes', '__init__.py')
 
         # Checking that import line is not already in the file
         pattern = 'from .{0} import {1}\n'.format(module_name, class_name)

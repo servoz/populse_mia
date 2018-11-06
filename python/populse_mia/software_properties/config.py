@@ -61,20 +61,22 @@ class Config:
         - get_projects_save_path: returns the folder where the projects are saved
         - set_max_projects: sets the maximum number of projects displayed in the "Saved projects" menu
         - get_max_projects: returns the maximum number of projects displayed in the "Saved projects" menu
+        - get_mia_path: returns the software's install path
+        - set_max_projects: sets the software's install path
     """
 
     def __init__(self):
         self.config = self.loadConfig()
 
     def loadConfig(self):
-        with open(os.path.join('..', '..', 'properties', 'config.yml'), 'r') as stream:
+        with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
                 
     def saveConfig(self):
-        with open(os.path.join('..', '..', 'properties', 'config.yml'), 'w', encoding='utf8') as configfile:
+        with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.config, configfile, default_flow_style=False, allow_unicode=True)
             
     def getPathToProjectsFolder(self):
@@ -260,9 +262,9 @@ class Config:
         try:
             return self.config["projects_save_path"]
         except KeyError:
-            if not os.path.isdir(os.path.join('..', '..', 'projects')):
-                os.mkdir(os.path.join('..', '..', 'projects'))
-            return os.path.join('..', '..', 'projects')
+            if not os.path.isdir(os.path.join(self.get_mia_path(), 'projects')):
+                os.mkdir(os.path.join(self.get_mia_path(), 'projects'))
+            return os.path.join(self.get_mia_path(), 'projects')
 
     def set_max_projects(self, max_projects):
         self.config["max_projects"] = max_projects
@@ -274,3 +276,14 @@ class Config:
             return float(self.config["max_projects"])
         except KeyError:
             return 5.0
+
+    def set_mia_path(self, path):
+        self.config["mia_path"] = path
+        # Then save the modification
+        self.saveConfig()
+
+    def get_mia_path(self):
+        try:
+            return self.config["mia_path"]
+        except KeyError:
+            return os.path.abspath(os.path.join(os.getcwd(), '..', '..'))

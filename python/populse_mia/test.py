@@ -93,7 +93,11 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests project opening
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
+
         self.assertEqual(self.main_window.project.getName(), "project_8")
         self.assertEqual(self.main_window.windowTitle(), "MIA - Multiparametric Image Analysis - project_8")
         documents = self.main_window.project.session.get_documents_names(COLLECTION_CURRENT)
@@ -124,7 +128,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up adding a tag
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         # Testing without tag name
         self.main_window.data_browser.add_tag_action.trigger()
@@ -209,7 +216,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the pop up cloning a tag
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         # Testing without new tag name
         self.main_window.data_browser.clone_tag_action.trigger()
@@ -405,7 +415,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the rapid search bar
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         # Checking that the 8 scans are shown in the databrowser
         self.assertEqual(self.main_window.data_browser.table_data.rowCount(), 9)
@@ -474,7 +487,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the advanced search widget
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         scans_displayed = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
@@ -552,7 +568,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests scans removal in the databrowser
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         scans_displayed = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
@@ -596,7 +615,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the values modifications
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         value = float(self.main_window.project.session.get_value(COLLECTION_CURRENT, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
         value_initial = float(self.main_window.project.session.get_value(COLLECTION_INITIAL, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii", "BandWidth"))
@@ -627,7 +649,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the method resetting the selected cells
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         bandwidth_column = self.main_window.data_browser.table_data.get_tag_column("BandWidth")
 
@@ -680,7 +705,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the method resetting the columns selected
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         bandwidth_column = self.main_window.data_browser.table_data.get_tag_column("BandWidth")
 
@@ -769,7 +797,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests row reset
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         bw_column = self.main_window.data_browser.table_data.get_tag_column("BandWidth")
 
@@ -816,17 +847,24 @@ class TestMIADataBrowser(unittest.TestCase):
         add_path.type_line_edit.setText("Python")
         QTest.mouseClick(add_path.ok_button, Qt.LeftButton)
 
-        self.assertEqual(self.main_window.project.session.get_documents_names(COLLECTION_CURRENT), [os.path.join('data', 'downloaded_data', 'test.py')])
-        self.assertEqual(self.main_window.project.session.get_documents_names(COLLECTION_INITIAL), [os.path.join('data', 'downloaded_data', 'test.py')])
+        self.assertEqual(self.main_window.project.session.get_documents_names(COLLECTION_CURRENT),
+                         [os.path.join('data', 'downloaded_data', 'test.py')])
+        self.assertEqual(self.main_window.project.session.get_documents_names(COLLECTION_INITIAL),
+                         [os.path.join('data', 'downloaded_data', 'test.py')])
         self.assertEqual(self.main_window.data_browser.table_data.rowCount(), 1)
-        self.assertEqual(self.main_window.data_browser.table_data.item(0, 0).text(), os.path.join('data', 'downloaded_data', 'test.py'))
+        self.assertEqual(self.main_window.data_browser.table_data.item(0, 0).text(), os.path.join('data',
+                                                                                                  'downloaded_data',
+                                                                                                  'test.py'))
 
     def test_send_documents_to_pipeline(self):
         """
         Tests the popup sending the documents to the pipeline manager
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         # Checking that the pipeline manager has an empty list at the beginning
         self.assertEqual(self.main_window.pipeline_manager.scan_list, [])
@@ -898,7 +936,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the sorting in the databrowser
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         mixed_bandwidths = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
@@ -976,14 +1017,17 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Checking that the values for the "Projects preferences" are well set
         self.assertEqual(config.get_max_projects(), 5.0)
-        self.assertEqual(config.get_projects_save_path(), os.path.join('..', '..', 'projects'))
+        self.assertEqual(config.get_projects_save_path(), os.path.join(config.get_mia_path(), 'projects'))
 
     def test_undo_redo_databrowser(self):
         """
         Tests the databrowser undo/redo
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         self.assertEqual(self.main_window.project.undos, [])
         self.assertEqual(self.main_window.project.redos, [])
@@ -1064,7 +1108,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the count table popup
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         QTest.mouseClick(self.main_window.data_browser.count_table_button, Qt.LeftButton)
         count_table = self.main_window.data_browser.count_table_pop_up
@@ -1114,7 +1161,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the method clearing cells
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         # Selecting a cell
         bw_column = self.main_window.data_browser.table_data.get_tag_column("BandWidth")
@@ -1140,7 +1190,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests project filter opening
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         self.main_window.data_browser.open_filter_action.trigger()
         open_popup = self.main_window.data_browser.popUp
@@ -1164,8 +1217,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the brick history popup
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
-
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         bricks_column = self.main_window.data_browser.table_data.get_tag_column("Bricks")
         bricks_widget = self.main_window.data_browser.table_data.cellWidget(8, bricks_column)
@@ -1204,7 +1259,10 @@ class TestMIADataBrowser(unittest.TestCase):
         Tests the multiple sort popup
         """
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
         self.main_window.data_browser.table_data.itemChanged.disconnect()
         self.main_window.data_browser.table_data.multiple_sort_pop_up()
@@ -1499,6 +1557,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
         node_controller = self.main_window.pipeline_manager.nodeController
+        config = Config()
 
         # Adding a process
         from nipype.interfaces.spm import Smooth
@@ -1515,19 +1574,20 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
         pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
-        from pipeline_manager.pipeline_editor import save_pipeline
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        from .pipeline_manager.pipeline_editor import save_pipeline
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)
-        self.assertTrue(os.path.isfile(os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')))
+        self.assertTrue(os.path.isfile(os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')))
 
     def test_z_load_pipeline(self):
         """
         Loads a pipeline (z to run at the end)
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         pipeline = pipeline_editor_tabs.get_current_pipeline()
@@ -1545,8 +1605,9 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
 
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         editor0 = pipeline_editor_tabs.get_current_editor()
@@ -1573,8 +1634,9 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
 
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         self.assertEqual(pipeline_editor_tabs.get_filename_by_index(0), filename)
@@ -1606,8 +1668,9 @@ class TestMIAPipelineManager(unittest.TestCase):
          - PipelineEditorTabs.get_index_by_editor
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         editor0 = pipeline_editor_tabs.get_current_editor()
@@ -1635,8 +1698,9 @@ class TestMIAPipelineManager(unittest.TestCase):
          - PipelineEditorTabs.set_current_editor_by_editor
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         editor0 = pipeline_editor_tabs.get_current_editor()
@@ -1661,10 +1725,11 @@ class TestMIAPipelineManager(unittest.TestCase):
         Opens a sub_pipeline (z to run at the end)
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
         # Adding the processes path to the system path
         import sys
-        sys.path.append(os.path.join('..', '..', 'processes'))
+        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
 
         # Importing the package
         package_name = 'User_processes'
@@ -1691,6 +1756,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         Initializes the pipeline (z to run at the end)
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
 
         # Forcing the exit and disabling the init progressbar
         self.main_window.force_exit = True
@@ -1698,7 +1764,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # Adding the processes path to the system path
         import sys
-        sys.path.append(os.path.join('..', '..', 'processes'))
+        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
 
         # Importing the package
         package_name = 'User_processes'
@@ -1729,7 +1795,8 @@ class TestMIAPipelineManager(unittest.TestCase):
                                                            active=True, weak=False)
 
         # Choosing a nii file from the project_8's raw_data folder
-        folder = os.path.abspath(os.path.join('project_8', 'data', 'raw_data'))
+        folder = os.path.abspath(os.path.join(config.get_mia_path(), 'resources', 'mia', 'project_8',
+                                              'data', 'raw_data'))
         nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
         nii_path = os.path.abspath(os.path.join(folder, nii_file))
 
@@ -1920,8 +1987,11 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
         Plays with the iteration table
         """
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        self.main_window.switch_project(project_8_path, "project_8", "project_8")
 
-        self.main_window.switch_project("project_8", "project_8", "project_8")
         iteration_table = self.main_window.pipeline_manager.iterationTable
         iteration_table.check_box_iterate.setChecked(True)
         iteration_table.update_iterated_tag("BandWidth")
@@ -2140,8 +2210,9 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
         pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
         pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        config = Config()
 
-        filename = os.path.join('..', '..', 'processes', 'User_processes', 'test_pipeline.py')
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         pipeline_editor_tabs.load_pipeline(filename)
 
         pipeline = pipeline_editor_tabs.get_current_pipeline()

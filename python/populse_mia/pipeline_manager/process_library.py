@@ -29,6 +29,9 @@ from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QLineEdit, QApplication, QSplitter, QFileDialog, QTreeView, \
     QMessageBox
 
+# Populse_MIA import
+from ..software_properties.config import Config
+
 # soma-base import
 from soma.path import find_in_path
 
@@ -137,9 +140,11 @@ class ProcessLibraryWidget(QWidget):
         :return: the config as a dictionary
         """
 
-        if not os.path.exists(os.path.join('..', '..', 'properties', 'process_config.yml')):
-            open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+        config = Config()
+
+        if not os.path.exists(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml')):
+            open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'a').close()
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
@@ -177,9 +182,12 @@ class ProcessLibraryWidget(QWidget):
 
         """
 
+        config = Config()
+
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = self.paths
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') \
+                as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False, allow_unicode=True)
 
 
@@ -633,7 +641,9 @@ class PackageLibraryDialog(QDialog):
         :return: the config as a dictionary
         """
 
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+        config = Config()
+
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
@@ -676,9 +686,11 @@ class PackageLibraryDialog(QDialog):
 
         """
 
+        config = Config()
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = self.paths
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') \
+                as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False, allow_unicode=True)
 
     def browse_package(self):
@@ -740,11 +752,12 @@ class PackageLibraryDialog(QDialog):
         """
 
         self.packages = self.package_library.package_tree
+        config = Config()
 
         if module_name:
 
-            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
-                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+            if os.path.abspath(os.path.join(config.get_mia_path(), 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join(config.get_mia_path(), 'processes')))
 
             # Reloading the package
             if module_name in sys.modules.keys():
@@ -819,11 +832,12 @@ class PackageLibraryDialog(QDialog):
         """
 
         self.packages = self.package_library.package_tree
+        config = Config()
 
         if package:
 
-            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
-                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+            if os.path.abspath(os.path.join(config.get_mia_path(), 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join(config.get_mia_path(), 'processes')))
 
             path_list = package.split('.')
             pkg_iter = self.packages
@@ -870,7 +884,10 @@ class PackageLibraryDialog(QDialog):
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = list(set(self.paths))
 
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as configfile:
+        config = Config()
+
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') \
+                as configfile:
             yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()
 
@@ -1300,6 +1317,8 @@ class InstallProcesses(QDialog):
 
         filename = self.path_edit.text()
 
+        config = Config()
+
         if not os.path.isdir(filename):
         
             if not os.path.isfile(filename):
@@ -1324,14 +1343,14 @@ class InstallProcesses(QDialog):
 
         try:
 
-            if os.path.abspath(os.path.join('..', '..', 'processes')) not in sys.path:
-                sys.path.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+            if os.path.abspath(os.path.join(config.get_mia_path(), 'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(os.path.join(config.get_mia_path(), 'processes')))
 
             # Process config update
-            if not os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
-                open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'a').close()
+            if not os.path.isfile(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml')):
+                open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'a').close()
 
-            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+            with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
                 try:
                     process_dic = yaml.load(stream)
                 except yaml.YAMLError as exc:
@@ -1364,8 +1383,8 @@ class InstallProcesses(QDialog):
             mia_processes_not_found = True
 
             # packages_already: packages already installed in populse_mia (populse_mia/processes)
-            packages_already = [dire for dire in os.listdir(os.path.join('..', '..', 'processes'))
-                                if not os.path.isfile(os.path.join('..', '..', 'processes', dire))]
+            packages_already = [dire for dire in os.listdir(os.path.join(config.get_mia_path(), 'processes'))
+                                if not os.path.isfile(os.path.join(config.get_mia_path(), 'processes', dire))]
 
             if is_zipfile(filename):
                 # Extraction of the zipped content
@@ -1384,10 +1403,10 @@ class InstallProcesses(QDialog):
                     if mia_processes_not_found:
 
                         if (package_name == "MIA_processes") and (
-                                os.path.exists(os.path.join('..', '..', 'processes', 'MIA_processes'))):
+                                os.path.exists(os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'))):
                             mia_processes_not_found = False
                             tmp_folder4MIA = tempfile.mkdtemp()
-                            shutil.copytree(os.path.join('..', '..', 'processes', 'MIA_processes'),
+                            shutil.copytree(os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'),
                                             os.path.join(tmp_folder4MIA, 'MIA_processes'))
 
                     if is_zipfile(filename):
@@ -1395,11 +1414,11 @@ class InstallProcesses(QDialog):
                         with ZipFile(filename, 'r') as zip_ref:
                             members_to_extract = [member for member in zip_ref.namelist()
                                                   if member.startswith(package_name)]
-                            zip_ref.extractall(os.path.join('..', '..', 'processes'), members_to_extract)
+                            zip_ref.extractall(os.path.join(config.get_mia_path(), 'processes'), members_to_extract)
 
                     elif os.path.isdir(filename):
                         distutils.dir_util.copy_tree(os.path.join(filename),
-                                                     os.path.join('..', '..', 'processes', package_name))
+                                                     os.path.join(config.get_mia_path(), 'processes', package_name))
 
                 else:
                     date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -1412,32 +1431,32 @@ class InstallProcesses(QDialog):
                                                   if member.startswith(package_name)]
                             zip_ref.extractall(temp_dir, members_to_extract)
                             shutil.move(os.path.join(temp_dir, package_name),
-                                        os.path.join('..', '..', 'processes', package_name + '_' + date))
+                                        os.path.join(config.get_mia_path(), 'processes', package_name + '_' + date))
 
                     elif os.path.isdir(filename):
                         shutil.copytree(os.path.join(filename),
-                                        os.path.join('..', '..', 'processes', package_name + '_' + date))
+                                        os.path.join(config.get_mia_path(), 'processes', package_name + '_' + date))
 
                     original_package_name = package_name
                     package_name = package_name + '_' + date
 
                     # Replacing the original package name pattern in all the extracted files by the package name
                     # with the date
-                    change_pattern_in_folder(os.path.join('..', '..', 'processes', package_name),
+                    change_pattern_in_folder(os.path.join(config.get_mia_path(), 'processes', package_name),
                                              original_package_name, package_name)
 
                 package_names.append(package_name)  # package_names contains all the extracted packages
                 final_package_dic = add_package(packages, package_name)
 
-            if not os.path.abspath(os.path.join('..', '..', 'processes')) in paths:
-                paths.append(os.path.abspath(os.path.join('..', '..', 'processes')))
+            if not os.path.abspath(os.path.join(config.get_mia_path(), 'processes')) in paths:
+                paths.append(os.path.abspath(os.path.join(config.get_mia_path(), 'processes')))
 
             process_dic["Packages"] = final_package_dic
             process_dic["Paths"] = paths
 
             # Idea: Should we encrypt the path ?
 
-            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+            with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
                 yaml.dump(process_dic, stream, default_flow_style=False, allow_unicode=True)
 
             self.process_installed.emit()
@@ -1462,7 +1481,8 @@ class InstallProcesses(QDialog):
             if process_dic_orig is None:
                 process_dic_orig = {}
 
-            with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+            with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') \
+                    as stream:
                 yaml.dump(process_dic_orig, stream, default_flow_style=False, allow_unicode=True)
 
             # Deleting the extracted files
@@ -1470,13 +1490,13 @@ class InstallProcesses(QDialog):
                 package_names = []
 
             for package_name in package_names:
-                if os.path.exists(os.path.join('..', '..', 'processes', package_name)):
-                    shutil.rmtree(os.path.join('..', '..', 'processes', package_name))
+                if os.path.exists(os.path.join(config.get_mia_path(), 'processes', package_name)):
+                    shutil.rmtree(os.path.join(config.get_mia_path(), 'processes', package_name))
 
             # If the error comes from a MIA_process update, the old version is restored
             if not mia_processes_not_found:
                 distutils.dir_util.copy_tree(os.path.join(tmp_folder4MIA, 'MIA_processes'),
-                                             os.path.join('..', '..', 'processes', 'MIA_processes'))
+                                             os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'))
 
             if 'tmp_folder4MIA' in locals():
                 shutil.rmtree(tmp_folder4MIA)

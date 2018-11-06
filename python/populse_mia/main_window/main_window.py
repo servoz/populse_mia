@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         self.project = project
         self.test = test
         self.force_exit = False
-        app_icon = QIcon(os.path.join('..', 'sources_images', 'brain_mri.jpeg'))
+        app_icon = QIcon(os.path.join('sources_images', 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
         self.saved_projects = SavedProjects()
@@ -146,7 +146,7 @@ class MainWindow(QMainWindow):
         self.action_save_as.setShortcut('Ctrl+Shift+S')
         self.addAction(self.action_save_as)
 
-        self.action_import = QAction(QIcon(os.path.join('..', 'sources_images', 'Blue.png')), 'Import', self)
+        self.action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
         for i in range(self.saved_projects.maxProjects):
@@ -165,7 +165,7 @@ class MainWindow(QMainWindow):
         else:
             self.action_package_library.setEnabled(True)
 
-        self.action_exit = QAction(QIcon(os.path.join('..', 'sources_images', 'exit.png')), 'Exit', self)
+        self.action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
         self.action_undo = QAction('Undo', self)
@@ -339,12 +339,16 @@ class MainWindow(QMainWindow):
             for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
                 # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) \
+                        is None and "logExport" not in scan:
                     os.remove(filename)
-            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'downloaded_data', '*')):
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data',
+                                                   'downloaded_data', '*')):
                 scan = os.path.basename(filename)
                 # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "downloaded_data", scan)) is None and "logExport" not in scan:
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data",
+                                                                                      "downloaded_data", scan)) \
+                        is None and "logExport" not in scan:
                     os.remove(filename)
             self.project.database.__exit__(None, None, None)
 
@@ -470,13 +474,15 @@ class MainWindow(QMainWindow):
                     shutil.copy(filename, os.path.join(os.path.relpath(filters_path)))
 
             # First we register the Database before commiting the last pending modifications
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'),
+                        os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
 
             # We commit the last pending modifications
             self.project.saveModifications()
 
             os.mkdir(properties_path)
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'properties', 'properties.yml'), os.path.relpath(properties_path))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'properties', 'properties.yml'),
+                        os.path.relpath(properties_path))
 
             # We copy the Database with all the modifications commited in the new project
             os.mkdir(os.path.relpath(database_path))
@@ -486,11 +492,12 @@ class MainWindow(QMainWindow):
             os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
 
             # We reput the Database without the last modifications in the old project
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'), os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'),
+                        os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
 
             os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
 
-            self.remove_raw_files_useless() # We remove the useless files from the old project
+            self.remove_raw_files_useless()  # We remove the useless files from the old project
 
             # Removing the old project from the list of currently opened projects
             config = Config()
@@ -835,8 +842,10 @@ class MainWindow(QMainWindow):
 
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join('..', '..', 'ressources', 'mia',
-                                                                               'MRIFileManager', 'MRIManager.jar'),
+        config = Config()
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join(config.get_mia_path(), 'ressources',
+                                                                               'mia', 'MRIFileManager',
+                                                                               'MRIManager.jar'),
                                      '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
                                      '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
                                      'AcquisitionTime',

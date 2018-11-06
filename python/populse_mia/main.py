@@ -125,10 +125,11 @@ def verify_processes():
     """
 
     proc_content_flag = False
+    config = Config()
 
-    if os.path.isfile(os.path.join('..', '..', 'properties', 'process_config.yml')):
+    if os.path.isfile(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml')):
                       
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'r') as stream:
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             proc_content = yaml.load(stream)
             proc_content_flag = True
             
@@ -179,7 +180,7 @@ def verify_processes():
                 final_pkgs = {}
                 final_pkgs["Packages"] = {}
 
-        with open(os.path.join('..', '..', 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
+        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') as stream:
             yaml.dump(final_pkgs, stream, default_flow_style=False, allow_unicode=True)
 
 

@@ -157,7 +157,7 @@ class AdvancedSearch(QWidget):
 
         # Minus to remove the row
         remove_row_label = ClickableLabel()
-        remove_row_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "red_minus.png")))
+        remove_row_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "red_minus.png")))
         remove_row_picture = remove_row_picture.scaledToHeight(30)
         remove_row_label.setPixmap(remove_row_picture)
 
@@ -314,7 +314,7 @@ class AdvancedSearch(QWidget):
         # Plus added to the last row
         add_row_label = ClickableLabel()
         add_row_label.setObjectName('plus')
-        add_row_picture = QPixmap(os.path.relpath(os.path.join("..", "sources_images", "green_plus.png")))
+        add_row_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
         add_row_picture = add_row_picture.scaledToHeight(20)
         add_row_label.setPixmap(add_row_picture)
         add_row_label.clicked.connect(self.add_row)

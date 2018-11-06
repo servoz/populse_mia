@@ -94,9 +94,9 @@ class PopUpSeeAllProjects(QDialog):
         :return: either a green "v" or a red cross depending on the existence of the project
         """
         if os.path.exists(os.path.join(path)):
-            icon = QIcon(os.path.join('..', 'sources_images', 'green_v.png'))
+            icon = QIcon(os.path.join('sources_images', 'green_v.png'))
         else:
-            icon = QIcon(os.path.join('..', 'sources_images', 'red_cross.png'))
+            icon = QIcon(os.path.join('sources_images', 'red_cross.png'))
         return icon
 
     def item_to_path(self):

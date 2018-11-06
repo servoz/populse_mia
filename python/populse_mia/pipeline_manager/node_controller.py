@@ -549,7 +549,7 @@ class PlugFilter(QWidget):
 
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.setIcon(QIcon(os.path.join('sources_images', 'gray_cross.png')))
         self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout.addWidget(self.rapid_search)
@@ -824,7 +824,7 @@ class FilterWidget(QWidget):
 
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join('..', 'sources_images', 'gray_cross.png')))
+        self.button_cross.setIcon(QIcon(os.path.join('sources_images', 'gray_cross.png')))
         self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout.addWidget(self.rapid_search)
