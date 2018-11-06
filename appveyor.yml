@@ -25,11 +25,11 @@ install:
   - "pip install -e .[postgres]"
   - "cd .."
   - "cd populse-mia"
-  - "SET PYTHONPATH=C:\\projects\\populse-mia\\python\\populse_mia\\src\\modules\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-mia\\;%PYTHONPATH%"
 
 test_script:
   - "python --version"
-  - "python .\\python\\populse_mia\\src\\scripts\\test.py -v"
+  - "python .\\python\\populse_mia\\test.py -v"
 
 notifications:
   - provider: Email
