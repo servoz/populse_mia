@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 # Populse_MIA imports
 from .pop_up_visualized_tags import PopUpVisualizedTags
 from .pop_up_information import PopUpInformation
-from ..project.project import TAG_FILENAME
+from populse_mia.project.project import TAG_FILENAME
 
 
 class PopUpProperties(QDialog):

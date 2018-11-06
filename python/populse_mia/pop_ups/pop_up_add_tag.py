@@ -16,10 +16,10 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 
 # Populse_MIA imports
-from ..utils.tools import ClickableLabel
-from ..utils.utils import check_value_type
-from ..project.database_mia import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
-from ..project.project import COLLECTION_CURRENT
+from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils.utils import check_value_type
+from populse_mia.project.database_mia import TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL, TAG_UNIT_DEGREE, TAG_UNIT_MHZ
+from populse_mia.project.project import COLLECTION_CURRENT
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_DATE, \

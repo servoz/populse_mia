@@ -18,9 +18,9 @@ from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 # Populse_MIA imports
 from .filter import Filter
-from ..software_properties.config import Config
-from ..utils.utils import set_item_data
-from ..project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from populse_mia.software_properties.config import Config
+from populse_mia.utils.utils import set_item_data
+from populse_mia.project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_LIST_STRING, FIELD_TYPE_JSON, FIELD_TYPE_DATETIME, \
@@ -156,7 +156,7 @@ class Project:
             self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False,
                                    TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False,
-                                   TAG_ORIGIN_BUILTIN, None, None)  # TODO Maybe remove checksum tag from initial table
+                                   TAG_ORIGIN_BUILTIN, None, None)  # TODO Maybe remove checksum tag from populse_mia.itial table
             self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True,
                                    TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True,
@@ -293,7 +293,7 @@ class Project:
 
         filter_name = self.getFilterName()
 
-        # We save the filter only if we have a filter name from the popup
+        # We save the filter only if we have a filter name from populse_mia.e popup
         if filter_name != None:
             file_path = os.path.join(filters_path, filter_name + ".json")
 
@@ -463,7 +463,7 @@ class Project:
         """
 
         # To avoid circular imports
-        from ..data_browser.data_browser import not_defined_value
+        from populse_mia.data_browser.data_browser import not_defined_value
         
         # We can undo if we have an action to revert
         if len(self.undos) > 0:
@@ -575,7 +575,7 @@ class Project:
         """
 
         # To avoid circular imports
-        from ..data_browser.data_browser import not_defined_value
+        from populse_mia.data_browser.data_browser import not_defined_value
 
         # We can redo if we have an action to make again
         if len(self.redos) > 0:

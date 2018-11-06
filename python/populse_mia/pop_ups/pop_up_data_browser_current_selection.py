@@ -10,8 +10,8 @@
 from PyQt5.QtWidgets import QVBoxLayout, QDialogButtonBox, QDialog, QApplication
 
 # Populse_MIA imports
-from ..data_browser import data_browser
-from ..project.project import TAG_FILENAME
+from populse_mia.data_browser import data_browser
+from populse_mia.project.project import TAG_FILENAME
 
 
 class PopUpDataBrowserCurrentSelection(QDialog):

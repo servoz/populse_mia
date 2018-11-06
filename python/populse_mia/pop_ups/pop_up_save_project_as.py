@@ -13,7 +13,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
 
 # Populse_MIA imports
-from utils import utils
+from populse_mia.utils import utils
 
 
 class PopUpSaveProjectAs(QFileDialog):

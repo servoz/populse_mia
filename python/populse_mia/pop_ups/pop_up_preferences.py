@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDia
     QFileDialog, QMessageBox
 
 # Populse_MIA imports
-from ..software_properties.config import Config
+from populse_mia.software_properties.config import Config
 
 
 class PopUpPreferences(QDialog):

@@ -12,13 +12,13 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 
 # Populse_MIA imports
-from ..project.project import COLLECTION_CURRENT
-from ..project.database_mia import TAG_ORIGIN_USER
+from populse_mia.project.project import COLLECTION_CURRENT
+from populse_mia.project.database_mia import TAG_ORIGIN_USER
 
 
 class PopUpRemoveTag(QDialog):
     """
-     Is called when the user wants to remove a user tag from the project
+     Is called when the user wants to remove a user tag from populse_mia.e project
 
      Attributes:
          - project: current project in the software

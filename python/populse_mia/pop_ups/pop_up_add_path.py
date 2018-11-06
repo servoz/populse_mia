@@ -14,12 +14,13 @@ import hashlib
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLineEdit, QLabel, QPushButton, QFileDialog, QMessageBox
 
 # Populse_MIA imports
-from ..project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
+from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_TYPE, TAG_CHECKSUM, TYPE_NII, \
+    TYPE_MAT
 
 
 class PopUpAddPath(QDialog):
     """
-    Is called when the user wants to add a document to the project without importing from the MRI File Manager
+    Is called when the user wants to add a document to the project without importing from populse_mia.e MRI File Manager
 
     Attributes:
         - project: current project in the software

@@ -14,7 +14,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QMessageBox
 
 # Populse_MIA imports
-from ..project.project import COLLECTION_CURRENT, TAG_CHECKSUM
+from populse_mia.project.project import COLLECTION_CURRENT, TAG_CHECKSUM
 
 
 class PopUpCloneTag(QDialog):

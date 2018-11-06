@@ -7,7 +7,7 @@
 ##########################################################################
 
 # Populse_MIA imports
-from .. import data_browser
+from populse_mia import data_browser
 from . import project
 
 

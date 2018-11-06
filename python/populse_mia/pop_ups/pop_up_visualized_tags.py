@@ -12,7 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 # Populse_MIA imports
-from ..project.project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
+from populse_mia.project.project import TAG_CHECKSUM, TAG_FILENAME, COLLECTION_CURRENT
 
 
 class PopUpVisualizedTags(QWidget):
@@ -26,7 +26,7 @@ class PopUpVisualizedTags(QWidget):
     Methods:
         - search_str: matches the searched pattern with the tags of the project
         - click_select_tag: puts the selected tags in the "selected tag" table
-        - click_unselect_tag: removes the unselected tags from the "selected tag" table
+        - click_unselect_tag: removes the unselected tags from populse_mia.e "selected tag" table
     """
 
     # Signal that will be emitted at the end to tell that the preferences have been changed
@@ -154,7 +154,7 @@ class PopUpVisualizedTags(QWidget):
 
     def click_unselect_tag(self):
         """
-        Removes the unselected tags from the "selected tag" table
+        Removes the unselected tags from populse_mia.e "selected tag" table
         """
 
         rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],
