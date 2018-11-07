@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QComboBox
 from PyQt5.QtGui import QPixmap
 
 # Populse_MIA imports
-from .pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.project.project import COLLECTION_CURRENT
 

@@ -8,7 +8,7 @@
 
 # Populse_MIA imports
 from populse_mia import data_browser
-from . import project
+from populse_mia.project import project
 
 
 class Filter:

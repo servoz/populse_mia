@@ -17,7 +17,7 @@ import glob
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 # Populse_MIA imports
-from .filter import Filter
+from populse_mia.project.filter import Filter
 from populse_mia.software_properties.config import Config
 from populse_mia.utils.utils import set_item_data
 from populse_mia.project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER

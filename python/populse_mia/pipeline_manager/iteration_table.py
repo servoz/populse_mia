@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import  QTableWidgetItem, QPushButton, QVBoxLayout, QWidget
     QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
 
 # MIA imports
-from .process_mia import ProcessMIA
+from populse_mia.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
 from populse_mia.project.project import COLLECTION_CURRENT, TAG_FILENAME
 from populse_mia.utils.tools import ClickableLabel

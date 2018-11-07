@@ -19,11 +19,11 @@ from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButt
     QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
 
 # Populse_MIA imports
-from .rapid_search import RapidSearch
-from .advanced_search import AdvancedSearch
-from .count_table import CountTable
-from .modify_table import ModifyTable
-from .mini_viewer import MiniViewer
+from populse_mia.data_browser.rapid_search import RapidSearch
+from populse_mia.data_browser.advanced_search import AdvancedSearch
+from populse_mia.data_browser.count_table import CountTable
+from populse_mia.data_browser.modify_table import ModifyTable
+from populse_mia.data_browser.mini_viewer import MiniViewer
 from populse_mia.pop_ups.pop_up_multiple_sort import PopUpMultipleSort
 from populse_mia.pop_ups.pop_up_properties import PopUpProperties
 from populse_mia.pop_ups.pop_up_show_brick import PopUpShowBrick

@@ -8,7 +8,7 @@
 
 import os
 import yaml
-from .config import Config
+from populse_mia.software_properties.config import Config
 
 
 class SavedProjects:

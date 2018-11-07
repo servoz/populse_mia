@@ -11,7 +11,7 @@ from PyQt5 import QtWidgets
 
 # Populse_MIA imports
 from populse_mia.software_properties.config import Config
-from .pop_up_filter_selection import PopUpFilterSelection
+from populse_mia.pop_ups.pop_up_filter_selection import PopUpFilterSelection
 
 
 class PopUpSelectFilter(PopUpFilterSelection):

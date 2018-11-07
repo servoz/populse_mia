@@ -30,7 +30,7 @@ from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCoun
 from populse_mia.pop_ups.pop_up_visualized_tags import PopUpVisualizedTags
 from populse_mia.project.project import TAG_FILENAME, COLLECTION_CURRENT
 from populse_mia.project.filter import Filter
-from .process_mia import ProcessMIA
+from populse_mia.pipeline_manager.process_mia import ProcessMIA
 
 if sys.version_info[0] >= 3:
     unicode = str

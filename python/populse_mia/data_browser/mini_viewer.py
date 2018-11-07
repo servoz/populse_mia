@@ -24,7 +24,7 @@ from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSi
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.pop_ups.pop_up_select_tag import PopUpSelectTag
 from populse_mia.software_properties.config import Config
-from . import data_browser
+from populse_mia.data_browser import data_browser
 from populse_mia.project.project import COLLECTION_CURRENT
 
 

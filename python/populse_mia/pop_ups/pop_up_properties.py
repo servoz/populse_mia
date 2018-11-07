@@ -12,8 +12,8 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog
 
 # Populse_MIA imports
-from .pop_up_visualized_tags import PopUpVisualizedTags
-from .pop_up_information import PopUpInformation
+from populse_mia.pop_ups.pop_up_visualized_tags import PopUpVisualizedTags
+from populse_mia.pop_ups.pop_up_information import PopUpInformation
 from populse_mia.project.project import TAG_FILENAME
 
 
