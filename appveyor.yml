@@ -25,7 +25,7 @@ install:
   - "pip install -e .[postgres]"
   - "cd .."
   - "cd populse-mia"
-  - "SET PYTHONPATH=C:\\projects\\populse-mia\\;%PYTHONPATH%"
+  - "SET PYTHONPATH=C:\\projects\\populse-mia\\python\\;%PYTHONPATH%"
 
 test_script:
   - "python --version"
