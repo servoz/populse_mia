@@ -843,9 +843,7 @@ class MainWindow(QMainWindow):
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         config = Config()
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', os.path.join(config.get_mia_path(), 'resources',
-                                                                               'mia', 'MRIFileManager',
-                                                                               'MRIManager.jar'),
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', config.get_mri_conv_path(),
                                      '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
                                      '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
                                      'AcquisitionTime',

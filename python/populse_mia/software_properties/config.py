@@ -61,8 +61,10 @@ class Config:
         - get_projects_save_path: returns the folder where the projects are saved
         - set_max_projects: sets the maximum number of projects displayed in the "Saved projects" menu
         - get_max_projects: returns the maximum number of projects displayed in the "Saved projects" menu
+        - set_mia_path: sets the software's install path
         - get_mia_path: returns the software's install path
-        - set_max_projects: sets the software's install path
+        - set_mri_conv_path: sets the MRIFileManager.jar path
+        - get_mri_conv_path: sets the MRIFileManager.jar path
     """
 
     def __init__(self):
@@ -293,3 +295,15 @@ class Config:
         except AttributeError:
             return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
+    def set_mri_conv_path(self, path):
+        self.config["mri_conv_path"] = path
+        # Then save the modification
+        self.saveConfig()
+
+    def get_mri_conv_path(self):
+        try:
+            return self.config["mri_conv_path"]
+        except KeyError:
+            return ""
+        except AttributeError:
+            return ""

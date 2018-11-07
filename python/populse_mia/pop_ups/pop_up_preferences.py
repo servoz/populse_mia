@@ -24,6 +24,8 @@ class PopUpPreferences(QDialog):
     Is called when the user wants to change the software preferences
 
     Methods:
+        - browse_projects_save_path: called when "Projects folder" browse button is clicked
+        - browse_mri_conv_path: called when "MRIFileManager.jar" browse button is clicked
         - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed
         - use_spm_changed: called when the use_spm checkbox is changed
         - use_matlab_changed: called when the use_matlab checkbox is changed
@@ -132,6 +134,29 @@ class PopUpPreferences(QDialog):
 
         self.groupbox_projects.setLayout(projects_layout)
 
+        # Groupbox "POPULSE third party preferences"
+        self.groupbox_populse = QtWidgets.QGroupBox("POPULSE third party preference")
+
+        # MRI File Manager folder label/line edit
+        self.mri_conv_path_label = QLabel("MRIFileManager.jar path:")
+        self.mri_conv_path_line_edit = QLineEdit(config.get_mri_conv_path())
+        self.mri_conv_path_browse = QPushButton("Browse")
+        self.mri_conv_path_browse.clicked.connect(self.browse_mri_conv_path)
+
+        # MRI File Manager layouts
+        h_box_mri_conv = QtWidgets.QHBoxLayout()
+        h_box_mri_conv.addWidget(self.mri_conv_path_line_edit)
+        h_box_mri_conv.addWidget(self.mri_conv_path_browse)
+
+        v_box_mri_conv = QtWidgets.QVBoxLayout()
+        v_box_mri_conv.addWidget(self.mri_conv_path_label)
+        v_box_mri_conv.addLayout(h_box_mri_conv)
+
+        populse_layout = QVBoxLayout()
+        populse_layout.addLayout(v_box_mri_conv)
+
+        self.groupbox_populse.setLayout(populse_layout)
+
         # Final tab layouts
         h_box_top = QtWidgets.QHBoxLayout()
         h_box_top.addWidget(self.groupbox_global)
@@ -140,6 +165,7 @@ class PopUpPreferences(QDialog):
         self.tab_tools_layout = QtWidgets.QVBoxLayout()
         self.tab_tools_layout.addLayout(h_box_top)
         self.tab_tools_layout.addWidget(self.groupbox_projects)
+        self.tab_tools_layout.addWidget(self.groupbox_populse)
         self.tab_tools_layout.addStretch(1)
         self.tab_tools.setLayout(self.tab_tools_layout)
 
@@ -344,6 +370,14 @@ class PopUpPreferences(QDialog):
         if fname:
             self.projects_save_path_line_edit.setText(fname)
 
+    def browse_mri_conv_path(self):
+        """
+        Called when "MRIFileManager.jar" browse button is clicked
+        """
+        fname = QFileDialog.getOpenFileName(self, 'Select the location of the MRIFileManager.jar file')[0]
+        if fname:
+            self.mri_conv_path_line_edit.setText(fname)
+
     def use_spm_standalone_changed(self):
         """
         Called when the use_spm_standalone checkbox is changed
@@ -467,6 +501,21 @@ class PopUpPreferences(QDialog):
             self.msg.setIcon(QMessageBox.Critical)
             self.msg.setText("Invalid projects folder path")
             self.msg.setInformativeText("The projects folder path entered {0} is invalid.".format(projects_folder))
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
+        # MRIFileManager.jar path
+        mri_conv_path = self.mri_conv_path_line_edit.text()
+        if os.path.isfile(mri_conv_path):
+            config.set_mri_conv_path(mri_conv_path)
+        else:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Invalid MRIFileManager.jar path")
+            self.msg.setInformativeText("The MRIFileManager.jar path entered {0} is invalid.".format(mri_conv_path))
             self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
