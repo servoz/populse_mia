@@ -1773,6 +1773,10 @@ class TestMIAPipelineManager(unittest.TestCase):
         # Adding the processes path to the system path
         sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
         print('MIA_path', config.get_mia_path())
+        print('READING INIT')
+        with open(os.path.join(config.get_mia_path(), 'processes', 'User_processes', '__init__.py')) as f:
+            for line in f:
+                print("__init__.py", line)
 
         # Importing the package
         package_name = 'User_processes'
