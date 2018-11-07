@@ -27,7 +27,7 @@ from populse_mia.main_window.main_window import MainWindow
 from populse_mia.software_properties.config import Config
 from capsul.api import get_process_instance
 
-'''
+
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1298,7 +1298,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.main_window.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-'''
+
 
 class TestMIAPipelineManager(unittest.TestCase):
 
@@ -1587,7 +1587,8 @@ class TestMIAPipelineManager(unittest.TestCase):
         filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)
-        self.assertTrue(os.path.isfile(os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')))
+        self.assertTrue(os.path.isfile(os.path.join(config.get_mia_path(), 'processes', 'User_processes',
+                                                    'test_pipeline.py')))
 
     def test_z_load_pipeline(self):
         """
@@ -1772,19 +1773,12 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # Adding the processes path to the system path
         sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
-        print('MIA_path', config.get_mia_path())
-        print('READING INIT')
-        with open(os.path.join(config.get_mia_path(), 'processes', 'User_processes', '__init__.py')) as f:
-            for line in f:
-                print("__init__.py", line)
 
         # Importing the package
         package_name = 'User_processes'
         __import__(package_name)
         pkg = sys.modules[package_name]
-        print('PACKAGES', pkg)
         for name, cls in sorted(list(pkg.__dict__.items())):
-            print('NAME', name)
             if name == 'Test_pipeline':
                 process_class = cls
 

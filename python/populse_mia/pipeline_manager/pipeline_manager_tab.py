@@ -513,7 +513,8 @@ class PipelineManagerTab(QWidget):
         os.remove(tmp_file)
         config = Config()
 
-        if os.path.relpath(filename_folder) != os.path.join(config.get_mia_path(), 'processes', 'User_processes'):
+        if os.path.relpath(filename_folder) != \
+                os.path.relpath(os.path.join(config.get_mia_path(), 'processes', 'User_processes')):
             return
 
         # Updating __init__.py
