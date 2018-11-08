@@ -1,7 +1,7 @@
 <p align="center" >
-  <b> populse_mia</b><br>
-	<br>
-  <img src="https://github.com/populse/populse_mia/blob/master/python/populse_mia/ressources/mia/images/Logo_populse_mia.jpg">
+	<b> populse_mia </b> <br>
+	
+  <img src="https://github.com/populse/populse_mia/blob/master/python/populse_mia/ressources/mia/images/Logo_populse_mia.jpg" alt="populse_mia logo" height="220" width="300">
 </p>
 
 
