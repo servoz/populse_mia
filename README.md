@@ -1,7 +1,7 @@
 <p align="center" >
   <b> populse_mia: Multiparametric Image Analysis </b><br>
 	<br>
-  <img src="https://user-images.githubusercontent.com/1913468/38312384-eb8fd9ee-3821-11e8-870d-209673077223.jpg">
+  <img src="https://github.com/populse/populse_mia/blob/master/python/populse_mia/ressources/mia/images/Logo_populse_mia.jpg">
 </p>
 
 
