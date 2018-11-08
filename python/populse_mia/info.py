@@ -13,12 +13,12 @@ __version__ = "{0}.{1}.{2}".format(version_major, version_minor, version_micro)
 # Expected by setup.py: the status of the project
 CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'Intended Audience :: Developers',
-                'License :: CeCILL Free Software License Agreement (CECILL)',
-                'Topic :: Software Development :: Libraries :: Python Modules',
-                'Operating System :: OS Independent',
-                'Programming Language :: Python',
-                'Topic :: Scientific/Engineering',
-                'Topic :: Utilities']
+               'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
+               'Topic :: Software Development :: Libraries :: Python Modules',
+               'Operating System :: OS Independent',
+               'Programming Language :: Python',
+               'Topic :: Scientific/Engineering',
+               'Topic :: Utilities']
 
 # project descriptions
 NAME = 'populse_mia'
@@ -38,7 +38,7 @@ brainvisa_build_model = 'pure_python'
 ORGANISATION = 'populse'
 AUTHOR = ''
 AUTHOR_EMAIL = ''
-URL = 'http://populse.github.io'
+URL = 'http://populse.github.io/populse_mia'
 LICENSE = 'CeCILL'
 VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
@@ -59,7 +59,8 @@ REQUIRES = [
   'capsul',
   'soma_workflow',
   'nipype',
-  'scikit-image'
+  'scikit-image',
+  'populse-db'
 ]
 EXTRA_REQUIRES = {
     'doc': [
