@@ -1,8 +1,4 @@
 <p align="center" >
-	<b> populse_mia </b>
-</p>
-
-<p align="center" >
 	<img src="https://github.com/populse/populse_mia/blob/master/python/populse_mia/ressources/mia/images/Logo_populse_mia.jpg" alt="populse_mia logo" height="220" width="300">
 	<sub><sub> ©Johan Pietras @IRMaGe </sub></sub>
 </p>
