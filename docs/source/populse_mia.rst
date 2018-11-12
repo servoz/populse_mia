@@ -26,6 +26,14 @@ populse\_mia.info module
     :undoc-members:
     :show-inheritance:
 
+populse\_mia.install\_mia module
+--------------------------------
+
+.. automodule:: populse_mia.install_mia
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 populse\_mia.install\_processes module
 --------------------------------------
 

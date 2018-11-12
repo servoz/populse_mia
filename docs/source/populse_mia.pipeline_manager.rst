@@ -1,6 +1,13 @@
 populse\_mia.pipeline\_manager package
 ======================================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    populse_mia.pipeline_manager.capsul_files
+
 Submodules
 ----------
 

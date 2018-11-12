@@ -42,7 +42,7 @@
 <dt id="populse_mia.pop_ups.pop_up_add_path.PopUpAddPath">
 <em class="property">class </em><code class="descclassname">populse_mia.pop_ups.pop_up_add_path.</code><code class="descname">PopUpAddPath</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_add_path.PopUpAddPath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to add a document to the project without importing from the MRI File Manager</p>
+<p>Is called when the user wants to add a document to the project without importing from populse_mia.e MRI File Manager</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
@@ -614,6 +614,8 @@ We need to override the MousePressEvent</p>
 <dl class="docutils">
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
+<li>browse_projects_save_path: called when “Projects folder” browse button is clicked</li>
+<li>browse_mri_conv_path: called when “MRIFileManager.jar” browse button is clicked</li>
 <li>use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</li>
 <li>use_spm_changed: called when the use_spm checkbox is changed</li>
 <li>use_matlab_changed: called when the use_matlab checkbox is changed</li>
@@ -635,6 +637,12 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab_standalone">
 <code class="descname">browse_matlab_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab_standalone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when matlab browse button is clicked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_mri_conv_path">
+<code class="descname">browse_mri_conv_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_mri_conv_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when “MRIFileManager.jar” browse button is clicked</p>
 </dd></dl>
 
 <dl class="method">
@@ -814,7 +822,7 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.pop_ups.pop_up_remove_tag.PopUpRemoveTag">
 <em class="property">class </em><code class="descclassname">populse_mia.pop_ups.pop_up_remove_tag.</code><code class="descname">PopUpRemoveTag</code><span class="sig-paren">(</span><em>databrowser</em>, <em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_remove_tag.PopUpRemoveTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to remove a user tag from the project</p>
+<p>Is called when the user wants to remove a user tag from populse_mia.e project</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
@@ -1211,7 +1219,7 @@ We need to override the MousePressEvent</p>
 <dd><ul class="first last simple">
 <li>search_str: matches the searched pattern with the tags of the project</li>
 <li>click_select_tag: puts the selected tags in the “selected tag” table</li>
-<li>click_unselect_tag: removes the unselected tags from the “selected tag” table</li>
+<li>click_unselect_tag: removes the unselected tags from populse_mia.e “selected tag” table</li>
 </ul>
 </dd>
 </dl>
@@ -1224,7 +1232,7 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag">
 <code class="descname">click_unselect_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the unselected tags from the “selected tag” table</p>
+<dd><p>Removes the unselected tags from populse_mia.e “selected tag” table</p>
 </dd></dl>
 
 <dl class="method">

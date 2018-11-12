@@ -1,0 +1,1597 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.pipeline_manager.capsul_files package &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.pipeline_manager.capsul_files package</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="populse-mia-pipeline-manager-capsul-files-package">
+<h1>populse_mia.pipeline_manager.capsul_files package<a class="headerlink" href="#populse-mia-pipeline-manager-capsul-files-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-populse_mia.pipeline_manager.capsul_files.pipeline_developper_view">
+<span id="populse-mia-pipeline-manager-capsul-files-pipeline-developper-view-module"></span><h2>populse_mia.pipeline_manager.capsul_files.pipeline_developper_view module<a class="headerlink" href="#module-populse_mia.pipeline_manager.capsul_files.pipeline_developper_view" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.ColorType">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">ColorType</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.ColorType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.ColorType.colorLink">
+<code class="descname">colorLink</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.ColorType.colorLink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.EmbeddedSubPipelineItem">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">EmbeddedSubPipelineItem</code><span class="sig-paren">(</span><em>sub_pipeline_wid</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.EmbeddedSubPipelineItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsProxyWidget</span></code></p>
+<p>QGraphicsItem containing a sub-pipeline view</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">HandleItem</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsRectItem</span></code></p>
+<p>A handle that can be moved by the mouse</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem.itemChange">
+<code class="descname">itemChange</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsItem.GraphicsItemChange</em>, <em>Any</em><span class="sig-paren">)</span> &#x2192; Any<a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem.itemChange" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem.mouseReleaseEvent">
+<code class="descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsSceneMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.HandleItem.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">Link</code><span class="sig-paren">(</span><em>origin</em>, <em>target</em>, <em>active</em>, <em>weak</em>, <em>color</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsPathItem</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.focusInEvent">
+<code class="descname">focusInEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QFocusEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.focusInEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.focusOutEvent">
+<code class="descname">focusOutEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QFocusEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.focusOutEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.fonced_viewer">
+<code class="descname">fonced_viewer</code><span class="sig-paren">(</span><em>det</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.fonced_viewer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.keyPressEvent">
+<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QKeyEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.mousePressEvent">
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsSceneMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>self</em>, <em>rect: QRectF = QRectF()</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>update(self, float, float, float, float)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.update_activation">
+<code class="descname">update_activation</code><span class="sig-paren">(</span><em>active</em>, <em>weak</em>, <em>color</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Link.update_activation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">NodeGWidget</code><span class="sig-paren">(</span><em>name</em>, <em>parameters</em>, <em>pipeline</em>, <em>parent=None</em>, <em>process=None</em>, <em>sub_pipeline=None</em>, <em>colored_parameters=True</em>, <em>logical_view=False</em>, <em>labels=[]</em>, <em>show_opt_inputs=True</em>, <em>show_opt_outputs=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsItem</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.add_subpipeline_view">
+<code class="descname">add_subpipeline_view</code><span class="sig-paren">(</span><em>sub_pipeline</em>, <em>allow_open_controller=True</em>, <em>scale=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.add_subpipeline_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.boundingRect">
+<code class="descname">boundingRect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span> &#x2192; QRectF<a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.boundingRect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.changeSize">
+<code class="descname">changeSize</code><span class="sig-paren">(</span><em>w</em>, <em>h</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.changeSize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.change_input_view">
+<code class="descname">change_input_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.change_input_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.change_output_view">
+<code class="descname">change_output_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.change_output_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.clear_plugs">
+<code class="descname">clear_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.clear_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.contentsRect">
+<code class="descname">contentsRect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.contentsRect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.fonced_viewer">
+<code class="descname">fonced_viewer</code><span class="sig-paren">(</span><em>det</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.fonced_viewer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.get_title">
+<code class="descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.get_title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.in_params_width">
+<code class="descname">in_params_width</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.in_params_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.keyPressEvent">
+<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QKeyEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.mouseDoubleClickEvent">
+<code class="descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsSceneMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.mousePressEvent">
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsSceneMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.new_color">
+<code class="descname">new_color</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.new_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.out_params_width">
+<code class="descname">out_params_width</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.out_params_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.paint">
+<code class="descname">paint</code><span class="sig-paren">(</span><em>self</em>, <em>QPainter</em>, <em>QStyleOptionGraphicsItem</em>, <em>widget: QWidget = None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.paint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.postscript">
+<code class="descname">postscript</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.postscript" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.resize_subpipeline_on_hide">
+<code class="descname">resize_subpipeline_on_hide</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.resize_subpipeline_on_hide" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.resize_subpipeline_on_show">
+<code class="descname">resize_subpipeline_on_show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.resize_subpipeline_on_show" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.updateInfoActived">
+<code class="descname">updateInfoActived</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.updateInfoActived" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.updateSize">
+<code class="descname">updateSize</code><span class="sig-paren">(</span><em>w</em>, <em>h</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.updateSize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.update_node">
+<code class="descname">update_node</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.NodeGWidget.update_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">PipelineDevelopperView</code><span class="sig-paren">(</span><em>pipeline=None</em>, <em>parent=None</em>, <em>show_sub_pipelines=False</em>, <em>allow_open_controller=False</em>, <em>logical_view=False</em>, <em>enable_edition=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsView</span></code></p>
+<p>Pipeline representation as a graph, using boxes and arrows.</p>
+<p>Based on Qt QGraphicsView, this can be used as a Qt QWidget.</p>
+<p>Qt signals are emitted on a right click on a node box, and on a double
+click on a sub-pipeline box, to allow handling at a higher level. Default
+behaviors can be enabled using constructor parameters.</p>
+<p>Ctrl + double click opens sub-pipelines in embedded views inside their
+parent box.</p>
+<p>subpipeline_clicked
+node_right_clicked
+node_clicked
+node_clicked_ctrl
+plug_clicked
+plug_right_clicked
+link_right_clicked
+colored_parameters
+scene</p>
+<p>__init__
+set_pipeline
+is_logical_view
+set_logical_view
+zoom_in
+zoom_out
+openProcessController
+add_embedded_subpipeline
+onLoadSubPipelineClicked
+onOpenProcessController
+enableNode
+enable_step
+disable_preceding_steps
+disable_following_steps
+enable_preceding_steps
+enable_following_steps
+set_switch_value
+disable_done_steps
+enable_all_steps
+check_files
+auto_dot_node_positions
+save_dot_image_ui
+reset_initial_nodes_positions
+window</p>
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput">
+<em class="property">class </em><code class="descname">IterativeProcessInput</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.ProcessModuleInput</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput.iterative_plugs">
+<code class="descname">iterative_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput.iterative_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput.set_plugs">
+<code class="descname">set_plugs</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.IterativeProcessInput.set_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessModuleInput">
+<em class="property">class </em><code class="descname">ProcessModuleInput</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessModuleInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit">
+<em class="property">class </em><code class="descname">ProcessNameEdit</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QLineEdit</span></code></p>
+<p>A specialized QLineEdit with completion for process name</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.get_processes_or_modules">
+<code class="descname">get_processes_or_modules</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.get_processes_or_modules" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.load_py">
+<code class="descname">load_py</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.load_py" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.on_text_edited">
+<code class="descname">on_text_edited</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.ProcessNameEdit.on_text_edited" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_embedded_subpipeline">
+<code class="descname">add_embedded_subpipeline</code><span class="sig-paren">(</span><em>subpipeline_name</em>, <em>scale=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_embedded_subpipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an embedded sub-pipeline inside its parent node.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_iterative_process">
+<code class="descname">add_iterative_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_iterative_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert an iterative process node in the pipeline. Asks for the process
+module/name, the node name, and iterative plugs before inserting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_optional_output_switch">
+<code class="descname">add_optional_output_switch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_optional_output_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert an optional output switch node in the pipeline. Asks for the
+switch inputs/outputs, and the node name before inserting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_process">
+<code class="descname">add_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a process node in the pipeline. Asks for the process
+module/name, and the node name before inserting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_switch">
+<code class="descname">add_switch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.add_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a switch node in the pipeline. Asks for the switch
+inputs/outputs, and the node name before inserting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.auto_dot_node_positions">
+<code class="descname">auto_dot_node_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.auto_dot_node_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate pipeline nodes positions using graphviz/dot, and place the
+pipeline view nodes accordingly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.check_files">
+<code class="descname">check_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.check_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.colored_parameters">
+<code class="descname">colored_parameters</code><em class="property"> = True</em><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.colored_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>If enabled (default), parameters in nodes boxes are displayed with color
+codes representing their state, and the state of their values: output
+parameters, empty values, existing files, non-existing files…</p>
+<p>When colored_parameters is set, however, callbacks have to be installed to
+track changes in traits values, so this actually has an overhead.
+When colored_parameters is used, the color code is as follows:</p>
+<ul class="simple">
+<li>black pamameter name: input</li>
+<li>red parameter name: output</li>
+<li>italics parameter name: Undefined, None, or empty string value</li>
+<li>bold parameter name: existing file or directory name</li>
+<li>regular font parameter name: non-existing file, or non-file parameter type</li>
+<li>black plug: mandatory</li>
+<li>green plug: optional</li>
+<li>grey plug: mandatory, inactive</li>
+<li>light green plug: optional, inactive</li>
+<li>grey link: inactive</li>
+<li>orange link: active</li>
+<li>dotted line link: weak link</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.confirm_erase_pipeline">
+<code class="descname">confirm_erase_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.confirm_erase_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.del_node">
+<code class="descname">del_node</code><span class="sig-paren">(</span><em>node_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.del_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_done_steps">
+<code class="descname">disable_done_steps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_done_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_following_steps">
+<code class="descname">disable_following_steps</code><span class="sig-paren">(</span><em>step_name</em>, <em>dummy</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_following_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_preceding_steps">
+<code class="descname">disable_preceding_steps</code><span class="sig-paren">(</span><em>step_name</em>, <em>dummy</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.disable_preceding_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.edit_sub_pipeline">
+<code class="descname">edit_sub_pipeline</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.edit_sub_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a sub-pipeline has to be edited</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.edition_enabled">
+<code class="descname">edition_enabled</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.edition_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the editable state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_edit_sub_pipeline">
+<code class="descname">emit_edit_sub_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_edit_sub_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_export_to_db_scans">
+<code class="descname">emit_export_to_db_scans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_export_to_db_scans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_open_filter">
+<code class="descname">emit_open_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.emit_open_filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enableNode">
+<code class="descname">enableNode</code><span class="sig-paren">(</span><em>checked</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enableNode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_all_steps">
+<code class="descname">enable_all_steps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_all_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_following_steps">
+<code class="descname">enable_following_steps</code><span class="sig-paren">(</span><em>step_name</em>, <em>dummy</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_following_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_preceding_steps">
+<code class="descname">enable_preceding_steps</code><span class="sig-paren">(</span><em>step_name</em>, <em>dummy</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_preceding_steps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_step">
+<code class="descname">enable_step</code><span class="sig-paren">(</span><em>step_name</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.enable_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_inputs">
+<code class="descname">export_all_unconnected_inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_outputs">
+<code class="descname">export_all_unconnected_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_plugs">
+<code class="descname">export_all_unconnected_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_all_unconnected_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_inputs">
+<code class="descname">export_node_all_unconnected_inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_outputs">
+<code class="descname">export_node_all_unconnected_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_plugs">
+<code class="descname">export_node_all_unconnected_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_all_unconnected_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_plugs">
+<code class="descname">export_node_plugs</code><span class="sig-paren">(</span><em>node_name</em>, <em>inputs=True</em>, <em>outputs=True</em>, <em>optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_inputs">
+<code class="descname">export_node_unconnected_mandatory_inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_outputs">
+<code class="descname">export_node_unconnected_mandatory_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_plugs">
+<code class="descname">export_node_unconnected_mandatory_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_node_unconnected_mandatory_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_plugs">
+<code class="descname">export_plugs</code><span class="sig-paren">(</span><em>inputs=True</em>, <em>outputs=True</em>, <em>optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_to_db_scans">
+<code class="descname">export_to_db_scans</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_to_db_scans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when an Input Filter has to be linked to database_scans</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_inputs">
+<code class="descname">export_unconnected_mandatory_inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_outputs">
+<code class="descname">export_unconnected_mandatory_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_plugs">
+<code class="descname">export_unconnected_mandatory_plugs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.export_unconnected_mandatory_plugs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.is_logical_view">
+<code class="descname">is_logical_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.is_logical_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>in logical view mode, plugs and links between plugs are hidden, only
+links between nodes are displayed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.link_keydelete_clicked">
+<code class="descname">link_keydelete_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.link_keydelete_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.link_right_clicked">
+<code class="descname">link_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.link_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a link is right-clicked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.load_pipeline">
+<code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filename=''</em>, <em>load_pipeline=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.load_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.load_pipeline_parameters">
+<code class="descname">load_pipeline_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.load_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loading and setting pipeline parameters (inputs and outputs) from a Json file.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mouseMoveEvent">
+<code class="descname">mouseMoveEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mousePressEvent">
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mouseReleaseEvent">
+<code class="descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.new_pipeline">
+<code class="descname">new_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.new_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_clicked">
+<code class="descname">node_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a node box has to be open.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_clicked_ctrl">
+<code class="descname">node_clicked_ctrl</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_clicked_ctrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a node box has to be in the foreground.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_keydelete_clicked">
+<code class="descname">node_keydelete_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_keydelete_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_right_clicked">
+<code class="descname">node_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.node_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a node box is right-clicked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.onLoadSubPipelineClicked">
+<code class="descname">onLoadSubPipelineClicked</code><span class="sig-paren">(</span><em>node_name</em>, <em>sub_pipeline</em>, <em>modifiers</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.onLoadSubPipelineClicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event to load a open a sub-pipeline view.
+If ctrl is pressed the new view will be embedded in its parent node
+box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.onOpenProcessController">
+<code class="descname">onOpenProcessController</code><span class="sig-paren">(</span><em>node_name</em>, <em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.onOpenProcessController" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event to open a sub-process/sub-pipeline controller</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.openProcessController">
+<code class="descname">openProcessController</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.openProcessController" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_background_menu">
+<code class="descname">open_background_menu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_background_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the right-click menu when triggered from the pipeline backround.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_filter">
+<code class="descname">open_filter</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when an Input Filter has to be opened</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_node_menu">
+<code class="descname">open_node_menu</code><span class="sig-paren">(</span><em>node_name</em>, <em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.open_node_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>right-click popup menu for nodes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.plug_clicked">
+<code class="descname">plug_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.plug_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a plug is clicked</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.plug_right_clicked">
+<code class="descname">plug_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.plug_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a plug is right-clicked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.print_node_positions">
+<code class="descname">print_node_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.print_node_positions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.reset_initial_nodes_positions">
+<code class="descname">reset_initial_nodes_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.reset_initial_nodes_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set each pipeline node to its “saved” position, ie the one which may
+be found in the “node_position” variable of the pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_dot_image_ui">
+<code class="descname">save_dot_image_ui</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_dot_image_ui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask for a filename using the file dialog, and save a graphviz/dot
+representation of the pipeline.
+The pipeline representation follows the current visualization mode
+(“regular” or “logical” with smaller boxes) with one link of a given
+type (active, weak) between two given boxes: all parameters are not
+represented.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_pipeline">
+<code class="descname">save_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask for a filename using the file dialog, and save the pipeline as a
+XML or python file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_pipeline_parameters">
+<code class="descname">save_pipeline_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.save_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saving pipeline parameters (inputs and outputs) to a Json file.
+:return:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.scene">
+<code class="descname">scene</code><em class="property"> = None</em><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>type: PipelineScene</p>
+<p>the main scene.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_enable_edition">
+<code class="descname">set_enable_edition</code><span class="sig-paren">(</span><em>state=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_enable_edition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the editable state. Edition allows to modify a pipeline: adding /
+removing process boxes and switches, drawing links, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_logical_view">
+<code class="descname">set_logical_view</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_logical_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>in logical view mode, plugs and links between plugs are hidden, only
+links between nodes are displayed.</p>
+<dl class="docutils">
+<dt>state:  bool (mandatory)</dt>
+<dd>to set/unset the logical view mode</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_pipeline">
+<code class="descname">set_pipeline</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns a new pipeline to the view.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_switch_value">
+<code class="descname">set_switch_value</code><span class="sig-paren">(</span><em>switch</em>, <em>value</em>, <em>dummy</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.set_switch_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.show_optional_inputs">
+<code class="descname">show_optional_inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.show_optional_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Added to choose to visualize optional inputs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.show_optional_outputs">
+<code class="descname">show_optional_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.show_optional_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Added to choose to visualize optional outputs.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.subpipeline_clicked">
+<code class="descname">subpipeline_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.subpipeline_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a sub pipeline has to be open.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.switch_clicked">
+<code class="descname">switch_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.switch_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal emitted when a switch box has to be open.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.switch_logical_view">
+<code class="descname">switch_logical_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.switch_logical_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.wheelEvent">
+<code class="descname">wheelEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QWheelEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.window">
+<code class="descname">window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>window() is overloaded from QWidget.window() to handle embedded views
+cases.
+A PipelineDevelopperView may be displayed inside a NodeGWidget.
+In this case, we want to go up to the parent scene’s window to the
+“real” top window, where QWidget.window() will end in the current
+graphics scene.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.zoom_in">
+<code class="descname">zoom_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.zoom_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom the view in, applying a 1.2 zoom factor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.zoom_out">
+<code class="descname">zoom_out</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView.zoom_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom the view out, applying a 1/1.2 zool factor</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">PipelineScene</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsScene</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.add_link">
+<code class="descname">add_link</code><span class="sig-paren">(</span><em>source</em>, <em>dest</em>, <em>active</em>, <em>weak</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.add_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>node_name</em>, <em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.add_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.edition_enabled">
+<code class="descname">edition_enabled</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.edition_enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.helpEvent">
+<code class="descname">helpEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.helpEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display tooltips on plugs and links</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.html_doc">
+<em class="property">static </em><code class="descname">html_doc</code><span class="sig-paren">(</span><em>doc_text</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.html_doc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.is_existing_path">
+<em class="property">static </em><code class="descname">is_existing_path</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.is_existing_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.keyPressEvent">
+<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QKeyEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_keydelete_clicked">
+<code class="descname">link_keydelete_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_keydelete_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_right_clicked">
+<code class="descname">link_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_tooltip_text">
+<code class="descname">link_tooltip_text</code><span class="sig-paren">(</span><em>source_dest</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.link_tooltip_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tooltip text for the fiven link</p>
+<dl class="docutils">
+<dt>source_dest: tupe (2 tuples of 2 strings)</dt>
+<dd>link description:
+((source_node, source_param), (dest_node, dest_param))</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_clicked">
+<code class="descname">node_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_clicked_ctrl">
+<code class="descname">node_clicked_ctrl</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_clicked_ctrl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_keydelete_clicked">
+<code class="descname">node_keydelete_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_keydelete_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_right_clicked">
+<code class="descname">node_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_tooltip_text">
+<code class="descname">node_tooltip_text</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.node_tooltip_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_clicked">
+<code class="descname">plug_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_right_clicked">
+<code class="descname">plug_right_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_right_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_tooltip_text">
+<code class="descname">plug_tooltip_text</code><span class="sig-paren">(</span><em>node</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.plug_tooltip_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tooltip text for a node plug</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.remove_node">
+<code class="descname">remove_node</code><span class="sig-paren">(</span><em>node_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.remove_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.set_enable_edition">
+<code class="descname">set_enable_edition</code><span class="sig-paren">(</span><em>state=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.set_enable_edition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.set_pipeline">
+<code class="descname">set_pipeline</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.set_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.subpipeline_clicked">
+<code class="descname">subpipeline_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.subpipeline_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.switch_clicked">
+<code class="descname">switch_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.switch_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.typeLink">
+<code class="descname">typeLink</code><span class="sig-paren">(</span><em>name_node</em>, <em>name_plug</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.typeLink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.update_paths">
+<code class="descname">update_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.update_paths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.update_pipeline">
+<code class="descname">update_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineScene.update_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">Plug</code><span class="sig-paren">(</span><em>color</em>, <em>name</em>, <em>height</em>, <em>width</em>, <em>activated=True</em>, <em>optional=False</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsPolygonItem</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.get_plug_point">
+<code class="descname">get_plug_point</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.get_plug_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.mousePressEvent">
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QGraphicsSceneMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.update_plug">
+<code class="descname">update_plug</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.Plug.update_plug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">boxItem</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QGraphicsRectItem</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.focusInEvent">
+<code class="descname">focusInEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QFocusEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.focusInEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.focusOutEvent">
+<code class="descname">focusOutEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QFocusEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.focusOutEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.keyPressEvent">
+<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QKeyEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.boxItem.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.values">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.</code><code class="descname">values</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-populse_mia.pipeline_manager.capsul_files.pipeline_tools">
+<span id="populse-mia-pipeline-manager-capsul-files-pipeline-tools-module"></span><h2>populse_mia.pipeline_manager.capsul_files.pipeline_tools module<a class="headerlink" href="#module-populse_mia.pipeline_manager.capsul_files.pipeline_tools" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.create_output_directories">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">create_output_directories</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.create_output_directories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create output directories for a process, pipeline or node.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.disable_runtime_steps_with_existing_outputs">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">disable_runtime_steps_with_existing_outputs</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.disable_runtime_steps_with_existing_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable steps in a pipeline which outputs contain existing files. This
+disabling is the “runtime steps disabling” one (see
+<code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.pipeline.Pipeline</span></code>), not the node disabling with
+activation propagation, so it doesn’t affect the actual pipeline state.
+The aim is to prevent overwriting files which have already been processed,
+and to allow downstream execution of the remaining steps of the pipeline.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline (mandatory)</dt>
+<dd>pipeline to disbale nodes in.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">dot_graph_from_pipeline</code><span class="sig-paren">(</span><em>pipeline</em>, <em>nodes_sizes={}</em>, <em>use_nodes_pos=False</em>, <em>include_io=True</em>, <em>enlarge_boxes=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a graphviz/dot-compatible representation of the pipeline.
+The pipeline representation uses one link between two given boxes:
+parameters are not represented.</p>
+<p>This is different from the workflow graph, as given by
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">capsul.pipeline.Pipeline.workflow_graph()</span></code>, in that the full graph
+is represented here, including disabled nodes.</p>
+<p>To build a workflow graph, see <a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow"><code class="xref py py-func docutils literal notranslate"><span class="pre">dot_graph_from_workflow()</span></code></a>.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline</dt>
+<dd>pipeline to convert to a dot graph</dd>
+<dt>nodes_sizes: dict (optional)</dt>
+<dd>nodes sizes may be specified here, keys are node names, and values are
+tuples (width, height). Special “inputs” and “outputs” keys represent
+the global inputs/outputs blocks of the pipeline.</dd>
+<dt>use_nodes_pos: bool (optional)</dt>
+<dd>if True, nodes positions in the pipeline.node_position variable will
+be used to force nodes positions in the graph.</dd>
+<dt>include_io: bool (optional)</dt>
+<dd>If True, build a node for the pipeline inputs and a node for the
+pipeline outputs. If False, these nodes will not be generated, and
+their links ignored.</dd>
+<dt>enlarge_boxes: float (optional)</dt>
+<dd>when nodes sizes are specified, enlarge them by this amount to produce
+bigger boxes</dd>
+</dl>
+<dl class="docutils">
+<dt>dot_graph: tuple</dt>
+<dd>a (nodes, edges) tuple, where nodes is a list of node tuples
+(id, node_name, props) and edges is a dict, where
+keys are (source_node_id, dest_node_id), and values are tuples
+(props, active, weak). In both cases props is a dictionary of
+properties.
+This representation is simple and is meant to feed
+<a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">save_dot_graph()</span></code></a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">dot_graph_from_workflow</code><span class="sig-paren">(</span><em>pipeline</em>, <em>nodes_sizes={}</em>, <em>use_nodes_pos=False</em>, <em>enlarge_boxes=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a graphviz/dot-compatible representation of the pipeline workflow.</p>
+<p>This is different from the pipeline graph, as obtained
+by:py:func:<cite>dot_graph_from_pipeline</cite>, since only used parts are visible
+here: switches and disabled branches are removed.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline</dt>
+<dd>pipeline to convert to a dot graph</dd>
+<dt>nodes_sizes: dict (optional)</dt>
+<dd>nodes sizes may be specified here, keys are node names, and values are
+tuples (width, height). Special “inputs” and “outputs” keys represent
+the global inputs/outputs blocks of the pipeline.</dd>
+<dt>use_nodes_pos: bool (optional)</dt>
+<dd>if True, nodes positions in the pipeline.node_position variable will
+be used to force nodes positions in the graph.</dd>
+<dt>enlarge_boxes: float (optional)</dt>
+<dd>when nodes sizes are specified, enlarge them by this amount to produce
+bigger boxes</dd>
+</dl>
+<dl class="docutils">
+<dt>dot_graph: tuple</dt>
+<dd>a (nodes, edges) tuple, where nodes is a list of node tuples
+(id, node_name, props) and edges is a dict, where
+keys are (source_node_id, dest_node_id), and values are tuples
+(props, active, weak). In both cases props is a dictionary of
+properties.
+This representation is simple and is meant to feed
+<a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">save_dot_graph()</span></code></a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dump_pipeline_state_as_dict">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">dump_pipeline_state_as_dict</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dump_pipeline_state_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Get a pipeline state (parameters values, nodes activation, selected
+steps… in a dictionary.</p>
+<p>The returned dict may contain sub-pipelines state also.</p>
+<p>The dict may be saved, and used to restore a pipeline state, using
+<a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.set_pipeline_state_from_dict" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.set_pipeline_state_from_dict"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_pipeline_state_from_dict()</span></code></a>.</p>
+<p>Note that</p>
+</div></blockquote>
+<dl class="docutils">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">pipeline.export_to_dict</span></code></dt>
+<dd><p class="first">would almost do the job, but does not include the recursive aspect.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline (or Process) instance</dt>
+<dd>pipeline (or process) to get state from</dd>
+</dl>
+<dl class="last docutils">
+<dt>state_dict: dict</dt>
+<dd>pipeline state</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.get_output_directories">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">get_output_directories</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.get_output_directories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get output directories for a process, pipeline, or node</p>
+<dl class="docutils">
+<dt>dirs: dict</dt>
+<dd>organized directories list: a dict with recursive nodes mapping.
+In each element, the “directories” key holds a directories names set,
+and “nodes” is a dict with sub-nodes (node_name, dict mapping,
+organized the same way)</dd>
+<dt>flat_dirs: set</dt>
+<dd>set of all directories in the pipeline, as a flat set.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.load_pipeline_parameters">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">load_pipeline_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.load_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loading and setting pipeline parameters (inputs and outputs) from a Json file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.nodes_with_existing_outputs">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">nodes_with_existing_outputs</code><span class="sig-paren">(</span><em>pipeline</em>, <em>exclude_inactive=True</em>, <em>recursive=False</em>, <em>exclude_inputs=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.nodes_with_existing_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks nodes in a pipeline which outputs contain existing files on the
+filesystem. Such nodes, maybe, should not run again. Only nodes which
+actually produce outputs are selected this way (switches are skipped).</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline (mandatory)</dt>
+<dd>pipeline to disbale nodes in.</dd>
+<dt>exclude_inactive: bool (optional)</dt>
+<dd>if this option is set, inactive nodes will not be checked
+nor returned in the list. Inactive means disabled, not active, or in a
+disabled runtime step.
+Default: True</dd>
+<dt>recursive: bool (optional)</dt>
+<dd>if this option is set, sub-pipelines will not be returned as a whole
+but will be parsed recursively to select individual leaf nodes.
+Default: False</dd>
+<dt>exclude_inputs: bool (optional, default: True)</dt>
+<dd>Some processes or pipelines have input/output files: files taken as
+inputs which are re-written as outputs, or may carry an input file to
+the outputs through a switch selection (in the case of preprocessing
+steps, for instance).
+If this option is set, such outputs which also appear in the same node
+inputs will not be listed in the existing outputs, so that they will
+not be erased by a cleaning operation, and will not prevent execution
+of these nodes.</dd>
+</dl>
+<dl class="docutils">
+<dt>selected_nodes: dict</dt>
+<dd>keys: node names
+values: list of pairs (param_name, file_name)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.nodes_with_missing_inputs">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">nodes_with_missing_inputs</code><span class="sig-paren">(</span><em>pipeline</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.nodes_with_missing_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks nodes in a pipeline which inputs contain invalid inputs.
+Inputs which are files non-existing on the filesystem (so, which cannot
+run), or have missing mandatory inputs, or take as input a temporary file
+which should be the output from another disabled node, are recorded.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline (mandatory)</dt>
+<dd>pipeline to disbale nodes in.</dd>
+<dt>recursive: bool (optional)</dt>
+<dd>if this option is set, sub-pipelines will not be returned as a whole
+but will be parsed recursively to select individual leaf nodes. Note
+that if not set, a pipeline is regarded as a process, but pipelines may
+not use all their inputs/outputs so the result might be inaccurate.
+Default: True</dd>
+</dl>
+<dl class="docutils">
+<dt>selected_nodes: dict</dt>
+<dd>keys: node names
+values: list of pairs (param_name, file_name)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.pipeline_link_color">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">pipeline_link_color</code><span class="sig-paren">(</span><em>plug</em>, <em>link</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.pipeline_link_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link color and style for graphical display and graphviz graphs.</p>
+<dl class="docutils">
+<dt>plug: Plug</dt>
+<dd>the plug the link belong to</dd>
+<dt>link: link tuple (5 values)</dt>
+<dd>link to color</dd>
+</dl>
+<dl class="docutils">
+<dt>link_props: tuple</dt>
+<dd>(color, style, active, weak) where color is a RGB tuple of float values
+(between 0. and 1.), style is a string (“solid”, “dotted”), active and
+weak are booleans.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.pipeline_node_colors">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">pipeline_node_colors</code><span class="sig-paren">(</span><em>pipeline</em>, <em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.pipeline_node_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Node color to display boxes in GUI and graphviz graphs. Depending on the
+node type (process, pipeline, switch) and its activation, colors will
+differ.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline</dt>
+<dd>the pipeline the node belongs to</dd>
+<dt>node: Node</dt>
+<dd>the node to be colored</dd>
+</dl>
+<dl class="docutils">
+<dt>colors: tuple</dt>
+<dd>(box_color, background_fill_color, dark_color, style). Colors are
+3-tuples of float values between 0. and 1. style is “default”,
+“switch” or “pipeline”.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">save_dot_graph</code><span class="sig-paren">(</span><em>dot_graph</em>, <em>filename</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a graphviz/dot input file, which can be used to generate an
+image representation of the graph, or to make dot automatically
+position nodes.</p>
+<dl class="docutils">
+<dt>dot_graph: dot graph</dt>
+<dd>representation of the pipeline, obatained using
+<a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">dot_graph_from_pipeline()</span></code></a></dd>
+<dt>filename: string</dt>
+<dd>file name to save the dot definition in</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: additional attributes for the dot graph</dt>
+<dd>like nodesep=0.1 or rankdir=”TB”</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_image">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">save_dot_image</code><span class="sig-paren">(</span><em>pipeline</em>, <em>filename</em>, <em>nodes_sizes={}</em>, <em>use_nodes_pos=False</em>, <em>include_io=True</em>, <em>enlarge_boxes=0.0</em>, <em>workflow=False</em>, <em>format=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a dot/graphviz image of the pipeline in a file.</p>
+<p>It may use either the complete pipeline graph (with switches and disabled
+branches), or the workflow, hiding disabled parts (see the workflow
+parameter).</p>
+<p>Basically combines <a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">dot_graph_from_pipeline()</span></code></a> or
+<a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dot_graph_from_workflow"><code class="xref py py-func docutils literal notranslate"><span class="pre">dot_graph_from_workflow()</span></code></a>, and <a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_dot_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">save_dot_graph()</span></code></a>, then
+runs the <a class="reference external" href="http://www.graphviz.org">dot</a> command, which has to be
+installed and available on the system.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline</dt>
+<dd>pipeline to convert to a dot graph</dd>
+<dt>filename: string</dt>
+<dd>file name to save the dot definition in.</dd>
+<dt>nodes_sizes: dict (optional)</dt>
+<dd>nodes sizes may be specified here, keys are node names, and values are
+tuples (width, height). Special “inputs” and “outputs” keys represent
+the global inputs/outputs blocks of the pipeline.</dd>
+<dt>use_nodes_pos: bool (optional)</dt>
+<dd>if True, nodes positions in the pipeline.node_position variable will
+be used to force nodes positions in the graph.</dd>
+<dt>include_io: bool (optional)</dt>
+<dd>If True, build a node for the pipeline inputs and a node for the
+pipeline outputs. If False, these nodes will not be generated, and
+their links ignored.</dd>
+<dt>enlarge_boxes: float (optional)</dt>
+<dd>when nodes sizes are specified, enlarge them by this amount to produce
+bigger boxes</dd>
+<dt>workflow: bool (optional)</dt>
+<dd>if True, the workflow corresponding to the current pipeline state will
+be used instead of the complete graph: disabled parts will be hidden.</dd>
+<dt>format: string (optional)</dt>
+<dd>dot output format (see <a class="reference external" href="http://www.graphviz.org">dot</a> command doc).
+If not specified, guessed from the file name extension.</dd>
+<dt><a href="#id4"><span class="problematic" id="id5">**</span></a>kwargs: additional attributes for the dot graph</dt>
+<dd>like nodesep=0.1 or rankdir=”TB”</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_pipeline">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">save_pipeline</code><span class="sig-paren">(</span><em>pipeline</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the pipeline either in XML or .py source file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_pipeline_parameters">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">save_pipeline_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.save_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saving pipeline parameters (inputs and outputs) to a Json file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.set_pipeline_state_from_dict">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">set_pipeline_state_from_dict</code><span class="sig-paren">(</span><em>pipeline</em>, <em>state_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.set_pipeline_state_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a pipeline (or process) state from a dict description.</p>
+<p>State includes parameters values, nodes activation, steps selection etc.
+The state is generally taken using <a class="reference internal" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.dump_pipeline_state_as_dict" title="populse_mia.pipeline_manager.capsul_files.pipeline_tools.dump_pipeline_state_as_dict"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_pipeline_state_as_dict()</span></code></a>.</p>
+<dl class="docutils">
+<dt>pipeline: Pipeline or Process instance</dt>
+<dd>process to set state in</dd>
+<dt>state_dict: dict (mapping object)</dt>
+<dd>state dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.pipeline_tools.where_is_plug_value_from">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.pipeline_tools.</code><code class="descname">where_is_plug_value_from</code><span class="sig-paren">(</span><em>plug</em>, <em>recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.pipeline_tools.where_is_plug_value_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find where the given (input) plug takes its value from.
+It has to be the output of an uphill process, or be unconnected.
+Looking for it may involve ascending through switches or pipeline walls.</p>
+<dl class="docutils">
+<dt>plug: Plug instance (mandatory)</dt>
+<dd>the plug to find source connection with</dd>
+<dt>recursive: bool (optional)</dt>
+<dd>if this option is set, sub-pipelines will not be returned as a whole
+but will be parsed recursively to select individual leaf nodes. Note
+that if not set, a pipeline is regarded as a process, but pipelines may
+not use all their inputs/outputs so the result might be inaccurate.
+Default: True</dd>
+</dl>
+<dl class="docutils">
+<dt>node: Node</dt>
+<dd>origin pipeline node. May be None if the plug was not connected to an
+active source.</dd>
+<dt>param_name: string</dt>
+<dd>origin plug name in the origin node. May be None if node is None</dd>
+<dt>parent: Node</dt>
+<dd>Top-level parent node of the origin node. Useful to determine if the
+origin node is in a runtime pipeline step, which only records top-level
+nodes.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-populse_mia.pipeline_manager.capsul_files.test_save">
+<span id="populse-mia-pipeline-manager-capsul-files-test-save-module"></span><h2>populse_mia.pipeline_manager.capsul_files.test_save module<a class="headerlink" href="#module-populse_mia.pipeline_manager.capsul_files.test_save" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestDateTime">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestDateTime</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestDateTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestDateTime.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestDateTime&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestDateTime&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestFile">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestFile</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestFile.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestFile&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestFile&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestFloat">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestFloat</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestFloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestFloat.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestFloat&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestFloat&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestInt">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestInt</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestInt.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestInt&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestInt&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestListFile">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestListFile</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestListFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestListFile.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestListFile&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestListFile&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestListFloat">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestListFloat</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestListFloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestListFloat.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestListFloat&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestListFloat&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestListInt">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestListInt</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestListInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestListInt.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestListInt&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestListInt&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestListList">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestListList</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestListList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestListList.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestListList&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestListList&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestListString">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestListString</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestListString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestListString.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestListString&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestListString&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestPipelineMethods</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<p>Class executing the unit tests of load_pipeline_parameters and save_pipeline_parameters</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before every unit test
+Creates a temporary folder containing the database file that will be used for the test</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.tearDown">
+<code class="descname">tearDown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.tearDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after every unit test
+Deletes the temporary folder created for the test</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_date_time">
+<code class="descname">test_date_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_date_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_file">
+<code class="descname">test_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_float">
+<code class="descname">test_float</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_int">
+<code class="descname">test_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_file">
+<code class="descname">test_list_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_float">
+<code class="descname">test_list_float</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_int">
+<code class="descname">test_list_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_list">
+<code class="descname">test_list_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_string">
+<code class="descname">test_list_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_list_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_string">
+<code class="descname">test_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestPipelineMethods.test_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.TestString">
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">TestString</code><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.TestString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Type ‘TestString.help()’ for a full description of this process parameters.</li>
+<li>Type ‘&lt;TestString&gt;.get_input_spec()’ for a full description of this process input trait types.</li>
+<li>Type ‘&lt;TestString&gt;.get_output_spec()’ for a full description of this process output trait types.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.load_pipeline_dictionary">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">load_pipeline_dictionary</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.load_pipeline_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.load_pipeline_parameters">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">load_pipeline_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.load_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loading and setting pipeline parameters (inputs and outputs) from a Json file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.pipeline_manager.capsul_files.test_save.save_pipeline_parameters">
+<code class="descclassname">populse_mia.pipeline_manager.capsul_files.test_save.</code><code class="descname">save_pipeline_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.capsul_files.test_save.save_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saving pipeline parameters (inputs and outputs) to a Json file.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-populse_mia.pipeline_manager.capsul_files">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.pipeline_manager.capsul_files" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
