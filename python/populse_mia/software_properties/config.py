@@ -289,8 +289,8 @@ class Config:
         self.saveConfig()
 
     def get_mia_path(self):
-        # During the installation, the mia path is stored in the user's .mia folder in configuration.yml
-        dot_mia_config = os.path.join(os.path.expanduser("~"), ".mia", "configuration.yml")
+        # During the installation, the mia path is stored in the user's .populse_mia folder in configuration.yml
+        dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         if os.path.isfile(dot_mia_config):
             with open(dot_mia_config, 'r') as stream:
                 try:
