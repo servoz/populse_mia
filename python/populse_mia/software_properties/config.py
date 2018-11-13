@@ -288,12 +288,24 @@ class Config:
         self.saveConfig()
 
     def get_mia_path(self):
-        try:
-            return self.config["mia_path"]
-        except KeyError:
-            return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
-        except AttributeError:
-            return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+        # During the installation, the mia path is stored in the user's .mia folder in configuration.yml
+        dot_mia_config = os.path.join(os.path.expanduser("~"), ".mia", "configuration.yml")
+        if os.path.isfile(dot_mia_config):
+            with open(dot_mia_config, 'r') as stream:
+                try:
+                    mia_home_config = yaml.load(stream)
+                    return mia_home_config["mia_path"]
+                except yaml.YAMLError:
+                    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+                except KeyError:
+                    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+        else:
+            try:
+                return self.config["mia_path"]
+            except KeyError:
+                return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+            except AttributeError:
+                return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
     def set_mri_conv_path(self, path):
         self.config["mri_conv_path"] = path
