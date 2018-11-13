@@ -210,7 +210,8 @@ class Config:
 
     def get_matlab_command(self):
         if self.config["use_spm"] == "yes":
-            return '{0}/run_spm12.sh {1}/ script'.format(self.config["spm"], self.config["matlab"])
+            return '{0}' + os.sep + 'run_spm12.sh {1}' + os.sep + ' script'.format(self.config["spm"],
+                                                                                   self.config["matlab"])
         else:
             return None
 
