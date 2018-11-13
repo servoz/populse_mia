@@ -245,3 +245,7 @@ def launch_mia():
 def main():
     verify_processes()
     launch_mia()
+
+
+if __name__ == '__main__':
+    main()
