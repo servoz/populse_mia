@@ -42,8 +42,8 @@ install:
   - python3 setup.py develop
   - cd ..
   - cd populse_mia
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_mia/python/populse_mia/src/modules"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_mia/python/populse_mia/src/modules"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_mia/python"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_mia/python"; fi
   - "export DISPLAY=:99.0"
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
@@ -51,8 +51,8 @@ install:
 
 script:
   - python3 -V
-  - python3 ./python/populse_mia/src/scripts/test.py -v
-  - coverage run ./python/populse_mia/src/scripts/test.py
+  - python3 ./python/populse_mia/test.py -v
+  - coverage run ./python/populse_mia/test.py
 
 after_success:
 - codecov

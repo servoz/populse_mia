@@ -36,704 +36,73 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_add_path">
-<span id="populse-mia-src-modules-pop-ups-pop-up-add-path-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_add_path module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_add_path" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_add_path.</code><code class="descname">PopUpAddPath</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to add a document to the project without importing from the MRI File Manager</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: updates the “scan_list” attribute of several widgets</li>
-<li>find_type: tries to find the document type when the document is changed</li>
-<li>file_to_choose: lets the user choose a file to import</li>
-<li>save_path: adds the path to the database and the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.file_to_choose">
-<code class="descname">file_to_choose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.file_to_choose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lets the user choose a file to import</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.find_type">
-<code class="descname">find_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.find_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to find the document type when the document is changed</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.save_path">
-<code class="descname">save_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_path.PopUpAddPath.save_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the path to the database and the data browser</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-add-path-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_add_path module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-add-path-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_add_tag">
-<span id="populse-mia-src-modules-pop-ups-pop-up-add-tag-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_add_tag module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_add_tag" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_add_tag.</code><code class="descname">DefaultValueListCreation</code><span class="sig-paren">(</span><em>parent</em>, <em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Widget that is called when to create a list’s default value</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>type: type of the list (e.g. list of int, list of float, etc.)</li>
-<li>parent: the DefaultValueQLineEdit parent object</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>default_init_table: default init table when no previous value</li>
-<li>update_default_value: checks if the values are correct and updates the parent value</li>
-<li>add_element: one more element added to the list</li>
-<li>remove_element: removes the last element of the list</li>
-<li>resize_table: to resize the pop up depending on the table</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.add_element">
-<code class="descname">add_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.add_element" title="Permalink to this definition">¶</a></dt>
-<dd><p>One more element added to the list</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.default_init_table">
-<code class="descname">default_init_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.default_init_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default init table when no previous value</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.remove_element">
-<code class="descname">remove_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.remove_element" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the last element of the list</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.resize_table">
-<code class="descname">resize_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.resize_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>To resize the pop up depending on the table</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.update_default_value">
-<code class="descname">update_default_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueListCreation.update_default_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the values are correct and updates the parent value</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueQLineEdit">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_add_tag.</code><code class="descname">DefaultValueQLineEdit</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueQLineEdit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QLineEdit</span></code></p>
-<p>Overrides the QLineEdit for the default value
-We need to override the MousePressEvent</p>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueQLineEdit.mousePressEvent">
-<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.DefaultValueQLineEdit.mousePressEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mouse pressed on the QLineEdit
-:param event:</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_add_tag.</code><code class="descname">PopUpAddTag</code><span class="sig-paren">(</span><em>databrowser</em>, <em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to add a tag to the project</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-<li>type: type of the tag to add</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>on_activated: type updated</li>
-<li>ok_action: verifies that each field is correct and send the new tag to the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.ok_action">
-<code class="descname">ok_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.ok_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies that each field is correct and send the new tag to the data browser</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.on_activated">
-<code class="descname">on_activated</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.on_activated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type updated</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> – New type</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.signal_add_tag">
-<code class="descname">signal_add_tag</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_add_tag.PopUpAddTag.signal_add_tag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-add-tag-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_add_tag module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-add-tag-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_clone_tag">
-<span id="populse-mia-src-modules-pop-ups-pop-up-clone-tag-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_clone_tag module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_clone_tag" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_clone_tag.</code><code class="descname">PopUpCloneTag</code><span class="sig-paren">(</span><em>databrowser</em>, <em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to clone a tag to the project</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the tags of the project</li>
-<li>ok_action: verifies the specified name is correct and send the information to the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.ok_action">
-<code class="descname">ok_action</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.ok_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies the specified name is correct and send the information to the data browser</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.search_str">
-<code class="descname">search_str</code><span class="sig-paren">(</span><em>project</em>, <em>str_search</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches the searched pattern with the tags of the project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>project</strong> – current project</li>
-<li><strong>str_search</strong> – string pattern to search</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.signal_clone_tag">
-<code class="descname">signal_clone_tag</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_clone_tag.PopUpCloneTag.signal_clone_tag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-clone-tag-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_clone_tag module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-clone-tag-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_close_pipeline">
-<span id="populse-mia-src-modules-pop-ups-pop-up-close-pipeline-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_close_pipeline module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_close_pipeline" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_close_pipeline.</code><code class="descname">PopUpClosePipeline</code><span class="sig-paren">(</span><em>pipeline_name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user closes a pipeline editor that has been modified</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>pipeline_name: name of the pipeline (basename)</li>
-<li>bool_save_as: boolean to True if the pipeline needs to be saved</li>
-<li>bool_exit: boolean to True if we can exit the editor</li>
-<li>save_as_signal: signal emitted to save the pipeline under another name</li>
-<li>do_not_save_signal: signal emitted to close the editor</li>
-<li>cancel_signal: signal emitted to cancel the action</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>save_as_clicked: makes the actions to save the pipeline</li>
-<li>do_not_save_clicked: makes the actions not to save the pipeline</li>
-<li>cancel_clicked: makes the actions to cancel the action</li>
-<li>can_exit: returns the value of bool_exit</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.can_exit">
-<code class="descname">can_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.can_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of bool_exit</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool_exit value</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.cancel_clicked">
-<code class="descname">cancel_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.cancel_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes the actions to cancel the action</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.cancel_signal">
-<code class="descname">cancel_signal</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.cancel_signal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.do_not_save_clicked">
-<code class="descname">do_not_save_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.do_not_save_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes the actions not to save the pipeline</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.do_not_save_signal">
-<code class="descname">do_not_save_signal</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.do_not_save_signal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.save_as_clicked">
-<code class="descname">save_as_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.save_as_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes the actions to save the pipeline</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.save_as_signal">
-<code class="descname">save_as_signal</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_close_pipeline.PopUpClosePipeline.save_as_signal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-close-pipeline-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_close_pipeline module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-close-pipeline-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection">
-<span id="populse-mia-src-modules-pop-ups-pop-up-data-browser-current-selection-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection.PopUpDataBrowserCurrentSelection">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection.</code><code class="descname">PopUpDataBrowserCurrentSelection</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em>, <em>filter</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection.PopUpDataBrowserCurrentSelection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called to display the current data_browser selection</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-<li>filter: list of the current documents in the data browser</li>
-<li>main_window: main window of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: updates the “scan_list” attribute of several widgets</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection.PopUpDataBrowserCurrentSelection.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection.PopUpDataBrowserCurrentSelection.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the “scan_list” attribute of several widgets</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-data-browser-current-selection-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_data_browser_current_selection module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-data-browser-current-selection-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_filter_selection">
-<span id="populse-mia-src-modules-pop-ups-pop-up-filter-selection-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_filter_selection module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_filter_selection" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_filter_selection.</code><code class="descname">PopUpFilterSelection</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to open a filter that has already been saved</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the saved filters</li>
-<li>ok_clicked: actions when the “OK” button is clicked</li>
-<li>cancel_clicked: closes the pop-up</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.cancel_clicked">
-<code class="descname">cancel_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.cancel_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes the pop-up</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Actions when the “OK” button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.search_str">
-<code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_filter_selection.PopUpFilterSelection.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches the searched pattern with the saved filters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str_search</strong> – string pattern to search</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-filter-selection-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_filter_selection module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-filter-selection-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_information">
-<span id="populse-mia-src-modules-pop-ups-pop-up-information-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_information module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_information" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_information.PopUpInformation">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_information.</code><code class="descname">PopUpInformation</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_information.PopUpInformation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
-<p>Is called when the user wants to display the current project’s information</p>
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_information.PopUpInformation.signal_preferences_change">
-<code class="descname">signal_preferences_change</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_information.PopUpInformation.signal_preferences_change" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-information-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_information module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-information-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_multiple_sort">
-<span id="populse-mia-src-modules-pop-ups-pop-up-multiple-sort-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_multiple_sort module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_multiple_sort" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_multiple_sort.</code><code class="descname">PopUpMultipleSort</code><span class="sig-paren">(</span><em>project</em>, <em>table_data_browser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called to sort the data browser’s table depending on multiple tags</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>table_data_browser: data browser’s table of the software</li>
-<li>values_list: list containing the values that can take each selected tag</li>
-<li>list_tags: list of the selected tags</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>refresh_layout: updates the layouts (especially when a tag push button is added or removed)</li>
-<li>add_tag: adds a push button</li>
-<li>remove_tag: removes a push buttons and makes the changes in the list of values</li>
-<li>select_tag: calls a pop-up to choose a tag</li>
-<li>fill_values: fills the values list when a tag is added or removed</li>
-<li>sort_scans: collects the information and send them to the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.add_tag">
-<code class="descname">add_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.add_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a push button</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.fill_values">
-<code class="descname">fill_values</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.fill_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fills the values list when a tag is added or removed</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – index of the pressed push button</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.refresh_layout">
-<code class="descname">refresh_layout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.refresh_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the layouts (especially when a tag push button is added or removed)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.remove_tag">
-<code class="descname">remove_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.remove_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes a push buttons and makes the changesn in the list of values</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.select_tag">
-<code class="descname">select_tag</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.select_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls a pop-up to choose a tag</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idx</strong> – index of the pressed push button</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.sort_scans">
-<code class="descname">sort_scans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_multiple_sort.PopUpMultipleSort.sort_scans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collects the information and send them to the data browser</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-multiple-sort-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_multiple_sort module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-multiple-sort-module" title="Permalink to this headline">¶</a></h2>
+<<<<<<< HEAD
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_new_project">
-<span id="populse-mia-src-modules-pop-ups-pop-up-new-project-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_new_project module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_new_project" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_new_project.</code><code class="descname">PopUpNewProject</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
-<p>Is called when the user wants to create a new project</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
-<li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
-<li>relative_subpath: relative path to the new project (without the project folder)</li>
-</ul>
-</dd>
-<dt>Method:</dt>
-<dd><ul class="first last simple">
-<li>get_filename: sets the widget’s attributes depending on the selected file name</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject.get_filename">
-<code class="descname">get_filename</code><span class="sig-paren">(</span><em>file_name_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject.get_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the widget’s attributes depending on the selected file name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name_tuple</strong> – tuple obtained with the selectedFiles method</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">real file name</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject.signal_create_project">
-<code class="descname">signal_create_project</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_new_project.PopUpNewProject.signal_create_project" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-new-project-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_new_project module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-new-project-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_open_project">
-<span id="populse-mia-src-modules-pop-ups-pop-up-open-project-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_open_project module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_open_project" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_open_project.</code><code class="descname">PopUpOpenProject</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
-<p>Is called when the user wants to open project</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
-<li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
-</ul>
-</dd>
-<dt>Method:</dt>
-<dd><ul class="first last simple">
-<li>get_filename: sets the widget’s attributes depending on the selected file name</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject.get_filename">
-<code class="descname">get_filename</code><span class="sig-paren">(</span><em>file_name_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject.get_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the widget’s attributes depending on the selected file name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name_tuple</strong> – tuple obtained with the selectedFiles method</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject.signal_create_project">
-<code class="descname">signal_create_project</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_open_project.PopUpOpenProject.signal_create_project" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-open-project-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_open_project module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-open-project-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_preferences">
-<span id="populse-mia-src-modules-pop-ups-pop-up-preferences-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_preferences module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_preferences" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_preferences.</code><code class="descname">PopUpPreferences</code><span class="sig-paren">(</span><em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to change the software preferences</p>
-<dl class="docutils">
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</li>
-<li>use_spm_changed: called when the use_spm checkbox is changed</li>
-<li>use_matlab_changed: called when the use_matlab checkbox is changed</li>
-<li>browse_matlab: called when matlab browse button is clicked</li>
-<li>browse_matlab_standalone: called when matlab browse button is clicked</li>
-<li>browse_spm_standalone: called when spm standalone browse button is clicked</li>
-<li>browse_spm: called when spm browse button is clicked</li>
-<li>ok_clicked: saves the modifications to the config file and apply them</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab">
-<code class="descname">browse_matlab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when matlab browse button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab_standalone">
-<code class="descname">browse_matlab_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_matlab_standalone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when matlab browse button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_projects_save_path">
-<code class="descname">browse_projects_save_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_projects_save_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when “Projects folder” browse button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm">
-<code class="descname">browse_spm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when spm browse button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm_standalone">
-<code class="descname">browse_spm_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm_standalone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when spm standalone browse button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the modifications to the config file and apply them</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>main_window</strong> – main window of the software</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.signal_preferences_change">
-<code class="descname">signal_preferences_change</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.signal_preferences_change" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_clinical_mode_signal">
-<code class="descname">use_clinical_mode_signal</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_clinical_mode_signal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_matlab_changed">
-<code class="descname">use_matlab_changed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_matlab_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the use_matlab checkbox is changed</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_spm_changed">
-<code class="descname">use_spm_changed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_spm_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the use_spm checkbox is changed</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_spm_standalone_changed">
-<code class="descname">use_spm_standalone_changed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_preferences.PopUpPreferences.use_spm_standalone_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the use_spm_standalone checkbox is changed</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-preferences-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_preferences module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-preferences-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_properties">
-<span id="populse-mia-src-modules-pop-ups-pop-up-properties-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_properties module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_properties" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_properties.</code><code class="descname">PopUpProperties</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em>, <em>old_tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to change the current project’s properties</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-<li>old_tags: visualized tags before opening this dialog</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: saves the modifications and updates the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the modifications and updates the data browser</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties.signal_settings_change">
-<code class="descname">signal_settings_change</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_properties.PopUpProperties.signal_settings_change" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-properties-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_properties module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-properties-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-quit-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_quit module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-quit-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-remove-tag-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_remove_tag module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-remove-tag-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-save-project-as-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_save_project_as module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-save-project-as-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-see-all-projects-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_see_all_projects module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-see-all-projects-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-select-filter-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_select_filter module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-select-filter-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-select-iteration-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_select_iteration module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-select-iteration-module" title="Permalink to this headline">¶</a></h2>
+=======
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-new-project-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_new_project module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-new-project-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-open-project-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_open_project module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-open-project-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-preferences-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_preferences module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-preferences-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-properties-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_properties module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-properties-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_quit">
 <span id="populse-mia-src-modules-pop-ups-pop-up-quit-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_quit module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_quit" title="Permalink to this headline">¶</a></h2>
@@ -808,98 +177,11 @@ We need to override the MousePressEvent</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_remove_tag">
-<span id="populse-mia-src-modules-pop-ups-pop-up-remove-tag-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_remove_tag module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_remove_tag" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_remove_tag.</code><code class="descname">PopUpRemoveTag</code><span class="sig-paren">(</span><em>databrowser</em>, <em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to remove a user tag from the project</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the tags of the project</li>
-<li>ok_action: verifies the selected tags and send the information to the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.ok_action">
-<code class="descname">ok_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.ok_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies the selected tags and send the information to the data browser</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.search_str">
-<code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches the searched pattern with the tags of the project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str_search</strong> – string pattern to search</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.signal_remove_tag">
-<code class="descname">signal_remove_tag</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_remove_tag.PopUpRemoveTag.signal_remove_tag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-remove-tag-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_remove_tag module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-remove-tag-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_save_project_as">
-<span id="populse-mia-src-modules-pop-ups-pop-up-save-project-as-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_save_project_as module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_save_project_as" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_save_project_as.</code><code class="descname">PopUpSaveProjectAs</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
-<p>Is called when the user wants to save a project under another name</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
-<li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
-<li>relative_subpath: relative path to the new project (without the project folder)</li>
-</ul>
-</dd>
-<dt>Method:</dt>
-<dd><ul class="first last simple">
-<li>return_value: sets the widget’s attributes depending on the selected file name</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs.return_value">
-<code class="descname">return_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs.return_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the widget’s attributes depending on the selected file name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new project’s file name</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs.signal_saved_project">
-<code class="descname">signal_saved_project</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_save_project_as.PopUpSaveProjectAs.signal_saved_project" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-save-project-as-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_save_project_as module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-save-project-as-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_see_all_projects">
 <span id="populse-mia-src-modules-pop-ups-pop-up-see-all-projects-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_see_all_projects module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_see_all_projects" title="Permalink to this headline">¶</a></h2>
@@ -964,35 +246,8 @@ We need to override the MousePressEvent</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_select_filter">
-<span id="populse-mia-src-modules-pop-ups-pop-up-select-filter-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_select_filter module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_select_filter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_filter.PopUpSelectFilter">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_select_filter.</code><code class="descname">PopUpSelectFilter</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_filter.PopUpSelectFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pop_ups.pop_up_filter_selection.PopUpFilterSelection</span></code></p>
-<p>Is called when the user wants to open a filter that has already been saved</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-<li>config: current config of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: saves the modifications and updates the data browser</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_filter.PopUpSelectFilter.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_filter.PopUpSelectFilter.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the modifications and updates the data browser</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-select-filter-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_select_filter module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-select-filter-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_select_iteration">
 <span id="populse-mia-src-modules-pop-ups-pop-up-select-iteration-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_select_iteration module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_select_iteration" title="Permalink to this headline">¶</a></h2>
@@ -1023,234 +278,25 @@ We need to override the MousePressEvent</p>
 
 </dd></dl>
 
+>>>>>>> master
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_select_tag">
-<span id="populse-mia-src-modules-pop-ups-pop-up-select-tag-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_select_tag module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_select_tag" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_tag.PopUpSelectTag">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_select_tag.</code><code class="descname">PopUpSelectTag</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_tag.PopUpSelectTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pop_ups.pop_up_tag_selection.PopUpTagSelection</span></code></p>
-<p>Is called when the user wants to update the tag to display in the mini viewer</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>config: current config of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: saves the modifications and updates the mini viewer</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_tag.PopUpSelectTag.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_tag.PopUpSelectTag.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the modifications and updates the mini viewer</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-select-tag-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_select_tag module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-select-tag-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table">
-<span id="populse-mia-src-modules-pop-ups-pop-up-select-tag-count-table-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table.PopUpSelectTagCountTable">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table.</code><code class="descname">PopUpSelectTagCountTable</code><span class="sig-paren">(</span><em>project</em>, <em>tags_to_display</em>, <em>tag_name_checked=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table.PopUpSelectTagCountTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pop_ups.pop_up_tag_selection.PopUpTagSelection</span></code></p>
-<p>Is called when the user wants to update a visualized tag of the count table</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>selected_tag: the selected tag</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: updates the selected tag and closes the pop-up</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table.PopUpSelectTagCountTable.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table.PopUpSelectTagCountTable.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the selected tag and closes the pop-up</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-select-tag-count-table-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_select_tag_count_table module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-select-tag-count-table-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_show_brick">
-<span id="populse-mia-src-modules-pop-ups-pop-up-show-brick-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_show_brick module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_show_brick" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_show_brick.</code><code class="descname">PopUpShowBrick</code><span class="sig-paren">(</span><em>project</em>, <em>brick_uuid</em>, <em>databrowser</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Class to display the brick history of a document</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>databrowser: data browser instance of the software</li>
-<li>main_window: main window of the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>io_value_is_scan: checks if the I/O value is a scan</li>
-<li>file_clicked: called when a file is clicked</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick.file_clicked">
-<code class="descname">file_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick.file_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when a file is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick.io_value_is_scan">
-<code class="descname">io_value_is_scan</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_show_brick.PopUpShowBrick.io_value_is_scan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the I/O value is a scan</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> – I/O value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The scan corresponding to the value if it exists, None otherwise</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-show-brick-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_show_brick module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-show-brick-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_tag_selection">
-<span id="populse-mia-src-modules-pop-ups-pop-up-tag-selection-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_tag_selection module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_tag_selection" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_tag_selection.</code><code class="descname">PopUpTagSelection</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to update the tags that are visualized in the data browser</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the tags of the project</li>
-<li>item_clicked: checks the checkbox of an item when the latter is clicked</li>
-<li>ok_clicked: actions when the “OK” button is clicked</li>
-<li>cancel_clicked: closes the pop-up</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.cancel_clicked">
-<code class="descname">cancel_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.cancel_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes the pop-up</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.item_clicked">
-<code class="descname">item_clicked</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.item_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the checkbox of an item when the latter is clicked</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> – clicked item</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.ok_clicked">
-<code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Actions when the “OK” button is clicked</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.search_str">
-<code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_tag_selection.PopUpTagSelection.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches the searched pattern with the tags of the project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str_search</strong> – string pattern to search</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-tag-selection-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_tag_selection module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-tag-selection-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups.pop_up_visualized_tags">
-<span id="populse-mia-src-modules-pop-ups-pop-up-visualized-tags-module"></span><h2>populse_mia.src.modules.pop_ups.pop_up_visualized_tags module<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups.pop_up_visualized_tags" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags">
-<em class="property">class </em><code class="descclassname">populse_mia.src.modules.pop_ups.pop_up_visualized_tags.</code><code class="descname">PopUpVisualizedTags</code><span class="sig-paren">(</span><em>project</em>, <em>visualized_tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
-<p>Is called when the user wants to update the tags that are visualized</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>visualized_tags: project’s visualized tags before opening this widget</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the tags of the project</li>
-<li>click_select_tag: puts the selected tags in the “selected tag” table</li>
-<li>click_unselect_tag: removes the unselected tags from the “selected tag” table</li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_select_tag">
-<code class="descname">click_select_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_select_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Puts the selected tags in the “selected tag” table</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag">
-<code class="descname">click_unselect_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the unselected tags from the “selected tag” table</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.search_str">
-<code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches the searched pattern with the tags of the project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str_search</strong> – string pattern to search</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.signal_preferences_change">
-<code class="descname">signal_preferences_change</code><a class="headerlink" href="#populse_mia.src.modules.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.signal_preferences_change" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="populse-mia-src-modules-pop-ups-pop-up-visualized-tags-module">
+<h2>populse_mia.src.modules.pop_ups.pop_up_visualized_tags module<a class="headerlink" href="#populse-mia-src-modules-pop-ups-pop-up-visualized-tags-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.src.modules.pop_ups">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.src.modules.pop_ups" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

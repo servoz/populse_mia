@@ -1,9 +1,7 @@
 <p align="center" >
-  <b> populse_mia: Multiparametric Image Analysis </b><br>
-	<br>
-  <img src="https://user-images.githubusercontent.com/1913468/38312384-eb8fd9ee-3821-11e8-870d-209673077223.jpg">
+	<img src="https://github.com/populse/populse_mia/blob/master/python/populse_mia/ressources/mia/images/Logo_populse_mia.jpg" alt="populse_mia logo" height="220" width="300">
+	<sub><sub> ©Johan Pietras @IRMaGe </sub></sub>
 </p>
-
 
 [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
 [![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)

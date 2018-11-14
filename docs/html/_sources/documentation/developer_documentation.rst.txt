@@ -16,3 +16,4 @@ Conventions
 -----------
 
 We follow as much as possible the `PEP 8 <https://www.python.org/dev/peps/pep-0008/>`_ for coding conventions and the `PEP 257 <https://www.python.org/dev/peps/pep-0257/>`_ for docstring conventions. We are encouraging people that want to colabore to the populse project to follow these guidelines.
+
