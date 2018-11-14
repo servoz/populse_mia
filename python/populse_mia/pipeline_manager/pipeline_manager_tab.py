@@ -794,6 +794,7 @@ class PipelineManagerTab(QWidget):
         :param pipeline: not None if this method is called from a sub-pipeline
         """
 
+        config = Config()
         main_pipeline = False
 
         # If the initialisation is launch for the main pipeline
@@ -932,10 +933,56 @@ class PipelineManagerTab(QWidget):
 
             # Adding I/O to database history
             inputs = process.get_inputs()
+            keys2consider = ['use_mcr', 'paths', 'matlab_cmd', 'output_directory'] # plugs to be filled automatically
+            
             for key in inputs:
-                value = inputs[key]
-                if value is Undefined:
+                
+                if inputs[key] is Undefined:
                     inputs[key] = "<undefined>"
+
+#Could be cleaner to do some tests with warning pop up if necessary (ex. if config.get_spm_standalone_path() is None, etc ...)
+                    
+#                if (isinstance(process, NipypeProcess)) and (key in keys2consider) and (inputs[key] == "<undefined>"):
+                if (key in keys2consider) and (inputs[key] == "<undefined>"):
+
+                    if (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'yes'):  # use_mcr parameter
+                        inputs[key] = True
+                    elif (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'no'):
+                        inputs[key] = False
+                            
+                    if (key == keys2consider[1]) and (config.get_use_spm_standalone() == 'yes'):  # paths  parameter
+                        inputs[key] = config.get_spm_standalone_path().split()
+                    elif (key == keys2consider[1]) and (config.get_use_spm() == 'yes'):
+                        inputs[key] = config.get_spm_path().split()
+
+                    if (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'yes'):  # matlab_cmd parameter
+                        inputs[key] = config.get_spm_standalone_path() + '/run_spm12.sh '\
+                                      + config.get_matlab_standalone_path() + ' script'
+                    elif (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'no'):
+                        inputs[key] = config.get_matlab_path()
+
+                    if (key == keys2consider[3]):                                                 # output_directory parameter
+
+                        if not os.path.isdir(os.path.abspath(self.project.folder + '/scripts')):
+                            os.mkdir(os.path.abspath(self.project.folder + '/scripts'))
+
+                        inputs[key] =  os.path.abspath(self.project.folder + '/scripts')
+   
+                    try:
+                        pipeline.nodes[node_name].set_plug_value(key, inputs[key])
+                    
+                    except TraitError:
+                    
+#                        if type(inputs[key]) is list and len(inputs[key]) == 1:
+                        if isinstance(inputs[key], list) and len(inputs[key]) == 1:
+                        
+                            try:
+                                pipeline.nodes[key].set_plug_value(key, inputs[key][0])
+                            
+                            except TraitError:
+                                print("Trait error for {0} plug of {1} node".format(key, inputs[key]))
+                                pass
+
             outputs = process.get_outputs()
             for key in outputs:
                 value = outputs[key]
