@@ -10,19 +10,26 @@ import datetime
 import os
 import sys
 import uuid
+import six
 from time import sleep
 from collections import OrderedDict
+
+from PyQt5 import QtCore
 from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
 from traits.api import TraitListObject, Undefined
 
 # PyQt5 imports
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QRectF
 from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog
+    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, QMessageBox, QProgressDialog, QGraphicsScene, \
+    QGraphicsView
 
 # Capsul imports
 from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess, Pipeline
+
+from pipeline_manager.capsul_files import pipeline_developper_view
+from .capsul_files.pipeline_developper_view import PipelineDevelopperView
 
 # Populse_MIA imports
 from pipeline_manager.process_mia import ProcessMIA
@@ -79,6 +86,8 @@ class PipelineManagerTab(QWidget):
         - displayNodeParameters: displays the node controller when a node is clicked
     """
 
+    item_library_clicked = QtCore.Signal(str)
+
     def __init__(self, project, scan_list, main_window):
         """
         Initialization of the Pipeline Manager tab
@@ -108,6 +117,9 @@ class PipelineManagerTab(QWidget):
         self.verticalLayout = QVBoxLayout(self)
 
         self.processLibrary = ProcessLibraryWidget(self.main_window)
+
+        self.processLibrary.process_library.item_library_clicked.connect(self.item_library_clicked)
+        self.item_library_clicked.connect(self._showPreview)
 
         # self.diagramScene = DiagramScene(self)
         self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list, self.main_window)
@@ -180,8 +192,22 @@ class PipelineManagerTab(QWidget):
         self.splitterRight.addWidget(self.scrollArea)
         self.splitterRight.setSizes([400, 400])
 
+        # previewScene = QGraphicsScene()
+        # previewScene.setSceneRect(QtCore.QRectF())
+        # self.previewDiagram = QGraphicsView()
+        # self.previewDiagram.setEnabled(False)
+
+        self.previewBlock = PipelineDevelopperView(pipeline=None, allow_open_controller=False,
+                                                   show_sub_pipelines=True, enable_edition=False)
+
+
+
+        self.splitter0 = QSplitter(Qt.Vertical)
+        self.splitter0.addWidget(self.processLibrary)
+        self.splitter0.addWidget(self.previewBlock)
+
         self.splitter1 = QSplitter(Qt.Horizontal)
-        self.splitter1.addWidget(self.processLibrary)
+        self.splitter1.addWidget(self.splitter0)
         self.splitter1.addWidget(self.pipelineEditorTabs)
         self.splitter1.addWidget(self.splitterRight)
         self.splitter1.setSizes([200, 800, 200])
@@ -189,17 +215,94 @@ class PipelineManagerTab(QWidget):
         if config.get_clinical_mode() == 'yes':
             self.processLibrary.setHidden(True)
 
-        self.splitter2 = QSplitter(Qt.Vertical)
-        self.splitter2.addWidget(self.splitter1)
-        self.splitter2.setSizes([800, 100])
+        # self.splitter2 = QSplitter(Qt.Vertical)
+        # self.splitter2.addWidget(self.splitter1)
+        # self.splitter2.setSizes([800, 100])
 
         self.verticalLayout.addLayout(self.hLayout)
-        self.verticalLayout.addWidget(self.splitter2)
+        self.verticalLayout.addWidget(self.splitter1)
 
         self.startedConnection = None
 
         # To undo/redo
         self.nodeController.value_changed.connect(self.controller_value_changed)
+
+    def _showPreview(self,nameItem):
+        for elem in self.previewBlock.scene.items():
+            self.previewBlock.scene.removeItem(elem)
+        self.previewBlock.centerOn(0, 0)
+        self.find_process(nameItem)
+
+    def find_process(self, path):
+        """
+        Finds the dropped process in the system's paths
+
+        :param path: class's path (e.g. "nipype.interfaces.spm.Smooth") (str)
+        """
+        package_name, process_name = os.path.splitext(path)
+        process_name = process_name[1:]
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, instance in sorted(list(pkg.__dict__.items())):
+            if name == process_name:
+                try:
+                    process = get_process_instance(instance)
+                except Exception as e:
+                    print(e)
+                    return
+                else:
+                    node, node_name = self.add_process(instance)
+                    gnode = self.previewBlock.scene.add_node(node_name, node)
+                    gnode.setPos(0,0)
+                    gnode.updateInfoActived(True)
+                    # gnode.active = True
+                    # gnode.update_node()
+                    rect=gnode.sceneBoundingRect()
+                    self.previewBlock.scene.setSceneRect(rect)
+                    self.previewBlock.fitInView(rect.x(),rect.y(),rect.width()*1.2,rect.height()*1.2, Qt.KeepAspectRatio)
+                    self.previewBlock.setAlignment(Qt.AlignCenter)
+
+    def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
+        """
+        Adds a process to the pipeline
+
+        :param class_process: process class's name (str)
+        :param node_name: name of the corresponding node (using when undo/redo) (str)
+        :param from_undo: boolean that is True if the action has been made using an undo
+        :param from_redo: boolean that is True if the action has been made using a redo
+        :param links: list of links (using when undo/redo)
+        """
+        pipeline = self.previewBlock.scene.pipeline
+        if not node_name:
+            class_name = class_process.__name__
+            i = 1
+
+            node_name = class_name.lower() + str(i)
+
+            while node_name in pipeline.nodes and i < 100:
+                i += 1
+                node_name = class_name.lower() + str(i)
+
+            process_to_use = class_process()
+
+        else:
+            process_to_use = class_process
+
+        try:
+            process = get_process_instance(
+                process_to_use)
+        except Exception as e:
+            print(e)
+            return
+
+        pipeline.add_process(node_name, process)
+
+        # Capsul update
+        node = pipeline.nodes[node_name]
+        # gnode = self.scene.add_node(node_name, node)
+
+        return node, node_name
+
 
     def undo(self):
         """

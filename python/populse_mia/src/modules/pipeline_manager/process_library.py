@@ -18,6 +18,7 @@ from datetime import datetime
 import distutils.dir_util
 
 # PyQt5 import # TO REMOVE
+from PyQt5 import QtCore
 from PyQt5.QtCore import QSortFilterProxyModel
 
 # PyQt / PySide import, via soma
@@ -26,7 +27,7 @@ from soma.qt_gui.qt_backend.QtCore import Qt, Signal, QModelIndex, \
     QAbstractItemModel, QByteArray, QMimeData
 from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QPushButton, QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout, \
-    QLineEdit, QApplication, QSplitter, QFileDialog, QTreeView, \
+    QLineEdit, QApplication, QSplitter, QTreeView,QFileDialog, \
     QMessageBox
 
 # soma-base import
@@ -59,6 +60,8 @@ class ProcessLibraryWidget(QWidget):
         - load_packages: sets packages and paths to the widget and to the system paths
         - save_config: saves the current config to process_config.yml
     """
+
+
 
     def __init__(self, main_window=None):
         """
@@ -495,6 +498,8 @@ class ProcessLibrary(QTreeView):
 
     """
 
+    item_library_clicked = QtCore.Signal(str)
+
     def __init__(self, d):
         super(ProcessLibrary, self).__init__()
         self.load_dictionary(d)
@@ -520,6 +525,21 @@ class ProcessLibrary(QTreeView):
         """
 
         return self._model.to_dict()
+
+    def mousePressEvent(self,event):
+        idx = self.indexAt(event.pos())
+        # print('idx',dir(idx.model()))
+        if idx.isValid:
+            model = idx.model()
+            idx = idx.sibling(idx.row(),0)
+            node = idx.internalPointer()
+            txt = node.data(idx.column())
+            path = txt.encode()
+            # print('dictionary ',path.decode('utf8'))
+            self.item_library_clicked.emit(path.decode('utf8'))
+            # self.item_library_clicked.emit(model.itemData(idx)[0])
+
+        return QTreeView.mousePressEvent(self,event)
 
 
 class PackageLibraryDialog(QDialog):
