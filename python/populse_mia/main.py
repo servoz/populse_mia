@@ -203,6 +203,20 @@ def verify_saved_projects():
 def launch_mia():
     global main_window
 
+    # Checking if Populse_MIA is called from the site/dist packages or from a cloned git repository
+    if not os.path.join(os.path.dirname(os.path.realpath(__file__)), '..') in sys.path:
+        print('Populse_MIA in "developer" mode')
+        # This means that we are in "developer" mode
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+        dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+        if os.path.isfile(dot_mia_config):
+            print('configuration.yml in .populse_mia has been detected.')
+            with open(dot_mia_config, 'r') as stream:
+                mia_home_config = yaml.load(stream)
+            mia_home_config["dev_mode"] = "yes"
+            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+                yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+
     app = QApplication(sys.argv)
     QApplication.setOverrideCursor(Qt.WaitCursor)
 
@@ -245,6 +259,14 @@ def launch_mia():
 def main():
     verify_processes()
     launch_mia()
+
+    dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+    if os.path.isfile(dot_mia_config):
+        with open(dot_mia_config, 'r') as stream:
+            mia_home_config = yaml.load(stream)
+        mia_home_config["dev_mode"] = "no"
+        with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+            yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
 
 
 if __name__ == '__main__':

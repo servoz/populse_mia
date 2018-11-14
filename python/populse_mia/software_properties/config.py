@@ -74,12 +74,13 @@ class Config:
             self.saveConfig()
 
     def loadConfig(self):
+        print('MIA_PATH', self.get_mia_path())
         with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
-                
+
     def saveConfig(self):
         with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'w', encoding='utf8') as configfile:
             yaml.dump(self.config, configfile, default_flow_style=False, allow_unicode=True)
@@ -295,6 +296,9 @@ class Config:
             with open(dot_mia_config, 'r') as stream:
                 try:
                     mia_home_config = yaml.load(stream)
+                    if "dev_mode" in mia_home_config.keys() and mia_home_config["dev_mode"] == "yes":
+                        return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+
                     return mia_home_config["mia_path"]
                 except yaml.YAMLError:
                     return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
