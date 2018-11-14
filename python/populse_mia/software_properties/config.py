@@ -74,7 +74,6 @@ class Config:
             self.saveConfig()
 
     def loadConfig(self):
-        print('MIA_PATH', self.get_mia_path())
         with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'r') as stream:
             try:
                 return yaml.load(stream)

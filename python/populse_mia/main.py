@@ -8,25 +8,6 @@
 
 # -*- coding: utf-8 -*- # Character encoding, recommended
 
-import sys
-import os
-import yaml
-import pkgutil
-import inspect
-
-# PyQt5 imports
-from PyQt5.QtCore import QDir, QLockFile, Qt
-from PyQt5.QtWidgets import QApplication
-
-# Populse_MIA imports
-from populse_mia.main_window.main_window import MainWindow
-from populse_mia.project.project import Project
-from populse_mia.software_properties.config import Config
-from populse_mia.software_properties.saved_projects import SavedProjects
-
-# soma-base imports
-from soma.path import find_in_path
-from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 main_window = None
 
@@ -39,6 +20,8 @@ def clean_up():
     """
     Cleans up the software during "normal" closing
     """
+
+    from populse_mia.software_properties.config import Config
 
     global main_window
 
@@ -62,6 +45,14 @@ class NipypePackages:
         :param module_name: name of the module
         :param class_name: name of the class
         """
+
+        import sys
+        import pkgutil
+        import inspect
+
+        # soma-base imports
+        from soma.path import find_in_path
+
         if module_name:
 
             # Reloading the package
@@ -122,6 +113,19 @@ def verify_processes():
     When the software is launched, if Nipype's interfaces are yet unavailable,
     tries to make them available in the processes library
     """
+
+    import sys
+    import os
+    import yaml
+
+    # PyQt5 imports
+    from PyQt5.QtWidgets import QApplication
+
+    # Populse_MIA imports
+    from populse_mia.software_properties.config import Config
+
+    # soma-base imports
+    from soma.qt_gui.qt_backend.Qt import QMessageBox
 
     proc_content_flag = False
     config = Config()
@@ -189,6 +193,12 @@ def verify_saved_projects():
 
     :return: the list of the deleted projects
     """
+
+    import os
+
+    # Populse_MIA imports
+    from populse_mia.software_properties.saved_projects import SavedProjects
+
     saved_projects_object = SavedProjects()
     saved_projects_list = saved_projects_object.pathsList
     deleted_projects = []
@@ -201,26 +211,26 @@ def verify_saved_projects():
 
 
 def launch_mia():
-    global main_window
+    import sys
+    import os
 
-    # Checking if Populse_MIA is called from the site/dist packages or from a cloned git repository
-    if not os.path.join(os.path.dirname(os.path.realpath(__file__)), '..') in sys.path:
-        print('Populse_MIA in "developer" mode')
-        # This means that we are in "developer" mode
-        sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-        dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
-        if os.path.isfile(dot_mia_config):
-            print('configuration.yml in .populse_mia has been detected.')
-            with open(dot_mia_config, 'r') as stream:
-                mia_home_config = yaml.load(stream)
-            mia_home_config["dev_mode"] = "yes"
-            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-                yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+    # PyQt5 imports
+    from PyQt5.QtCore import QDir, QLockFile, Qt
+    from PyQt5.QtWidgets import QApplication
+
+    # Populse_MIA imports
+    from populse_mia.main_window.main_window import MainWindow
+    from populse_mia.project.project import Project
+    from populse_mia.software_properties.config import Config
+
+    global main_window
 
     app = QApplication(sys.argv)
     QApplication.setOverrideCursor(Qt.WaitCursor)
 
     def my_excepthook(type, value, tback):
+
+        import sys
         # log the exception here
 
         print("excepthook")
@@ -257,9 +267,36 @@ def launch_mia():
 
 
 def main():
+    import os
+    import sys
+    import yaml
+
+    # Checking if Populse_MIA is called from the site/dist packages or from a cloned git repository
+    if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path:
+        print('Populse_MIA in "developer" mode')
+        # This means that we are in "developer" mode
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+        dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+        if os.path.isfile(dot_mia_config):
+            print('configuration.yml in .populse_mia has been detected.')
+            with open(dot_mia_config, 'r') as stream:
+                mia_home_config = yaml.load(stream)
+            mia_home_config["dev_mode"] = "yes"
+            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+                yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+
+    else:
+        dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+        with open(dot_mia_config, 'r') as stream:
+            mia_home_config = yaml.load(stream)
+        mia_home_config["dev_mode"] = "yes"
+        with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+            yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+
     verify_processes()
     launch_mia()
 
+    # Setting the dev_mode to "no"
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
     if os.path.isfile(dot_mia_config):
         with open(dot_mia_config, 'r') as stream:
