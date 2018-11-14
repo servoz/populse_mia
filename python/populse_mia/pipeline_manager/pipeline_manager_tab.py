@@ -28,13 +28,11 @@ from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
 # Capsul imports
 from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess, Pipeline
 
-from pipeline_manager.capsul_files import pipeline_developper_view
-from .capsul_files.pipeline_developper_view import PipelineDevelopperView
-
 # Populse_MIA imports
 from populse_mia.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.pop_ups.pop_up_select_iteration import PopUpSelectIteration
 from populse_mia.pipeline_manager.iteration_table import IterationTable
+from populse_mia.pipeline_manager.capsul_files.pipeline_developper_view import PipelineDevelopperView
 from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, \
     BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, \
     TAG_CHECKSUM, TYPE_NII, TYPE_MAT
@@ -119,7 +117,7 @@ class PipelineManagerTab(QWidget):
         self.processLibrary = ProcessLibraryWidget(self.main_window)
 
         self.processLibrary.process_library.item_library_clicked.connect(self.item_library_clicked)
-        self.item_library_clicked.connect(self._showPreview)
+        self.item_library_clicked.connect(self._show_preview)
 
         # self.diagramScene = DiagramScene(self)
         self.pipelineEditorTabs = PipelineEditorTabs(self.project, self.scan_list, self.main_window)
@@ -200,8 +198,6 @@ class PipelineManagerTab(QWidget):
         self.previewBlock = PipelineDevelopperView(pipeline=None, allow_open_controller=False,
                                                    show_sub_pipelines=True, enable_edition=False)
 
-
-
         self.splitter0 = QSplitter(Qt.Vertical)
         self.splitter0.addWidget(self.processLibrary)
         self.splitter0.addWidget(self.previewBlock)
@@ -214,6 +210,7 @@ class PipelineManagerTab(QWidget):
 
         if config.get_clinical_mode() == 'yes':
             self.processLibrary.setHidden(True)
+            self.previewBlock.setHidden(True)
 
         # self.splitter2 = QSplitter(Qt.Vertical)
         # self.splitter2.addWidget(self.splitter1)
@@ -227,11 +224,11 @@ class PipelineManagerTab(QWidget):
         # To undo/redo
         self.nodeController.value_changed.connect(self.controller_value_changed)
 
-    def _showPreview(self,nameItem):
+    def _show_preview(self, name_item):
         for elem in self.previewBlock.scene.items():
             self.previewBlock.scene.removeItem(elem)
         self.previewBlock.centerOn(0, 0)
-        self.find_process(nameItem)
+        self.find_process(name_item)
 
     def find_process(self, path):
         """
@@ -251,7 +248,7 @@ class PipelineManagerTab(QWidget):
                     print(e)
                     return
                 else:
-                    node, node_name = self.add_process(instance)
+                    node, node_name = self.add_process_to_preview(instance)
                     gnode = self.previewBlock.scene.add_node(node_name, node)
                     gnode.setPos(0,0)
                     gnode.updateInfoActived(True)
@@ -259,18 +256,16 @@ class PipelineManagerTab(QWidget):
                     # gnode.update_node()
                     rect=gnode.sceneBoundingRect()
                     self.previewBlock.scene.setSceneRect(rect)
-                    self.previewBlock.fitInView(rect.x(),rect.y(),rect.width()*1.2,rect.height()*1.2, Qt.KeepAspectRatio)
+                    self.previewBlock.fitInView(rect.x(), rect.y(), rect.width() * 1.2,
+                                                rect.height() * 1.2, Qt.KeepAspectRatio)
                     self.previewBlock.setAlignment(Qt.AlignCenter)
 
-    def add_process(self, class_process, node_name=None, from_undo=False, from_redo=False, links=[]):
+    def add_process_to_preview(self, class_process, node_name=None):
         """
         Adds a process to the pipeline
 
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node (using when undo/redo) (str)
-        :param from_undo: boolean that is True if the action has been made using an undo
-        :param from_redo: boolean that is True if the action has been made using a redo
-        :param links: list of links (using when undo/redo)
         """
         pipeline = self.previewBlock.scene.pipeline
         if not node_name:
@@ -302,7 +297,6 @@ class PipelineManagerTab(QWidget):
         # gnode = self.scene.add_node(node_name, node)
 
         return node, node_name
-
 
     def undo(self):
         """
@@ -517,10 +511,12 @@ class PipelineManagerTab(QWidget):
         # and the user cannot save a pipeline
         if config.get_clinical_mode() == 'yes':
             self.processLibrary.setHidden(True)
+            self.previewBlock.setHidden(True)
             self.save_pipeline_action.setDisabled(True)
             self.save_pipeline_as_action.setDisabled(True)
         else:
             self.processLibrary.setHidden(False)
+            self.previewBlock.setHidden(False)
             self.save_pipeline_action.setDisabled(False)
             self.save_pipeline_as_action.setDisabled(False)
 
