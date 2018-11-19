@@ -1,12 +1,12 @@
 # To install sphinx
-pip3 install sphinx
+          pip3 install sphinx
 
 # In populse_mia's root folder
-mkdir docs/
-cd docs/
+          mkdir docs/
+          cd docs/
 
 # To begin
-sphinx-quickstart
+          sphinx-quickstart
 """
 Default values, except the following ones:
  - Separate source and build directories (y/n) [n]: y
@@ -25,7 +25,7 @@ The following line (8) must be modified from docs/Makefile:
 """
 
 # To update the api documentation (in docs/ folder)
-sphinx-apidoc -f -o source/ ../python/populse_mia/
+          sphinx-apidoc -f -o source/ ../python/populse_mia/
 
 # To generate the html pages (in docs/ folder)
-make html
+          make html
