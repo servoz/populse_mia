@@ -289,7 +289,7 @@ def main():
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         with open(dot_mia_config, 'r') as stream:
             mia_home_config = yaml.load(stream)
-        mia_home_config["dev_mode"] = "yes"
+        mia_home_config["dev_mode"] = "no"
         with open(dot_mia_config, 'w', encoding='utf8') as configfile:
             yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
 
