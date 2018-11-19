@@ -33,16 +33,9 @@ Non-Populse member
         cd [mia_install_dir]  
         sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
-    * Add the module directory to the python path
-
-        * Depending of your command-line interpreter and the environment you are working in, `the environment variables management <https://en.wikipedia.org/wiki/Unix_shell>`_ can be different ::
-
-            export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash  
-            setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  etc.  
-
     * Then interprets the main.py file to run Populse_MIA ::
 
-        cd [mia_install_dir]/python/populse_mia/src/scripts  
+        cd [mia_install_dir]/python/populse_mia
         python3 main.py
 
     * If you have made some changes to improve the code and want to share them, feel free to open pull requests:
@@ -74,16 +67,10 @@ Populse member
         cd [mia_install_dir]  
         sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
-    * Add the module directory to the python path
-
-        * Depending of your command-line interpreter and the environment you are working in, `the environment variables management <https://en.wikipedia.org/wiki/Unix_shell>`_ can be different ::
-
-            export PYTHONPATH=$PYTHONPATH:[mia_install_dir]/python/populse_mia/src/modules # bash  
-            setenv PYTHONPATH ${PYTHONPATH}:[mia_install_dir]/python/populse_mia/src/modules # tcsh / csh  etc.  
 
     * Then interprets the main.py file to run Populse_MIA ::
 
-        cd [mia_install_dir]/python/populse_mia/src/scripts  
+        cd [mia_install_dir]/python/populse_mia
         python3 main.py  
 
     * Make sure to work on your own branch ::

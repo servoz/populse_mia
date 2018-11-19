@@ -66,7 +66,7 @@ Installation
 
 * Click on "Install" to install Populse_MIA with the selected parameters.
 
-* The installation status is displayed. The last step (Python packages installation) may take a few minutes if no package used in Populse_MIA are not already installed in your Python environment).
+* The installation status is displayed. The last step (Python packages installation) may take a few minutes.
 
 .. image:: ../images/mia_install_3.png
    :align: center
