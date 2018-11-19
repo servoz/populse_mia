@@ -51,7 +51,86 @@
 <div class="section" id="populse-mia-s-user-installation">
 <h1>Populse_MIA’s user installation<a class="headerlink" href="#populse-mia-s-user-installation" title="Permalink to this headline">¶</a></h1>
 <p>WARNING: THIS IS JUST A TEST!</p>
-<p>You can download the archive <a class="reference external" href="https://github.com/dhrbn/populse_mia_install/archive/master.zip">here</a></p>
+<p>This page explains how to install Populse_MIA.</p>
+<div class="section" id="pre-requirements">
+<h2>Pre-requirements<a class="headerlink" href="#pre-requirements" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Make sure to have Python3 installed. You can verify it by typing the following in a command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">V</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Populse_MIA is ensured to work under Python’s 3.5, 3.6 and 3.7 versions.</p>
+<ul>
+<li><p class="first">Make sure to have a java package installed. You can verify it by typing the following in a command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">java</span> <span class="o">-</span><span class="n">version</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make sure to have pip3 installed. You can verify it by typing the following in a command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">First download the archive <a class="reference external" href="https://github.com/dhrbn/populse_mia_install/archive/master.zip">here</a>.</p>
+</li>
+<li><p class="first">Unzip it and launch the following command in the extracted folder (“populse_mia_install-master”):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">install_mia</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">If PyQt5 and pyyaml are not installed in your Python environment they will be first installed before launching the Populse_MIA’s installation.</p>
+</li>
+</ul>
+<img alt="../_images/mia_install_1.png" class="align-center" id="pyqt5-and-pyyaml" src="../_images/mia_install_1.png" />
+<ul>
+<li><p class="first">An error can sometimes occur after the installation of both packages, the Python environment not being correctly updated. If this error occurs launch the same command again to install Populse_MIA:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">install_mia</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The Populse_MIA installation is now launched and you have to select three parameters:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>Populse_MIA installation path: the folder where to install Populse_MIA, set by default to “.populse_mia” in the current user’s diretory. Two folders will be created in the selected folder:</dt>
+<dd><ul class="first last">
+<li>populse_mia: containing populse_mia’s configuration and resources files.</li>
+<li>MRIFileManager: containing the file converter used in Populse_MIA.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Populse_MIA projects path: the folder containing the analysis projects saved in Populse_MIA. A “projects” folder will be created in the selected folder.</li>
+<li>Operating mode: Choose between clinical and research mode (more information about <a class="reference external" href="../documentation/documentation.html#operating-mode">operating mode</a>).</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<img alt="../_images/mia_install_2.png" class="align-center" id="populse-mia-install-widget" src="../_images/mia_install_2.png" />
+<ul class="simple">
+<li>Click on “Install” to install Populse_MIA with the selected parameters.</li>
+<li>The installation status is displayed. The last step (Python packages installation) may take a few minutes if no package used in Populse_MIA are not already installed in your Python environment).</li>
+</ul>
+<img alt="../_images/mia_install_3.png" class="align-center" id="populse-mia-install-widget-status" src="../_images/mia_install_3.png" />
+<ul class="simple">
+<li>When the packages have been installed, a summary of the installation is displayed.</li>
+</ul>
+<img alt="../_images/mia_install_4.png" class="align-center" id="populse-mia-install-widget-summary" src="../_images/mia_install_4.png" />
+<ul>
+<li><p class="first">Populse_MIA is now installed. To launch it, type the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">populse_mia</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 
 

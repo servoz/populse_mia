@@ -1495,6 +1495,24 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 </dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_process_to_preview">
+<code class="descname">add_process_to_preview</code><span class="sig-paren">(</span><em>class_process</em>, <em>node_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_process_to_preview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a process to the pipeline</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>class_process</strong> – process class’s name (str)</li>
+<li><strong>node_name</strong> – name of the corresponding node (using when undo/redo) (str)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.controller_value_changed">
 <code class="descname">controller_value_changed</code><span class="sig-paren">(</span><em>signal_list</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.controller_value_changed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates history when a pipeline node is changed</p>
@@ -1530,6 +1548,20 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 </dd></dl>
 
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.find_process">
+<code class="descname">find_process</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.find_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the dropped process in the system’s paths</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – class’s path (e.g. “nipype.interfaces.spm.Smooth”) (str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.initPipeline">
 <code class="descname">initPipeline</code><span class="sig-paren">(</span><em>pipeline=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.initPipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the current pipeline of the pipeline editor</p>
@@ -1558,6 +1590,11 @@ the inputs and are stored in the database.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.item_library_clicked">
+<code class="descname">item_library_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.item_library_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.loadParameters">
@@ -2225,6 +2262,11 @@ package where a change of status where done.</p>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.item_library_clicked">
+<code class="descname">item_library_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibrary.item_library_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.load_dictionary">
 <code class="descname">load_dictionary</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibrary.load_dictionary" title="Permalink to this definition">¶</a></dt>
@@ -2238,6 +2280,11 @@ package where a change of status where done.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.mousePressEvent">
+<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>self</em>, <em>QMouseEvent</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibrary.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.to_dict">

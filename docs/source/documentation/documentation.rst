@@ -12,8 +12,8 @@ Populse_MIA's documentation
 * `Developer documentation <./developer_documentation.html>`_
 * `Create and install a pipeline process <./create_process.html>`_
 
-Clinical mode
--------------
+Operating mode
+--------------
 
 Populse_MIA has two operating modes: 
   * Clinical mode
@@ -23,4 +23,4 @@ Populse_MIA has two operating modes:
       * When creating a project, MIA default tags are stored in the database
       * Process library enabled
 
-When the software is opened for the first time, the clinical mode is enabled. To disabled it, go to the software preferences (File > MIA preferences) and disable “Clinical mode”.
+To modify it, go to the software preferences (File > MIA preferences) and disable/enable “Clinical mode”.
