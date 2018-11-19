@@ -48,7 +48,7 @@ class Config:
         - set_spm_path: sets the path of SPM12 (license version)
         - get_spm_standalone_path: returns the path of SPM12 (standalone version)
         - set_spm_standalone_path: sets the path of SPM12 (standalone version)
-        - get_matlab_command: return Matlab command
+        - get_matlab_command: returns Matlab command
         - set_use_spm: sets the value of "use spm" checkbox in the preferences
         - get_use_spm: returns the value of "use spm" checkbox in the preferences
         - set_use_spm_standalone: sets the value of "use spm standalone" checkbox in the preferences
@@ -209,9 +209,11 @@ class Config:
         self.saveConfig()
 
     def get_matlab_command(self):
-        if self.config["use_spm"] == "yes":
-            return '{0}' + os.sep + 'run_spm12.sh {1}' + os.sep + ' script'.format(self.config["spm"],
-                                                                                   self.config["matlab"])
+        if self.config["use_spm_standalone"] == "yes":
+            return '{0}'.format(self.config["spm_standalone"]) + os.sep + \
+                   'run_spm12.sh {0}'.format(self.config["matlab_standalone"]) + os.sep + ' script'
+        elif self.config["use_matlab"] == "yes":
+            return self.config["matlab"]
         else:
             return None
 
