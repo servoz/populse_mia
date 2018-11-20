@@ -4,7 +4,6 @@
 </p>
 
 [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
-[![](https://ci.appveyor.com/api/projects/status/k840n8kgbhukvfwc?svg=true)](https://ci.appveyor.com/project/dhrbn/populse-mia)
 [![](https://ci.appveyor.com/api/projects/status/2km9ddxkpfkgra7v?svg=true)](https://ci.appveyor.com/project/populse/populse-mia)
 
 
