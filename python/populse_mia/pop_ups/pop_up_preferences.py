@@ -25,7 +25,7 @@ class PopUpPreferences(QDialog):
 
     Methods:
         - browse_projects_save_path: called when "Projects folder" browse button is clicked
-        - browse_mri_conv_path: called when "MRIFileManager.jar" browse button is clicked
+        - browse_mri_conv_path: called when "MRIManager.jar" browse button is clicked
         - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed
         - use_spm_changed: called when the use_spm checkbox is changed
         - use_matlab_changed: called when the use_matlab checkbox is changed
@@ -138,7 +138,7 @@ class PopUpPreferences(QDialog):
         self.groupbox_populse = QtWidgets.QGroupBox("POPULSE third party preference")
 
         # MRI File Manager folder label/line edit
-        self.mri_conv_path_label = QLabel("Absolute path to MRIFileManager.jar:")
+        self.mri_conv_path_label = QLabel("Absolute path to MRIManager.jar:")
         self.mri_conv_path_line_edit = QLineEdit(config.get_mri_conv_path())
         self.mri_conv_path_browse = QPushButton("Browse")
         self.mri_conv_path_browse.clicked.connect(self.browse_mri_conv_path)
@@ -374,7 +374,7 @@ class PopUpPreferences(QDialog):
         """
         Called when "MRIFileManager.jar" browse button is clicked
         """
-        fname = QFileDialog.getOpenFileName(self, 'Select the location of the MRIFileManager.jar file')[0]
+        fname = QFileDialog.getOpenFileName(self, 'Select the location of the MRIManager.jar file')[0]
         if fname:
             self.mri_conv_path_line_edit.setText(fname)
 
