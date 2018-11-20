@@ -23,8 +23,9 @@ Populse_MIA aims to provide easy tools to perform complex data processing based 
 Main features
 =============
 
-Available soon
-
+* `Metadata enhancement <./documentation/data_browser.html>`_
+* `Complex pipeline processing <./documentation/pipeline_manager.html>`_
+* Data visualization (coming soon)
 
 Installation
 ============
