@@ -4,7 +4,7 @@
 </p>
 
 [![](https://travis-ci.org/populse/populse_mia.svg?branch=master)](https://travis-ci.org/populse/populse_mia)
-[![](https://ci.appveyor.com/api/projects/status/tk00pnvn08h56dia?svg=true)](https://ci.appveyor.com/project/dhrbn/populse-mia)
+[![](https://ci.appveyor.com/api/projects/status/k840n8kgbhukvfwc?svg=true)](https://ci.appveyor.com/project/dhrbn/populse-mia)
 [![](https://codecov.io/github/populse/populse_mia/coverage.svg?branch=master)](https://codecov.io/github/populse/populse_mia)
 [![](https://img.shields.io/badge/license-CeCILL-blue.svg)](https://github.com/populse/populse_mia/blob/master/LICENSE)
 [![](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-yellow.svg)](#)
