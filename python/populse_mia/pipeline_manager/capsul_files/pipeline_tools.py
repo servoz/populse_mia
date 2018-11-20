@@ -628,7 +628,8 @@ def nodes_with_existing_outputs(pipeline, exclude_inactive=True,
             if not getattr(steps, step):
                 disabled_nodes.update(trait.nodes)
 
-    nodes = pipeline.nodes.items()
+    # nodes = pipeline.nodes.items()
+    nodes = list(pipeline.nodes.items())
     while nodes:
         node_name, node = nodes.pop(0)
         if node_name == '' or not hasattr(node, 'process'):
@@ -699,7 +700,8 @@ def nodes_with_missing_inputs(pipeline, recursive=True):
             disabled_nodes.update(
                 [pipeline.nodes[node_name] for node_name in trait.nodes])
 
-    nodes = pipeline.nodes.items()
+    # nodes = pipeline.nodes.items()
+    nodes = list(pipeline.nodes.items())
     while nodes:
         node_name, node = nodes.pop(0)
         if node_name == '' or not hasattr(node, 'process'):
