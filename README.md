@@ -33,10 +33,12 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
           git clone https://github.com/populse/populse_mia.git [mia_install_dir]
 
-  * Or download the zip file of the project ([green button "Clone or download"](https://github.com/populse/populse_mia))
+  * Or download the zip file (populse_mia-master.zip) of the project ([green button "Clone or download"](https://github.com/populse/populse_mia))
   
      * Extract the data in the directory of your choice [mia_install_dir]
 
+           unzip populse_mia-master.zip -d [mia_install_dir]  # In this case [mia_install_dir] becomes [mia_install_dir]/populse_mia-master
+	
   * Then, install the Python module distribution
 
         cd [mia_install_dir]  
