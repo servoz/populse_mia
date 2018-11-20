@@ -63,8 +63,8 @@ class Config:
         - get_max_projects: returns the maximum number of projects displayed in the "Saved projects" menu
         - set_mia_path: sets the software's install path
         - get_mia_path: returns the software's install path
-        - set_mri_conv_path: sets the MRIFileManager.jar path
-        - get_mri_conv_path: sets the MRIFileManager.jar path
+        - set_mri_conv_path: sets the MRIManager.jar path
+        - get_mri_conv_path: sets the MRIManager.jar path
     """
 
     def __init__(self):
