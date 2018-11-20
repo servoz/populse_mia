@@ -138,7 +138,7 @@ class PopUpPreferences(QDialog):
         self.groupbox_populse = QtWidgets.QGroupBox("POPULSE third party preference")
 
         # MRI File Manager folder label/line edit
-        self.mri_conv_path_label = QLabel("MRIFileManager.jar path:")
+        self.mri_conv_path_label = QLabel("Absolute path to MRIFileManager.jar:")
         self.mri_conv_path_line_edit = QLineEdit(config.get_mri_conv_path())
         self.mri_conv_path_browse = QPushButton("Browse")
         self.mri_conv_path_browse.clicked.connect(self.browse_mri_conv_path)
@@ -509,8 +509,20 @@ class PopUpPreferences(QDialog):
 
         # MRIFileManager.jar path
         mri_conv_path = self.mri_conv_path_line_edit.text()
-        if os.path.isfile(mri_conv_path):
+        if mri_conv_path == "":
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Warning)
+            self.msg.setText("Empty MRIFileManager.jar path")
+            self.msg.setInformativeText("No path has been entered for MRIFileManager.jar.".format(mri_conv_path))
+            self.msg.setWindowTitle("Warning")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
             config.set_mri_conv_path(mri_conv_path)
+
+        elif os.path.isfile(mri_conv_path):
+            config.set_mri_conv_path(mri_conv_path)
+
         else:
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
