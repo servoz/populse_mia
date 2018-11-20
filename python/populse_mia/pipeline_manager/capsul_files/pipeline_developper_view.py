@@ -2659,6 +2659,7 @@ class PipelineDevelopperView(QGraphicsView):
             menu.addSeparator()
 
         controller_action = QtGui.QAction('open node controller', menu)
+        controller_action.setDisabled(True)
         controller_action.triggered.connect(self.openProcessController)
         menu.addAction(controller_action)
 
