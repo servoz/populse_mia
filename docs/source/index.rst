@@ -9,10 +9,15 @@
 |`Home <./index.html>`_|`Documentation <./documentation/documentation.html>`_|`Installation <./installation/installation.html>`_|`GitHub <https://github.com/populse/populse_mia>`_|
 +----------------------+-----------------------------------------------------+--------------------------------------------------+--------------------------------------------------+
 
+|
+|
+
 .. image:: ./images/Logo_populse_mia.jpg
    :align: center
    :width: 400px
    :name: Logo Populse_MIA
+
+|
 
 
 Generalities

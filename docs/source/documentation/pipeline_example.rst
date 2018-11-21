@@ -41,6 +41,8 @@ Pipeline creation
    :align: center
    :name: Pipeline example 1
 
+|
+
 * Export the plugs that you want to be able to modify from outside the pipeline and add links between the realign and coregister nodes (`more information <./pipeline_manager.html#how-to-use-the-pipeline-editor>`_)
 
     * The Realign process jobtype will be "write" so the output of the node will be a new file that will be contained in the "_realigned_files" plug.
@@ -52,6 +54,8 @@ Pipeline creation
 .. image:: ../images/pipeline_example_2.png
    :align: center
    :name: Pipeline example 2
+
+|
 
 * Save the pipeline in the proposed folder by clicking on the bottom left "Pipeline" menu. It is now stored in the process library under "User_processes".
 
@@ -75,6 +79,8 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
    :align: center
    :name: Pipeline example 4
 
+|
+
 * Add Input_filter processes in front of each input that comes from the database (Anat_file, FLASH_file and MDEFT_file)
     * Note: a file_to_list process is added before the Anat_file plug because Input_filter's output is of type List, and Anat_file plug is of type File.
 
@@ -82,12 +88,16 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
    :align: center
    :name: Pipeline example 5
 
+|
+
 * For each Input_filter process, right-click on it and select "Open filter". In the filter pop-up, modify the filter to apply.
     * For exemple, for the Anat_file plug. Set : "Exp Type == Anat" in the Advanced Search.
 
 .. image:: ../images/pipeline_example_6.png
    :align: center
    :name: Pipeline example 6
+
+|
 
 * Right-click on one of the Input_filter processes and select "Export to database_scans".
 
@@ -97,12 +107,16 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
    :align: center
    :name: Pipeline example 7
 
+|
+
 * Export the other node plugs by right-clicking on "realign_coreg_smooth1" node and selecting "Export all unconnected plugs".
     * The pipeline becomes enabled.
 
 .. image:: ../images/pipeline_example_8.png
    :align: center
    :name: Pipeline example 8
+
+|
 
 * Save the pipeline in the proposed folder by clicking on the bottom left "Pipeline" menu.
 
@@ -111,6 +125,8 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
 .. image:: ../images/pipeline_example_9.png
    :align: center
    :name: Pipeline example 9
+
+|
 
 * Save the set of parameters that you have just modified by clicking on "Save pipeline parameters" in the bottom left "Pipeline" menu.
     * This step is not mandatory. But by saving these parameters, the next time you open the pipeline, you will be able load them directly by clicking on "Load pipeline parameters" in the bottom left "Pipeline" menu.
@@ -123,6 +139,8 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
    :align: center
    :name: Pipeline example 10
 
+|
+
 * Run the pipeline by clicking on "Run pipeline" in the bottom left "Pipeline" menu.
     * Choose on which Patient to iterate the pipeline (reminder: patients K49 and K51 got missing files)
     * In iteration mode, there is no need to initialize the pipeline. It is automatically done before each iterated run.
@@ -131,11 +149,15 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
    :align: center
    :name: Pipeline example 11
 
+|
+
 * During the run, some information is displayed thanks to the status bar at the bottom of the software.
 
 .. image:: ../images/pipeline_example_12.png
    :align: center
    :name: Pipeline example 12
+
+|
 
 * At the end of the run, another message to sum-up the run is displayed thanks to the status bar at the bottom of the software.
 

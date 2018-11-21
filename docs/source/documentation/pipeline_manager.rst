@@ -162,6 +162,8 @@ This part is based on the Double_smooth.py file created in :ref:`pipeline-editor
    :align: center
    :name: Node controller inputs/outputs
 
+|
+
 * A pop-up similar to the Data Browser will be displayed and you will be able to choose which documents of the database to set on the plug by using Rapid or Advanced Search.
 * You can either filter the database (by setting the filter parameters and clicking on "Search") or click on the selected documents.
 * The second push button at the bottom left of the window specifies which tag values to set on the selected plug.
@@ -170,11 +172,15 @@ This part is based on the Double_smooth.py file created in :ref:`pipeline-editor
    :align: center
    :name: Plug filter
 
+|
+
 * Press "OK" to set the selected documents to the plug value. The plug value has been updated in the node controller
 
 .. image:: ../images/node_controller_3.png
    :align: center
    :name: Node controller inputs/outputs 2
+
+|
 
 * You can also modify the plug values by hand
     * Note: the "output_directory" of a Nipype process corresponds to the folder where Nipype writes the Matlab scripts during execution and has to be set.
@@ -183,12 +189,16 @@ This part is based on the Double_smooth.py file created in :ref:`pipeline-editor
    :align: center
    :name: Node controller inputs/outputs 3
 
+|
+
 * The pipeline inputs are now correctly set and it can be initialized. Select "Initialize pipeline" in the Pipeline Manager's "Pipeline" menu.
     * During the initialization step, the output files are created (but still empty) and stored in the database with information about their ancestors (their input files and parameters)
 
 .. image:: ../images/node_controller_5.png
    :align: center
    :name: Node controller inputs/outputs 4
+
+|
 
 * The output file names are generated and updated in the node controller (in this example the file names begin with "ss" which means that they have been smoothed twice).
 * The pipeline can now be run by selecting "Run pipeline" in the Pipeline Manager's "Pipeline" menu.
@@ -213,6 +223,8 @@ Assume that the current project contains several patients, so several "Patient" 
    :align: center
    :name: Data Browser
 
+|
+
 - Go to the Pipeline Manager and check the "Iterate pipeline" check box to activate the iteration table.
 
 - Select on which tag to iterate the pipeline by clicking on the "Select" push button and select "Patient".
@@ -224,6 +236,8 @@ Assume that the current project contains several patients, so several "Patient" 
 .. image:: ../images/iteration_table.png
    :align: center
    :name: Iteration table
+
+|
 
 - When the "Iterate pipeline" check box is checked, before running a pipeline, a pop-up is displayed to let you choose on which value to iterate the pipeline.
 
