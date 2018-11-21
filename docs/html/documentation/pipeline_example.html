@@ -76,6 +76,9 @@
 <li>First add the three SPM’s processes by dragging them from the process library (under nipype &gt; interfaces &gt; spm) and dropping them to the pipeline editor.</li>
 </ul>
 <img alt="../_images/pipeline_example_1.png" class="align-center" id="pipeline-example-1" src="../_images/pipeline_example_1.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul>
 <li><p class="first">Export the plugs that you want to be able to modify from outside the pipeline and add links between the realign and coregister nodes (<a class="reference external" href="./pipeline_manager.html#how-to-use-the-pipeline-editor">more information</a>)</p>
 <blockquote>
@@ -90,6 +93,9 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_2.png" class="align-center" id="pipeline-example-2" src="../_images/pipeline_example_2.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu. It is now stored in the process library under “User_processes”.</li>
 </ul>
@@ -104,6 +110,9 @@
 <li>Add the previously saved pipeline in a new editor by dragging it from the process library (under User_processes) and dropping it to the pipeline editor.</li>
 </ul>
 <img alt="../_images/pipeline_example_4.png" class="align-center" id="pipeline-example-4" src="../_images/pipeline_example_4.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>Add Input_filter processes in front of each input that comes from the database (Anat_file, FLASH_file and MDEFT_file)</dt>
@@ -115,6 +124,9 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_5.png" class="align-center" id="pipeline-example-5" src="../_images/pipeline_example_5.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>For each Input_filter process, right-click on it and select “Open filter”. In the filter pop-up, modify the filter to apply.</dt>
@@ -126,11 +138,17 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_6.png" class="align-center" id="pipeline-example-6" src="../_images/pipeline_example_6.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li>Right-click on one of the Input_filter processes and select “Export to database_scans”.</li>
 <li>Add links between “database_scans” and the input of the other Input_filter processes.</li>
 </ul>
 <img alt="../_images/pipeline_example_7.png" class="align-center" id="pipeline-example-7" src="../_images/pipeline_example_7.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>Export the other node plugs by right-clicking on “realign_coreg_smooth1” node and selecting “Export all unconnected plugs”.</dt>
@@ -142,11 +160,17 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_8.png" class="align-center" id="pipeline-example-8" src="../_images/pipeline_example_8.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu.</li>
 <li>Click on the “inputs” or “outputs” node and modify the parameters in the node controller</li>
 </ul>
 <img alt="../_images/pipeline_example_9.png" class="align-center" id="pipeline-example-9" src="../_images/pipeline_example_9.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>Save the set of parameters that you have just modified by clicking on “Save pipeline parameters” in the bottom left “Pipeline” menu.</dt>
@@ -167,6 +191,9 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_10.png" class="align-center" id="pipeline-example-10" src="../_images/pipeline_example_10.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>Run the pipeline by clicking on “Run pipeline” in the bottom left “Pipeline” menu.</dt>
@@ -179,10 +206,16 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_example_11.png" class="align-center" id="pipeline-example-11" src="../_images/pipeline_example_11.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li>During the run, some information is displayed thanks to the status bar at the bottom of the software.</li>
 </ul>
 <img alt="../_images/pipeline_example_12.png" class="align-center" id="pipeline-example-12" src="../_images/pipeline_example_12.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 <ul class="simple">
 <li>At the end of the run, another message to sum-up the run is displayed thanks to the status bar at the bottom of the software.</li>
 </ul>

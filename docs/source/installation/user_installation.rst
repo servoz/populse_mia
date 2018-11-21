@@ -36,6 +36,7 @@ Installation
 
 * First download the archive `here <https://github.com/dhrbn/populse_mia_install/archive/master.zip>`_.
 
+
 * Unzip it and launch the following command in the extracted folder ("populse_mia_install-master"): ::
 
         python3 install_mia.py
@@ -46,9 +47,7 @@ Installation
    :align: center
    :name: PyQt5 and pyyaml
 
-* An error can sometimes occur after the installation of both packages, the Python environment not being correctly updated. If this error occurs launch the same command again to install Populse_MIA: ::
-
-        python3 install_mia.py
+|
 
 * The Populse_MIA installation is now launched and you have to select three parameters:
 
@@ -64,6 +63,8 @@ Installation
    :align: center
    :name: Populse_MIA install widget
 
+|
+
 * Click on "Install" to install Populse_MIA with the selected parameters.
 
 * The installation status is displayed. The last step (Python packages installation) may take a few minutes.
@@ -72,11 +73,15 @@ Installation
    :align: center
    :name: Populse_MIA install widget status
 
+|
+
 * When the packages have been installed, a summary of the installation is displayed.
 
 .. image:: ../images/mia_install_4.png
    :align: center
    :name: Populse_MIA install widget summary
+
+|
 
 * Populse_MIA is now installed. To launch it, type the following command: ::
 

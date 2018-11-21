@@ -99,6 +99,8 @@ In this case, by setting the first tag to "Patient" and the second to "Exp Type"
    :align: center
    :name: Count table pop-up
 
+|
+
 Example 2:
 
 Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
@@ -120,6 +122,7 @@ and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the ta
 +-------------+-----------+------+-------+-------+
 | P2          | T3        | v(2) | v(1)  | v(1)  |
 +-------------+-----------+------+-------+-------+
+
 with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
 SequenceName).
 
