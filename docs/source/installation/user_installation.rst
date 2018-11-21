@@ -46,10 +46,6 @@ Installation
    :align: center
    :name: PyQt5 and pyyaml
 
-* An error can sometimes occur after the installation of both packages, the Python environment not being correctly updated. If this error occurs launch the same command again to install Populse_MIA: ::
-
-        python3 install_mia.py
-
 * The Populse_MIA installation is now launched and you have to select three parameters:
 
     * Populse_MIA installation path: the folder where to install Populse_MIA, set by default to ".populse_mia" in the current user's diretory. Two folders will be created in the selected folder:
