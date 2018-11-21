@@ -960,8 +960,8 @@ class PipelineManagerTab(QWidget):
                         inputs[key] = config.get_spm_path().split()                                                                                    ### Test for matlab launch
 
                     if (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'yes'):  # matlab_cmd parameter                               ### Test for matlab launch
-                        inputs[key] = config.get_spm_standalone_path() + '/run_spm12.sh '\                                                             ### Test for matlab launch
-                                      + config.get_matlab_standalone_path() + ' script'                                                                ### Test for matlab launch
+                        inputs[key] = (config.get_spm_standalone_path() + '/run_spm12.sh ' +                                                           ### Test for matlab launch
+                                       config.get_matlab_standalone_path() + ' script')                                                                ### Test for matlab launch
                     elif (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'no'):                                                      ### Test for matlab launch
                         inputs[key] = config.get_matlab_path()                                                                                         ### Test for matlab launch
 
