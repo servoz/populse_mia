@@ -39,6 +39,14 @@ class ProcessMIA(Process):
         super(ProcessMIA, self).__init__()
         # self.filters = {}  # use if the filters are set on plugs
 
+    def manage_matlab_launch_parameters(self, process):
+        process.inputs.use_mcr = self.use_mcr
+        process.inputs.paths = self.paths
+        process.inputs.matlab_cmd = self.matlab_cmd
+        process.inputs.mfile = self.mfile
+        return process
+
+
     def list_outputs(self):
         """
         Generates the outputs of the process (need to be overridden)

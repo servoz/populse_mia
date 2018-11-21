@@ -19,6 +19,8 @@ from matplotlib.backends.qt_compat import QtWidgets
 from traits.trait_errors import TraitError
 from traits.api import TraitListObject, Undefined
 
+from nipype.interfaces.base import traits    ### Test for matlab launch
+
 # PyQt5 imports
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QRectF
 from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
@@ -943,45 +945,45 @@ class PipelineManagerTab(QWidget):
 #Could be cleaner to do some tests with warning pop up if necessary (ex. if config.get_spm_standalone_path() is None, etc ...)
                     
 #                if (isinstance(process, NipypeProcess)) and (key in keys2consider) and (inputs[key] == "<undefined>"):
-                if (key in keys2consider) and (inputs[key] == "<undefined>"):
-
-                    if (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'yes'):  # use_mcr parameter
-                        inputs[key] = True
-                    elif (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'no'):
-                        inputs[key] = False
+                if 'NipypeProcess' in str(process.__class__):                                   # update launching parameters for MIA_processes bricks ### Test for matlab launch
+                    print('\nUpdating the launching parameters for NipypeProcess node: {0} ...'.format(node_name))                                     ### Test for matlab launch
+                    keys2consider = ['use_mcr', 'paths', 'matlab_cmd', 'output_directory']      # plugs to be filled automatically                     ### Test for matlab launch
+                    
+                    if (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'yes'):  # use_mcr parameter                                  ### Test for matlab launch
+                        inputs[key] = True                                                                                                             ### Test for matlab launch
+                    elif (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'no'):                                                      ### Test for matlab launch
+                        inputs[key] = False                                                                                                            ### Test for matlab launch
                             
-                    if (key == keys2consider[1]) and (config.get_use_spm_standalone() == 'yes'):  # paths  parameter
-                        inputs[key] = config.get_spm_standalone_path().split()
-                    elif (key == keys2consider[1]) and (config.get_use_spm() == 'yes'):
-                        inputs[key] = config.get_spm_path().split()
+                    if (key == keys2consider[1]) and (config.get_use_spm_standalone() == 'yes'):  # paths  parameter                                   ### Test for matlab launch
+                        inputs[key] = config.get_spm_standalone_path().split()                                                                         ### Test for matlab launch
+                    elif (key == keys2consider[1]) and (config.get_use_spm() == 'yes'):                                                                ### Test for matlab launch
+                        inputs[key] = config.get_spm_path().split()                                                                                    ### Test for matlab launch
 
-                    if (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'yes'):  # matlab_cmd parameter
-                        inputs[key] = config.get_spm_standalone_path() + '/run_spm12.sh '\
-                                      + config.get_matlab_standalone_path() + ' script'
-                    elif (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'no'):
-                        inputs[key] = config.get_matlab_path()
+                    if (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'yes'):  # matlab_cmd parameter                               ### Test for matlab launch
+                        inputs[key] = config.get_spm_standalone_path() + '/run_spm12.sh '\                                                             ### Test for matlab launch
+                                      + config.get_matlab_standalone_path() + ' script'                                                                ### Test for matlab launch
+                    elif (key == keys2consider[2]) and (config.get_use_spm_standalone() == 'no'):                                                      ### Test for matlab launch
+                        inputs[key] = config.get_matlab_path()                                                                                         ### Test for matlab launch
 
-                    if (key == keys2consider[3]):                                                 # output_directory parameter
+                    if (key == keys2consider[3]):                                                 # output_directory parameter                         ### Test for matlab launch
 
-                        if not os.path.isdir(os.path.abspath(self.project.folder + '/scripts')):
-                            os.mkdir(os.path.abspath(self.project.folder + '/scripts'))
+                        if not os.path.isdir(os.path.abspath(self.project.folder + '/scripts')):                                                       ### Test for matlab launch
+                            os.mkdir(os.path.abspath(self.project.folder + '/scripts'))                                                                ### Test for matlab launch
 
-                        inputs[key] =  os.path.abspath(self.project.folder + '/scripts')
+                        inputs[key] =  os.path.abspath(self.project.folder + '/scripts')                                                               ### Test for matlab launch
    
-                    try:
-                        pipeline.nodes[node_name].set_plug_value(key, inputs[key])
+                    try:                                                                                                                               ### Test for matlab launch
+                        pipeline.nodes[node_name].set_plug_value(key, inputs[key])                                                                     ### Test for matlab launch
                     
-                    except TraitError:
+                    except TraitError:                                                                                                                 ### Test for matlab launch
                     
-#                        if type(inputs[key]) is list and len(inputs[key]) == 1:
-                        if isinstance(inputs[key], list) and len(inputs[key]) == 1:
+                        if isinstance(inputs[key], list) and len(inputs[key]) == 1:                                                                    ### Test for matlab launch
                         
-                            try:
-                                pipeline.nodes[key].set_plug_value(key, inputs[key][0])
+                            try:                                                                                                                       ### Test for matlab launch
+                                pipeline.nodes[key].set_plug_value(key, inputs[key][0])                                                                ### Test for matlab launch
                             
-                            except TraitError:
-                                print("Trait error for {0} plug of {1} node".format(key, inputs[key]))
-                                pass
+                            except TraitError:                                                                                                         ### Test for matlab launch
+                                print("Trait error for {0} plug of {1} node".format(key, inputs[key]))                                                 ### Test for matlab launch
 
             outputs = process.get_outputs()
             for key in outputs:
@@ -1059,6 +1061,29 @@ class PipelineManagerTab(QWidget):
             self.nodeController.display_parameters(self.nodeController.node_name,
                                                    pipeline.nodes[node_controller_node_name].process,
                                                    pipeline)
+
+        if 'MIA_processes' in str(process.__class__):                                  # update launching parameters for MIA_processes bricks   ### Test for matlab launch
+            print('\nUpdating the launching parameters for MIA_processes node: {0} ...'.format(node_name))                                      ### Test for matlab launch
+            if config.get_use_spm_standalone() == 'yes':                                                                                        ### Test for matlab launch
+                pipeline.nodes[node_name].process.add_trait("use_mcr", traits.Bool(True, output=False, optional=True))                          ### Test for matlab launch
+                pipeline.nodes[node_name].process.add_trait("paths", traits.Directory(config.get_spm_standalone_path().split(),                 ### Test for matlab launch
+                                                                              output=False, optional=True))                                     ### Test for matlab launch
+                pipeline.nodes[node_name].process.add_trait("matlab_cmd", traits.Str(config.get_spm_standalone_path() +                         ### Test for matlab launch
+                                                                                     '/run_spm12.sh ' + config.get_matlab_standalone_path() +   ### Test for matlab launch
+                                                                                     ' script', output=False, optional=True))                   ### Test for matlab launch
+            elif config.get_use_spm() == 'yes':
+                pipeline.nodes[node_name].process.add_trait("use_mcr", traits.Bool(False, output=False, optional=True))                         ### Test for matlab launch
+                pipeline.nodes[node_name].process.add_trait("paths", traits.Directory(config.get_spm_path().split(),                            ### Test for matlab launch
+                                                                                      output=False, optional=True))                             ### Test for matlab launch
+                pipeline.nodes[node_name].process.add_trait("matlab_cmd", traits.Str(config.get_matlab_path(),                                  ### Test for matlab launch
+                                                                                     output=False, optional=True))                              ### Test for matlab launch
+                
+            if not os.path.isdir(os.path.abspath(self.project.folder + '/scripts')):                                                            ### Test for matlab launch
+                os.mkdir(os.path.abspath(self.project.folder + '/scripts'))                                                                     ### Test for matlab launch
+
+            pipeline.nodes[node_name].process.add_trait("output_directory", traits.Directory(os.path.abspath(self.project.folder + '/scripts'), ### Test for matlab launch
+                                                                                             output=False, optional=True))                      ### Test for matlab launch                  
+            pipeline.nodes[node_name].process.add_trait("mfile", traits.Bool(True, output=False, optional=True))                                ### Test for matlab launch
 
     def runPipeline(self):
         """
