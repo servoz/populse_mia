@@ -911,6 +911,26 @@ class PipelineManagerTab(QWidget):
 
             process = node.process
 
+            if 'IRMaGe_processes' in str(process.__class__):  # update launching parameters for IRMaGe_processes bricks   ### Test for matlab launch
+                print('\nUpdating the launching parameters for IRMaGe process node: {0} ...'.format(node_name))  ### Test for matlab launch
+                    
+                if config.get_use_spm_standalone() == 'yes':  ### Test for matlab launch
+                    pipeline.nodes[node_name].process.use_mcr = True
+                    pipeline.nodes[node_name].process.paths = config.get_spm_standalone_path().split()
+                    pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
+                        
+                elif config.get_use_spm() == 'yes':
+                    pipeline.nodes[node_name].process.use_mcr = False
+                    pipeline.nodes[node_name].process.paths = config.get_spm_path().split()
+                    pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
+
+                if not os.path.isdir(os.path.abspath(self.project.folder + os.sep + 'scripts')):  ### Test for matlab launch
+                    os.mkdir(os.path.abspath(self.project.folder + os.sep + 'scripts'))  ### Test for matlab launch
+
+                pipeline.nodes[node_name].process.output_directory = os.path.abspath(self.project.folder +
+                                                                                         os.sep + 'scripts')
+                pipeline.nodes[node_name].process.mfile = True
+
             # Getting the list of the outputs of the node according to its inputs
             try:
                 self.inheritance_dict = None
@@ -1061,27 +1081,7 @@ class PipelineManagerTab(QWidget):
             self.nodeController.display_parameters(self.nodeController.node_name,
                                                    pipeline.nodes[node_controller_node_name].process,
                                                    pipeline)
-
-        if 'IRMaGe_processes' in str(
-                process.__class__):  # update launching parameters for IRMaGe_processes bricks   ### Test for matlab launch
-            print('\nUpdating the launching parameters for IRMaGe process node: {0} ...'.format(
-                node_name))  ### Test for matlab launch
-            if config.get_use_spm_standalone() == 'yes':  ### Test for matlab launch
-                pipeline.nodes[node_name].process.use_mcr = True
-                pipeline.nodes[node_name].process.paths = config.get_spm_standalone_path().split()
-                pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
-            elif config.get_use_spm() == 'yes':
-                pipeline.nodes[node_name].process.use_mcr = False
-                pipeline.nodes[node_name].process.paths = config.get_spm_path().split()
-                pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
-
-            if not os.path.isdir(os.path.abspath(self.project.folder + os.sep + 'scripts')):  ### Test for matlab launch
-                os.mkdir(os.path.abspath(self.project.folder + os.sep + 'scripts'))  ### Test for matlab launch
-
-            pipeline.nodes[node_name].process.output_directory = os.path.abspath(self.project.folder +
-                                                                                 os.sep + 'scripts')
-            pipeline.nodes[node_name].process.mfile = True
-
+        
     def runPipeline(self):
         """
         Runs the current pipeline of the pipeline editor
