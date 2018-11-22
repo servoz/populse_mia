@@ -18,7 +18,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
 * From PyPI
 
-   > Available soon
+   > Available soon.
 
 * From source, for Linux distributions
   * A compatible version of Python must be installed
