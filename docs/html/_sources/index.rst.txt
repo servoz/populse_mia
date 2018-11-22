@@ -17,6 +17,18 @@
    :width: 400px
    :name: Logo Populse_MIA
 
+.. raw:: html
+
+    <embed>
+      <center>
+        <i>
+          <font size="1">
+            ©Johan Pietras @IRMaGe
+          </font size>
+        </i>
+      </center>
+    </embed>
+
 |
 
 
