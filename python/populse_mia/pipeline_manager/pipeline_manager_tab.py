@@ -945,7 +945,7 @@ class PipelineManagerTab(QWidget):
 #Could be cleaner to do some tests with warning pop up if necessary (ex. if config.get_spm_standalone_path() is None, etc ...)
                     
 #                if (isinstance(process, NipypeProcess)) and (key in keys2consider) and (inputs[key] == "<undefined>"):
-                if 'NipypeProcess' in str(process.__class__):                                   # update launching parameters for MIA_processes bricks ### Test for matlab launch
+                if 'NipypeProcess' in str(process.__class__):                                   # update launching parameters for IRMaGe_processes bricks ### Test for matlab launch
                     print('\nUpdating the launching parameters for NipypeProcess node: {0} ...'.format(node_name))                                     ### Test for matlab launch
                     keys2consider = ['use_mcr', 'paths', 'matlab_cmd', 'output_directory']      # plugs to be filled automatically                     ### Test for matlab launch
                     
@@ -1062,28 +1062,25 @@ class PipelineManagerTab(QWidget):
                                                    pipeline.nodes[node_controller_node_name].process,
                                                    pipeline)
 
-        if 'MIA_processes' in str(process.__class__):                                  # update launching parameters for MIA_processes bricks   ### Test for matlab launch
-            print('\nUpdating the launching parameters for MIA_processes node: {0} ...'.format(node_name))                                      ### Test for matlab launch
-            if config.get_use_spm_standalone() == 'yes':                                                                                        ### Test for matlab launch
-                pipeline.nodes[node_name].process.add_trait("use_mcr", traits.Bool(True, output=False, optional=True))                          ### Test for matlab launch
-                pipeline.nodes[node_name].process.add_trait("paths", traits.Directory(config.get_spm_standalone_path().split(),                 ### Test for matlab launch
-                                                                              output=False, optional=True))                                     ### Test for matlab launch
-                pipeline.nodes[node_name].process.add_trait("matlab_cmd", traits.Str(config.get_spm_standalone_path() +                         ### Test for matlab launch
-                                                                                     '/run_spm12.sh ' + config.get_matlab_standalone_path() +   ### Test for matlab launch
-                                                                                     ' script', output=False, optional=True))                   ### Test for matlab launch
+        if 'IRMaGe_processes' in str(
+                process.__class__):  # update launching parameters for IRMaGe_processes bricks   ### Test for matlab launch
+            print('\nUpdating the launching parameters for IRMaGe process node: {0} ...'.format(
+                node_name))  ### Test for matlab launch
+            if config.get_use_spm_standalone() == 'yes':  ### Test for matlab launch
+                pipeline.nodes[node_name].process.use_mcr = True
+                pipeline.nodes[node_name].process.paths = config.get_spm_standalone_path().split()
+                pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
             elif config.get_use_spm() == 'yes':
-                pipeline.nodes[node_name].process.add_trait("use_mcr", traits.Bool(False, output=False, optional=True))                         ### Test for matlab launch
-                pipeline.nodes[node_name].process.add_trait("paths", traits.Directory(config.get_spm_path().split(),                            ### Test for matlab launch
-                                                                                      output=False, optional=True))                             ### Test for matlab launch
-                pipeline.nodes[node_name].process.add_trait("matlab_cmd", traits.Str(config.get_matlab_path(),                                  ### Test for matlab launch
-                                                                                     output=False, optional=True))                              ### Test for matlab launch
-                
-            if not os.path.isdir(os.path.abspath(self.project.folder + '/scripts')):                                                            ### Test for matlab launch
-                os.mkdir(os.path.abspath(self.project.folder + '/scripts'))                                                                     ### Test for matlab launch
+                pipeline.nodes[node_name].process.use_mcr = False
+                pipeline.nodes[node_name].process.paths = config.get_spm_path().split()
+                pipeline.nodes[node_name].process.matlab_cmd = config.get_matlab_command()
 
-            pipeline.nodes[node_name].process.add_trait("output_directory", traits.Directory(os.path.abspath(self.project.folder + '/scripts'), ### Test for matlab launch
-                                                                                             output=False, optional=True))                      ### Test for matlab launch                  
-            pipeline.nodes[node_name].process.add_trait("mfile", traits.Bool(True, output=False, optional=True))                                ### Test for matlab launch
+            if not os.path.isdir(os.path.abspath(self.project.folder + os.sep + 'scripts')):  ### Test for matlab launch
+                os.mkdir(os.path.abspath(self.project.folder + os.sep + 'scripts'))  ### Test for matlab launch
+
+            pipeline.nodes[node_name].process.output_directory = os.path.abspath(self.project.folder +
+                                                                                 os.sep + 'scripts')
+            pipeline.nodes[node_name].process.mfile = True
 
     def runPipeline(self):
         """

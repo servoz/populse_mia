@@ -46,7 +46,6 @@ class ProcessMIA(Process):
         process.inputs.mfile = self.mfile
         return process
 
-
     def list_outputs(self):
         """
         Generates the outputs of the process (need to be overridden)
