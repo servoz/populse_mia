@@ -70,12 +70,12 @@
 <p>This method is called during a pipeline run. It has to contain the desired processing and need no return value.</p>
 </div></blockquote>
 <p><strong>Note:</strong> if you are using a Nipype interface that need to use Matlab script. Make sure to use the “manage_matlab_launch_parameters” method in the _run_process method to set the Matlab’s parameters of your Populse_MIA’s config to the Nipype interface.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">process</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
-<span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manage_matlab_launch_parameters</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">manage_matlab_launch_parameters</span><span class="p">()</span>
 
 <span class="c1"># Then set the several inputs of the interface</span>
-<span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span>
-<span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>  <span class="c1"># etc.</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>  <span class="c1"># etc.</span>
 </pre></div>
 </div>
 <p><strong>Example:</strong> creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy’s gaussian filtering function.</p>
@@ -107,19 +107,20 @@
         <span class="c1"># Output</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;smoothed_file&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Output file&#39;</span><span class="p">))</span>  <span class="c1"># Mandatory plug</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">smooth</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Depending on the chosen method, the output dictionary will be generated differently</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
                 <span class="c1"># Nipype interfaces have already a _list_outputs method that generates the output dictionary</span>
-                <span class="n">spm_smooth</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="p">{}</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
-                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
-                <span class="n">nipype_dict</span> <span class="o">=</span> <span class="n">spm_smooth</span><span class="o">.</span><span class="n">_list_outputs</span><span class="p">()</span>  <span class="c1"># Generates: {&#39;smoothed_files&#39; : [out_filename]}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+                <span class="n">nipype_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">_list_outputs</span><span class="p">()</span>  <span class="c1"># Generates: {&#39;smoothed_files&#39; : [out_filename]}</span>
                 <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">:</span> <span class="n">nipype_dict</span><span class="p">[</span><span class="s1">&#39;smoothed_files&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Generating the filename by hand</span>
@@ -144,18 +145,17 @@
         <span class="c1"># Depending on the chosen method, the output file will be generated differently</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
-                <span class="n">spm_smooth</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
                 <span class="c1"># Make sure to call the manage_matlab_launch_parameters method to set the config parameters</span>
-                <span class="n">spm_smooth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manage_matlab_launch_parameters</span><span class="p">(</span><span class="n">spm_smooth</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manage_matlab_launch_parameters</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
                     <span class="k">return</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
-                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>
-                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
 
-                <span class="n">spm_smooth</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># Running the interface</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># Running the interface</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>

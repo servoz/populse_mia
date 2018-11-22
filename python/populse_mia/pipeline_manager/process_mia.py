@@ -23,6 +23,7 @@ class ProcessMIA(Process):
     Class overriding the default capsul Process class, in order to personalize the run in MIA
 
     Methods:
+        - manage_matlab_launch_parameters: sets the Matlab's config parameters when a Nipype process is used
         - list_outputs: generates the outputs of the process (need to be overridden)
         - _before_run_process: method called before running the process
         - _after_run_process: method called after the process being run
@@ -39,12 +40,16 @@ class ProcessMIA(Process):
         super(ProcessMIA, self).__init__()
         # self.filters = {}  # use if the filters are set on plugs
 
-    def manage_matlab_launch_parameters(self, process):
-        process.inputs.use_mcr = self.use_mcr
-        process.inputs.paths = self.paths
-        process.inputs.matlab_cmd = self.matlab_cmd
-        process.inputs.mfile = self.mfile
-        return process
+    def manage_matlab_launch_parameters(self):
+        """
+        Sets the Matlab's config parameters when a Nipype process is used
+        """
+
+        if hasattr(self, "process"):
+            self.process.inputs.use_mcr = self.use_mcr
+            self.process.inputs.paths = self.paths
+            self.process.inputs.matlab_cmd = self.matlab_cmd
+            self.process.inputs.mfile = self.mfile
 
     def list_outputs(self):
         """

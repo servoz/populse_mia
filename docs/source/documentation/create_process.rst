@@ -33,12 +33,12 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
 
 **Note:** if you are using a Nipype interface that need to use Matlab script. Make sure to use the "manage_matlab_launch_parameters" method in the _run_process method to set the Matlab's parameters of your Populse_MIA's config to the Nipype interface. ::
 
-    process = spm.Smooth()
-    process = self.manage_matlab_launch_parameters(process)
+    self.process = spm.Smooth()
+    self.manage_matlab_launch_parameters()
 
     # Then set the several inputs of the interface
-    process.inputs.in_files = self.in_files
-    process.inputs.fwhm = self.fwhm  # etc.
+    self.process.inputs.in_files = self.in_files
+    self.process.inputs.fwhm = self.fwhm  # etc.
 
 
 **Example:** creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy's gaussian filtering function. ::
@@ -70,20 +70,21 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     
             # Output
             self.add_trait("smoothed_file", traits.File(output=True, desc='Output file'))  # Mandatory plug
+
+            self.process = spm.smooth()
     
         def list_outputs(self):
             # Depending on the chosen method, the output dictionary will be generated differently
             if self.method in ['SPM', 'Scipy']:
                 if self.method == 'SPM':
                     # Nipype interfaces have already a _list_outputs method that generates the output dictionary
-                    spm_smooth = spm.Smooth()
                     if not self.in_file:
                         print('"in_file" plug is mandatory for a Smooth process')
                         return {}
                     else:
-                        spm_smooth.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
-                    spm_smooth.inputs.out_prefix = self.out_prefix
-                    nipype_dict = spm_smooth._list_outputs()  # Generates: {'smoothed_files' : [out_filename]}
+                        self.process.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
+                    self.process.inputs.out_prefix = self.out_prefix
+                    nipype_dict = self.process._list_outputs()  # Generates: {'smoothed_files' : [out_filename]}
                     output_dict = {'smoothed_file': nipype_dict['smoothed_files'][0]}
                 else:
                     # Generating the filename by hand
@@ -108,18 +109,17 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
             # Depending on the chosen method, the output file will be generated differently
             if self.method in ['SPM', 'Scipy']:
                 if self.method == 'SPM':
-                    spm_smooth = spm.Smooth()
                     # Make sure to call the manage_matlab_launch_parameters method to set the config parameters
-                    spm_smooth = self.manage_matlab_launch_parameters(spm_smooth)
+                    self.manage_matlab_launch_parameters()
                     if not self.in_file:
                         print('"in_file" plug is mandatory for a Smooth process')
                         return
                     else:
-                        spm_smooth.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
-                    spm_smooth.inputs.fwhm = self.fwhm
-                    spm_smooth.inputs.out_prefix = self.out_prefix
+                        self.process.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
+                    self.process.inputs.fwhm = self.fwhm
+                    self.process.inputs.out_prefix = self.out_prefix
     
-                    spm_smooth.run()  # Running the interface
+                    self.process.run()  # Running the interface
     
                 else:
                     if not self.in_file:
