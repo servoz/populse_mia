@@ -31,6 +31,16 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     This method is called during a pipeline run. It has to contain the desired processing and need no return value.
 
 
+**Note:** if you are using a Nipype interface that need to use Matlab script. Make sure to use the "manage_matlab_launch_parameters" method in the _run_process method to set the Matlab's parameters of your Populse_MIA's config to the Nipype interface. ::
+
+    process = spm.Smooth()
+    process = self.manage_matlab_launch_parameters(process)
+
+    # Then set the several inputs of the interface
+    process.inputs.in_files = self.in_files
+    process.inputs.fwhm = self.fwhm  # etc.
+
+
 **Example:** creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy's gaussian filtering function. ::
 
     import os
@@ -38,8 +48,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     import nibabel as nib  # used to read and save Nifti images
     from nipype.interfaces import spm  # used to use SPM's Smooth
     from scipy.ndimage.filters import gaussian_filter  # used to apply the smoothing on an array
-    # from populse_mia import Process_mia  # to uncommented when populse_mia will be on Pypi
-    from pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
+    from populse_mia.pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
     
     
     class SmoothSpmScipy(ProcessMIA):
@@ -100,6 +109,8 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
             if self.method in ['SPM', 'Scipy']:
                 if self.method == 'SPM':
                     spm_smooth = spm.Smooth()
+                    # Make sure to call the manage_matlab_launch_parameters method to set the config parameters
+                    spm_smooth = self.manage_matlab_launch_parameters(spm_smooth)
                     if not self.in_file:
                         print('"in_file" plug is mandatory for a Smooth process')
                         return
