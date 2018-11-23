@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. MacOS, Windows, Ubuntu]
- - Populse_MIA version [e.g. 1.0.0] (type python3 -c "from populse_mia import info; print(info.\_\_version__)" in a command line)
+ - Populse_MIA version [e.g. 1.0.0] (type python3 -c "from populse_mia import info; print(info.__version__)" in a command line)
 
 **Additional context**
 Add any other context about the problem here.
