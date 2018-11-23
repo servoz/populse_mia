@@ -912,7 +912,7 @@ class PipelineManagerTab(QWidget):
             process = node.process
 
             if 'IRMaGe_processes' in str(process.__class__):  # update launching parameters for IRMaGe_processes bricks   ### Test for matlab launch
-                print('\nUpdating the launching parameters for IRMaGe process node: {0} ...'.format(node_name))  ### Test for matlab launch
+                print('\nUpdating the launching parameters for IRMaGe process node: {0} ...\n'.format(node_name))  ### Test for matlab launch
                     
                 if config.get_use_spm_standalone() == 'yes':  ### Test for matlab launch
                     pipeline.nodes[node_name].process.use_mcr = True
