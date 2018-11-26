@@ -41,7 +41,7 @@ Menu bar actions
     * MIA preferences
         * Opens the software preferences dialog
     * Project properties
-        * Opens the project properties dialog
+        * Opens the project properties dialog (see preferences manual `here <./preferences.html>`_)
     * Package library manager
         * Opens the package library dialog
     * Exit
