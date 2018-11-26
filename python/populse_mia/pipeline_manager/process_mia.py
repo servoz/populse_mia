@@ -89,7 +89,7 @@ class ProcessMIA(Process):
                     for single_value in output_value:
                         self.manage_brick_output_before_run(single_value)
                 else:
-                    print('entering manage_brick_output_before_run')
+                    print('\nEntering manage_brick_output_before_run ...\n')
                     self.manage_brick_output_before_run(output_value)
 
     def manage_brick_after_run(self):
