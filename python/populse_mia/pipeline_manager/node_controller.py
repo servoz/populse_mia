@@ -780,7 +780,7 @@ class FilterWidget(QWidget):
 
         super(FilterWidget, self).__init__(None)
 
-        from data_browser.rapid_search import RapidSearch
+        from populse_mia.data_browser.rapid_search import RapidSearch
 
         self.project = project
         self.visible_tags = self.project.session.get_visibles()

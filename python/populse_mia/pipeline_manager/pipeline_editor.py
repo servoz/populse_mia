@@ -778,6 +778,9 @@ class PipelineEditor(PipelineDevelopperView):
             print(e)
             return
 
+        if hasattr(process, 'use_project') and process.use_project:
+            process.project = self.project
+
         pipeline.add_process(node_name, process)
 
         # Capsul update
