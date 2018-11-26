@@ -39,9 +39,9 @@ Menu bar actions
     * Saved projects
         * Lists all the recent projects
     * MIA preferences
-        * Opens the software preferences dialog
+        * Opens the software preferences dialog (see preferences manual `here <./preferences.html>`_)
     * Project properties
-        * Opens the project properties dialog
+        * Opens the project properties dialog 
     * Package library manager
         * Opens the package library dialog
     * Exit
