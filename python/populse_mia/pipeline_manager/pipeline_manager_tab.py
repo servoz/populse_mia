@@ -828,6 +828,13 @@ class PipelineManagerTab(QWidget):
         nodes_inputs_ratio_list = []
 
         for node_name, node in pipeline.nodes.items():
+
+            # Updating the project attribute of the processes
+            if hasattr(node, 'process'):
+                process = node.process
+                if hasattr(process, 'use_project') and process.use_project:
+                    process.project = self.project
+
             nb_plugs_from_in = 0
             nb_plugs = 0
 
