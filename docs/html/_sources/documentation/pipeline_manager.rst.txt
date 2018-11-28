@@ -96,7 +96,7 @@ Note 1: a plug is either mandatory or optional. When it is mandatory, it is repr
 
 Note 2: to make a pipeline valid, you have to export plugs that are the pipeline global input/outputs. In this example, the "in_files" plug needs to be exported because it is mandatory. The only output plug has to be also exported. The node will then be activated and its color become lighter. It is also possible to export optional plug such as "fwhm" and "output_directory" even if they already have default value.
 
-Note 3: Nipype's processes in Populse_MIA need an "output_directory" plug value to be run. It is important to always export it and to set it (e.g. "/tmp/"). 
+Note 3: Nipype's processes needs values for "output_directory", "use_mcr", "paths", "matlab_cmd" and "mfile" plugs. These are updated from Populse_MIA's during pipeline initialization. 
 
 Note 4: if you right-click on a node or on the pipeline editor background, you can also export plugs (mandatory or not, input, output or both). This method is usually faster to export plugs. 
 
@@ -133,7 +133,21 @@ We now have a pipeline that can smooth an image twice with the same fwhm paramet
    :align: center
    :name: Pipeline tutorial 5
 
-- To set input values and to run the pipeline, follow the steps of :ref:`node-controller-label`
+If you want to change one parameter of the pipeline, it is still possible to make a change following these steps:
+
+- For instance, if you want to change the prefix of the file name generated in the second process, go back to the "double_smooth.py" pipeline, export the "out_prefix" plug and save the pipeline.
+
+.. image:: ../images/pipeline_tuto_6.png
+   :align: center
+   :name: Pipeline tutorial 6
+
+- When you go back to the "New pipeline 1" pipeline, you can see that the "out_prefix" plug has been automatically added and you can now control its value.
+
+.. image:: ../images/pipeline_tuto_7.png
+   :align: center
+   :name: Pipeline tutorial 7
+
+To set input values and to run the pipeline, follow the steps of :ref:`node-controller-label`.
 
 
 .. _node-controller-label:

@@ -161,7 +161,7 @@
 </ul>
 <p>Note 1: a plug is either mandatory or optional. When it is mandatory, it is represented as a triangle and has to be exported or connected to another plug to run the pipeline. When it is optional, it is represented as a rectangle and can be exported or connected or not. Usually optional plugs have default values, e.g. “fwhm” plug from SPM’s smooth is [6, 6, 6], so do not need to be exported and/or modified. It all depends if you want to have access to this plug when the pipeline will be used as a process.</p>
 <p>Note 2: to make a pipeline valid, you have to export plugs that are the pipeline global input/outputs. In this example, the “in_files” plug needs to be exported because it is mandatory. The only output plug has to be also exported. The node will then be activated and its color become lighter. It is also possible to export optional plug such as “fwhm” and “output_directory” even if they already have default value.</p>
-<p>Note 3: Nipype’s processes in Populse_MIA need an “output_directory” plug value to be run. It is important to always export it and to set it (e.g. “/tmp/”).</p>
+<p>Note 3: Nipype’s processes needs values for “output_directory”, “use_mcr”, “paths”, “matlab_cmd” and “mfile” plugs. These are updated from Populse_MIA’s during pipeline initialization.</p>
 <p>Note 4: if you right-click on a node or on the pipeline editor background, you can also export plugs (mandatory or not, input, output or both). This method is usually faster to export plugs.</p>
 <img alt="../_images/pipeline_tuto_2.png" class="align-center" id="pipeline-tutorial-2" src="../_images/pipeline_tuto_2.png" />
 <p>Now the pipeline is only composed of one process with exported inputs/output. It is still possible to add another process to modify it.</p>
@@ -197,9 +197,16 @@
 </li>
 </ul>
 <img alt="../_images/pipeline_tuto_5.png" class="align-center" id="pipeline-tutorial-5" src="../_images/pipeline_tuto_5.png" />
+<p>If you want to change one parameter of the pipeline, it is still possible to make a change following these steps:</p>
 <ul class="simple">
-<li>To set input values and to run the pipeline, follow the steps of <a class="reference internal" href="#node-controller-label"><span class="std std-ref">The node controller</span></a></li>
+<li>For instance, if you want to change the prefix of the file name generated in the second process, go back to the “double_smooth.py” pipeline, export the “out_prefix” plug and save the pipeline.</li>
 </ul>
+<img alt="../_images/pipeline_tuto_6.png" class="align-center" id="pipeline-tutorial-6" src="../_images/pipeline_tuto_6.png" />
+<ul class="simple">
+<li>When you go back to the “New pipeline 1” pipeline, you can see that the “out_prefix” plug has been automatically added and you can now control its value.</li>
+</ul>
+<img alt="../_images/pipeline_tuto_7.png" class="align-center" id="pipeline-tutorial-7" src="../_images/pipeline_tuto_7.png" />
+<p>To set input values and to run the pipeline, follow the steps of <a class="reference internal" href="#node-controller-label"><span class="std std-ref">The node controller</span></a>.</p>
 </div>
 </div>
 <div class="section" id="the-node-controller">
