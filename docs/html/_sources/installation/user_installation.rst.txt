@@ -28,6 +28,11 @@ Populse_MIA is ensured to work under Python's 3.5, 3.6 and 3.7 versions.
 
         pip3 --version
 
+* Make sure to have git installed. You can verify it by typing the following in a command line: ::
+
+        git --version
+
+
 
 Installation
 ------------
