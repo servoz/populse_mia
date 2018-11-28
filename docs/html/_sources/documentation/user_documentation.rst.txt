@@ -64,5 +64,3 @@ Menu bar actions
         * From zip file
             * Installs processes to the Process Library from a zip file
 
-
-To be continued.

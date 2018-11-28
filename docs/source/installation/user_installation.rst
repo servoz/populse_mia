@@ -8,8 +8,6 @@
 Populse_MIA's user installation
 ===============================
 
-WARNING: THIS IS JUST A TEST!
-
 This page explains how to install Populse_MIA.
 
 
