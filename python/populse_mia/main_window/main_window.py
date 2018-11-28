@@ -15,7 +15,8 @@ import glob
 
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton, QApplication
+from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWindow, QMessageBox, QMenu, QPushButton, \
+    QApplication, QLabel
 
 # Populse_MIA imports
 from populse_mia.software_properties.saved_projects import SavedProjects
@@ -414,7 +415,9 @@ class MainWindow(QMainWindow):
         self.data_browser = DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
-        self.image_viewer = ImageViewer()
+        # To uncomment when the Data Viewer will be created
+        # self.image_viewer = ImageViewer()
+        self.image_viewer = QLabel("Coming soon...")
         self.tabs.addTab(self.image_viewer, "Data Viewer")
 
         self.pipeline_manager = PipelineManagerTab(self.project, [], self)
