@@ -45,6 +45,7 @@ Populse_MIA aims to provide easy tools to perform complex data processing based 
 Main features
 =============
 
+* `MRI data conversion <./documentation/mri_file_manager.html>`_
 * `Metadata enhancement <./documentation/data_browser.html>`_
 * `Complex pipeline processing <./documentation/pipeline_manager.html>`_
 * Data visualization (coming soon)
