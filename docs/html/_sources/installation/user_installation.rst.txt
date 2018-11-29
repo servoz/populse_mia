@@ -18,6 +18,8 @@ Pre-requirements
 
         python3 -V
 
+* Note: depending on your Python setup and OS, the "python3" command can be use as the default Python command. Try "python -V", if it returns "Python 3.x.x" replace all the "python3" commands below by "python".
+
 Populse_MIA is ensured to work under Python's 3.5, 3.6 and 3.7 versions. 
 
 * Make sure to have a java package installed. You can verify it by typing the following in a command line: ::
@@ -32,6 +34,7 @@ Populse_MIA is ensured to work under Python's 3.5, 3.6 and 3.7 versions.
 
         git --version
 
+* If you are installing Populse_MIA on Windows, make sure to have Microsoft Visual C++ installed.
 
 
 Installation
