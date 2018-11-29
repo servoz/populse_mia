@@ -21,24 +21,25 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'Topic :: Utilities']
 
 # project descriptions
-NAME = 'populse_mia'
 DESCRIPTION = 'populse mia'
-LONG_DESCRIPTION = '''
+LONG_DESCRIPTION = """
 ===============
 populse_mia
 ===============
-
-Python modules not yet ready for distribution.
-'''
-# BrainVISA project
-PROJECT = 'populse'
-brainvisa_build_model = 'pure_python'
+[MIA] Multiparametric Image Analysis:
+A complete image processing environment mainly targeted at 
+the analysis and visualization of large amounts of MRI data
+"""
 
 # Other values used in setup.py
+NAME = 'populse_mia'
 ORGANISATION = 'populse'
-AUTHOR = ''
+MAINTAINER = 'Populse team'
+MAINTAINER_EMAIL = ''
+AUTHOR = 'Populse team'
 AUTHOR_EMAIL = ''
 URL = 'http://populse.github.io/populse_mia'
+DOWNLOAD_URL = 'http://populse.github.io/populse_mia'
 LICENSE = 'CeCILL'
 VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
