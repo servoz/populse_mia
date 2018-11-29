@@ -21,6 +21,7 @@ Populse_MIA is composed of three main tabs:
   * Pipeline Manager (`manual <./pipeline_manager.html>`_)
       * Advanced and graphical construction of processing pipelines (see a complete example `here <./pipeline_example.html>`_)
 
+Populse_MIA uses a Populse third party software called MRI File Manager (`manual <./mri_file_manager.html>`_) to import MRI data and convert them to Nifti/JSON format.
 
 Menu bar actions
 ----------------
