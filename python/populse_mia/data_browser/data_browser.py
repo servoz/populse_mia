@@ -1771,7 +1771,7 @@ class TableDataBrowser(QTableWidget):
                     item = QtWidgets.QTableWidgetItem()
                     self.setItem(row, column_index, item)
                     scan = self.item(row, 0).text()
-                    cur_value = self.project.database.get_value(COLLECTION_CURRENT, scan, tag)
+                    cur_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag)
 
                     if cur_value is not None:
                         set_item_data(item, cur_value, tag_object.type)

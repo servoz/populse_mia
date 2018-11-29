@@ -508,7 +508,7 @@ class AdvancedSearch(QWidget):
                             fields.append([child.currentText()])
                         else:
                             if replace_all_by_fields:
-                                fields.append(self.project.database.get_visibles())
+                                fields.append(self.project.session.get_visibles())
                             else:
                                 fields.append([child.currentText()])
                     elif child_name == 'value':
@@ -529,12 +529,12 @@ class AdvancedSearch(QWidget):
                 values[i] = values[i].split("; ")
             if conditions[i] == "IN":
                 for tag in fields[i].copy():
-                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag)
                     if tag_row.type in LIST_TYPES:
                         fields[i].remove(tag)
             elif conditions[i] in operators:
                 for tag in fields[i].copy():
-                    tag_row = self.project.database.get_field(COLLECTION_CURRENT, tag)
+                    tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag)
                     if tag_row.type in no_operators_tags:
                         fields[i].remove(tag)
 
@@ -565,7 +565,7 @@ class AdvancedSearch(QWidget):
 
             # Replacing all visualized tags by the current list of visible tags
             if fields[i][0] == "All visualized tags":
-                fields[i] = self.project.database.get_visibles()
+                fields[i] = self.project.session.get_visibles()
 
             row[3].setCurrentText(conditions[i])
             row[4].setText(str(values[i]))
