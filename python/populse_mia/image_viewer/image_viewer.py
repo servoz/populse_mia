@@ -152,7 +152,9 @@ class ImageViewer(QWidget):
 
     def imgqLabel(self):
         QLabel.__init__(self)
-        image = QImage('sources_images/LogoIRMaGe.png')
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
+        image = QImage(os.path.join(sources_images_dir, 'LoGoIRMaGe.png'))
         self.scaleFactor = 1.0
         self.imageLabel = QLabel()
         self.imageLabel.setBackgroundRole(QPalette.Base)

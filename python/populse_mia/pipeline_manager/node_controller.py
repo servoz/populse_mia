@@ -547,9 +547,11 @@ class PlugFilter(QWidget):
         self.rapid_search = RapidSearch(self)
         self.rapid_search.textChanged.connect(partial(self.search_str))
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join('sources_images', 'gray_cross.png')))
+        self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir, 'gray_cross.png')))
         self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout.addWidget(self.rapid_search)
@@ -822,9 +824,11 @@ class FilterWidget(QWidget):
             self.rapid_search.setText(filter_to_apply.search_bar)
         self.rapid_search.textChanged.connect(partial(self.search_str))
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join('sources_images', 'gray_cross.png')))
+        self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir, 'gray_cross.png')))
         self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout.addWidget(self.rapid_search)

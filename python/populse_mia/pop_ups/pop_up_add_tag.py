@@ -94,9 +94,11 @@ class DefaultValueListCreation(QDialog):
         cancel_button.clicked.connect(self.close)
 
         # Button to add an element to the list
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.add_element_label = ClickableLabel()
         self.add_element_label.setObjectName('plus')
-        add_element_picture = QtGui.QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
+        add_element_picture = QtGui.QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
         add_element_picture = add_element_picture.scaledToHeight(15)
         self.add_element_label.setPixmap(add_element_picture)
         self.add_element_label.clicked.connect(self.add_element)
@@ -104,7 +106,7 @@ class DefaultValueListCreation(QDialog):
         # Button to remove the last element of the list
         self.remove_element_label = ClickableLabel()
         self.remove_element_label.setObjectName('minus')
-        remove_element_picture = QtGui.QPixmap(os.path.relpath(os.path.join("sources_images", "red_minus.png")))
+        remove_element_picture = QtGui.QPixmap(os.path.relpath(os.path.join(sources_images_dir, "red_minus.png")))
         remove_element_picture = remove_element_picture.scaledToHeight(20)
         self.remove_element_label.setPixmap(remove_element_picture)
         self.remove_element_label.clicked.connect(self.remove_element)

@@ -197,9 +197,11 @@ class DataBrowser(QWidget):
         # Add path button under the table
         hbox_layout = QHBoxLayout()
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.addRowLabel = ClickableLabel()
         self.addRowLabel.setObjectName('plus')
-        add_row_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
+        add_row_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
         add_row_picture = add_row_picture.scaledToHeight(20)
         self.addRowLabel.setPixmap(add_row_picture)
         self.addRowLabel.setFixedWidth(20)
@@ -374,9 +376,11 @@ class DataBrowser(QWidget):
         self.search_bar = RapidSearch(self)
         self.search_bar.textChanged.connect(partial(self.search_str))
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join('sources_images', 'gray_cross.png')))
+        self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir, 'gray_cross.png')))
         self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout = QHBoxLayout()

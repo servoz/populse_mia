@@ -137,15 +137,17 @@ class CountTable(QDialog):
         self.push_buttons.insert(1, push_button_tag_2)
 
         # Labels to add/remove a tag (a push button)
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.remove_tag_label = ClickableLabel()
-        remove_tag_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "red_minus.png")))
+        remove_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "red_minus.png")))
         remove_tag_picture = remove_tag_picture.scaledToHeight(20)
         self.remove_tag_label.setPixmap(remove_tag_picture)
         self.remove_tag_label.clicked.connect(self.remove_tag)
 
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
-        add_tag_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
+        add_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
         add_tag_picture = add_tag_picture.scaledToHeight(15)
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)
@@ -414,8 +416,10 @@ class CountTable(QDialog):
                 # List of scans created, given the generator
                 list_scans = [getattr(scan, TAG_FILENAME) for scan in generator_scans]
 
+                sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                                  "sources_images")
                 if list_scans:
-                    icon = QIcon(os.path.join('sources_images', 'green_v.png'))
+                    icon = QIcon(os.path.join(sources_images_dir, 'green_v.png'))
                     length = len(list_scans)
                     nb_scans_ok += length
                     text = str(length)
@@ -427,7 +431,7 @@ class CountTable(QDialog):
                     tool_tip = tool_tip[:-1]
                     item.setToolTip(tool_tip)
                 else:
-                    icon = QIcon(os.path.join('sources_images', 'red_cross.png'))
+                    icon = QIcon(os.path.join(sources_images_dir, 'red_cross.png'))
                 item.setIcon(icon)
                 self.table.setItem(row, col, item)
 

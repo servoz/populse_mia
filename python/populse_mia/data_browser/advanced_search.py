@@ -156,8 +156,10 @@ class AdvancedSearch(QWidget):
         field_choice.currentTextChanged.connect(lambda: self.displayConditionRules(field_choice, condition_choice))
 
         # Minus to remove the row
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         remove_row_label = ClickableLabel()
-        remove_row_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "red_minus.png")))
+        remove_row_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "red_minus.png")))
         remove_row_picture = remove_row_picture.scaledToHeight(30)
         remove_row_label.setPixmap(remove_row_picture)
 
@@ -312,9 +314,11 @@ class AdvancedSearch(QWidget):
         """
 
         # Plus added to the last row
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         add_row_label = ClickableLabel()
         add_row_label.setObjectName('plus')
-        add_row_picture = QPixmap(os.path.relpath(os.path.join("sources_images", "green_plus.png")))
+        add_row_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
         add_row_picture = add_row_picture.scaledToHeight(20)
         add_row_label.setPixmap(add_row_picture)
         add_row_label.clicked.connect(self.add_row)

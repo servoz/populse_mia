@@ -97,10 +97,12 @@ class MainWindow(QMainWindow):
             msg.buttonClicked.connect(msg.close)
             msg.exec()
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.project = project
         self.test = test
         self.force_exit = False
-        app_icon = QIcon(os.path.join('sources_images', 'brain_mri.jpeg'))
+        app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
         self.saved_projects = SavedProjects()
@@ -133,6 +135,8 @@ class MainWindow(QMainWindow):
 
         """
 
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                                          "sources_images")
         self.action_create = QAction('New project', self)
         self.action_create.setShortcut('Ctrl+N')
 
@@ -147,7 +151,7 @@ class MainWindow(QMainWindow):
         self.action_save_as.setShortcut('Ctrl+Shift+S')
         self.addAction(self.action_save_as)
 
-        self.action_import = QAction(QIcon(os.path.join('sources_images', 'Blue.png')), 'Import', self)
+        self.action_import = QAction(QIcon(os.path.join(sources_images_dir, 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
         for i in range(self.saved_projects.maxProjects):
@@ -166,7 +170,7 @@ class MainWindow(QMainWindow):
         else:
             self.action_package_library.setEnabled(True)
 
-        self.action_exit = QAction(QIcon(os.path.join('sources_images', 'exit.png')), 'Exit', self)
+        self.action_exit = QAction(QIcon(os.path.join(sources_images_dir, 'exit.png')), 'Exit', self)
         self.action_exit.setShortcut('Ctrl+W')
 
         self.action_undo = QAction('Undo', self)
