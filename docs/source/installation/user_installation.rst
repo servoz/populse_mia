@@ -61,7 +61,7 @@ Installation
 
 |
 
-* The Populse_MIA installation is now launched and you have to select three parameters:
+* The Populse_MIA installation is now launched and you have to select three mandatory parameters:
 
     * Populse_MIA installation path: the folder where to install Populse_MIA, set by default to ".populse_mia" in the current user's diretory. Two folders will be created in the selected folder:
         * populse_mia: containing populse_mia's configuration and resources files.
@@ -70,6 +70,21 @@ Installation
     * Populse_MIA projects path: the folder containing the analysis projects saved in Populse_MIA. A "projects" folder will be created in the selected folder.
 
     * Operating mode: Choose between clinical and research mode (more information about `operating mode <../documentation/documentation.html#operating-mode>`_).
+
+* If you already want to configure the use of Matlab and SPM (in license or standalone mode), you can also specify these several paths:
+
+    * Matlab path:
+        * Path of the Matlab executable file (is detected automatically).
+
+    * Matlab standalone path:
+        * Path of the folder containing Matlab Compiler Runtine (e.g. /usr/local/MATLAB/MATLAB_Runtime/v93/).
+
+    * SPM path:
+        * Path of the folder containing SPM12 code.
+
+    * SPM standalone path:
+        * Path of the folder containing run_spm12.sh.
+
 
 .. image:: ../images/mia_install_2.png
    :align: center
