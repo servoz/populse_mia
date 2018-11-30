@@ -205,6 +205,7 @@ class DataBrowser(QWidget):
         add_row_picture = add_row_picture.scaledToHeight(20)
         self.addRowLabel.setPixmap(add_row_picture)
         self.addRowLabel.setFixedWidth(20)
+        self.addRowLabel.setToolTip('Add data without using the MRI converter tool (File>Import)')
         self.addRowLabel.clicked.connect(self.table_data.add_path)
 
         hbox_layout.addWidget(self.addRowLabel)
