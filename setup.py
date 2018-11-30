@@ -12,7 +12,7 @@ pkgdata = {
     # format is:
     # <python module>: <file extensions list>
     # e.g:
-    # 'populse_mia.icons': ['*.png']
+    'populse_mia.sources_images': ['*.png', '*.jpeg', '*.jpg']
 }
 
 # Read the info.py file in populse_mia module
