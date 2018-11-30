@@ -69,5 +69,7 @@ EXTRA_REQUIRES = {
     ],
 }
 
+brainvisa_build_model = 'pure_python'
+
 # tests to run
 test_commands = ['%s -m populse_mia.test' % sys.executable]
