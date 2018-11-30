@@ -40,7 +40,7 @@ Populse_MIA is ensured to work under Python's 3.5, 3.6 and 3.7 versions.
 Installation
 ------------
 
-* First download the archive `here <https://github.com/dhrbn/populse_mia_install/archive/master.zip>`_.
+* First download the archive `here <https://github.com/servoz/populse_mia_install/archive/master.zip>`_.
 
 
 * Unzip it and launch the following command in the extracted folder ("populse_mia_install-master"): ::
