@@ -13,6 +13,7 @@ import hashlib  # To generate the md5 of each path
 import datetime
 from time import time, sleep
 from datetime import datetime
+import threading
 
 # PyQt5 imports
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
@@ -58,7 +59,9 @@ def read_log(project, main_window):
     main_window.progress.show()
     main_window.progress.exec()
 
-    return main_window.progress.worker.scans_added
+    with main_window.progress.worker.lock:
+        scans_added = list(main_window.progress.worker.scans_added)
+    return scans_added
 
 
 class ImportProgress(QProgressDialog):
@@ -100,6 +103,11 @@ class ImportWorker(QThread):
         super().__init__()
         self.project = project
         self.progress = progress
+        self.lock = threading.RLock()
+        # scans_added should always be accessed through the lock, and copied
+        # before releasing the lock, becuase its value will change inside
+        # the thread
+        self.scans_added = []
 
     def run(self):
 
@@ -116,15 +124,19 @@ class ImportWorker(QThread):
 
         # Checking all the export logs from MRIManager and taking the most recent
         list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
-        log_to_read = max(list_logs, key=os.path.getctime)
+        if len(list_logs) == 0:
+            list_dict_log = []
+        else:
+            log_to_read = max(list_logs, key=os.path.getctime)
 
-        with open(log_to_read, "r", encoding="utf-8") as file:
-            list_dict_log = json.load(file)
+            with open(log_to_read, "r", encoding="utf-8") as file:
+                list_dict_log = json.load(file)
 
         # For history
         historyMaker = []
         historyMaker.append("add_scans")
-        self.scans_added = []
+        with self.lock:
+            self.scans_added = []
         values_added = []
         tags_added = []
         tags_names_added = []
@@ -146,7 +158,8 @@ class ImportWorker(QThread):
 
                 document_not_existing = self.project.session.get_document(COLLECTION_CURRENT, file_database_path) is None
                 if document_not_existing:
-                    self.scans_added.append(file_database_path)  # Scan added to history
+                    with self.lock:
+                        self.scans_added.append(file_database_path)  # Scan added to history
 
                 documents[file_database_path] = {}
                 documents[file_database_path][TAG_FILENAME] = file_database_path
