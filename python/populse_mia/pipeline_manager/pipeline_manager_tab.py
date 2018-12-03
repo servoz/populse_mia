@@ -227,8 +227,6 @@ class PipelineManagerTab(QWidget):
         self.nodeController.value_changed.connect(self.controller_value_changed)
 
     def _show_preview(self, name_item):
-        for elem in self.previewBlock.scene.items():
-            self.previewBlock.scene.removeItem(elem)
         self.previewBlock.centerOn(0, 0)
         self.find_process(name_item)
 
@@ -251,7 +249,7 @@ class PipelineManagerTab(QWidget):
                     return
                 else:
                     node, node_name = self.add_process_to_preview(instance)
-                    gnode = self.previewBlock.scene.add_node(node_name, node)
+                    gnode = self.previewBlock.scene.gnodes[node_name]
                     gnode.setPos(0,0)
                     gnode.updateInfoActived(True)
                     # gnode.active = True
@@ -269,7 +267,8 @@ class PipelineManagerTab(QWidget):
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node (using when undo/redo) (str)
         """
-        pipeline = self.previewBlock.scene.pipeline
+        #pipeline = self.previewBlock.scene.pipeline
+        pipeline = Pipeline()
         if not node_name:
             class_name = class_process.__name__
             i = 1
@@ -293,6 +292,7 @@ class PipelineManagerTab(QWidget):
             return
 
         pipeline.add_process(node_name, process)
+        self.previewBlock.set_pipeline(pipeline)
 
         # Capsul update
         node = pipeline.nodes[node_name]
