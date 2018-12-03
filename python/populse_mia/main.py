@@ -295,8 +295,13 @@ def main():
             # start with ans empty config
             mia_home_config = {}
         mia_home_config["dev_mode"] = "no"
-        with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-            yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+        try:
+            if not os.path.exists(os.path.dirname(dot_mia_config)):
+                os.mkdir(os.path.dirname(dot_mia_config))
+            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+                yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+        except:
+            print('could not write configuration file', dot_mia_config)
 
     verify_processes()
     launch_mia()
