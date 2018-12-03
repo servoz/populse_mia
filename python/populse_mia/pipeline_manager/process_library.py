@@ -33,11 +33,14 @@ from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
 # Populse_MIA import
 from populse_mia.software_properties.config import Config
 
+# capsul import
+from capsul.api import get_process_instance
+
 # soma-base import
 from soma.path import find_in_path
 
 
-class ProcessLibraryWidget(QWidget):          
+class ProcessLibraryWidget(QWidget):
     """
     Widget that handles the available Capsul's processes in the software
 
@@ -541,11 +544,12 @@ class ProcessLibrary(QTreeView):
             model = idx.model()
             idx = idx.sibling(idx.row(),0)
             node = idx.internalPointer()
-            txt = node.data(idx.column())
-            path = txt.encode()
-            # print('dictionary ',path.decode('utf8'))
-            self.item_library_clicked.emit(path.decode('utf8'))
-            # self.item_library_clicked.emit(model.itemData(idx)[0])
+            if node is not None:
+                txt = node.data(idx.column())
+                path = txt.encode()
+                # print('dictionary ',path.decode('utf8'))
+                self.item_library_clicked.emit(path.decode('utf8'))
+                # self.item_library_clicked.emit(model.itemData(idx)[0])
 
         return QTreeView.mousePressEvent(self,event)
 
@@ -754,13 +758,17 @@ class PackageLibraryDialog(QDialog):
             old_status = self.status_label.text()
             self.status_label.setText("Adding {0}. Please wait.".format(self.line_edit.text()))
             QApplication.processEvents()
-            package_added = self.add_package(self.line_edit.text())
-            if package_added is not None:
+            errors = self.add_package(self.line_edit.text())
+            if len(errors) == 0:
                 self.status_label.setText("{0} added to the Package Library.".format(self.line_edit.text()))
             else:
                 self.status_label.setText(old_status)
+                msg = QMessageBox()
+                msg.setText('\n'.join(errors))
+                msg.setIcon(QMessageBox.Warning)
+                msg.exec_()
 
-    def add_package(self, module_name, class_name=None):
+    def add_package(self, module_name, class_name=None, show_error=False):
         """
         Adds a package and its modules to the package tree
 
@@ -769,6 +777,9 @@ class PackageLibraryDialog(QDialog):
 
         :package_library: pipeline_manager.process_library.PackageLibrary object
         :package_library.package_tree: current package tree known in Package Library window
+
+        :show_error: display error in a message box in case of error. If False,
+        errors are silent and error messages returned at the end of execution
         """
 
         self.packages = self.package_library.package_tree
@@ -783,14 +794,21 @@ class PackageLibraryDialog(QDialog):
             if module_name in sys.modules.keys():
                 del sys.modules[module_name]
 
+            err_msg = []
+
             try:
                 __import__(module_name)
                 pkg = sys.modules[module_name]
 
                 # Checking if there are subpackages
-                for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
-                    if ispkg:
-                        self.add_package(str(module_name + '.' + modname))
+                subpkg = False
+                if hasattr(pkg, '__path__'):
+                    for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+                        if ispkg or modname != '__main__':
+                            err_msg += self.add_package(
+                                str(module_name + '.' + modname),
+                                show_error=False)
+                            subpkg = True
 
                 for k, v in sorted(list(pkg.__dict__.items())):
                     if class_name and k != class_name:
@@ -798,8 +816,8 @@ class PackageLibraryDialog(QDialog):
                     # Checking each class of in the package
                     if inspect.isclass(v):
                         try:
-                            find_in_path(k)
-                            #get_process_instance(v)
+                            get_process_instance(
+                                '%s.%s' % (module_name, v.__name__))
                         except:
                             #TODO: WHICH TYPE OF EXCEPTION?
                             pass
@@ -820,13 +838,17 @@ class PackageLibraryDialog(QDialog):
 
                 self.package_library.package_tree = self.packages
                 self.package_library.generate_tree()
-                return True
+                return err_msg
 
             except Exception as err:
+                err_msg.append("in {2}: {0}: {1}.".format(err.__class__, err,
+                                                          module_name))
+            if show_error and len(err_msg) != 0:
                 msg = QMessageBox()
-                msg.setText("{0}: {1}.".format(err.__class__, err))
+                msg.setText('\n'.join(err_msg))
                 msg.setIcon(QMessageBox.Warning)
                 msg.exec_()
+            return err_msg
 
     def remove_package_with_text(self):
         """
@@ -1296,7 +1318,8 @@ class InstallProcesses(QDialog):
                     # Checking each class of in the package
                     if inspect.isclass(v):
                         try:
-                            find_in_path(k)
+                            get_process_instance(
+                                '%s.%s' % (module_name, v.__name__))
                         except:
                             pass
                         else:
