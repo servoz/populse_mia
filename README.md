@@ -59,7 +59,9 @@ The documentation is available on populse_mia's website here: [https://populse.g
           cd [mia_install_dir]/python/populse_mia  
           python3 main.py  
 
-> Usage instructions for other platforms available soon
+  * For all platforms, after a [Populse_MIA’s user installation](https://populse.github.io/populse_mia/html/installation/user_installation.html)
+ 
+        python3 -m populse_mia
 
 # Tests
 
