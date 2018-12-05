@@ -56,7 +56,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
     * Interprets the main.py file
 
-          cd [mia_install_dir]/python/populse_mia/src/scripts  
+          cd [mia_install_dir]/python/populse_mia  
           python3 main.py  
 
 > Usage instructions for other platforms available soon
