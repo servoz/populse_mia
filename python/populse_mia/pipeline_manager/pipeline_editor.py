@@ -22,7 +22,7 @@ from capsul.api import get_process_instance, Process, PipelineNode, Switch
 from soma.utils.weak_proxy import weak_proxy
 
 # Populse_MIA imports
-from populse_mia.pipeline_manager.capsul_files.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
+from capsul.qt_gui.widgets.pipeline_developper_view import PipelineDevelopperView, NodeGWidget
 from populse_mia.pipeline_manager.node_controller import FilterWidget
 from populse_mia.pop_ups.pop_up_close_pipeline import PopUpClosePipeline
 from populse_mia.software_properties.config import Config
