@@ -29,12 +29,12 @@ from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
 
 # Capsul imports
 from capsul.api import get_process_instance, StudyConfig, PipelineNode, Switch, NipypeProcess, Pipeline
+from capsul.qt_gui.widgets.pipeline_developper_view import PipelineDevelopperView
 
 # Populse_MIA imports
 from populse_mia.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.pop_ups.pop_up_select_iteration import PopUpSelectIteration
 from populse_mia.pipeline_manager.iteration_table import IterationTable
-from capsul.qt_gui.widgets.pipeline_developper_view import PipelineDevelopperView
 from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, \
     BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, \
     TAG_CHECKSUM, TYPE_NII, TYPE_MAT
