@@ -1421,9 +1421,9 @@ class InstallProcesses(QDialog):
             except TypeError:
                 paths = []
 
-            # Saving all the install packages names and checking if the IRMaGe_processes are updated
+            # Saving all the install packages names and checking if the MIA_processes are updated
             package_names = []
-            irmage_processes_not_found = True
+            mia_processes_not_found = True
 
             # packages_already: packages already installed in populse_mia (populse_mia/processes)
             packages_already = [dire for dire in os.listdir(os.path.join(config.get_mia_path(), 'processes'))
@@ -1441,16 +1441,16 @@ class InstallProcesses(QDialog):
 
             for package_name in packages_name:  # package_name: package(s) in the zip file or in folder; one by one
 
-                if (package_name not in packages_already) or (package_name == 'IRMaGe_processes'):
-                    # Copy IRMaGe_processes in a temporary folder
-                    if irmage_processes_not_found:
+                if (package_name not in packages_already) or (package_name == 'MIA_processes'):
+                    # Copy MIA_processes in a temporary folder
+                    if mia_processes_not_found:
 
-                        if (package_name == "IRMaGe_processes") and (
-                                os.path.exists(os.path.join(config.get_mia_path(), 'processes', 'IRMaGe_processes'))):
-                            irmage_processes_not_found = False
+                        if (package_name == "MIA_processes") and (
+                                os.path.exists(os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'))):
+                            mia_processes_not_found = False
                             tmp_folder4MIA = tempfile.mkdtemp()
-                            shutil.copytree(os.path.join(config.get_mia_path(), 'processes', 'IRMaGe_processes'),
-                                            os.path.join(tmp_folder4MIA, 'IRMaGe_processes'))
+                            shutil.copytree(os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'),
+                                            os.path.join(tmp_folder4MIA, 'MIA_processes'))
 
                     if is_zipfile(filename):
                         
@@ -1536,10 +1536,10 @@ class InstallProcesses(QDialog):
                 if os.path.exists(os.path.join(config.get_mia_path(), 'processes', package_name)):
                     shutil.rmtree(os.path.join(config.get_mia_path(), 'processes', package_name))
 
-            # If the error comes from a IRMaGe_process update, the old version is restored
-            if not irmage_processes_not_found:
-                distutils.dir_util.copy_tree(os.path.join(tmp_folder4MIA, 'IRMaGe_processes'),
-                                             os.path.join(config.get_mia_path(), 'processes', 'IRMaGe_processes'))
+            # If the error comes from a MIA_process update, the old version is restored
+            if not mia_processes_not_found:
+                distutils.dir_util.copy_tree(os.path.join(tmp_folder4MIA, 'MIA_processes'),
+                                             os.path.join(config.get_mia_path(), 'processes', 'MIA_processes'))
 
             if 'tmp_folder4MIA' in locals():
                 shutil.rmtree(tmp_folder4MIA)
