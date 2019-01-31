@@ -762,9 +762,11 @@ class PackageLibraryDialog(QDialog):
             if len(errors) == 0:
                 self.status_label.setText("{0} added to the Package Library.".format(self.line_edit.text()))
             else:
+
                 self.status_label.setText(old_status)
                 msg = QMessageBox()
-                msg.setText('\n'.join(errors))
+                #msg.setText('\n'.join(errors))
+                msg.setText(errors)
                 msg.setIcon(QMessageBox.Warning)
                 msg.exec_()
 
@@ -850,6 +852,9 @@ class PackageLibraryDialog(QDialog):
                 msg.exec_()
             return err_msg
 
+        else:
+            return 'No package selected!'
+                
     def remove_package_with_text(self):
         """
         Removes the package in the line edit from the package tree
@@ -860,7 +865,8 @@ class PackageLibraryDialog(QDialog):
         self.status_label.setText("Removing {0}. Please wait.".format(self.line_edit.text()))
         QApplication.processEvents()
         package_removed = self.remove_package(self.line_edit.text())
-        if package_removed is not None:
+        
+        if package_removed is True :
             self.status_label.setText("{0} removed from Package Library.".format(self.line_edit.text()))
         else:
             self.status_label.setText(old_status)
@@ -872,7 +878,6 @@ class PackageLibraryDialog(QDialog):
         :param package: module's representation as a string (e.g.: nipype.interfaces.spm)
         :return: True if the package has been removed correctly
         """
-
         self.packages = self.package_library.package_tree
         config = Config()
 
@@ -901,6 +906,16 @@ class PackageLibraryDialog(QDialog):
                     return None
                     # break
 
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowTitle("Warning: Package not found in Package Library")
+            msg.setText("No package selected!")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            return False
+        
         self.package_library.package_tree = self.packages
         self.package_library.generate_tree()
         return True
