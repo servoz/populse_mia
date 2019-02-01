@@ -367,8 +367,12 @@ class PopUpPreferences(QDialog):
         """
 
         fname = QFileDialog.getExistingDirectory(self, 'Select a folder where to save the projects')
+        
         if fname:
             self.projects_save_path_line_edit.setText(fname)
+
+            with open(os.path.join(fname, '.gitignore'), 'w') as myFile:
+                myFile.write("/*") 
 
     def browse_mri_conv_path(self):
         """
