@@ -38,12 +38,12 @@ install:
   #- git clone --depth=50 --branch=master https://github.com/populse/soma-base.git
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip3 uninstall --yes soma-base; fi
   #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip3 uninstall --yes soma-base; fi
-  - git clone --depth=50 --branch=master https://github.com/populse/capsul.git
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip3 uninstall --yes capsul; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip3 uninstall --yes capsul; fi
-  - cd capsul
-  - python setup.py install
-  - cd ..
+  #- git clone --depth=50 --branch=master https://github.com/populse/capsul.git
+  #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip3 uninstall --yes capsul; fi
+  #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip3 uninstall --yes capsul; fi
+  #- cd capsul
+  #- python setup.py install
+  #- cd ..
   - cd populse_mia
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/populse_mia/python"; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/populse_mia/python"; fi
