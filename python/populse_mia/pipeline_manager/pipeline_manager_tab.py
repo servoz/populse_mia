@@ -862,13 +862,15 @@ class PipelineManagerTab(QWidget):
         # Sorting the nodes_to_check list as the order (the nodes having the highest ratio
         # being at the end of the list)
         nodes_to_check = [x for _, x in sorted(zip(nodes_inputs_ratio_list, nodes_to_check))]
+        # I think (econdami) the following is more explicit (in case of !):
+        #[x for (y,x) in sorted(zip(nodes_inputs_ratio_list, nodes_to_check), key=lambda pair: pair[0])]
 
         while nodes_to_check:
             # Finding one node that has a ratio of 1, which means that all of its mandatory
             # inputs are "connected"
             key_name = [key for key, value in nodes_inputs_ratio.items() if value[0] == value[1]]
+            
             if key_name:
-
                 # This node can be initialized so it is placed at the end of the nodes_to_check list
                 nodes_to_check.append(key_name[0])
 
@@ -891,17 +893,23 @@ class PipelineManagerTab(QWidget):
 
             # If the node is a pipeline node, each of its nodes has to be initialised
             node = pipeline.nodes[node_name]
+            
             if isinstance(node, PipelineNode):
                 sub_pipeline = node.process
                 self.init_pipeline(sub_pipeline)
+                
                 for plug_name in node.plugs.keys():
+                    
                     if hasattr(node.plugs[plug_name], 'links_to'):  # If the plug is an output and is
                         # connected to another one
                         list_info_link = list(node.plugs[plug_name].links_to)
+                        
                         for info_link in list_info_link:
+                            
                             if info_link[2] in pipeline.nodes.values():  # The third element of info_link contains the
                                 # destination node object
                                 dest_node_name = info_link[0]
+                                
                                 if dest_node_name:
                                     # Adding the destination node name and incrementing
                                     # the input counter of the latter if it is not the
@@ -921,9 +929,13 @@ class PipelineManagerTab(QWidget):
             self.project.saveModifications()
 
             process = node.process
+            libProcName = str(process).split('.')[0].split('_')[0][1:]
 
-            if 'IRMaGe_processes' in str(process.__class__):  # update launching parameters for IRMaGe_processes bricks   ### Test for matlab launch
-                print('\nUpdating the launching parameters for IRMaGe process node: {0} ...\n'.format(node_name))  ### Test for matlab launch
+            if libProcName in ['IRMaGe', 'mia', 'User']:
+                # update launching parameters for IRMaGe_processes bricks ### IRMaGe_processes is deprecated ###  OR
+                # update launching parameters for mia_processes bricks    ### mia_processes is the official process library for mia ###  OR
+                # update launching parameters for User_processes bricks   ### this is the library for bricks development ###
+                print('\nUpdating the launching parameters for {0} process node: {1} ...\n'.format(libProcName, node_name))  ### Test for matlab launch
                     
                 if config.get_use_spm_standalone() == 'yes':  ### Test for matlab launch
                     pipeline.nodes[node_name].process.use_mcr = True
@@ -946,11 +958,14 @@ class PipelineManagerTab(QWidget):
             try:
                 self.inheritance_dict = None
                 (process_outputs, self.inheritance_dict) = process.list_outputs()
+                
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
+                
             except ValueError:
                 process_outputs = process.list_outputs()
                 print("No inheritance dict for the process {0}.".format(node_name))
+                
             except AttributeError:  # If the process has no "list_outputs" method, which is the case for Nipype's
                 # interfaces
                 try:
@@ -960,13 +975,13 @@ class PipelineManagerTab(QWidget):
                     for key, value in process_outputs.items():
                         tmp_dict['_' + key] = process_outputs[key]
                     process_outputs = tmp_dict
+                    
                 except:  # TODO: test which kind of error can generate a Nipype interface
                     print("No output list method for the process {0}.".format(node_name))
                     process_outputs = {}
 
             # Adding I/O to database history
             inputs = process.get_inputs()
-            keys2consider = ['use_mcr', 'paths', 'matlab_cmd', 'output_directory'] # plugs to be filled automatically
             
             for key in inputs:
                 
@@ -977,7 +992,7 @@ class PipelineManagerTab(QWidget):
                     
 #                if (isinstance(process, NipypeProcess)) and (key in keys2consider) and (inputs[key] == "<undefined>"):
                 if 'NipypeProcess' in str(process.__class__):                                   # update launching parameters for IRMaGe_processes bricks ### Test for matlab launch
-                    print('\nUpdating the launching parameters for NipypeProcess node: {0} ...'.format(node_name))                                     ### Test for matlab launch
+                    print('\nUpdating the launching parameters for nipype process node: {0} ...'.format(node_name))                                     ### Test for matlab launch
                     keys2consider = ['use_mcr', 'paths', 'matlab_cmd', 'output_directory']      # plugs to be filled automatically                     ### Test for matlab launch
                     
                     if (key == keys2consider[0]) and (config.get_use_spm_standalone() == 'yes'):  # use_mcr parameter                                  ### Test for matlab launch
