@@ -646,9 +646,11 @@ class PipelineManagerTab(QWidget):
         if path not in sys.path:
             sys.path.insert(0, path)
 
-        self.processLibrary.pkg_library.add_package(package, class_name)
+        self.processLibrary.pkg_library.add_package(package, class_name, init_package_tree=True)
+        
         if os.path.relpath(path) not in self.processLibrary.pkg_library.paths:
             self.processLibrary.pkg_library.paths.append(os.path.relpath(path))
+            
         self.processLibrary.pkg_library.save()
 
     def loadPipeline(self):
@@ -663,18 +665,34 @@ class PipelineManagerTab(QWidget):
         Saves the current pipeline of the pipeline editor
 
         """
+        self.main_window.statusBar().showMessage(
+            'The pipeline is getting saved. Please wait.')
+        #QApplication.processEvents()
+        
         filename = self.pipelineEditorTabs.get_current_filename()
+        
         if filename:
             self.pipelineEditorTabs.save_pipeline(new_file_name=filename)
+            
         else:
             self.pipelineEditorTabs.save_pipeline()
+
+        self.main_window.statusBar().showMessage(
+            'The pipeline has been saved.')
 
     def savePipelineAs(self):
         """
         Saves the current pipeline of the pipeline editor under another name
 
         """
+
+        self.main_window.statusBar().showMessage(
+            'The pipeline is getting saved. Please wait.')
+        
         self.pipelineEditorTabs.save_pipeline()
+
+        self.main_window.statusBar().showMessage(
+            'The pipeline has been saved.')
 
     def loadParameters(self):
         """

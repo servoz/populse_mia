@@ -16,6 +16,7 @@ import tempfile
 import shutil
 from datetime import datetime
 import distutils.dir_util
+import traceback
 
 # PyQt5 import # TO REMOVE
 from PyQt5 import QtCore
@@ -37,7 +38,7 @@ from populse_mia.software_properties.config import Config
 from capsul.api import get_process_instance
 
 # soma-base import
-from soma.path import find_in_path
+#from soma.path import find_in_path
 
 
 class ProcessLibraryWidget(QWidget):
@@ -425,7 +426,6 @@ class DictionaryTreeModel(QAbstractItemModel):
     def insertRows(self, position, rows, parent=QModelIndex()):
         """insert rows from starting position and number given by rows"""
         parentNode = self.getNode(parent)
-
         self.beginInsertRows(parent, position, position + rows - 1)
 
         for row in range(rows):
@@ -453,7 +453,6 @@ class DictionaryTreeModel(QAbstractItemModel):
 
 def node_structure_from_dict(datadict, parent=None, root_node=None):
     """returns a hierarchical node stucture required by the TreeModel"""
-    
     if not parent:
         root_node = Node('Root')
         parent = root_node
@@ -508,7 +507,6 @@ class ProcessLibrary(QTreeView):
         - to_dict: returns a dictionary from the current tree
 
     """
-
     item_library_clicked = QtCore.Signal(str)
 
     def __init__(self, d):
@@ -521,7 +519,6 @@ class ProcessLibrary(QTreeView):
 
         :param d: dictionary to load. See the packages attribut in the ProcessLibraryWidget class.
         """
-        
         self.dictionary = d
         self._nodes = node_structure_from_dict(d)
         self._model = DictionaryTreeModel(self._nodes)
@@ -534,7 +531,6 @@ class ProcessLibrary(QTreeView):
 
         :return: the dictionary
         """
-
         return self._model.to_dict()
 
     def mousePressEvent(self,event):
@@ -584,7 +580,6 @@ class PackageLibraryDialog(QDialog):
         """
         Initialization of the PackageLibraryDialog widget
         """
-
         super(PackageLibraryDialog, self).__init__(parent)
 
         self.setWindowTitle("Package library manager")
@@ -664,7 +659,6 @@ class PackageLibraryDialog(QDialog):
 
         :return: the config as a dictionary
         """
-
         config = Config()
 
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
@@ -689,7 +683,6 @@ class PackageLibraryDialog(QDialog):
         Updates the tree of the process library
 
         """
-
         try:
             self.packages = self.process_config["Packages"]
         except KeyError:
@@ -709,7 +702,6 @@ class PackageLibraryDialog(QDialog):
         Saves the current config to process_config.yml
 
         """
-
         config = Config()
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = self.paths
@@ -722,12 +714,12 @@ class PackageLibraryDialog(QDialog):
         Opens a browser to select a package
 
         """
-
         file_dialog = QFileDialog()
         file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
 
         # To select files or directories, we should use a proxy model
         # but mine is not working yet...
+        
         # file_dialog.setProxyModel(FileFilterProxyModel())
         file_dialog.setFileMode(QFileDialog.Directory)
         # file_dialog.setFileMode(QFileDialog.Directory | QFileDialog.ExistingFile)
@@ -744,7 +736,6 @@ class PackageLibraryDialog(QDialog):
         Adds a package from the line edit's text
 
         """
-
         if self.is_path:  # Currently the self.is_path = False
             # (Need to pass by the method browse_package to initialise to True and the Browse button is commented.
             # Could be interesting to permit a backdoor to pass the absolute path in the field for add package,
@@ -754,23 +745,68 @@ class PackageLibraryDialog(QDialog):
             sys.path.append(path)
             self.add_package(package)
             self.paths.append(os.path.relpath(path))
+            
         else:
+            #self.package_library.package_tree = self.load_config()['Packages']
             old_status = self.status_label.text()
             self.status_label.setText("Adding {0}. Please wait.".format(self.line_edit.text()))
             QApplication.processEvents()
-            errors = self.add_package(self.line_edit.text())
+            _2add = self.line_edit.text()
+
+            if os.path.splitext(_2add)[1]:
+                part = ''
+                old_part = ''
+                flag = False
+
+                for content in _2add.split('.'):
+                    part += content
+
+                    try:
+                        __import__(part)
+
+                    except ModuleNotFoundError:
+
+                        try:
+                            flag = True
+
+                            if content in dir(sys.modules[old_part]):
+                                errors = self.add_package(os.path.splitext(_2add)[0], os.path.splitext(_2add)[1][1:])
+                                break
+
+                            else:
+                                errors = self.add_package(_2add)
+                                break
+
+                        except KeyError:
+                            errors = 'No package, module or class named ' + _2add + ' !'
+                            break
+
+                    old_part = part
+                    part += '.'
+
+                if flag is False:    
+                    errors = self.add_package(os.path.splitext(_2add)[0], os.path.splitext(_2add)[1][1:])
+
+            else:
+                errors = self.add_package(os.path.splitext(_2add)[0], os.path.splitext(_2add)[0])
+            
             if len(errors) == 0:
                 self.status_label.setText("{0} added to the Package Library.".format(self.line_edit.text()))
+                
             else:
-
                 self.status_label.setText(old_status)
                 msg = QMessageBox()
-                #msg.setText('\n'.join(errors))
-                msg.setText(errors)
+                
+                if isinstance(errors, str):
+                    msg.setText(errors)
+                    
+                elif isinstance(errors, list):
+                    msg.setText('\n'.join(errors))
+
                 msg.setIcon(QMessageBox.Warning)
                 msg.exec_()
 
-    def add_package(self, module_name, class_name=None, show_error=False):
+    def add_package(self, module_name, class_name=None, show_error=False, init_package_tree=False):
         """
         Adds a package and its modules to the package tree
 
@@ -784,7 +820,11 @@ class PackageLibraryDialog(QDialog):
         errors are silent and error messages returned at the end of execution
         """
 
-        self.packages = self.package_library.package_tree
+        if init_package_tree is True:
+            self.update_config()
+            del self.packages
+
+        self.packages = self.package_library.package_tree 
         config = Config()
 
         if module_name:
@@ -803,55 +843,82 @@ class PackageLibraryDialog(QDialog):
                 pkg = sys.modules[module_name]
 
                 # Checking if there are subpackages
-                subpkg = False
                 if hasattr(pkg, '__path__'):
+
                     for importer, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
-                        if ispkg or modname != '__main__':
+                        
+                        if ispkg and modname != '__main__':
                             err_msg += self.add_package(
-                                str(module_name + '.' + modname),
+                                str(module_name + '.' + modname), class_name,
                                 show_error=False)
-                            subpkg = True
 
                 for k, v in sorted(list(pkg.__dict__.items())):
-                    if class_name and k != class_name:
-                        continue
+
                     # Checking each class of in the package
                     if inspect.isclass(v):
+
                         try:
                             get_process_instance(
                                 '%s.%s' % (module_name, v.__name__))
-                        except:
+                            
+                        except Exception:
+                            print(traceback.format_exc())
                             #TODO: WHICH TYPE OF EXCEPTION?
-                            pass
+                            #pass
+                        
                         else:
                             # Updating the tree's dictionnary
                             path_list = module_name.split('.')
                             path_list.append(k)
                             pkg_iter = self.packages
+                            recurs = False
+
                             for element in path_list:
-                                if element in pkg_iter.keys():
+
+                                if element == class_name:
+                                    recurs = True
+                                
+                                if element in pkg_iter.keys() and element is not path_list[-1]:
                                     pkg_iter = pkg_iter[element]
+                                    
                                 else:
+                                    
                                     if element is path_list[-1]:
-                                        pkg_iter[element] = 'process_enabled'
+
+                                        if element == class_name or recurs is True:
+                                            print('\nEnabling %s.%s ...' %  (module_name, v.__name__))
+                                            pkg_iter[element] = 'process_enabled'
+
+                                        elif element in pkg_iter.keys():
+                                            pkg_iter = pkg_iter[element]
+
+                                        else:
+                                            print('\nA not installed pipeline was detected in the %s library:' % (path_list[0]))
+                                            print('- %s.%s ...' %  (module_name, v.__name__))
+                                            print('This pipeline is now installed but disabled (see File > Package Library Manager to enable it) ...')
+                                            pkg_iter[element] = 'process_disabled'
+
                                     else:
                                         pkg_iter[element] = {}
                                         pkg_iter = pkg_iter[element]
 
                 self.package_library.package_tree = self.packages
                 self.package_library.generate_tree()
+                #self.save_config()
                 return err_msg
 
             except Exception as err:
                 err_msg.append("in {2}: {0}: {1}.".format(err.__class__, err,
                                                           module_name))
+
             if show_error and len(err_msg) != 0:
                 msg = QMessageBox()
                 msg.setText('\n'.join(err_msg))
                 msg.setIcon(QMessageBox.Warning)
                 msg.exec_()
+   
             return err_msg
-
+        
         else:
             return 'No package selected!'
                 
@@ -860,7 +927,6 @@ class PackageLibraryDialog(QDialog):
         Removes the package in the line edit from the package tree
 
         """
-
         old_status = self.status_label.text()
         self.status_label.setText("Removing {0}. Please wait.".format(self.line_edit.text()))
         QApplication.processEvents()
@@ -925,14 +991,15 @@ class PackageLibraryDialog(QDialog):
         Saves the tree to the process_config.yml file
 
         """
-
         # Updating the packages and the paths according to the package library tree
         self.packages = self.package_library.package_tree
         self.paths = self.package_library.paths
 
         if self.process_config:
+            
             if self.process_config.get("Packages"):
                 del self.process_config["Packages"]
+                
             if self.process_config.get("Paths"):
                 del self.process_config["Paths"]
         else:
@@ -940,7 +1007,6 @@ class PackageLibraryDialog(QDialog):
 
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = list(set(self.paths))
-
         config = Config()
 
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'w', encoding='utf8') \
@@ -959,7 +1025,6 @@ def import_file(full_name, path):
     :param path: path of the package
     :return: the corresponding module
     """
-
     from importlib import util
 
     spec = util.spec_from_file_location(full_name, path)
@@ -1004,7 +1069,8 @@ class FileFilterProxyModel(QSortFilterProxyModel):
             return flags
         else:
             flags |= Qt.ItemIsSelectable
-            return flags"""
+            return flags
+    """
 
 
 class PackageLibrary(QTreeWidget):
@@ -1032,7 +1098,6 @@ class PackageLibrary(QTreeWidget):
         :param package_tree: representation of the packages as a tree-dictionary
         :param paths: list of paths to add to the system to import the packages
         """
-
         super(PackageLibrary, self).__init__()
 
         self.itemChanged.connect(self.update_checks)
@@ -1073,7 +1138,6 @@ class PackageLibrary(QTreeWidget):
             or 'process_disabled'. etc. pkg_iter take only the modules concerning the top
             package where a change of status where done.
         """
-        
         if state == Qt.Checked:
             val = 'process_enabled'
         else:
@@ -1105,7 +1169,6 @@ class PackageLibrary(QTreeWidget):
 
         :param parent: parent item
         """
-
         check_state = parent.checkState(0)
 
         if parent.childCount() == 0:
@@ -1121,7 +1184,6 @@ class PackageLibrary(QTreeWidget):
 
         :param child: child item
         """
-
         check_state = child.checkState(0)
 
         if child.childCount() == 0:
@@ -1151,7 +1213,6 @@ class PackageLibrary(QTreeWidget):
         Generates the package tree
 
         """
-
         self.itemChanged.disconnect()
         self.clear()
         self.fill_item(self.invisibleRootItem(), self.package_tree)
@@ -1164,7 +1225,6 @@ class PackageLibrary(QTreeWidget):
         :param item: current item to fill
         :param value: value of the item in the tree
         """
-
         item.setExpanded(True)
 
         if type(value) is dict:
@@ -1269,7 +1329,6 @@ class InstallProcesses(QDialog):
 
         :param folder: True if the dialog installs from folder, False if from zip file
         """
-
         if folder is True:
             filename = QFileDialog.getExistingDirectory(self, caption='Select a directory',
                                                         directory=os.path.expanduser("~"),
@@ -1290,7 +1349,6 @@ class InstallProcesses(QDialog):
         """
         Installs the selected file/folder on Populse_MIA
         """
-
         def add_package(proc_dic, module_name):
             """
             Adds a package and its modules to the package tree
@@ -1299,7 +1357,6 @@ class InstallProcesses(QDialog):
             :param module_name: name of the module
             :return: proc_dic: the modified process tree-dictionary
             """
-
             if module_name:
 
                 # Reloading the package
@@ -1332,22 +1389,33 @@ class InstallProcesses(QDialog):
                 for k, v in sorted(list(pkg.__dict__.items())):
                     # Checking each class of in the package
                     if inspect.isclass(v):
+
                         try:
+                            print('\n Installing %s.%s ...' %  (module_name, v.__name__))
                             get_process_instance(
                                 '%s.%s' % (module_name, v.__name__))
-                        except:
-                            pass
+
+                        except Exception:
+                            print(traceback.format_exc())
+                            #TODO: WHICH TYPE OF EXCEPTION?
+                            #pass
+
                         else:
                             # Updating the tree's dictionnary
                             path_list = module_name.split('.')
                             path_list.append(k)
                             pkg_iter = proc_dic
+
                             for element in path_list:
+
                                 if element in pkg_iter.keys():
                                     pkg_iter = pkg_iter[element]
+
                                 else:
+
                                     if element is path_list[-1]:
                                         pkg_iter[element] = 'process_enabled'
+
                                     else:
                                         pkg_iter[element] = {}
                                         pkg_iter = pkg_iter[element]
@@ -1363,18 +1431,22 @@ class InstallProcesses(QDialog):
             :return:
             """
             for dname, dirs, files in os.walk(path):
+                
                 for fname in files:
                     # Modifying only .py files (pipelines are saved with this extension)
+                    
                     if fname[-2:] == 'py':
                         fpath = os.path.join(dname, fname)
+                        
                         with open(fpath) as f:
                             s = f.read()
+                            
                         s = s.replace(old_pattern + '.', new_pattern + '.')
+                        
                         with open(fpath, "w") as f:
                             f.write(s)
-
+                            
         filename = self.path_edit.text()
-
         config = Config()
 
         if not os.path.isdir(filename):
