@@ -39,10 +39,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html">populse_mia.pipeline_manager.capsul_files package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-populse_mia.pipeline_manager.capsul_files.pipeline_developper_view">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-populse_mia.pipeline_manager.capsul_files.pipeline_tools">populse_mia.pipeline_manager.capsul_files.pipeline_tools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-populse_mia.pipeline_manager.capsul_files.test_save">populse_mia.pipeline_manager.capsul_files.test_save module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-populse_mia.pipeline_manager.capsul_files">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-pipeline-developper-view-module">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-pipeline-tools-module">populse_mia.pipeline_manager.capsul_files.pipeline_tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-test-save-module">populse_mia.pipeline_manager.capsul_files.test_save module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -543,7 +543,7 @@ if hasattr(self.process, ‘filters’):</p>
 <dl class="class">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">PipelineEditor</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView" title="populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView"><code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view.PipelineDevelopperView</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.qt_gui.widgets.pipeline_developper_view.PipelineDevelopperView</span></code></p>
 <p>View to edit a pipeline graphically</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
@@ -1368,18 +1368,6 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.pipeline_manager.pipeline_editor.save_py_pipeline">
-<code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">save_py_pipeline</code><span class="sig-paren">(</span><em>pipeline</em>, <em>py_file</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.save_py_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a pipeline in an Python source file</p>
-<dl class="docutils">
-<dt>pipeline: Pipeline instance</dt>
-<dd>pipeline to save</dd>
-<dt>py_file: str</dt>
-<dd>.py file to save the pipeline in</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.values">
 <code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">values</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2133,7 +2121,7 @@ package where a change of status where done.</p>
 </dl>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package">
-<code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em>, <em>show_error=False</em>, <em>init_package_tree=False</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a package and its modules to the package tree</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2150,11 +2138,15 @@ package where a change of status where done.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Package_library.package_tree:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first last">current package tree known in Package Library window</p>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">current package tree known in Package Library window</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Show_error:</th><td class="field-body"><p class="first last">display error in a message box in case of error. If False,</p>
 </td>
 </tr>
 </tbody>
 </table>
+<p>errors are silent and error messages returned at the end of execution</p>
 </dd></dl>
 
 <dl class="method">

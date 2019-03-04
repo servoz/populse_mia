@@ -71,7 +71,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
             # Output
             self.add_trait("smoothed_file", traits.File(output=True, desc='Output file'))  # Mandatory plug
 
-            self.process = spm.smooth()
+            self.process = spm.Smooth()
     
         def list_outputs(self):
             # Depending on the chosen method, the output dictionary will be generated differently
