@@ -31,6 +31,7 @@ install:
   - pip3 install codecov
   #- pip3 install --upgrade --force-reinstall pyqt5
   - pip3 install --force-reinstall pyqt5==5.11.3
+  - pip3 install --force-reinstall PyQt5-sip==4.19.13
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_db
