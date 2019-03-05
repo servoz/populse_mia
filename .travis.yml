@@ -21,6 +21,9 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libpng; fi
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then uname -a; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
+
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libpng-dev; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install subversion; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install svn; fi
