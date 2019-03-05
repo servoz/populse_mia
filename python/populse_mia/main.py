@@ -8,6 +8,25 @@
 
 # -*- coding: utf-8 -*- # Character encoding, recommended
 
+import sys
+import os
+import pkgutil
+import inspect
+import yaml
+
+# PyQt5 imports
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QDir, QLockFile, Qt
+
+# soma-base imports
+from soma.path import find_in_path
+from soma.qt_gui.qt_backend.Qt import QMessageBox
+
+# populse_mia imports
+#from populse_mia.software_properties.config import Config
+#from populse_mia.software_properties.saved_projects import SavedProjects
+#from populse_mia.main_window.main_window import MainWindow
+#from populse_mia.project.project import Project
 
 main_window = None
 
@@ -46,12 +65,12 @@ class NipypePackages:
         :param class_name: name of the class
         """
 
-        import sys
-        import pkgutil
-        import inspect
+        #import sys
+        #import pkgutil
+        #import inspect
 
         # soma-base imports
-        from soma.path import find_in_path
+        #from soma.path import find_in_path
 
         if module_name:
 
@@ -114,18 +133,18 @@ def verify_processes():
     tries to make them available in the processes library
     """
 
-    import sys
-    import os
-    import yaml
+    #import sys
+    #import os
+    #import yaml
 
     # PyQt5 imports
-    from PyQt5.QtWidgets import QApplication
+    #from PyQt5.QtWidgets import QApplication
 
     # Populse_MIA imports
     from populse_mia.software_properties.config import Config
 
     # soma-base imports
-    from soma.qt_gui.qt_backend.Qt import QMessageBox
+    #from soma.qt_gui.qt_backend.Qt import QMessageBox
 
     proc_content_flag = False
     config = Config()
@@ -194,7 +213,7 @@ def verify_saved_projects():
     :return: the list of the deleted projects
     """
 
-    import os
+    #import os
 
     # Populse_MIA imports
     from populse_mia.software_properties.saved_projects import SavedProjects
@@ -211,12 +230,12 @@ def verify_saved_projects():
 
 
 def launch_mia():
-    import sys
-    import os
+    #import sys
+    #import os
 
     # PyQt5 imports
-    from PyQt5.QtCore import QDir, QLockFile, Qt
-    from PyQt5.QtWidgets import QApplication
+    #from PyQt5.QtCore import QDir, QLockFile, Qt
+    #from PyQt5.QtWidgets import QApplication
 
     # Populse_MIA imports
     from populse_mia.main_window.main_window import MainWindow
@@ -230,7 +249,7 @@ def launch_mia():
 
     def my_excepthook(type, value, tback):
 
-        import sys
+        #import sys
         # log the exception here
 
         print("excepthook")
@@ -267,9 +286,9 @@ def launch_mia():
 
 
 def main():
-    import os
-    import sys
-    import yaml
+    #import os
+    #import sys
+    #import yaml
 
     # Checking if Populse_MIA is called from the site/dist packages or from a cloned git repository
     if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path:
