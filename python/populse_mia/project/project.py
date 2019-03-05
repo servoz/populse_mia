@@ -334,7 +334,7 @@ class Project:
         """
         with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'r') as stream:
             try:
-                return yaml.load(stream)
+                return yaml.load(stream, Loader=yaml.FullLoader)
             except yaml.YAMLError as exc:
                 print(exc)
 

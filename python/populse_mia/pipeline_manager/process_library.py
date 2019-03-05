@@ -153,7 +153,7 @@ class ProcessLibraryWidget(QWidget):
             open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'a').close()
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
-                return yaml.load(stream)
+                return yaml.load(stream, Loader=yaml.FullLoader)
             except yaml.YAMLError as exc:
                 print(exc)
 
@@ -663,7 +663,7 @@ class PackageLibraryDialog(QDialog):
 
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
-                return yaml.load(stream)
+                return yaml.load(stream, Loader=yaml.FullLoader)
             except yaml.YAMLError as exc:
                 print(exc)
 
@@ -1482,7 +1482,7 @@ class InstallProcesses(QDialog):
 
             with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
                 try:
-                    process_dic = yaml.load(stream)
+                    process_dic = yaml.load(stream, Loader=yaml.FullLoader)
                 except yaml.YAMLError as exc:
                     process_dic = {}
                     print(exc)

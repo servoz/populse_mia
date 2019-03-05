@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
     with open(os.path.join('properties', 'process_config.yml'), 'r') as stream:
         try:
-            process_dic = yaml.load(stream)
+            process_dic = yaml.load(stream, Loader=yaml.FullLoader)
         except yaml.YAMLError as exc:
             process_dic = {}
             print(exc)

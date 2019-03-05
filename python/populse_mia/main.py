@@ -151,7 +151,7 @@ def verify_processes():
 
     if os.path.isfile(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml')):
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
-            proc_content = yaml.load(stream)
+            proc_content = yaml.load(stream, Loader=yaml.FullLoader)
             proc_content_flag = True
 
     if (not proc_content_flag) or (
@@ -299,7 +299,7 @@ def main():
         if os.path.isfile(dot_mia_config):
             print('configuration.yml in .populse_mia has been detected.')
             with open(dot_mia_config, 'r') as stream:
-                mia_home_config = yaml.load(stream)
+                mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
             mia_home_config["dev_mode"] = "yes"
             with open(dot_mia_config, 'w', encoding='utf8') as configfile:
                 yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
@@ -308,7 +308,7 @@ def main():
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         try:
             with open(dot_mia_config, 'r') as stream:
-                mia_home_config = yaml.load(stream)
+                mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
         except:
             # the config file probably does not exist yet,
             # start with ans empty config
@@ -329,7 +329,7 @@ def main():
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
     if os.path.isfile(dot_mia_config):
         with open(dot_mia_config, 'r') as stream:
-            mia_home_config = yaml.load(stream)
+            mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
         mia_home_config["dev_mode"] = "no"
         with open(dot_mia_config, 'w', encoding='utf8') as configfile:
             yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)

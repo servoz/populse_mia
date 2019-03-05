@@ -44,7 +44,7 @@ class SavedProjects:
         config = Config()
         with open(os.path.join(config.get_mia_path(), 'properties', 'saved_projects.yml'), 'r') as stream:
             try:
-                return yaml.load(stream)
+                return yaml.load(stream, Loader=yaml.FullLoader)
             except yaml.YAMLError as exc:
                 print(exc)
 
