@@ -221,7 +221,9 @@ class MIAInstallWidget(QtWidgets.QWidget):
     def load_config(config_file):
         with open(config_file, 'r') as stream:
             try:
-                return yaml.load(stream, Loader=yaml.FullLoader)
+                # return = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+                return  = yaml.load(stream) ## version < 5.1
+            
             except yaml.YAMLError as exc:
                 print(exc)
 

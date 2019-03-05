@@ -92,7 +92,8 @@ if __name__ == '__main__':
 
     with open(os.path.join('properties', 'process_config.yml'), 'r') as stream:
         try:
-            process_dic = yaml.load(stream, Loader=yaml.FullLoader)
+            # process_dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+            process_dic = yaml.load(stream) ## version < 5.1
         except yaml.YAMLError as exc:
             process_dic = {}
             print(exc)

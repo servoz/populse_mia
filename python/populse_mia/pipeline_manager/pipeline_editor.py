@@ -563,7 +563,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         config = Config()
         with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
             try:
-                dic = yaml.load(stream, Loader=yaml.FullLoader)
+                # dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+                dic = yaml.load(stream) ## version < 5.1
             except yaml.YAMLError as exc:
                 print(exc)
                 dic = {}
@@ -1217,7 +1218,8 @@ class PipelineEditor(PipelineDevelopperView):
                 # Reading the process configuration file
                 with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
                     try:
-                        dic = yaml.load(stream, Loader=yaml.FullLoader)
+                        # dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+                        dic = yaml.load(stream) ## version < 5.1
                     except yaml.YAMLError as exc:
                         print(exc)
                         dic = {}

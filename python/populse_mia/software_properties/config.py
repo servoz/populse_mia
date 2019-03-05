@@ -76,7 +76,8 @@ class Config:
     def loadConfig(self):
         with open(os.path.join(self.get_mia_path(), 'properties', 'config.yml'), 'r') as stream:
             try:
-                return yaml.load(stream, Loader=yaml.FullLoader)
+                # return yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+                return yaml.load(stream) ## version < 5.1
             except yaml.YAMLError as exc:
                 print(exc)
 
@@ -296,7 +297,8 @@ class Config:
         if os.path.isfile(dot_mia_config):
             with open(dot_mia_config, 'r') as stream:
                 try:
-                    mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
+                    # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
+                    mia_home_config = yaml.load(stream) ## version < 5.1
                     if "dev_mode" in mia_home_config.keys() and mia_home_config["dev_mode"] == "yes":
                         return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
