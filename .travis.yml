@@ -23,6 +23,7 @@ before_install:
 install:
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then uname -a; fi
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $SHELL; fi
 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libpng-dev; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install subversion; fi
@@ -59,6 +60,9 @@ install:
   - sleep 3 # give xvfb some time to start
 
 script:
+
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then python -c "import sys; from PyQt5.QtWidgets import QApplication; print(sys.argv); app1 = QApplication.instance(); app = QApplication(sys.argv); print(app1); print(app)"; fi
+
   - python3 -V
   - python3 ./python/populse_mia/test.py -v
   - coverage run ./python/populse_mia/test.py
