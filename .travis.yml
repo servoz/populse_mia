@@ -21,8 +21,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libpng; fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then uname -a; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then uname -a; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libpng-dev; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install subversion; fi
@@ -32,7 +32,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install --upgrade pywavelets; fi
   - python3 setup.py install
   - pip3 install codecov
-  #- pip3 install --upgrade --force-reinstall pyqt5
+  - pip3 install --upgrade --force-reinstall pyqt5
   - cd ..
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_db
