@@ -1,4 +1,4 @@
-# Long version
+# Long version:
 * [Python Packaging User Guide](https://packaging.python.org/tutorials/packaging-projects/)
 
 # Short version:
