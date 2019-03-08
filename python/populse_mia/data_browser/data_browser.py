@@ -9,6 +9,7 @@
 import ast
 import os
 from functools import partial
+from PyQt5.QtCore import QTimer
 
 # PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
@@ -311,7 +312,7 @@ class DataBrowser(QWidget):
         self.save_filter_action.triggered.connect(
             lambda: self.project.save_current_filter(self.advanced_search.get_filters(False)))
 
-        self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+O")
+        self.open_filter_action = QAction("Open filter", self, shortcut="Ctrl+F")
         self.open_filter_action.triggered.connect(self.open_filter)
 
     def open_filter(self):
@@ -351,6 +352,16 @@ class DataBrowser(QWidget):
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
+    def delay_event(self, str_search):
+        """
+        Delays the use of the str_search function by 500ms
+        """
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        f = partial(self.search_str, str_search)
+        self.timer.timeout.connect(f)
+        self.timer.start(500)
+
     def create_toolbar_menus(self):
         """
         Creates the toolbar menu at the top of the tab
@@ -375,7 +386,7 @@ class DataBrowser(QWidget):
         filters_tool_button.setMenu(filters_menu)
 
         self.search_bar = RapidSearch(self)
-        self.search_bar.textChanged.connect(partial(self.search_str))
+        self.search_bar.textChanged.connect(self.delay_event)
 
         sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                                           "sources_images")
@@ -424,7 +435,6 @@ class DataBrowser(QWidget):
         """
 
         old_scan_list = self.table_data.scans_to_visualize
-
         return_list = []
 
         # Every scan taken if empty search
@@ -753,15 +763,15 @@ class TableDataBrowser(QTableWidget):
         # Adding a custom context menu
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         if self.activate_selection:
-            self.customContextMenuRequested.connect(partial(self.context_menu_table))
+            self.customContextMenuRequested.connect(self.context_menu_table)
         self.itemChanged.connect(self.change_cell_color)
         if activate_selection:
             self.itemSelectionChanged.connect(self.selection_changed)
         else:
             self.setSelectionMode(QAbstractItemView.NoSelection)
-        self.horizontalHeader().sortIndicatorChanged.connect(partial(self.sort_updated))
-        self.horizontalHeader().sectionDoubleClicked.connect(partial(self.select_all_column))
-        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
+        self.horizontalHeader().sortIndicatorChanged.connect(self.sort_updated)
+        self.horizontalHeader().sectionDoubleClicked.connect(self.select_all_column)
+        self.horizontalHeader().sectionMoved.connect(self.section_moved)
         self.verticalHeader().setMinimumSectionSize(30)
 
         self.update_table(True)
@@ -941,7 +951,7 @@ class TableDataBrowser(QTableWidget):
             self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
 
         # We reconnect the signal
-        self.horizontalHeader().sectionMoved.connect(partial(self.section_moved))
+        self.horizontalHeader().sectionMoved.connect(self.section_moved)
 
         # Selection updated
         self.update_selection()
