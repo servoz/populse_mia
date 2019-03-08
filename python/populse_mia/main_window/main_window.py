@@ -119,7 +119,6 @@ class MainWindow(QMainWindow):
         self.create_actions()
         self.create_menus()
 
-        self.setWindowTitle('MIA - Multiparametric Image Analysis')
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
 
         self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
