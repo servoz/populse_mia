@@ -13,6 +13,7 @@ import os
 import pkgutil
 import inspect
 import yaml
+import copy
 
 # PyQt5 imports
 from PyQt5.QtWidgets import QApplication
@@ -220,7 +221,7 @@ def verify_saved_projects():
     from populse_mia.software_properties.saved_projects import SavedProjects
 
     saved_projects_object = SavedProjects()
-    saved_projects_list = saved_projects_object.pathsList
+    saved_projects_list = copy.deepcopy(saved_projects_object.pathsList)
     deleted_projects = []
     for saved_project in saved_projects_list:
         if not os.path.isdir(saved_project):
