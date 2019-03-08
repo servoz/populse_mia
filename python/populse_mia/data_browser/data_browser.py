@@ -353,7 +353,9 @@ class DataBrowser(QWidget):
         self.count_table_pop_up.show()
 
     def delay_event(self, str_search):
-
+        """
+        Delays the use of the str_search function by 500ms
+        """
         self.timer = QTimer()
         self.timer.setSingleShot(True)
         f = partial(self.search_str, str_search)
