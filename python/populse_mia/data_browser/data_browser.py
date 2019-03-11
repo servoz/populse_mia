@@ -386,7 +386,8 @@ class DataBrowser(QWidget):
         filters_tool_button.setMenu(filters_menu)
 
         self.search_bar = RapidSearch(self)
-        self.search_bar.textChanged.connect(self.delay_event)
+        self.search_bar.textChanged.connect(self.search_str)
+        #self.search_bar.textChanged.connect(self.delay_event)
 
         sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                                           "sources_images")
