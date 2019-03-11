@@ -3,6 +3,7 @@ from setuptools import find_packages, setup
 
 # Select modules to include in distribution
 modules = find_packages('python')
+print('\nmodules found: ', modules)
 
 # Additional script files to include in distribution
 scripts = []
