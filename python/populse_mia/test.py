@@ -18,7 +18,7 @@ from populse_db.database import FIELD_TYPE_INTEGER
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 import unittest
-import time
+
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from populse_mia.project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
@@ -446,7 +446,6 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Testing G1 rapid search
         self.main_window.data_browser.search_bar.setText("G1")
-        time.sleep(1)
         scans_displayed = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
             item = self.main_window.data_browser.table_data.item(row, 0)
@@ -459,7 +458,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Testing that all the scans are back when clicking on the cross
         QTest.mouseClick(self.main_window.data_browser.button_cross, Qt.LeftButton)
-        time.sleep(1)
+
         scans_displayed = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
             item = self.main_window.data_browser.table_data.item(row, 0)
@@ -480,7 +479,6 @@ class TestMIADataBrowser(unittest.TestCase):
         # Testing not defined values
         QTest.mouseClick(self.main_window.data_browser.button_cross, Qt.LeftButton)
         self.main_window.data_browser.search_bar.setText("*Not Defined*")
-        time.sleep(1)
         scans_displayed = []
         for row in range(0, self.main_window.data_browser.table_data.rowCount()):
             item = self.main_window.data_browser.table_data.item(row, 0)
