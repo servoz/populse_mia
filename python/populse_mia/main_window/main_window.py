@@ -46,36 +46,36 @@ class MainWindow(QMainWindow):
         - saved_projects: projects that have already been saved
 
     Methods:
+        - add_clinical_tags: adds the clinical tags to the database and the data browser
+        - check_unsaved_modifications: checks if there are differences between the current project and the database
+        - closeEvent: overrides the closing event to check if there are unsaved modifications
         - create_actions: creates the actions in each menu
         - create_menus: creates the menu-bar
-        - undo: undoes the last action made by the user
+        - create_project_pop_up: creates a new project
+        - create_tabs: creates the tabs
+        - documentation: opens the documentation in a web browser
+        - import_data: calls the import software (MRI File Manager)
+        - install_processes_pop_up: opens the install processes pop-up
+        - open_project_pop_up: opens a pop-up to open a project and updates the recent projects
+        - open_recent_project: opens a recent project
+        - package_library_pop_up: opens the package library pop-up
+        - project_properties_pop_up: opens the project properties pop-up
         - redo: redoes the last action made by the user
-        - closeEvent: overrides the closing event to check if there are unsaved modifications
         - remove_raw_files_useless: removes the useless raw files of the current project
         - save: saves either the current project or the current pipeline
         - save_as: saves either the current project or the current pipeline under a new name
-        - saveChoice: checks if the project needs to be saved as or just saved
-        - check_unsaved_modifications: checks if there are differences between the current project and the database
-        - create_tabs: creates the tabs
         - save_project_as: opens a pop-up to save the current project as
-        - create_project_pop_up: creates a new project
-        - open_project_pop_up: opens a pop-up to open a project and updates the recent projects
-        - open_recent_project: opens a recent project
+        - saveChoice: checks if the project needs to be saved as or just saved
+        - see_all_projects: opens a pop-up to show the recent projects
+        - software_preferences_pop_up: opens the MIA2 preferences pop-up
         - switch_project: switches project if it's possible
+        - tab_changed: method called when the tab is changed
+        - undo: undoes the last action made by the user
+        - update_package_library_action: updates the package library action depending on the mode
         - update_project: updates the project once the database has been updated
         - update_recent_projects_actions: updates the list of recent projects
-        - see_all_projects: opens a pop-up to show the recent projects
-        - project_properties_pop_up: opens the project properties pop-up
-        - software_preferences_pop_up: opens the MIA2 preferences pop-up
-        - update_package_library_action: updates the package library action depending on the mode
-        - package_library_pop_up: opens the package library pop-up
-        - documentation: opens the documentation in a web browser
-        - install_processes_pop_up: opens the install processes pop-up
-        - add_clinical_tags: adds the clinical tags to the database and the data browser
-        - import_data: calls the import software (MRI File Manager)
-        - tab_changed: method called when the tab is changed
-
     """
+
     def __init__(self, project, test=False, deleted_projects=None):
 
         super(MainWindow, self).__init__()
@@ -288,7 +288,7 @@ class MainWindow(QMainWindow):
         :param event: closing event
         """
 
-        if self.check_unsaved_modifications():
+        if self.check_unsaved_modifications() or self.test:
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
