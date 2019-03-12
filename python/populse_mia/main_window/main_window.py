@@ -43,40 +43,39 @@ class MainWindow(QMainWindow):
     Attributes:
         - project: current project in the software
         - test: boolean if the widget is launched from unit tests or not
-        - force_exit: boolean if we need to force exit (used in unit tests)
         - saved_projects: projects that have already been saved
 
     Methods:
+        - add_clinical_tags: adds the clinical tags to the database and the data browser
+        - check_unsaved_modifications: checks if there are differences between the current project and the database
+        - closeEvent: overrides the closing event to check if there are unsaved modifications
         - create_actions: creates the actions in each menu
         - create_menus: creates the menu-bar
-        - undo: undoes the last action made by the user
+        - create_project_pop_up: creates a new project
+        - create_tabs: creates the tabs
+        - documentation: opens the documentation in a web browser
+        - import_data: calls the import software (MRI File Manager)
+        - install_processes_pop_up: opens the install processes pop-up
+        - open_project_pop_up: opens a pop-up to open a project and updates the recent projects
+        - open_recent_project: opens a recent project
+        - package_library_pop_up: opens the package library pop-up
+        - project_properties_pop_up: opens the project properties pop-up
         - redo: redoes the last action made by the user
-        - closeEvent: overrides the closing event to check if there are unsaved modifications
         - remove_raw_files_useless: removes the useless raw files of the current project
         - save: saves either the current project or the current pipeline
         - save_as: saves either the current project or the current pipeline under a new name
-        - saveChoice: checks if the project needs to be saved as or just saved
-        - check_unsaved_modifications: checks if there are differences between the current project and the database
-        - create_tabs: creates the tabs
         - save_project_as: opens a pop-up to save the current project as
-        - create_project_pop_up: creates a new project
-        - open_project_pop_up: opens a pop-up to open a project and updates the recent projects
-        - open_recent_project: opens a recent project
+        - saveChoice: checks if the project needs to be saved as or just saved
+        - see_all_projects: opens a pop-up to show the recent projects
+        - software_preferences_pop_up: opens the MIA2 preferences pop-up
         - switch_project: switches project if it's possible
+        - tab_changed: method called when the tab is changed
+        - undo: undoes the last action made by the user
+        - update_package_library_action: updates the package library action depending on the mode
         - update_project: updates the project once the database has been updated
         - update_recent_projects_actions: updates the list of recent projects
-        - see_all_projects: opens a pop-up to show the recent projects
-        - project_properties_pop_up: opens the project properties pop-up
-        - software_preferences_pop_up: opens the MIA2 preferences pop-up
-        - update_package_library_action: updates the package library action depending on the mode
-        - package_library_pop_up: opens the package library pop-up
-        - documentation: opens the documentation in a web browser
-        - install_processes_pop_up: opens the install processes pop-up
-        - add_clinical_tags: adds the clinical tags to the database and the data browser
-        - import_data: calls the import software (MRI File Manager)
-        - tab_changed: method called when the tab is changed
-
     """
+
     def __init__(self, project, test=False, deleted_projects=None):
 
         super(MainWindow, self).__init__()
@@ -101,7 +100,6 @@ class MainWindow(QMainWindow):
                                           "sources_images")
         self.project = project
         self.test = test
-        self.force_exit = False
         app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
@@ -159,7 +157,7 @@ class MainWindow(QMainWindow):
 
         self.action_see_all_projects = QAction('See all projects', self)
 
-        self.action_project_properties = QAction('project properties', self)
+        self.action_project_properties = QAction('Project properties', self)
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
@@ -290,17 +288,14 @@ class MainWindow(QMainWindow):
         :param event: closing event
         """
 
-        if self.force_exit:
-            event.accept()
-            return
-        if self.check_unsaved_modifications():
+        if self.check_unsaved_modifications() == False or self.test:
+            can_exit = True
+
+        else:
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
-
-        else:
-            can_exit = True
 
         if can_exit:
             self.project.unsaveModifications()
@@ -381,7 +376,7 @@ class MainWindow(QMainWindow):
 
     def saveChoice(self):
         """
-        Checks if the project needs to be saved as or just saved
+        Checks if the project needs to be 'saved as' or just 'saved'
 
         """
         if self.project.isTempProject:
@@ -574,29 +569,56 @@ class MainWindow(QMainWindow):
 
         """
         # Ui_Dialog() is defined in pop_ups.py
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
 
-        self.exPopup = PopUpOpenProject()
-        if self.exPopup.exec_():
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
 
-            file_name = self.exPopup.selectedFiles()
-            self.exPopup.get_filename(file_name)
-            file_name = self.exPopup.relative_path
+        else:
+            can_switch = True
 
-            self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
+        # We can open a new project
+        if can_switch:
+            self.exPopup = PopUpOpenProject()
+            if self.exPopup.exec_():
+
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.get_filename(file_name)
+                file_name = self.exPopup.relative_path
+
+                self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
 
     def open_recent_project(self):
         """
         Opens a recent project
 
         """
-        action = self.sender()
-        if action:
-            file_name = action.data()
-            entire_path = os.path.abspath(file_name)
-            path, name = os.path.split(entire_path)
-            relative_path = os.path.relpath(file_name)
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
 
-            self.switch_project(relative_path, file_name, name)  # We switch the project
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
+
+        else:
+            can_switch = True
+
+        # We can open a new project
+        if can_switch:
+            action = self.sender()
+            if action:
+                file_name = action.data()
+                entire_path = os.path.abspath(file_name)
+                path, name = os.path.split(entire_path)
+                relative_path = os.path.relpath(file_name)
+
+                self.switch_project(relative_path, file_name, name)  # We switch the project
 
     def switch_project(self, path, file_name, name):
         """
@@ -620,55 +642,40 @@ class MainWindow(QMainWindow):
                         and os.path.exists(os.path.join(path, "data", "downloaded_data")) \
                         and os.path.exists(os.path.join(path, "filters")):
 
-                    # We check for unsaved modifications
-                    if self.check_unsaved_modifications():
+                    # We check for invalid scans in the project
 
-                        # If there are unsaved modifications, we ask the user what he wants to do
-                        self.pop_up_close = PopUpQuit(self.project)
-                        self.pop_up_close.save_as_signal.connect(self.saveChoice)
-                        self.pop_up_close.exec()
-                        can_switch = self.pop_up_close.can_exit()
+                    try:
+                        temp_database = Project(path, False)
+                    except IOError:
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText(
+                            "project already opened")
+                        msg.setInformativeText(
+                            "The project at " + str(path) +
+                            " is already opened in another instance of the software.")
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
+                        return False
+                    problem_list = controller.verify_scans(temp_database, path)
 
-                    else:
-                        can_switch = True
-
-                    # We can open a new project
-                    if can_switch:
-
-                        # We check for invalid scans in the project
-
-                        try:
-                            temp_database = Project(path, False)
-                        except IOError:
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Warning)
-                            msg.setText(
-                                "project already opened")
-                            msg.setInformativeText(
-                                "The project at " + str(path) +
-                                " is already opened in another instance of the software.")
-                            msg.setWindowTitle("Warning")
-                            msg.setStandardButtons(QMessageBox.Ok)
-                            msg.buttonClicked.connect(msg.close)
-                            msg.exec()
-                            return False
-                        problem_list = controller.verify_scans(temp_database, path)
-
-                        # Message if invalid files
-                        if problem_list:
-                            str_msg = ""
-                            for element in problem_list:
-                                str_msg += element + "\n\n"
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Warning)
-                            msg.setText(
-                                "These files have been modified or removed since "
-                                "they have been converted for the first time:")
-                            msg.setInformativeText(str_msg)
-                            msg.setWindowTitle("Warning")
-                            msg.setStandardButtons(QMessageBox.Ok)
-                            msg.buttonClicked.connect(msg.close)
-                            msg.exec()
+                    # Message if invalid files
+                    if problem_list:
+                        str_msg = ""
+                        for element in problem_list:
+                            str_msg += element + "\n\n"
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText(
+                            "These files have been modified or removed since "
+                            "they have been converted for the first time:")
+                        msg.setInformativeText(str_msg)
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
 
                     self.project.session.unsave_modifications()
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
