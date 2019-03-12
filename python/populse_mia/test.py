@@ -1768,7 +1768,6 @@ class TestMIAPipelineManager(unittest.TestCase):
         config = Config()
 
         # Forcing the exit and disabling the init progressbar
-        self.main_window.force_exit = True
         self.main_window.pipeline_manager.disable_progress_bar = True
 
         # Adding the processes path to the system path

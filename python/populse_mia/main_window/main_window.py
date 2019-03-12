@@ -43,7 +43,6 @@ class MainWindow(QMainWindow):
     Attributes:
         - project: current project in the software
         - test: boolean if the widget is launched from unit tests or not
-        - force_exit: boolean if we need to force exit (used in unit tests)
         - saved_projects: projects that have already been saved
 
     Methods:
@@ -101,7 +100,6 @@ class MainWindow(QMainWindow):
                                           "sources_images")
         self.project = project
         self.test = test
-        self.force_exit = False
         app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
 
@@ -159,7 +157,7 @@ class MainWindow(QMainWindow):
 
         self.action_see_all_projects = QAction('See all projects', self)
 
-        self.action_project_properties = QAction('project properties', self)
+        self.action_project_properties = QAction('Project properties', self)
 
         self.action_software_preferences = QAction('MIA preferences', self)
 
@@ -290,9 +288,6 @@ class MainWindow(QMainWindow):
         :param event: closing event
         """
 
-        if self.force_exit:
-            event.accept()
-            return
         if self.check_unsaved_modifications():
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
