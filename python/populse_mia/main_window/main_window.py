@@ -288,14 +288,14 @@ class MainWindow(QMainWindow):
         :param event: closing event
         """
 
-        if self.check_unsaved_modifications() or self.test:
+        if self.check_unsaved_modifications() == False or self.test:
+            can_exit = True
+
+        else:
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
             can_exit = self.pop_up_close.can_exit()
-
-        else:
-            can_exit = True
 
         if can_exit:
             self.project.unsaveModifications()
