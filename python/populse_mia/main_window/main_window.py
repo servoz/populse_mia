@@ -376,7 +376,7 @@ class MainWindow(QMainWindow):
 
     def saveChoice(self):
         """
-        Checks if the project needs to be saved as or just saved
+        Checks if the project needs to be 'saved as' or just 'saved'
 
         """
         if self.project.isTempProject:
@@ -569,29 +569,56 @@ class MainWindow(QMainWindow):
 
         """
         # Ui_Dialog() is defined in pop_ups.py
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
 
-        self.exPopup = PopUpOpenProject()
-        if self.exPopup.exec_():
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
 
-            file_name = self.exPopup.selectedFiles()
-            self.exPopup.get_filename(file_name)
-            file_name = self.exPopup.relative_path
+        else:
+            can_switch = True
 
-            self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
+        # We can open a new project
+        if can_switch:
+            self.exPopup = PopUpOpenProject()
+            if self.exPopup.exec_():
+
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.get_filename(file_name)
+                file_name = self.exPopup.relative_path
+
+                self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
 
     def open_recent_project(self):
         """
         Opens a recent project
 
         """
-        action = self.sender()
-        if action:
-            file_name = action.data()
-            entire_path = os.path.abspath(file_name)
-            path, name = os.path.split(entire_path)
-            relative_path = os.path.relpath(file_name)
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
 
-            self.switch_project(relative_path, file_name, name)  # We switch the project
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
+
+        else:
+            can_switch = True
+
+        # We can open a new project
+        if can_switch:
+            action = self.sender()
+            if action:
+                file_name = action.data()
+                entire_path = os.path.abspath(file_name)
+                path, name = os.path.split(entire_path)
+                relative_path = os.path.relpath(file_name)
+
+                self.switch_project(relative_path, file_name, name)  # We switch the project
 
     def switch_project(self, path, file_name, name):
         """
@@ -615,55 +642,40 @@ class MainWindow(QMainWindow):
                         and os.path.exists(os.path.join(path, "data", "downloaded_data")) \
                         and os.path.exists(os.path.join(path, "filters")):
 
-                    # We check for unsaved modifications
-                    if self.check_unsaved_modifications():
+                    # We check for invalid scans in the project
 
-                        # If there are unsaved modifications, we ask the user what he wants to do
-                        self.pop_up_close = PopUpQuit(self.project)
-                        self.pop_up_close.save_as_signal.connect(self.saveChoice)
-                        self.pop_up_close.exec()
-                        can_switch = self.pop_up_close.can_exit()
+                    try:
+                        temp_database = Project(path, False)
+                    except IOError:
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText(
+                            "project already opened")
+                        msg.setInformativeText(
+                            "The project at " + str(path) +
+                            " is already opened in another instance of the software.")
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
+                        return False
+                    problem_list = controller.verify_scans(temp_database, path)
 
-                    else:
-                        can_switch = True
-
-                    # We can open a new project
-                    if can_switch:
-
-                        # We check for invalid scans in the project
-
-                        try:
-                            temp_database = Project(path, False)
-                        except IOError:
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Warning)
-                            msg.setText(
-                                "project already opened")
-                            msg.setInformativeText(
-                                "The project at " + str(path) +
-                                " is already opened in another instance of the software.")
-                            msg.setWindowTitle("Warning")
-                            msg.setStandardButtons(QMessageBox.Ok)
-                            msg.buttonClicked.connect(msg.close)
-                            msg.exec()
-                            return False
-                        problem_list = controller.verify_scans(temp_database, path)
-
-                        # Message if invalid files
-                        if problem_list:
-                            str_msg = ""
-                            for element in problem_list:
-                                str_msg += element + "\n\n"
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Warning)
-                            msg.setText(
-                                "These files have been modified or removed since "
-                                "they have been converted for the first time:")
-                            msg.setInformativeText(str_msg)
-                            msg.setWindowTitle("Warning")
-                            msg.setStandardButtons(QMessageBox.Ok)
-                            msg.buttonClicked.connect(msg.close)
-                            msg.exec()
+                    # Message if invalid files
+                    if problem_list:
+                        str_msg = ""
+                        for element in problem_list:
+                            str_msg += element + "\n\n"
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setText(
+                            "These files have been modified or removed since "
+                            "they have been converted for the first time:")
+                        msg.setInformativeText(str_msg)
+                        msg.setWindowTitle("Warning")
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        msg.buttonClicked.connect(msg.close)
+                        msg.exec()
 
                     self.project.session.unsave_modifications()
                     self.remove_raw_files_useless()  # We remove the useless files from the old project
