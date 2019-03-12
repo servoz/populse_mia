@@ -56,35 +56,31 @@ class Project:
 
     Attributes:
         - folder: project's path
-        - database: populse_db's database object
-        - session: database session
-        - properties: project's properties
-        - undos: list of actions to undo
-        - redos: list of actions to redo
+        - project: project's object
 
     Methods:
         - add_clinical_tags: adds the clinical tags to the project
-        - init_filters: initializes the filters at project opening
-        - setCurrentFilter: sets the current filter of the project
-        - getFilter: returns a Filter object
-        - save_current_filter: saves the current filter
-        - getFilterName: input box to get the name of the filter to save
-        - loadProperties: loads the properties file
-        - getName: returns the name of the project
-        - setName: sets the name of the project
-        - saveConfig: saves the changes in the properties file
         - getDate: returns the date of creation of the project
-        - setDate: sets the date of the project
-        - getSortedTag: returns the sorted tag of the project
-        - setSortedTag: sets the sorted tag of the project
+        - getFilter: returns a Filter object
+        - getFilterName: input box to get the name of the filter to save
+        - getName: returns the name of the project
         - getSortOrder: returns the sort order of the project
-        - setSortOrder: sets the sort order of the project
-        - saveModifications: saves the pending operations of the project (actions still not saved)
-        - unsaveModifications: unsaves the pending operations of the project
+        - getSortedTag: returns the sorted tag of the project
         - hasUnsavedModifications: returns if the project has unsaved modifications or not
-        - undo: undoes the last action made by the user on the project
+        - init_filters: initializes the filters at project opening
+        - loadProperties: loads the properties file
         - redo: redoes the last action made by the user on the project
         - reput_values: reputs the value objects in the database
+        - save_current_filter: saves the current filter
+        - saveConfig: saves the changes in the properties file
+        - setCurrentFilter: sets the current filter of the project
+        - setDate: sets the date of the project
+        - saveModifications: saves the pending operations of the project (actions still not saved)
+        - setName: sets the name of the project
+        - setSortOrder: sets the sort order of the project
+        - setSortedTag: sets the sorted tag of the project
+        - undo: undoes the last action made by the user on the project
+        - unsaveModifications: unsaves the pending operations of the project
     """
 
     def __init__(self, project_root_folder, new_project):
