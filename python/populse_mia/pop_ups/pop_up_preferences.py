@@ -13,7 +13,8 @@ from functools import partial
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QLineEdit, QPushButton, \
-    QFileDialog, QMessageBox
+    QFileDialog, QMessageBox, QFrame
+from PyQt5.QtCore import QRect
 
 # Populse_MIA imports
 from populse_mia.software_properties.config import Config
@@ -24,16 +25,17 @@ class PopUpPreferences(QDialog):
     Is called when the user wants to change the software preferences
 
     Methods:
-        - browse_projects_save_path: called when "Projects folder" browse button is clicked
-        - browse_mri_conv_path: called when "MRIManager.jar" browse button is clicked
-        - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed
-        - use_spm_changed: called when the use_spm checkbox is changed
-        - use_matlab_changed: called when the use_matlab checkbox is changed
         - browse_matlab: called when matlab browse button is clicked
         - browse_matlab_standalone: called when matlab browse button is clicked
-        - browse_spm_standalone: called when spm standalone browse button is clicked
+        - browse_projects_save_path: called when "Projects folder" browse button is clicked
+        - browse_mri_conv_path: called when "MRIManager.jar" browse button is clicked
         - browse_spm: called when spm browse button is clicked
+        - browse_spm_standalone: called when spm standalone browse button is clicked
+        - clinical_mode_switch: called when the clinical mode checkbox is clicked
         - ok_clicked: saves the modifications to the config file and apply them
+        - use_matlab_changed: called when the use_matlab checkbox is changed
+        - use_spm_changed: called when the use_spm checkbox is changed
+        - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed
     """
 
     # Signal that will be emitted at the end to tell that the project has been created
@@ -48,6 +50,8 @@ class PopUpPreferences(QDialog):
 
         self.setObjectName("Dialog")
         self.setWindowTitle('MIA preferences')
+
+        self.clicked = 0
 
         self.tab_widget = QtWidgets.QTabWidget(self)
         self.tab_widget.setEnabled(True)
@@ -74,16 +78,19 @@ class PopUpPreferences(QDialog):
         h_box_auto_save.addStretch(1)
 
         self.clinical_mode_checkbox = QCheckBox('', self)
+        self.clinical_mode_checkbox.clicked.connect(self.clinical_mode_switch)
         self.clinical_mode_label = QLabel("Clinical mode")
 
         if config.get_clinical_mode() == "yes":
             self.clinical_mode_checkbox.setChecked(1)
+
         else:
             self.clinical_mode_checkbox.setChecked(1)
             self.clinical_mode_checkbox.setChecked(0)
 
         h_box_clinical_mode = QtWidgets.QHBoxLayout()
         h_box_clinical_mode.addWidget(self.clinical_mode_checkbox)
+        #h_box_clinical_mode.addWidget(self.clinical_mode_trap)
         h_box_clinical_mode.addWidget(self.clinical_mode_label)
         h_box_clinical_mode.addStretch(1)
 
@@ -360,6 +367,20 @@ class PopUpPreferences(QDialog):
         self.use_matlab_checkbox.stateChanged.connect(self.use_matlab_changed)
         self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
         self.use_spm_standalone_checkbox.stateChanged.connect(self.use_spm_standalone_changed)
+
+    def clinical_mode_switch(self):
+        """
+        Called when the clinical mode checkbox is clicked
+        """
+        self.clicked +=1
+        if self.clicked % 6 == 0:
+            self.clinical_mode_checkbox.setChecked(1)
+            self.clinical_mode_checkbox.setChecked(0)
+            self.clinical_mode_checkbox.setVisible(False)
+            self.clinical_mode_label.setText("Developer mode")
+        else:
+            self.clinical_mode_checkbox.setChecked(1)
+            self.clinical_mode_label.setText("Clinical mode")
 
     def browse_projects_save_path(self):
         """

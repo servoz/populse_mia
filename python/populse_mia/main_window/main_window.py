@@ -634,7 +634,7 @@ class MainWindow(QMainWindow):
 
             # If the file exists
             if os.path.exists(os.path.join(path)):
-
+                # If it is a MIA project
                 if os.path.exists(os.path.join(path, "properties", "properties.yml")) \
                         and os.path.exists(os.path.join(path, "database", "mia.db")) \
                         and os.path.exists(os.path.join(path, "data", "raw_data")) \
