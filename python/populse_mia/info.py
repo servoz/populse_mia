@@ -2,8 +2,8 @@ import sys
 
 # Current version
 version_major = 1
-version_minor = 0
-version_micro = 1
+version_minor = 1
+version_micro = 0
 version_extra = ""
 
 # Expected by setup.py: string of form "X.Y.Z"
