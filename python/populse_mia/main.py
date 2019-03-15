@@ -15,8 +15,12 @@ import inspect
 import yaml
 import copy
 
+from functools import partial
+
 # PyQt5 imports
-from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit
+
 from PyQt5.QtCore import QDir, QLockFile, Qt
 
 # soma-base imports
@@ -199,19 +203,12 @@ def main():
     '''
 
 
-    print('\nprout os.path.abspath(os.path.join(os.path.realpath(__file__))): ', os.path.abspath(os.path.join(os.path.realpath(__file__))))
-    
-    print("os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')): ", os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')))
-                                                                                               
-    print('os.path.dirname(os.path.dirname(os.path.realpath(__file__))): ', os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-    
     if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path: # "developer" mode
         print('Populse_MIA in "developer" mode')
         sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         
-        if os.path.isfile(dot_mia_config):
+        if not os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
             
             with open(dot_mia_config, 'r') as stream:
@@ -225,6 +222,7 @@ def main():
 
         else:
             print('\n{0} has not been detected.'.format(dot_mia_config))
+        verify_processes()
 
     else:                                                                            # "user" mode
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
@@ -233,25 +231,56 @@ def main():
             with open(dot_mia_config, 'r') as stream:
                 # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
                 mia_home_config = yaml.load(stream) ## version < 5.1
-                
+            verify_processes()
+
         except Exception as e:                                                      # the config file does not exist
             print('\n~/.populse_mia/configuration.yml has not been opened: ', e)
             mia_home_config = {}
             
-        mia_home_config["dev_mode"] = "no"
-        
-        try:                                                                        # try to create config
-            if not os.path.exists(os.path.dirname(dot_mia_config)):
-                os.mkdir(os.path.dirname(dot_mia_config))
-                print('\nThe {0} file is created ...'.format(dot_mia_config))
-                
-            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-                yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
-                
-        except Exception as e:
-            print('\nCould not write the {0} configuration file: {1} ...'.format(dot_mia_config, e))
+            mia_home_config["dev_mode"] = "no"
 
-    verify_processes()
+            #Open popup, user choose the path to .populse_mia/populse_mia
+            app = QApplication(sys.argv)
+            msg = QDialog()
+            msg.setWindowTitle("MIA path selection")
+            #msg.setWindowFlags(msg.windowFlags() | Qt.CustomizeWindowHint)
+            #msg.setWindowFlag(Qt.WindowCloseButtonHint, False)
+            vbox_layout = QVBoxLayout()
+
+            hbox_layout = QHBoxLayout()
+            file_label = QLabel("Please select the MIA path (directory with\n "
+                                "the processes, properties & resources directories): ")
+            msg.file_line_edit = QLineEdit()
+            msg.file_line_edit.setFixedWidth(400)
+            #msg.file_line_edit.textChanged.connect()
+            file_button = QPushButton("Browse")
+            file_button.clicked.connect(partial(browse_mia_path, msg))
+            vbox_layout.addWidget(file_label)
+            hbox_layout.addWidget(msg.file_line_edit)
+            hbox_layout.addWidget(file_button)
+            vbox_layout.addLayout(hbox_layout)
+
+            hbox_layout = QHBoxLayout()
+            msg.ok_button = QPushButton("Ok")
+            msg.ok_button.clicked.connect(partial(ok_mia_path, msg))
+            hbox_layout.addWidget(msg.ok_button)
+            vbox_layout.addLayout(hbox_layout)
+
+            msg.setLayout(vbox_layout)
+            msg.exec()
+            del app
+
+        # try:                                                                        # try to create config
+        #     if not os.path.exists(os.path.dirname(dot_mia_config)):
+        #         os.mkdir(os.path.dirname(dot_mia_config))
+        #         print('\nThe {0} file is created ...'.format(dot_mia_config))
+        #
+        #     with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+        #         yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+        #
+        # except Exception as e:
+        #     print('\nCould not write the {0} configuration file: {1} ...'.format(dot_mia_config, e))
+
     launch_mia()
 
     # Setting the dev_mode to "no"
@@ -263,6 +292,33 @@ def main():
         mia_home_config["dev_mode"] = "no"
         with open(dot_mia_config, 'w', encoding='utf8') as configfile:
             yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+
+def browse_mia_path(dialog):
+    dname = QFileDialog.getExistingDirectory(dialog, "Please select MIA path")
+    dialog.file_line_edit.setText(dname)
+
+def ok_mia_path(dialog):
+    mia_home_config = {}
+    mia_home_config["dev_mode"] = "no"
+    mia_home_config["mia_path"] = dialog.file_line_edit.text()
+    print(mia_home_config)
+    dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+    with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+        yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
+
+    try:
+        verify_processes()
+        dialog.close()
+    except Exception as e:
+        print('\nCould not fetch the configuration file: {0} ...'.format(e))
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Error: MIA path directory incorrect")
+        msg.setText("Error : Please select the MIA path (directory with\n "
+                    "the processes, properties & resources directories): ")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.buttonClicked.connect(msg.close)
+        msg.exec()
 
 def verify_processes():
     """
