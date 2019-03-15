@@ -191,21 +191,25 @@ def launch_mia():
 
 def main():
     '''
-    Check if Populse_MIA is called from the site/dist packages or from a cloned git repository.
-    - If launched from a cloned git repository ("developper mode"), add the good path to sys.path
-    - Read/create the ~/.populse_mia/configuration.yml (in "developer mode" or in "user mode") and update
-      the dev_mode parameter to "yes" or "no".
-    - In "developer" mode, if the ~/.populse_mia/configuration.yml is not existing, 
+    Checks if Populse_MIA is called from the site/dist packages or from a cloned git repository.
+    Updates the dev_mode parameter accordingly. Tries to update the mia_path if necessary.
+    Launchs the verify_processes() function, then the launch_mia() function (mia's real launch !!).
+    When mia is exited, sets the dev_mode parameter to "no.
+    - If launched from a cloned git repository ("developper mode"):
+        - adds the good path to the sys.path
+        - if the ~/.populse_mia/configuration.yml exists, updates
+          the dev_mode parameter to "yes"
+        - if the ~/.populse_mia/configuration.yml is not existing 
+          nothing is done.
+  - if launched from the site/dist packages ("user mode"):
+        - if the ~/.populse_mia/configuration.yml exists, updates
+          the dev_mode parameter to "no" and if not found update 
+          the mia_path parameter.
+        - if the ~/.populse_mia/configuration.yml is not existing,
+          it is tried to create this file with the good dev_mode
+          and mia_path parameters
     '''
 
-
-    print('\nprout os.path.abspath(os.path.join(os.path.realpath(__file__))): ', os.path.abspath(os.path.join(os.path.realpath(__file__))))
-    
-    print("os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')): ", os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')))
-                                                                                               
-    print('os.path.dirname(os.path.dirname(os.path.realpath(__file__))): ', os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-    
     if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path: # "developer" mode
         print('Populse_MIA in "developer" mode')
         sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -254,13 +258,17 @@ def main():
     verify_processes()
     launch_mia()
 
-    # Setting the dev_mode to "no"
+    # Setting the dev_mode to "no" when exiting mia, if ~/.populse_mia/configuration.yml file exists
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+    
     if os.path.isfile(dot_mia_config):
+        
         with open(dot_mia_config, 'r') as stream:
             # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
             mia_home_config = yaml.load(stream) ## version < 5.1
+            
         mia_home_config["dev_mode"] = "no"
+        
         with open(dot_mia_config, 'w', encoding='utf8') as configfile:
             yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
 
