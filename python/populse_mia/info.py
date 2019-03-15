@@ -61,7 +61,8 @@ REQUIRES = [
   'soma_workflow',
   'nipype',
   'scikit-image',
-  'populse-db'
+  'populse-db',
+  'mia-processes' 
 ]
 EXTRA_REQUIRES = {
     'doc': [
