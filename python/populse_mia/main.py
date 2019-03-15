@@ -15,12 +15,8 @@ import inspect
 import yaml
 import copy
 
-from functools import partial
-
 # PyQt5 imports
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit
-
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QDir, QLockFile, Qt
 
 # soma-base imports
@@ -28,16 +24,17 @@ from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 # populse_mia imports
-#from populse_mia.software_properties.config import Config
-#from populse_mia.software_properties.saved_projects import SavedProjects
-#from populse_mia.main_window.main_window import MainWindow
-#from populse_mia.project.project import Project
+# from populse_mia.software_properties.config import Config
+# from populse_mia.software_properties.saved_projects import SavedProjects
+# from populse_mia.main_window.main_window import MainWindow
+# from populse_mia.project.project import Project
 
 main_window = None
 
 """
 @atexit.register
 """
+
 
 class PackagesInstall:
     def __init__(self):
@@ -46,7 +43,6 @@ class PackagesInstall:
     def add_package(self, module_name, class_name=None, flag=True):
         """
         Adds a package and its modules to the package tree
-
         :param module_name: name of the module
         :param class_name: name of the class
         """
@@ -100,10 +96,12 @@ class PackagesInstall:
                                         pkg_iter = pkg_iter[element]
 
             except ModuleNotFoundError as e:
-                print('\nWhen attempting to add a package and its modules to the package tree, the following exception was caught:')
+                print(
+                    '\nWhen attempting to add a package and its modules to the package tree, the following exception was caught:')
                 print('{0}'.format(e))
 
             return self.packages
+
 
 def clean_up():
     """
@@ -121,6 +119,7 @@ def clean_up():
     config.set_opened_projects(opened_projects)
     main_window.remove_raw_files_useless()
 
+
 def deepCompDic(old_dic, new_dic, level="0"):
     """
     Recursive comparison of the old_dic and new _dic dictionary. If all keys are recursively
@@ -131,14 +130,14 @@ def deepCompDic(old_dic, new_dic, level="0"):
     PY3 = sys.version_info[0] == 3
 
     if PY3:
-        
+
         if isinstance(old_dic, str):
             return True
-    
+
     else:
         if isinstance(old_dic, basestring):
             return True
-        
+
     for key in old_dic:
 
         if key not in new_dic:
@@ -146,14 +145,14 @@ def deepCompDic(old_dic, new_dic, level="0"):
             if level == "0":
                 pass
 
-            elif level =="+1":
+            elif level == "+1":
                 return False
-    
+
         elif deepCompDic(old_dic[str(key)], new_dic[str(key)], level="+1"):
             new_dic[str(key)] = old_dic[str(key)]
-        
+
+
 def launch_mia():
- 
     # Populse_MIA imports
     from populse_mia.main_window.main_window import MainWindow
     from populse_mia.project.project import Project
@@ -193,16 +192,27 @@ def launch_mia():
     main_window.show()
     app.exec()
 
+
 def main():
     '''
-    Check if Populse_MIA is called from the site/dist packages or from a cloned git repository.
-    - If launched from a cloned git repository ("developper mode"), add the good path to sys.path
-    - Read/create the ~/.populse_mia/configuration.yml (in "developer mode" or in "user mode") and update
-      the dev_mode parameter to "yes" or "no".
-    - In "developer" mode, if the ~/.populse_mia/configuration.yml is not existing, 
+    Checks if Populse_MIA is called from the site/dist packages or from a cloned git repository.
+    Updates the dev_mode parameter accordingly. Tries to update the mia_path if necessary.
+    Launchs the verify_processes() function, then the launch_mia() function (mia's real launch !!).
+    When mia is exited, sets the dev_mode parameter to "no.
+    - If launched from a cloned git repository ("developper mode"):
+        - adds the good path to the sys.path
+        - if the ~/.populse_mia/configuration.yml exists, updates
+          the dev_mode parameter to "yes"
+        - if the ~/.populse_mia/configuration.yml is not existing
+          nothing is done.
+  - if launched from the site/dist packages ("user mode"):
+        - if the ~/.populse_mia/configuration.yml exists, updates
+          the dev_mode parameter to "no" and if not found update
+          the mia_path parameter.
+        - if the ~/.populse_mia/configuration.yml is not existing,
+          it is tried to create this file with the good dev_mode
+          and mia_path parameters
     '''
-
-
     if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path: # "developer" mode
         print('Populse_MIA in "developer" mode')
         sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -283,13 +293,17 @@ def main():
 
     launch_mia()
 
-    # Setting the dev_mode to "no"
+    # Setting the dev_mode to "no" when exiting mia, if ~/.populse_mia/configuration.yml file exists
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+    
     if os.path.isfile(dot_mia_config):
+        
         with open(dot_mia_config, 'r') as stream:
             # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
             mia_home_config = yaml.load(stream) ## version < 5.1
+            
         mia_home_config["dev_mode"] = "no"
+        
         with open(dot_mia_config, 'w', encoding='utf8') as configfile:
             yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
 
