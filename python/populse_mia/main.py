@@ -15,19 +15,17 @@ import inspect
 import yaml
 import copy
 
+from functools import partial
+
 # PyQt5 imports
-from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit
+
 from PyQt5.QtCore import QDir, QLockFile, Qt
 
 # soma-base imports
 from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
-
-# populse_mia imports
-# from populse_mia.software_properties.config import Config
-# from populse_mia.software_properties.saved_projects import SavedProjects
-# from populse_mia.main_window.main_window import MainWindow
-# from populse_mia.project.project import Project
 
 main_window = None
 
