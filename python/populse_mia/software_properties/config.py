@@ -69,6 +69,7 @@ class Config:
 
     def __init__(self):
         self.config = self.loadConfig()
+        self.dev_mode = False
         if "mia_path" not in self.config.keys():
             self.config["mia_path"] = self.get_mia_path()
             self.saveConfig()
