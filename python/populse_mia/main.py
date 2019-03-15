@@ -216,7 +216,7 @@ def main():
         sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         
-        if not os.path.isfile(dot_mia_config):
+        if os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
             
             with open(dot_mia_config, 'r') as stream:
