@@ -190,42 +190,66 @@ def launch_mia():
     app.exec()
 
 def main():
-    # Checking if Populse_MIA is called from the site/dist packages or from a cloned git repository
-    if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path:
+    '''
+    Check if Populse_MIA is called from the site/dist packages or from a cloned git repository.
+    - If launched from a cloned git repository ("developper mode"), add the good path to sys.path
+    - Read/create the ~/.populse_mia/configuration.yml (in "developer mode" or in "user mode") and update
+      the dev_mode parameter to "yes" or "no".
+    - In "developer" mode, if the ~/.populse_mia/configuration.yml is not existing, 
+    '''
+
+
+    print('\nprout os.path.abspath(os.path.join(os.path.realpath(__file__))): ', os.path.abspath(os.path.join(os.path.realpath(__file__))))
+    
+    print("os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')): ", os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..')))
+                                                                                               
+    print('os.path.dirname(os.path.dirname(os.path.realpath(__file__))): ', os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+    
+    if not os.path.dirname(os.path.dirname(os.path.realpath(__file__))) in sys.path: # "developer" mode
         print('Populse_MIA in "developer" mode')
-        # This means that we are in "developer" mode
         sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+        
         if os.path.isfile(dot_mia_config):
-            print('configuration.yml in .populse_mia has been detected.')
+            print('\n{0} has been detected.'.format(dot_mia_config))
+            
             with open(dot_mia_config, 'r') as stream:
                 # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
                 mia_home_config = yaml.load(stream) ## version < 5.1
+                
             mia_home_config["dev_mode"] = "yes"
+            
             with open(dot_mia_config, 'w', encoding='utf8') as configfile:
                 yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
 
-    else:
+        else:
+            print('\n{0} has not been detected.'.format(dot_mia_config))
+
+    else:                                                                            # "user" mode
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
         
         try:
             with open(dot_mia_config, 'r') as stream:
                 # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
                 mia_home_config = yaml.load(stream) ## version < 5.1
-        except:
-            # the config file probably does not exist yet,
-            # start with ans empty config
+                
+        except Exception as e:                                                      # the config file does not exist
+            print('\n~/.populse_mia/configuration.yml has not been opened: ', e)
             mia_home_config = {}
             
         mia_home_config["dev_mode"] = "no"
         
-        try:
+        try:                                                                        # try to create config
             if not os.path.exists(os.path.dirname(dot_mia_config)):
                 os.mkdir(os.path.dirname(dot_mia_config))
+                print('\nThe {0} file is created ...'.format(dot_mia_config))
+                
             with open(dot_mia_config, 'w', encoding='utf8') as configfile:
                 yaml.dump(mia_home_config, configfile, default_flow_style=False, allow_unicode=True)
-        except:
-            print('could not write configuration file', dot_mia_config)
+                
+        except Exception as e:
+            print('\nCould not write the {0} configuration file: {1} ...'.format(dot_mia_config, e))
 
     verify_processes()
     launch_mia()
