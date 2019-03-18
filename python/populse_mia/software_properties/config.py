@@ -68,8 +68,8 @@ class Config:
     """
 
     def __init__(self):
-        self.config = self.loadConfig()
         self.dev_mode = False
+        self.config = self.loadConfig()
         if "mia_path" not in self.config.keys():
             self.config["mia_path"] = self.get_mia_path()
             self.saveConfig()
@@ -293,28 +293,49 @@ class Config:
         self.saveConfig()
 
     def get_mia_path(self):
-        # During the installation, the mia path is stored in the user's .populse_mia folder in configuration.yml
+        '''
+         Return the path to the folder containing the processes, properties and resources folders
+         of mia (mia_path). During the mia installation, the mia_path is defined and stored in the
+         configuration.yml file, located in the .populse_mia folder (himself located in the user's
+         home). If mia is launched in developer mode, mia path is the cloned git repository. If
+         mia is launched in user mode, mia path must compulsorily be returned from the mia_path
+         parameter of the configuration.yml
+        '''
         dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia", "configuration.yml")
+
         if os.path.isfile(dot_mia_config):
+
             with open(dot_mia_config, 'r') as stream:
+
                 try:
                     # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
-                    mia_home_config = yaml.load(stream) ## version < 5.1
-                    if "dev_mode" in mia_home_config.keys() and mia_home_config["dev_mode"] == "yes":
+                    mia_home_config = yaml.load(stream)  ## version < 5.1
+
+                    if "dev_mode" in mia_home_config.keys() and mia_home_config[
+                        "dev_mode"] == "yes":  # Only for developer mode
                         self.dev_mode = True
                         return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
                     self.dev_mode = False
-                    return mia_home_config["mia_path"]
-                except yaml.YAMLError:
-                    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
-                except KeyError:
-                    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
-        else:
+                    return mia_home_config["mia_path"]  # Only for user mode
+
+                # except yaml.YAMLError:
+                #    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+                # except KeyError:
+                #    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+
+                except (yaml.YAMLError, KeyError) as e:
+                    print(
+                        '\nMia path (where is located the processes, the properties and resources folders) has not been found ...')
+                    # return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+
+        else:  # Only for developer mode
             try:
                 return self.config["mia_path"]
-            except KeyError:
-                return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
-            except AttributeError:
+            # except KeyError:
+            #    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+            # except AttributeError:
+            #    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
+            except (KeyError, AttributeError):
                 return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
     def set_mri_conv_path(self, path):
