@@ -136,17 +136,13 @@ class DataBrowser(QWidget):
     Attributes:
         - main_window: main window of the software
         - project: current project in the software
-        - table_data: table that contains the data of the current project
-        - viewer: mini-viewer at the bottom of the table
-        - advanced_search: advanced search widget at the top of the table
-        - search_bar: rapid search widget at the top of the table
 
     Methods:
         - send_documents_to_pipeline: sends the current list of scans to the Pipeline Manager
         - update_database: updates the database in the software
         - create_actions: creates the actions of the tab
         - open_filter: opens a project filter that has already been saved
-        - open_filter_infos: displays the current filter
+        - open_filter_infos: applies the current filter
         - count_table_pop_up: opens the count table
         - create_toolbar_menus: creates the toolbar menu at the top of the tab
         - search_str: searches a string in the table and updates the visualized documents
@@ -325,7 +321,7 @@ class DataBrowser(QWidget):
 
     def open_filter_infos(self):
         """
-        Displays the current filter
+        Applies the current filter
         """
 
         filter_to_apply = self.project.currentFilter
@@ -352,15 +348,15 @@ class DataBrowser(QWidget):
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
-    def delay_event(self, str_search):
-        """
-        Delays the use of the str_search function by 500ms
-        """
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        f = partial(self.search_str, str_search)
-        self.timer.timeout.connect(f)
-        self.timer.start(500)
+    # def delay_event(self, str_search):
+    #     """
+    #     Delays the use of the str_search function by 500ms
+    #     """
+    #     self.timer = QTimer()
+    #     self.timer.setSingleShot(True)
+    #     f = partial(self.search_str, str_search)
+    #     self.timer.timeout.connect(f)
+    #     self.timer.start(500)
 
     def create_toolbar_menus(self):
         """

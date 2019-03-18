@@ -69,6 +69,7 @@ class Config:
 
     def __init__(self):
         self.config = self.loadConfig()
+        self.dev_mode = False
         if "mia_path" not in self.config.keys():
             self.config["mia_path"] = self.get_mia_path()
             self.saveConfig()
@@ -300,8 +301,9 @@ class Config:
                     # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
                     mia_home_config = yaml.load(stream) ## version < 5.1
                     if "dev_mode" in mia_home_config.keys() and mia_home_config["dev_mode"] == "yes":
+                        self.dev_mode = True
                         return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
-
+                    self.dev_mode = False
                     return mia_home_config["mia_path"]
                 except yaml.YAMLError:
                     return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))

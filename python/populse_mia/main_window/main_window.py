@@ -111,6 +111,12 @@ class MainWindow(QMainWindow):
         config = Config()
         background_color = config.getBackgroundColor()
         text_color = config.getTextColor()
+        self.windowName = "MIA - Multiparametric Image Analysis"
+        if config.dev_mode:
+            self.windowName += " (Developer mode)"
+        self.windowName += " - "
+        self.projectName = "Unnamed project"
+
         self.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
 
         # Create actions & menus
@@ -119,7 +125,7 @@ class MainWindow(QMainWindow):
 
         self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
 
-        self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
+        self.setWindowTitle(self.windowName + self.projectName)
 
         # Create Tabs
         self.create_tabs()
@@ -734,9 +740,10 @@ class MainWindow(QMainWindow):
 
         # Window name updated
         if self.project.isTempProject:
-            self.setWindowTitle('MIA - Multiparametric Image Analysis - Unnamed project')
+            self.projectName = ('Unnamed project')
         else:
-            self.setWindowTitle('MIA - Multiparametric Image Analysis - ' + self.project.getName())
+            self.projectName = self.project.getName()
+        self.setWindowTitle(self.windowName + self.projectName)
 
         # List of project updated
         if not self.test:
