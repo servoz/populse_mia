@@ -3,22 +3,10 @@ matrix:
     - os: osx
       language: generic
     - os: linux
-      language: python  
-      python:
-        - "3.5"
-    - os: linux
-      language: python  
-      python:
-        - "3.6"
-    - os: linux
-      language: python  
-      python:
-        - "3.7"
-    - os: linux
       dist: xenial
       language: python  
       python:
-        - "3.7"
+        - "3.5"
       services:
         - xvfb
     - os: linux
@@ -26,6 +14,13 @@ matrix:
       language: python  
       python:
         - "3.6"
+      services:
+        - xvfb
+    - os: linux
+      dist: xenial
+      language: python  
+      python:
+        - "3.7"
       services:
         - xvfb
 
@@ -71,8 +66,8 @@ install:
   #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHONPATH="$PYTHONPATH:/home/travis/build/populse/soma-base/python"; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PYTHONPATH="$PYTHONPATH:/Users/travis/build/populse/soma-base/python"; fi
 
-  - if [[ "$TRAVIS_DIST_NAME" != "xenial" ]]; then "export DISPLAY=:99.0"; fi
-  - if [[ "$TRAVIS_DIST_NAME" == "trusty" ]]; then sh -e /etc/init.d/xvfb start; fi
+  - "export DISPLAY=:99.0"
+  #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
   - sleep 3 # give xvfb some time to start
 
