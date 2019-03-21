@@ -10,6 +10,20 @@ matrix:
       language: python  
       python:
         - "3.6"
+    - os: linux
+      language: python  
+      python:
+        - "3.7"
+    - os: linux
+      dist: xenial
+      language: python  
+      python:
+        - "3.7"
+    - os: linux
+      dist: xenial
+      language: python  
+      python:
+        - "3.6"
 
 # osx deps
 before_install:
