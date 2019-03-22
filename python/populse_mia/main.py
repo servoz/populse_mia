@@ -599,7 +599,7 @@ def verify_processes():
                 if (not os.path.relpath(os.path.join(config.get_mia_path(),
                                                      'processes')) in
                         sys.path) and (not os.path.abspath(os.path.join(
-                    config.get_mia_path(), 'processes')) in sys.path):
+                        config.get_mia_path(), 'processes')) in sys.path):
 
                     sys.path.append(os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')))
