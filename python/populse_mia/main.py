@@ -32,25 +32,19 @@ import yaml
 import copy
 from functools import partial
 
-#PyQt5 imports
-from PyQt5 import QtWidgets
+# PyQt5 imports
 from PyQt5.QtCore import QDir, QLockFile, Qt
 from PyQt5.QtWidgets import (QApplication, QDialog, QPushButton, QLabel,
-                            QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit)
+                             QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit)
 
-#soma-base imports
+# soma-base imports
 from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 main_window = None
 
-"""
-@atexit.register
-"""
-
 
 class PackagesInstall:
-    
     """Help to make available a pipeline package in the mia pipeline library,
        in a recursive way.
 
@@ -59,7 +53,7 @@ class PackagesInstall:
         - add_package
 
     """
-    
+
     def __init__(self):
         """Initialise the packages instance attribute."""
         self.packages = {}
@@ -80,7 +74,7 @@ class PackagesInstall:
 
         if module_name:
 
-            #reloading the package
+            # reloading the package
             if module_name in sys.modules.keys():
                 del sys.modules[module_name]
 
@@ -88,7 +82,7 @@ class PackagesInstall:
                 __import__(module_name)
                 pkg = sys.modules[module_name]
 
-                #check if there are subpackages, in this case explore them
+                # check if there are subpackages, in this case explore them
                 for _, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
 
                     if ispkg:
@@ -102,33 +96,34 @@ class PackagesInstall:
 
                     if class_name and k != class_name:
                         continue
-                    
-                    #checking each class in the package
+
+                    # checking each class in the package
                     if inspect.isclass(v):
-                        
+
                         try:
                             find_in_path(k)
 
-                        except:
-                            #TODO: WHICH TYPE OF EXCEPTION?
+                        except Exception as e:
+                            print("Warning : {0}".format(e))
+                            # TODO: WHICH TYPE OF EXCEPTION?
                             pass
-                        
+
                         else:
-                            #updating the tree's dictionnary
+                            # updating the tree's dictionnary
                             path_list = module_name.split('.')
                             path_list.append(k)
                             pkg_iter = self.packages
 
                             for element in path_list:
-                                
+
                                 if element in pkg_iter.keys():
                                     pkg_iter = pkg_iter[element]
-                                    
+
                                 else:
-                                    
+
                                     if element is path_list[-1]:
                                         pkg_iter[element] = 'process_enabled'
-                                        
+
                                     else:
                                         pkg_iter[element] = {}
                                         pkg_iter = pkg_iter[element]
@@ -139,6 +134,7 @@ class PackagesInstall:
                 print('{0}'.format(e))
 
             return self.packages
+
 
 def launch_mia():
     """Actual launch of the mia software.
@@ -157,8 +153,8 @@ def launch_mia():
         - verify_saved_projects
 
     """
-    
-    #populse_mia imports
+
+    # populse_mia imports
     from populse_mia.main_window.main_window import MainWindow
     from populse_mia.project.project import Project
     from populse_mia.software_properties.config import Config
@@ -198,19 +194,19 @@ def launch_mia():
                 opened_projects.remove(main_window.project.folder)
                 config.set_opened_projects(opened_projects)
                 main_window.remove_raw_files_useless()
-                
+
             except AttributeError as e:
                 opened_projects = []
                 config.set_opened_projects(opened_projects)
 
             print("\nClean up before closing mia done ...\n")
-        
-        #log the exception here
+
+        # log the exception here
         print("\nException hooking in progress ...")
         clean_up()
-        #then call the default handler
+        # then call the default handler
         sys.__excepthook__(etype, evalue, tback)
-        #there was some issue/error/problem, so exiting
+        # there was some issue/error/problem, so exiting
         sys.exit(1)
 
     def verify_saved_projects():
@@ -222,7 +218,8 @@ def launch_mia():
         """
 
         # Populse_MIA imports
-        from populse_mia.software_properties.saved_projects import SavedProjects
+        from populse_mia.software_properties.saved_projects \
+            import SavedProjects
 
         saved_projects_object = SavedProjects()
         saved_projects_list = copy.deepcopy(saved_projects_object.pathsList)
@@ -239,18 +236,18 @@ def launch_mia():
     QApplication.setOverrideCursor(Qt.WaitCursor)
     sys.excepthook = my_excepthook
 
-    #working from the scripts directory
+    # working from the scripts directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     lock_file = QLockFile(QDir.temp().absoluteFilePath(
-                                                  'lock_file_populse_mia.lock'))
+        'lock_file_populse_mia.lock'))
 
     if not lock_file.tryLock(100):
-        #software already opened in another instance
+        # software already opened in another instance
         pass
 
     else:
-        #no instances of the software is opened, the list of opened projects
-        #can be cleared
+        # no instances of the software is opened, the list of opened projects
+        # can be cleared
         config = Config()
         config.set_opened_projects([])
 
@@ -260,14 +257,15 @@ def launch_mia():
     main_window.show()
     app.exec()
 
+
 def main():
     """Make basic configuration check then actual launch of mia.
 
     Checks if MIA is called from the site/dist packages (user mode) or from a
-    cloned git repository (developer mode). Tries(1) to updates the dev_mode
+    cloned git repository (developer mode). Tries(1) to update the dev_mode
     parameter accordingly and the mia_path if necessary, in the
     ~/.populse_mia/configuration.yml file (this file must be available from the
-    ~/.populse_mia directory). Launchs the verify_processes() function, then
+    ~/.populse_mia directory). Launches the verify_processes() function, then
     the launch_mia() function (mia's real launch !!). When mia is exited, if
     the ~/.populse_mia/configuration.yml exists, sets the dev_mode parameter to
     'no'.
@@ -294,7 +292,7 @@ def main():
         - ok_mia_path
 
     """
-    
+
     def browse_mia_path(dialog):
         """The user define the mia_path parameter.
 
@@ -304,9 +302,9 @@ def main():
         :param dialog: QtWidgets.QDialog object ('msg' in the main function)
 
         """
-        
-        dname = QFileDialog.getExistingDirectory(dialog,
-                                                 "Please select MIA path")
+
+        dname = QFileDialog.getExistingDirectory(dialog, "Please select MIA "
+                                                         "path")
         dialog.file_line_edit.setText(dname)
 
     def ok_mia_path(dialog):
@@ -326,8 +324,8 @@ def main():
         :param dialog: QtWidgets.QDialog object ('msg' in the main function)
 
         """
-        
-        mia_home_config = {}
+
+        mia_home_config = dict()
         mia_home_config["dev_mode"] = "no"
         mia_home_config["mia_path"] = dialog.file_line_edit.text()
         print('\nNew values in ~/.populse_mia/configuration.yml: ',
@@ -342,7 +340,8 @@ def main():
             dialog.close()
 
         except Exception as e:
-            print('\nCould not fetch the configuration file: {0} ...'.format(e))
+            print('\nCould not fetch the '
+                  'configuration file: {0} ...'.format(e))
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setWindowTitle("populse_mia - Error: "
@@ -352,36 +351,38 @@ def main():
             msg.setStandardButtons(QMessageBox.Ok)
             msg.buttonClicked.connect(msg.close)
             msg.exec()
-    
+
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia",
                                   "configuration.yml")
 
     if not os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))) in sys.path: #"developer" mode
+            os.path.realpath(__file__))) in sys.path:  # "developer" mode
         print('\nPopulse_MIA in "developer" mode')
         sys.path.insert(0, os.path.dirname(os.path.dirname(
-                                                   os.path.realpath(__file__))))
+            os.path.realpath(__file__))))
 
         if os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
-            
+
             with open(dot_mia_config, 'r') as stream:
-                #from version 5.1:
-                #mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-                mia_home_config = yaml.load(stream) ##version < 5.1
-                
+                # from version 5.1:
+                # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
+                mia_home_config = yaml.load(stream)  ##version < 5.1
+
             mia_home_config["dev_mode"] = "yes"
-            
+
             with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-                yaml.dump(mia_home_config, configfile, default_flow_style=False,
+                yaml.dump(mia_home_config,
+                          configfile,
+                          default_flow_style=False,
                           allow_unicode=True)
 
         else:
             print('\n{0} has not been detected.'.format(dot_mia_config))
-            
+
         verify_processes()
 
-    else:                                             #"user" mode
+    else:  # "user" mode
 
         try:
             if not os.path.exists(os.path.dirname(dot_mia_config)):
@@ -390,21 +391,21 @@ def main():
                       .format(os.path.exists(os.path.dirname(dot_mia_config))))
 
             with open(dot_mia_config, 'r') as stream:
-                #from version 5.1:
-                #mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-                mia_home_config = yaml.load(stream) ## version < 5.1
+                # from version 5.1:
+                # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
+                mia_home_config = yaml.load(stream)  # version < 5.1
 
             verify_processes()
 
-        except Exception as e:       #the configuration.yml file does not exist
-                                     #or has not been correctly read ...
+        except Exception as e:  # the configuration.yml file does not exist
+            # or has not been correctly read ...
             print('\nA probleme has been detected when opening'
                   ' the ~/.populse_mia/configuration.yml file'
                   ' or with the parameters returned from this file: ', e)
-            mia_home_config = {}
+            mia_home_config = dict()
             mia_home_config["dev_mode"] = "no"
 
-            #open popup, user choose the path to .populse_mia/populse_mia
+            # open popup, user choose the path to .populse_mia/populse_mia
             app = QApplication(sys.argv)
             msg = QDialog()
             msg.setWindowTitle("populse_mia - mia path selection")
@@ -432,14 +433,13 @@ def main():
 
     launch_mia()
 
-    #set the dev_mode to "no" when exiting mia,
-    #if ~/.populse_mia/configuration.yml file exists
+    # set the dev_mode to "no" when exiting mia,
+    # if ~/.populse_mia/configuration.yml file exists
     if os.path.isfile(dot_mia_config):
-
         with open(dot_mia_config, 'r') as stream:
-            #from version 5.1:
-            #mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-            mia_home_config = yaml.load(stream) ## version < 5.1
+            # from version 5.1:
+            # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
+            mia_home_config = yaml.load(stream)  ## version < 5.1
 
         mia_home_config["dev_mode"] = "no"
 
@@ -447,7 +447,7 @@ def main():
             yaml.dump(mia_home_config, configfile, default_flow_style=False,
                       allow_unicode=True)
 
-            
+
 def verify_processes():
     """Install or update to the last version available on the station, of the
        nipype and the mia_processes processes libraries.
@@ -463,11 +463,12 @@ def verify_processes():
        version of the library installed on the station (pip install...) and
        when starting mia. The verify_processes function will install or update
        in the pipeline library of the Pipeline Manager tab of mia, the nipype
-       and mia_processes libraries. All this informations, as well as the
+       and mia_processes libraries. All these informations, as well as the
        installed versions and package paths are saved in the
-       mia_path/properties/process_config.yml file. When an upgrade or downgrade
-       is performed for a package, the last configuration used by the user is
-       kept (if a pipeline was visible, it remains so and vice versa).
+       mia_path/properties/process_config.yml file. When an upgrade or
+       downgrade is performed for a package, the last configuration used by
+       the user is kept (if a pipeline was visible, it remains so and vice
+       versa).
        However, if a new pipeline is available in the new version it is
        automatically marked as visible in the library.
 
@@ -476,8 +477,8 @@ def verify_processes():
         - deepCompDic
 
     """
-    
-    #populse_mia imports
+
+    # populse_mia imports
     from populse_mia.software_properties.config import Config
 
     def deepCompDic(old_dic, new_dic, level="0"):
@@ -520,11 +521,11 @@ def verify_processes():
 
                 elif level == "+1":
                     return False
-                
-            #keep the same configuration for the pipeline in new and old dic
+
+            # keep the same configuration for the pipeline in new and old dic
             elif deepCompDic(old_dic[str(key)], new_dic[str(key)], level="+1"):
                 new_dic[str(key)] = old_dic[str(key)]
-    
+
     proc_content = False
     nipypeVer = False
     miaProcVer = False
@@ -532,18 +533,25 @@ def verify_processes():
     config = Config()
     proc_config = os.path.join(config.get_mia_path(), 'properties',
                                'process_config.yml')
-    #check if nipype and mia_processes are available on the station
-    #if not available inform the user to install them
+    # check if nipype and mia_processes are available on the station
+    # if not available inform the user to install them
     print('\nChecking the installed versions of nipype and mia_processes ...')
     print('***************************************************************')
-    
+    pkg_error = []
     try:
         __import__('nipype')
         nipypeVer = sys.modules['nipype'].__version__
+    except ImportError as e:
+        pkg_error.append('nipype')
+
+    try:
         __import__('mia_processes')
         miaProcVer = sys.modules['mia_processes'].__version__
 
     except ImportError as e:
+        pkg_error.append('mia_processes')
+
+    if len(pkg_error) > 0:
         print('\n' + '*' * 37)
         print('MIA warning: {0}'.format(e))
         print('*' * 37 + '\n')
@@ -552,14 +560,14 @@ def verify_processes():
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("populse_mia -  warning: {0}".format(e))
 
-        if nipypeVer is False:
-            pckg = 'nipype'
-
-        elif miaProcVer is False:
-            pckg = 'mia_processes'
- 
-        msg.setText("Package {0} not found !\nPlease install the package and "
-                    "start again mia ...".format(pckg))
+        if len(pkg_error) > 1:
+            msg.setText("Package {0} not found !\nPlease install "
+                        "the package and "
+                        "start again mia ...".format(pkg_error[0]))
+        else:
+            msg.setText("Package {0} and {1} not found !\n"
+                        "Please install the packages and start again mia "
+                        "...".format(pkg_error[0], pkg_error[1]))
         msg.setStandardButtons(QMessageBox.Ok)
         msg.buttonClicked.connect(msg.close)
         msg.exec()
@@ -567,19 +575,18 @@ def verify_processes():
         return
 
     if os.path.isfile(proc_config):
-
         with open(proc_config, 'r') as stream:
-            #from version 5.1
-            #proc_content = yaml.load(stream, Loader=yaml.FullLoader)
-            proc_content = yaml.load(stream) ## version < 5.1
+            # from version 5.1
+            # proc_content = yaml.load(stream, Loader=yaml.FullLoader)
+            proc_content = yaml.load(stream)  # version < 5.1
 
     if (isinstance(proc_content, dict)) and ('Packages' in proc_content):
         othPckg = [f for f in proc_content['Packages']
                    if f not in ['mia_processes', 'nipype']]
 
-    if 'othPckg' in dir(): #othPckg: a list containing all packages, other than
-                           #         nipype and mia_processes, used during the
-                           #         previous launch of mia
+    if 'othPckg' in dir():
+        # othPckg: a list containing all packages, other than nipype and
+        # mia_processes, used during the previous launch of mia.
 
         for pckg in othPckg:
 
@@ -587,56 +594,57 @@ def verify_processes():
                 __import__(pckg)
 
             except ImportError:
-                #try to update the sys.path for the processes/ directory
-                #currently used
+                # try to update the sys.path for the processes/ directory
+                # currently used
                 if (not os.path.relpath(os.path.join(config.get_mia_path(),
-                                                    'processes')) in sys.path) \
-                    and (
-                    not os.path.abspath(os.path.join(config.get_mia_path(),
-                                                     'processes')) in sys.path):
+                                                     'processes')) in
+                        sys.path) and (not os.path.abspath(os.path.join(
+                    config.get_mia_path(), 'processes')) in sys.path):
+
                     sys.path.append(os.path.abspath(os.path.join(
-                                           config.get_mia_path(), 'processes')))
+                        config.get_mia_path(), 'processes')))
 
                     try:
                         __import__(pckg)
 
-                        #update the Paths parameter (processes/ directory
-                        #currently used) saved later in the
-                        #mia_path/properties/process_config.yml file
+                        # update the Paths parameter (processes/ directory
+                        # currently used) saved later in the
+                        # mia_path/properties/process_config.yml file
                         if (('Paths' in proc_content)
-                           and (isinstance(proc_content['Paths'], list))):
+                                and (isinstance(proc_content['Paths'], list))):
 
                             if ((not os.path.relpath(os.path.join(
-                                    config.get_mia_path(), 'processes'))
-                                        in proc_content['Paths'])
-                                and (
-                                not os.path.abspath(os.path.join(
-                                    config.get_mia_path(), 'processes'))
-                                        in proc_content['Paths'])):
+                                    config.get_mia_path(), 'processes')) in
+                                     proc_content['Paths'])
+                                    and (
+                                            not os.path.abspath(os.path.join(
+                                                config.get_mia_path(),
+                                                'processes')) in
+                                                proc_content['Paths'])):
                                 proc_content['Paths'].append(os.path.abspath(
                                     os.path.join(
                                         config.get_mia_path(), 'processes')))
 
                         else:
                             proc_content['Paths'] = [os.path.abspath(
-                                             os.path.join(config.get_mia_path(),
-                                                          'processes'))]
+                                os.path.join(config.get_mia_path(),
+                                             'processes'))]
 
                         with open(proc_config, 'w', encoding='utf8') as stream:
                             yaml.dump(proc_content, stream,
                                       default_flow_style=False,
                                       allow_unicode=True)
-                            
-                        #finally the processes/ directory currently used is
-                        #removed from the sys.path because this directory is now
-                        #added to the Paths parameter in the
-                        #mia_path/properties/process_config.yml file
+
+                        # finally the processes/ directory currently used is
+                        # removed from the sys.path because this directory is
+                        # now added to the Paths parameter in the
+                        # mia_path/properties/process_config.yml file
                         sys.path.remove(os.path.abspath(os.path.join(
-                                           config.get_mia_path(), 'processes')))
-                        
-                    #if an exception is raised, ask to the user to remove the
-                    #package from the pipeline library or reload it
-                    except ImportError as e: 
+                            config.get_mia_path(), 'processes')))
+
+                    # if an exception is raised, ask to the user to remove the
+                    # package from the pipeline library or reload it
+                    except ImportError as e:
                         print('{0}'.format(e))
                         app = QApplication(sys.argv)
                         msg = QMessageBox()
@@ -644,137 +652,141 @@ def verify_processes():
                         msg.setWindowTitle("populse_mia - warning: {0}"
                                            .format(e))
                         msg.setText(("The {0} processes library has not been "
-                                     "found in {1}.\n To prevent mia crash when"
-                                     " using it, please remove "
-                                     "(see File > Package library manager) or "
-                                     "load again (see More > Install processes)"
+                                     "found in {1}.\n To prevent mia crash "
+                                     "when using it, please remove (see "
+                                     "File > Package library manager) or load "
+                                     "again (see More > Install processes)"
                                      " this processes library").format(
-                                         pckg, os.path.abspath(os.path.join(
-                                          config.get_mia_path(), 'processes'))))
+                            pckg, os.path.abspath(os.path.join(
+                                config.get_mia_path(), 'processes'))))
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()
                         del app
                         sys.path.remove(os.path.abspath(os.path.join(
-                                           config.get_mia_path(), 'processes')))
+                            config.get_mia_path(), 'processes')))
 
-                #the processes/ directory being already in the sys.path, the
-                #package is certainly not properly installed in the processes/
-                #directory
+                # the processes/ directory being already in the sys.path, the
+                # package is certainly not properly installed in the processes/
+                # directory
                 else:
                     print("No module named '{0}'".format(pckg))
                     app = QApplication(sys.argv)
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
                     msg.setWindowTitle("populse_mia - warning: {0}".format(e))
-                    msg.setText(("The {0} processes library has not been found "
-                                 "in {1}.\n To prevent mia crash when using it,"
-                                 " please Remove (see File > Package library "
-                                 "manager) or load again (see More > Install "
-                                 "processes) this processes library").format(
-                                     pckg, os.path.abspath(os.path.join(
-                                         config.get_mia_path(), 'processes'))))
+                    msg.setText(("The {0} processes library has not been "
+                                 "found in {1}.\n To prevent mia crash when "
+                                 "using it, please Remove (see File > "
+                                 "Package library manager) or load again ("
+                                 "see More > Install processes) this "
+                                 "processes library").format(
+                        pckg, os.path.abspath(os.path.join(
+                            config.get_mia_path(), 'processes'))))
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
                     del app
 
-    #the file mia_path/properties/process_config.yml is corrupted or no pipeline
-    #processes was available during the previous use of mia or their version is
-    #not known
+    # the file mia_path/properties/process_config.yml is corrupted or
+    # no pipeline processes was available during the previous use of mia or
+    # their version is not known
     if (not isinstance(proc_content, dict)) or (
-       (isinstance(proc_content, dict)) and
+            (isinstance(proc_content, dict)) and
             ('Packages' not in proc_content)) or (
-       (isinstance(proc_content, dict)) and
-               ('Versions' not in proc_content)):
+            (isinstance(proc_content, dict)) and
+            ('Versions' not in proc_content)):
         pack2install = ['nipype.interfaces', 'mia_processes']
 
     else:
-        #during the previous use of mia, nipype was not available or its
-        #version was not known or its version was different from the one
-        #currently available on the station
+        # during the previous use of mia, nipype was not available or its
+        # version was not known or its version was different from the one
+        # currently available on the station
         if ((isinstance(proc_content, dict)) and ('Packages' in proc_content)
             and ('nipype' not in proc_content['Packages'])) or (
-            (isinstance(proc_content, dict)) and ('Versions' in proc_content)
-            and ('nipype' not in proc_content['Versions'])) or (
-            (isinstance(proc_content, dict)) and ('Versions' in proc_content)
-            and ('nipype' in proc_content['Versions'])
-            and (proc_content['Versions']['nipype'] != nipypeVer)):
+                (isinstance(proc_content, dict)) and ('Versions' in
+                                                      proc_content)
+                and ('nipype' not in proc_content['Versions'])) or (
+                (isinstance(proc_content, dict)) and ('Versions' in
+                                                      proc_content)
+                and ('nipype' in proc_content['Versions'])
+                and (proc_content['Versions']['nipype'] != nipypeVer)):
             pack2install.append('nipype.interfaces')
 
-        #during the previous use of mia, mia_processes was not available or its
-        #version was not known or its version was different from the one
-        #currently available on the station
+        # during the previous use of mia, mia_processes was not available or
+        # its version was not known or its version was different from the one
+        # currently available on the station
         if ((isinstance(proc_content, dict)) and ('Packages' in proc_content)
             and ('mia_processes' not in proc_content['Packages'])) or (
-            (isinstance(proc_content, dict)) and ('Versions' in proc_content)
-            and ('mia_processes' not in proc_content['Versions'])) or (
-            (isinstance(proc_content, dict)) and ('Versions' in proc_content)
-            and ('mia_processes' in proc_content['Versions'])
-            and (proc_content['Versions']['mia_processes'] != miaProcVer)):
+                (isinstance(proc_content, dict)) and ('Versions' in
+                                                      proc_content)
+                and ('mia_processes' not in proc_content['Versions'])) or (
+                (isinstance(proc_content, dict)) and ('Versions' in
+                                                      proc_content)
+                and ('mia_processes' in proc_content['Versions'])
+                and (proc_content['Versions']['mia_processes'] != miaProcVer)):
             pack2install.append('mia_processes')
 
-    final_pckgs = {}              #final_pckgs: the final dic of dic with the
-    final_pckgs["Packages"] = {}  #             informations about the
-    final_pckgs["Versions"] = {}  #             installed packages, their
-                                  #             version, and the path to access
-                                  #             them
-    for pckg in pack2install:     #pack2install: a list containing the package
-                                  #              (nipype and/or mia_processes)
-                                  #              to install
+    final_pckgs = dict()  # final_pckgs: the final dic of dic with the
+    final_pckgs["Packages"] = {}  # informations about the
+    final_pckgs["Versions"] = {}  # installed packages, their
+    #             version, and the path to access
+    #             them
+    for pckg in pack2install:
+        # pack2install: a list containing the package (nipype and/or
+        # mia_processes) to install
         package = PackagesInstall()
-        # pckg_dic: a dic of dic representation of a
-        #           package and its
-        #           subpackages/modules
-        #           Ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
-        pckg_dic = package.add_package(pckg) 
-                                             
+        # pckg_dic: a dic of dic representation of a package and its
+        # subpackages/modules Ex. {package: {subpackage: {pipeline:
+        # 'process_enabled'}}}
+        pckg_dic = package.add_package(pckg)
+
         for item in pckg_dic:
             final_pckgs["Packages"][item] = pckg_dic[item]
 
-        if 'nipype' in pckg:         # Save the packages version
+        if 'nipype' in pckg:  # Save the packages version
             final_pckgs["Versions"]["nipype"] = nipypeVer
             print('\n** Upgrading the {0} library processes to {1} version ...'
-                                                        .format(pckg, nipypeVer))              
+                  .format(pckg, nipypeVer))
 
         if 'mia_processes' in pckg:
             final_pckgs["Versions"]["mia_processes"] = miaProcVer
             print('\n** Upgrading the {0} library processes to {1} version ...'
-                                                     .format(pckg, miaProcVer))
+                  .format(pckg, miaProcVer))
 
     if pack2install:
 
         if not any("nipype" in s for s in pack2install):
-             print('\n** The nipype library processes in mia use already the '
-                   'installed version ', nipypeVer)
+            print('\n** The nipype library processes in mia use already the '
+                  'installed version ', nipypeVer)
 
         elif not any("mia_processes" in s for s in pack2install):
             print('\n** The mia_processes library in mia use already the '
                   'installed version ', miaProcVer)
- 
-        if ((isinstance(proc_content, dict)) and ('Paths' in proc_content)):
 
-            for item in proc_content['Paths']: # Save the path to the packages
+        if (isinstance(proc_content, dict)) and ('Paths' in proc_content):
+
+            for item in proc_content['Paths']:  # Save the path to the packages
                 final_pckgs["Paths"] = proc_content['Paths']
 
-        if ((isinstance(proc_content, dict)) and ('Versions' in proc_content)):
+        if (isinstance(proc_content, dict)) and ('Versions' in proc_content):
 
             for item in proc_content['Versions']:
 
                 if item not in final_pckgs['Versions']:
                     final_pckgs['Versions'][item] = proc_content[
-                                                               'Versions'][item]
+                        'Versions'][item]
 
-        #try to keep the previous configuration before the update
-        #of the packages
-        if ((isinstance(proc_content, dict)) and ('Packages' in proc_content)):
+        # try to keep the previous configuration before the update
+        # of the packages
+        if (isinstance(proc_content, dict)) and ('Packages' in proc_content):
             deepCompDic(proc_content['Packages'], final_pckgs['Packages'])
 
             for item in proc_content['Packages']:
 
                 if item not in final_pckgs['Packages']:
                     final_pckgs['Packages'][item] = proc_content[
-                                                               'Packages'][item]
+                        'Packages'][item]
 
         with open(proc_config, 'w', encoding='utf8') as stream:
             yaml.dump(final_pckgs, stream, default_flow_style=False,
@@ -783,9 +795,9 @@ def verify_processes():
     else:
         print('\n- mia use already the installed version of nipype and '
               'mia_processes ({0} and {1} respectively)'
-                                                 .format(nipypeVer, miaProcVer))
+              .format(nipypeVer, miaProcVer))
 
 
 if __name__ == '__main__':
-    #this will only be executed when this module is run directly
+    # this will only be executed when this module is run directly
     main()
