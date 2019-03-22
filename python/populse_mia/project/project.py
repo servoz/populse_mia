@@ -55,8 +55,8 @@ class Project:
     Class that handles projects and their associated database
 
     Attributes:
-        - folder: project's path
-        - project: project's object
+        :param project_root_folder: project's path
+        :param new_project: project's object
 
     Methods:
         - add_clinical_tags: adds the clinical tags to the project
@@ -152,7 +152,8 @@ class Project:
             self.session.add_field(COLLECTION_CURRENT, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False,
                                    TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_CHECKSUM, FIELD_TYPE_STRING, "Path checksum", False,
-                                   TAG_ORIGIN_BUILTIN, None, None)  # TODO Maybe remove checksum tag from populse_mia.itial table
+                                   TAG_ORIGIN_BUILTIN, None, None)
+            # TODO Maybe remove checksum tag from populse_mia.itial table
             self.session.add_field(COLLECTION_CURRENT, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True,
                                    TAG_ORIGIN_BUILTIN, None, None)
             self.session.add_field(COLLECTION_INITIAL, TAG_TYPE, FIELD_TYPE_STRING, "Path type", True,
@@ -204,9 +205,9 @@ class Project:
 
     def add_clinical_tags(self):
         """
-        Adds the clinical tags to the project
+        Adds new clinical tags to the project
 
-        :return: the clinical tags that were not already in the project
+        :return: clinical tags that were added
         """
         return_tags = []
         for clinical_tag in CLINICAL_TAGS:
@@ -228,7 +229,72 @@ class Project:
 
         return return_tags
 
-    """ FILTERS """
+    def getDate(self):
+        """
+        Returns the date of creation of the project
+
+        :return: the date of creation of the project if it's not Unnamed project, otherwise empty string
+        """
+
+        return self.properties["date"]
+
+    def getFilter(self, filter):
+        """
+        Returns a Filter object from its name
+
+        :param filter: Filter name
+        :return: Filter object
+        """
+        for filterObject in self.filters:
+            if filterObject.name == filter:
+                return filterObject
+
+    def getFilterName(self):
+        """
+        Input box to type the name of the filter to save
+
+        :return: Return the name typed
+        """
+
+        text, ok_pressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
+        if ok_pressed and text != '':
+            return text
+
+    def getName(self):
+        """
+        Returns the name of the project
+
+        :return: the name of the project if it's not Unnamed project, otherwise empty string
+        """
+
+        return self.properties["name"]
+
+    def getSortedTag(self):
+        """
+        Returns the sorted tag of the project
+
+        :return: the sorted tag of the project if it's not Unnamed project, otherwise empty string
+        """
+
+        return self.properties["sorted_tag"]
+
+    def getSortOrder(self):
+        """
+        Returns the sort order of the project
+
+        :return: the sort order of the project if it's not Unnamed project, otherwise empty string
+        """
+
+        return self.properties["sort_order"]
+
+    def hasUnsavedModifications(self):
+        """
+        Returns if the project has unsaved modifications or not
+
+        :return: True if the project has pending modifications, False otherwise
+        """
+
+        return self.unsavedModifications or self.session.has_unsaved_modifications()
 
     def init_filters(self):
         """
@@ -248,82 +314,6 @@ class Project:
                                   data["conditions"], data["search_bar_text"])
             self.filters.append(filter_object)
 
-    def setCurrentFilter(self, filter):
-        """
-        Sets the current filter of the project
-
-        :param filter: new Filter object
-        """
-
-        self.currentFilter = filter
-
-    def getFilter(self, filter):
-        """
-        Returns a Filter object
-
-        :param filter: Filter name
-        :return: Filter object
-        """
-        for filterObject in self.filters:
-            if filterObject.name == filter:
-                return filterObject
-
-    def save_current_filter(self, advanced_filters):
-        """
-        Saves the current filter
-        """
-
-        (fields, conditions, values, links, nots) = advanced_filters
-        self.currentFilter.fields = fields
-        self.currentFilter.conditions = conditions
-        self.currentFilter.values = values
-        self.currentFilter.links = links
-        self.currentFilter.nots = nots
-
-        # Getting the path
-        filters_path = os.path.join(self.folder, "filters")
-
-        # Filters folder created if it does not already exists
-        if not os.path.exists(filters_path):
-            os.mkdir(filters_path)
-
-        filter_name = self.getFilterName()
-
-        # We save the filter only if we have a filter name from populse_mia.e popup
-        if filter_name != None:
-            file_path = os.path.join(filters_path, filter_name + ".json")
-
-            if os.path.exists(file_path):
-                # Filter already exists
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("The filter already exists in the project")
-                msg.setInformativeText("The project already has a filter named " + filter_name)
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
-
-            else:
-                # Json filter file written
-                with open(file_path, 'w') as outfile:
-                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values,
-                                        self.currentFilter.fields, self.currentFilter.links,
-                                        self.currentFilter.conditions, self.currentFilter.search_bar)
-                    json.dump(new_filter.json_format(), outfile)
-                    self.filters.append(new_filter)
-
-    def getFilterName(self):
-        """
-        Input box to get the name of the filter to save
-        """
-
-        text, ok_pressed = QInputDialog.getText(None, "Save a filter", "Filter name: ", QLineEdit.Normal, "")
-        if ok_pressed and text != '':
-            return text
-
-    """ PROPERTIES """
-
     def loadProperties(self):
         """
         Loads the properties file
@@ -334,235 +324,6 @@ class Project:
                 return yaml.load(stream) ## version < 5.1
             except yaml.YAMLError as exc:
                 print(exc)
-
-    def getName(self):
-        """
-        Returns the name of the project
-
-        :return: the name of the project if it's not Unnamed project, otherwise empty string
-        """
-
-        return self.properties["name"]
-
-    def setName(self, name):
-        """
-        Sets the name of the project if it's not Unnamed project, otherwise does nothing
-
-        :param name: new name of the project
-        """
-
-        self.properties["name"] = name
-
-    def saveConfig(self):
-        """
-        Saves the changes in the properties file
-        """
-
-        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
-            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
-
-    def getDate(self):
-        """
-        Returns the date of creation of the project
-
-        :return: the date of creation of the project if it's not Unnamed project, otherwise empty string
-        """
-
-        return self.properties["date"]
-
-    def setDate(self, date):
-        """
-        Sets the date of the project
-
-        :param date: new date of the project
-        """
-
-        self.properties["date"] = date
-
-    def getSortedTag(self):
-        """
-        Returns the sorted tag of the project
-
-        :return: the sorted tag of the project if it's not Unnamed project, otherwise empty string
-        """
-
-        return self.properties["sorted_tag"]
-
-    def setSortedTag(self, tag):
-        """
-        Sets the sorted tag of the project
-
-        :param tag: new sorted tag of the project
-        """
-
-        old_tag = self.properties["sorted_tag"]
-        self.properties["sorted_tag"] = tag
-        if old_tag != tag:
-            self.unsavedModifications = True
-
-    def getSortOrder(self):
-        """
-        Returns the sort order of the project
-
-        :return: the sort order of the project if it's not Unnamed project, otherwise empty string
-        """
-
-        return self.properties["sort_order"]
-
-    def setSortOrder(self, order):
-        """
-        Sets the sort order of the project
-
-        :param order: new sort order of the project (ascending or descending)
-        """
-
-        old_order = self.properties["sort_order"]
-        self.properties["sort_order"] = order
-        if old_order != order:
-            self.unsavedModifications = True
-
-    """ UTILS """
-
-    """ MODIFICATIONS """
-
-    def saveModifications(self):
-        """
-        Saves the pending operations of the project (actions still not saved)
-        """
-
-        self.session.save_modifications()
-        self.saveConfig()
-        self.unsavedModifications = False
-
-    def unsaveModifications(self):
-        """
-        Unsaves the pending operations of the project
-        """
-        self.session.unsave_modifications()
-        self.unsavedModifications = False
-
-    def hasUnsavedModifications(self):
-        """
-        Returns if the project has unsaved modifications or not
-
-        :return: True if the project has pending modifications, False otherwise
-        """
-
-        return self.unsavedModifications or self.session.has_unsaved_modifications()
-
-    """ UNDO/REDO """
-
-    def undo(self, table):
-        """
-        Undoes the last action made by the user on the project
-
-        :param table: table on which to apply the modifications
-        """
-
-        # To avoid circular imports
-        from populse_mia.data_browser.data_browser import not_defined_value
-        
-        # We can undo if we have an action to revert
-        if len(self.undos) > 0:
-            to_undo = self.undos.pop()
-            self.redos.append(to_undo)  # We pop the undo action in the redo stack
-            # The first element of the list is the type of action made by the user (add_tag,
-            # remove_tags, add_scans, remove_scans, or modified_values)
-            action = to_undo[0]
-            if action == "add_tag":
-                # For removing the tag added, we just have to memorize the tag name, and remove it
-                tag_to_remove = to_undo[1]
-                self.session.remove_field(COLLECTION_CURRENT, tag_to_remove)
-                self.session.remove_field(COLLECTION_INITIAL, tag_to_remove)
-                column_to_remove = table.get_tag_column(tag_to_remove)
-                table.removeColumn(column_to_remove)
-            if action == "remove_tags":
-                # To reput the removed tags, we need to reput the tag in the tag list,
-                # and all the tags values associated to this tag
-                tags_removed = to_undo[1]  # The second element is a list of the removed tags ([Tag row, origin,
-                # unit, default_value])
-                for i in range(0, len(tags_removed)):
-                    # We reput each tag in the tag list, keeping all the tags params
-                    tag_to_reput = tags_removed[i][0]
-                    self.session.add_field(COLLECTION_CURRENT, tag_to_reput.field_name, tag_to_reput.type,
-                                           tag_to_reput.description, tag_to_reput.visibility, tag_to_reput.origin,
-                                           tag_to_reput.unit, tag_to_reput.default_value)
-                    self.session.add_field(COLLECTION_INITIAL, tag_to_reput.field_name, tag_to_reput.type,
-                                           tag_to_reput.description, tag_to_reput.visibility, tag_to_reput.origin,
-                                           tag_to_reput.unit, tag_to_reput.default_value)
-                values_removed = to_undo[2]  # The third element is a list of tags values (Value class)
-                self.reput_values(values_removed)
-                for i in range(0, len(tags_removed)):
-                    # We reput each tag in the tag list, keeping all the tags params
-                    tag_to_reput = tags_removed[i][0]
-                    column = table.get_index_insertion(tag_to_reput.field_name)
-                    table.add_column(column, tag_to_reput.field_name)
-            if action == "add_scans":
-                # To remove added scans, we just need their file name
-                scans_added = to_undo[1]  # The second element is a list of added scans to remove
-                for i in range(0, len(scans_added)):
-                    # We remove each scan added
-                    scan_to_remove = scans_added[i]
-                    self.session.remove_document(COLLECTION_CURRENT, scan_to_remove)
-                    self.session.remove_document(COLLECTION_INITIAL, scan_to_remove)
-                    table.removeRow(table.get_scan_row(scan_to_remove))
-                    table.scans_to_visualize.remove(scan_to_remove)
-                table.itemChanged.disconnect()
-                table.update_colors()
-                table.itemChanged.connect(table.change_cell_color)
-            if action == "remove_scans":
-                # To reput a removed scan, we need the scans names, and all the values associated
-                scans_removed = to_undo[1]  # The second element is the list of removed scans (Scan class)
-                for i in range(0, len(scans_removed)):
-                    # We reput each scan, keeping the same values
-                    scan_to_reput = scans_removed[i]
-                    self.session.add_document(COLLECTION_CURRENT, getattr(scan_to_reput, TAG_FILENAME))
-                    self.session.add_document(COLLECTION_INITIAL, getattr(scan_to_reput, TAG_FILENAME))
-                    table.scans_to_visualize.append(getattr(scan_to_reput, TAG_FILENAME))
-                values_removed = to_undo[2]  # The third element is the list of removed values
-                self.reput_values(values_removed)
-                table.add_rows(self.session.get_documents_names(COLLECTION_CURRENT))
-            if action == "modified_values":
-                # To revert a value changed in the databrowser, we need two things: the cell
-                # (scan and tag, and the old value)
-                modified_values = to_undo[1]  # The second element is a list of modified values (reset,
-                # or value changed)
-                table.itemChanged.disconnect()
-                for i in range(0, len(modified_values)):
-                    # Each modified value is a list of 3 elements: scan, tag, and old_value
-                    value_to_restore = modified_values[i]
-                    scan = value_to_restore[0]
-                    tag = value_to_restore[1]
-                    old_value = value_to_restore[2]
-                    new_value = value_to_restore[3]
-                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
-                    if old_value is None:
-                        # If the cell was not defined before, we reput it
-                        self.session.remove_value(COLLECTION_CURRENT, scan, tag)
-                        self.session.remove_value(COLLECTION_INITIAL, scan, tag)
-                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
-                        font = item.font()
-                        font.setItalic(True)
-                        font.setBold(True)
-                        item.setFont(font)
-                    else:
-                        # If the cell was there before, we just set it to the old value
-                        self.session.set_value(COLLECTION_CURRENT, scan, tag, old_value)
-                        set_item_data(item, old_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
-                        # If the new value is None, the not defined font must be removed
-                        if new_value is None:
-                            font = item.font()
-                            font.setItalic(False)
-                            font.setBold(False)
-                            item.setFont(font)
-                table.update_colors()
-                table.itemChanged.connect(table.change_cell_color)
-            if action == "modified_visibilities":
-                # To revert the modifications of the visualized tags
-                old_tags = self.session.get_visibles()  # Old list of columns
-                visibles = to_undo[1]  # List of the tags visibles before the modification (Tag objects)
-                self.session.set_visibles(visibles)
-                table.update_visualized_columns(old_tags, self.session.get_visibles())  # Columns updated
 
     def redo(self, table):
         """
@@ -678,10 +439,10 @@ class Project:
 
             if action == "modified_visibilities":
                 # To revert the modifications of the visualized tags
-                old_tags = self.session.get_visibles()  # Old list of columns
-                visibles = to_redo[2]  # List of the tags visibles before the modification (Tag objects)
-                self.session.set_visibles(visibles)
-                table.update_visualized_columns(old_tags, self.session.get_visibles())  # Columns updated
+                old_tags = self.session.get_showed_tags()  # Old list of columns
+                showed_tags = to_redo[2]  # List of the tags shown before the modification (Tag objects)
+                self.session.set_showed_tags(showed_tags)
+                table.update_visualized_columns(old_tags, self.session.get_showed_tags())  # Columns updated
 
     def reput_values(self, values):
         """
@@ -695,3 +456,237 @@ class Project:
             valueToReput = values[i]
             self.session.add_value(COLLECTION_CURRENT, valueToReput[0], valueToReput[1], valueToReput[2])
             self.session.add_value(COLLECTION_INITIAL, valueToReput[0], valueToReput[1], valueToReput[3])
+
+    def save_current_filter(self, custom_filters):
+        """
+        Saves the current filter
+
+        :param custom_filters: The customized filter
+        """
+
+        (fields, conditions, values, links, nots) = custom_filters
+        self.currentFilter.fields = fields
+        self.currentFilter.conditions = conditions
+        self.currentFilter.values = values
+        self.currentFilter.links = links
+        self.currentFilter.nots = nots
+
+        # Getting the path
+        filters_path = os.path.join(self.folder, "filters")
+
+        # Filters folder created if it does not already exists
+        if not os.path.exists(filters_path):
+            os.mkdir(filters_path)
+
+        filter_name = self.getFilterName()
+
+        # We save the filter only if we have a filter name from populse_mia.e popup
+        if filter_name != None:
+            file_path = os.path.join(filters_path, filter_name + ".json")
+
+            if os.path.exists(file_path):
+                # Filter already exists
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The filter already exists in the project")
+                msg.setInformativeText("The project already has a filter named " + filter_name)
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+            else:
+                # Json filter file written
+                with open(file_path, 'w') as outfile:
+                    new_filter = Filter(filter_name, self.currentFilter.nots, self.currentFilter.values,
+                                        self.currentFilter.fields, self.currentFilter.links,
+                                        self.currentFilter.conditions, self.currentFilter.search_bar)
+                    json.dump(new_filter.json_format(), outfile)
+                    self.filters.append(new_filter)
+
+    def saveConfig(self):
+        """
+        Saves the changes in the properties file
+        """
+
+        with open(os.path.join(self.folder, 'properties', 'properties.yml'), 'w', encoding='utf8') as configfile:
+            yaml.dump(self.properties, configfile, default_flow_style=False, allow_unicode=True)
+
+    def saveModifications(self):
+        """
+        Saves the pending operations of the project (actions still not saved)
+        """
+
+        self.session.save_modifications()
+        self.saveConfig()
+        self.unsavedModifications = False
+
+    def setCurrentFilter(self, filter):
+        """
+        Sets the current filter of the project
+
+        :param filter: new Filter object
+        """
+
+        self.currentFilter = filter
+
+    def setDate(self, date):
+        """
+        Sets the date of the project
+
+        :param date: new date of the project
+        """
+
+        self.properties["date"] = date
+
+    def setName(self, name):
+        """
+        Sets the name of the project if it's not Unnamed project, otherwise does nothing
+
+        :param name: new name of the project
+        """
+
+        self.properties["name"] = name
+
+    def setSortedTag(self, tag):
+        """
+        Sets the sorted tag of the project
+
+        :param tag: new sorted tag of the project
+        """
+
+        old_tag = self.properties["sorted_tag"]
+        self.properties["sorted_tag"] = tag
+        if old_tag != tag:
+            self.unsavedModifications = True
+
+    def setSortOrder(self, order):
+        """
+        Sets the sort order of the project
+
+        :param order: new sort order of the project (ascending or descending)
+        """
+
+        old_order = self.properties["sort_order"]
+        self.properties["sort_order"] = order
+        if old_order != order:
+            self.unsavedModifications = True
+
+    def undo(self, table):
+        """
+        Undoes the last action made by the user on the project
+
+        :param table: table on which to apply the modifications
+        """
+
+        # To avoid circular imports
+        from populse_mia.data_browser.data_browser import not_defined_value
+        
+        # We can undo if we have an action to revert
+        if len(self.undos) > 0:
+            to_undo = self.undos.pop()
+            self.redos.append(to_undo)  # We pop the undo action in the redo stack
+            # The first element of the list is the type of action made by the user (add_tag,
+            # remove_tags, add_scans, remove_scans, or modified_values)
+            action = to_undo[0]
+            if action == "add_tag":
+                # For removing the tag added, we just have to memorize the tag name, and remove it
+                tag_to_remove = to_undo[1]
+                self.session.remove_field(COLLECTION_CURRENT, tag_to_remove)
+                self.session.remove_field(COLLECTION_INITIAL, tag_to_remove)
+                column_to_remove = table.get_tag_column(tag_to_remove)
+                table.removeColumn(column_to_remove)
+            if action == "remove_tags":
+                # To reput the removed tags, we need to reput the tag in the tag list,
+                # and all the tags values associated to this tag
+                tags_removed = to_undo[1]  # The second element is a list of the removed tags ([Tag row, origin,
+                # unit, default_value])
+                for i in range(0, len(tags_removed)):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tag_to_reput = tags_removed[i][0]
+                    self.session.add_field(COLLECTION_CURRENT, tag_to_reput.field_name, tag_to_reput.type,
+                                           tag_to_reput.description, tag_to_reput.visibility, tag_to_reput.origin,
+                                           tag_to_reput.unit, tag_to_reput.default_value)
+                    self.session.add_field(COLLECTION_INITIAL, tag_to_reput.field_name, tag_to_reput.type,
+                                           tag_to_reput.description, tag_to_reput.visibility, tag_to_reput.origin,
+                                           tag_to_reput.unit, tag_to_reput.default_value)
+                values_removed = to_undo[2]  # The third element is a list of tags values (Value class)
+                self.reput_values(values_removed)
+                for i in range(0, len(tags_removed)):
+                    # We reput each tag in the tag list, keeping all the tags params
+                    tag_to_reput = tags_removed[i][0]
+                    column = table.get_index_insertion(tag_to_reput.field_name)
+                    table.add_column(column, tag_to_reput.field_name)
+            if action == "add_scans":
+                # To remove added scans, we just need their file name
+                scans_added = to_undo[1]  # The second element is a list of added scans to remove
+                for i in range(0, len(scans_added)):
+                    # We remove each scan added
+                    scan_to_remove = scans_added[i]
+                    self.session.remove_document(COLLECTION_CURRENT, scan_to_remove)
+                    self.session.remove_document(COLLECTION_INITIAL, scan_to_remove)
+                    table.removeRow(table.get_scan_row(scan_to_remove))
+                    table.scans_to_visualize.remove(scan_to_remove)
+                table.itemChanged.disconnect()
+                table.update_colors()
+                table.itemChanged.connect(table.change_cell_color)
+            if action == "remove_scans":
+                # To reput a removed scan, we need the scans names, and all the values associated
+                scans_removed = to_undo[1]  # The second element is the list of removed scans (Scan class)
+                for i in range(0, len(scans_removed)):
+                    # We reput each scan, keeping the same values
+                    scan_to_reput = scans_removed[i]
+                    self.session.add_document(COLLECTION_CURRENT, getattr(scan_to_reput, TAG_FILENAME))
+                    self.session.add_document(COLLECTION_INITIAL, getattr(scan_to_reput, TAG_FILENAME))
+                    table.scans_to_visualize.append(getattr(scan_to_reput, TAG_FILENAME))
+                values_removed = to_undo[2]  # The third element is the list of removed values
+                self.reput_values(values_removed)
+                table.add_rows(self.session.get_documents_names(COLLECTION_CURRENT))
+            if action == "modified_values":
+                # To revert a value changed in the databrowser, we need two things: the cell
+                # (scan and tag, and the old value)
+                modified_values = to_undo[1]  # The second element is a list of modified values (reset,
+                # or value changed)
+                table.itemChanged.disconnect()
+                for i in range(0, len(modified_values)):
+                    # Each modified value is a list of 3 elements: scan, tag, and old_value
+                    value_to_restore = modified_values[i]
+                    scan = value_to_restore[0]
+                    tag = value_to_restore[1]
+                    old_value = value_to_restore[2]
+                    new_value = value_to_restore[3]
+                    item = table.item(table.get_scan_row(scan), table.get_tag_column(tag))
+                    if old_value is None:
+                        # If the cell was not defined before, we reput it
+                        self.session.remove_value(COLLECTION_CURRENT, scan, tag)
+                        self.session.remove_value(COLLECTION_INITIAL, scan, tag)
+                        set_item_data(item, not_defined_value, FIELD_TYPE_STRING)
+                        font = item.font()
+                        font.setItalic(True)
+                        font.setBold(True)
+                        item.setFont(font)
+                    else:
+                        # If the cell was there before, we just set it to the old value
+                        self.session.set_value(COLLECTION_CURRENT, scan, tag, old_value)
+                        set_item_data(item, old_value, self.session.get_field(COLLECTION_CURRENT, tag).type)
+                        # If the new value is None, the not defined font must be removed
+                        if new_value is None:
+                            font = item.font()
+                            font.setItalic(False)
+                            font.setBold(False)
+                            item.setFont(font)
+                table.update_colors()
+                table.itemChanged.connect(table.change_cell_color)
+            if action == "modified_visibilities":
+                # To revert the modifications of the visualized tags
+                old_tags = self.session.get_visibles()  # Old list of columns
+                visibles = to_undo[1]  # List of the tags visibles before the modification (Tag objects)
+                self.session.set_visibles(visibles)
+                table.update_visualized_columns(old_tags, self.session.get_visibles())  # Columns updated
+
+    def unsaveModifications(self):
+        """
+        Unsaves the pending operations of the project
+        """
+        self.session.unsave_modifications()
+        self.unsavedModifications = False

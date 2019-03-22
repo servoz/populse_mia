@@ -183,7 +183,7 @@ class DataBrowser(QWidget):
         self.frame_table_data.setObjectName("frame_table_data")
 
         # Main table that will display the tags
-        self.table_data = TableDataBrowser(project, self, self.project.session.get_visibles(), True, True)
+        self.table_data = TableDataBrowser(project, self, self.project.session.get_showed_tags(), True, True)
         self.table_data.setObjectName("table_data")
 
         # LAYOUTS #
@@ -440,10 +440,10 @@ class DataBrowser(QWidget):
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
-                filter = self.search_bar.prepare_not_defined_filter(self.project.session.get_visibles())
+                filter = self.search_bar.prepare_not_defined_filter(self.project.session.get_showed_tags())
             # Scans matching the search
             else:
-                filter = self.search_bar.prepare_filter(str_search, self.project.session.get_visibles(),
+                filter = self.search_bar.prepare_filter(str_search, self.project.session.get_showed_tags(),
                                                         self.table_data.scans_to_search)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
@@ -1580,7 +1580,7 @@ class TableDataBrowser(QTableWidget):
         Displays the visualized tags pop-up
         """
 
-        old_tags = self.project.session.get_visibles()  # Old list of columns
+        old_tags = self.project.session.get_showed_tags()  # Old list of columns
         self.pop_up = PopUpProperties(self.project, self.data_browser, old_tags)
         self.pop_up.tab_widget.setCurrentIndex(0)
         screen_resolution = QApplication.instance().desktop().screenGeometry()
@@ -1735,7 +1735,7 @@ class TableDataBrowser(QTableWidget):
         tags = sorted(tags)
         tags.insert(0, TAG_FILENAME)
 
-        visibles = self.project.session.get_visibles()
+        visibles = self.project.session.get_showed_tags()
 
         # Adding missing columns
 

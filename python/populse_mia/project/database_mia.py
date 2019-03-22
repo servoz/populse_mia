@@ -37,6 +37,9 @@ class DatabaseMIA(Database):
     """
     Class overriding the default behavior of populse_db
 
+    Attributes:
+        :param string_engine: Path of the new database file
+
     Methods:
         - _Database__create_empty_schema: overrides the method creating the empty schema
         - __enter__: returns a DatabaseSession instance for using the database
@@ -160,19 +163,19 @@ class DatabaseMIA(Database):
 
 class DatabaseSessionMIA(DatabaseSession):
     """
-    Class overriding the database session
+    Class overriding the database session of populse_db
 
     Methods:
         - add_collection: overrides the method adding a collection
-        - add_fields: adds the list of fields
         - add_field: adds a field to the database, if it does not already exist
+        - add_fields: adds the list of fields
         - get_visibles: gives the list of visible tags
         - set_visibles: sets the list of visible tags
     """
 
     def add_collection(self, name, primary_key, visibility, origin, unit, default_value):
         """
-        Overrides the method adding a collection
+        Overrides the method adding a collection of populse_db
 
         :param name: New collection name
         :param primary_key: New collection primary_key column
@@ -223,30 +226,6 @@ class DatabaseSessionMIA(DatabaseSession):
             self._DatabaseSession__collections[name] = collection_row
 
         self.session.flush()
-
-    def add_fields(self, fields):
-        """
-        Adds the list of fields
-
-        :param fields: list of fields (collection, name, type, description, visibility, origin, unit, default_value)
-        """
-
-        collections = []
-
-        for field in fields:
-            # Adding each field
-            self.add_field(field[0], field[1], field[2], field[3], field[4], field[5], field[6], field[7], False)
-            if field[0] not in collections:
-                collections.append(field[0])
-
-        # Updating the table classes
-        self.session.flush()
-
-        # Classes reloaded in order to add the new column attribute
-        self._DatabaseSession__update_table_classes()
-
-        for collection in collections:
-            self._DatabaseSession__refresh_cache_documents(collection)
 
     def add_field(self, collection, name, field_type, description, visibility, origin, unit, default_value,
                   index=False, flush=True):
@@ -342,7 +321,31 @@ class DatabaseSessionMIA(DatabaseSession):
 
         self.unsaved_modifications = True
 
-    def get_visibles(self):
+    def add_fields(self, fields):
+        """
+        Adds the list of fields
+
+        :param fields: list of fields (collection, name, type, description, visibility, origin, unit, default_value)
+        """
+
+        collections = []
+
+        for field in fields:
+            # Adding each field
+            self.add_field(field[0], field[1], field[2], field[3], field[4], field[5], field[6], field[7], False)
+            if field[0] not in collections:
+                collections.append(field[0])
+
+        # Updating the table classes
+        self.session.flush()
+
+        # Classes reloaded in order to add the new column attribute
+        self._DatabaseSession__update_table_classes()
+
+        for collection in collections:
+            self._DatabaseSession__refresh_cache_documents(collection)
+
+    def get_showed_tags(self):
         """
         Gives the list of visible tags
 
@@ -357,15 +360,15 @@ class DatabaseSessionMIA(DatabaseSession):
                 visible_names.append(field.field_name)
         return visible_names
 
-    def set_visibles(self, visibles):
+    def set_showed_tags(self, field_showed):
         """
         Sets the list of visible tags
 
-        :param visibles: list of visible tags
+        :param field_showed: list of visible tags
         """
 
         for field in self.session.query(self.table_classes[FIELD_TABLE]).all():
-            if field.field_name in visibles:
+            if field.field_name in field_showed:
                 field.visibility = True
             else:
                 field.visibility = False

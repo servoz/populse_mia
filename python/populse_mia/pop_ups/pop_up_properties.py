@@ -49,7 +49,7 @@ class PopUpProperties(QDialog):
         self.tab_widget.setEnabled(True)
 
         # The 'Visualized tags" tab
-        self.tab_tags = PopUpVisualizedTags(self.project, self.project.session.get_visibles())
+        self.tab_tags = PopUpVisualizedTags(self.project, self.project.session.get_showed_tags())
         self.tab_tags.setObjectName("tab_tags")
         self.tab_widget.addTab(self.tab_tags, _translate("Dialog", "Visualized tags"))
 
@@ -91,14 +91,14 @@ class PopUpProperties(QDialog):
             new_visibilities.append(visible_tag)
 
         new_visibilities.append(TAG_FILENAME)
-        self.project.session.set_visibles(new_visibilities)
+        self.project.session.set_showed_tags(new_visibilities)
         history_maker.append(new_visibilities)
 
         self.project.undos.append(history_maker)
         self.project.redos.clear()
 
         # Columns updated
-        self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_visibles())
+        self.databrowser.table_data.update_visualized_columns(self.old_tags, self.project.session.get_showed_tags())
         self.accept()
         self.close()
 
