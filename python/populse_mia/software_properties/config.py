@@ -66,7 +66,6 @@ class Config:
         - set_mri_conv_path: sets the MRIManager.jar path
         - get_mri_conv_path: sets the MRIManager.jar path
     """
-
     def __init__(self):
         self.dev_mode = False
         self.config = self.loadConfig()
@@ -324,8 +323,7 @@ class Config:
                 #    return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
                 except (yaml.YAMLError, KeyError) as e:
-                    print(
-                        '\nMia path (where is located the processes, the properties and resources folders) has not been found ...')
+                    print('\nMia path (where is located the processes, the properties and resources folders) has not been found ...')
                     # return os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..', '..', '..'))
 
         else:  # Only for developer mode
