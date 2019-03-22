@@ -6,14 +6,13 @@ parameters and the various checks necessary for a successful launch of the
 mia's GUI.
 
 Contains:
+    Class:
+    - PackagesInstall
 
-Class:
-- PackagesInstall
-
-Function:
-- launch_mia
-- main
-- verify_processes
+    Function:
+    - launch_mia
+    - main
+    - verify_processes
 
 """
 ###############################################################################
