@@ -61,9 +61,7 @@ class PackagesInstall:
     """
     
     def __init__(self):
-        """Initialise the packages instance attribute. 
-
-        """
+        """Initialise the packages instance attribute."""
         self.packages = {}
 
     def add_package(self, module_name, class_name=None):
