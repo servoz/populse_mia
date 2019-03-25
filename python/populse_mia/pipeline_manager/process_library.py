@@ -616,6 +616,10 @@ class PackageLibraryDialog(QDialog):
         push_button_save.setText("Save changes")
         push_button_save.clicked.connect(self.save)
 
+        push_button_cancel = QPushButton("Cancel")
+        push_button_cancel.setObjectName("pushButton_cancel")
+        push_button_cancel.clicked.connect(self.close)
+
         # Layout
 
         h_box_line_edit = QHBoxLayout()
@@ -631,6 +635,7 @@ class PackageLibraryDialog(QDialog):
         h_box_save = QHBoxLayout()
         h_box_save.addStretch(1)
         h_box_save.addWidget(push_button_save)
+        h_box_save.addWidget(push_button_cancel)
 
         h_box_buttons = QHBoxLayout()
         h_box_buttons.addStretch(1)
@@ -1015,7 +1020,7 @@ class PackageLibraryDialog(QDialog):
                 as configfile:
             yaml.dump(self.process_config, configfile, default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()
-
+        self.close()
 
 def import_file(full_name, path):
     """
