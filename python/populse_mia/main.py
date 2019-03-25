@@ -100,33 +100,24 @@ class PackagesInstall:
                     # checking each class in the package
                     if inspect.isclass(v):
 
-                        try:
-                            find_in_path(k)
+                        # updating the tree's dictionnary
+                        path_list = module_name.split('.')
+                        path_list.append(k)
+                        pkg_iter = self.packages
 
-                        except Exception as e:
-                            print("Warning : {0}".format(e))
-                            # TODO: WHICH TYPE OF EXCEPTION?
-                            pass
+                        for element in path_list:
 
-                        else:
-                            # updating the tree's dictionnary
-                            path_list = module_name.split('.')
-                            path_list.append(k)
-                            pkg_iter = self.packages
+                            if element in pkg_iter.keys():
+                                pkg_iter = pkg_iter[element]
 
-                            for element in path_list:
+                            else:
 
-                                if element in pkg_iter.keys():
-                                    pkg_iter = pkg_iter[element]
+                                if element is path_list[-1]:
+                                    pkg_iter[element] = 'process_enabled'
 
                                 else:
-
-                                    if element is path_list[-1]:
-                                        pkg_iter[element] = 'process_enabled'
-
-                                    else:
-                                        pkg_iter[element] = {}
-                                        pkg_iter = pkg_iter[element]
+                                    pkg_iter[element] = {}
+                                    pkg_iter = pkg_iter[element]
 
             except ModuleNotFoundError as e:
                 print('\nWhen attempting to add a package and its modules to '
