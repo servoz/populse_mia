@@ -543,6 +543,9 @@ def verify_processes():
         nipypeVer = sys.modules['nipype'].__version__
     except ImportError as e:
         pkg_error.append('nipype')
+        print('\n' + '*' * 37)
+        print('MIA warning: {0}'.format(e))
+        print('*' * 37 + '\n')
 
     try:
         __import__('mia_processes')
@@ -550,17 +553,17 @@ def verify_processes():
 
     except ImportError as e:
         pkg_error.append('mia_processes')
-
-    if len(pkg_error) > 0:
         print('\n' + '*' * 37)
         print('MIA warning: {0}'.format(e))
         print('*' * 37 + '\n')
+
+    if len(pkg_error) > 0:
         app = QApplication(sys.argv)
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("populse_mia -  warning: {0}".format(e))
 
-        if len(pkg_error) > 1:
+        if len(pkg_error) == 1:
             msg.setText("Package {0} not found !\nPlease install "
                         "the package and "
                         "start again mia ...".format(pkg_error[0]))
