@@ -30,21 +30,27 @@ from populse_mia.project.project import COLLECTION_CURRENT
 
 class MiniViewer(QWidget):
     """
-    MiniViewer that allows to rapidly visualize scans either with a single image per scan
-    with cursors to move in five dimensions or with all images of the greater dimension of the scan.
+    MiniViewer that allows to rapidly visualize scans either with a single
+    image per scan
+    with cursors to move in five dimensions or with all images of the
+    greater dimension of the scan.
 
-    When the latter is selected, the displayed images depends on their dimension:
+    When the latter is selected, the displayed images depends on their
+    dimension:
 
         - 3D: display all the slices.
-        - 4D: display the middle slice of the third dimension for each time of the fourth dimension.
-        - 5D: display the middle slice of the third dimension for the first time of the fourth dimension for each time of the fifth dimension.
+        - 4D: display the middle slice of the third dimension for each time
+        of the fourth dimension.
+        - 5D: display the middle slice of the third dimension for the first
+        time of the fourth dimension for each time of the fifth dimension.
 
 
 
     Note:
         - idx corresponds to the index of the displayed image
         - idx in [0, self.max_scans]
-        - most of the class's attributes are lists of 0 to self.max_scans elements
+        - most of the class's attributes are lists of 0 to self.max_scans
+        elements
 
     Attributes:
         - project: current project in the software
@@ -52,7 +58,8 @@ class MiniViewer(QWidget):
         - a1: list of the "3D" sliders
         - a2: list of the "4D" sliders
         - a3: list of the "5D" sliders
-        - imageLabel: list of labels on which to set the current image as a QPixmap
+        - imageLabel: list of labels on which to set the current image as a
+        QPixmap
         - txta1: list of labels "m/n" on the side of a1 sliders
         - txta2: list of labels "m/n" on the side of a2 sliders
         - txta3: list of labels "m/n" on the side of a3 sliders
@@ -64,7 +71,8 @@ class MiniViewer(QWidget):
 
     Methods:
         - update_nb_slices: updates the config file and the thumbnails
-        - check_box_slices_state_changed: updates the config file and the thumbnails
+        - check_box_slices_state_changed: updates the config file and the
+        thumbnails
         - check_box_cursors_state_changed: updates the config file
         - verify_slices: verifies the number of selected documents
         - show_slices: creates the thumbnails from the selected file paths
@@ -74,15 +82,21 @@ class MiniViewer(QWidget):
         - image_to_pixmap: creates a 2D pixmap from a N-D Nifti image
         - createSlider: creates a slider
         - enableSliders: enables each slider of the selected index
-        - boxSlider: creates sliders, their connections and thumbnail labels for a selected index
-        - displayPosValue: displays the position of each cursor for the selected index
-        - createFieldValue: creates a field where will be displayed the position of a cursor
-        - createDimensionLabels: creates the dimension labels for the selected index
+        - boxSlider: creates sliders, their connections and thumbnail labels
+        for a selected index
+        - displayPosValue: displays the position of each cursor for the
+        selected index
+        - createFieldValue: creates a field where will be displayed the
+        position of a cursor
+        - createDimensionLabels: creates the dimension labels for the
+        selected index
         - changePosValue: changes the value of a cursor for the selected index
         - navigImage: displays the 2D image for the selected index
-        - indexImage: updates the sliders values depending on the size of the selected image
+        - indexImage: updates the sliders values depending on the size of
+        the selected image
         - openTagsPopUp: opens a pop-up to select the legend of the thumbnails
-        - image2DModifications: applies modifications to the image to display it correctly
+        - image2DModifications: applies modifications to the image to
+        display it correctly
 
     """
 
@@ -96,7 +110,8 @@ class MiniViewer(QWidget):
         # The MiniViewer is set hidden to give more space to the data_browser
         self.setHidden(True)
 
-        # When multiple selection, limiting the number of thumbnails to max_scans
+        # When multiple selection, limiting the number of thumbnails to
+        # max_scans
         self.max_scans = 4
 
         # Config that allows to read the software preferences
@@ -141,14 +156,18 @@ class MiniViewer(QWidget):
             self.check_box_slices.setCheckState(Qt.Checked)
         else:
             self.check_box_slices.setCheckState(Qt.Unchecked)
-        self.check_box_slices.stateChanged.connect(self.check_box_slices_state_changed)
+        self.check_box_slices.stateChanged.connect(
+            self.check_box_slices_state_changed)
 
         self.check_box_cursors = QCheckBox('Chain cursors')
+        self.check_box_cursors.setToolTip("Allows to connect all cursors "
+                                          "when selecting multiple documents")
         if self.config.getChainCursors() == 'yes':
             self.check_box_cursors.setCheckState(Qt.Checked)
         else:
             self.check_box_cursors.setCheckState(Qt.Unchecked)
-        self.check_box_cursors.stateChanged.connect(self.check_box_cursors_state_changed)
+        self.check_box_cursors.stateChanged.connect(
+            self.check_box_cursors_state_changed)
 
         self.file_paths = ""
 
