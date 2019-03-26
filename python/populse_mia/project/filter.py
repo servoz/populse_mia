@@ -15,6 +15,19 @@ class Filter:
     """
     Class that represents a Filter, containing the results of both rapid and advanced search
 
+    Attributes:
+        :param name: filter's name
+        :param nots: list of negations ("" or NOT)
+        :param values: list of values
+        :param fields: list of list of fields
+        :param links: list of links (AND/OR)
+        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+        :param search_bar: value in the rapid search bar
+
+    Methods:
+        - generate_filter: apply the filter to the given list of scans
+        - json_format: returns the filter as a dictionary
+
     The advanced search creates a complex query to the database and is a combination of several "query lines" which
     are linked with AND or OR and all composed of:
     - A negation or not
@@ -22,18 +35,7 @@ class Filter:
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
 
-    Attributes:
-        - nots: list of negations ("" or NOT)
-        - values: list of values
-        - fields: list of list of fields
-        - links: list of links (AND/OR)
-        - conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
-        - search_bar: value in the rapid search bar
-        - name: filter's name
 
-    Methods:
-        - json_format: returns the filter as a dictionary
-        - generate_filter: apply the filter to the given list of scans
     """
 
     def __init__(self, name, nots, values, fields, links, conditions, search_bar):
@@ -45,25 +47,6 @@ class Filter:
         self.conditions = conditions
         self.search_bar = search_bar
         self.name = name
-
-    def json_format(self):
-        """
-        Returns the filter as a dictionary
-
-        :return: the filter as a dictionary
-        """
-
-        # Filter dictionary
-        data = {
-            "name": self.name,
-            "search_bar_text": self.search_bar,
-            "fields": self.fields,
-            "conditions": self.conditions,
-            "values": self.values,
-            "links": self.links,
-            "nots": self.nots
-        }
-        return data
 
     def generate_filter(self, current_project, scans, tags):
         """
@@ -84,3 +67,22 @@ class Filter:
         advanced_result = current_project.session.filter_documents(project.COLLECTION_CURRENT, advanced_filter)
         final_result = [getattr(scan, project.TAG_FILENAME) for scan in advanced_result]
         return final_result
+
+    def json_format(self):
+        """
+        Returns the filter as a dictionary
+
+        :return: the filter as a dictionary
+        """
+
+        # Filter dictionary
+        data = {
+            "name": self.name,
+            "search_bar_text": self.search_bar,
+            "fields": self.fields,
+            "conditions": self.conditions,
+            "values": self.values,
+            "links": self.links,
+            "nots": self.nots
+        }
+        return data

@@ -30,7 +30,7 @@ from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, FIELD_TY
     FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
 
-def getJsonTagsFromFile(file_path, path):
+def tags_from_file(file_path, path):
     """
     Returns a list of [tag, value] contained in a Json file
 
@@ -46,7 +46,6 @@ def getJsonTagsFromFile(file_path, path):
 
 
 def read_log(project, main_window):
-
     """
     From the log export file of the import software, the data base (here the current project) is loaded with the tags
 
@@ -64,12 +63,55 @@ def read_log(project, main_window):
     return scans_added
 
 
+def save_project(project):
+    """
+    Saves the modifications of the project
+
+    :param project: current project in the software
+    """
+
+    project.saveModifications()
+
+
+def verify_scans(project, path):
+    """
+    Checks if the project's scans have been modified
+
+    :param project: current project in the software
+    :param path:
+    :return: the list of scans that have been modified
+    """
+
+    # Returning the files that are problematic
+    return_list = []
+    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
+
+        file_name = scan
+        file_path = os.path.relpath(os.path.join(project.folder, file_name))
+
+        if os.path.exists(file_path):
+            # If the file exists, we do the checksum
+            with open(file_path, 'rb') as scan_file:
+                data = scan_file.read()
+                actual_md5 = hashlib.md5(data).hexdigest()
+
+            initial_checksum = project.session.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
+            if initial_checksum is not None and actual_md5 != initial_checksum:
+                return_list.append(file_name)
+
+        else:
+            # Otherwise, we directly add the file in the list
+            return_list.append(file_name)
+
+    return return_list
+
+
 class ImportProgress(QProgressDialog):
     """
     Import progress bar
     """
-    def __init__(self, project):
 
+    def __init__(self, project):
         super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 3)
 
         self.setWindowTitle("Importing the paths")
@@ -105,18 +147,10 @@ class ImportWorker(QThread):
         self.progress = progress
         self.lock = threading.RLock()
         # scans_added should always be accessed through the lock, and copied
-        # before releasing the lock, becuase its value will change inside
-        # the thread
+        # before releasing the lock, because its value will change inside the thread
         self.scans_added = []
 
     def run(self):
-
-        # import pprofile
-        # prof = pprofile.Profile()
-        # with prof():
-        # import cProfile
-        # pr = cProfile.Profile()
-        # pr.enable()
 
         begin = time()
 
@@ -156,7 +190,8 @@ class ImportWorker(QThread):
                 file_path = os.path.join(raw_data_folder, file_name + ".nii")
                 file_database_path = os.path.relpath(file_path, self.project.folder)
 
-                document_not_existing = self.project.session.get_document(COLLECTION_CURRENT, file_database_path) is None
+                document_not_existing = self.project.session.get_document(COLLECTION_CURRENT,
+                                                                          file_database_path) is None
                 if document_not_existing:
                     with self.lock:
                         self.scans_added.append(file_database_path)  # Scan added to history
@@ -165,7 +200,7 @@ class ImportWorker(QThread):
                 documents[file_database_path][TAG_FILENAME] = file_database_path
 
                 # For each tag in each scan
-                for tag in getJsonTagsFromFile(file_name, path_name):
+                for tag in tags_from_file(file_name, path_name):
 
                     # We do the tag only if it's not in the tags to remove
                     if tag[0] not in tags_to_remove:
@@ -313,44 +348,3 @@ class ImportWorker(QThread):
         # pr.disable()
         # pr.print_stats(sort='time')
         # prof.print_stats()
-
-
-def verify_scans(project, path):
-    """
-    Checks if the project's scans have been modified
-
-    :param project: current project in the software
-    :param path:
-    :return: the list of scans that have been modified
-    """
-    # Returning the files that are problematic
-    return_list = []
-    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
-
-        file_name = scan
-        file_path = os.path.relpath(os.path.join(project.folder, file_name))
-
-        if os.path.exists(file_path):
-            # If the file exists, we do the checksum
-            with open(file_path, 'rb') as scan_file:
-                data = scan_file.read()
-                actual_md5 = hashlib.md5(data).hexdigest()
-
-            initial_checksum = project.session.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
-            if initial_checksum is not None and actual_md5 != initial_checksum:
-                return_list.append(file_name)
-
-        else:
-            # Otherwise, we directly add the file in the list
-            return_list.append(file_name)
-
-    return return_list
-
-
-def save_project(project):
-    """
-    Saves the modifications of the project
-    
-    :param project: current project in the software
-    """
-    project.saveModifications()

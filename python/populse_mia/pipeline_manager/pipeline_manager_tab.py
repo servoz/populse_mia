@@ -132,7 +132,7 @@ class PipelineManagerTab(QWidget):
         self.pipelineEditorTabs.pipeline_saved.connect(self.updateProcessLibrary)
 
         self.nodeController = NodeController(self.project, self.scan_list, self, self.main_window)
-        self.nodeController.visibles_tags = self.project.session.get_visibles()
+        self.nodeController.visibles_tags = self.project.session.get_showed_tags()
 
         self.iterationTable = IterationTable(self.project, self.scan_list, self.main_window)
         self.iterationTable.iteration_table_updated.connect(self.update_scans_list)
@@ -551,7 +551,7 @@ class PipelineManagerTab(QWidget):
         self.project = project
         self.nodeController.project = project
         self.pipelineEditorTabs.project = project
-        self.nodeController.visibles_tags = self.project.session.get_visibles()
+        self.nodeController.visibles_tags = self.project.session.get_showed_tags()
         self.iterationTable.project = project
         ProcessMIA.project = project
 

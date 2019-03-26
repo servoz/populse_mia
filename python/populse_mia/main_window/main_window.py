@@ -48,13 +48,15 @@ from populse_mia.pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
 
 
 class MainWindow(QMainWindow):
+
     """
-    Primary master class
+
+    Main window class, initializes the software appearance and defines interactions with the user.
 
     Attributes:
-        - project: current project in the software
-        - test: boolean if the widget is launched from unit tests or not
-        - saved_projects: projects that have already been saved
+        :param project: current project in the software
+        :param test: boolean if the widget is launched from unit tests or not
+        :param deleted_projects: projects that have been deleted
 
     Methods:
         - add_clinical_tags: adds the clinical tags to the database and the
@@ -93,6 +95,7 @@ class MainWindow(QMainWindow):
         - update_project: updates the project once the database has been
         updated
         - update_recent_projects_actions: updates the list of recent projects
+
     """
 
     def __init__(self, project, test=False, deleted_projects=None):
@@ -153,6 +156,62 @@ class MainWindow(QMainWindow):
         self.create_tabs()
         self.setCentralWidget(self.centralWindow)
         self.showMaximized()
+
+    def add_clinical_tags(self):
+        """
+        Adds the clinical tags to the database and the data browser
+
+        """
+        added_tags = self.project.add_clinical_tags()
+        for tag in added_tags:
+            column = self.data_browser.table_data.get_index_insertion(tag)
+            self.data_browser.table_data.add_column(column, tag)
+
+    def check_unsaved_modifications(self):
+        """
+        Checks if there are differences between the current project and the database
+
+        :return: True if there are unsaved modifications, False otherwise
+        """
+        if self.project.isTempProject:
+            if len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
+                return True
+            else:
+                return False
+        elif self.project.hasUnsavedModifications():
+            return True
+        else:
+            return False
+
+    def closeEvent(self, event):
+        """
+        Overrides the closing event to check if there are unsaved modifications
+
+        :param event: closing event
+        """
+
+        if self.check_unsaved_modifications() == False or self.test:
+            can_exit = True
+
+        else:
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_exit = self.pop_up_close.can_exit()
+
+        if can_exit:
+            self.project.unsaveModifications()
+
+            # Clean up
+            config = Config()
+            opened_projects = config.get_opened_projects()
+            opened_projects.remove(self.project.folder)
+            config.set_opened_projects(opened_projects)
+            self.remove_raw_files_useless()
+
+            event.accept()
+        else:
+            event.ignore()
 
     def create_actions(self):
         """
@@ -299,171 +358,42 @@ class MainWindow(QMainWindow):
             self.action_install_processes_folder)
         self.menu_install_process.addAction(self.action_install_processes_zip)
 
-    def undo(self):
+    def create_project_pop_up(self):
         """
-        Undoes the last action made by the user
-
-        """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "",
-                                                       1) == 'Data Browser':
-            # In Data Browser
-            self.project.undo(self.data_browser.table_data)
-            # Action reverted in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "",
-                                                      1) == 'Pipeline Manager':
-            # In Pipeline Manager
-            self.pipeline_manager.undo()
-
-    def redo(self):
-        """
-        Redoes the last action made by the user
+        Creates a new project
 
         """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "",
-                                                       1) == 'Data Browser':
-            # In Data Browser
-            self.project.redo(self.data_browser.table_data)
-            # Action remade in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "",
-                                                     1) == 'Pipeline Manager':
-            # In Pipeline Manager
-            self.pipeline_manager.redo()
 
-    def closeEvent(self, event):
-        """
-        Overrides the closing event to check if there are unsaved modifications
-
-        :param event: closing event
-        """
-
-        if self.check_unsaved_modifications() == False or self.test:
-            can_exit = True
-
-        else:
+        if self.check_unsaved_modifications():
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
-            can_exit = self.pop_up_close.can_exit()
+            can_switch = self.pop_up_close.can_exit()
 
-        if can_exit:
-            self.project.unsaveModifications()
-
-            # Clean up
-            config = Config()
-            opened_projects = config.get_opened_projects()
-            opened_projects.remove(self.project.folder)
-            config.set_opened_projects(opened_projects)
-            self.remove_raw_files_useless()
-
-            event.accept()
         else:
-            event.ignore()
+            can_switch = True
+        if can_switch:
+            # Opens a pop-up when the 'New project' action is clicked and updates the recent projects
+            self.exPopup = PopUpNewProject()
 
-    def remove_raw_files_useless(self):
-        """
-        Removes the useless raw files of the current project
+            if self.exPopup.exec_():
 
-        """
+                self.project.session.unsave_modifications()
+                self.remove_raw_files_useless()  # We remove the useless files from the old project
 
-        # If it's unnamed project, we can remove the whole project
-        if self.project.isTempProject:
-            self.project.database.__exit__(None, None, None)
-            shutil.rmtree(self.project.folder)
-        else:
-            for filename in glob.glob(os.path.join(os.path.relpath(
-                    self.project.folder), 'data', 'raw_data', '*')):
-                scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the
-                # project, and if it's not a logExport
-                # Json files associated to nii files are kept for the
-                # raw_data folder
-                file_name, file_extension = os.path.splitext(scan)
-                file_in_database = False
-                for database_scan in \
-                        self.project.session.get_documents_names(
-                            COLLECTION_CURRENT):
-                    if file_name in database_scan:
-                        file_in_database = True
-                if "logExport" in scan:
-                    file_in_database = True
-                if not file_in_database:
-                    os.remove(filename)
-            for filename in glob.glob(os.path.join(os.path.relpath(
-                    self.project.folder), 'data', 'derived_data', '*')):
-                scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT,
-                                         os.path.join("data",
-                                                      "derived_data", scan)) \
-                        is None and "logExport" not in scan:
-                    os.remove(filename)
-            for filename in glob.glob(os.path.join(os.path.relpath(
-                    self.project.folder), 'data', 'downloaded_data', '*')):
-                scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the
-                # project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT,
-                                     os.path.join("data",
-                                                  "downloaded_data", scan)) \
-                        is None and "logExport" not in scan:
-                    os.remove(filename)
-            self.project.database.__exit__(None, None, None)
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.get_filename(self.exPopup.selectedFiles())
+                file_name = self.exPopup.relative_path
 
-    def save(self):
-        """
-        Saves either the current project or the current pipeline
-        """
+                # Removing the old project from the list of currently opened projects
+                config = Config()
+                opened_projects = config.get_opened_projects()
+                opened_projects.remove(self.project.folder)
+                config.set_opened_projects(opened_projects)
 
-        if self.tabs.tabText(self.tabs.currentIndex()).replace(
-                "&", "", 1) == 'Data Browser':
-            # In Data Browser
-            self.saveChoice()
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace(
-                "&", "", 1) == 'Pipeline Manager':
-            # In Pipeline Manager
-            self.pipeline_manager.savePipeline()
+                self.project = Project(self.exPopup.relative_path, True)
 
-    def save_as(self):
-        """
-        Saves either the current project or the current pipeline under a
-        new name
-        """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace(
-                "&", "", 1) == 'Data Browser':
-            # In Data Browser
-            self.save_project_as()
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace(
-                "&", "", 1) == 'Pipeline Manager':
-            # In Pipeline Manager
-            self.pipeline_manager.savePipelineAs()
-
-    def saveChoice(self):
-        """
-        Checks if the project needs to be 'saved as' or just 'saved'
-
-        """
-        if self.project.isTempProject:
-            self.save_project_as()
-        else:
-            controller.save_project(self.project)
-
-    def check_unsaved_modifications(self):
-        """
-        Checks if there are differences between the current project and the
-        database
-
-        :return: 1 if there are unsaved modifications, 0 otherwise
-        """
-        if self.project.isTempProject and len(
-                self.project.session.get_documents_names(
-                    COLLECTION_CURRENT)) > 0:
-            return 1
-        if self.project.isTempProject:
-            return 0
-        if self.project.hasUnsavedModifications():
-            return 1
-        else:
-            return 0
+                self.update_project(file_name)  # project updated everywhere
 
     def create_tabs(self):
         """
@@ -494,6 +424,215 @@ class MainWindow(QMainWindow):
         self.centralWindow = QWidget()
         self.centralWindow.setLayout(vertical_layout)
 
+    @staticmethod
+    def documentation():
+        """
+        Opens the documentation in a web browser
+
+        """
+        webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
+
+    def install_processes_pop_up(self, folder=False):
+        """
+        Opens the install processes pop-up
+
+        :param folder: boolean, True if installing from a folder
+        """
+        self.pop_up_install_processes = InstallProcesses(self, folder=folder)
+        self.pop_up_install_processes.show()
+        self.pop_up_install_processes.process_installed.connect(
+            self.pipeline_manager.processLibrary.update_process_library)
+        self.pop_up_install_processes.process_installed.connect(
+            self.pipeline_manager.processLibrary.pkg_library.update_config)
+
+    def import_data(self):
+        """
+        Calls the import software (MRI File Manager), reads the imported files and loads them into the database
+
+        """
+        # Opens the conversion software to convert the MRI files in Nifti/Json
+        config = Config()
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', config.get_mri_conv_path(),
+                                     '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
+                                     '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
+                                     'AcquisitionTime',
+                                     'CloseAfterExport'])
+        # 'NoLogExport'if we don't want log export
+
+        if code_exit == 0:
+
+            # Database filled
+            new_scans = controller.read_log(self.project, self)
+
+            # Table updated
+            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.data_browser.table_data.scans_to_visualize = documents
+            self.data_browser.table_data.scans_to_search = documents
+            self.data_browser.table_data.add_columns()
+            self.data_browser.table_data.fill_headers()
+            self.data_browser.table_data.add_rows(new_scans)
+            self.data_browser.reset_search_bar()
+            self.data_browser.frame_advanced_search.setHidden(True)
+            self.data_browser.advanced_search.rows = []
+
+        else:
+            pass
+
+    def open_project_pop_up(self):
+        """
+        Opens a pop-up to open a project and updates the recent projects
+
+        """
+        # Ui_Dialog() is defined in pop_ups.py
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
+
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
+
+        else:
+            can_switch = True
+
+        # We can open a new project
+        if can_switch:
+            self.exPopup = PopUpOpenProject()
+            if self.exPopup.exec_():
+                file_name = self.exPopup.selectedFiles()
+                self.exPopup.get_filename(file_name)
+                file_name = self.exPopup.relative_path
+
+                self.switch_project(file_name, self.exPopup.name)  # We switch the project
+
+    def open_recent_project(self):
+        """
+        Opens a recent project
+
+        """
+        # We check for unsaved modifications
+        if self.check_unsaved_modifications():
+
+            # If there are unsaved modifications, we ask the user what he wants to do
+            self.pop_up_close = PopUpQuit(self.project)
+            self.pop_up_close.save_as_signal.connect(self.saveChoice)
+            self.pop_up_close.exec()
+            can_switch = self.pop_up_close.can_exit()
+
+        else:
+            can_switch = True
+
+        # We can open a new project
+        if can_switch:
+            action = self.sender()
+            if action:
+                file_name = action.data()
+                entire_path = os.path.abspath(file_name)
+                path, name = os.path.split(entire_path)
+                relative_path = os.path.relpath(file_name)
+                self.switch_project(relative_path, name)  # We switch the project
+
+    def package_library_pop_up(self):
+        """
+        Opens the package library pop-up
+
+        """
+
+        self.pop_up_package_library = PackageLibraryDialog(self)
+        self.pop_up_package_library.setGeometry(300, 200, 800, 600)
+        self.pop_up_package_library.show()
+        self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
+
+    def project_properties_pop_up(self):
+        """
+        Opens the project properties pop-up
+
+        """
+
+        old_tags = self.project.session.get_showed_tags()
+        self.pop_up_settings = PopUpProperties(self.project, self.data_browser, old_tags)
+        self.pop_up_settings.setGeometry(300, 200, 800, 600)
+        self.pop_up_settings.show()
+
+        if self.pop_up_settings.exec_():
+            self.data_browser.table_data.update_visualized_columns(old_tags, self.project.session.get_showed_tags())
+
+    def redo(self):
+        """
+        Redoes the last action made by the user
+
+        """
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.project.redo(self.data_browser.table_data)  # Action remade in the Database
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
+            self.pipeline_manager.redo()
+
+    def remove_raw_files_useless(self):
+        """
+        Removes the useless raw files of the current project
+
+        """
+
+        # If it's unnamed project, we can remove the whole project
+        if self.project.isTempProject:
+            self.project.database.__exit__(None, None, None)
+            shutil.rmtree(self.project.folder)
+        else:
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
+                scan = os.path.basename(filename)
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
+                # Json files associated to nii files are kept for the raw_data folder
+                file_name, file_extension = os.path.splitext(scan)
+                file_in_database = False
+                for database_scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                    if file_name in database_scan:
+                        file_in_database = True
+                if "logExport" in scan:
+                    file_in_database = True
+                if not file_in_database:
+                    os.remove(filename)
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
+                scan = os.path.basename(filename)
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) \
+                        is None and "logExport" not in scan:
+                    os.remove(filename)
+            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data',
+                                                   'downloaded_data', '*')):
+                scan = os.path.basename(filename)
+                # The file is removed only if it's not a scan in the project, and if it's not a logExport
+                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data",
+                                                                                      "downloaded_data", scan)) \
+                        is None and "logExport" not in scan:
+                    os.remove(filename)
+            self.project.database.__exit__(None, None, None)
+
+    def save(self):
+        """
+        Saves either the current project or the current pipeline
+        """
+
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.saveChoice()
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
+            self.pipeline_manager.savePipeline()
+
+    def save_as(self):
+        """
+        Saves either the current project or the current pipeline under a new name
+        """
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.save_project_as()
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
+            self.pipeline_manager.savePipelineAs()
+
     def save_project_as(self):
         """
         Opens a pop-up to save the current project as
@@ -505,24 +644,18 @@ class MainWindow(QMainWindow):
 
             old_folder = self.project.folder
             file_name = self.exPopup.relative_path
-            data_path = os.path.join(os.path.relpath(
-                self.exPopup.relative_path), 'data')
-            database_path = os.path.join(os.path.relpath(
-                self.exPopup.relative_path), 'database')
-            properties_path = os.path.join(os.path.relpath(
-                self.exPopup.relative_path), 'properties')
-            filters_path = os.path.join(os.path.relpath(
-                self.exPopup.relative_path), 'filters')
-            data_path = os.path.join(os.path.relpath(
-                self.exPopup.relative_path), 'data')
+            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
+            database_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'database')
+            properties_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'properties')
+            filters_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'filters')
+            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
             raw_data_path = os.path.join(data_path, 'raw_data')
             derived_data_path = os.path.join(data_path, 'derived_data')
             downloaded_data_path = os.path.join(data_path, 'downloaded_data')
 
             # List of projects updated
             if not self.test:
-                self.saved_projects_list = \
-                    self.saved_projects.addSavedProject(file_name)
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
             self.update_recent_projects_actions()
 
             os.makedirs(self.exPopup.relative_path)
@@ -535,31 +668,20 @@ class MainWindow(QMainWindow):
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
-                for filename in glob.glob(os.path.join(
-                        os.path.relpath(old_folder), 'data', 'raw_data', '*')):
-                    shutil.copy(filename, os.path.join(
-                        os.path.relpath(data_path), 'raw_data'))
-                for filename in glob.glob(os.path.join(
-                        os.path.relpath(old_folder), 'data', 'derived_data', '*')):
-                    shutil.copy(filename, os.path.join(
-                        os.path.relpath(data_path), 'derived_data'))
-                for filename in glob.glob(os.path.join(
-                        os.path.relpath(old_folder), 'data', 'downloaded_data', '*')):
-                    shutil.copy(filename, os.path.join(
-                        os.path.relpath(data_path), 'downloaded_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
 
             if os.path.exists(os.path.join(old_folder, 'filters')):
-                for filename in glob.glob(os.path.join(
-                        os.path.relpath(old_folder), 'filters', '*')):
-                    shutil.copy(filename, os.path.join(
-                        os.path.relpath(filters_path)))
+                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'filters', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(filters_path)))
 
-            # First we register the Database before commiting the last
-            # pending modifications
-            shutil.copy(os.path.join(os.path.relpath(
-                old_folder), 'database', 'mia.db'),
-                        os.path.join(os.path.relpath(
-                            old_folder), 'database', 'mia_before_commit.db'))
+            # First we register the Database before commiting the last pending modifications
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'),
+                        os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
 
             # We commit the last pending modifications
             self.project.saveModifications()
@@ -609,141 +731,84 @@ class MainWindow(QMainWindow):
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
 
-    def create_project_pop_up(self):
+    def saveChoice(self):
         """
-        Creates a new project
+        Checks if the project needs to be 'saved as' or just 'saved'
 
         """
-
-        if self.check_unsaved_modifications():
-            self.pop_up_close = PopUpQuit(self.project)
-            self.pop_up_close.save_as_signal.connect(self.saveChoice)
-            self.pop_up_close.exec()
-            can_switch = self.pop_up_close.can_exit()
-
+        if self.project.isTempProject:
+            self.save_project_as()
         else:
-            can_switch = True
-        if can_switch:
+            controller.save_project(self.project)
 
-            # Opens a pop-up when the 'New project' action is clicked and updates the recent projects
-            self.exPopup = PopUpNewProject()
-
-            if self.exPopup.exec_():
-
-                self.project.session.unsave_modifications()
-                self.remove_raw_files_useless()  # We remove the useless files from the old project
-
-                file_name = self.exPopup.selectedFiles()
-                self.exPopup.get_filename(self.exPopup.selectedFiles())
-                file_name = self.exPopup.relative_path
-
-                # Removing the old project from the list of currently opened projects
-                config = Config()
-                opened_projects = config.get_opened_projects()
-                opened_projects.remove(self.project.folder)
-                config.set_opened_projects(opened_projects)
-
-                self.project = Project(self.exPopup.relative_path, True)
-
-                self.update_project(file_name)  # project updated everywhere
-
-    def open_project_pop_up(self):
+    def see_all_projects(self):
         """
-        Opens a pop-up to open a project and updates the recent projects
+        Opens a pop-up to show the recent projects
 
         """
         # Ui_Dialog() is defined in pop_ups.py
-        # We check for unsaved modifications
-        if self.check_unsaved_modifications():
+        self.exPopup = PopUpSeeAllProjects(self.saved_projects, self)
+        if self.exPopup.exec_():
+            file_path = self.exPopup.relative_path
+            if not self.test:
+                self.saved_projects_list = self.saved_projects.addSavedProject(file_path)
+            self.update_recent_projects_actions()
 
-            # If there are unsaved modifications, we ask the user what he wants to do
-            self.pop_up_close = PopUpQuit(self.project)
-            self.pop_up_close.save_as_signal.connect(self.saveChoice)
-            self.pop_up_close.exec()
-            can_switch = self.pop_up_close.can_exit()
-
-        else:
-            can_switch = True
-
-        # We can open a new project
-        if can_switch:
-            self.exPopup = PopUpOpenProject()
-            if self.exPopup.exec_():
-
-                file_name = self.exPopup.selectedFiles()
-                self.exPopup.get_filename(file_name)
-                file_name = self.exPopup.relative_path
-
-                self.switch_project(self.exPopup.relative_path, file_name, self.exPopup.name)  # We switch the project
-
-    def open_recent_project(self):
+    def software_preferences_pop_up(self):
         """
-        Opens a recent project
+        Opens the MIA2 preferences pop-up
 
         """
-        # We check for unsaved modifications
-        if self.check_unsaved_modifications():
 
-            # If there are unsaved modifications, we ask the user what he wants to do
-            self.pop_up_close = PopUpQuit(self.project)
-            self.pop_up_close.save_as_signal.connect(self.saveChoice)
-            self.pop_up_close.exec()
-            can_switch = self.pop_up_close.can_exit()
+        self.pop_up_preferences = PopUpPreferences(self)
+        self.pop_up_preferences.setGeometry(300, 200, 800, 600)
+        self.pop_up_preferences.show()
+        self.pop_up_preferences.use_clinical_mode_signal.connect(self.add_clinical_tags)
 
-        else:
-            can_switch = True
+        # Modifying the options in the Pipeline Manager (verify if clinical mode)
+        self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
+        self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
 
-        # We can open a new project
-        if can_switch:
-            action = self.sender()
-            if action:
-                file_name = action.data()
-                entire_path = os.path.abspath(file_name)
-                path, name = os.path.split(entire_path)
-                relative_path = os.path.relpath(file_name)
-
-                self.switch_project(relative_path, file_name, name)  # We switch the project
-
-    def switch_project(self, path, file_name, name):
+    def switch_project(self, file_path, name):
         """
-        Switches project if it's possible
+        Verifies if it's possible to open the selected project and quit the current one
 
-        :param path: relative path of the new project
-        :param file_name: raw file_name
+        :param file_path: raw file_path
         :param name: project name
         """
+        # /!\ file_path and path are the same param
 
         # Switching project only if it's a different one
-        if path != self.project.folder:
+        if file_path != self.project.folder:
 
             # If the file exists
-            if os.path.exists(os.path.join(path)):
+            if os.path.exists(os.path.join(file_path)):
                 # If it is a MIA project
-                if os.path.exists(os.path.join(path, "properties", "properties.yml")) \
-                        and os.path.exists(os.path.join(path, "database", "mia.db")) \
-                        and os.path.exists(os.path.join(path, "data", "raw_data")) \
-                        and os.path.exists(os.path.join(path, "data", "derived_data")) \
-                        and os.path.exists(os.path.join(path, "data", "downloaded_data")) \
-                        and os.path.exists(os.path.join(path, "filters")):
+                if os.path.exists(os.path.join(file_path, "properties", "properties.yml")) \
+                        and os.path.exists(os.path.join(file_path, "database", "mia.db")) \
+                        and os.path.exists(os.path.join(file_path, "data", "raw_data")) \
+                        and os.path.exists(os.path.join(file_path, "data", "derived_data")) \
+                        and os.path.exists(os.path.join(file_path, "data", "downloaded_data")) \
+                        and os.path.exists(os.path.join(file_path, "filters")):
 
                     # We check for invalid scans in the project
 
                     try:
-                        temp_database = Project(path, False)
+                        temp_database = Project(file_path, False)
                     except IOError:
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
                         msg.setText(
                             "project already opened")
                         msg.setInformativeText(
-                            "The project at " + str(path) +
+                            "The project at " + str(file_path) +
                             " is already opened in another instance of the software.")
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()
                         return False
-                    problem_list = controller.verify_scans(temp_database, path)
+                    problem_list = controller.verify_scans(temp_database, file_path)
 
                     # Message if invalid files
                     if problem_list:
@@ -772,7 +837,7 @@ class MainWindow(QMainWindow):
 
                     self.project = temp_database  # New Database
 
-                    self.update_project(file_name)  # project updated everywhere
+                    self.update_project(file_path)  # project updated everywhere
 
                     return True
 
@@ -801,172 +866,6 @@ class MainWindow(QMainWindow):
                 msg.buttonClicked.connect(msg.close)
                 msg.exec()
                 return False
-
-    def update_project(self, file_name, call_update_table=True):
-        """
-        Updates the project once the database has been updated
-
-        :param file_name: File name of the new project
-        :param call_update_table: boolean, True if we need to call update_table's method
-        """
-
-        self.data_browser.update_database(self.project)  # Database update data_browser
-        self.pipeline_manager.update_project(self.project)
-
-        if call_update_table:
-            self.data_browser.table_data.update_table()  # Table updated
-
-        # Window name updated
-        if self.project.isTempProject:
-            self.projectName = ('Unnamed project')
-        else:
-            self.projectName = self.project.getName()
-        self.setWindowTitle(self.windowName + self.projectName)
-
-        # List of project updated
-        if not self.test:
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-        self.update_recent_projects_actions()
-
-    def update_recent_projects_actions(self):
-        """
-        Updates the list of recent projects
-
-        """
-        if self.saved_projects_list:
-            for i in range(min(len(self.saved_projects_list),
-                               self.config.get_max_projects())):
-                text = os.path.basename(self.saved_projects_list[i])
-                self.saved_projects_actions[i].setText(text)
-                self.saved_projects_actions[i].setData(self.saved_projects_list[i])
-                self.saved_projects_actions[i].setVisible(True)
-
-    def see_all_projects(self):
-        """
-        Opens a pop-up to show the recent projects
-
-        """
-        # Ui_Dialog() is defined in pop_ups.py
-        self.exPopup = PopUpSeeAllProjects(self.saved_projects, self)
-        if self.exPopup.exec_():
-            file_name = self.exPopup.relative_path
-            if not self.test:
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
-            self.update_recent_projects_actions()
-
-    def project_properties_pop_up(self):
-        """
-        Opens the project properties pop-up
-
-        """
-
-        old_tags = self.project.session.get_visibles()
-        self.pop_up_settings = PopUpProperties(self.project, self.data_browser, old_tags)
-        self.pop_up_settings.setGeometry(300, 200, 800, 600)
-        self.pop_up_settings.show()
-
-        if self.pop_up_settings.exec_():
-            self.data_browser.table_data.update_visualized_columns(old_tags, self.project.session.get_visibles())
-
-    def software_preferences_pop_up(self):
-        """
-        Opens the MIA2 preferences pop-up
-
-        """
-
-        self.pop_up_preferences = PopUpPreferences(self)
-        self.pop_up_preferences.setGeometry(300, 200, 800, 600)
-        self.pop_up_preferences.show()
-        self.pop_up_preferences.use_clinical_mode_signal.connect(self.add_clinical_tags)
-
-        # Modifying the options in the Pipeline Manager (verify if clinical mode)
-        self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
-        self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
-
-    def update_package_library_action(self):
-        """
-        Updates the package library action depending on the mode
-
-        """
-        if Config().get_clinical_mode() == 'yes':
-            self.action_package_library.setDisabled(True)
-            # self.action_install_processes.setDisabled(True)
-        else:
-            self.action_package_library.setEnabled(True)
-            # self.action_install_processes.setEnabled(True)
-
-    def package_library_pop_up(self):
-        """
-        Opens the package library pop-up
-
-        """
-
-        self.pop_up_package_library = PackageLibraryDialog(self)
-        self.pop_up_package_library.setGeometry(300, 200, 800, 600)
-        self.pop_up_package_library.show()
-        self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
-
-    @staticmethod
-    def documentation():
-        """
-        Opens the documentation in a web browser
-
-        """
-        webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
-
-    def install_processes_pop_up(self, folder=False):
-        """
-        Opens the install processes pop-up
-
-        :param folder: boolean, True if installing from a folder
-        """
-        self.pop_up_install_processes = InstallProcesses(self, folder=folder)
-        self.pop_up_install_processes.show()
-        self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.update_process_library)
-        self.pop_up_install_processes.process_installed.connect(self.pipeline_manager.processLibrary.pkg_library.update_config)
-
-    def add_clinical_tags(self):
-        """
-        Adds the clinical tags to the database and the data browser
-
-        """
-        added_tags = self.project.add_clinical_tags()
-        for tag in added_tags:
-            column = self.data_browser.table_data.get_index_insertion(tag)
-            self.data_browser.table_data.add_column(column, tag)
-
-    def import_data(self):
-        """
-        Calls the import software (MRI File Manager), reads the imported files and loads them into the database
-
-        """
-        # Opens the conversion software to convert the MRI files in Nifti/Json
-        config = Config()
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', config.get_mri_conv_path(),
-                                     '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
-                                     '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
-                                     'AcquisitionTime',
-                                     'CloseAfterExport'])
-        # 'NoLogExport'if we don't want log export
-
-        if code_exit == 0:
-
-            # Database filled
-            new_scans = controller.read_log(self.project, self)
-
-            # Table updated
-            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
-            self.data_browser.table_data.scans_to_visualize = documents
-            self.data_browser.table_data.scans_to_search = documents
-            self.data_browser.table_data.add_columns()
-            self.data_browser.table_data.fill_headers()
-            self.data_browser.table_data.add_rows(new_scans)
-            self.data_browser.reset_search_bar()
-            self.data_browser.frame_advanced_search.setHidden(True)
-            self.data_browser.advanced_search.rows = []
-
-        else:
-            pass
 
     def tab_changed(self):
         """
@@ -1022,3 +921,65 @@ class MainWindow(QMainWindow):
                 msg.addButton(save_button, QMessageBox.AcceptRole)
                 msg.addButton(unsave_button, QMessageBox.AcceptRole)
                 msg.exec()
+
+    def undo(self):
+        """
+        Undoes the last action made by the user
+
+        """
+        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+            # In Data Browser
+            self.project.undo(self.data_browser.table_data)  # Action reverted in the Database
+        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            # In Pipeline Manager
+            self.pipeline_manager.undo()
+
+    def update_package_library_action(self):
+        """
+        Updates the package library action depending on the mode
+
+        """
+        if Config().get_clinical_mode() == 'yes':
+            self.action_package_library.setDisabled(True)
+            # self.action_install_processes.setDisabled(True)
+        else:
+            self.action_package_library.setEnabled(True)
+            # self.action_install_processes.setEnabled(True)
+
+    def update_project(self, file_path, call_update_table=True):
+        """
+        Updates the project once the database has been updated
+
+        :param file_path: File name of the new project
+        :param call_update_table: boolean, True if we need to call update_table's method
+        """
+
+        self.data_browser.update_database(self.project)  # Database update data_browser
+        self.pipeline_manager.update_project(self.project)
+
+        if call_update_table:
+            self.data_browser.table_data.update_table()  # Table updated
+
+        # Window name updated
+        if self.project.isTempProject:
+            self.projectName = ('Unnamed project')
+        else:
+            self.projectName = self.project.getName()
+        self.setWindowTitle(self.windowName + self.projectName)
+
+        # List of project updated
+        if not self.test:
+            self.saved_projects_list = self.saved_projects.addSavedProject(file_path)
+        self.update_recent_projects_actions()
+
+    def update_recent_projects_actions(self):
+        """
+        Updates the list of recent projects
+
+        """
+        if self.saved_projects_list:
+            for i in range(min(len(self.saved_projects_list), self.config.get_max_projects())):
+                text = os.path.basename(self.saved_projects_list[i])
+                self.saved_projects_actions[i].setText(text)
+                self.saved_projects_actions[i].setData(self.saved_projects_list[i])
+                self.saved_projects_actions[i].setVisible(True)
