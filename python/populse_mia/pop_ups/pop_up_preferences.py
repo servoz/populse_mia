@@ -564,7 +564,6 @@ class PopUpPreferences(QDialog):
 
         # Max projects in "Saved projects"
         max_projects = min(max(self.max_projects_box.value(), 1), 20)
-        print(self.max_projects_box.value())
         config.set_max_projects(max_projects)
 
         # Use Matlab
