@@ -20,43 +20,21 @@ class SavedProjects:
         - pathsList: list of all the saved projects
 
     Methods:
-        - loadSavedProjects: loads the dictionary from the saved_projects.yml file
-        - saveSavedProjects: saves the dictionary to the saved_projects.yml file
         - addSavedProject: adds a new saved project
+        - loadSavedProjects: loads the dictionary from the saved_projects.yml
+        file
+        - saveSavedProjects: saves the dictionary to the saved_projects.yml
+        file
         - removeSavedProject: removes a saved project from the config file
-        - getList: returns the list of the saved projects
     """
 
     def __init__(self):
+
+        # self.maxProjects = 5
         self.savedProjects = self.loadSavedProjects()
-        #self.maxProjects = 5
         self.pathsList = self.savedProjects["paths"]
         if self.pathsList is None:
             self.pathsList = []
-
-    def loadSavedProjects(self):
-        """
-        Loads the dictionary from the saved_projects.yml file
-
-        :return: the dictionary
-        """
-        config = Config()
-        with open(os.path.join(config.get_mia_path(), 'properties', 'saved_projects.yml'), 'r') as stream:
-            try:
-                # return yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
-                return yaml.load(stream) ## version < 5.1
-            
-            except yaml.YAMLError as exc:
-                print(exc)
-
-    def saveSavedProjects(self):
-        """
-        Saves the dictionary to the saved_projects.yml file
-        """
-        config = Config()
-        with open(os.path.join(config.get_mia_path(), 'properties', 'saved_projects.yml'), 'w', encoding='utf8') \
-                as configfile:
-            yaml.dump(self.savedProjects, configfile, default_flow_style=False, allow_unicode=True)
 
     def addSavedProject(self, newPath):
         """
@@ -64,7 +42,8 @@ class SavedProjects:
 
         :param newPath: new project's path to add
         :return: the new path's list
-        """
+
+        """""
         if self.pathsList:
             if newPath not in self.pathsList:
                 self.pathsList.insert(0, newPath)
@@ -76,6 +55,34 @@ class SavedProjects:
         self.savedProjects["paths"] = self.pathsList
         self.saveSavedProjects()
         return self.pathsList
+
+    def loadSavedProjects(self):
+        """
+        Loads the dictionary from the saved_projects.yml file
+
+        :return: the dictionary
+        """
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+                               'saved_projects.yml'), 'r') as stream:
+            try:
+                # from version 5.1
+                # return yaml.load(stream, Loader=yaml.FullLoader)
+                return yaml.load(stream) # version < 5.1
+            
+            except yaml.YAMLError as exc:
+                print(exc)
+
+    def saveSavedProjects(self):
+        """
+        Saves the dictionary to the saved_projects.yml file
+        """
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+                               'saved_projects.yml'), 'w', encoding='utf8') \
+                as configfile:
+            yaml.dump(self.savedProjects, configfile,
+                      default_flow_style=False, allow_unicode=True)
 
     def removeSavedProject(self, path):
         """
@@ -89,10 +96,11 @@ class SavedProjects:
 
         self.saveSavedProjects()
 
-    def getList(self):
-        """
-        Returns the list of the saved projects
-
-        :return: the list of the saved projects
-        """
-        return self.savedProjects["paths"]
+    # Not used anywhere
+    # def getList(self):
+    #     """
+    #     Returns the list of the saved projects
+    #
+    #     :return: the list of the saved projects
+    #     """
+    #     return self.savedProjects["paths"]

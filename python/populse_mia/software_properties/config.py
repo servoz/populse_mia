@@ -103,7 +103,7 @@ class Config:
     def get_clinical_mode(self):
         """
         Gets if clinical mode is disabled or enabled in the preferences
-        Returns: boolean
+        :return: boolean
 
         """
         try:
@@ -114,7 +114,7 @@ class Config:
     def get_matlab_command(self):
         """
         Gets Matlab command
-        Returns: Returns path to matlab executable or nothing if matlab
+        :return: Returns path to matlab executable or nothing if matlab
         path not specified
 
         """
@@ -131,7 +131,7 @@ class Config:
     def get_matlab_path(self):
         """
         Gets the path to the matlab executable
-        Returns: String of path
+        :return: String of path
 
         """
         try:
@@ -142,7 +142,7 @@ class Config:
     def get_matlab_standalone_path(self):
         """
         Gets the path to matlab compiler runtime
-        Returns: string of path
+        :return: string of path
 
         """
         try:
@@ -154,7 +154,7 @@ class Config:
         """
         Gets the maximum number of projects displayed in the "Saved
         projects" menu
-        Returns: Integer
+        :return: Integer
 
         """
         try:
@@ -173,7 +173,7 @@ class Config:
         mode, mia path must compulsorily be returned from the mia_path
         parameter of the configuration.yml
 
-        Returns: string of path to mia folder
+        :return: string of path to mia folder
 
         """
         dot_mia_config = os.path.join(os.path.expanduser("~"),
@@ -229,7 +229,7 @@ class Config:
     def get_mri_conv_path(self):
         """
         gets the MRIManager.jar path
-        Returns: string of the path
+        :return: string of the path
 
         """
         try:
@@ -242,7 +242,7 @@ class Config:
     def get_opened_projects(self):
         """
         Gets opened projects
-        Returns: list of opened projects
+        :return: list of opened projects
 
         """
         return self.config["opened_projects"]
@@ -250,7 +250,7 @@ class Config:
     def get_projects_save_path(self):
         """
         Gets the path where projects are saved
-        Returns: string of path
+        :return: string of path
 
         """
         try:
@@ -264,7 +264,7 @@ class Config:
     def get_spm_path(self):
         """
         Gets the path of SPM12
-        Returns: string of path
+        :return: string of path
 
         """
         try:
@@ -275,7 +275,7 @@ class Config:
     def get_spm_standalone_path(self):
         """
         Gets the path to the SPM12 (standalone version)
-        Returns: String of path
+        :return: String of path
 
         """
         try:
@@ -286,7 +286,7 @@ class Config:
     def get_use_matlab(self):
         """
         Gets the value of "use matlab" checkbox in the preferences
-        Returns: boolean
+        :return: boolean
 
         """
         try:
@@ -297,7 +297,7 @@ class Config:
     def get_use_spm(self):
         """
         Gets the value of "use spm" checkbox in the preferences
-        Returns: boolean
+        :return: boolean
 
         """
         try:
@@ -308,7 +308,7 @@ class Config:
     def get_use_spm_standalone(self):
         """
         Gets the value of "use spm standalone" checkbox in the preferences
-        Returns: boolean
+        :return: boolean
 
         """
         try:
@@ -319,7 +319,7 @@ class Config:
     def getBackgroundColor(self):
         """
         Gets background color
-        Returns: string of the background color
+        :return: string of the background color
 
         """
         return self.config["background_color"]
@@ -327,7 +327,7 @@ class Config:
     def getChainCursors(self):
         """
         Gets the value of the checkbox 'chain cursor' in miniviewer
-        Returns: boolean
+        :return: boolean
 
         """
         return self.config["chain_cursors"]
@@ -336,7 +336,7 @@ class Config:
         """
         Gets number the maximum number of slices to display in the
         miniviewer
-        Returns: Integer
+        :return: Integer
 
         """
         return self.config["nb_slices_max"]
@@ -344,7 +344,7 @@ class Config:
     def getPathToProjectsFolder(self):
         """
         Gets the project's path
-        Returns: string of the path
+        :return: string of the path
 
         """
         return self.config["paths"]["projects"]
@@ -353,7 +353,7 @@ class Config:
         """
         Gets whether the show_all_slices parameters was enabled
         or not in the miniviewer
-        Returns: boolean
+        :return: boolean
 
         """
         #Used in MiniViewer
@@ -362,7 +362,7 @@ class Config:
     def getTextColor(self):
         """
         Gets the text color
-        Returns: string
+        :return: string
 
         """
         print(self.config["text_color"])
@@ -371,7 +371,7 @@ class Config:
     def getThumbnailTag(self):
         """
         Gets the tag of the thumbnail displayed in the miniviewer
-        Returns: string
+        :return: string
 
         """
         return self.config["thumbnail_tag"]
@@ -379,7 +379,7 @@ class Config:
     def isAutoSave(self):
         """
         Gets if the auto-save mode is enabled or not
-        Returns: boolean
+        :return: boolean
 
         """
         # used only in tests and when the background/text color is changed
@@ -388,7 +388,7 @@ class Config:
     def loadConfig(self):
         """
         Reads the config in the config.yml file
-        Returns: Returns a dictionary of the contents of config.yml
+        :return: Returns a dictionary of the contents of config.yml
 
         """
         with open(os.path.join(self.get_mia_path(), 'properties',
@@ -414,8 +414,7 @@ class Config:
     def set_clinical_mode(self, clinical_mode):
         """
         Enable of disable clinical mode
-        Args:
-            clinical_mode: boolean
+        :param: clinical_mode: boolean
 
         """
         self.config["clinical_mode"] = clinical_mode
@@ -425,8 +424,7 @@ class Config:
     def set_matlab_path(self, path):
         """
         Sets the path of Matlab's executable
-        Args:
-            path: string of path
+        :param: path: string of path
 
         """
         self.config["matlab"] = path
@@ -436,8 +434,7 @@ class Config:
     def set_matlab_standalone_path(self, path):
         """
         Sets the path of Matlab Compiler Runtime
-        Args:
-            path: string of path
+        :param: path: string of path
 
         """
         self.config["matlab_standalone"] = path
@@ -448,8 +445,7 @@ class Config:
         """
         Sets the maximum number of projects displayed in
         the "Saved projects" menu
-        Args:
-            nb_max_projects: Integer
+        :param: nb_max_projects: Integer
 
         """
         self.config["max_projects"] = nb_max_projects
@@ -460,8 +456,7 @@ class Config:
     def set_mri_conv_path(self, path):
         """
         Sets the MRIManager.jar path
-        Args:
-            path: string of the path
+        :param: path: string of the path
 
         """
         self.config["mri_conv_path"] = path
@@ -471,8 +466,7 @@ class Config:
     def set_opened_projects(self, new_projects):
         """
         Sets the list of opened projects and saves the modification
-        Args:
-            new_projects: List of path
+        :param: new_projects: List of path
 
         """
         self.config["opened_projects"] = new_projects
@@ -482,8 +476,7 @@ class Config:
     def set_projects_save_path(self, path):
         """
         Sets the folder where the projects are saved
-        Args:
-            path: string of path
+        :param: path: string of path
         """
         self.config["projects_save_path"] = path
         # Then save the modification
@@ -492,8 +485,7 @@ class Config:
     def set_spm_path(self, path):
         """
         Sets the path of SPM12 (license version)
-        Args:
-            path: string of path
+        :param: path: string of path
 
         """
         self.config["spm"] = path
@@ -503,8 +495,7 @@ class Config:
     def set_spm_standalone_path(self, path):
         """
         Sets the path of SPM12 (standalone version)
-        Args:
-            path: string of path
+        :param: path: string of path
 
         """
         self.config["spm_standalone"] = path
@@ -514,8 +505,7 @@ class Config:
     def set_use_matlab(self, use_matlab):
         """
         Sets the value of "use matlab" checkbox in the preferences
-        Args:
-            use_matlab: boolean
+        :param: use_matlab: boolean
 
         """
         self.config["use_matlab"] = use_matlab
@@ -525,8 +515,7 @@ class Config:
     def set_use_spm(self, use_spm):
         """
         Sets the value of "use spm" checkbox in the preferences
-        Args:
-            use_spm: boolean
+        :param: use_spm: boolean
         """
         self.config["use_spm"] = use_spm
         # Then save the modification
@@ -535,8 +524,7 @@ class Config:
     def set_use_spm_standalone(self, use_spm_standalone):
         """
         Sets the value of "use spm standalone" checkbox in the preferences
-        Args:
-            use_spm_standalone: boolean
+        :param:use_spm_standalone: boolean
 
         """
         self.config["use_spm_standalone"] = use_spm_standalone
@@ -546,8 +534,7 @@ class Config:
     def setAutoSave(self, save):
         """
         Sets auto-save mode
-        Args:
-            save: boolean
+        :param: save: boolean
         """
         self.config["auto_save"] = save
         # Then save the modification
@@ -556,8 +543,7 @@ class Config:
     def setBackgroundColor(self, color):
         """
         Set background color and save configuration
-        Args:
-            color: Color string ('Black', 'Blue', 'Green', 'Grey',
+        :param: color: Color string ('Black', 'Blue', 'Green', 'Grey',
             'Orange', 'Red', 'Yellow', 'White')
         """
         self.config["background_color"] = color
@@ -567,8 +553,7 @@ class Config:
     def setChainCursors(self, chain_cursors):
         """
         Sets the value of the checkbox 'chain cursor' in the miniviewer
-        Args:
-            chain_cursors: Boolean
+        :param: chain_cursors: Boolean
         """
         self.config["chain_cursors"] = chain_cursors
         # Then save the modification
@@ -577,8 +562,7 @@ class Config:
     def setNbAllSlicesMax(self, nb_slices_max):
         """
         Sets the number of slices to display in the miniviewer
-        Args:
-            nb_slices_max: Int
+        :param: nb_slices_max: Int
 
         """
         self.config["nb_slices_max"] = nb_slices_max
@@ -588,8 +572,7 @@ class Config:
     def setShowAllSlices(self, show_all_slices):
         """
         Sets the show_all_slides setting in miniviewer
-        Args:
-            show_all_slices: Boolean
+        :param: show_all_slices: Boolean
         """
         self.config["show_all_slices"] = show_all_slices
         # Then save the modification
@@ -598,8 +581,7 @@ class Config:
     def setTextColor(self, color):
         """
         Set text color and save configuration
-        Args:
-            color: Color string ('Black', 'Blue', 'Green', 'Grey',
+        :param: color: Color string ('Black', 'Blue', 'Green', 'Grey',
             'Orange', 'Red', 'Yellow', 'White')
 
         """
@@ -610,8 +592,7 @@ class Config:
     def setThumbnailTag(self, thumbnail_tag):
         """
         Sets the tag that is displayed in the mini viewer
-        Args:
-            thumbnail_tag: String
+        :param: thumbnail_tag: String
 
         """
         self.config["thumbnail_tag"] = thumbnail_tag
@@ -622,10 +603,9 @@ class Config:
     # def set_mia_path(self, path):
     #     """
     #
-    #     Args:
-    #         path:
+    #     :param:#         path:
     #
-    #     Returns:
+    #     :return:
     #
     #     """
     #     self.config["mia_path"] = path
@@ -635,7 +615,7 @@ class Config:
     # def getPathData(self):
     #     """
     #     Get the path tp the data directory
-    #     Returns: returns the path to the data directory
+    #     :return: returns the path to the data directory
     #
     #     """
     #     return self.config["paths"]["data"]
@@ -643,7 +623,7 @@ class Config:
     # def getPathToProjectsDBFile(self):
     #     """
     #
-    #     Returns:
+    #     :return:
     #
     #     """
     #     folder = self.getPathToProjectsFolder()
@@ -652,10 +632,9 @@ class Config:
     # def setPathToData(self,path):
     #     """
     #
-    #     Args:
-    #         path:
+    #     :param:#         path:
     #
-    #     Returns:
+    #     :return:
     #
     #     """
     #     if path is not None and path != '':
