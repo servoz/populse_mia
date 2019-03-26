@@ -679,10 +679,10 @@ class Project:
                 table.itemChanged.connect(table.change_cell_color)
             if action == "modified_visibilities":
                 # To revert the modifications of the visualized tags
-                old_tags = self.session.get_visibles()  # Old list of columns
+                old_tags = self.session.get_showed_tags()  # Old list of columns
                 visibles = to_undo[1]  # List of the tags visibles before the modification (Tag objects)
                 self.session.set_visibles(visibles)
-                table.update_visualized_columns(old_tags, self.session.get_visibles())  # Columns updated
+                table.update_visualized_columns(old_tags, self.session.get_showed_tags())  # Columns updated
 
     def unsaveModifications(self):
         """
