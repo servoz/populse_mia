@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*- #
+"""Module to define main window settings
+
+Contains:
+    Class:
+    -MainWindow
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -22,7 +31,6 @@ from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, QMainWind
 from populse_mia.software_properties.saved_projects import SavedProjects
 from populse_mia.software_properties.config import Config
 from populse_mia.data_browser.data_browser import DataBrowser
-from populse_mia.image_viewer.image_viewer import ImageViewer
 from populse_mia.pipeline_manager.pipeline_manager_tab import PipelineManagerTab
 from populse_mia.pipeline_manager.process_library import InstallProcesses, PackageLibraryDialog
 import populse_mia.project.controller as controller
@@ -108,22 +116,24 @@ class MainWindow(QMainWindow):
 
         self.saved_projects_actions = []
 
-        config = Config()
-        background_color = config.getBackgroundColor()
-        text_color = config.getTextColor()
+        self.config = Config()
+        background_color = self.config.getBackgroundColor()
+        text_color = self.config.getTextColor()
         self.windowName = "MIA - Multiparametric Image Analysis"
-        if config.dev_mode:
+        if self.config.dev_mode:
             self.windowName += " (Developer mode)"
         self.windowName += " - "
         self.projectName = "Unnamed project"
 
-        self.setStyleSheet("background-color:" + background_color + ";color:" + text_color + ";")
+        self.setStyleSheet("background-color:" + background_color +
+                           ";color:" + text_color + ";")
 
         # Create actions & menus
         self.create_actions()
         self.create_menus()
 
-        self.statusBar().showMessage('Please create a new project (Ctrl+N) or open an existing project (Ctrl+O)')
+        self.statusBar().showMessage('Please create a new project (Ctrl+N) or '
+                                     'open an existing project (Ctrl+O)')
 
         self.setWindowTitle(self.windowName + self.projectName)
 
@@ -157,7 +167,7 @@ class MainWindow(QMainWindow):
         self.action_import = QAction(QIcon(os.path.join(sources_images_dir, 'Blue.png')), 'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
-        for i in range(self.saved_projects.maxProjects):
+        for i in range(self.config.get_max_projects()):
             self.saved_projects_actions.append(QAction(self, visible=False,
                                                        triggered=self.open_recent_project))
 
@@ -239,7 +249,7 @@ class MainWindow(QMainWindow):
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
         self.menu_file.addMenu(self.menu_saved_projects)
-        for i in range(self.saved_projects.maxProjects):
+        for i in range(self.config.get_max_projects()):
             self.menu_saved_projects.addAction(self.saved_projects_actions[i])
         self.menu_saved_projects.addSeparator()
         self.menu_saved_projects.addAction(self.action_see_all_projects)
@@ -756,7 +766,8 @@ class MainWindow(QMainWindow):
 
         """
         if self.saved_projects_list:
-            for i in range(min(len(self.saved_projects_list), self.saved_projects.maxProjects)):
+            for i in range(min(len(self.saved_projects_list),
+                               self.config.get_max_projects())):
                 text = os.path.basename(self.saved_projects_list[i])
                 self.saved_projects_actions[i].setText(text)
                 self.saved_projects_actions[i].setData(self.saved_projects_list[i])

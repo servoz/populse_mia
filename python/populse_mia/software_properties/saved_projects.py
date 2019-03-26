@@ -17,7 +17,6 @@ class SavedProjects:
 
     Attributes:
         - savedProjects: dictionary of all the saved projects
-        - maxProjects: maximum projects to display in the "See all project" menu
         - pathsList: list of all the saved projects
 
     Methods:
@@ -30,7 +29,7 @@ class SavedProjects:
 
     def __init__(self):
         self.savedProjects = self.loadSavedProjects()
-        self.maxProjects = 5
+        #self.maxProjects = 5
         self.pathsList = self.savedProjects["paths"]
         if self.pathsList is None:
             self.pathsList = []
