@@ -365,7 +365,6 @@ class Config:
         :return: string
 
         """
-        print(self.config["text_color"])
         return self.config["text_color"]
 
     def getThumbnailTag(self):
