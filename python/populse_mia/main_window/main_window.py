@@ -896,10 +896,9 @@ class MainWindow(QMainWindow):
                         msg.setIcon(QMessageBox.Warning)
                         msg.setText(
                             "project already opened")
-                        msg.setIn formativeText(
-                            "The project at " + str(file_path) +
-                            " is already opened in another instance of "
-                            "the software.")
+                        msg.setInformativeText("The project at " + str(
+                            file_path) + " is already opened in another "
+                                        "instance of the software.")
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
