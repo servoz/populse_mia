@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- #
-"""Module to define main window settings
+"""Module to define main window appearance and settings
+
+Initializes the software appearance and defines interactions with the user.
 
 Contains:
     Class:
@@ -51,7 +53,8 @@ class MainWindow(QMainWindow):
 
     """
 
-    Main window class, initializes the software appearance and defines interactions with the user.
+    Main window class, initializes the software appearance and defines
+    interactions with the user.
 
     Attributes:
         :param project: current project in the software
@@ -169,12 +172,15 @@ class MainWindow(QMainWindow):
 
     def check_unsaved_modifications(self):
         """
-        Checks if there are differences between the current project and the database
+        Checks if there are differences between the current project and the
+        database
 
-        :return: True if there are unsaved modifications, False otherwise
+        :return: Boolean. True if there are unsaved modifications,
+        False otherwise
         """
         if self.project.isTempProject:
-            if len(self.project.session.get_documents_names(COLLECTION_CURRENT)) > 0:
+            if len(self.project.session.get_documents_names(
+                    COLLECTION_CURRENT)) > 0:
                 return True
             else:
                 return False
@@ -185,7 +191,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         """
-        Overrides the closing event to check if there are unsaved modifications
+        Overrides the QWidget closing event to check if there are unsaved
+        modifications
 
         :param event: closing event
         """
@@ -215,7 +222,7 @@ class MainWindow(QMainWindow):
 
     def create_actions(self):
         """
-        Creates the actions in each menu
+        Creates the actions and their shortcuts in each menu
 
         """
 
@@ -373,19 +380,22 @@ class MainWindow(QMainWindow):
         else:
             can_switch = True
         if can_switch:
-            # Opens a pop-up when the 'New project' action is clicked and updates the recent projects
+            # Opens a pop-up when the 'New project' action is clicked and
+            # updates the recent projects
             self.exPopup = PopUpNewProject()
 
             if self.exPopup.exec_():
 
                 self.project.session.unsave_modifications()
-                self.remove_raw_files_useless()  # We remove the useless files from the old project
+                self.remove_raw_files_useless()  # We remove the useless
+                # files from the old project
 
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.get_filename(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
 
-                # Removing the old project from the list of currently opened projects
+                # Removing the old project from the list of currently opened
+                # projects
                 config = Config()
                 opened_projects = config.get_opened_projects()
                 opened_projects.remove(self.project.folder)
@@ -397,7 +407,8 @@ class MainWindow(QMainWindow):
 
     def create_tabs(self):
         """
-        Creates the tabs
+        Creates the tabs and initializes the DataBrowser and PipelineManager
+        classes
         """
         self.config = Config()
 
@@ -430,7 +441,8 @@ class MainWindow(QMainWindow):
         Opens the documentation in a web browser
 
         """
-        webbrowser.open('https://populse.github.io/populse_mia/html/index.html')
+        webbrowser.open(
+            'https://populse.github.io/populse_mia/html/index.html')
 
     def install_processes_pop_up(self, folder=False):
         """
@@ -447,15 +459,20 @@ class MainWindow(QMainWindow):
 
     def import_data(self):
         """
-        Calls the import software (MRI File Manager), reads the imported files and loads them into the database
+        Calls the import software (MRI File Manager), reads the imported
+        files and loads them into the database
 
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         config = Config()
-        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar', config.get_mri_conv_path(),
-                                     '[ExportNifti] ' + os.path.join(self.project.folder, 'data', 'raw_data'),
-                                     '[ExportToMIA] PatientName-StudyName-CreationDate-SeqNumber-Protocol-SequenceName-'
-                                     'AcquisitionTime',
+        code_exit = subprocess.call(['java', '-Xmx4096M', '-jar',
+                                      config.get_mri_conv_path(),
+                                     '[ExportNifti] ' + os.path.join(
+                                         self.project.folder, 'data',
+                                         'raw_data'),
+                                     '[ExportToMIA] PatientName-StudyName-'
+                                     'CreationDate-SeqNumber-Protocol-'
+                                     'SequenceName-AcquisitionTime',
                                      'CloseAfterExport'])
         # 'NoLogExport'if we don't want log export
 
@@ -465,7 +482,8 @@ class MainWindow(QMainWindow):
             new_scans = controller.read_log(self.project, self)
 
             # Table updated
-            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            documents = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
             self.data_browser.table_data.scans_to_visualize = documents
             self.data_browser.table_data.scans_to_search = documents
             self.data_browser.table_data.add_columns()
@@ -487,7 +505,8 @@ class MainWindow(QMainWindow):
         # We check for unsaved modifications
         if self.check_unsaved_modifications():
 
-            # If there are unsaved modifications, we ask the user what he wants to do
+            # If there are unsaved modifications, we ask the user what he
+            # wants to do
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
@@ -504,7 +523,8 @@ class MainWindow(QMainWindow):
                 self.exPopup.get_filename(file_name)
                 file_name = self.exPopup.relative_path
 
-                self.switch_project(file_name, self.exPopup.name)  # We switch the project
+                self.switch_project(file_name, self.exPopup.name)
+                # We switch the project
 
     def open_recent_project(self):
         """
@@ -514,7 +534,8 @@ class MainWindow(QMainWindow):
         # We check for unsaved modifications
         if self.check_unsaved_modifications():
 
-            # If there are unsaved modifications, we ask the user what he wants to do
+            # If there are unsaved modifications, we ask the user what he
+            # wants to do
             self.pop_up_close = PopUpQuit(self.project)
             self.pop_up_close.save_as_signal.connect(self.saveChoice)
             self.pop_up_close.exec()
@@ -531,7 +552,8 @@ class MainWindow(QMainWindow):
                 entire_path = os.path.abspath(file_name)
                 path, name = os.path.split(entire_path)
                 relative_path = os.path.relpath(file_name)
-                self.switch_project(relative_path, name)  # We switch the project
+                self.switch_project(relative_path, name)
+                # We switch the project
 
     def package_library_pop_up(self):
         """
@@ -542,7 +564,8 @@ class MainWindow(QMainWindow):
         self.pop_up_package_library = PackageLibraryDialog(self)
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
         self.pop_up_package_library.show()
-        self.pop_up_package_library.signal_save.connect(self.pipeline_manager.processLibrary.update_process_library)
+        self.pop_up_package_library.signal_save.connect(
+            self.pipeline_manager.processLibrary.update_process_library)
 
     def project_properties_pop_up(self):
         """
@@ -551,22 +574,29 @@ class MainWindow(QMainWindow):
         """
 
         old_tags = self.project.session.get_showed_tags()
-        self.pop_up_settings = PopUpProperties(self.project, self.data_browser, old_tags)
+        self.pop_up_settings = PopUpProperties(self.project,
+                                               self.data_browser, old_tags)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
         if self.pop_up_settings.exec_():
-            self.data_browser.table_data.update_visualized_columns(old_tags, self.project.session.get_showed_tags())
+            self.data_browser.table_data.update_visualized_columns(
+                old_tags, self.project.session.get_showed_tags())
 
     def redo(self):
         """
         Redoes the last action made by the user
 
         """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+        if self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Data Browser':
             # In Data Browser
-            self.project.redo(self.data_browser.table_data)  # Action remade in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            self.project.redo(self.data_browser.table_data)
+            # Action remade in the Database
+        elif self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.redo()
 
@@ -581,31 +611,44 @@ class MainWindow(QMainWindow):
             self.project.database.__exit__(None, None, None)
             shutil.rmtree(self.project.folder)
         else:
-            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'raw_data', '*')):
+            for filename in glob.glob(
+                    os.path.join(os.path.relpath(
+                        self.project.folder), 'data', 'raw_data', '*')):
                 scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                # Json files associated to nii files are kept for the raw_data folder
+                # The file is removed only if it's not a scan in the project,
+                # and if it's not a logExport
+                # Json files associated to nii files are kept for the raw_
+                # data folder
                 file_name, file_extension = os.path.splitext(scan)
                 file_in_database = False
-                for database_scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+                for database_scan in self.project.session.get_documents_names(
+                        COLLECTION_CURRENT):
                     if file_name in database_scan:
                         file_in_database = True
                 if "logExport" in scan:
                     file_in_database = True
                 if not file_in_database:
                     os.remove(filename)
-            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data', 'derived_data', '*')):
+            for filename in glob.glob(
+                    os.path.join(os.path.relpath(
+                        self.project.folder), 'data', 'derived_data', '*')):
                 scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data", "derived_data", scan)) \
-                        is None and "logExport" not in scan:
+                # The file is removed only if it's not a scan in the project,
+                # and if it's not a logExport
+                if self.project.session.get_document(
+                        COLLECTION_CURRENT, os.path.join(
+                            "data", "derived_data", scan)) is None and \
+                        "logExport" not in scan:
                     os.remove(filename)
-            for filename in glob.glob(os.path.join(os.path.relpath(self.project.folder), 'data',
-                                                   'downloaded_data', '*')):
+            for filename in glob.glob(os.path.join(
+                    os.path.relpath(self.project.folder), 'data',
+                    'downloaded_data', '*')):
                 scan = os.path.basename(filename)
-                # The file is removed only if it's not a scan in the project, and if it's not a logExport
-                if self.project.session.get_document(COLLECTION_CURRENT, os.path.join("data",
-                                                                                      "downloaded_data", scan)) \
+                # The file is removed only if it's not a scan in the project,
+                # and if it's not a logExport
+                if self.project.session.get_document(
+                        COLLECTION_CURRENT, os.path.join(
+                            "data","downloaded_data", scan)) \
                         is None and "logExport" not in scan:
                     os.remove(filename)
             self.project.database.__exit__(None, None, None)
@@ -615,10 +658,14 @@ class MainWindow(QMainWindow):
         Saves either the current project or the current pipeline
         """
 
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+        if self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Data Browser':
             # In Data Browser
             self.saveChoice()
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+        elif self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.savePipeline()
 
@@ -626,10 +673,14 @@ class MainWindow(QMainWindow):
         """
         Saves either the current project or the current pipeline under a new name
         """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+        if self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Data Browser':
             # In Data Browser
             self.save_project_as()
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+        elif self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.savePipelineAs()
 
@@ -644,18 +695,24 @@ class MainWindow(QMainWindow):
 
             old_folder = self.project.folder
             file_name = self.exPopup.relative_path
-            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
-            database_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'database')
-            properties_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'properties')
-            filters_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'filters')
-            data_path = os.path.join(os.path.relpath(self.exPopup.relative_path), 'data')
+
+            database_path = os.path.join(
+                os.path.relpath(self.exPopup.relative_path), 'database')
+            properties_path = os.path.join(
+                os.path.relpath(self.exPopup.relative_path), 'properties')
+            filters_path = os.path.join(
+                os.path.relpath(self.exPopup.relative_path), 'filters')
+            data_path = os.path.join(
+                os.path.relpath(self.exPopup.relative_path), 'data')
+
             raw_data_path = os.path.join(data_path, 'raw_data')
             derived_data_path = os.path.join(data_path, 'derived_data')
             downloaded_data_path = os.path.join(data_path, 'downloaded_data')
 
             # List of projects updated
             if not self.test:
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_name)
+                self.saved_projects_list = self.saved_projects.addSavedProject(
+                    file_name)
             self.update_recent_projects_actions()
 
             os.makedirs(self.exPopup.relative_path)
@@ -668,20 +725,32 @@ class MainWindow(QMainWindow):
 
             # Data files copied
             if os.path.exists(os.path.join(old_folder, 'data')):
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'raw_data', '*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'raw_data'))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'derived_data', '*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'derived_data'))
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'data', 'downloaded_data', '*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(data_path), 'downloaded_data'))
+                for filename in glob.glob(
+                        os.path.join(os.path.relpath(old_folder), 'data',
+                                     'raw_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(
+                        data_path), 'raw_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(
+                        old_folder), 'data', 'derived_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(
+                        data_path), 'derived_data'))
+                for filename in glob.glob(os.path.join(os.path.relpath(
+                        old_folder), 'data', 'downloaded_data', '*')):
+                    shutil.copy(filename, os.path.join(os.path.relpath(
+                        data_path), 'downloaded_data'))
 
             if os.path.exists(os.path.join(old_folder, 'filters')):
-                for filename in glob.glob(os.path.join(os.path.relpath(old_folder), 'filters', '*')):
-                    shutil.copy(filename, os.path.join(os.path.relpath(filters_path)))
+                for filename in glob.glob(os.path.join(
+                        os.path.relpath(old_folder), 'filters', '*')):
+                    shutil.copy(filename, os.path.join(
+                        os.path.relpath(filters_path)))
 
-            # First we register the Database before commiting the last pending modifications
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'),
-                        os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
+            # First we register the Database before commiting the last
+            # pending modifications
+            shutil.copy(os.path.join(os.path.relpath(old_folder),
+                                     'database', 'mia.db'),
+                        os.path.join(os.path.relpath(old_folder),
+                                     'database', 'mia_before_commit.db'))
 
             # We commit the last pending modifications
             self.project.saveModifications()
@@ -691,22 +760,33 @@ class MainWindow(QMainWindow):
                                      'properties', 'properties.yml'),
                         os.path.relpath(properties_path))
 
-            # We copy the Database with all the modifications commited in the new project
+            # We copy the Database with all the modifications commited in
+            # the new project
             os.mkdir(os.path.relpath(database_path))
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'), os.path.relpath(database_path))
+            shutil.copy(os.path.join(os.path.relpath(old_folder),
+                                     'database', 'mia.db'),
+                        os.path.relpath(database_path))
 
-            # We remove the Database with all the modifications saved in the old project
-            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
+            # We remove the Database with all the modifications saved in
+            # the old project
+            os.remove(os.path.join(
+                os.path.relpath(old_folder), 'database', 'mia.db'))
 
-            # We reput the Database without the last modifications in the old project
-            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'),
-                        os.path.join(os.path.relpath(old_folder), 'database', 'mia.db'))
+            # We reput the Database without the last modifications
+            # in the old project
+            shutil.copy(os.path.join(os.path.relpath(old_folder), 'database',
+                                     'mia_before_commit.db'),
+                        os.path.join(os.path.relpath(old_folder), 'database',
+                                     'mia.db'))
 
-            os.remove(os.path.join(os.path.relpath(old_folder), 'database', 'mia_before_commit.db'))
+            os.remove(os.path.join(os.path.relpath(old_folder), 'database',
+                                   'mia_before_commit.db'))
 
-            self.remove_raw_files_useless()  # We remove the useless files from the old project
+            self.remove_raw_files_useless()
+            # We remove the useless files from the old project
 
-            # Removing the old project from the list of currently opened projects
+            # Removing the old project from the list of
+            # currently opened projects
             config = Config()
             opened_projects = config.get_opened_projects()
             opened_projects.remove(self.project.folder)
@@ -718,13 +798,16 @@ class MainWindow(QMainWindow):
             self.project.setDate(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))
             self.project.saveModifications()
 
-            self.update_project(file_name, call_update_table=False) # project updated everywhere
+            self.update_project(file_name, call_update_table=False)
+            # project updated everywhere
 
-            # If some files have been set in the pipeline editors, display a warning message
+            # If some files have been set in the pipeline editors,
+            # display a warning message
             if self.pipeline_manager.pipelineEditorTabs.has_pipeline_nodes():
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
-                msg.setText("This action moves the current database. All pipelines will need to be initialized "
+                msg.setText("This action moves the current database. "
+                            "All pipelines will need to be initialized "
                             "again before they can run.")
                 msg.setWindowTitle("Warning")
                 msg.setStandardButtons(QMessageBox.Ok)
@@ -751,7 +834,8 @@ class MainWindow(QMainWindow):
         if self.exPopup.exec_():
             file_path = self.exPopup.relative_path
             if not self.test:
-                self.saved_projects_list = self.saved_projects.addSavedProject(file_path)
+                self.saved_projects_list = self.saved_projects.addSavedProject(
+                    file_path)
             self.update_recent_projects_actions()
 
     def software_preferences_pop_up(self):
@@ -763,18 +847,24 @@ class MainWindow(QMainWindow):
         self.pop_up_preferences = PopUpPreferences(self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
         self.pop_up_preferences.show()
-        self.pop_up_preferences.use_clinical_mode_signal.connect(self.add_clinical_tags)
+        self.pop_up_preferences.use_clinical_mode_signal.connect(
+            self.add_clinical_tags)
 
         # Modifying the options in the Pipeline Manager (verify if clinical mode)
-        self.pop_up_preferences.signal_preferences_change.connect(self.pipeline_manager.update_clinical_mode)
-        self.pop_up_preferences.signal_preferences_change.connect(self.update_package_library_action)
+        self.pop_up_preferences.signal_preferences_change.connect(
+            self.pipeline_manager.update_clinical_mode)
+        self.pop_up_preferences.signal_preferences_change.connect(
+            self.update_package_library_action)
 
     def switch_project(self, file_path, name):
         """
-        Verifies if it's possible to open the selected project and quit the current one
+        Verifies if it's possible to open the selected project
+        and quit the current one
 
         :param file_path: raw file_path
         :param name: project name
+
+        :return: Boolean
         """
         # /!\ file_path and path are the same param
 
@@ -784,12 +874,18 @@ class MainWindow(QMainWindow):
             # If the file exists
             if os.path.exists(os.path.join(file_path)):
                 # If it is a MIA project
-                if os.path.exists(os.path.join(file_path, "properties", "properties.yml")) \
-                        and os.path.exists(os.path.join(file_path, "database", "mia.db")) \
-                        and os.path.exists(os.path.join(file_path, "data", "raw_data")) \
-                        and os.path.exists(os.path.join(file_path, "data", "derived_data")) \
-                        and os.path.exists(os.path.join(file_path, "data", "downloaded_data")) \
-                        and os.path.exists(os.path.join(file_path, "filters")):
+                if os.path.exists(os.path.join(
+                        file_path, "properties", "properties.yml")) \
+                    and os.path.exists(os.path.join(
+                        file_path, "database", "mia.db")) \
+                    and os.path.exists(os.path.join(
+                        file_path, "data", "raw_data")) \
+                    and os.path.exists(os.path.join(
+                        file_path, "data", "derived_data")) \
+                    and os.path.exists(os.path.join(
+                        file_path, "data", "downloaded_data")) \
+                    and os.path.exists(os.path.join(
+                        file_path, "filters")):
 
                     # We check for invalid scans in the project
 
@@ -800,15 +896,17 @@ class MainWindow(QMainWindow):
                         msg.setIcon(QMessageBox.Warning)
                         msg.setText(
                             "project already opened")
-                        msg.setInformativeText(
+                        msg.setIn formativeText(
                             "The project at " + str(file_path) +
-                            " is already opened in another instance of the software.")
+                            " is already opened in another instance of "
+                            "the software.")
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()
                         return False
-                    problem_list = controller.verify_scans(temp_database, file_path)
+                    problem_list = controller.verify_scans(temp_database,
+                                                           file_path)
 
                     # Message if invalid files
                     if problem_list:
@@ -827,7 +925,8 @@ class MainWindow(QMainWindow):
                         msg.exec()
 
                     self.project.session.unsave_modifications()
-                    self.remove_raw_files_useless()  # We remove the useless files from the old project
+                    self.remove_raw_files_useless()
+                    # We remove the useless files from the old project
 
                     # project removed from the opened projects list
                     config = Config()
@@ -837,7 +936,8 @@ class MainWindow(QMainWindow):
 
                     self.project = temp_database  # New Database
 
-                    self.update_project(file_path)  # project updated everywhere
+                    self.update_project(file_path)
+                    # project updated everywhere
 
                     return True
 
@@ -845,9 +945,12 @@ class MainWindow(QMainWindow):
                 else:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
-                    msg.setText("The project selected isn't a valid MIA project")
+                    msg.setText("The project selected isn't a "
+                                "valid MIA project")
                     msg.setInformativeText(
-                        "The project selected " + name + " isn't a MIA project.\nPlease select a valid one.")
+                        "The project selected " + name + " isn't a MIA project"
+                                                         ".\nPlease select a "
+                                                         "valid one.")
                     msg.setWindowTitle("Warning")
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
@@ -860,7 +963,9 @@ class MainWindow(QMainWindow):
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText("The project selected doesn't exist anymore")
                 msg.setInformativeText(
-                    "The project selected " + name + " doesn't exist anymore.\nPlease select another one.")
+                    "The project selected " + name + " doesn't exist anymore."
+                                                     "\nPlease select "
+                                                     "another one.")
                 msg.setWindowTitle("Warning")
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
@@ -873,10 +978,13 @@ class MainWindow(QMainWindow):
 
         """
 
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+        if self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Data Browser':
             # data_browser refreshed after working with pipelines
             old_scans = self.data_browser.table_data.scans_to_visualize
-            documents = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            documents = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
 
             self.data_browser.table_data.add_columns()
             self.data_browser.table_data.fill_headers()
@@ -888,7 +996,8 @@ class MainWindow(QMainWindow):
 
             self.data_browser.table_data.itemChanged.disconnect()
             self.data_browser.table_data.fill_cells_update_table()
-            self.data_browser.table_data.itemChanged.connect(self.data_browser.table_data.change_cell_color)
+            self.data_browser.table_data.itemChanged.connect(
+                self.data_browser.table_data.change_cell_color)
 
             self.data_browser.table_data.update_visualized_rows(old_scans)
 
@@ -899,20 +1008,26 @@ class MainWindow(QMainWindow):
 
             if len(self.project.currentFilter.nots) > 0:
                 self.data_browser.frame_advanced_search.setHidden(False)
-                self.data_browser.advanced_search.scans_list = self.data_browser.table_data.scans_to_visualize
+                self.data_browser.advanced_search.scans_list = \
+                    self.data_browser.table_data.scans_to_visualize
                 self.data_browser.advanced_search.show_search()
-                self.data_browser.advanced_search.apply_filter(self.project.currentFilter)
+                self.data_browser.advanced_search.apply_filter(
+                    self.project.currentFilter)
 
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+        elif self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Pipeline Manager':
             # Pipeline Manager
-            # The pending modifications must be saved before working with pipelines (auto_commit)
+            # The pending modifications must be saved before
+            # working with pipelines (auto_commit)
             if self.project.hasUnsavedModifications():
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText("Unsaved modifications in the Data Browser !")
                 msg.setInformativeText(
                     "There are unsaved modifications in the database, "
-                    "you need to save or remove them before working with pipelines.")
+                    "you need to save or remove them before working "
+                    "with pipelines.")
                 msg.setWindowTitle("Warning")
                 save_button = QPushButton("Save")
                 save_button.clicked.connect(self.project.saveModifications)
@@ -927,10 +1042,16 @@ class MainWindow(QMainWindow):
         Undoes the last action made by the user
 
         """
-        if self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Data Browser':
+        if self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Data Browser':
             # In Data Browser
-            self.project.undo(self.data_browser.table_data)  # Action reverted in the Database
-        elif self.tabs.tabText(self.tabs.currentIndex()).replace("&", "", 1) == 'Pipeline Manager':
+            self.project.undo(
+                self.data_browser.table_data)
+            # Action reverted in the Database
+        elif self.tabs.tabText(
+                self.tabs.currentIndex()).replace("&",
+                                                  "", 1) == 'Pipeline Manager':
             # In Pipeline Manager
             self.pipeline_manager.undo()
 
@@ -949,12 +1070,16 @@ class MainWindow(QMainWindow):
     def update_project(self, file_path, call_update_table=True):
         """
         Updates the project once the database has been updated
+        Updates the database, the window title and the recent and saved
+        projects menus.
 
         :param file_path: File name of the new project
-        :param call_update_table: boolean, True if we need to call update_table's method
+        :param call_update_table: boolean, True if we need to call
+        update_table's method
         """
 
-        self.data_browser.update_database(self.project)  # Database update data_browser
+        self.data_browser.update_database(self.project)
+        # Database update data_browser
         self.pipeline_manager.update_project(self.project)
 
         if call_update_table:
@@ -962,14 +1087,15 @@ class MainWindow(QMainWindow):
 
         # Window name updated
         if self.project.isTempProject:
-            self.projectName = ('Unnamed project')
+            self.projectName = 'Unnamed project'
         else:
             self.projectName = self.project.getName()
         self.setWindowTitle(self.windowName + self.projectName)
 
         # List of project updated
         if not self.test:
-            self.saved_projects_list = self.saved_projects.addSavedProject(file_path)
+            self.saved_projects_list = self.saved_projects.addSavedProject(
+                file_path)
         self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
@@ -978,8 +1104,12 @@ class MainWindow(QMainWindow):
 
         """
         if self.saved_projects_list:
-            for i in range(min(len(self.saved_projects_list), self.config.get_max_projects())):
+            for i in range(min(len(
+                    self.saved_projects_list),
+                    self.config.get_max_projects())):
                 text = os.path.basename(self.saved_projects_list[i])
                 self.saved_projects_actions[i].setText(text)
-                self.saved_projects_actions[i].setData(self.saved_projects_list[i])
+                self.saved_projects_actions[i].setData(
+                    self.saved_projects_list[i])
                 self.saved_projects_actions[i].setVisible(True)
+
