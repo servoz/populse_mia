@@ -794,7 +794,7 @@ class Project:
                 old_tags = self.session.get_showed_tags()  # Old list of columns
                 visibles = to_undo[
                     1]  # List of the tags visibles before the modification (Tag objects)
-                self.session.set_visibles(visibles)
+                self.session.set_showed_tags(visibles)
                 table.update_visualized_columns(old_tags,
                                                 self.session.get_showed_tags())  # Columns updated
 
