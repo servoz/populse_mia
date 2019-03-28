@@ -376,6 +376,7 @@ def main():
     else:  # "user" mode
 
         try:
+            
             if not os.path.exists(os.path.dirname(dot_mia_config)):
                 os.mkdir(os.path.dirname(dot_mia_config))
                 print('\nThe {0} directory is created ...'
@@ -386,6 +387,12 @@ def main():
                 # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
                 mia_home_config = yaml.load(stream)  # version < 5.1
 
+            mia_home_config["dev_mode"] = "no"
+            
+            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+                yaml.dump(mia_home_config, configfile, default_flow_style=False,
+                          allow_unicode=True)
+                
             verify_processes()
 
         except Exception as e:  # the configuration.yml file does not exist
@@ -427,6 +434,7 @@ def main():
     # set the dev_mode to "no" when exiting mia,
     # if ~/.populse_mia/configuration.yml file exists
     if os.path.isfile(dot_mia_config):
+        
         with open(dot_mia_config, 'r') as stream:
             # from version 5.1:
             # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
@@ -529,9 +537,11 @@ def verify_processes():
     print('\nChecking the installed versions of nipype and mia_processes ...')
     print('***************************************************************')
     pkg_error = []
+    
     try:
         __import__('nipype')
         nipypeVer = sys.modules['nipype'].__version__
+        
     except ImportError as e:
         pkg_error.append('nipype')
         print('\n' + '*' * 37)
@@ -547,26 +557,26 @@ def verify_processes():
         print('\n' + '*' * 37)
         print('MIA warning: {0}'.format(e))
         print('*' * 37 + '\n')
-
+   
     if len(pkg_error) > 0:
         app = QApplication(sys.argv)
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle("populse_mia -  warning: {0}".format(e))
+        msg.setWindowTitle("populse_mia -  warning: ModuleNotFoundError!")
 
         if len(pkg_error) == 1:
-            msg.setText("Package {0} not found !\nPlease install "
+            msg.setText("{0} package not found !\nPlease install "
                         "the package and "
                         "start again mia ...".format(pkg_error[0]))
         else:
-            msg.setText("Package {0} and {1} not found !\n"
+            msg.setText("{0} and {1} packages not found !\n"
                         "Please install the packages and start again mia "
                         "...".format(pkg_error[0], pkg_error[1]))
         msg.setStandardButtons(QMessageBox.Ok)
         msg.buttonClicked.connect(msg.close)
         msg.exec()
         del app
-        return
+        sys.exit(1)
 
     if os.path.isfile(proc_config):
         with open(proc_config, 'r') as stream:
