@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*- #
+"""Module that contains class to override the default behaviour and some
+session methods of populse_db
+
+Contains:
+    Class:
+    -DatabaseMIA
+    -DatabaseSessionMIA
+
+"""
+
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -187,8 +199,8 @@ class DatabaseSessionMIA(DatabaseSession):
         - add_collection: overrides the method adding a collection
         - add_field: adds a field to the database, if it does not already exist
         - add_fields: adds the list of fields
-        - get_visibles: gives the list of visible tags
-        - set_visibles: sets the list of visible tags
+        - get_showed_tags: gives the list of visible tags
+        - set_showed_tags: sets the list of visible tags
     """
 
     def add_collection(self, name, primary_key, visibility, origin, unit,

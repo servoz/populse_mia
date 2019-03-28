@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*- #
+"""
+
+Contains:
+    Methods:
+        -read_log
+        -tags_from_file
+        -verify_scans
+    Class:
+        -ImportProgress
+        -ImportWorker
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -20,15 +34,47 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QProgressDialog
 
 # Populse_MIA imports
-from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, \
+from populse_mia.project.project import COLLECTION_CURRENT, \
+    COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, \
     TYPE_NII
-from populse_mia.project.database_mia import TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER
+from populse_mia.project.database_mia import TAG_ORIGIN_BUILTIN, \
+    TAG_ORIGIN_USER
 
 # Populse_db imports
-from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, FIELD_TYPE_TIME, \
-    FIELD_TYPE_LIST_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_FLOAT, FIELD_TYPE_LIST_FLOAT, \
-    FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
+from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, \
+    FIELD_TYPE_DATE, FIELD_TYPE_TIME, FIELD_TYPE_LIST_STRING, \
+    FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_FLOAT, \
+    FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_BOOLEAN, FIELD_TYPE_LIST_BOOLEAN, \
+    FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
+
+def read_log(project, main_window):
+    """
+    From the log export file of the import software, the data base (here the
+    current project) is loaded with the tags
+
+    :param project: current project in the software
+    :param main_window: software's main window
+    :return: the scans that have been added
+    """
+
+    main_window.progress = ImportProgress(project)
+    main_window.progress.show()
+    main_window.progress.exec()
+
+    with main_window.progress.worker.lock:
+        scans_added = list(main_window.progress.worker.scans_added)
+    return scans_added
+
+
+# def save_project(project):
+#     """
+#     Saves the modifications of the project
+#
+#     :param project: current project in the software
+#     """
+#
+#     project.saveModifications()
 
 def tags_from_file(file_path, path):
     """
@@ -45,40 +91,11 @@ def tags_from_file(file_path, path):
     return json_tags
 
 
-def read_log(project, main_window):
-    """
-    From the log export file of the import software, the data base (here the current project) is loaded with the tags
-
-    :param project: current project in the software
-    :param main_window: software's main window
-    :return: the scans that have been added
-    """
-
-    main_window.progress = ImportProgress(project)
-    main_window.progress.show()
-    main_window.progress.exec()
-
-    with main_window.progress.worker.lock:
-        scans_added = list(main_window.progress.worker.scans_added)
-    return scans_added
-
-
-def save_project(project):
-    """
-    Saves the modifications of the project
-
-    :param project: current project in the software
-    """
-
-    project.saveModifications()
-
-
-def verify_scans(project, path):
+def verify_scans(project):
     """
     Checks if the project's scans have been modified
 
     :param project: current project in the software
-    :param path:
     :return: the list of scans that have been modified
     """
 
@@ -95,7 +112,8 @@ def verify_scans(project, path):
                 data = scan_file.read()
                 actual_md5 = hashlib.md5(data).hexdigest()
 
-            initial_checksum = project.session.get_value(COLLECTION_CURRENT, scan, TAG_CHECKSUM)
+            initial_checksum = project.session.get_value(COLLECTION_CURRENT,
+                                                         scan, TAG_CHECKSUM)
             if initial_checksum is not None and actual_md5 != initial_checksum:
                 return_list.append(file_name)
 
@@ -112,10 +130,12 @@ class ImportProgress(QProgressDialog):
     """
 
     def __init__(self, project):
-        super(ImportProgress, self).__init__("Please wait while the paths are being imported...", None, 0, 3)
+        super(ImportProgress, self).__init__(
+            "Please wait while the paths are being imported...", None, 0, 3)
 
         self.setWindowTitle("Importing the paths")
-        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint |
+                             Qt.CustomizeWindowHint)
         self.setModal(True)
 
         self.setMinimumDuration(0)
@@ -147,16 +167,19 @@ class ImportWorker(QThread):
         self.progress = progress
         self.lock = threading.RLock()
         # scans_added should always be accessed through the lock, and copied
-        # before releasing the lock, because its value will change inside the thread
+        # before releasing the lock, because its value will change inside
+        # the thread
         self.scans_added = []
 
     def run(self):
 
         begin = time()
 
-        raw_data_folder = os.path.relpath(os.path.join(self.project.folder, 'data', 'raw_data'))
+        raw_data_folder = os.path.relpath(os.path.join(self.project.folder,
+                                                       'data', 'raw_data'))
 
-        # Checking all the export logs from MRIManager and taking the most recent
+        # Checking all the export logs from MRIManager and taking the most
+        # recent
         list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
         if len(list_logs) == 0:
             list_dict_log = []
@@ -176,28 +199,33 @@ class ImportWorker(QThread):
         tags_names_added = []
         documents = {}
 
-        tags_to_remove = ["Dataset data file", "Dataset header file"]  # List of tags to remove
+        # List of tags to remove
+        tags_to_remove = ["Dataset data file", "Dataset header file"]
 
         for dict_log in list_dict_log:
 
             if dict_log['StatusExport'] == "Export ok":
                 file_name = dict_log['NameFile']
                 path_name = raw_data_folder
-                with open(os.path.join(path_name, file_name) + ".nii", 'rb') as scan_file:
+                with open(os.path.join(path_name, file_name) + ".nii",
+                          'rb') as scan_file:
                     data = scan_file.read()
                     original_md5 = hashlib.md5(data).hexdigest()
 
                 file_path = os.path.join(raw_data_folder, file_name + ".nii")
-                file_database_path = os.path.relpath(file_path, self.project.folder)
+                file_database_path = os.path.relpath(file_path,
+                                                     self.project.folder)
 
-                document_not_existing = self.project.session.get_document(COLLECTION_CURRENT,
-                                                                          file_database_path) is None
+                document_not_existing = self.project.session.get_document(
+                    COLLECTION_CURRENT, file_database_path) is None
                 if document_not_existing:
                     with self.lock:
-                        self.scans_added.append(file_database_path)  # Scan added to history
+                        # Scan added to history
+                        self.scans_added.append(file_database_path)
 
                 documents[file_database_path] = {}
-                documents[file_database_path][TAG_FILENAME] = file_database_path
+                documents[file_database_path][TAG_FILENAME] = \
+                    file_database_path
 
                 # For each tag in each scan
                 for tag in tags_from_file(file_name, path_name):
@@ -235,12 +263,15 @@ class ImportWorker(QThread):
                             format = format.replace("mm", "%M")
                             format = format.replace("ss", "%S")
                             format = format.replace("SSS", "%f")
-                            if "%Y" in format and "%m" in format and "%d" in format and "%H" in format and \
+                            if "%Y" in format and "%m" in format and "%d" in\
+                                    format and "%H" in format and \
                                     "%M" in format and "%S" in format:
                                 tag_type = FIELD_TYPE_DATETIME
-                            elif "%Y" in format and "%m" in format and "%d" in format:
+                            elif "%Y" in format and "%m" in format and "%d" \
+                                    in format:
                                 tag_type = FIELD_TYPE_DATE
-                            elif "%H" in format and "%M" in format and "%S" in format:
+                            elif "%H" in format and "%M" in format and "%S" \
+                                    in format:
                                 tag_type = FIELD_TYPE_TIME
 
                         if tag_name != "Json_Version":
@@ -267,7 +298,8 @@ class ImportWorker(QThread):
                                     value_prepared.append(value_single[0])
                                 value = value_prepared
 
-                        if tag_type == FIELD_TYPE_DATETIME or tag_type == FIELD_TYPE_DATE or \
+                        if tag_type == FIELD_TYPE_DATETIME or tag_type == \
+                                FIELD_TYPE_DATE or \
                                 tag_type == FIELD_TYPE_TIME:
                             if value is not None and value != "":
                                 value = datetime.strptime(value, format)
@@ -278,14 +310,18 @@ class ImportWorker(QThread):
 
                         # TODO time lists
 
-                        tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
-                        if tag_row is None and tag_name not in tags_names_added:
+                        tag_row = self.project.session.get_field(
+                            COLLECTION_CURRENT, tag_name)
+                        if tag_row is None and tag_name not in \
+                                tags_names_added:
                             # Adding the tag as it's not in the database yet
                             tags_added.append(
-                                [COLLECTION_CURRENT, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit,
+                                [COLLECTION_CURRENT, tag_name, tag_type,
+                                 description, False, TAG_ORIGIN_BUILTIN, unit,
                                  None])
                             tags_added.append(
-                                [COLLECTION_INITIAL, tag_name, tag_type, description, False, TAG_ORIGIN_BUILTIN, unit,
+                                [COLLECTION_INITIAL, tag_name, tag_type,
+                                 description, False, TAG_ORIGIN_BUILTIN, unit,
                                  None])
                             tags_names_added.append(tag_name)
 
@@ -293,14 +329,19 @@ class ImportWorker(QThread):
                         if value is not None and value != "":
                             if document_not_existing:
                                 values_added.append(
-                                    [file_database_path, tag_name, value, value])  # Value added to history
+                                    [file_database_path, tag_name, value,
+                                     value])  # Value added to history
                             documents[file_database_path][tag_name] = value
 
                 if document_not_existing:
                     # Tags added manually
+                    # Value added to history
                     values_added.append(
-                        [file_database_path, TAG_CHECKSUM, original_md5, original_md5])  # Value added to history
-                    values_added.append([file_database_path, TAG_TYPE, TYPE_NII, TYPE_NII])  # Value added to history
+                        [file_database_path, TAG_CHECKSUM, original_md5,
+                         original_md5])
+                    # Value added to history
+                    values_added.append([file_database_path, TAG_TYPE,
+                                         TYPE_NII, TYPE_NII])
                 documents[file_database_path][TAG_CHECKSUM] = original_md5
                 documents[file_database_path][TAG_TYPE] = TYPE_NII
 
@@ -308,10 +349,13 @@ class ImportWorker(QThread):
         for tag in self.project.session.get_fields(COLLECTION_CURRENT):
             if tag.origin == TAG_ORIGIN_USER:
                 for scan in self.scans_added:
-                    if tag.default_value is not None and self.project.session.get_value(COLLECTION_CURRENT, scan[0],
-                                                                                        tag.name) is None:
-                        values_added.append(
-                            [scan, tag.name, tag.default_value, tag.default_value])  # Value added to history
+                    if tag.default_value is not None and \
+                            self.project.session.get_value(
+                                COLLECTION_CURRENT, scan[0], tag.name) is None:
+                        # Value added to history
+                        values_added.append([scan, tag.name,
+                                             tag.default_value,
+                                             tag.default_value])
                         documents[scan][tag.name] = tag.default_value
 
         self.notifyProgress.emit(1)
@@ -322,14 +366,19 @@ class ImportWorker(QThread):
         self.notifyProgress.emit(2)
         sleep(0.1)
 
-        current_paths = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        current_paths = self.project.session.get_documents_names(
+            COLLECTION_CURRENT)
 
         for document in documents:
             if document in current_paths:
-                self.project.session.remove_document(COLLECTION_CURRENT, document)
-                self.project.session.remove_document(COLLECTION_INITIAL, document)
-            self.project.session.add_document(COLLECTION_CURRENT, documents[document], flush=False)
-            self.project.session.add_document(COLLECTION_INITIAL, documents[document], flush=False)
+                self.project.session.remove_document(COLLECTION_CURRENT,
+                                                     document)
+                self.project.session.remove_document(COLLECTION_INITIAL,
+                                                     document)
+            self.project.session.add_document(COLLECTION_CURRENT, documents[
+                document], flush=False)
+            self.project.session.add_document(COLLECTION_INITIAL, documents[
+                document], flush=False)
         self.project.session.session.flush()
 
         self.notifyProgress.emit(3)

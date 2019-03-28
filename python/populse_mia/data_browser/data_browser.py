@@ -1230,7 +1230,7 @@ class TableDataBrowser(QTableWidget):
         # Auto-save
         config = Config()
         if config.isAutoSave() == "yes":
-            save_project(self.project)
+            self.project.saveModifications()
 
     def context_menu_table(self, position):
         """

@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*- #
+"""Module that handles projects and their database
+
+Contains:
+    Class:
+    -Project
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -9,11 +18,13 @@
 import os
 
 # PyQt5 imports
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QComboBox, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, \
+    QComboBox, QVBoxLayout
 from PyQt5.QtGui import QPixmap
 
 # Populse_MIA imports
-from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from populse_mia.pop_ups.pop_up_select_tag_count_table import \
+    PopUpSelectTagCountTable
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.project.project import COLLECTION_CURRENT
 
@@ -140,7 +151,7 @@ class PopUpMultipleSort(QDialog):
 
         :param idx: index of the pressed push button
         """
-        pop_up = PopUpSelectTagCountTable(self.project, self.project.session.get_visibles(), self.push_buttons[idx].text())
+        pop_up = PopUpSelectTagCountTable(self.project, self.project.session.get_showed_tags(), self.push_buttons[idx].text())
         if pop_up.exec_():
             self.push_buttons[idx].setText(pop_up.selected_tag)
             self.fill_values(idx)

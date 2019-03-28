@@ -822,7 +822,7 @@ class MainWindow(QMainWindow):
         if self.project.isTempProject:
             self.save_project_as()
         else:
-            controller.save_project(self.project)
+            self.project.saveModifications()
 
     def see_all_projects(self):
         """
@@ -904,8 +904,7 @@ class MainWindow(QMainWindow):
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()
                         return False
-                    problem_list = controller.verify_scans(temp_database,
-                                                           file_path)
+                    problem_list = controller.verify_scans(temp_database)
 
                     # Message if invalid files
                     if problem_list:
