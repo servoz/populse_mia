@@ -6,7 +6,8 @@
 # for details.
 ##########################################################################
 
-from sqlalchemy import create_engine, MetaData, String, Boolean, Integer, Enum, Column, Table
+from sqlalchemy import create_engine, MetaData, String, Boolean, Integer, \
+    Enum, Column, Table
 from sqlalchemy.exc import ArgumentError
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.orm import mapper
@@ -290,7 +291,8 @@ class DatabaseSessionMIA(DatabaseSession):
         field_row = self.get_field(collection, name)
         if field_row is not None:
             raise ValueError("A field with the name " +
-                             str(name) + " already exists in the collection " + collection)
+                             str(name) + " already exists in the collection " +
+                             collection)
         if not isinstance(name, str):
             raise ValueError("The field name must be of type " + str(str) +
                              ", but field name of type " + str(type(name)) +
@@ -318,35 +320,44 @@ class DatabaseSessionMIA(DatabaseSession):
         # Fields creation
         if field_type in LIST_TYPES:
             if self.list_tables:
-                table = 'list_%s_%s' % (self.name_to_valid_column_name(collection),
-                                        self.name_to_valid_column_name(name))
-                list_table = Table(table, self.metadata, Column('document_id', String, primary_key=True),
-                                   Column('i', Integer, primary_key=True),
-                                   Column('value', TYPE_TO_COLUMN[field_type[5:]]))
+                table = 'list_%s_%s' % (self.name_to_valid_column_name(
+                    collection), self.name_to_valid_column_name(name))
+                list_table = Table(
+                    table, self.metadata,
+                    Column('document_id', String, primary_key=True),
+                    Column('i',Integer, primary_key=True),
+                    Column('value', TYPE_TO_COLUMN[field_type[5:]]))
                 list_query = CreateTable(list_table)
                 self.session.execute(list_query)
 
                 # Creating the class associated
-                collection_dict = {'__tablename__': table, '__table__': list_table}
+                collection_dict = {'__tablename__': table,
+                                   '__table__': list_table}
                 collection_class = type(table, (self.base,), collection_dict)
                 mapper(collection_class, list_table)
                 self.table_classes[table] = collection_class
 
-            # String columns if it list type, as the str representation of the lists will be stored
+            # String columns if it list type, as the str representation of the
+            # lists will be stored
             field_type = String
         else:
-            field_type = self._DatabaseSession__field_type_to_column_type(field_type)
+            field_type = self._DatabaseSession__field_type_to_column_type(
+                field_type)
 
-        column = Column(self.name_to_valid_column_name(name), field_type, index=index)
+        column = Column(
+            self.name_to_valid_column_name(name), field_type, index=index)
         column_str_type = column.type.compile(self.database.engine.dialect)
         column_name = column.compile(dialect=self.database.engine.dialect)
 
-        # Column created in document table, and in initial table if initial values are used
+        # Column created in document table, and in initial table if initial
+        # values are used
 
         document_query = str('ALTER TABLE "%s" ADD COLUMN %s %s' %
-                             (self.name_to_valid_column_name(collection), column_name, column_str_type))
+                             (self.name_to_valid_column_name(collection),
+                              column_name, column_str_type))
         self.session.execute(document_query)
-        self.table_classes[self.name_to_valid_column_name(collection)].__table__.append_column(column)
+        self.table_classes[self.name_to_valid_column_name(
+            collection)].__table__.append_column(column)
 
         # Redefinition of the table classes
         if flush:
@@ -364,14 +375,16 @@ class DatabaseSessionMIA(DatabaseSession):
         """
         Adds the list of fields
 
-        :param fields: list of fields (collection, name, type, description, visibility, origin, unit, default_value)
+        :param fields: list of fields (collection, name, type, description,
+        visibility, origin, unit, default_value)
         """
 
         collections = []
 
         for field in fields:
             # Adding each field
-            self.add_field(field[0], field[1], field[2], field[3], field[4], field[5], field[6], field[7], False)
+            self.add_field(field[0], field[1], field[2], field[3], field[4],
+                           field[5], field[6], field[7], False)
             if field[0] not in collections:
                 collections.append(field[0])
 
@@ -392,7 +405,8 @@ class DatabaseSessionMIA(DatabaseSession):
         """
 
         visible_fields = self.session.query(
-            self.table_classes[FIELD_TABLE]).filter(self.table_classes[FIELD_TABLE].visibility == True).all()
+            self.table_classes[FIELD_TABLE]).filter(
+            self.table_classes[FIELD_TABLE].visibility == True).all()
         visible_names = []
         for field in visible_fields:
             if field.field_name not in visible_names:
