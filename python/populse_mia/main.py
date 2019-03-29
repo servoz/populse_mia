@@ -452,24 +452,24 @@ def verify_processes():
        nipype and the mia_processes processes libraries.
 
        By default, mia provides two process libraries in the pipeline library
-       of the Pipeline Manager tab. The nipype, provided as it is because it
-       is developed by another team (https://github.com/nipy/nipype), and
+       (available in Pipeline Manager tab). The nipype, given as it is because
+       it is developed by another team (https://github.com/nipy/nipype), and
        mia_processes which is developed under the umbrella of populse
        (https://github.com/populse/mia_processes). When installing mia in
        user mode, these two libraries are automatically installed on the
        station. The idea is to use the versioning available with pypi
        (https://pypi.org/). Thus, it is sufficient for the user to change the
-       version of the library installed on the station (pip install...) and
-       when starting mia. The verify_processes function will install or update
-       in the pipeline library of the Pipeline Manager tab of mia, the nipype
-       and mia_processes libraries. All these informations, as well as the
-       installed versions and package paths are saved in the
-       mia_path/properties/process_config.yml file. When an upgrade or
-       downgrade is performed for a package, the last configuration used by
-       the user is kept (if a pipeline was visible, it remains so and vice
-       versa).
-       However, if a new pipeline is available in the new version it is
-       automatically marked as visible in the library.
+       version of the library installed on the station (pip install...) to
+       also change the version available in mia. Indeed, when starting mia, the
+       verify_processes function will install or update nipype and
+       mia_processes libraries in the pipeline library. Currently it is
+       mandatory to have nipype and may_processes installed in the station.
+       All these informations, as well as the installed versions and package
+       paths are saved in the  mia_path/properties/process_config.yml file.
+       When an upgrade or downgrade is performed for a package, the last
+       configuration used by the user is kept (if a pipeline was visible, it
+       remains so and vice versa). However, if a new pipeline is available in
+       the new version it is automatically marked as visible in the library.
 
     Contains:
         Private function:
