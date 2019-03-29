@@ -190,7 +190,7 @@ class ImportWorker(QThread):
                 list_dict_log = json.load(file)
 
         # For history
-        historyMaker = []
+        historyMaker = list()
         historyMaker.append("add_scans")
         with self.lock:
             self.scans_added = []
