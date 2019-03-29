@@ -323,7 +323,7 @@ class TestMIADataBrowser(unittest.TestCase):
         """
 
         # Testing default tags visibility
-        visibles = self.main_window.project.session.get_showed_tags()
+        visibles = self.main_window.project.session.get_shown_tags()
         self.assertEqual(len(visibles), 4)
         self.assertTrue(TAG_FILENAME in visibles)
         self.assertTrue(TAG_BRICKS in visibles)
@@ -373,7 +373,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertTrue(TAG_EXP_TYPE in visibles_tags)
         QTest.mouseClick(settings.push_button_ok, Qt.LeftButton)
 
-        new_visibles = self.main_window.project.session.get_showed_tags()
+        new_visibles = self.main_window.project.session.get_shown_tags()
         self.assertEqual(len(new_visibles), 3)
         self.assertTrue(TAG_FILENAME in new_visibles)
         self.assertTrue(TAG_EXP_TYPE in new_visibles)
@@ -397,7 +397,7 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(settings.tab_tags.push_button_select_tag, Qt.LeftButton)
         QTest.mouseClick(settings.push_button_ok, Qt.LeftButton)
 
-        new_visibles = self.main_window.project.session.get_showed_tags()
+        new_visibles = self.main_window.project.session.get_shown_tags()
         self.assertEqual(len(new_visibles), 4)
         self.assertTrue(TAG_FILENAME in new_visibles)
         self.assertTrue(TAG_EXP_TYPE in new_visibles)

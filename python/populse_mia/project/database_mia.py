@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
-"""Module that contains class to override the default behaviour and some
-session methods of populse_db
+"""Module that contains class to override the default behaviour of
+populse_db and some of its methods
 
 Contains:
     Class:
@@ -56,16 +56,81 @@ class DatabaseMIA(Database):
         :param string_engine: Path of the new database file
 
     Methods:
-        - _Database__create_empty_schema: overrides the method creating the
-        empty schema
         - __enter__: returns a DatabaseSession instance for using the database
         - __exit__: releases a DatabaseSession previously created by __enter__
+        - _Database__create_empty_schema: overrides the method creating the
+        empty schema
     """
 
     def __init__(self, string_engine):
 
         super().__init__(string_engine, caches=True, list_tables=True,
                          query_type=QUERY_MIXED)
+
+    def __enter__(self):
+        """
+        Returns a DatabaseSession instance for using the database. This is
+        supposed to be called using a "with" statement:
+
+        with database as session:
+           session.add_document(...)
+
+        Therefore __exit__ must be called to get rid of the session.
+        When called recursively, the underlying database session returned
+        is the same. The commit/rollback of the session is done only by the
+        outermost __enter__/__exit__ pair (i.e. by the outermost with
+        statement).
+
+        :return: the database session
+        """
+        # Creates the session object
+        new_session = self._Database__scoped_session()
+        # Checks if it is a brain new session object or if __enter__ already
+        # added a DatabaseSession instance to it (meaning recursive call)
+        db_session = getattr(new_session, '_populse_db_session', None)
+        if db_session is None:
+            # No recursive call. Creates a new DatabaseSession
+            # and attaches it to the session. Doing this way allows
+            # to be thread safe because scoped_session automatically
+            # creates a new session per thread. Therefore we also
+            # create a new DatabaseSession per thread.
+            db_session = DatabaseSessionMIA(self, new_session)
+            new_session._populse_db_session = db_session
+            # Attach a counter to the session object to count
+            # the recursion depth of __enter__ calls
+            new_session._populse_db_counter = 1
+        else:
+            # __enter__ is called recursively. Simply increment
+            # the recursive depth counter previously attached to
+            # the session object
+            new_session._populse_db_counter += 1
+        return db_session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Releases a DatabaseSession previously created by __enter__
+
+        If no recursive call of __enter__ was done, the session
+        is committed if no error is reported (e.g. exc_type is None)
+        otherwise it is rolled back. Nothing is done
+        """
+        # Get the current session. SqlAlchemy scoped_session returns
+        # the same object (per thread) on each call until remove()
+        # is called.
+        current_session = self._Database__scoped_session()
+        # Decrement recursive depth counter
+        current_session._populse_db_counter -= 1
+        if current_session._populse_db_counter == 0:
+            # If there is no recursive call, commit or rollback
+            # the session according to the presence of an exception
+            if exc_type is None:
+                current_session.commit()
+            else:
+                current_session.rollback()
+            # Delete the database session
+            del current_session._populse_db_session
+            del current_session._populse_db_counter
+            self._Database__scoped_session.remove()
 
     def _Database__create_empty_schema(self, string_engine):
         """
@@ -125,72 +190,6 @@ class DatabaseMIA(Database):
             metadata.create_all(engine)
             return engine
 
-    def __enter__(self):
-        """
-        Returns a DatabaseSession instance for using the database. This is
-        supposed to be called using a "with" statement:
-
-        with database as session:
-           session.add_document(...)
-
-        Therefore __exit__ must be called to get rid of the session.
-        When called recursively, the underlying database session returned
-        is the same. The commit/rollback of the session is done only by the
-        outermost __enter__/__exit__ pair (i.e. by the outermost with
-        statement).
-
-        :return: the database session
-        """
-        # Create the session object
-        new_session = self._Database__scoped_session()
-        # Check if it is a brain new session object or if __enter__ already
-        # added a DatabaseSession instance to it (meaning recursive call)
-        db_session = getattr(new_session, '_populse_db_session', None)
-        if db_session is None:
-            # No recursive call. Create a new DatabaseSession
-            # and attach it to the session. Doing this way allow
-            # to be thread safe because scoped_session automatically
-            # creates a new session per thread. Therefore we also
-            # create a new DatabaseSession per thread.
-            db_session = DatabaseSessionMIA(self, new_session)
-            new_session._populse_db_session = db_session
-            # Attache a counter to the session object to count
-            # the recursion depth of __enter__ calls
-            new_session._populse_db_counter = 1
-        else:
-            # __enter__ is called recursively. Simply increment
-            # the recusive depth counter previously attached to
-            # the session object
-            new_session._populse_db_counter += 1
-        return db_session
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Releases a DatabaseSession previously created by __enter__
-
-        If no recursive call of __enter__ was done, the session
-        is committed if no error is reported (e.g. exc_type is None)
-        otherwise it is rolled back. Nothing is done
-        """
-        # Get the current session. SqlAlchemy scoped_session returns
-        # the same object (per thread) on each call until remove()
-        # is called.
-        current_session = self._Database__scoped_session()
-        # Decrement recursive depth counter
-        current_session._populse_db_counter -= 1
-        if current_session._populse_db_counter == 0:
-            # If there is no recursive call, commit or rollback
-            # the session according to the presence of an exception
-            if exc_type is None:
-                current_session.commit()
-            else:
-                current_session.rollback()
-            # Delete the database session
-            del current_session._populse_db_session
-            del current_session._populse_db_counter
-            self._Database__scoped_session.remove()
-
-
 class DatabaseSessionMIA(DatabaseSession):
     """
     Class overriding the database session of populse_db
@@ -199,8 +198,8 @@ class DatabaseSessionMIA(DatabaseSession):
         - add_collection: overrides the method adding a collection
         - add_field: adds a field to the database, if it does not already exist
         - add_fields: adds the list of fields
-        - get_showed_tags: gives the list of visible tags
-        - set_showed_tags: sets the list of visible tags
+        - get_shown_tags: gives the list of visible tags
+        - set_shown_tags: sets the list of visible tags
     """
 
     def add_collection(self, name, primary_key, visibility, origin, unit,
@@ -279,10 +278,8 @@ class DatabaseSessionMIA(DatabaseSession):
         :param collection: field collection (str)
         :param name: field name (str)
         :param field_type: field type (string, int, float, boolean, date,
-        datetime,
-                     time, list_string, list_int, list_float, list_boolean,
-                     list_date,
-                     list_datetime, or list_time)
+        datetime, time, list_string, list_int, list_float, list_boolean,
+        list_date, list_datetime, or list_time)
         :param description: field description (str or None)
         :param visibility: Bool to know if the field is visible in the
         databrowser
@@ -337,7 +334,7 @@ class DatabaseSessionMIA(DatabaseSession):
                 list_table = Table(
                     table, self.metadata,
                     Column('document_id', String, primary_key=True),
-                    Column('i',Integer, primary_key=True),
+                    Column('i', Integer, primary_key=True),
                     Column('value', TYPE_TO_COLUMN[field_type[5:]]))
                 list_query = CreateTable(list_table)
                 self.session.execute(list_query)
@@ -409,7 +406,7 @@ class DatabaseSessionMIA(DatabaseSession):
         for collection in collections:
             self._DatabaseSession__refresh_cache_documents(collection)
 
-    def get_showed_tags(self):
+    def get_shown_tags(self):
         """
         Gives the list of visible tags
 
@@ -425,7 +422,7 @@ class DatabaseSessionMIA(DatabaseSession):
                 visible_names.append(field.field_name)
         return visible_names
 
-    def set_showed_tags(self, field_showed):
+    def set_shown_tags(self, field_showed):
         """
         Sets the list of visible tags
 

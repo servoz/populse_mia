@@ -151,7 +151,7 @@ class PopUpMultipleSort(QDialog):
 
         :param idx: index of the pressed push button
         """
-        pop_up = PopUpSelectTagCountTable(self.project, self.project.session.get_showed_tags(), self.push_buttons[idx].text())
+        pop_up = PopUpSelectTagCountTable(self.project, self.project.session.get_shown_tags(), self.push_buttons[idx].text())
         if pop_up.exec_():
             self.push_buttons[idx].setText(pop_up.selected_tag)
             self.fill_values(idx)

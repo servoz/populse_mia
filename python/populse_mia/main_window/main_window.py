@@ -573,7 +573,7 @@ class MainWindow(QMainWindow):
 
         """
 
-        old_tags = self.project.session.get_showed_tags()
+        old_tags = self.project.session.get_shown_tags()
         self.pop_up_settings = PopUpProperties(self.project,
                                                self.data_browser, old_tags)
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
@@ -581,7 +581,7 @@ class MainWindow(QMainWindow):
 
         if self.pop_up_settings.exec_():
             self.data_browser.table_data.update_visualized_columns(
-                old_tags, self.project.session.get_showed_tags())
+                old_tags, self.project.session.get_shown_tags())
 
     def redo(self):
         """

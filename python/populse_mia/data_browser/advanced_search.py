@@ -124,7 +124,7 @@ class AdvancedSearch(QWidget):
             for tag in self.tags_list:
                 field_choice.addItem(tag)
         else:
-            for tag in self.project.session.get_showed_tags():
+            for tag in self.project.session.get_shown_tags():
                 field_choice.addItem(tag)
         field_choice.model().sort(0)
         field_choice.addItem("All visualized tags")
@@ -508,7 +508,7 @@ class AdvancedSearch(QWidget):
                             fields.append([child.currentText()])
                         else:
                             if replace_all_by_fields:
-                                fields.append(self.project.session.get_showed_tags())
+                                fields.append(self.project.session.get_shown_tags())
                             else:
                                 fields.append([child.currentText()])
                     elif child_name == 'value':
@@ -565,7 +565,7 @@ class AdvancedSearch(QWidget):
 
             # Replacing all visualized tags by the current list of visible tags
             if fields[i][0] == "All visualized tags":
-                fields[i] = self.project.session.get_showed_tags()
+                fields[i] = self.project.session.get_shown_tags()
 
             row[3].setCurrentText(conditions[i])
             row[4].setText(str(values[i]))

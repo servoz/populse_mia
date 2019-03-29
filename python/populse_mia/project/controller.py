@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- #
-"""
+"""Module
 
 Contains:
     Methods:
@@ -135,7 +135,7 @@ class ImportProgress(QProgressDialog):
 
         self.setWindowTitle("Importing the paths")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint |
-                             Qt.CustomizeWindowHint)
+                            Qt.CustomizeWindowHint)
         self.setModal(True)
 
         self.setMinimumDuration(0)

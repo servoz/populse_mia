@@ -545,13 +545,13 @@ class Project:
             if action == "modified_visibilities":
                 # To revert the modifications of the visualized tags
                 # Old list of columns
-                old_tags = self.session.get_showed_tags()
+                old_tags = self.session.get_shown_tags()
                 # List of the tags shown before the modification (Tag objects)
                 showed_tags = to_redo[2]
-                self.session.set_showed_tags(showed_tags)
+                self.session.set_shown_tags(showed_tags)
                 # Columns updated
                 table.update_visualized_columns(
-                    old_tags, self.session.get_showed_tags())
+                    old_tags, self.session.get_shown_tags())
 
     def reput_values(self, values):
         """
@@ -843,14 +843,14 @@ class Project:
             if action == "modified_visibilities":
                 # To revert the modifications of the visualized tags
                 # Old list of columns
-                old_tags = self.session.get_showed_tags()
+                old_tags = self.session.get_shown_tags()
                 # List of the tags visibles before the modification
                 # (Tag objects)
                 visibles = to_undo[1]
-                self.session.set_showed_tags(visibles)
+                self.session.set_shown_tags(visibles)
                 # Columns updated
                 table.update_visualized_columns(
-                    old_tags, self.session.get_showed_tags())
+                    old_tags, self.session.get_shown_tags())
 
     def unsaveModifications(self):
         """

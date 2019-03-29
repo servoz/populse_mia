@@ -672,11 +672,11 @@ class PlugFilter(QWidget):
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
-                filter = self.prepare_not_defined_filter(self.project.session.get_showed_tags())
+                filter = self.prepare_not_defined_filter(self.project.session.get_shown_tags())
 
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_showed_tags(),
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_shown_tags(),
                                                           self.table_data.scans_to_search)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
@@ -785,7 +785,7 @@ class FilterWidget(QWidget):
         from populse_mia.data_browser.rapid_search import RapidSearch
 
         self.project = project
-        self.visible_tags = self.project.session.get_showed_tags()
+        self.visible_tags = self.project.session.get_shown_tags()
         self.node = node
         self.process = node.process
         self.main_window = main_window
@@ -948,10 +948,10 @@ class FilterWidget(QWidget):
         else:
             # Scans with at least a not defined value
             if str_search == not_defined_value:
-                filter = self.prepare_not_defined_filter(self.project.session.get_showed_tags())
+                filter = self.prepare_not_defined_filter(self.project.session.get_shown_tags())
             # Scans matching the search
             else:
-                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_showed_tags(), old_scan_list)
+                filter = self.rapid_search.prepare_filter(str_search, self.project.session.get_shown_tags(), old_scan_list)
 
             generator = self.project.session.filter_documents(COLLECTION_CURRENT, filter)
 
