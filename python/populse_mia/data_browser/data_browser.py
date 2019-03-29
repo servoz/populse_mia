@@ -34,7 +34,6 @@ from populse_mia.pop_ups.pop_up_clone_tag import PopUpCloneTag
 from populse_mia.pop_ups.pop_up_remove_tag import PopUpRemoveTag
 from populse_mia.pop_ups.pop_up_select_filter import PopUpSelectFilter
 from populse_mia.pop_ups.pop_up_data_browser_current_selection import PopUpDataBrowserCurrentSelection
-from populse_mia.project.controller import save_project
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import check_value_type, set_item_data, table_to_database
 from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, \
@@ -1230,7 +1229,7 @@ class TableDataBrowser(QTableWidget):
         # Auto-save
         config = Config()
         if config.isAutoSave() == "yes":
-            save_project(self.project)
+            self.project.saveModifications()
 
     def context_menu_table(self, position):
         """

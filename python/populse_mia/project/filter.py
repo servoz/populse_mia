@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*- #
+"""Module that handles the filter class which contains the results of both
+rapid and advanced search
+
+Contains:
+    Class:
+    -Filter
+
+"""
+
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -13,7 +24,8 @@ from populse_mia.project import project
 
 class Filter:
     """
-    Class that represents a Filter, containing the results of both rapid and advanced search
+    Class that represents a Filter, containing the results of both rapid and
+    advanced search
 
     Attributes:
         :param name: filter's name
@@ -21,14 +33,16 @@ class Filter:
         :param values: list of values
         :param fields: list of list of fields
         :param links: list of links (AND/OR)
-        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
+        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
         :param search_bar: value in the rapid search bar
 
     Methods:
         - generate_filter: apply the filter to the given list of scans
         - json_format: returns the filter as a dictionary
 
-    The advanced search creates a complex query to the database and is a combination of several "query lines" which
+    The advanced search creates a complex query to the database and is a
+    combination of several "query lines" which
     are linked with AND or OR and all composed of:
     - A negation or not
     - A tag name or all visible tags
@@ -38,7 +52,8 @@ class Filter:
 
     """
 
-    def __init__(self, name, nots, values, fields, links, conditions, search_bar):
+    def __init__(self, name, nots, values, fields, links, conditions,
+                 search_bar):
 
         self.nots = nots
         self.values = values
@@ -58,14 +73,20 @@ class Filter:
         :return: The list of scans matching the filter
         """
 
-        rapid_filter = data_browser.rapid_search.RapidSearch.prepare_filter(self.search_bar, tags, scans)
-        rapid_result = current_project.session.filter_documents(project.COLLECTION_CURRENT, rapid_filter)
-        rapid_list = [getattr(scan, project.TAG_FILENAME) for scan in rapid_result]
-        advanced_filter = data_browser.advanced_search.AdvancedSearch.prepare_filters(self.links, self.fields,
-                                                                                      self.conditions, self.values,
-                                                                                      self.nots, rapid_list)
-        advanced_result = current_project.session.filter_documents(project.COLLECTION_CURRENT, advanced_filter)
-        final_result = [getattr(scan, project.TAG_FILENAME) for scan in advanced_result]
+        rapid_filter = data_browser.rapid_search.RapidSearch.prepare_filter(
+            self.search_bar, tags, scans)
+        rapid_result = current_project.session.filter_documents(
+            project.COLLECTION_CURRENT, rapid_filter)
+        rapid_list = [getattr(
+            scan, project.TAG_FILENAME) for scan in rapid_result]
+        advanced_filter = \
+            data_browser.advanced_search.AdvancedSearch.prepare_filters(
+                self.links, self.fields, self.conditions, self.values,
+                self.nots, rapid_list)
+        advanced_result = current_project.session.filter_documents(
+            project.COLLECTION_CURRENT, advanced_filter)
+        final_result = [getattr(
+            scan, project.TAG_FILENAME) for scan in advanced_result]
         return final_result
 
     def json_format(self):
