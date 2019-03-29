@@ -15,9 +15,11 @@ from PyQt5.QtCore import QTimer
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction, QMessageBox, QPushButton, \
-    QProgressDialog, QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit, QApplication, QWidget, QVBoxLayout, \
-    QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate, QAbstractItemView
+from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, \
+    QToolButton, QAction, QMessageBox, QPushButton, QProgressDialog, \
+    QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit, QApplication, \
+    QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout,\
+    QItemDelegate, QAbstractItemView
 
 # Populse_MIA imports
 from populse_mia.data_browser.rapid_search import RapidSearch
@@ -347,15 +349,15 @@ class DataBrowser(QWidget):
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
-    # def delay_event(self, str_search):
-    #     """
-    #     Delays the use of the str_search function by 500ms
-    #     """
-    #     self.timer = QTimer()
-    #     self.timer.setSingleShot(True)
-    #     f = partial(self.search_str, str_search)
-    #     self.timer.timeout.connect(f)
-    #     self.timer.start(500)
+    def delay_event(self, str_search):
+        """
+        Delays the use of the str_search function by 500ms
+        """
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        f = partial(self.search_str, str_search)
+        self.timer.timeout.connect(f)
+        self.timer.start(500)
 
     def create_toolbar_menus(self):
         """
@@ -381,8 +383,8 @@ class DataBrowser(QWidget):
         filters_tool_button.setMenu(filters_menu)
 
         self.search_bar = RapidSearch(self)
-        self.search_bar.textChanged.connect(self.search_str)
-        #self.search_bar.textChanged.connect(self.delay_event)
+        # self.search_bar.textChanged.connect(self.search_str)
+        self.search_bar.textChanged.connect(self.delay_event)
 
         sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                                           "sources_images")

@@ -156,7 +156,7 @@ class ImportProgress(QProgressDialog):
 
 class ImportWorker(QThread):
     """
-    Thread import
+    Import Thread
     """
 
     notifyProgress = pyqtSignal(int)
