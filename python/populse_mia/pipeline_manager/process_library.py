@@ -963,7 +963,9 @@ class PackageLibraryDialog(QDialog):
             pkg_iter = self.packages
 
             for element in path_list:
+
                 if element in pkg_iter.keys():
+
                     if element is not path_list[-1]:
                         pkg_iter = pkg_iter[element]
                     else:

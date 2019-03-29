@@ -591,20 +591,19 @@ def verify_processes():
     if 'othPckg' in dir():
         # othPckg: a list containing all packages, other than nipype and
         # mia_processes, used during the previous launch of mia.
-
+        
         for pckg in othPckg:
 
             try:
                 __import__(pckg)
 
-            except ImportError:
+            except ImportError as e:
                 # try to update the sys.path for the processes/ directory
                 # currently used
                 if (not os.path.relpath(os.path.join(config.get_mia_path(),
                                                      'processes')) in
                         sys.path) and (not os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')) in sys.path):
-
                     sys.path.append(os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')))
 
@@ -655,13 +654,13 @@ def verify_processes():
                         msg.setIcon(QMessageBox.Warning)
                         msg.setWindowTitle("populse_mia - warning: {0}"
                                            .format(e))
-                        msg.setText(("The {0} processes library has not been "
-                                     "found in {1}.\n To prevent mia crash "
-                                     "when using it, please remove (see "
-                                     "File > Package library manager) or load "
-                                     "again (see More > Install processes)"
-                                     " this processes library").format(
-                            pckg, os.path.abspath(os.path.join(
+                        msg.setText(("At least, {0} has not been found in {1}."
+                                     "\nTo prevent mia crash when using it, "
+                                     "please remove (see File > Package "
+                                     "library manager) or load again (see More"
+                                     " > Install processes) the corresponding "
+                                     "process library.").format(
+                            e.msg.split()[-1], os.path.abspath(os.path.join(
                                 config.get_mia_path(), 'processes'))))
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
@@ -679,13 +678,13 @@ def verify_processes():
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
                     msg.setWindowTitle("populse_mia - warning: {0}".format(e))
-                    msg.setText(("The {0} processes library has not been "
-                                 "found in {1}.\n To prevent mia crash when "
-                                 "using it, please Remove (see File > "
-                                 "Package library manager) or load again ("
-                                 "see More > Install processes) this "
-                                 "processes library").format(
-                        pckg, os.path.abspath(os.path.join(
+                    msg.setText(("At least, {0} has not been found in {1}."
+                                 "\nTo prevent mia crash when using it, "
+                                 "please remove (see File > Package "
+                                 "library manager) or load again (see More"
+                                 " > Install processes) the corresponding "
+                                 "process library.").format(
+                        e.msg.split()[-1], os.path.abspath(os.path.join(
                             config.get_mia_path(), 'processes'))))
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
