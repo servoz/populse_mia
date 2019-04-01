@@ -1,3 +1,20 @@
+# -*- coding: utf-8 -*- #
+"""
+Module
+
+Contains:
+    Class:
+        - DataBrowser
+        - DateFormatDelegate
+        - DateTimeFormatDelegate
+        - NumberFormatDelegate
+        - TableDataBrowser
+        - TimeFormatDelegate
+
+
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -56,86 +73,6 @@ from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, \
 
 # Variable shown everywhere when no value for the tag
 not_defined_value = "*Not Defined*"
-
-
-class NumberFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle numbers in the TableDataBrowser
-    """
-    def __init__(self, parent=None):
-        """
-        Initialization of the NumberFormatDelegate class
-        """
-        QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        """
-        Override of the createEditor method, called to generate the widget
-        """
-        editor = QDoubleSpinBox(parent)
-        data = index.data(Qt.EditRole)
-        decimals_number = str(data)[::-1].find('.')
-        editor.setMaximum(10 ** 10)
-        editor.setDecimals(decimals_number)
-        return editor
-
-
-class DateTimeFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle date & time in the TableDataBrowser
-    """
-    def __init__(self, parent=None):
-        """
-        Initialization of the DateTimeFormatDelegate class
-        """
-        QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        """
-        Override of the createEditor method, called to generate the widget
-        """
-        editor = QDateTimeEdit(parent)
-        editor.setDisplayFormat("dd/MM/yyyy hh:mm:ss.zzz")
-        return editor
-
-
-class DateFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle dates in the TableDataBrowser
-    """
-    def __init__(self, parent=None):
-        """
-        Initialization of the DateFormatDelegate class
-        """
-        QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        """
-        Override of the createEditor method, called to generate the widget
-        """
-        editor = QDateEdit(parent)
-        editor.setDisplayFormat("dd/MM/yyyy")
-        return editor
-
-
-class TimeFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle times in the TableDataBrowser
-    """
-    def __init__(self, parent=None):
-        """
-        Initialization of the TimeFormatDelegate class
-        """
-        QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        """
-        Override of the createEditor method, called to generate the widget
-        """
-        editor = QTimeEdit(parent)
-        editor.setDisplayFormat("hh:mm:ss.zzz")
-        return editor
-
 
 class DataBrowser(QWidget):
     """
@@ -736,6 +673,62 @@ class DataBrowser(QWidget):
         self.pop_up_remove_tag = PopUpRemoveTag(self, self.project)
         self.pop_up_remove_tag.show()
 
+class DateFormatDelegate(QItemDelegate):
+    """
+    Delegate that is used to handle dates in the TableDataBrowser
+    """
+    def __init__(self, parent=None):
+        """
+        Initialization of the DateFormatDelegate class
+        """
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        """
+        Override of the createEditor method, called to generate the widget
+        """
+        editor = QDateEdit(parent)
+        editor.setDisplayFormat("dd/MM/yyyy")
+        return editor
+
+class DateTimeFormatDelegate(QItemDelegate):
+    """
+    Delegate that is used to handle date & time in the TableDataBrowser
+    """
+    def __init__(self, parent=None):
+        """
+        Initialization of the DateTimeFormatDelegate class
+        """
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        """
+        Override of the createEditor method, called to generate the widget
+        """
+        editor = QDateTimeEdit(parent)
+        editor.setDisplayFormat("dd/MM/yyyy hh:mm:ss.zzz")
+        return editor
+
+class NumberFormatDelegate(QItemDelegate):
+    """
+    Delegate that is used to handle numbers in the TableDataBrowser
+    """
+    def __init__(self, parent=None):
+        """
+        Initialization of the NumberFormatDelegate class
+        """
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        """
+        Override of the createEditor method, called to generate the widget
+        """
+        editor = QDoubleSpinBox(parent)
+        data = index.data(Qt.EditRole)
+        decimals_number = str(data)[::-1].find('.')
+        editor.setMaximum(10 ** 10)
+        editor.setDecimals(decimals_number)
+        return editor
 
 class TableDataBrowser(QTableWidget):
     """
@@ -2375,3 +2368,21 @@ class TableDataBrowser(QTableWidget):
         self.update_colors()
 
         self.itemChanged.connect(self.change_cell_color)
+
+class TimeFormatDelegate(QItemDelegate):
+    """
+    Delegate that is used to handle times in the TableDataBrowser
+    """
+    def __init__(self, parent=None):
+        """
+        Initialization of the TimeFormatDelegate class
+        """
+        QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        """
+        Override of the createEditor method, called to generate the widget
+        """
+        editor = QTimeEdit(parent)
+        editor.setDisplayFormat("hh:mm:ss.zzz")
+        return editor

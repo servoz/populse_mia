@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- #
-"""Module that handles the filter class which contains the results of both
+"""Module that handle the filter class which contains the results of both
 rapid and advanced search
 
 Contains:
@@ -23,8 +23,7 @@ from populse_mia.project import project
 
 
 class Filter:
-    """
-    Class that represents a Filter, containing the results of both rapid and
+    """Class that represent a Filter, containing the results of both rapid and
     advanced search
 
     Attributes:
@@ -64,13 +63,12 @@ class Filter:
         self.name = name
 
     def generate_filter(self, current_project, scans, tags):
-        """
-        Apply the filter to the given list of scans
+        """Apply the filter to the given list of scans
 
         :param current_project: Current project
         :param scans: List of scans to apply the filter into
         :param tags: List of tags to search in
-        :return: The list of scans matching the filter
+        :returns: The list of scans matching the filter
         """
 
         rapid_filter = data_browser.rapid_search.RapidSearch.prepare_filter(
@@ -90,10 +88,9 @@ class Filter:
         return final_result
 
     def json_format(self):
-        """
-        Returns the filter as a dictionary
+        """Return the filter as a dictionary
 
-        :return: the filter as a dictionary
+        :returns: the filter as a dictionary
         """
 
         # Filter dictionary

@@ -49,8 +49,7 @@ ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
 
 
 class DatabaseMIA(Database):
-    """
-    Class overriding the default behavior of populse_db
+    """Class overriding the default behavior of populse_db
 
     Attributes:
         :param string_engine: Path of the new database file
@@ -68,12 +67,12 @@ class DatabaseMIA(Database):
                          query_type=QUERY_MIXED)
 
     def __enter__(self):
-        """
-        Returns a DatabaseSession instance for using the database. This is
-        supposed to be called using a "with" statement:
+        """Return a DatabaseSession instance for using the database. This is
+        supposed to be called using a "with" statement.
 
-        with database as session:
-           session.add_document(...)
+        Example:
+            with database as session:
+               session.add_document(...)
 
         Therefore __exit__ must be called to get rid of the session.
         When called recursively, the underlying database session returned
@@ -81,7 +80,7 @@ class DatabaseMIA(Database):
         outermost __enter__/__exit__ pair (i.e. by the outermost with
         statement).
 
-        :return: the database session
+        :returns: the database session
         """
         # Creates the session object
         new_session = self._Database__scoped_session()
@@ -107,8 +106,7 @@ class DatabaseMIA(Database):
         return db_session
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Releases a DatabaseSession previously created by __enter__
+        """Release a DatabaseSession previously created by __enter__
 
         If no recursive call of __enter__ was done, the session
         is committed if no error is reported (e.g. exc_type is None)
@@ -133,8 +131,7 @@ class DatabaseMIA(Database):
             self._Database__scoped_session.remove()
 
     def _Database__create_empty_schema(self, string_engine):
-        """
-        Overrides the method creating the empty schema, in order to add
+        """Override the method creating the empty schema, in order to add
         columns to field table
 
         :param string_engine: Path of the new database file
@@ -191,8 +188,7 @@ class DatabaseMIA(Database):
             return engine
 
 class DatabaseSessionMIA(DatabaseSession):
-    """
-    Class overriding the database session of populse_db
+    """Class overriding the database session of populse_db
 
     Methods:
         - add_collection: overrides the method adding a collection
@@ -204,8 +200,7 @@ class DatabaseSessionMIA(DatabaseSession):
 
     def add_collection(self, name, primary_key, visibility, origin, unit,
                        default_value):
-        """
-        Overrides the method adding a collection of populse_db
+        """Override the method adding a collection of populse_db
 
         :param name: New collection name
         :param primary_key: New collection primary_key column
@@ -272,8 +267,7 @@ class DatabaseSessionMIA(DatabaseSession):
     def add_field(self, collection, name, field_type, description,
                   visibility, origin, unit, default_value,
                   index=False, flush=True):
-        """
-        Adds a field to the database, if it does not already exist
+        """Add a field to the database, if it does not already exist
 
         :param collection: field collection (str)
         :param name: field name (str)
@@ -381,8 +375,7 @@ class DatabaseSessionMIA(DatabaseSession):
         self.unsaved_modifications = True
 
     def add_fields(self, fields):
-        """
-        Adds the list of fields
+        """Add the list of fields
 
         :param fields: list of fields (collection, name, type, description,
         visibility, origin, unit, default_value)
@@ -407,10 +400,9 @@ class DatabaseSessionMIA(DatabaseSession):
             self._DatabaseSession__refresh_cache_documents(collection)
 
     def get_shown_tags(self):
-        """
-        Gives the list of visible tags
+        """Give the list of visible tags
 
-        :return: the list of visible tags
+        :returns: the list of visible tags
         """
 
         visible_fields = self.session.query(
@@ -423,8 +415,7 @@ class DatabaseSessionMIA(DatabaseSession):
         return visible_names
 
     def set_shown_tags(self, field_showed):
-        """
-        Sets the list of visible tags
+        """Set the list of visible tags
 
         :param field_showed: list of visible tags
         """

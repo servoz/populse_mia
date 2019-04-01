@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
-"""Module that handles projects and their database
+"""Module that handle the projects and their database.
 
 Contains:
     Class:
-    -Project
+    - Project
 
 """
 
@@ -63,37 +63,36 @@ TYPE_MAT = "Matrix"
 
 
 class Project:
-    """
-    Class that handles projects and their associated database
+    """Class that handles projects and their associated database.
 
     Attributes:
         :param project_root_folder: project's path
         :param new_project: project's object
 
     Methods:
-        - add_clinical_tags: adds the clinical tags to the project
-        - getDate: returns the date of creation of the project
-        - getFilter: returns a Filter object
+        - add_clinical_tags: add the clinical tags to the project
+        - getDate: return the date of creation of the project
+        - getFilter: return a Filter object
         - getFilterName: input box to get the name of the filter to save
-        - getName: returns the name of the project
-        - getSortOrder: returns the sort order of the project
-        - getSortedTag: returns the sorted tag of the project
-        - hasUnsavedModifications: returns if the project has unsaved
+        - getName: return the name of the project
+        - getSortOrder: return the sort order of the project
+        - getSortedTag: return the sorted tag of the project
+        - hasUnsavedModifications: return if the project has unsaved
         modifications or not
-        - init_filters: initializes the filters at project opening
-        - loadProperties: loads the properties file
-        - redo: redoes the last action made by the user on the project
-        - reput_values: reputs the value objects in the database
-        - save_current_filter: saves the current filter
-        - saveConfig: saves the changes in the properties file
-        - setCurrentFilter: sets the current filter of the project
-        - setDate: sets the date of the project
-        - saveModifications: saves the pending operations of the project
+        - init_filters: initialize the filters at project opening
+        - loadProperties: load the properties file
+        - redo: redo the last action made by the user on the project
+        - reput_values: re-put the value objects in the database
+        - save_current_filter: save the current filter
+        - saveConfig: save the changes in the properties file
+        - setCurrentFilter: set the current filter of the project
+        - setDate: set the date of the project
+        - saveModifications: save the pending operations of the project
         (actions still not saved)
-        - setName: sets the name of the project
-        - setSortOrder: sets the sort order of the project
-        - setSortedTag: sets the sorted tag of the project
-        - undo: undoes the last action made by the user on the project
+        - setName: set the name of the project
+        - setSortOrder: set the sort order of the project
+        - setSortedTag: set the sorted tag of the project
+        - undo: undo the last action made by the user on the project
         - unsaveModifications: unsaves the pending operations of the project
     """
 
@@ -255,10 +254,9 @@ class Project:
         self.init_filters()
 
     def add_clinical_tags(self):
-        """
-        Adds new clinical tags to the project
+        """Add new clinical tags to the project.
 
-        :return: list of clinical tags that were added
+        :returns: list of clinical tags that were added
         """
         return_tags = []
         for clinical_tag in CLINICAL_TAGS:
@@ -286,31 +284,28 @@ class Project:
         return return_tags
 
     def getDate(self):
-        """
-        Returns the date of creation of the project
+        """Return the date of creation of the project.
 
-        :return: string of the date of creation of the project if it's not
+        :returns: string of the date of creation of the project if it's not
         Unnamed project, otherwise empty string
         """
 
         return self.properties["date"]
 
     def getFilter(self, filter):
-        """
-        Returns a Filter object from its name
+        """Return a Filter object from its name
 
         :param filter: Filter name
-        :return: Filter object
+        :returns: Filter object
         """
         for filterObject in self.filters:
             if filterObject.name == filter:
                 return filterObject
 
     def getFilterName(self):
-        """
-        Input box to type the name of the filter to save
+        """Input box to type the name of the filter to save.
 
-        :return: Return the name typed
+        :returns: Return the name typed
         """
 
         text, ok_pressed = QInputDialog.getText(
@@ -319,40 +314,37 @@ class Project:
             return text
 
     def getName(self):
-        """
-        Returns the name of the project
+        """Return the name of the project.
 
-        :return: string of the name of the project if it's not Unnamed project,
+        :returns: string of the name of the project if it's not Unnamed
+        project,
         otherwise empty string
         """
 
         return self.properties["name"]
 
     def getSortedTag(self):
-        """
-        Returns the sorted tag of the project
+        """Return the sorted tag of the project.
 
-        :return: string of the sorted tag of the project if it's not Unnamed
+        :returns: string of the sorted tag of the project if it's not Unnamed
         project, otherwise empty string
         """
 
         return self.properties["sorted_tag"]
 
     def getSortOrder(self):
-        """
-        Returns the sort order of the project
+        """Returns the sort order of the project.
 
-        :return: string of the sort order of the project if it's not Unnamed
+        :returns: string of the sort order of the project if it's not Unnamed
         project, otherwise empty string
         """
 
         return self.properties["sort_order"]
 
     def hasUnsavedModifications(self):
-        """
-        Returns if the project has unsaved modifications or not
+        """Return if the project has unsaved modifications or not.
 
-        :return: boolean, True if the project has pending modifications,
+        :returns: boolean, True if the project has pending modifications,
         False otherwise
         """
 
@@ -360,9 +352,7 @@ class Project:
                or self.session.has_unsaved_modifications()
 
     def init_filters(self):
-        """
-        Initializes the filters at project opening
-        """
+        """Initialize the filters at project opening."""
 
         self.currentFilter = Filter(None, [], [], [], [], [], "")
         self.filters = []
@@ -381,9 +371,7 @@ class Project:
             self.filters.append(filter_object)
 
     def loadProperties(self):
-        """
-        Loads the properties file
-        """
+        """Load the properties file."""
         with open(os.path.join(
                 self.folder, 'properties', 'properties.yml'), 'r') as stream:
             try:
@@ -395,8 +383,7 @@ class Project:
                 print(exc)
 
     def redo(self, table):
-        """
-        Redoes the last action made by the user on the project
+        """Redo the last action made by the user on the project.
 
         :param table: table on which to apply the modifications
         """
@@ -554,8 +541,7 @@ class Project:
                     old_tags, self.session.get_shown_tags())
 
     def reput_values(self, values):
-        """
-        Reputs the value objects in the database
+        """Re-put the value objects in the database.
 
         :param values: List of Value objects
         """
@@ -571,8 +557,7 @@ class Project:
                 valueToReput[3])
 
     def save_current_filter(self, custom_filters):
-        """
-        Saves the current filter
+        """Save the current filter.
 
         :param custom_filters: The customized filter
         """
@@ -627,9 +612,7 @@ class Project:
                     self.filters.append(new_filter)
 
     def saveConfig(self):
-        """
-        Saves the changes in the properties file
-        """
+        """Save the changes in the properties file."""
 
         with open(os.path.join(self.folder, 'properties', 'properties.yml'),
                   'w', encoding='utf8') as configfile:
@@ -637,8 +620,8 @@ class Project:
                       default_flow_style=False, allow_unicode=True)
 
     def saveModifications(self):
-        """
-        Saves the pending operations of the project (actions still not saved)
+        """Save the pending operations of the project (actions
+        still not saved).
         """
 
         self.session.save_modifications()
@@ -646,8 +629,7 @@ class Project:
         self.unsavedModifications = False
 
     def setCurrentFilter(self, filter):
-        """
-        Sets the current filter of the project
+        """Set the current filter of the project.
 
         :param filter: new Filter object
         """
@@ -655,8 +637,7 @@ class Project:
         self.currentFilter = filter
 
     def setDate(self, date):
-        """
-        Sets the date of the project
+        """Set the date of the project.
 
         :param date: new date of the project
         """
@@ -664,9 +645,8 @@ class Project:
         self.properties["date"] = date
 
     def setName(self, name):
-        """
-        Sets the name of the project if it's not Unnamed project,
-        otherwise does nothing
+        """Set the name of the project if it's not Unnamed project,
+        otherwise does nothing.
 
         :param name: new name of the project
         """
@@ -674,8 +654,7 @@ class Project:
         self.properties["name"] = name
 
     def setSortedTag(self, tag):
-        """
-        Sets the sorted tag of the project
+        """Set the sorted tag of the project.
 
         :param tag: new sorted tag of the project
         """
@@ -686,8 +665,7 @@ class Project:
             self.unsavedModifications = True
 
     def setSortOrder(self, order):
-        """
-        Sets the sort order of the project
+        """Set the sort order of the project.
 
         :param order: new sort order of the project (ascending or descending)
         """
@@ -698,8 +676,7 @@ class Project:
             self.unsavedModifications = True
 
     def undo(self, table):
-        """
-        Undoes the last action made by the user on the project
+        """Undo the last action made by the user on the project.
 
         :param table: table on which to apply the modifications
         """
@@ -853,8 +830,6 @@ class Project:
                     old_tags, self.session.get_shown_tags())
 
     def unsaveModifications(self):
-        """
-        Unsaves the pending operations of the project
-        """
+        """Unsave the pending operations of the project."""
         self.session.unsave_modifications()
         self.unsavedModifications = False

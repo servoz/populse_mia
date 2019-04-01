@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*- #
-"""Module
+"""Module to handle the importation from MRIFileManager and its progress
 
 Contains:
-    Methods:
-        -read_log
-        -tags_from_file
-        -verify_scans
     Class:
-        -ImportProgress
-        -ImportWorker
+        -ImportProgress : Inherit from QProgressDialog and handle the
+        progress bar
+        -ImportWorker : Inherit from QThread and manage the threads
+    Methods:
+        -read_log : Show the evolution of the progress bar and returns its
+        feedback
+        -tags_from_file : Returns a list of [tag, value] contained in a Json
+        file
+        -verify_scans : Check if the project's scans have been modified
+
 
 """
 
@@ -48,85 +52,15 @@ from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_DATETIME, \
     FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
 
-def read_log(project, main_window):
-    """
-    From the log export file of the import software, the data base (here the
-    current project) is loaded with the tags
-
-    :param project: current project in the software
-    :param main_window: software's main window
-    :return: the scans that have been added
-    """
-
-    main_window.progress = ImportProgress(project)
-    main_window.progress.show()
-    main_window.progress.exec()
-
-    with main_window.progress.worker.lock:
-        scans_added = list(main_window.progress.worker.scans_added)
-    return scans_added
-
-
-# def save_project(project):
-#     """
-#     Saves the modifications of the project
-#
-#     :param project: current project in the software
-#     """
-#
-#     project.saveModifications()
-
-def tags_from_file(file_path, path):
-    """
-    Returns a list of [tag, value] contained in a Json file
-
-    :param file_path: file path of the Json file (without the extension)
-    :param path: project path
-    :return: a list of the Json tags of the file
-    """
-    json_tags = []
-    with open(os.path.join(path, file_path) + ".json") as f:
-        for name, value in json.load(f).items():
-            json_tags.append([name, value])
-    return json_tags
-
-
-def verify_scans(project):
-    """
-    Checks if the project's scans have been modified
-
-    :param project: current project in the software
-    :return: the list of scans that have been modified
-    """
-
-    # Returning the files that are problematic
-    return_list = []
-    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
-
-        file_name = scan
-        file_path = os.path.relpath(os.path.join(project.folder, file_name))
-
-        if os.path.exists(file_path):
-            # If the file exists, we do the checksum
-            with open(file_path, 'rb') as scan_file:
-                data = scan_file.read()
-                actual_md5 = hashlib.md5(data).hexdigest()
-
-            initial_checksum = project.session.get_value(COLLECTION_CURRENT,
-                                                         scan, TAG_CHECKSUM)
-            if initial_checksum is not None and actual_md5 != initial_checksum:
-                return_list.append(file_name)
-
-        else:
-            # Otherwise, we directly add the file in the list
-            return_list.append(file_name)
-
-    return return_list
-
-
 class ImportProgress(QProgressDialog):
-    """
-    Import progress bar
+    """Handle the progress bar.
+
+    Attributes;
+        :param project: A Project object
+
+    Methods:
+        - onProgress : Set the import progressbar value.
+
     """
 
     def __init__(self, project):
@@ -147,18 +81,22 @@ class ImportProgress(QProgressDialog):
         self.worker.start()
 
     def onProgress(self, i):
-        """
-        Signal to set the import progressbar value
-        """
+        """Signal to set the import progressbar value"""
 
         self.setValue(i)
 
 
 class ImportWorker(QThread):
-    """
-    Import Thread
-    """
+    """Manage threads.
 
+    Attributes:
+        :param project: A Project object
+        ;param progress: An ImportProgress object
+
+    Methods:
+        - run : Override the QThread run method.
+    """
+    # Used to fill the progress bar
     notifyProgress = pyqtSignal(int)
 
     def __init__(self, project, progress):
@@ -172,7 +110,9 @@ class ImportWorker(QThread):
         self.scans_added = []
 
     def run(self):
-
+        """Override the QThread run method. Executed when the worker is
+        started, fills the database and updates the progress.
+        """
         begin = time()
 
         raw_data_folder = os.path.relpath(os.path.join(self.project.folder,
@@ -397,3 +337,78 @@ class ImportWorker(QThread):
         # pr.disable()
         # pr.print_stats(sort='time')
         # prof.print_stats()
+
+
+def read_log(project, main_window):
+    """Show the evolution of the progress bar and returns its feedback, a list
+    of the paths to each data file that was loaded.
+
+    :param project: current project in the software
+    :param main_window: software's main window
+    :returns: the scans that have been added
+    """
+
+    main_window.progress = ImportProgress(project)
+    main_window.progress.show()
+    main_window.progress.exec()
+
+    with main_window.progress.worker.lock:
+        scans_added = list(main_window.progress.worker.scans_added)
+    return scans_added
+
+
+# def save_project(project):
+#     """
+#     Saves the modifications of the project
+#
+#     :param project: current project in the software
+#     """
+#
+#     project.saveModifications()
+
+def tags_from_file(file_path, path):
+    """Return a list of [tag, value] contained in a Json file.
+
+    :param file_path: file path of the Json file (without the extension)
+    :param path: project path
+    :returns: a list of the Json tags of the file
+    """
+    json_tags = []
+    with open(os.path.join(path, file_path) + ".json") as f:
+        for name, value in json.load(f).items():
+            json_tags.append([name, value])
+    return json_tags
+
+
+def verify_scans(project):
+    """Check if the project's scans have been modified.
+
+    :param project: current project in the software
+    :returns: the list of scans that have been modified
+    """
+
+    # Returning the files that are problematic
+    return_list = []
+    for scan in project.session.get_documents_names(COLLECTION_CURRENT):
+
+        file_name = scan
+        file_path = os.path.relpath(os.path.join(project.folder, file_name))
+
+        if os.path.exists(file_path):
+            # If the file exists, we do the checksum
+            with open(file_path, 'rb') as scan_file:
+                data = scan_file.read()
+                actual_md5 = hashlib.md5(data).hexdigest()
+
+            initial_checksum = project.session.get_value(COLLECTION_CURRENT,
+                                                         scan, TAG_CHECKSUM)
+            if initial_checksum is not None and actual_md5 != initial_checksum:
+                return_list.append(file_name)
+
+        else:
+            # Otherwise, we directly add the file in the list
+            return_list.append(file_name)
+
+    return return_list
+
+
