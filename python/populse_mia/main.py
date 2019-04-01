@@ -452,24 +452,24 @@ def verify_processes():
        nipype and the mia_processes processes libraries.
 
        By default, mia provides two process libraries in the pipeline library
-       of the Pipeline Manager tab. The nipype, provided as it is because it
-       is developed by another team (https://github.com/nipy/nipype), and
+       (available in Pipeline Manager tab). The nipype, given as it is because
+       it is developed by another team (https://github.com/nipy/nipype), and
        mia_processes which is developed under the umbrella of populse
        (https://github.com/populse/mia_processes). When installing mia in
        user mode, these two libraries are automatically installed on the
        station. The idea is to use the versioning available with pypi
        (https://pypi.org/). Thus, it is sufficient for the user to change the
-       version of the library installed on the station (pip install...) and
-       when starting mia. The verify_processes function will install or update
-       in the pipeline library of the Pipeline Manager tab of mia, the nipype
-       and mia_processes libraries. All these informations, as well as the
-       installed versions and package paths are saved in the
-       mia_path/properties/process_config.yml file. When an upgrade or
-       downgrade is performed for a package, the last configuration used by
-       the user is kept (if a pipeline was visible, it remains so and vice
-       versa).
-       However, if a new pipeline is available in the new version it is
-       automatically marked as visible in the library.
+       version of the library installed on the station (pip install...) to
+       also change the version available in mia. Indeed, when starting mia, the
+       verify_processes function will install or update nipype and
+       mia_processes libraries in the pipeline library. Currently it is
+       mandatory to have nipype and may_processes installed in the station.
+       All these informations, as well as the installed versions and package
+       paths are saved in the  mia_path/properties/process_config.yml file.
+       When an upgrade or downgrade is performed for a package, the last
+       configuration used by the user is kept (if a pipeline was visible, it
+       remains so and vice versa). However, if a new pipeline is available in
+       the new version it is automatically marked as visible in the library.
 
     Contains:
         Private function:
@@ -591,20 +591,19 @@ def verify_processes():
     if 'othPckg' in dir():
         # othPckg: a list containing all packages, other than nipype and
         # mia_processes, used during the previous launch of mia.
-
+        
         for pckg in othPckg:
 
             try:
                 __import__(pckg)
 
-            except ImportError:
+            except ImportError as e:
                 # try to update the sys.path for the processes/ directory
                 # currently used
                 if (not os.path.relpath(os.path.join(config.get_mia_path(),
                                                      'processes')) in
                         sys.path) and (not os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')) in sys.path):
-
                     sys.path.append(os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')))
 
@@ -655,13 +654,13 @@ def verify_processes():
                         msg.setIcon(QMessageBox.Warning)
                         msg.setWindowTitle("populse_mia - warning: {0}"
                                            .format(e))
-                        msg.setText(("The {0} processes library has not been "
-                                     "found in {1}.\n To prevent mia crash "
-                                     "when using it, please remove (see "
-                                     "File > Package library manager) or load "
-                                     "again (see More > Install processes)"
-                                     " this processes library").format(
-                            pckg, os.path.abspath(os.path.join(
+                        msg.setText(("At least, {0} has not been found in {1}."
+                                     "\nTo prevent mia crash when using it, "
+                                     "please remove (see File > Package "
+                                     "library manager) or load again (see More"
+                                     " > Install processes) the corresponding "
+                                     "process library.").format(
+                            e.msg.split()[-1], os.path.abspath(os.path.join(
                                 config.get_mia_path(), 'processes'))))
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
@@ -679,13 +678,13 @@ def verify_processes():
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
                     msg.setWindowTitle("populse_mia - warning: {0}".format(e))
-                    msg.setText(("The {0} processes library has not been "
-                                 "found in {1}.\n To prevent mia crash when "
-                                 "using it, please Remove (see File > "
-                                 "Package library manager) or load again ("
-                                 "see More > Install processes) this "
-                                 "processes library").format(
-                        pckg, os.path.abspath(os.path.join(
+                    msg.setText(("At least, {0} has not been found in {1}."
+                                 "\nTo prevent mia crash when using it, "
+                                 "please remove (see File > Package "
+                                 "library manager) or load again (see More"
+                                 " > Install processes) the corresponding "
+                                 "process library.").format(
+                        e.msg.split()[-1], os.path.abspath(os.path.join(
                             config.get_mia_path(), 'processes'))))
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
