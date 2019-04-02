@@ -26,6 +26,7 @@ import glob
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 # Populse_MIA imports
+from populse_mia.utils.utils import verCmp
 from populse_mia.project.filter import Filter
 from populse_mia.software_properties.config import Config
 from populse_mia.utils.utils import set_item_data
@@ -386,11 +387,13 @@ class Project:
         """
         with open(os.path.join(
                 self.folder, 'properties', 'properties.yml'), 'r') as stream:
+            
             try:
-                # from version 5.1
-                # return yaml.load(stream, Loader=yaml.FullLoader)
-                # version < 5.1
-                return yaml.load(stream)
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    return yaml.load(stream, Loader=yaml.FullLoader)
+                else:    
+                    return yaml.load(stream)
+
             except yaml.YAMLError as exc:
                 print(exc)
 
