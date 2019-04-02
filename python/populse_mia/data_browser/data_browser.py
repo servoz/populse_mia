@@ -1926,12 +1926,11 @@ class TableDataBrowser(QTableWidget):
 
         self.resizeColumnsToContents()
 
-    def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
+    def section_moved(self, oldVisualIndex, newVisualIndex):
         # TODO : Update description
         """Called when the columns of the data_browser are moved.
         We have to ensure FileName column stays at index 0
 
-        :param logicalIndex:
         :param oldVisualIndex: from index
         :param newVisualIndex: to index
         """
