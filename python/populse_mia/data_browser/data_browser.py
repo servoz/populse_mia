@@ -12,7 +12,6 @@ Contains:
         - TimeFormatDelegate
 
 
-
 """
 
 ##########################################################################
@@ -74,41 +73,41 @@ from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, \
 # Variable shown everywhere when no value for the tag
 not_defined_value = "*Not Defined*"
 
+
 class DataBrowser(QWidget):
-    """
-    Widget that contains everything in the Data Browser tab.
+    """Widget that contains everything in the Data Browser tab.
 
     Attributes:
         - main_window: main window of the software
         - project: current project in the software
 
     Methods:
+        - add_tag_infos: adds the tag after add tag pop-up
+        - add_tag_pop_up: displays the add tag pop-up
+        - advanced_search: launches the advanced search
+        - clone_tag_infos: clones the tag after the clone tag pop-up
+        - clone_tag_pop_up: displays the clone tag pop-up
+        - connect_viewer: displays the selected documents in the viewer
+        - create_actions: creates the actions of the tab
+        - create_toolbar_menus: creates the toolbar menu at the top of the tab
+        - count_table_pop_up: opens the count table
+        - move_splitter: checks if the viewer's splitter is at its lowest
+        position
+        - open_filter: opens a project filter that has already been saved
+        - open_filter_infos: applies the current filter
+        - remove_tag_infos: removes user tags after the pop-up
+        - remove_tag_pop_up: displays the pop-up to remove user tags
+        - reset_search_bar: resets the rapid search bar
+        - search_str: searches a string in the table and updates the
+        visualized documents
         - send_documents_to_pipeline: sends the current list of scans to the
         Pipeline Manager
         - update_database: updates the database in the software
-        - create_actions: creates the actions of the tab
-        - open_filter: opens a project filter that has already been saved
-        - open_filter_infos: applies the current filter
-        - count_table_pop_up: opens the count table
-        - create_toolbar_menus: creates the toolbar menu at the top of the tab
-        - search_str: searches a string in the table and updates the
-        visualized documents
-        - reset_search_bar: resets the rapid search bar
-        - move_splitter: checks if the viewer's splitter is at its lowest
-        position
-        - connect_viewer: displays the selected documents in the viewer
-        - advanced_search: launches the advanced search
-        - add_tag_infos: adds the tag after add tag pop-up
-        - add_tag_pop_up: displays the add tag pop-up
-        - clone_tag_infos: clones the tag after the clone tag pop-up
-        - clone_tag_pop_up: displays the clone tag pop-up
-        - remove_tag_infos: removes user tags after the pop-up
-        - remove_tag_pop_up: displays the pop-up to remove user tags
+
     """
 
     def __init__(self, project, main_window):
-        """
-        Initialization of the data_browser class
+        """Initialization of the data_browser class
 
         :param project: current project in the software
         :param main_window: main window of the software
@@ -174,7 +173,7 @@ class DataBrowser(QWidget):
 
         # VISUALIZATION
 
-        # Visualization frame, label and text edit (bottom left of the
+        # Visualization frame, label and text edit (bot.0tom left of the
         # screen in the application)
         self.frame_visualization = QtWidgets.QFrame(self)
         self.frame_visualization.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -220,9 +219,7 @@ class DataBrowser(QWidget):
         self.connect_viewer()
 
     def send_documents_to_pipeline(self):
-        """
-        Sends the current list of scans to the Pipeline Manager
-        """
+        """Send the current list of scans to the Pipeline Manager."""
 
         current_scans = self.table_data.get_current_filter()
 
@@ -233,9 +230,8 @@ class DataBrowser(QWidget):
         self.show_selection.show()
 
     def update_database(self, database):
-        """
-        Updates the database in the software. Called when switching project
-        (new, open, and save as)
+        """Update the database in the software. Called when switching project
+        (new, open, and save as).
 
         :param database: New instance of Database
         """
@@ -250,9 +246,7 @@ class DataBrowser(QWidget):
         self.frame_advanced_search.setHidden(True)
 
     def create_actions(self):
-        """
-        Creates the actions of the tab
-        """
+        """Create the actions of the tab"""
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
         self.add_tag_action.triggered.connect(self.add_tag_pop_up)
 
@@ -272,17 +266,13 @@ class DataBrowser(QWidget):
         self.open_filter_action.triggered.connect(self.open_filter)
 
     def open_filter(self):
-        """
-        Opens a project filter that has already been saved
-        """
+        """Open a project filter that has already been saved"""
 
         self.popUp = PopUpSelectFilter(self.project, self)
         self.popUp.show()
 
     def open_filter_infos(self):
-        """
-        Applies the current filter
-        """
+        """Apply the current filter"""
 
         filter_to_apply = self.project.currentFilter
 
@@ -304,9 +294,7 @@ class DataBrowser(QWidget):
             self.advanced_search.apply_filter(filter_to_apply)
 
     def count_table_pop_up(self):
-        """
-        Opens the count table
-        """
+        """Open the count table"""
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
@@ -321,9 +309,7 @@ class DataBrowser(QWidget):
     #     self.timer.start(500)
 
     def create_toolbar_menus(self):
-        """
-        Creates the toolbar menu at the top of the tab
-        """
+        """Create the toolbar menu at the top of the tab"""
         self.menu_toolbar = QToolBar()
 
         tags_tool_button = QToolButton()
@@ -390,8 +376,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(self.count_table_button)
 
     def search_str(self, str_search):
-        """
-        Searches a string in the table and updates the visualized documents
+        """Search a string in the table and updates the visualized documents.
 
         :param str_search: string to search
         """
@@ -427,23 +412,17 @@ class DataBrowser(QWidget):
         self.project.currentFilter.search_bar = str_search
 
     def reset_search_bar(self):
-        """
-        Resets the rapid search bar
-        """
+        """Reset the rapid search bar."""
         self.search_bar.setText("")
 
     def move_splitter(self):
-        """
-        Checks if the viewer's splitter is at its lowest position
-        """
+        """Check if the viewer's splitter is at its lowest position."""
         if self.splitter_vertical.sizes()[1] != \
                 self.splitter_vertical.minimumHeight():
             self.connect_viewer()
 
     def connect_viewer(self):
-        """
-        Displays the selected documents in the viewer
-        """
+        """Display the selected documents in the viewer."""
 
         if self.splitter_vertical.sizes()[1] == \
                 self.splitter_vertical.minimumHeight():
@@ -468,9 +447,7 @@ class DataBrowser(QWidget):
             self.viewer.verify_slices(full_names)
 
     def advanced_search(self):
-        """
-        Launches the advanced search
-        """
+        """Launch the advanced search."""
 
         if self.frame_advanced_search.isHidden():
             # If the advanced search is hidden, we reset it and display it
@@ -498,9 +475,8 @@ class DataBrowser(QWidget):
             self.table_data.update_visualized_rows(old_scans_list)
 
     def add_tag_infos(self, new_tag_name, new_default_value, tag_type,
-                      new_tag_description,new_tag_unit):
-        """
-        Adds the tag after add tag pop-up
+                      new_tag_description, new_tag_unit):
+        """Add the tag after add tag pop-up.
 
         :param new_tag_name: New tag name
         :param new_default_value:  New default value
@@ -542,8 +518,7 @@ class DataBrowser(QWidget):
         self.table_data.add_column(column, new_tag_name)
 
     def add_tag_pop_up(self):
-        """
-        Displays the add tag pop-up
+        """Display the add tag pop-up
 
         :return:
         """
@@ -553,8 +528,7 @@ class DataBrowser(QWidget):
         self.pop_up_add_tag.show()
 
     def clone_tag_infos(self, tag_to_clone, new_tag_name):
-        """
-        Clones the tag after the clone tag pop-up
+        """Clone the tag after the clone tag pop-up.
 
         :param tag_to_clone: Tag to clone
         :param new_tag_name: New tag name
@@ -606,17 +580,14 @@ class DataBrowser(QWidget):
         self.table_data.add_column(column, new_tag_name)
 
     def clone_tag_pop_up(self):
-        """
-        Displays the clone tag pop-up
-        """
+        """Display the clone tag pop-up."""
 
         # We first show the clone_tag pop up
         self.pop_up_clone_tag = PopUpCloneTag(self, self.project)
         self.pop_up_clone_tag.show()
 
     def remove_tag_infos(self, tag_names_to_remove):
-        """
-        Removes user tags after the pop-up
+        """Remove user tags after the pop-up.
 
         :param tag_names_to_remove: list of tags to remove
         """
@@ -665,40 +636,28 @@ class DataBrowser(QWidget):
             self.table_data.selection_changed)
 
     def remove_tag_pop_up(self):
-        """
-        Displays the pop-up to remove user tags
-        """
+        """Display the pop-up to remove user tags."""
 
         # We first open the remove_tag pop up
         self.pop_up_remove_tag = PopUpRemoveTag(self, self.project)
         self.pop_up_remove_tag.show()
 
 class DateFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle dates in the TableDataBrowser
-    """
+    """Delegate that is used to handle dates in the TableDataBrowser."""
     def __init__(self, parent=None):
-        """
-        Initialization of the DateFormatDelegate class
-        """
         QItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, option, index):
         """
-        Override of the createEditor method, called to generate the widget
+        Override of the createEditor method, called to generate the widget.
         """
         editor = QDateEdit(parent)
         editor.setDisplayFormat("dd/MM/yyyy")
         return editor
 
 class DateTimeFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle date & time in the TableDataBrowser
-    """
+    """Delegate that is used to handle date & time in the TableDataBrowser."""
     def __init__(self, parent=None):
-        """
-        Initialization of the DateTimeFormatDelegate class
-        """
         QItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, option, index):
@@ -710,13 +669,8 @@ class DateTimeFormatDelegate(QItemDelegate):
         return editor
 
 class NumberFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle numbers in the TableDataBrowser
-    """
+    """Delegate that is used to handle numbers in the TableDataBrowser."""
     def __init__(self, parent=None):
-        """
-        Initialization of the NumberFormatDelegate class
-        """
         QItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, option, index):
@@ -731,19 +685,19 @@ class NumberFormatDelegate(QItemDelegate):
         return editor
 
 class TableDataBrowser(QTableWidget):
-    """
-    Table widget that displays the documents contained in the database and
+    """Table widget that displays the documents contained in the database and
     their associated tags.
 
     Attributes:
-        - project: current project in the software
-        - data_browser: parent data browser widget
-        - tags_to_display: list tags to display
-        - update_values: boolean to specify if edition is enabled
-        - activate_selection: boolean to specify if selection is enabled
-        - link_viewer: boolean to specify if the table is linked to a viewer
-        - bricks: dictionary containing information about the processes
-        that has been run to generate documents
+        :param project: current project in the software
+        :param data_browser: parent data browser widget
+        :param tags_to_display: list of tags to display
+        :param update_values: boolean to specify if edition is enabled
+        :param activate_selection: dictionary containing information about
+        the processes that has been run to generate
+        documents
+        :param link_viewer: boolean to specify if the table is linked to a
+        viewer
 
     Methods:
         - add_path: calls a pop-up to add any document to the project
@@ -785,23 +739,11 @@ class TableDataBrowser(QTableWidget):
         - mouseReleaseEvent: called when clicking released on cells
         - change_cell_color: changes the background color and the value of
         cells when edited by the user
+
     """
 
     def __init__(self, project, data_browser, tags_to_display,
                  update_values, activate_selection, link_viewer=True):
-        """
-        Initialization of the TableDataBrowser class
-
-        :param project: current project in the software
-        :param data_browser: parent data browser widget
-        :param tags_to_display: list of tags to display
-        :param update_values: boolean to specify if edition is enabled
-        :param activate_selection: dictionary containing information about
-        the processes that has been run to generate
-        documents
-        :param link_viewer: boolean to specify if the table is linked to a
-        viewer
-        """
 
         super().__init__()
 
@@ -842,16 +784,13 @@ class TableDataBrowser(QTableWidget):
             self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def add_path(self):
-        """
-        Calls a pop-up to add any document to the project
-        """
+        """Call a pop-up to add any document to the project."""
 
         self.pop_up_add_path = PopUpAddPath(self.project, self.data_browser)
         self.pop_up_add_path.show()
 
     def add_column(self, column, tag):
-        """
-        Adds a column to the table
+        """Add a column to the table
 
         :param column: index of the column to add
         :param tag: tag name to add
@@ -910,8 +849,8 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def sort_updated(self, column, order):
-        """
-        Called when the sort is updated
+        # TODO : Update description
+        """Called when the sort is updated
 
         :param column: column being sorted
         :param order: new order
@@ -931,8 +870,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def get_current_filter(self):
-        """
-        Get the current data browser selection (list of paths)
+        """Get the current data browser selection (list of paths).
         If there is a current selection, the list of selected scans is returned
         otherwise the list of the visible paths in the data browser is returned
 
@@ -949,9 +887,8 @@ class TableDataBrowser(QTableWidget):
         return return_list
 
     def update_selection(self):
-        """
-        Called after searches to update the selection
-        """
+        # TODO : Update description
+        """Called after searches to update the selection."""
 
         # Selection updated
         self.clearSelection()
@@ -967,9 +904,8 @@ class TableDataBrowser(QTableWidget):
                     item_to_select.setSelected(True)
 
     def selection_changed(self):
-        """
-        Called when the selection is changed
-        """
+        # TODO : Update description
+        """Called when the selection is changed."""
 
         # List of selected scans updated
         self.scans.clear()
@@ -996,8 +932,8 @@ class TableDataBrowser(QTableWidget):
             self.data_browser.connect_viewer()
 
     def section_moved(self, logicalIndex, oldVisualIndex, newVisualIndex):
-        """
-        Called when the columns of the data_browser are moved
+        # TODO : Update description
+        """Called when the columns of the data_browser are moved.
         We have to ensure FileName column stays at index 0
 
         :param logicalIndex:
@@ -1027,9 +963,9 @@ class TableDataBrowser(QTableWidget):
         self.update()
 
     def select_all_column(self, col):
-        """
-        Called when single clicking on the column header to select the
-        whole column
+        # TODO : Update description
+        """Called when single clicking on the column header to select the
+        whole column.
 
         :param col: column to select
         """
@@ -1038,9 +974,8 @@ class TableDataBrowser(QTableWidget):
         self.selectColumn(col)
 
     def select_all_columns(self):
-        """
-        Called from context menu to select the columns
-        """
+        # TODO : Update description
+        """Called from context menu to select the columns."""
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         points = self.selectedIndexes()
@@ -1051,9 +986,9 @@ class TableDataBrowser(QTableWidget):
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def update_table(self, take_tags_to_update=False):
-        """
-        Fills the table with the project's data
+        """Fill the table with the project's data.
         Only called when switching project to completely reset the table
+        # TODO : Update params
         """
 
         self.setSortingEnabled(False)
@@ -1108,10 +1043,8 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def fill_headers(self, take_tags_to_update=False):
-        """
-        Initializes and fills the headers of the table
-        """
-
+        """Initialize and fills the headers of the table."""
+        # TODO : Update params
         # Sorting the list of tags in alphabetical order,
         # but keeping FileName first
         tags = self.project.session.get_fields_names(COLLECTION_CURRENT)
@@ -1169,9 +1102,7 @@ class TableDataBrowser(QTableWidget):
             column += 1
 
     def fill_cells_update_table(self):
-        """
-        Initializes and fills the cells of the table
-        """
+        """Initialize and fills the cells of the table"""
 
         cells_number = len(self.scans_to_visualize) * len(
             self.horizontalHeader())
@@ -1260,9 +1191,7 @@ class TableDataBrowser(QTableWidget):
         self.progress.close()
 
     def show_brick_history(self):
-        """
-        Shows brick history pop-up
-        """
+        """Show brick history pop-up."""
 
         brick_uuid = self.bricks[self.sender()]
         self.show_brick_popup = PopUpShowBrick(
@@ -1271,9 +1200,7 @@ class TableDataBrowser(QTableWidget):
         self.show_brick_popup.show()
 
     def update_colors(self):
-        """
-        Updates the background of all the cells
-        """
+        """Update the background of all the cells."""
 
         # itemChanged signal is always disconnected when calling this method
 
@@ -1331,8 +1258,7 @@ class TableDataBrowser(QTableWidget):
             self.project.saveModifications()
 
     def context_menu_table(self, position):
-        """
-        Creates the context menu of the table
+        """Create the context menu of the table.
 
         :param position: position of the mouse cursor
         """
@@ -1410,8 +1336,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def sort_column(self, order):
-        """
-        Sorts the current column
+        """Sort the current column.
 
         :param order: order of sort (0 for ascending, 1 for descending)
         """
@@ -1424,8 +1349,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.disconnect()
 
     def get_tag_column(self, tag):
-        """
-        Returns the column index of the tag
+        """Return the column index of the tag.
 
         :param tag: tag name
         :return: index of the column of the tag
@@ -1439,7 +1363,7 @@ class TableDataBrowser(QTableWidget):
 
     def get_scan_row(self, scan):
         """
-        Returns the row index of the scan
+        Return the row index of the scan.
 
         :param scan: scan filename
         :return: index of the row of the scan
@@ -1452,9 +1376,7 @@ class TableDataBrowser(QTableWidget):
                 return row
 
     def clear_cell(self):
-        """
-        Clears the selected cells
-        """
+        """Clear the selected cells."""
 
         # For history
         history_maker = []
@@ -1487,9 +1409,7 @@ class TableDataBrowser(QTableWidget):
         self.project.redos.clear()
 
     def reset_cell(self):
-        """
-        Resets the selected cells to their original values
-        """
+        """Reset the selected cells to their original values."""
 
         # For history
         history_maker = []
@@ -1539,9 +1459,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def reset_column(self):
-        """
-        Resets the selected columns to their original values
-        """
+        """Reset the selected columns to their original values."""
 
         # For history
         history_maker = list()
@@ -1591,9 +1509,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def reset_row(self):
-        """
-        Resets the selected rows to their original values
-        """
+        """Reset the selected rows to their original values."""
 
         # For history
         history_maker = []
@@ -1648,9 +1564,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def display_unreset_values(self):
-        """
-        Displays an error message when trying to reset user tags
-        """
+        """Display an error message when trying to reset user tags."""
         self.msg = QMessageBox()
         self.msg.setIcon(QMessageBox.Warning)
         self.msg.setText("Some values do not have a raw value")
@@ -1664,9 +1578,7 @@ class TableDataBrowser(QTableWidget):
         self.msg.show()
 
     def remove_scan(self):
-        """
-        Removes documents from table and project
-        """
+        """Remove documents from table and project."""
 
         points = self.selectedIndexes()
 
@@ -1716,9 +1628,7 @@ class TableDataBrowser(QTableWidget):
         self.resizeColumnsToContents()
 
     def visualized_tags_pop_up(self):
-        """
-        Displays the visualized tags pop-up
-        """
+        """Display the visualized tags pop-up."""
         # Old list of columns
         old_tags = self.project.session.get_shown_tags()
         self.pop_up = PopUpProperties(
@@ -1731,8 +1641,7 @@ class TableDataBrowser(QTableWidget):
         self.pop_up.show()
 
     def multiple_sort_infos(self, list_tags, order):
-        """
-        Sorts the table according to the tags specify in list_tags
+        """Sort the table according to the tags specify in list_tags.
 
         :param list_tags: list of the tags on which to sort the documents
         :param order: "Ascending" or "Descending"
@@ -1783,15 +1692,12 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def multiple_sort_pop_up(self):
-        """
-        Displays the multiple sort pop-up
-        """
+        """Display the multiple sort pop-up."""
         self.pop_up = PopUpMultipleSort(self.project, self)
         self.pop_up.show()
 
     def update_visualized_rows(self, old_scans):
-        """
-        Updates the list of documents (scans) in the table
+        """Update the list of documents (scans) in the table.
 
         :param old_scans: old list of scans
         """
@@ -1824,8 +1730,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def update_visualized_columns(self, old_tags, visibles):
-        """
-        Updates the visualized tags in the table
+        """Update the visualized tags in the table.
 
         :param old_tags: old list of visualized tags
         :param visibles: list of tags to display
@@ -1867,9 +1772,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def add_columns(self):
-        """
-        Adds columns
-        """
+        """Add columns."""
 
         self.itemChanged.disconnect()
 
@@ -1969,8 +1872,7 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
     def add_rows(self, rows):
-        """
-        Inserts rows if they are not already in the table
+        """Insert rows if they are not already in the table.
 
         :param rows: list of all scans
         """
@@ -2080,9 +1982,8 @@ class TableDataBrowser(QTableWidget):
         self.progress.close()
 
     def get_index_insertion(self, to_insert):
-        """
-        Gets index insertion of a new column, since it's already sorted in
-        alphabetical order
+        """Get index insertion of a new column, since it's already sorted in
+        alphabetical order.
 
         :param to_insert: tag to insert
         """
@@ -2093,8 +1994,8 @@ class TableDataBrowser(QTableWidget):
         return self.columnCount()
 
     def mouseReleaseEvent(self, e):
-        """
-        Called when clicking released on cells, for list values changes
+        """Called when clicking released on cells, for list values changes.
+        # TODO : Update description
 
         :param e: event
         """
@@ -2224,9 +2125,9 @@ class TableDataBrowser(QTableWidget):
             self.setMouseTracking(True)
 
     def change_cell_color(self, item_origin):
-        """
-        Changes the background color and the value of cells when edited by the
-        user. Handles the multi-selection case.
+        """Change the background color and the value of cells when edited by
+        the user.
+        Handle the multi-selection case.
 
         :param item_origin: item from where the call comes from
         """
@@ -2370,19 +2271,17 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.connect(self.change_cell_color)
 
 class TimeFormatDelegate(QItemDelegate):
-    """
-    Delegate that is used to handle times in the TableDataBrowser
+    """Delegate that is used to handle times in the TableDataBrowser.
+
+    # TODO : Update params
     """
     def __init__(self, parent=None):
-        """
-        Initialization of the TimeFormatDelegate class
-        """
         QItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, option, index):
-        """
-        Override of the createEditor method, called to generate the widget
+        """Override of the createEditor method, called to generate the widget.
         """
         editor = QTimeEdit(parent)
         editor.setDisplayFormat("hh:mm:ss.zzz")
         return editor
+

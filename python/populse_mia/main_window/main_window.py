@@ -51,9 +51,7 @@ from populse_mia.pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
 
 class MainWindow(QMainWindow):
 
-    """
-
-    Main window class, initializes the software appearance and defines
+    """Main window class, initializes the software appearance and defines
     interactions with the user.
 
     Attributes:
@@ -161,19 +159,16 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
     def add_clinical_tags(self):
-        """
-        Adds the clinical tags to the database and the data browser
+        """Add the clinical tags to the database and the data browser"""
 
-        """
         added_tags = self.project.add_clinical_tags()
         for tag in added_tags:
             column = self.data_browser.table_data.get_index_insertion(tag)
             self.data_browser.table_data.add_column(column, tag)
 
     def check_unsaved_modifications(self):
-        """
-        Checks if there are differences between the current project and the
-        database
+        """Check if there are differences between the current project and the
+        database.
 
         :return: Boolean. True if there are unsaved modifications,
         False otherwise
@@ -190,8 +185,7 @@ class MainWindow(QMainWindow):
             return False
 
     def closeEvent(self, event):
-        """
-        Overrides the QWidget closing event to check if there are unsaved
+        """Override the QWidget closing event to check if there are unsaved
         modifications
 
         :param event: closing event
@@ -221,10 +215,7 @@ class MainWindow(QMainWindow):
             event.ignore()
 
     def create_actions(self):
-        """
-        Creates the actions and their shortcuts in each menu
-
-        """
+        """Create the actions and their shortcuts in each menu"""
 
         sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
             os.path.realpath(__file__))),
@@ -309,10 +300,7 @@ class MainWindow(QMainWindow):
                                 self.install_processes_pop_up(folder=False))
 
     def create_menus(self):
-        """
-        Creates the menu-bar
-
-        """
+        """Create the menu-bar."""
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
@@ -366,10 +354,7 @@ class MainWindow(QMainWindow):
         self.menu_install_process.addAction(self.action_install_processes_zip)
 
     def create_project_pop_up(self):
-        """
-        Creates a new project
-
-        """
+        """Create a new project."""
 
         if self.check_unsaved_modifications():
             self.pop_up_close = PopUpQuit(self.project)
@@ -406,10 +391,8 @@ class MainWindow(QMainWindow):
                 self.update_project(file_name)  # project updated everywhere
 
     def create_tabs(self):
-        """
-        Creates the tabs and initializes the DataBrowser and PipelineManager
-        classes
-        """
+        """Create the tabs and initializes the DataBrowser and PipelineManager
+        classes."""
         self.config = Config()
 
         self.tabs = QTabWidget()
@@ -437,16 +420,12 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def documentation():
-        """
-        Opens the documentation in a web browser
-
-        """
+        """Open the documentation in a web browser."""
         webbrowser.open(
             'https://populse.github.io/populse_mia/html/index.html')
 
     def install_processes_pop_up(self, folder=False):
-        """
-        Opens the install processes pop-up
+        """Open the install processes pop-up.
 
         :param folder: boolean, True if installing from a folder
         """
@@ -458,9 +437,8 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.processLibrary.pkg_library.update_config)
 
     def import_data(self):
-        """
-        Calls the import software (MRI File Manager), reads the imported
-        files and loads them into the database
+        """Call the import software (MRI File Manager), reads the imported
+        files and loads them into the database.
 
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
@@ -497,10 +475,7 @@ class MainWindow(QMainWindow):
             pass
 
     def open_project_pop_up(self):
-        """
-        Opens a pop-up to open a project and updates the recent projects
-
-        """
+        """Open a pop-up to open a project and updates the recent projects."""
         # Ui_Dialog() is defined in pop_ups.py
         # We check for unsaved modifications
         if self.check_unsaved_modifications():
@@ -527,10 +502,7 @@ class MainWindow(QMainWindow):
                 # We switch the project
 
     def open_recent_project(self):
-        """
-        Opens a recent project
-
-        """
+        """Open a recent project."""
         # We check for unsaved modifications
         if self.check_unsaved_modifications():
 
@@ -556,10 +528,7 @@ class MainWindow(QMainWindow):
                 # We switch the project
 
     def package_library_pop_up(self):
-        """
-        Opens the package library pop-up
-
-        """
+        """Open the package library pop-up"""
 
         self.pop_up_package_library = PackageLibraryDialog(self)
         self.pop_up_package_library.setGeometry(300, 200, 800, 600)
@@ -568,10 +537,7 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.processLibrary.update_process_library)
 
     def project_properties_pop_up(self):
-        """
-        Opens the project properties pop-up
-
-        """
+        """Open the project properties pop-up"""
 
         old_tags = self.project.session.get_shown_tags()
         self.pop_up_settings = PopUpProperties(self.project,
@@ -584,10 +550,7 @@ class MainWindow(QMainWindow):
                 old_tags, self.project.session.get_shown_tags())
 
     def redo(self):
-        """
-        Redoes the last action made by the user
-
-        """
+        """Redo the last action made by the user."""
         if self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
                                                   "", 1) == 'Data Browser':
@@ -601,10 +564,7 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.redo()
 
     def remove_raw_files_useless(self):
-        """
-        Removes the useless raw files of the current project
-
-        """
+        """Remove the useless raw files of the current project"""
 
         # If it's unnamed project, we can remove the whole project
         if self.project.isTempProject:
@@ -654,9 +614,7 @@ class MainWindow(QMainWindow):
             self.project.database.__exit__(None, None, None)
 
     def save(self):
-        """
-        Saves either the current project or the current pipeline
-        """
+        """Save either the current project or the current pipeline"""
 
         if self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
@@ -670,8 +628,8 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.savePipeline()
 
     def save_as(self):
-        """
-        Saves either the current project or the current pipeline under a new name
+        """Save either the current project or the current pipeline under a new
+        name.
         """
         if self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
@@ -685,10 +643,7 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.savePipelineAs()
 
     def save_project_as(self):
-        """
-        Opens a pop-up to save the current project as
-
-        """
+        """Open a pop-up to save the current project as"""
 
         self.exPopup = PopUpSaveProjectAs()
         if self.exPopup.exec_():
@@ -815,20 +770,14 @@ class MainWindow(QMainWindow):
                 msg.exec()
 
     def saveChoice(self):
-        """
-        Checks if the project needs to be 'saved as' or just 'saved'
-
-        """
+        """Check if the project needs to be 'saved as' or just 'saved'."""
         if self.project.isTempProject:
             self.save_project_as()
         else:
             self.project.saveModifications()
 
     def see_all_projects(self):
-        """
-        Opens a pop-up to show the recent projects
-
-        """
+        """Open a pop-up to show the recent projects."""
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = PopUpSeeAllProjects(self.saved_projects, self)
         if self.exPopup.exec_():
@@ -839,10 +788,7 @@ class MainWindow(QMainWindow):
             self.update_recent_projects_actions()
 
     def software_preferences_pop_up(self):
-        """
-        Opens the MIA2 preferences pop-up
-
-        """
+        """Open the MIA2 preferences pop-up."""
 
         self.pop_up_preferences = PopUpPreferences(self)
         self.pop_up_preferences.setGeometry(300, 200, 800, 600)
@@ -857,9 +803,8 @@ class MainWindow(QMainWindow):
             self.update_package_library_action)
 
     def switch_project(self, file_path, name):
-        """
-        Verifies if it's possible to open the selected project
-        and quit the current one
+        """Check if it's possible to open the selected project
+        and quit the current one.
 
         :param file_path: raw file_path
         :param name: project name
@@ -971,10 +916,7 @@ class MainWindow(QMainWindow):
                 return False
 
     def tab_changed(self):
-        """
-        Method called when the tab is changed
-
-        """
+        """Update the window when the tab is changed"""
 
         if self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
@@ -1036,10 +978,7 @@ class MainWindow(QMainWindow):
                 msg.exec()
 
     def undo(self):
-        """
-        Undoes the last action made by the user
-
-        """
+        """Undo the last action made by the user."""
         if self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
                                                   "", 1) == 'Data Browser':
@@ -1054,10 +993,7 @@ class MainWindow(QMainWindow):
             self.pipeline_manager.undo()
 
     def update_package_library_action(self):
-        """
-        Updates the package library action depending on the mode
-
-        """
+        """Update the package library action depending on the mode."""
         if Config().get_clinical_mode() == 'yes':
             self.action_package_library.setDisabled(True)
             # self.action_install_processes.setDisabled(True)
@@ -1066,9 +1002,8 @@ class MainWindow(QMainWindow):
             # self.action_install_processes.setEnabled(True)
 
     def update_project(self, file_path, call_update_table=True):
-        """
-        Updates the project once the database has been updated
-        Updates the database, the window title and the recent and saved
+        """Update the project once the database has been updated.
+        Update the database, the window title and the recent and saved
         projects menus.
 
         :param file_path: File name of the new project
@@ -1097,10 +1032,7 @@ class MainWindow(QMainWindow):
         self.update_recent_projects_actions()
 
     def update_recent_projects_actions(self):
-        """
-        Updates the list of recent projects
-
-        """
+        """Update the list of recent projects."""
         if self.saved_projects_list:
             for i in range(min(len(
                     self.saved_projects_list),
