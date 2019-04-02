@@ -7,7 +7,6 @@
 ##########################################################################
 
 import os
-import re
 from functools import partial
 import nibabel as nib
 from scipy.ndimage import rotate  # to work with NumPy arrays
@@ -24,6 +23,7 @@ from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSi
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils.utils import verCmp
 from populse_mia.pop_ups.pop_up_select_tag import PopUpSelectTag
 from populse_mia.software_properties.config import Config
 from populse_mia.data_browser import data_browser
@@ -757,16 +757,15 @@ class MiniViewer(QWidget):
         if im2D is not None:
             im2D = rotate(im2D, -90, reshape=False)
             im2D = np.uint8((im2D - im2D.min()) / im2D.ptp() * 255.0)
-            
+
             # anti_aliasing keyword is defined in skimage since version 0.14.0
-            if verCmp(sk.__version__, '0.14.0') > -1:
-                im2D = resize(im2D, (128, 128),
-                              mode= 'constant',
+            if verCmp(sk.__version__, '0.14.0', 'sup'):
+                im2D = resize(im2D, (128, 128), mode= 'constant',
                               anti_aliasing=False)
 
             else:
-                im2D = resize(im2D, (128, 128))
-                
+                im2D = resize(im2D, (128, 128), mode = 'constant' )
+
             im2D = (im2D * 255).astype(np.uint8)
             return im2D
         
@@ -776,34 +775,13 @@ class MiniViewer(QWidget):
                                        / self.im_2D[idx].ptp() * 255.0)
             
             # anti_aliasing keyword is defined in skimage since version 0.14.0
-            if verCmp(sk.__version__, '0.14.0') > -1:
+            if verCmp(sk.__version__, '0.14.0', 'sup'):
                 self.im_2D[idx] = resize(self.im_2D[idx], (128, 128),
                                          mode = 'constant',
                                          anti_aliasing=False)
 
             else:
-                self.im_2D[idx] = resize(self.im_2D[idx], (128, 128))
+                self.im_2D[idx] = resize(self.im_2D[idx], (128, 128),
+                                         mode = 'constant' )
 
             self.im_2D[idx] = (self.im_2D[idx] * 255).astype(np.uint8)
-
-def verCmp(ver1, ver2):
-    """Version comparator.
-
-    :param ver1: the version of a package (a string; ex. '0.13.0')
-    :param ver2: the version of a package (a string; ex. '0.13.0')
-    
-    :returns: -1, if ver1 is older than ver2
-               0, if ver1 and ver2 are equivalent
-               1, if ver1 is newer than ver2
-
-     """
-    def normalise(v):
-        """Transform a version of a package to a corresponding list of integer.
-
-        :returns: a list of integer (ex. [0, 13, 0])
-
-        """
-
-        return [int(x) for x in re.sub(r'(\.0+)*$','', v).split(".")]
-
-    return (normalise(ver1)>normalise(ver2))-(normalise(ver1)<normalise(ver2))

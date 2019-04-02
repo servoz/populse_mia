@@ -17,6 +17,9 @@ Contains:
 
 import os
 import yaml
+
+# Populse_MIA imports
+from populse_mia.utils.utils import verCmp
 from populse_mia.software_properties.config import Config
 
 
@@ -104,9 +107,10 @@ class SavedProjects:
                                'saved_projects.yml'), 'r') as stream:
                 
                 try:
-                    # from version 5.1
-                    # return yaml.load(stream, Loader=yaml.FullLoader)
-                    return yaml.load(stream) # version < 5.1
+                    if verCmp(yaml.__version__, '5.1', 'sup'):
+                        return yaml.load(stream, Loader=yaml.FullLoader)
+                    else:    
+                        return yaml.load(stream)
             
                 except yaml.YAMLError as exc:
                     print(exc)
