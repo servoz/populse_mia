@@ -1926,14 +1926,16 @@ class TableDataBrowser(QTableWidget):
 
         self.resizeColumnsToContents()
 
-    def section_moved(self, oldVisualIndex, newVisualIndex):
-        # TODO : Update description
-        """Called when the columns of the data_browser are moved.
-        We have to ensure FileName column stays at index 0
+    def section_moved(self, logical_index, old_index, new_index):
+        """Update the visual index and forbid to move the first column when
+        the user try to move columns.
 
-        :param oldVisualIndex: from index
-        :param newVisualIndex: to index
+        :param logical_index: int of the column logical index
+        :param old_index: int of the column old visual index
+        :param new_index: int of the column new visual index
         """
+        # The logical index is not used in this method but it is returned by
+        # the event we're connected to.
 
         self.itemSelectionChanged.disconnect()
 
@@ -1941,10 +1943,11 @@ class TableDataBrowser(QTableWidget):
         # call to this function
         self.horizontalHeader().sectionMoved.disconnect()
 
-        if oldVisualIndex == 0 or newVisualIndex == 0:
+        # We have to ensure FileName column stays at index 0
+        if old_index == 0 or new_index == 0:
             # FileName column is moved, to revert because it has to stay the
             # first column
-            self.horizontalHeader().moveSection(newVisualIndex, oldVisualIndex)
+            self.horizontalHeader().moveSection(new_index, old_index)
 
         # We reconnect the signal
         self.horizontalHeader().sectionMoved.connect(self.section_moved)
@@ -1957,20 +1960,15 @@ class TableDataBrowser(QTableWidget):
         self.update()
 
     def select_all_column(self, col):
-        # TODO : Update description
-        """Called when single clicking on the column header to select the
-        whole column.
+        """Select all column when the header is double clicked
 
         :param col: column to select
         """
-
         self.clearSelection()
         self.selectColumn(col)
 
     def select_all_columns(self):
-        # TODO : Update description
-        """Called from context menu to select the columns."""
-
+        """Select one or several column(s). Called from the context menu."""
         self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         points = self.selectedIndexes()
         self.clearSelection()
@@ -1980,8 +1978,7 @@ class TableDataBrowser(QTableWidget):
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def selection_changed(self):
-        # TODO : Update description
-        """Called when the selection is changed."""
+        """Update the tab view when the selection changes"""
 
         # List of selected scans updated
         self.scans.clear()
@@ -2030,11 +2027,10 @@ class TableDataBrowser(QTableWidget):
         self.itemChanged.disconnect()
 
     def sort_updated(self, column, order):
-        # TODO : Update description
-        """Called when the sort is updated
+        """Update project and tab parameters after a sort.
 
-        :param column: column being sorted
-        :param order: new order
+        :param column: index of that was sorted
+        :param order: boolean of the new order
         """
 
         self.itemChanged.disconnect()
@@ -2109,8 +2105,7 @@ class TableDataBrowser(QTableWidget):
             self.project.saveModifications()
 
     def update_selection(self):
-        # TODO : Update description
-        """Called after searches to update the selection."""
+        """Update the selection after a search"""
 
         # Selection updated
         self.clearSelection()
@@ -2128,7 +2123,8 @@ class TableDataBrowser(QTableWidget):
     def update_table(self, take_tags_to_update=False):
         """Fill the table with the project's data.
         Only called when switching project to completely reset the table
-        # TODO : Update params
+
+        :param take_tags_to_update: boolean
         """
 
         self.setSortingEnabled(False)
@@ -2182,11 +2178,11 @@ class TableDataBrowser(QTableWidget):
         # will change
         self.itemChanged.connect(self.change_cell_color)
 
-    def update_visualized_columns(self, old_tags, visibles):
-        """Update the visualized tags in the table.
+    def update_visualized_columns(self, old_tags, showed):
+        """Update the tags shown in the table.
 
         :param old_tags: old list of visualized tags
-        :param visibles: list of tags to display
+        :param showed: list of tags to display
         """
 
         self.itemChanged.disconnect()
@@ -2195,11 +2191,11 @@ class TableDataBrowser(QTableWidget):
 
         # Tags that are not visible anymore are hidden
         for tag in old_tags:
-            if not tag in visibles:
+            if not tag in showed:
                 self.setColumnHidden(self.get_tag_column(tag), True)
 
         # Tags that became visible must be visible
-        for tag in visibles:
+        for tag in showed:
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Update the list of tags in the advanced search if it's opened
@@ -2208,7 +2204,7 @@ class TableDataBrowser(QTableWidget):
             for row in self.data_browser.advanced_search.rows:
                 fields = row[2]
                 fields.clear()
-                for visible_tag in visibles:
+                for visible_tag in showed:
                     fields.addItem(visible_tag)
                 fields.model().sort(0)
                 fields.addItem("All visualized tags")
@@ -2259,6 +2255,7 @@ class TableDataBrowser(QTableWidget):
 
     def visualized_tags_pop_up(self):
         """Display the visualized tags pop-up."""
+
         # Old list of columns
         old_tags = self.project.session.get_shown_tags()
         self.pop_up = PopUpProperties(
