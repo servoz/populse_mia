@@ -14,6 +14,9 @@ import pkgutil
 # Soma import
 from soma.path import find_in_path
 
+# Populse_MIA imports
+from populse_mia.utils.utils import verCmp
+
 ###################################################################
 # ZIP FILE TO UNZIP
 #
@@ -91,9 +94,14 @@ if __name__ == '__main__':
         open(os.path.join('properties', 'process_config.yml'), 'a').close()
 
     with open(os.path.join('properties', 'process_config.yml'), 'r') as stream:
+        
         try:
-            # process_dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
-            process_dic = yaml.load(stream) ## version < 5.1
+            if verCmp(yaml.__version__, '5.1', 'sup'):
+                process_dic = yaml.load(stream,
+                                            Loader=yaml.FullLoader)
+            else:    
+                process_dic = yaml.load(stream)
+
         except yaml.YAMLError as exc:
             process_dic = {}
             print(exc)

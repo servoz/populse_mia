@@ -21,6 +21,9 @@ Contains:
 import os
 import yaml
 
+# Populse_MIA imports
+from populse_mia.utils.utils import verCmp
+
 
 class Config:
     """
@@ -184,10 +187,11 @@ class Config:
             with open(dot_mia_config, 'r') as stream:
 
                 try:
-                    # from version 5.1
-                    # mia_home_config = yaml.load(stream,
-                    # Loader=yaml.FullLoader)
-                    mia_home_config = yaml.load(stream)  # version < 5.1
+                    if verCmp(yaml.__version__, '5.1', 'sup'):
+                        mia_home_config = yaml.load(stream,
+                                                    Loader=yaml.FullLoader)
+                    else:    
+                        mia_home_config = yaml.load(stream)
 
                     if "dev_mode" in mia_home_config.keys() and \
                             mia_home_config[
@@ -393,9 +397,12 @@ class Config:
         with open(os.path.join(self.get_mia_path(), 'properties',
                                'config.yml'), 'r') as stream:
             try:
-                # ## from version 5.1
-                # return yaml.load(stream, Loader=yaml.FullLoader)
-                return yaml.load(stream) ## version < 5.1
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    return yaml.load(stream, Loader=yaml.FullLoader)
+                
+                else:    
+                    return yaml.load(stream)
+                
             except yaml.YAMLError as exc:
                 print(exc)
 
@@ -636,3 +643,4 @@ class Config:
     #         self.config["paths"]["data"] = path
     #         # Then save the modification
     #         self.saveConfig()
+

@@ -26,10 +26,10 @@ from capsul.pipeline.python_export import save_py_pipeline
 from soma.utils.weak_proxy import weak_proxy
 
 # Populse_MIA imports
-
 from populse_mia.pipeline_manager.node_controller import FilterWidget
 from populse_mia.pop_ups.pop_up_close_pipeline import PopUpClosePipeline
 from populse_mia.software_properties.config import Config
+from populse_mia.utils.utils import verCmp
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -561,10 +561,17 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
 
         # Reading the process configuration file
         config = Config()
-        with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
+        with open(os.path.join(config.get_mia_path(),
+                               'properties',
+                               'process_config.yml'), 'r') as stream:
+            
             try:
-                # dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
-                dic = yaml.load(stream) ## version < 5.1
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    dic = yaml.load(stream, Loader=yaml.FullLoader)
+                    
+                else:    
+                    dic = yaml.load(stream)
+
             except yaml.YAMLError as exc:
                 print(exc)
                 dic = {}
@@ -1216,10 +1223,17 @@ class PipelineEditor(PipelineDevelopperView):
                 current_process_id = sub_pipeline_process.id
 
                 # Reading the process configuration file
-                with open(os.path.join(config.get_mia_path(), 'properties', 'process_config.yml'), 'r') as stream:
+                with open(os.path.join(config.get_mia_path(),
+                                       'properties',
+                                       'process_config.yml'), 'r') as stream:
+                    
                     try:
-                        # dic = yaml.load(stream, Loader=yaml.FullLoader) ## from version 5.1
-                        dic = yaml.load(stream) ## version < 5.1
+                        if verCmp(yaml.__version__, '5.1', 'sup'):
+                            dic= yaml.load(stream,
+                                           Loader=yaml.FullLoader)
+                        else:    
+                            dic = yaml.load(stream)
+
                     except yaml.YAMLError as exc:
                         print(exc)
                         dic = {}

@@ -353,13 +353,20 @@ def main():
         sys.path.insert(0, os.path.dirname(os.path.dirname(
             os.path.realpath(__file__))))
 
+        # Populse_MIA imports                      ## Not a clean import. 
+        from populse_mia.utils.utils import verCmp ## To be modified if possible during
+                                                   ## the switch to the VMC architecture!
+
         if os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
 
             with open(dot_mia_config, 'r') as stream:
-                # from version 5.1:
-                # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-                mia_home_config = yaml.load(stream)  ##version < 5.1
+                
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    mia_home_config = yaml.load(stream,
+                                                Loader=yaml.FullLoader)
+                else:    
+                    mia_home_config = yaml.load(stream)
 
             mia_home_config["dev_mode"] = "yes"
 
@@ -376,6 +383,9 @@ def main():
 
     else:  # "user" mode
 
+        # Populse_MIA imports                      ## Not a clean import. 
+        from populse_mia.utils.utils import verCmp ## To be modified if possible during
+                                                   ## the switch to the VMC architecture!
         try:
             
             if not os.path.exists(os.path.dirname(dot_mia_config)):
@@ -384,9 +394,13 @@ def main():
                       .format(os.path.exists(os.path.dirname(dot_mia_config))))
 
             with open(dot_mia_config, 'r') as stream:
-                # from version 5.1:
-                # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-                mia_home_config = yaml.load(stream)  # version < 5.1
+                
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    mia_home_config = yaml.load(stream,
+                                                Loader=yaml.FullLoader)
+                else:    
+                    mia_home_config = yaml.load(stream)
+
 
             mia_home_config["dev_mode"] = "no"
             
@@ -437,9 +451,12 @@ def main():
     if os.path.isfile(dot_mia_config):
         
         with open(dot_mia_config, 'r') as stream:
-            # from version 5.1:
-            # mia_home_config = yaml.load(stream, Loader=yaml.FullLoader)
-            mia_home_config = yaml.load(stream)  ## version < 5.1
+            
+            if verCmp(yaml.__version__, '5.1', 'sup'):
+                mia_home_config = yaml.load(stream,
+                                            Loader=yaml.FullLoader)
+            else:    
+                mia_home_config = yaml.load(stream)
 
         mia_home_config["dev_mode"] = "no"
 
@@ -480,6 +497,7 @@ def verify_processes():
 
     # populse_mia imports
     from populse_mia.software_properties.config import Config
+    from populse_mia.utils.utils import verCmp
 
     def deepCompDic(old_dic, new_dic, level="0"):
         """Try to keep the previous configuration existing before the update
@@ -580,10 +598,14 @@ def verify_processes():
         sys.exit(1)
 
     if os.path.isfile(proc_config):
+        
         with open(proc_config, 'r') as stream:
-            # from version 5.1
-            # proc_content = yaml.load(stream, Loader=yaml.FullLoader)
-            proc_content = yaml.load(stream)  # version < 5.1
+
+            if verCmp(yaml.__version__, '5.1', 'sup'):
+                proc_content = yaml.load(stream,
+                                         Loader=yaml.FullLoader)
+            else:    
+                proc_content = yaml.load(stream)
 
     if (isinstance(proc_content, dict)) and ('Packages' in proc_content):
         othPckg = [f for f in proc_content['Packages']
