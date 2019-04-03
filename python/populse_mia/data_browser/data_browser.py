@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 """
-Module
+Module to define data browser tab appearance, settings and methods.
 
 Contains:
     Class:
@@ -10,7 +10,6 @@ Contains:
         - NumberFormatDelegate
         - TableDataBrowser
         - TimeFormatDelegate
-
 
 """
 

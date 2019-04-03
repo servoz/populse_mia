@@ -34,7 +34,23 @@ class CountTable(QDialog):
     in the header of the m last columns of the table. The cells are then filled with a green plus or
     a red cross depending on if there is at least a scan that has all the tags values or not.
 
-    Example:
+    Attributes:
+        - project: current project in the software
+        - values_list: list that contains lists of all the values that the visualized tags can take
+
+    Methods:
+        - refresh_layout: updates the layout of the widget
+        - add_tag: adds a tag to visualize in the count table
+        - remove_tag: removes a tag to visualize in the count table
+        - select_tag: opens a pop-up to select which tag to visualize in the count table
+        - fill_values: fill values_list depending on the visualized tags
+        - count_scans: counts the number of scans depending on the selected tags and displays the result in the table
+        - fill_headers: fills the headers of the table depending on the selected tags
+        - fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags
+        - fill_last_tag: fills the cells corresponding to the last selected tag
+        - prepare_filter: prepares the filter in order to fill the count table
+
+    :Example:
 
     Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
     T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
@@ -79,23 +95,6 @@ class CountTable(QDialog):
     +-------------+-----------+------+-------+-------+
 
     Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.
-
-
-    Attributes:
-        - project: current project in the software
-        - values_list: list that contains lists of all the values that the visualized tags can take
-
-    Methods:
-        - refresh_layout: updates the layout of the widget
-        - add_tag: adds a tag to visualize in the count table
-        - remove_tag: removes a tag to visualize in the count table
-        - select_tag: opens a pop-up to select which tag to visualize in the count table
-        - fill_values: fill values_list depending on the visualized tags
-        - count_scans: counts the number of scans depending on the selected tags and displays the result in the table
-        - fill_headers: fills the headers of the table depending on the selected tags
-        - fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags
-        - fill_last_tag: fills the cells corresponding to the last selected tag
-        - prepare_filter: prepares the filter in order to fill the count table
 
     """
 

@@ -5,7 +5,7 @@ Initializes the software appearance and defines interactions with the user.
 
 Contains:
     Class:
-    -MainWindow
+        -MainWindow
 
 """
 
@@ -59,8 +59,8 @@ class MainWindow(QMainWindow):
         :param test: boolean if the widget is launched from unit tests or not
         :param deleted_projects: projects that have been deleted
 
-    Methods:
-        - add_clinical_tags: adds the clinical tags to the database and the
+..  Methods:
+        - add_clinical_tags: adds the clinical tags to the database and the \
         data browser
         - check_unsaved_modifications: checks if there are differences
         between the current project and the database
@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
         """Check if there are differences between the current project and the
         database.
 
-        :return: Boolean. True if there are unsaved modifications,
+        :return: Boolean. True if there are unsaved modifications, \
         False otherwise
         """
         if self.project.isTempProject:
@@ -1008,7 +1008,6 @@ class MainWindow(QMainWindow):
 
         :param file_path: File name of the new project
         :param call_update_table: boolean, True if we need to call
-        update_table's method
         """
 
         self.data_browser.update_database(self.project)
