@@ -5,14 +5,14 @@ Basically, this module is dedicated to the initialisation of the basic
 parameters and the various checks necessary for a successful launch of the
 mia's GUI.
 
-Contains:
-    Class:
-    - PackagesInstall
+Contains:    
+    Class:    
+        - PackagesInstall
 
-    Function:
-    - launch_mia
-    - main
-    - verify_processes
+    Function:  
+        - launch_mia
+        - main
+        - verify_processes
 
 """
 ###############################################################################
@@ -47,11 +47,11 @@ main_window = None
 class PackagesInstall:
     
     """Help to make available a pipeline package in the mia pipeline library,
-       in a recursive way.
+in a recursive way.
 
     Contains:
         Method:
-        - add_package
+            - add_package
 
     """
 
@@ -60,16 +60,16 @@ class PackagesInstall:
         self.packages = {}
 
     def add_package(self, module_name, class_name=None):
-        """Provide recursive representation of a package and its
-           subpackages/modules, to construct the mia's pipeline library.
+        """Provide recursive representation of a package and its 
+        subpackages/modules, to construct the mia's pipeline library.
 
         :param module_name: name of the module to add in the pipeline library
         :param class_name: only this pipeline will be add to the pipeline
                            library (optional)
 
-        :returns: dictionary of dictionaries countaining
-                   package/subpackages/pipelines status.
-                  ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
+        :returns: dictionary of dictionaries countaining 
+           package/subpackages/pipelines status.
+           ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
 
         """
 
@@ -141,8 +141,8 @@ def launch_mia():
     
     Contains:
         Private function:
-        - my_excepthook
-        - verify_saved_projects
+            - my_excepthook
+            - verify_saved_projects
 
     """
 

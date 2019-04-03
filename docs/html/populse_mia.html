@@ -219,22 +219,66 @@ MIA_processes.zip needs to be placed in MIA’s root folder (same place as this 
 </div>
 <div class="section" id="module-populse_mia.main">
 <span id="populse-mia-main-module"></span><h2>populse_mia.main module<a class="headerlink" href="#module-populse_mia.main" title="Permalink to this headline">¶</a></h2>
+<p>The first module used at the runtime of mia.</p>
+<p>Basically, this module is dedicated to the initialisation of the basic
+parameters and the various checks necessary for a successful launch of the
+mia’s GUI.</p>
+<dl class="docutils">
+<dt>Contains:    </dt>
+<dd><dl class="first last docutils">
+<dt>Class:    </dt>
+<dd><ul class="first last simple">
+<li>PackagesInstall</li>
+</ul>
+</dd>
+<dt>Function:  </dt>
+<dd><ul class="first last simple">
+<li>launch_mia</li>
+<li>main</li>
+<li>verify_processes</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="class">
-<dt id="populse_mia.main.NipypePackages">
-<em class="property">class </em><code class="descclassname">populse_mia.main.</code><code class="descname">NipypePackages</code><a class="headerlink" href="#populse_mia.main.NipypePackages" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.main.PackagesInstall">
+<em class="property">class </em><code class="descclassname">populse_mia.main.</code><code class="descname">PackagesInstall</code><a class="headerlink" href="#populse_mia.main.PackagesInstall" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Help to make available a pipeline package in the mia pipeline library,
+in a recursive way.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Method:</dt>
+<dd><ul class="first last simple">
+<li>add_package</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
 <dl class="method">
-<dt id="populse_mia.main.NipypePackages.add_package">
-<code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em>, <em>flag=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.NipypePackages.add_package" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a package and its modules to the package tree</p>
+<dt id="populse_mia.main.PackagesInstall.add_package">
+<code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.PackagesInstall.add_package" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide recursive representation of a package and its 
+subpackages/modules, to construct the mia’s pipeline library.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_name</strong> – name of the module</li>
-<li><strong>class_name</strong> – name of the class</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>module_name</strong> – name of the module to add in the pipeline library</li>
+<li><strong>class_name</strong> – only this pipeline will be add to the pipeline
+library (optional)</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dictionary of dictionaries countaining 
+package/subpackages/pipelines status.
+ex. {package: {subpackage: {pipeline: ‘process_enabled’}}}</p>
 </td>
 </tr>
 </tbody>
@@ -244,46 +288,115 @@ MIA_processes.zip needs to be placed in MIA’s root folder (same place as this 
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.main.clean_up">
-<code class="descclassname">populse_mia.main.</code><code class="descname">clean_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.clean_up" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cleans up the software during “normal” closing</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="populse_mia.main.launch_mia">
 <code class="descclassname">populse_mia.main.</code><code class="descname">launch_mia</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.launch_mia" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Actual launch of the mia software.</p>
+<p>Overload the sys.excepthook handler with the my_excepthook private function.
+Check if the software is already opened in another instance. If not, the
+list of opened projects is cleared.
+Checks if saved projects known in the mia software still exist, and updates
+if necessary.
+Instantiates a ‘project’ object that handles projects and their associated
+database anf finally launch of the mia’s GUI</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Private function:</dt>
+<dd><ul class="first last simple">
+<li>my_excepthook</li>
+<li>verify_saved_projects</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.main.main">
 <code class="descclassname">populse_mia.main.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="data">
-<dt id="populse_mia.main.main_window">
-<code class="descclassname">populse_mia.main.</code><code class="descname">main_window</code><em class="property"> = None</em><a class="headerlink" href="#populse_mia.main.main_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;atexit.register</p>
+<dd><p>Make basic configuration check then actual launch of mia.</p>
+<blockquote>
+<div><p>Checks if MIA is called from the site/dist packages (user mode) or from a
+cloned git repository (developer mode). Tries(1) to update the dev_mode
+parameter accordingly and the mia_path if necessary, in the
+~/.populse_mia/configuration.yml file (this file must be available from the
+~/.populse_mia directory). Launches the verify_processes() function, then
+the launch_mia() function (mia’s real launch !!). When mia is exited, if
+the ~/.populse_mia/configuration.yml exists, sets the dev_mode parameter to
+‘no’.</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>(1)If launched from a cloned git repository (‘developer mode’):</dt>
+<dd><ul class="first last">
+<li>adds the good path to the sys.path</li>
+<li>if the ~/.populse_mia/configuration.yml exists, updates
+the dev_mode parameter to ‘yes’</li>
+<li>if the ~/.populse_mia/configuration.yml is not existing
+nothing is done (in developer mode, the mia_path is the
+cloned git repository.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>(1)If launched from the site/dist packages (‘user mode’):</dt>
+<dd><ul class="first last">
+<li>if the ~/.populse_mia/configuration.yml exists, updates
+the dev_mode parameter to “no” and, if not found, update
+the mia_path parameter.</li>
+<li>if the file ~/.populse_mia/configuration.yml file does
+not exist or if the returned mia_path parameter is incorrect, a
+valid mia_path path is requested from the user, in order
+to try to fix a corruption of this file.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><dl class="docutils">
+<dt>Contains:</dt>
+<dd>Private function:
+- browse_mia_path
+- ok_mia_path</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.main.verify_processes">
 <code class="descclassname">populse_mia.main.</code><code class="descname">verify_processes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.verify_processes" title="Permalink to this definition">¶</a></dt>
-<dd><p>When the software is launched, if Nipype’s interfaces are yet unavailable,
-tries to make them available in the processes library</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="populse_mia.main.verify_saved_projects">
-<code class="descclassname">populse_mia.main.</code><code class="descname">verify_saved_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.main.verify_saved_projects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies if the projects saved in saved_projects.yml are still on the disk</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of the deleted projects</td>
-</tr>
-</tbody>
-</table>
+<dd><dl class="docutils">
+<dt>Install or update to the last version available on the station, of the</dt>
+<dd><p class="first">nipype and the mia_processes processes libraries.</p>
+<p class="last">By default, mia provides two process libraries in the pipeline library
+(available in Pipeline Manager tab). The nipype, given as it is because
+it is developed by another team (<a class="reference external" href="https://github.com/nipy/nipype">https://github.com/nipy/nipype</a>), and
+mia_processes which is developed under the umbrella of populse
+(<a class="reference external" href="https://github.com/populse/mia_processes">https://github.com/populse/mia_processes</a>). When installing mia in
+user mode, these two libraries are automatically installed on the
+station. The idea is to use the versioning available with pypi
+(<a class="reference external" href="https://pypi.org/">https://pypi.org/</a>). Thus, it is sufficient for the user to change the
+version of the library installed on the station (pip install…) to
+also change the version available in mia. Indeed, when starting mia, the
+verify_processes function will install or update nipype and
+mia_processes libraries in the pipeline library. Currently it is
+mandatory to have nipype and may_processes installed in the station.
+All these informations, as well as the installed versions and package
+paths are saved in the  mia_path/properties/process_config.yml file.
+When an upgrade or downgrade is performed for a package, the last
+configuration used by the user is kept (if a pipeline was visible, it
+remains so and vice versa). However, if a new pipeline is available in
+the new version it is automatically marked as visible in the library.</p>
+</dd>
+<dt>Contains:</dt>
+<dd>Private function:
+- deepCompDic</dd>
+</dl>
 </dd></dl>
 
 </div>

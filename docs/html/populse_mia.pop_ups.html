@@ -435,6 +435,12 @@ We need to override the MousePressEvent</p>
 </div>
 <div class="section" id="module-populse_mia.pop_ups.pop_up_multiple_sort">
 <span id="populse-mia-pop-ups-pop-up-multiple-sort-module"></span><h2>populse_mia.pop_ups.pop_up_multiple_sort module<a class="headerlink" href="#module-populse_mia.pop_ups.pop_up_multiple_sort" title="Permalink to this headline">¶</a></h2>
+<p>Module that handles projects and their database</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Class:
+-Project</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.pop_ups.pop_up_multiple_sort.PopUpMultipleSort">
 <em class="property">class </em><code class="descclassname">populse_mia.pop_ups.pop_up_multiple_sort.</code><code class="descname">PopUpMultipleSort</code><span class="sig-paren">(</span><em>project</em>, <em>table_data_browser</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_multiple_sort.PopUpMultipleSort" title="Permalink to this definition">¶</a></dt>
@@ -614,16 +620,17 @@ We need to override the MousePressEvent</p>
 <dl class="docutils">
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
-<li>browse_projects_save_path: called when “Projects folder” browse button is clicked</li>
-<li>browse_mri_conv_path: called when “MRIManager.jar” browse button is clicked</li>
-<li>use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</li>
-<li>use_spm_changed: called when the use_spm checkbox is changed</li>
-<li>use_matlab_changed: called when the use_matlab checkbox is changed</li>
 <li>browse_matlab: called when matlab browse button is clicked</li>
 <li>browse_matlab_standalone: called when matlab browse button is clicked</li>
-<li>browse_spm_standalone: called when spm standalone browse button is clicked</li>
+<li>browse_projects_save_path: called when “Projects folder” browse button is clicked</li>
+<li>browse_mri_conv_path: called when “MRIManager.jar” browse button is clicked</li>
 <li>browse_spm: called when spm browse button is clicked</li>
+<li>browse_spm_standalone: called when spm standalone browse button is clicked</li>
+<li>clinical_mode_switch: called when the clinical mode checkbox is clicked</li>
 <li>ok_clicked: saves the modifications to the config file and apply them</li>
+<li>use_matlab_changed: called when the use_matlab checkbox is changed</li>
+<li>use_spm_changed: called when the use_spm checkbox is changed</li>
+<li>use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</li>
 </ul>
 </dd>
 </dl>
@@ -661,6 +668,12 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm_standalone">
 <code class="descname">browse_spm_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.browse_spm_standalone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when spm standalone browse button is clicked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.clinical_mode_switch">
+<code class="descname">clinical_mode_switch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.clinical_mode_switch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the clinical mode checkbox is clicked</p>
 </dd></dl>
 
 <dl class="method">
