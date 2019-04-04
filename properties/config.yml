@@ -2,7 +2,6 @@ auto_save: 'no'
 background_color: ''
 chain_cursors: 'no'
 clinical_mode: 'yes'
-mia_path: /home/jibril/Bureau/Projects/populse_mia
 name: MIA
 nb_slices_max: '10'
 opened_projects: []
