@@ -277,13 +277,13 @@ in a recursive way.</p>
 <dt id="populse_mia.main.PackagesInstall.add_package">
 <code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/main.html#PackagesInstall.add_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.main.PackagesInstall.add_package" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide recursive representation of a package and its
-subpackages/modules,To construct the mia’s pipeline library.</p>
+subpackages/modules, to construct the mia’s pipeline library.</p>
 <blockquote>
 <div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first">
 <li><table class="first docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -307,9 +307,9 @@ library (optional)</td>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">returns:</th><td class="field-body"><p class="first last">dictionary of dictionaries countaining
+<tr class="field-even field"><th class="field-name">returns:</th><td class="field-body"><p class="first last">dictionary of dictionaries containing
 package/subpackages/pipelines status.
-ex. {package: {subpackage: {pipeline: ‘process_enabled’}}}</p>
+ex: {package: {subpackage: {pipeline: ‘process_enabled’}}}</p>
 </td>
 </tr>
 </tbody>
@@ -329,51 +329,13 @@ If not, the list of opened projects is cleared. Checks if saved projects
 known in the mia software still exist, and updates if necessary.
 Instantiates a ‘project’ object that handles projects and their
 associated database anf finally launch of the mia’s GUI.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Private function:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last">
-<li><p class="first">_my_excepthook(etype, evalue, tback) : Log all uncaught
-exceptions in non-interactive mode.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Private function:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li>_clean_up() : Cleans up the mia software during “normal”
-closing.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li><p class="first">_verify_saved_projects(): Verify if the projects saved in               saved_projects.yml are still on the disk</p>
-</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Function _my_excepthook:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">All python exceptions are handled by function, stored in
+<dl class="docutils">
+<dt><strong>Contains: Private function:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>_my_excepthook()</em></dt>
+<dd><p class="first">Log all uncaught exceptions in non-interactive mode.</p>
+<p>All python exceptions are handled by function, stored in
 sys.excepthook. By overloading the sys.excepthook handler with
 _my_excepthook function, this last function is called whenever
 there is a unhandled exception (so one that exits the interpreter).
@@ -383,7 +345,7 @@ We take advantage of it to clean up mia software before closing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first last">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last">
 <li><table class="first docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -416,32 +378,42 @@ We take advantage of it to clean up mia software before closing.</p>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
 <dl class="docutils">
-<dt><strong>Function _clean_up:</strong></dt>
-<dd>Make a clean up of the opened projects just before exiting mia.</dd>
+<dt><strong>Contains: Private function:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>_clean_up()</em></dt>
+<dd><p class="first">Cleans up the mia software during “normal” closing.</p>
+<p class="last">Make a clean up of the opened projects just before exiting
+mia.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
+</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>_verify_saved_projects()</em></dt>
+<dd><p class="first">Verify if the projects saved in saved_projects.yml are still
+on the disk.</p>
+<table class="last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Function _verify_saved_projects:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">the list of the deleted projects</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of the deleted projects</td>
 </tr>
 </tbody>
 </table>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -489,59 +461,60 @@ to try to fix a corruption of this file.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Private function:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last">
-<li><p class="first">_browse_mia_path(dialog): The user define the mia_path parameter.</p>
-</li>
 <li><dl class="first docutils">
-<dt>_ok_mia_path(dialog): Check the mia_path parameter then if it</dt>
-<dd><p class="first last">is valid close the ‘MIA path selection’ window.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Function _browse_mia_path:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">This method goes with the _ok_mia_path function, the latter will use
+<dt><em>_browse_mia_path()</em></dt>
+<dd><p class="first">The user define the mia_path parameter.</p>
+<p>This method goes with the _ok_mia_path function, the latter will use
 the value of the mia_path parameter, defined here.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<table class="last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Parameter dialog:</th></tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Parameters dialog:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object (‘msg’ in the main
 function)</td>
 </tr>
 </tbody>
 </table>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Function _ok_mia_path:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">This method goes with the _browse_mia_path function, the latter having
-allowed the definition of the mia_path parameter, the objective here
-is to check if the value of this parameter is valid. The dev_mode=’no’
-and mia_path parameters are saved in the, mandatory in user mode,
-~/.populse_mia/configuration.yml file. Then the verify_processes
-function is used through a try/except blocks to check if the mia_path
-parameter value is valid. If an exception is raised during the
-verify_processes function, the “MIA path selection” window is not
-closed and the user is prompted again to set the mia_path parameter.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>_ok_mia_path(dialog)</em></dt>
+<dd><p class="first">Check the mia_path parameter then if it
+is valid close the ‘MIA path selection’ window.</p>
+<p>This method goes with the _browse_mia_path function, the latter
+having allowed the definition of the mia_path parameter,
+the objective here is to check if the value of this parameter
+is valid. The dev_mode=’no’ and mia_path parameters are saved
+in the, mandatory in user mode,
+~/.populse_mia/configuration.yml file. Then the
+verify_processes function is used through a try/except blocks
+to check if the mia_path parameter value is valid. If an
+exception is raised during the verify_processes function,
+the “MIA path selection” window is not closed and the user is
+prompted again to set the mia_path parameter.</p>
 <table class="last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Parameter dialog:</th></tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Parameters dialog:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object
 (‘msg’ in the main function)</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -578,38 +551,44 @@ the new version it is automatically marked as visible in the library.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<tr class="field-odd field"><th class="field-name">Contains:</th><td class="field-body"><table class="first last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Private function:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
-<li>_deepCompDic(old_dic, new_dic, level=”0”): Try to keep the
-previous configuration existing before the update of the
-packages.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Function _deepCompDic:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">Recursive comparison of the old_dic and new _dic dictionary. If all
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last">
+<li><p class="first"><em>_deepCompDic()</em>:
+Try to keep the previous configuration existing before the
+update of the packages.</p>
+<p>Recursive comparison of the old_dic and new _dic dictionary. If all
 keys are recursively identical, the final value at the end of the
 whole tree in old_dic is kept in the new _dic. To sum up, this
 function is used to keep up the user display preferences in the
 processes library of the Pipeline Manager Editor.</p>
-<p><strong>param old_dic</strong>: the dic representation of the previous package            configuration</p>
-<p><strong>param new_dic</strong>: the dic representation of the new package           configuration</p>
-<p><strong>param level</strong>: the index level in the package (0: root, +1: in a           subpackage/pipeline)</p>
-<table class="last docutils field-list" frame="void" rules="none">
+<dl class="docutils">
+<dt><strong>param old_dic</strong>: the dic representation of the previous</dt>
+<dd><p class="first last">package configuration</p>
+</dd>
+</dl>
+<p><strong>param new_dic</strong>: the dic representation of the new package                  configuration</p>
+<dl class="docutils">
+<dt><strong>param level</strong>: the index level in the package (0: root,</dt>
+<dd><p class="first last">+1: in a subpackage/pipeline)</p>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">True if the current level is a pipeline that existed in the
-old configuration, False if the package/subpackage/pipeline
-did not exist</td>
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">True if the current level is a pipeline that existed
+in the old configuration, False if the
+package/subpackage/pipeline did not exist</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>

@@ -51,14 +51,11 @@ from populse_mia.pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
 
 class MainWindow(QMainWindow):
 
-    """Main window class, initializes the software appearance and defines
-interactions with the user.
+    """Initialize software appearance and define interactions with the user.
+..
 
-    :param project: current project in the software
-    :param test: boolean if the widget is launched from unit tests or not
-    :param deleted_projects: projects that have been deleted
-
-..  Methods:
+    Methods:
+        - __init__ : initialise the object MainWindow
         - add_clinical_tags: adds the clinical tags to the database and the
           data browser
         - check_unsaved_modifications: checks if there are differences

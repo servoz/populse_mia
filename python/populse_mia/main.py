@@ -61,17 +61,17 @@ in a recursive way.
 
     def add_package(self, module_name, class_name=None):
         """Provide recursive representation of a package and its
-subpackages/modules,To construct the mia's pipeline library.
+subpackages/modules, to construct the mia's pipeline library.
 
-        :Parameter:
+        :Parameters:
             - :module_name: name of the module to add in the pipeline
                library
             - :class_name: only this pipeline will be add to the pipeline
                library (optional)
 
-        :returns: dictionary of dictionaries countaining
+        :returns: dictionary of dictionaries containing
            package/subpackages/pipelines status.
-           ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
+           ex: {package: {subpackage: {pipeline: 'process_enabled'}}}
 
         """
 
@@ -103,7 +103,7 @@ subpackages/modules,To construct the mia's pipeline library.
                     # checking each class in the package
                     if inspect.isclass(v):
 
-                        # updating the tree's dictionnary
+                        # updating the tree's dictionary
                         path_list = module_name.split('.')
                         path_list.append(k)
                         pkg_iter = self.packages
@@ -141,37 +141,33 @@ def launch_mia():
     associated database anf finally launch of the mia's GUI.
 
 
-    :Contains:
-        :Private function:
-            - _my_excepthook(etype, evalue, tback) : Log all uncaught
-              exceptions in non-interactive mode.
+    **Contains: Private function:**
+        - *_my_excepthook()*
+           Log all uncaught exceptions in non-interactive mode.
 
-              :Contains:
-                :Private function:
-                  - _clean_up() : Cleans up the mia software during "normal"
-                    closing.
-            - _verify_saved_projects(): Verify if the projects saved in \
-              saved_projects.yml are still on the disk
+           All python exceptions are handled by function, stored in
+           sys.excepthook. By overloading the sys.excepthook handler with
+           _my_excepthook function, this last function is called whenever
+           there is a unhandled exception (so one that exits the interpreter).
+           We take advantage of it to clean up mia software before closing.
 
+            :Parameters:
+                - :etype: exception class
+                - :evalue: exception instance
+                - :tback: traceback object
 
-    :Function _my_excepthook:
-       All python exceptions are handled by function, stored in
-       sys.excepthook. By overloading the sys.excepthook handler with
-       _my_excepthook function, this last function is called whenever
-       there is a unhandled exception (so one that exits the interpreter).
-       We take advantage of it to clean up mia software before closing.
+            **Contains: Private function:**
+              - *_clean_up()*
+                 Cleans up the mia software during "normal" closing.
 
-        :Parameter:
-            - :etype: exception class
-            - :evalue: exception instance
-            - :tback: traceback object
+                 Make a clean up of the opened projects just before exiting
+                 mia.
+        - *_verify_saved_projects()*
+               Verify if the projects saved in saved_projects.yml are still
+               on the disk.
 
-    **Function _clean_up:**
-            Make a clean up of the opened projects just before exiting mia.
+               :Returns: the list of the deleted projects
 
-    :Function _verify_saved_projects:
-
-        :return: the list of the deleted projects
 
     """
 
@@ -281,30 +277,33 @@ def main():
 
     :Contains:
         :Private function:
-            - _browse_mia_path(dialog): The user define the mia_path parameter.
-            - _ok_mia_path(dialog): Check the mia_path parameter then if it
+            - *_browse_mia_path()*
+                The user define the mia_path parameter.
+
+                This method goes with the _ok_mia_path function, the latter will use
+                the value of the mia_path parameter, defined here.
+
+                :Parameters dialog: QtWidgets.QDialog object ('msg' in the main
+                   function)
+
+            - *_ok_mia_path(dialog)*
+               Check the mia_path parameter then if it
                is valid close the 'MIA path selection' window.
 
-    :Function _browse_mia_path:
-        This method goes with the _ok_mia_path function, the latter will use
-        the value of the mia_path parameter, defined here.
+               This method goes with the _browse_mia_path function, the latter
+               having allowed the definition of the mia_path parameter,
+               the objective here is to check if the value of this parameter
+               is valid. The dev_mode='no' and mia_path parameters are saved
+               in the, mandatory in user mode,
+               ~/.populse_mia/configuration.yml file. Then the
+               verify_processes function is used through a try/except blocks
+               to check if the mia_path parameter value is valid. If an
+               exception is raised during the verify_processes function,
+               the "MIA path selection" window is not closed and the user is
+               prompted again to set the mia_path parameter.
 
-        :Parameter dialog: QtWidgets.QDialog object ('msg' in the main
-           function)
-
-    :Function _ok_mia_path:
-        This method goes with the _browse_mia_path function, the latter having
-        allowed the definition of the mia_path parameter, the objective here
-        is to check if the value of this parameter is valid. The dev_mode='no'
-        and mia_path parameters are saved in the, mandatory in user mode,
-        ~/.populse_mia/configuration.yml file. Then the verify_processes
-        function is used through a try/except blocks to check if the mia_path
-        parameter value is valid. If an exception is raised during the
-        verify_processes function, the "MIA path selection" window is not
-        closed and the user is prompted again to set the mia_path parameter.
-
-        :Parameter dialog: QtWidgets.QDialog object
-           ('msg' in the main function)
+               :Parameters dialog: QtWidgets.QDialog object
+                  ('msg' in the main function)
 
     """
 
@@ -490,29 +489,30 @@ def verify_processes():
 
     :Contains:
         :Private function:
-            - _deepCompDic(old_dic, new_dic, level="0"): Try to keep the
-              previous configuration existing before the update of the
-              packages.
+            - *_deepCompDic()*:
+              Try to keep the previous configuration existing before the
+              update of the packages.
 
-    :Function _deepCompDic:
-        Recursive comparison of the old_dic and new _dic dictionary. If all
-        keys are recursively identical, the final value at the end of the
-        whole tree in old_dic is kept in the new _dic. To sum up, this
-        function is used to keep up the user display preferences in the
-        processes library of the Pipeline Manager Editor.
+              Recursive comparison of the old_dic and new _dic dictionary. If all
+              keys are recursively identical, the final value at the end of the
+              whole tree in old_dic is kept in the new _dic. To sum up, this
+              function is used to keep up the user display preferences in the
+              processes library of the Pipeline Manager Editor.
 
-        **param old_dic**: the dic representation of the previous package \
-           configuration
+              **param old_dic**: the dic representation of the previous
+                package configuration
 
-        **param new_dic**: the dic representation of the new package \
-          configuration
+              **param new_dic**: the dic representation of the new package \
+                 configuration
 
-        **param level**: the index level in the package (0: root, +1: in a \
-          subpackage/pipeline)
+              **param level**: the index level in the package (0: root,
+                  +1: in a subpackage/pipeline)
 
-        :returns: True if the current level is a pipeline that existed in the
-                  old configuration, False if the package/subpackage/pipeline
-                  did not exist
+              :returns: True if the current level is a pipeline that existed
+                  in the old configuration, False if the
+                  package/subpackage/pipeline did not exist
+
+
 
     """
 

@@ -63,22 +63,52 @@
 <dt id="populse_mia.main_window.main_window.MainWindow">
 <em class="property">class </em><code class="descclassname">populse_mia.main_window.main_window.</code><code class="descname">MainWindow</code><span class="sig-paren">(</span><em>project</em>, <em>test=False</em>, <em>deleted_projects=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/main_window/main_window.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.main_window.main_window.MainWindow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code></p>
-<p>Main window class, initializes the software appearance and defines
-interactions with the user.</p>
+<p>Initialize software appearance and define interactions with the user.
+..</p>
 <blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param project:</th><td class="field-body">current project in the software</td>
-</tr>
-<tr class="field-even field"><th class="field-name">param test:</th><td class="field-body">boolean if the widget is launched from unit tests or not</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">param deleted_projects:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">projects that have been deleted</td>
-</tr>
-</tbody>
-</table>
+<div><dl class="docutils">
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>__init__ : initialise the object MainWindow</li>
+<li>add_clinical_tags: adds the clinical tags to the database and the
+data browser</li>
+<li>check_unsaved_modifications: checks if there are differences
+between the current project and the database</li>
+<li>closeEvent: overrides the closing event to check if there are
+unsaved modifications</li>
+<li>create_actions: creates the actions in each menu</li>
+<li>create_menus: creates the menu-bar</li>
+<li>create_project_pop_up: creates a new project</li>
+<li>create_tabs: creates the tabs</li>
+<li>documentation: opens the documentation in a web browser</li>
+<li>import_data: calls the import software (MRI File Manager)</li>
+<li>install_processes_pop_up: opens the install processes pop-up</li>
+<li>open_project_pop_up: opens a pop-up to open a project and updates
+the recent projects</li>
+<li>open_recent_project: opens a recent project</li>
+<li>package_library_pop_up: opens the package library pop-up</li>
+<li>project_properties_pop_up: opens the project properties pop-up</li>
+<li>redo: redoes the last action made by the user</li>
+<li>remove_raw_files_useless: removes the useless raw files of the
+current project</li>
+<li>save: saves either the current project or the current pipeline</li>
+<li>save_as: saves either the current project or the current pipeline
+under a new name</li>
+<li>save_project_as: opens a pop-up to save the current project as</li>
+<li>saveChoice: checks if the project needs to be saved as or just saved</li>
+<li>see_all_projects: opens a pop-up to show the recent projects</li>
+<li>software_preferences_pop_up: opens the MIA2 preferences pop-up</li>
+<li>switch_project: switches project if it’s possible</li>
+<li>tab_changed: method called when the tab is changed</li>
+<li>undo: undoes the last action made by the user</li>
+<li>update_package_library_action: updates the package library action
+depending on the mode</li>
+<li>update_project: updates the project once the database has been
+updated</li>
+<li>update_recent_projects_actions: updates the list of recent projects</li>
+</ul>
+</dd>
+</dl>
 </div></blockquote>
 <dl class="method">
 <dt id="populse_mia.main_window.main_window.MainWindow.__init__">
