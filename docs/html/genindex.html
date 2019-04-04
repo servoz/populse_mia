@@ -85,7 +85,7 @@
       <li><a href="populse_mia.html#populse_mia.install_processes.add_package">add_package() (in module populse_mia.install_processes)</a>
 
       <ul>
-        <li><a href="populse_mia.html#populse_mia.main.NipypePackages.add_package">(populse_mia.main.NipypePackages method)</a>
+        <li><a href="populse_mia.html#populse_mia.main.PackagesInstall.add_package">(populse_mia.main.PackagesInstall method)</a>
 </li>
         <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package">(populse_mia.pipeline_manager.process_library.PackageLibraryDialog method)</a>
 </li>
@@ -230,8 +230,6 @@
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.childCount">childCount() (populse_mia.pipeline_manager.process_library.Node method)</a>
 </li>
-      <li><a href="populse_mia.html#populse_mia.main.clean_up">clean_up() (in module populse_mia.main)</a>
-</li>
       <li><a href="populse_mia.data_browser.html#populse_mia.data_browser.data_browser.TableDataBrowser.clear_cell">clear_cell() (populse_mia.data_browser.data_browser.TableDataBrowser method)</a>
 </li>
       <li><a href="populse_mia.data_browser.html#populse_mia.data_browser.advanced_search.AdvancedSearch.clearLayout">clearLayout() (populse_mia.data_browser.advanced_search.AdvancedSearch method)</a>
@@ -249,6 +247,8 @@
       <li><a href="populse_mia.utils.html#populse_mia.utils.tools.ClickableLabel">ClickableLabel (class in populse_mia.utils.tools)</a>
 </li>
       <li><a href="populse_mia.utils.html#populse_mia.utils.tools.ClickableLabel.clicked">clicked (populse_mia.utils.tools.ClickableLabel attribute)</a>
+</li>
+      <li><a href="populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_preferences.PopUpPreferences.clinical_mode_switch">clinical_mode_switch() (populse_mia.pop_ups.pop_up_preferences.PopUpPreferences method)</a>
 </li>
       <li><a href="populse_mia.data_browser.html#populse_mia.data_browser.data_browser.DataBrowser.clone_tag_infos">clone_tag_infos() (populse_mia.data_browser.data_browser.DataBrowser method)</a>
 </li>
@@ -552,12 +552,12 @@
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_max_projects">get_max_projects() (populse_mia.software_properties.config.Config method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_mia_path">get_mia_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_mri_conv_path">get_mri_conv_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_opened_projects">get_opened_projects() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.pipeline_editor.get_path">get_path() (in module populse_mia.pipeline_manager.pipeline_editor)</a>
@@ -567,6 +567,8 @@
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_mia.ProcessMIA.get_scan_bricks">get_scan_bricks() (populse_mia.pipeline_manager.process_mia.ProcessMIA method)</a>
 </li>
       <li><a href="populse_mia.data_browser.html#populse_mia.data_browser.data_browser.TableDataBrowser.get_scan_row">get_scan_row() (populse_mia.data_browser.data_browser.TableDataBrowser method)</a>
+</li>
+      <li><a href="populse_mia.project.html#populse_mia.project.database_mia.DatabaseSessionMIA.get_shown_tags">get_shown_tags() (populse_mia.project.database_mia.DatabaseSessionMIA method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_spm_path">get_spm_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
@@ -582,8 +584,6 @@
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.get_use_spm_standalone">get_use_spm_standalone() (populse_mia.software_properties.config.Config method)</a>
 </li>
-      <li><a href="populse_mia.project.html#populse_mia.project.database_mia.DatabaseSessionMIA.get_visibles">get_visibles() (populse_mia.project.database_mia.DatabaseSessionMIA method)</a>
-</li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getBackgroundColor">getBackgroundColor() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getChainCursors">getChainCursors() (populse_mia.software_properties.config.Config method)</a>
@@ -594,19 +594,11 @@
 </li>
       <li><a href="populse_mia.project.html#populse_mia.project.project.Project.getFilterName">getFilterName() (populse_mia.project.project.Project method)</a>
 </li>
-      <li><a href="populse_mia.project.html#populse_mia.project.controller.getJsonTagsFromFile">getJsonTagsFromFile() (in module populse_mia.project.controller)</a>
-</li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.saved_projects.SavedProjects.getList">getList() (populse_mia.software_properties.saved_projects.SavedProjects method)</a>
-</li>
       <li><a href="populse_mia.project.html#populse_mia.project.project.Project.getName">getName() (populse_mia.project.project.Project method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getNbAllSlicesMax">getNbAllSlicesMax() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.getNode">getNode() (populse_mia.pipeline_manager.process_library.DictionaryTreeModel method)</a>
-</li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getPathData">getPathData() (populse_mia.software_properties.config.Config method)</a>
-</li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getPathToProjectsDBFile">getPathToProjectsDBFile() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.getPathToProjectsFolder">getPathToProjectsFolder() (populse_mia.software_properties.config.Config method)</a>
 </li>
@@ -780,8 +772,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="populse_mia.html#populse_mia.main.main">main() (in module populse_mia.main)</a>
 </li>
-      <li><a href="populse_mia.html#populse_mia.main.main_window">main_window (in module populse_mia.main)</a>
-</li>
       <li><a href="populse_mia.main_window.html#populse_mia.main_window.main_window.MainWindow">MainWindow (class in populse_mia.main_window.main_window)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_mia.ProcessMIA.manage_brick_after_run">manage_brick_after_run() (populse_mia.pipeline_manager.process_mia.ProcessMIA method)</a>
@@ -842,14 +832,12 @@
       </ul></li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.new_tab">new_tab() (populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs method)</a>
 </li>
-      <li><a href="populse_mia.html#populse_mia.main.NipypePackages">NipypePackages (class in populse_mia.main)</a>
-</li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node">Node (class in populse_mia.pipeline_manager.process_library)</a>
+</li>
+      <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.node_clicked">node_clicked (populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.node_clicked">node_clicked (populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs attribute)</a>
-</li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.node_structure_from_dict">node_structure_from_dict() (in module populse_mia.pipeline_manager.process_library)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.node_controller.NodeController">NodeController (class in populse_mia.pipeline_manager.node_controller)</a>
@@ -951,6 +939,8 @@
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary">PackageLibrary (class in populse_mia.pipeline_manager.process_library)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog">PackageLibraryDialog (class in populse_mia.pipeline_manager.process_library)</a>
+</li>
+      <li><a href="populse_mia.html#populse_mia.main.PackagesInstall">PackagesInstall (class in populse_mia.main)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.parent">parent() (populse_mia.pipeline_manager.process_library.DictionaryTreeModel method)</a>
 
@@ -1334,8 +1324,6 @@
       </ul></li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.save_pipeline_parameters">save_pipeline_parameters() (populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs method)</a>
 </li>
-      <li><a href="populse_mia.project.html#populse_mia.project.controller.save_project">save_project() (in module populse_mia.project.controller)</a>
-</li>
       <li><a href="populse_mia.main_window.html#populse_mia.main_window.main_window.MainWindow.save_project_as">save_project_as() (populse_mia.main_window.main_window.MainWindow method)</a>
 </li>
       <li><a href="populse_mia.main_window.html#populse_mia.main_window.main_window.MainWindow.saveChoice">saveChoice() (populse_mia.main_window.main_window.MainWindow method)</a>
@@ -1414,15 +1402,13 @@
 </li>
       <li><a href="populse_mia.utils.html#populse_mia.utils.utils.set_item_data">set_item_data() (in module populse_mia.utils.utils)</a>
 </li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_matlab_path">set_matlab_path() (populse_mia.software_properties.config.Config method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_matlab_path">set_matlab_path() (populse_mia.software_properties.config.Config method)</a>
+</li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_matlab_standalone_path">set_matlab_standalone_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_max_projects">set_max_projects() (populse_mia.software_properties.config.Config method)</a>
-</li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_mia_path">set_mia_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.set_module_view">set_module_view() (populse_mia.pipeline_manager.process_library.PackageLibrary method)</a>
 </li>
@@ -1438,6 +1424,8 @@
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_projects_save_path">set_projects_save_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
+      <li><a href="populse_mia.project.html#populse_mia.project.database_mia.DatabaseSessionMIA.set_shown_tags">set_shown_tags() (populse_mia.project.database_mia.DatabaseSessionMIA method)</a>
+</li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_spm_path">set_spm_path() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_spm_standalone_path">set_spm_standalone_path() (populse_mia.software_properties.config.Config method)</a>
@@ -1447,8 +1435,6 @@
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_use_spm">set_use_spm() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.set_use_spm_standalone">set_use_spm_standalone() (populse_mia.software_properties.config.Config method)</a>
-</li>
-      <li><a href="populse_mia.project.html#populse_mia.project.database_mia.DatabaseSessionMIA.set_visibles">set_visibles() (populse_mia.project.database_mia.DatabaseSessionMIA method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.setAutoSave">setAutoSave() (populse_mia.software_properties.config.Config method)</a>
 </li>
@@ -1469,8 +1455,6 @@
       <li><a href="populse_mia.project.html#populse_mia.project.project.Project.setName">setName() (populse_mia.project.project.Project method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.setNbAllSlicesMax">setNbAllSlicesMax() (populse_mia.software_properties.config.Config method)</a>
-</li>
-      <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.setPathToData">setPathToData() (populse_mia.software_properties.config.Config method)</a>
 </li>
       <li><a href="populse_mia.software_properties.html#populse_mia.software_properties.config.Config.setShowAllSlices">setShowAllSlices() (populse_mia.software_properties.config.Config method)</a>
 </li>
@@ -1549,6 +1533,8 @@
       <li><a href="populse_mia.data_browser.html#populse_mia.data_browser.data_browser.TableDataBrowser">TableDataBrowser (class in populse_mia.data_browser.data_browser)</a>
 </li>
       <li><a href="populse_mia.image_viewer.html#populse_mia.image_viewer.image_viewer.ImageViewer.tableDataFill">tableDataFill() (populse_mia.image_viewer.image_viewer.ImageViewer method)</a>
+</li>
+      <li><a href="populse_mia.project.html#populse_mia.project.controller.tags_from_file">tags_from_file() (in module populse_mia.project.controller)</a>
 </li>
       <li><a href="populse_mia.html#populse_mia.test.TestMIADataBrowser.tearDown">tearDown() (populse_mia.test.TestMIADataBrowser method)</a>
 
@@ -1798,9 +1784,9 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="populse_mia.html#populse_mia.main.verify_processes">verify_processes() (in module populse_mia.main)</a>
+      <li><a href="populse_mia.utils.html#populse_mia.utils.utils.verCmp">verCmp() (in module populse_mia.utils.utils)</a>
 </li>
-      <li><a href="populse_mia.html#populse_mia.main.verify_saved_projects">verify_saved_projects() (in module populse_mia.main)</a>
+      <li><a href="populse_mia.html#populse_mia.main.verify_processes">verify_processes() (in module populse_mia.main)</a>
 </li>
       <li><a href="populse_mia.project.html#populse_mia.project.controller.verify_scans">verify_scans() (in module populse_mia.project.controller)</a>
 </li>

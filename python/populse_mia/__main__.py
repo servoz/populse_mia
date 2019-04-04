@@ -12,6 +12,7 @@ For example by using python3 -m populse_mia.
 # for details.
 ##########################################################################
 
+# Populse_MIA imports
 from populse_mia.main import main
 
 if __name__ == '__main__':

@@ -10,6 +10,7 @@ mia's GUI.
         - PackagesInstall
 
     :Function:
+
         - launch_mia
         - main
         - verify_processes
@@ -38,7 +39,6 @@ from PyQt5.QtWidgets import (QApplication, QDialog, QPushButton, QLabel,
                              QFileDialog, QVBoxLayout, QHBoxLayout, QLineEdit)
 
 # soma-base imports
-from soma.path import find_in_path
 from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 main_window = None
@@ -67,9 +67,9 @@ subpackages/modules,To construct the mia's pipeline library.
         :param class_name: only this pipeline will be add to the pipeline
          library (optional)
 
-        :returns: dictionary of dictionaries countaining \
-         package/subpackages/pipelines status. \
-         ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
+        :returns: dictionary of dictionaries countaining
+           package/subpackages/pipelines status.
+           ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
 
         """
 

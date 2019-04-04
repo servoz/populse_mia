@@ -38,11 +38,45 @@
 </div>
 <div class="section" id="module-populse_mia.project.controller">
 <span id="populse-mia-project-controller-module"></span><h2>populse_mia.project.controller module<a class="headerlink" href="#module-populse_mia.project.controller" title="Permalink to this headline">¶</a></h2>
+<p>Module to handle the importation from MRIFileManager and its progress</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Class:</dt>
+<dd>-ImportProgress : Inherit from QProgressDialog and handle the
+progress bar
+-ImportWorker : Inherit from QThread and manage the threads</dd>
+<dt>Methods:</dt>
+<dd>-read_log : Show the evolution of the progress bar and returns its
+feedback
+-tags_from_file : Returns a list of [tag, value] contained in a Json
+file
+-verify_scans : Check if the project’s scans have been modified</dd>
+</dl>
+</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.project.controller.ImportProgress">
 <em class="property">class </em><code class="descclassname">populse_mia.project.controller.</code><code class="descname">ImportProgress</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.ImportProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
-<p>Import progress bar</p>
+<p>Handle the progress bar.</p>
+<dl class="docutils">
+<dt>Attributes;</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param project:</th><td class="field-body">A Project object</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>onProgress : Set the import progressbar value.</li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="populse_mia.project.controller.ImportProgress.onProgress">
 <code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
@@ -55,7 +89,25 @@
 <dt id="populse_mia.project.controller.ImportWorker">
 <em class="property">class </em><code class="descclassname">populse_mia.project.controller.</code><code class="descname">ImportWorker</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.ImportWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
-<p>Thread import</p>
+<p>Manage threads.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param project:</th><td class="field-body">A Project object</td>
+</tr>
+</tbody>
+</table>
+<p class="last">;param progress: An ImportProgress object</p>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>run : Override the QThread run method.</li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="populse_mia.project.controller.ImportWorker.notifyProgress">
 <code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
@@ -63,36 +115,18 @@
 
 <dl class="method">
 <dt id="populse_mia.project.controller.ImportWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override the QThread run method. Executed when the worker is
+started, fills the database and updates the progress.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="populse_mia.project.controller.getJsonTagsFromFile">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">getJsonTagsFromFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.getJsonTagsFromFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of [tag, value] contained in a Json file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_path</strong> – file path of the Json file (without the extension)</li>
-<li><strong>path</strong> – project path</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.project.controller.read_log">
 <code class="descclassname">populse_mia.project.controller.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.read_log" title="Permalink to this definition">¶</a></dt>
-<dd><p>From the log export file of the import software, the data base (here the current project) is loaded with the tags</p>
+<dd><p>Show the evolution of the progress bar and returns its feedback, a list
+of the paths to each data file that was loaded.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -111,14 +145,21 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.project.controller.save_project">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">save_project</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.save_project" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the modifications of the project</p>
+<dt id="populse_mia.project.controller.tags_from_file">
+<code class="descclassname">populse_mia.project.controller.</code><code class="descname">tags_from_file</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.tags_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of [tag, value] contained in a Json file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> – file path of the Json file (without the extension)</li>
+<li><strong>path</strong> – project path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -126,20 +167,15 @@
 
 <dl class="function">
 <dt id="populse_mia.project.controller.verify_scans">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.verify_scans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the project’s scans have been modified</p>
+<code class="descclassname">populse_mia.project.controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.controller.verify_scans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the project’s scans have been modified.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>project</strong> – current project in the software</li>
-<li><strong>path</strong> – </li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the list of scans that have been modified</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the list of scans that have been modified</td>
 </tr>
 </tbody>
 </table>
@@ -148,18 +184,38 @@
 </div>
 <div class="section" id="module-populse_mia.project.database_mia">
 <span id="populse-mia-project-database-mia-module"></span><h2>populse_mia.project.database_mia module<a class="headerlink" href="#module-populse_mia.project.database_mia" title="Permalink to this headline">¶</a></h2>
+<p>Module that contains class to override the default behaviour of
+populse_db and some of its methods</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Class:
+-DatabaseMIA
+-DatabaseSessionMIA</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.project.database_mia.DatabaseMIA">
 <em class="property">class </em><code class="descclassname">populse_mia.project.database_mia.</code><code class="descname">DatabaseMIA</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.Database</span></code></p>
 <p>Class overriding the default behavior of populse_db</p>
 <dl class="docutils">
+<dt>Attributes:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param string_engine:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Path of the new database file</td>
+</tr>
+</tbody>
+</table>
+</dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>_Database__create_empty_schema: overrides the method creating the empty schema</li>
+<dd><ul class="first simple">
 <li>__enter__: returns a DatabaseSession instance for using the database</li>
 <li>__exit__: releases a DatabaseSession previously created by __enter__</li>
+<li>_Database__create_empty_schema: overrides the method creating the</li>
 </ul>
+<p class="last">empty schema</p>
 </dd>
 </dl>
 </dd></dl>
@@ -168,22 +224,22 @@
 <dt id="populse_mia.project.database_mia.DatabaseSessionMIA">
 <em class="property">class </em><code class="descclassname">populse_mia.project.database_mia.</code><code class="descname">DatabaseSessionMIA</code><span class="sig-paren">(</span><em>database</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.DatabaseSession</span></code></p>
-<p>Class overriding the database session</p>
+<p>Class overriding the database session of populse_db</p>
 <dl class="docutils">
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>add_collection: overrides the method adding a collection</li>
-<li>add_fields: adds the list of fields</li>
 <li>add_field: adds a field to the database, if it does not already exist</li>
-<li>get_visibles: gives the list of visible tags</li>
-<li>set_visibles: sets the list of visible tags</li>
+<li>add_fields: adds the list of fields</li>
+<li>get_shown_tags: gives the list of visible tags</li>
+<li>set_shown_tags: sets the list of visible tags</li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_collection">
 <code class="descname">add_collection</code><span class="sig-paren">(</span><em>name</em>, <em>primary_key</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides the method adding a collection</p>
+<dd><p>Override the method adding a collection of populse_db</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -205,7 +261,7 @@
 <dl class="method">
 <dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_field">
 <code class="descname">add_field</code><span class="sig-paren">(</span><em>collection</em>, <em>name</em>, <em>field_type</em>, <em>description</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em>, <em>index=False</em>, <em>flush=True</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a field to the database, if it does not already exist</p>
+<dd><p>Add a field to the database, if it does not already exist</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -213,40 +269,45 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>collection</strong> – field collection (str)</li>
 <li><strong>name</strong> – field name (str)</li>
-<li><strong>field_type</strong> – field type (string, int, float, boolean, date, datetime,
-time, list_string, list_int, list_float, list_boolean, list_date,
-list_datetime, or list_time)</li>
-<li><strong>description</strong> – field description (str or None)</li>
-<li><strong>visibility</strong> – Bool to know if the field is visible in the databrowser</li>
-<li><strong>origin</strong> – To know the origin of a field, in [TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER]</li>
-<li><strong>unit</strong> – Origin of the field, in [TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]</li>
-<li><strong>default_value</strong> – Default_value of the field, can be str or None</li>
-<li><strong>flush</strong> – bool to know if the table classes must be updated (put False if in the middle of filling fields) =&gt; True by default</li>
+<li><strong>field_type</strong> – field type (string, int, float, boolean, date,</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<p>datetime, time, list_string, list_int, list_float, list_boolean,
+list_date, list_datetime, or list_time)
+:param description: field description (str or None)
+:param visibility: Bool to know if the field is visible in the
+databrowser
+:param origin: To know the origin of a field,
+in [TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER]
+:param unit: Origin of the field, in [TAG_UNIT_MS, TAG_UNIT_MM,
+TAG_UNIT_DEGREE, TAG_UNIT_HZPIXEL, TAG_UNIT_MHZ]
+:param default_value: Default_value of the field, can be str or None
+:param flush: bool to know if the table classes must be updated (put
+False if in the middle of filling fields) =&gt; True by default</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_fields">
 <code class="descname">add_fields</code><span class="sig-paren">(</span><em>fields</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the list of fields</p>
+<dd><p>Add the list of fields</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fields</strong> – list of fields (collection, name, type, description, visibility, origin, unit, default_value)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fields</strong> – list of fields (collection, name, type, description,</td>
 </tr>
 </tbody>
 </table>
+<p>visibility, origin, unit, default_value)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.get_visibles">
-<code class="descname">get_visibles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.get_visibles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the list of visible tags</p>
+<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.get_shown_tags">
+<code class="descname">get_shown_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.get_shown_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the list of visible tags</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -258,14 +319,14 @@ list_datetime, or list_time)</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.set_visibles">
-<code class="descname">set_visibles</code><span class="sig-paren">(</span><em>visibles</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.set_visibles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the list of visible tags</p>
+<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.set_shown_tags">
+<code class="descname">set_shown_tags</code><span class="sig-paren">(</span><em>field_showed</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.set_shown_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the list of visible tags</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>visibles</strong> – list of visible tags</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>field_showed</strong> – list of visible tags</td>
 </tr>
 </tbody>
 </table>
@@ -276,36 +337,57 @@ list_datetime, or list_time)</li>
 </div>
 <div class="section" id="module-populse_mia.project.filter">
 <span id="populse-mia-project-filter-module"></span><h2>populse_mia.project.filter module<a class="headerlink" href="#module-populse_mia.project.filter" title="Permalink to this headline">¶</a></h2>
+<p>Module that handle the filter class which contains the results of both
+rapid and advanced search</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Class:
+-Filter</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.project.filter.Filter">
 <em class="property">class </em><code class="descclassname">populse_mia.project.filter.</code><code class="descname">Filter</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.filter.Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that represents a Filter, containing the results of both rapid and advanced search</p>
-<p>The advanced search creates a complex query to the database and is a combination of several “query lines” which
+<p>Class that represent a Filter, containing the results of both rapid and
+advanced search</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param name:</th><td class="field-body">filter’s name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param nots:</th><td class="field-body">list of negations (“” or NOT)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param values:</th><td class="field-body">list of values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param fields:</th><td class="field-body">list of list of fields</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param links:</th><td class="field-body">list of links (AND/OR)</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param conditions:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</td>
+</tr>
+</tbody>
+</table>
+<p class="last">BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+:param search_bar: value in the rapid search bar</p>
+</dd>
+<dt>Methods:</dt>
+<dd><ul class="first last simple">
+<li>generate_filter: apply the filter to the given list of scans</li>
+<li>json_format: returns the filter as a dictionary</li>
+</ul>
+</dd>
+</dl>
+<p>The advanced search creates a complex query to the database and is a
+combination of several “query lines” which
 are linked with AND or OR and all composed of:
 - A negation or not
 - A tag name or all visible tags
 - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
 - A value</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>nots: list of negations (“” or NOT)</li>
-<li>values: list of values</li>
-<li>fields: list of list of fields</li>
-<li>links: list of links (AND/OR)</li>
-<li>conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN, BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</li>
-<li>search_bar: value in the rapid search bar</li>
-<li>name: filter’s name</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>json_format: returns the filter as a dictionary</li>
-<li>generate_filter: apply the filter to the given list of scans</li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.project.filter.Filter.generate_filter">
 <code class="descname">generate_filter</code><span class="sig-paren">(</span><em>current_project</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
@@ -331,7 +413,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.filter.Filter.json_format">
 <code class="descname">json_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.filter.Filter.json_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the filter as a dictionary</p>
+<dd><p>Return the filter as a dictionary</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -347,58 +429,70 @@ are linked with AND or OR and all composed of:
 </div>
 <div class="section" id="module-populse_mia.project.project">
 <span id="populse-mia-project-project-module"></span><h2>populse_mia.project.project module<a class="headerlink" href="#module-populse_mia.project.project" title="Permalink to this headline">¶</a></h2>
+<p>Module that handle the projects and their database.</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Class:
+- Project</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.project.project.Project">
 <em class="property">class </em><code class="descclassname">populse_mia.project.project.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that handles projects and their associated database</p>
+<p>Class that handles projects and their associated database.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>folder: project’s path</li>
-<li>database: populse_db’s database object</li>
-<li>session: database session</li>
-<li>properties: project’s properties</li>
-<li>undos: list of actions to undo</li>
-<li>redos: list of actions to redo</li>
-</ul>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param project_root_folder:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">project’s path</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param new_project:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">project’s object</td>
+</tr>
+</tbody>
+</table>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>add_clinical_tags: adds the clinical tags to the project</li>
-<li>init_filters: initializes the filters at project opening</li>
-<li>setCurrentFilter: sets the current filter of the project</li>
-<li>getFilter: returns a Filter object</li>
-<li>save_current_filter: saves the current filter</li>
+<dd><ul class="first simple">
+<li>add_clinical_tags: add the clinical tags to the project</li>
+<li>getDate: return the date of creation of the project</li>
+<li>getFilter: return a Filter object</li>
 <li>getFilterName: input box to get the name of the filter to save</li>
-<li>loadProperties: loads the properties file</li>
-<li>getName: returns the name of the project</li>
-<li>setName: sets the name of the project</li>
-<li>saveConfig: saves the changes in the properties file</li>
-<li>getDate: returns the date of creation of the project</li>
-<li>setDate: sets the date of the project</li>
-<li>getSortedTag: returns the sorted tag of the project</li>
-<li>setSortedTag: sets the sorted tag of the project</li>
-<li>getSortOrder: returns the sort order of the project</li>
-<li>setSortOrder: sets the sort order of the project</li>
-<li>saveModifications: saves the pending operations of the project (actions still not saved)</li>
-<li>unsaveModifications: unsaves the pending operations of the project</li>
-<li>hasUnsavedModifications: returns if the project has unsaved modifications or not</li>
-<li>undo: undoes the last action made by the user on the project</li>
-<li>redo: redoes the last action made by the user on the project</li>
-<li>reput_values: reputs the value objects in the database</li>
+<li>getName: return the name of the project</li>
+<li>getSortOrder: return the sort order of the project</li>
+<li>getSortedTag: return the sorted tag of the project</li>
+<li>hasUnsavedModifications: return if the project has unsaved</li>
 </ul>
+<p class="last">modifications or not
+- init_filters: initialize the filters at project opening
+- loadProperties: load the properties file
+- redo: redo the last action made by the user on the project
+- reput_values: re-put the value objects in the database
+- save_current_filter: save the current filter
+- saveConfig: save the changes in the properties file
+- setCurrentFilter: set the current filter of the project
+- setDate: set the date of the project
+- saveModifications: save the pending operations of the project
+(actions still not saved)
+- setName: set the name of the project
+- setSortOrder: set the sort order of the project
+- setSortedTag: set the sorted tag of the project
+- undo: undo the last action made by the user on the project
+- unsaveModifications: unsaves the pending operations of the project</p>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.project.project.Project.add_clinical_tags">
 <code class="descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the clinical tags to the project</p>
+<dd><p>Add new clinical tags to the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the clinical tags that were not already in the project</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of clinical tags that were added</td>
 </tr>
 </tbody>
 </table>
@@ -407,21 +501,22 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getDate">
 <code class="descname">getDate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getDate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the date of creation of the project</p>
+<dd><p>Return the date of creation of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the date of creation of the project if it’s not Unnamed project, otherwise empty string</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the date of creation of the project if it’s not</td>
 </tr>
 </tbody>
 </table>
+<p>Unnamed project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getFilter">
 <code class="descname">getFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a Filter object</p>
+<dd><p>Return a Filter object from its name</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -437,81 +532,94 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getFilterName">
 <code class="descname">getFilterName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getFilterName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Input box to get the name of the filter to save</p>
+<dd><p>Input box to type the name of the filter to save.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Return the name typed</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getName">
 <code class="descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the name of the project</p>
+<dd><p>Return the name of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of the project if it’s not Unnamed project, otherwise empty string</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the name of the project if it’s not Unnamed</td>
 </tr>
 </tbody>
 </table>
+<p>project,
+otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getSortOrder">
 <code class="descname">getSortOrder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getSortOrder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the sort order of the project</p>
+<dd><p>Returns the sort order of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the sort order of the project if it’s not Unnamed project, otherwise empty string</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the sort order of the project if it’s not Unnamed</td>
 </tr>
 </tbody>
 </table>
+<p>project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.getSortedTag">
 <code class="descname">getSortedTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.getSortedTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the sorted tag of the project</p>
+<dd><p>Return the sorted tag of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the sorted tag of the project if it’s not Unnamed project, otherwise empty string</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the sorted tag of the project if it’s not Unnamed</td>
 </tr>
 </tbody>
 </table>
+<p>project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.hasUnsavedModifications">
 <code class="descname">hasUnsavedModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.hasUnsavedModifications" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns if the project has unsaved modifications or not</p>
+<dd><p>Return if the project has unsaved modifications or not.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the project has pending modifications, False otherwise</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean, True if the project has pending modifications,</td>
 </tr>
 </tbody>
 </table>
+<p>False otherwise</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.init_filters">
 <code class="descname">init_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.init_filters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the filters at project opening</p>
+<dd><p>Initialize the filters at project opening.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.loadProperties">
 <code class="descname">loadProperties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.loadProperties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads the properties file</p>
+<dd><p>Load the properties file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.redo">
 <code class="descname">redo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.redo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Redoes the last action made by the user on the project</p>
+<dd><p>Redo the last action made by the user on the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -525,7 +633,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.reput_values">
 <code class="descname">reput_values</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.reput_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reputs the value objects in the database</p>
+<dd><p>Re-put the value objects in the database.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -539,25 +647,34 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.saveConfig">
 <code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.saveConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the changes in the properties file</p>
+<dd><p>Save the changes in the properties file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.saveModifications">
 <code class="descname">saveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.saveModifications" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the pending operations of the project (actions still not saved)</p>
+<dd><p>Save the pending operations of the project (actions
+still not saved).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.save_current_filter">
-<code class="descname">save_current_filter</code><span class="sig-paren">(</span><em>advanced_filters</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the current filter</p>
+<code class="descname">save_current_filter</code><span class="sig-paren">(</span><em>custom_filters</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current filter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>custom_filters</strong> – The customized filter</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.project.project.Project.setCurrentFilter">
 <code class="descname">setCurrentFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.setCurrentFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the current filter of the project</p>
+<dd><p>Set the current filter of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -571,7 +688,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.setDate">
 <code class="descname">setDate</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.setDate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the date of the project</p>
+<dd><p>Set the date of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -585,7 +702,8 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.setName">
 <code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.setName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the name of the project if it’s not Unnamed project, otherwise does nothing</p>
+<dd><p>Set the name of the project if it’s not Unnamed project,
+otherwise does nothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -599,7 +717,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.setSortOrder">
 <code class="descname">setSortOrder</code><span class="sig-paren">(</span><em>order</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.setSortOrder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the sort order of the project</p>
+<dd><p>Set the sort order of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -613,7 +731,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.setSortedTag">
 <code class="descname">setSortedTag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.setSortedTag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the sorted tag of the project</p>
+<dd><p>Set the sorted tag of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -627,7 +745,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.undo">
 <code class="descname">undo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.undo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Undoes the last action made by the user on the project</p>
+<dd><p>Undo the last action made by the user on the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -641,7 +759,7 @@ are linked with AND or OR and all composed of:
 <dl class="method">
 <dt id="populse_mia.project.project.Project.unsaveModifications">
 <code class="descname">unsaveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#populse_mia.project.project.Project.unsaveModifications" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unsaves the pending operations of the project</p>
+<dd><p>Unsave the pending operations of the project.</p>
 </dd></dl>
 
 </dd></dl>

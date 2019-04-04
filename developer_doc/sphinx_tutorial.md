@@ -1,6 +1,5 @@
 # Long version:
-* [Sphinx Overview](http://www.sphinx-doc.org/en/master/index.html)
-
+* [Sphinx Overview](http://www.sphinx-doc.org/en/master/index.html) and [Documenting Your Project Using Sphinx](https://pythonhosted.org/an_example_pypi_project/sphinx.html)
 # Short version:
 
 ## To install sphinx
