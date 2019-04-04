@@ -51,6 +51,7 @@ in a recursive way.
 
     :Contains:
         :Method:
+            - __init__
             - add_package
 
     """

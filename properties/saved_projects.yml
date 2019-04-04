@@ -1,1 +1,5 @@
-paths: []
+paths:
+- ../../projects/test3
+- ../../projects/test2
+- ../../projects/test
+- ../../projects/test1

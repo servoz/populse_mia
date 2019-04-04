@@ -548,20 +548,6 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.plug_name">
-<code class="descname">plug_name</code><em class="property"> = None</em><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.plug_name" title="Permalink to this definition">¶</a></dt>
-<dd><p># If the filter is saved in the node plug (not the case now)
-if hasattr(self.process, ‘filters’):</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>if self.plug_name in self.process.filters.keys():</dt>
-<dd>print(“Already a filter for {0} plug of {1} process”.format(self.plug_name, self.process.name))
-# TODO: fill the advanced search with the corresponding filter</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.plug_value_changed">
 <code class="descname">plug_value_changed</code><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.plug_value_changed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1097,7 +1083,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_tab_name">
 <code class="descname">get_current_tab_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_current_tab_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_tab_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the tab name of the editor in the current tab.
-Trailing ” <a href="#id1"><span class="problematic" id="id2">*</span></a>” and ampersand (“&amp;”) characters are removed.</p>
+Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1225,7 +1211,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_tab_name_by_index">
 <code class="descname">get_tab_name_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_tab_name_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_tab_name_by_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the tab name of the editor at the given index.
-Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” and ampersand (“&amp;”) characters are removed.</p>
+Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -2332,12 +2318,12 @@ package where a change of status where done.</p>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">current package tree known in Package Library window</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Show_error:</th><td class="field-body"><p class="first last">display error in a message box in case of error. If False,</p>
+<tr class="field-even field"><th class="field-name">Show_error:</th><td class="field-body"><p class="first last">display error in a message box in case of error. If False,
+errors are silent and error messages returned at the end of execution</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>errors are silent and error messages returned at the end of execution</p>
 </dd></dl>
 
 <dl class="method">
@@ -2504,26 +2490,22 @@ package where a change of status where done.</p>
 <p>Widget that handles the available Capsul’s processes in the software</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><ul class="first last">
-<li><p class="first">process_library: library of the selected processes</p>
-</li>
-<li><p class="first">pkg_library: widget to control which processes to show in the process library</p>
-</li>
+<dd><ul class="first last simple">
+<li>process_library: library of the selected processes</li>
+<li>pkg_library: widget to control which processes to show in the process library</li>
 <li><dl class="first docutils">
 <dt>packages: tree-dictionary that is the representation of the process library.</dt>
-<dd><p class="first last">A dictionary, where keys are the name of a module (brick) and values
+<dd>A dictionary, where keys are the name of a module (brick) and values
 are ‘process_enabled’ or ‘process_disabled’. Key can be a submodule. 
 In this case the value is a dictionary where keys are the name of a
 module (brick) and values are ‘process_enabled’ or ‘process_disabled’.
 etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 ‘Filter_test’: ‘process_disabled’}, ‘nipype’: {‘interfaces’:
 {‘BIDSDataGrabber’: ‘process_enabled’, ‘fsl’: {‘AR1Image’:
-‘process_disabled’}}}}.</p>
-</dd>
+‘process_disabled’}}}}.</dd>
 </dl>
 </li>
-<li><p class="first">paths: list of path to add to the system path</p>
-</li>
+<li>paths: list of path to add to the system path</li>
 </ul>
 </dd>
 <dt>Methods:</dt>

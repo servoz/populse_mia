@@ -18,7 +18,7 @@ Subpackages
     populse_mia.pop_ups
     populse_mia.project
     populse_mia.software_properties
-    populse_mia.sources_images
+..    populse_mia.sources_images
     populse_mia.utils
 
 Submodules

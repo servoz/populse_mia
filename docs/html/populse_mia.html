@@ -111,13 +111,6 @@
 <li class="toctree-l2"><a class="reference internal" href="populse_mia.software_properties.html#module-populse_mia.software_properties.saved_projects">populse_mia.software_properties.saved_projects module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="populse_mia.sources_images.html">populse_mia.sources_images package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="populse_mia.utils.html">populse_mia.utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.utils.html#module-populse_mia.utils.tools">populse_mia.utils.tools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.utils.html#module-populse_mia.utils.utils">populse_mia.utils.utils module</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -256,6 +249,7 @@ in a recursive way.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Method:</th><td class="field-body"><ul class="first last simple">
+<li>__init__</li>
 <li>add_package</li>
 </ul>
 </td>
@@ -283,7 +277,7 @@ subpackages/modules, to construct the mia’s pipeline library.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><table class="first docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -345,7 +339,7 @@ We take advantage of it to clean up mia software before closing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><table class="first docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -428,10 +422,10 @@ the ~/.populse_mia directory). Launches the verify_processes()
 function, then the launch_mia() function (mia’s real launch !!). When
 mia is exited, if the ~/.populse_mia/configuration.yml exists, sets the
 dev_mode parameter to ‘no’.</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>If launched from a cloned git repository (‘developer mode’):</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>adds the good path to the sys.path</li>
 <li>if the ~/.populse_mia/configuration.yml exists, updates
 the dev_mode parameter to ‘yes’</li>
@@ -444,7 +438,7 @@ cloned git repository.</li>
 </li>
 <li><dl class="first docutils">
 <dt>If launched from the site/dist packages (‘user mode’):</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>if the ~/.populse_mia/configuration.yml exists, updates
 the dev_mode parameter to “no” and, if not found, update
 the mia_path parameter.</li>
