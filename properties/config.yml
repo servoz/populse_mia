@@ -2,7 +2,7 @@ auto_save: 'no'
 background_color: ''
 chain_cursors: 'no'
 clinical_mode: 'yes'
-name: MIA2
+name: MIA
 nb_slices_max: '10'
 opened_projects: []
 show_all_slices: 'no'
