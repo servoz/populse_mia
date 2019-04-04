@@ -1,11 +1,6 @@
 populse\_mia.software\_properties package
 =========================================
 
-.. automodule:: populse_mia.software_properties
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -26,3 +21,10 @@ populse\_mia.software\_properties.saved\_projects module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.software_properties
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -42,17 +42,15 @@ class MiniViewer(QWidget):
 
         - 3D: display all the slices.
         - 4D: display the middle slice of the third dimension for each time
-        of the fourth dimension.
+           of the fourth dimension.
         - 5D: display the middle slice of the third dimension for the first
-        time of the fourth dimension for each time of the fifth dimension.
-
-
+           time of the fourth dimension for each time of the fifth dimension.
 
     Note:
         - idx corresponds to the index of the displayed image
         - idx in [0, self.max_scans]
         - most of the class's attributes are lists of 0 to self.max_scans
-        elements
+           elements
 
     Attributes:
         - project: current project in the software
@@ -61,7 +59,7 @@ class MiniViewer(QWidget):
         - a2: list of the "4D" sliders
         - a3: list of the "5D" sliders
         - imageLabel: list of labels on which to set the current image as a
-        QPixmap
+           QPixmap
         - txta1: list of labels "m/n" on the side of a1 sliders
         - txta2: list of labels "m/n" on the side of a2 sliders
         - txta3: list of labels "m/n" on the side of a3 sliders
@@ -74,7 +72,7 @@ class MiniViewer(QWidget):
     Methods:
         - update_nb_slices: updates the config file and the thumbnails
         - check_box_slices_state_changed: updates the config file and the
-        thumbnails
+           thumbnails
         - check_box_cursors_state_changed: updates the config file
         - verify_slices: verifies the number of selected documents
         - show_slices: creates the thumbnails from the selected file paths
@@ -85,20 +83,20 @@ class MiniViewer(QWidget):
         - createSlider: creates a slider
         - enableSliders: enables each slider of the selected index
         - boxSlider: creates sliders, their connections and thumbnail labels
-        for a selected index
+           for a selected index
         - displayPosValue: displays the position of each cursor for the
-        selected index
+           selected index
         - createFieldValue: creates a field where will be displayed the
-        position of a cursor
+           position of a cursor
         - createDimensionLabels: creates the dimension labels for the
-        selected index
+           selected index
         - changePosValue: changes the value of a cursor for the selected index
         - navigImage: displays the 2D image for the selected index
         - indexImage: updates the sliders values depending on the size of
-        the selected image
+           the selected image
         - openTagsPopUp: opens a pop-up to select the legend of the thumbnails
         - image2DModifications: applies modifications to the image to
-        display it correctly
+          display it correctly
 
     """
 

@@ -1,11 +1,6 @@
 populse\_mia.pop\_ups package
 =============================
 
-.. automodule:: populse_mia.pop_ups
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -194,3 +189,10 @@ populse\_mia.pop\_ups.pop\_up\_visualized\_tags module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.pop_ups
+    :members:
+    :undoc-members:
+    :show-inheritance:

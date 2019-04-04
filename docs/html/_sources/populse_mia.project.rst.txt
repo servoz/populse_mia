@@ -1,11 +1,6 @@
 populse\_mia.project package
 ============================
 
-.. automodule:: populse_mia.project
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -42,3 +37,10 @@ populse\_mia.project.project module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.project
+    :members:
+    :undoc-members:
+    :show-inheritance:

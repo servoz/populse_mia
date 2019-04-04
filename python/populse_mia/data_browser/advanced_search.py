@@ -47,9 +47,9 @@ class AdvancedSearch(QWidget):
         - apply_filter: applies an opened filter
         - clearLayout: called to clear a layout
         - displayConditionRules: sets the list of condition choices,
-        depending on the tag type
+           depending on the tag type
         - displayValueRules: called when the condition choice is changed,
-        to update the placeholder text
+           to update the placeholder text
         - get_filters: gets the filters in list form
         - launch_search: called to start the search
         - prepare_filters: prepares the str representation of the filter
@@ -59,7 +59,7 @@ class AdvancedSearch(QWidget):
         - rows_borders_removed: links and adds row removed from every row
         - rowsContainsWidget: checks if the widget is still used
         - show_search: called when the Advanced Search button is clicked,
-        reset the rows
+           reset the rows
 
     """
 
@@ -73,7 +73,8 @@ class AdvancedSearch(QWidget):
         :param scans_list: current list of the documents
         :param tags_list: list of the visualized tags
         :param from_pipeline: True if the widget is called from the pipeline
-        manager
+           manager
+
         """
 
         super().__init__()
@@ -345,7 +346,7 @@ class AdvancedSearch(QWidget):
         Gets the filters in list form
 
         :param replace_all_by_fields: to replace All visualized tags by the
-        list of visible fields
+           list of visible fields
         :return: Lists of filters (fields, conditions, values, links, nots)
         """
 
@@ -462,7 +463,7 @@ class AdvancedSearch(QWidget):
         :param links: list of links (AND/OR)
         :param fields: list of list of fields
         :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
-        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+           BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
         :param values: list of values
         :param nots: list of negations ("" or NOT)
         :param scans: list of scans to search in

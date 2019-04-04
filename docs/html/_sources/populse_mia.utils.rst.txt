@@ -1,12 +1,5 @@
-:orphan:
-   
 populse\_mia.utils package
 ==========================
-
-.. automodule:: populse_mia.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Submodules
 ----------
@@ -28,3 +21,10 @@ populse\_mia.utils.utils module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
