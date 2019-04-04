@@ -333,7 +333,7 @@ associated database anf finally launch of the mia’s GUI.</p>
 <dt><strong>Contains: Private function:</strong></dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><em>_my_excepthook()</em></dt>
+<dt><em>_my_excepthook(etype, evalue, tback)</em></dt>
 <dd><p class="first">Log all uncaught exceptions in non-interactive mode.</p>
 <p>All python exceptions are handled by function, stored in
 sys.excepthook. By overloading the sys.excepthook handler with

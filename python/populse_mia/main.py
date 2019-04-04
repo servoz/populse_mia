@@ -142,7 +142,7 @@ def launch_mia():
 
 
     **Contains: Private function:**
-        - *_my_excepthook()*
+        - *_my_excepthook(etype, evalue, tback)*
            Log all uncaught exceptions in non-interactive mode.
 
            All python exceptions are handled by function, stored in
