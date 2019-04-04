@@ -5,14 +5,14 @@ Basically, this module is dedicated to the initialisation of the basic
 parameters and the various checks necessary for a successful launch of the
 mia's GUI.
 
-Contains:
-    Class:
-    - PackagesInstall
+:Contains:
+    :Class:
+        - PackagesInstall
 
-    Function:
-    - launch_mia
-    - main
-    - verify_processes
+    :Function:
+        - launch_mia
+        - main
+        - verify_processes
 
 """
 ###############################################################################
@@ -47,11 +47,11 @@ main_window = None
 class PackagesInstall:
     
     """Help to make available a pipeline package in the mia pipeline library,
-       in a recursive way.
+in a recursive way.
 
-    Contains:
-        Method:
-        - add_package
+    :Contains:
+        :Method:
+            - add_package
 
     """
 
@@ -61,15 +61,15 @@ class PackagesInstall:
 
     def add_package(self, module_name, class_name=None):
         """Provide recursive representation of a package and its
-           subpackages/modules, to construct the mia's pipeline library.
+subpackages/modules,To construct the mia's pipeline library.
 
         :param module_name: name of the module to add in the pipeline library
         :param class_name: only this pipeline will be add to the pipeline
-                           library (optional)
+         library (optional)
 
-        :returns: dictionary of dictionaries countaining
-                   package/subpackages/pipelines status.
-                  ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
+        :returns: dictionary of dictionaries countaining \
+         package/subpackages/pipelines status. \
+         ex. {package: {subpackage: {pipeline: 'process_enabled'}}}
 
         """
 
@@ -131,18 +131,44 @@ class PackagesInstall:
 def launch_mia():
     """Actual launch of the mia software.
 
-    Overload the sys.excepthook handler with the my_excepthook private function.
-    Check if the software is already opened in another instance. If not, the
-    list of opened projects is cleared.
-    Checks if saved projects known in the mia software still exist, and updates
-    if necessary.
-    Instantiates a 'project' object that handles projects and their associated
-    database anf finally launch of the mia's GUI
-    
-    Contains:
-        Private function:
-        - my_excepthook
-        - verify_saved_projects
+    Overload the sys.excepthook handler with the my_excepthook private
+    function. Check if the software is already opened in another instance.
+    If not, the list of opened projects is cleared. Checks if saved projects
+    known in the mia software still exist, and updates if necessary.
+    Instantiates a 'project' object that handles projects and their
+    associated database anf finally launch of the mia's GUI.
+
+
+    :Contains:
+        :Private function:
+            - my_excepthook(etype, evalue, tback) : Log all uncaught
+              exceptions in non-interactive mode.
+
+              :Contains:
+                :Private function:
+                  - clean_up() : Cleans up the mia software during "normal"
+                    closing.
+            - verify_saved_projects(): Verify if the projects saved in \
+              saved_projects.yml are still on the disk
+
+
+    :func my_excepthook:
+       All python exceptions are handled by function, stored in
+       sys.excepthook. By overloading the sys.excepthook handler with
+       my_excepthook function, this last function is called whenever
+       there is a unhandled exception (so one that exits the interpreter).
+       We take advantage of it to clean up mia software before closing.
+
+        :param etype: exception class
+        :param evalue: exception instance
+        :param tback: traceback object
+
+    **Func clean_up:**
+            Make a clean up of the opened projects just before exiting mia.
+
+    :func verify_saved_projects:
+
+        :return: the list of the deleted projects
 
     """
 
@@ -152,30 +178,8 @@ def launch_mia():
     from populse_mia.software_properties.config import Config
 
     def my_excepthook(etype, evalue, tback):
-        """Log all uncaught exceptions in non-interactive mode.
-
-        All python exceptions are handled by function, stored in
-        sys.excepthook. By overloading the sys.excepthook handler with
-        my_excepthook function, this last function is called whenever
-        there is a unhandled exception (so one that exits the interpreter).
-        We take advantage of it to clean up mia software before closing.
-        
-        :param etype: exception class
-        :param evalue: exception instance
-        :param tback: traceback object
-
-        Contains:
-            Private function:
-            - clean_up
-
-        """
 
         def clean_up():
-            """ Cleans up the mia software during "normal" closing.
-
-            Make a clean up of the opened projects just before exiting mia. 
-
-            """
             from populse_mia.software_properties.config import Config
 
             global main_window
@@ -202,12 +206,6 @@ def launch_mia():
         sys.exit(1)
 
     def verify_saved_projects():
-        """Verify if the projects saved in saved_projects.yml are still
-           on the disk
-
-        :return: the list of the deleted projects
-
-        """
 
         # Populse_MIA imports
         from populse_mia.software_properties.saved_projects \
@@ -254,22 +252,22 @@ def main():
     """Make basic configuration check then actual launch of mia.
 
     Checks if MIA is called from the site/dist packages (user mode) or from a
-    cloned git repository (developer mode). Tries(1) to update the dev_mode
+    cloned git repository (developer mode). Tries to update the dev_mode
     parameter accordingly and the mia_path if necessary, in the
-    ~/.populse_mia/configuration.yml file (this file must be available from the
-    ~/.populse_mia directory). Launches the verify_processes() function, then
-    the launch_mia() function (mia's real launch !!). When mia is exited, if
-    the ~/.populse_mia/configuration.yml exists, sets the dev_mode parameter to
-    'no'.
+    ~/.populse_mia/configuration.yml file (this file must be available from
+    the ~/.populse_mia directory). Launches the verify_processes()
+    function, then the launch_mia() function (mia's real launch !!). When
+    mia is exited, if the ~/.populse_mia/configuration.yml exists, sets the
+    dev_mode parameter to 'no'.
 
-    - (1)If launched from a cloned git repository ('developer mode'):
+    - If launched from a cloned git repository ('developer mode'):
         - adds the good path to the sys.path
         - if the ~/.populse_mia/configuration.yml exists, updates
           the dev_mode parameter to 'yes'
         - if the ~/.populse_mia/configuration.yml is not existing
           nothing is done (in developer mode, the mia_path is the
           cloned git repository.
-   - (1)If launched from the site/dist packages ('user mode'):
+    - If launched from the site/dist packages ('user mode'):
         - if the ~/.populse_mia/configuration.yml exists, updates
           the dev_mode parameter to "no" and, if not found, update
           the mia_path parameter.
@@ -278,10 +276,30 @@ def main():
           valid mia_path path is requested from the user, in order
           to try to fix a corruption of this file.
 
-    Contains:
-        Private function:
-        - browse_mia_path
-        - ok_mia_path
+    :Contains:
+        :Private function:
+            - browse_mia_path(dialog): The user define the mia_path parameter.
+            - ok_mia_path(dialog): Check the mia_path parameter then if it
+               is valid close the 'MIA path selection' window.
+
+    :func browse_mia_path:
+        This method goes with the ok_mia_path function, the latter will use the
+        value of the mia_path parameter, defined here.
+
+        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
+
+    :func ok_mia_path:
+        This method goes with the browse_mia_path function, the latter having
+        allowed the definition of the mia_path parameter, the objective here
+        is to check if the value of this parameter is valid. The dev_mode='no'
+        and mia_path parameters are saved in the, mandatory in user mode,
+        ~/.populse_mia/configuration.yml file. Then the verify_processes
+        function is used through a try/except blocks to check if the mia_path
+        parameter value is valid. If an exception is raised during the
+        verify_processes function, the "MIA path selection" window is not
+        closed and the user is prompted again to set the mia_path parameter.
+
+        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
 
     """
 
@@ -466,32 +484,54 @@ def main():
 
 
 def verify_processes():
-    """Install or update to the last version available on the station, of the
+    """Install or update to the last version available on the station, of the \
        nipype and the mia_processes processes libraries.
 
-       By default, mia provides two process libraries in the pipeline library
-       (available in Pipeline Manager tab). The nipype, given as it is because
-       it is developed by another team (https://github.com/nipy/nipype), and
-       mia_processes which is developed under the umbrella of populse
-       (https://github.com/populse/mia_processes). When installing mia in
-       user mode, these two libraries are automatically installed on the
-       station. The idea is to use the versioning available with pypi
-       (https://pypi.org/). Thus, it is sufficient for the user to change the
-       version of the library installed on the station (pip install...) to
-       also change the version available in mia. Indeed, when starting mia, the
-       verify_processes function will install or update nipype and
-       mia_processes libraries in the pipeline library. Currently it is
-       mandatory to have nipype and may_processes installed in the station.
-       All these informations, as well as the installed versions and package
-       paths are saved in the  mia_path/properties/process_config.yml file.
-       When an upgrade or downgrade is performed for a package, the last
-       configuration used by the user is kept (if a pipeline was visible, it
-       remains so and vice versa). However, if a new pipeline is available in
-       the new version it is automatically marked as visible in the library.
+    By default, mia provides two process libraries in the pipeline library
+    (available in Pipeline Manager tab). The nipype, given as it is because
+    it is developed by another team (https://github.com/nipy/nipype), and
+    mia_processes which is developed under the umbrella of populse
+    (https://github.com/populse/mia_processes). When installing mia in
+    user mode, these two libraries are automatically installed on the
+    station. The idea is to use the versioning available with pypi
+    (https://pypi.org/). Thus, it is sufficient for the user to change the
+    version of the library installed on the station (pip install...) to
+    also change the version available in mia. Indeed, when starting mia, the
+    verify_processes function will install or update nipype and
+    mia_processes libraries in the pipeline library. Currently it is
+    mandatory to have nipype and may_processes installed in the station.
+    All these informations, as well as the installed versions and package
+    paths are saved in the  mia_path/properties/process_config.yml file.
+    When an upgrade or downgrade is performed for a package, the last
+    configuration used by the user is kept (if a pipeline was visible, it
+    remains so and vice versa). However, if a new pipeline is available in
+    the new version it is automatically marked as visible in the library.
 
-    Contains:
-        Private function:
-        - deepCompDic
+    :Contains:
+        :Private function:
+            - deepCompDic(old_dic, new_dic, level="0"): Try to keep the
+              previous configuration existing before the update of the
+              packages.
+
+    :func deepCompDic:
+        Recursive comparison of the old_dic and new _dic dictionary. If all
+        keys are recursively identical, the final value at the end of the
+        whole tree in old_dic is kept in the new _dic. To sum up, this
+        function is used to keep up the user display preferences in the
+        processes library of the Pipeline Manager Editor.
+
+        **param old_dic**: the dic representation of the previous package \
+           configuration
+
+        **param new_dic**: the dic representation of the new package \
+          configuration
+
+        **param level**: the index level in the package (0: root, +1: in a \
+          subpackage/pipeline)
+
+        :returns: True if the current level is a pipeline that existed in the
+                  old configuration, False if the package/subpackage/pipeline
+                  did not exist
 
     """
 
@@ -509,8 +549,7 @@ def verify_processes():
         function is used to keep up the user display preferences in the
         processes library of the Pipeline Manager Editor.
 
-        :param old_dic: the dic representation of the previous package
-                        configuration
+        :param old_dic: the dic representation of the previous package configuration
         :param new_dic: the dic representation of the new package configuration
         :param level: the index level in the package
                       (0: root, +1: in a subpackage/pipeline)

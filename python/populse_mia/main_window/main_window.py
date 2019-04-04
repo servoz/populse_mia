@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*- #
-"""Module to define main window appearance and settings
+"""Module to define main window appearance and settings.
 
-Initializes the software appearance and defines interactions with the user.
+Initialize the software appearance and defines interactions with the user.
 
-Contains:
-    Class:
-        -MainWindow
+:Contains:
+    :Class:
+        - MainWindow
 
 """
 
@@ -52,20 +52,20 @@ from populse_mia.pop_ups.pop_up_see_all_projects import PopUpSeeAllProjects
 class MainWindow(QMainWindow):
 
     """Main window class, initializes the software appearance and defines
-    interactions with the user.
+interactions with the user.
 
-    Attributes:
-        :param project: current project in the software
-        :param test: boolean if the widget is launched from unit tests or not
-        :param deleted_projects: projects that have been deleted
+    - Attributes :
+        :Parameter project: current project in the software
+        :Parameter test: boolean if the widget is launched from unit tests or not
+        :Parameter deleted_projects: projects that have been deleted
 
 ..  Methods:
-        - add_clinical_tags: adds the clinical tags to the database and the \
-        data browser
+        - add_clinical_tags: adds the clinical tags to the database and the
+          data browser
         - check_unsaved_modifications: checks if there are differences
-        between the current project and the database
+          between the current project and the database
         - closeEvent: overrides the closing event to check if there are
-        unsaved modifications
+          unsaved modifications
         - create_actions: creates the actions in each menu
         - create_menus: creates the menu-bar
         - create_project_pop_up: creates a new project
@@ -74,16 +74,16 @@ class MainWindow(QMainWindow):
         - import_data: calls the import software (MRI File Manager)
         - install_processes_pop_up: opens the install processes pop-up
         - open_project_pop_up: opens a pop-up to open a project and updates
-        the recent projects
+          the recent projects
         - open_recent_project: opens a recent project
         - package_library_pop_up: opens the package library pop-up
         - project_properties_pop_up: opens the project properties pop-up
         - redo: redoes the last action made by the user
         - remove_raw_files_useless: removes the useless raw files of the
-        current project
+          current project
         - save: saves either the current project or the current pipeline
         - save_as: saves either the current project or the current pipeline
-        under a new name
+          under a new name
         - save_project_as: opens a pop-up to save the current project as
         - saveChoice: checks if the project needs to be saved as or just saved
         - see_all_projects: opens a pop-up to show the recent projects
@@ -92,9 +92,9 @@ class MainWindow(QMainWindow):
         - tab_changed: method called when the tab is changed
         - undo: undoes the last action made by the user
         - update_package_library_action: updates the package library action
-        depending on the mode
+          depending on the mode
         - update_project: updates the project once the database has been
-        updated
+          updated
         - update_recent_projects_actions: updates the list of recent projects
 
     """
