@@ -63,9 +63,11 @@ in a recursive way.
         """Provide recursive representation of a package and its
 subpackages/modules,To construct the mia's pipeline library.
 
-        :param module_name: name of the module to add in the pipeline library
-        :param class_name: only this pipeline will be add to the pipeline
-         library (optional)
+        :Parameter:
+            - :module_name: name of the module to add in the pipeline
+               library
+            - :class_name: only this pipeline will be add to the pipeline
+               library (optional)
 
         :returns: dictionary of dictionaries countaining
            package/subpackages/pipelines status.
@@ -152,21 +154,22 @@ def launch_mia():
               saved_projects.yml are still on the disk
 
 
-    :func _my_excepthook:
+    :Function _my_excepthook:
        All python exceptions are handled by function, stored in
        sys.excepthook. By overloading the sys.excepthook handler with
        _my_excepthook function, this last function is called whenever
        there is a unhandled exception (so one that exits the interpreter).
        We take advantage of it to clean up mia software before closing.
 
-        :param etype: exception class
-        :param evalue: exception instance
-        :param tback: traceback object
+        :Parameter:
+            - :etype: exception class
+            - :evalue: exception instance
+            - :tback: traceback object
 
-    **Func _clean_up:**
+    **Function _clean_up:**
             Make a clean up of the opened projects just before exiting mia.
 
-    :func _verify_saved_projects:
+    :Function _verify_saved_projects:
 
         :return: the list of the deleted projects
 
@@ -282,13 +285,14 @@ def main():
             - _ok_mia_path(dialog): Check the mia_path parameter then if it
                is valid close the 'MIA path selection' window.
 
-    :func _browse_mia_path:
-        This method goes with the _ok_mia_path function, the latter will use the
-        value of the mia_path parameter, defined here.
+    :Function _browse_mia_path:
+        This method goes with the _ok_mia_path function, the latter will use
+        the value of the mia_path parameter, defined here.
 
-        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
+        :Parameter dialog: QtWidgets.QDialog object ('msg' in the main
+           function)
 
-    :func _ok_mia_path:
+    :Function _ok_mia_path:
         This method goes with the _browse_mia_path function, the latter having
         allowed the definition of the mia_path parameter, the objective here
         is to check if the value of this parameter is valid. The dev_mode='no'
@@ -299,41 +303,18 @@ def main():
         verify_processes function, the "MIA path selection" window is not
         closed and the user is prompted again to set the mia_path parameter.
 
-        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
+        :Parameter dialog: QtWidgets.QDialog object
+           ('msg' in the main function)
 
     """
 
     def _browse_mia_path(dialog):
-        """The user define the mia_path parameter.
-
-        This method goes with the _ok_mia_path function, the latter will use the
-        value of the mia_path parameter, defined here.
-
-        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
-
-        """
 
         dname = QFileDialog.getExistingDirectory(dialog, "Please select MIA "
                                                          "path")
         dialog.file_line_edit.setText(dname)
 
     def _ok_mia_path(dialog):
-        """Check the mia_path parameter then if it is valid close the 'MIA path
-           selection' window.
-
-        This method goes with the _browse_mia_path function, the latter having
-        allowed the definition of the mia_path parameter, the objective here
-        is to check if the value of this parameter is valid. The dev_mode='no'
-        and mia_path parameters are saved in the, mandatory in user mode,
-        ~/.populse_mia/configuration.yml file. Then the verify_processes
-        function is used through a try/except blocks to check if the mia_path
-        parameter value is valid. If an exception is raised during the
-        verify_processes function, the "MIA path selection" window is not
-        closed and the user is prompted again to set the mia_path parameter.
-
-        :param dialog: QtWidgets.QDialog object ('msg' in the main function)
-
-        """
 
         mia_home_config = dict()
         mia_home_config["dev_mode"] = "no"
@@ -513,7 +494,7 @@ def verify_processes():
               previous configuration existing before the update of the
               packages.
 
-    :func _deepCompDic:
+    :Function _deepCompDic:
         Recursive comparison of the old_dic and new _dic dictionary. If all
         keys are recursively identical, the final value at the end of the
         whole tree in old_dic is kept in the new _dic. To sum up, this
@@ -540,24 +521,7 @@ def verify_processes():
     from populse_mia.utils.utils import verCmp
 
     def _deepCompDic(old_dic, new_dic, level="0"):
-        """Try to keep the previous configuration existing before the update
-           of the packages.
 
-        Recursive comparison of the old_dic and new _dic dictionary. If all
-        keys are recursively identical, the final value at the end of the
-        whole tree in old_dic is kept in the new _dic. To sum up, this
-        function is used to keep up the user display preferences in the
-        processes library of the Pipeline Manager Editor.
-
-        :param old_dic: the dic representation of the previous package configuration
-        :param new_dic: the dic representation of the new package configuration
-        :param level: the index level in the package
-                      (0: root, +1: in a subpackage/pipeline)
-        :returns: True if the current level is a pipeline that existed in the
-                  old configuration, False if the package/subpackage/pipeline
-                  did not exist
-
-        """
         PY3 = sys.version_info[0] == 3
 
         if PY3:

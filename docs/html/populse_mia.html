@@ -283,16 +283,34 @@ subpackages/modules,To construct the mia’s pipeline library.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">param module_name:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">name of the module to add in the pipeline library</td>
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first">
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">module_name:</th><td class="field-body">name of the module to add in the pipeline
+library</td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">param class_name:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">only this pipeline will be add to the pipeline
+</tbody>
+</table>
+</li>
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">class_name:</th><td class="field-body">only this pipeline will be add to the pipeline
 library (optional)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">dictionary of dictionaries countaining
+</tbody>
+</table>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">returns:</th><td class="field-body"><p class="first last">dictionary of dictionaries countaining
 package/subpackages/pipelines status.
-ex. {package: {subpackage: {pipeline: ‘process_enabled’}}}</td>
+ex. {package: {subpackage: {pipeline: ‘process_enabled’}}}</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -354,7 +372,7 @@ closing.</li>
 </table>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Func _my_excepthook:</th></tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Function _my_excepthook:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">All python exceptions are handled by function, stored in
 sys.excepthook. By overloading the sys.excepthook handler with
 _my_excepthook function, this last function is called whenever
@@ -365,11 +383,36 @@ We take advantage of it to clean up mia software before closing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param etype:</th><td class="field-body">exception class</td>
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first last">
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">etype:</th><td class="field-body">exception class</td>
 </tr>
-<tr class="field-even field"><th class="field-name">param evalue:</th><td class="field-body">exception instance</td>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">evalue:</th><td class="field-body">exception instance</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">param tback:</th><td class="field-body">traceback object</td>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">tback:</th><td class="field-body">traceback object</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -379,14 +422,14 @@ We take advantage of it to clean up mia software before closing.</p>
 </tbody>
 </table>
 <dl class="docutils">
-<dt><strong>Func _clean_up:</strong></dt>
+<dt><strong>Function _clean_up:</strong></dt>
 <dd>Make a clean up of the opened projects just before exiting mia.</dd>
 </dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Func _verify_saved_projects:</th></tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Function _verify_saved_projects:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><table class="first last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -467,20 +510,22 @@ to try to fix a corruption of this file.</li>
 </table>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Func _browse_mia_path:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">This method goes with the _ok_mia_path function, the latter will use the
-value of the mia_path parameter, defined here.</p>
+<tr class="field-even field"><th class="field-name" colspan="2">Function _browse_mia_path:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">This method goes with the _ok_mia_path function, the latter will use
+the value of the mia_path parameter, defined here.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param dialog:</th><td class="field-body">QtWidgets.QDialog object (‘msg’ in the main function)</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">Parameter dialog:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object (‘msg’ in the main
+function)</td>
 </tr>
 </tbody>
 </table>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Func _ok_mia_path:</th></tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Function _ok_mia_path:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">This method goes with the _browse_mia_path function, the latter having
 allowed the definition of the mia_path parameter, the objective here
 is to check if the value of this parameter is valid. The dev_mode=’no’
@@ -494,7 +539,9 @@ closed and the user is prompted again to set the mia_path parameter.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param dialog:</th><td class="field-body">QtWidgets.QDialog object (‘msg’ in the main function)</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">Parameter dialog:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object
+(‘msg’ in the main function)</td>
 </tr>
 </tbody>
 </table>
@@ -547,7 +594,7 @@ packages.</li>
 </table>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Func _deepCompDic:</th></tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Function _deepCompDic:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">Recursive comparison of the old_dic and new _dic dictionary. If all
 keys are recursively identical, the final value at the end of the
 whole tree in old_dic is kept in the new _dic. To sum up, this
