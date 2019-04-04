@@ -489,28 +489,30 @@ def verify_processes():
 
     :Contains:
         :Private function:
-            - *_deepCompDic()*:
-              Try to keep the previous configuration existing before the
-              update of the packages.
+            - *_deepCompDic()*
 
-              Recursive comparison of the old_dic and new _dic dictionary. If all
-              keys are recursively identical, the final value at the end of the
-              whole tree in old_dic is kept in the new _dic. To sum up, this
-              function is used to keep up the user display preferences in the
-              processes library of the Pipeline Manager Editor.
+               Try to keep the previous configuration existing before the
+               update of the packages.
 
-              **param old_dic**: the dic representation of the previous
-                package configuration
+               Recursive comparison of the old_dic and new _dic dictionary. If
+               all keys are recursively identical, the final value at the end
+               of the whole tree in old_dic is kept in the new _dic. To sum
+               up, this function is used to keep up the user display
+               preferences in the processes library of the Pipeline Manager
+               Editor.
 
-              **param new_dic**: the dic representation of the new package \
-                 configuration
+               **param old_dic**: the dic representation of the previous
+                 package configuration
 
-              **param level**: the index level in the package (0: root,
-                  +1: in a subpackage/pipeline)
+               **param new_dic**: the dic representation of the new package \
+                  configuration
 
-              :returns: True if the current level is a pipeline that existed
-                  in the old configuration, False if the
-                  package/subpackage/pipeline did not exist
+               **param level**: the index level in the package (0: root,
+                   +1: in a subpackage/pipeline)
+
+               :returns: True if the current level is a pipeline that existed
+                   in the old configuration, False if the
+                   package/subpackage/pipeline did not exist
 
 
 

@@ -557,20 +557,22 @@ the new version it is automatically marked as visible in the library.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Private function:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last">
-<li><p class="first"><em>_deepCompDic()</em>:
-Try to keep the previous configuration existing before the
+<li><p class="first"><em>_deepCompDic()</em></p>
+<blockquote>
+<div><p>Try to keep the previous configuration existing before the
 update of the packages.</p>
-<p>Recursive comparison of the old_dic and new _dic dictionary. If all
-keys are recursively identical, the final value at the end of the
-whole tree in old_dic is kept in the new _dic. To sum up, this
-function is used to keep up the user display preferences in the
-processes library of the Pipeline Manager Editor.</p>
+<p>Recursive comparison of the old_dic and new _dic dictionary. If
+all keys are recursively identical, the final value at the end
+of the whole tree in old_dic is kept in the new _dic. To sum
+up, this function is used to keep up the user display
+preferences in the processes library of the Pipeline Manager
+Editor.</p>
 <dl class="docutils">
 <dt><strong>param old_dic</strong>: the dic representation of the previous</dt>
 <dd><p class="first last">package configuration</p>
 </dd>
 </dl>
-<p><strong>param new_dic</strong>: the dic representation of the new package                  configuration</p>
+<p><strong>param new_dic</strong>: the dic representation of the new package                   configuration</p>
 <dl class="docutils">
 <dt><strong>param level</strong>: the index level in the package (0: root,</dt>
 <dd><p class="first last">+1: in a subpackage/pipeline)</p>
@@ -586,6 +588,7 @@ package/subpackage/pipeline did not exist</td>
 </tr>
 </tbody>
 </table>
+</div></blockquote>
 </li>
 </ul>
 </td>
