@@ -113,10 +113,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>Add Input_filter processes in front of each input that comes from the database (Anat_file, FLASH_file and MDEFT_file)</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Note: a file_to_list process is added before the Anat_file plug because Input_filter’s output is of type List, and Anat_file plug is of type File.</li>
 </ul>
 </dd>
@@ -127,10 +127,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>For each Input_filter process, right-click on it and select “Open filter”. In the filter pop-up, modify the filter to apply.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>For exemple, for the Anat_file plug. Set : “Exp Type == Anat” in the Advanced Search.</li>
 </ul>
 </dd>
@@ -149,10 +149,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>Export the other node plugs by right-clicking on “realign_coreg_smooth1” node and selecting “Export all unconnected plugs”.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>The pipeline becomes enabled.</li>
 </ul>
 </dd>
@@ -171,10 +171,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>Save the set of parameters that you have just modified by clicking on “Save pipeline parameters” in the bottom left “Pipeline” menu.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>This step is not mandatory. But by saving these parameters, the next time you open the pipeline, you will be able load them directly by clicking on “Load pipeline parameters” in the bottom left “Pipeline” menu.</li>
 </ul>
 </dd>
@@ -182,7 +182,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Set up the iteration table.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Check the “Iterate pipeline” check box and select to iterate over the “Patient” tag.</li>
 <li>By changing the value of the selected Patient, you change the list of documents in “database_scans”</li>
 </ul>
@@ -194,10 +194,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>Run the pipeline by clicking on “Run pipeline” in the bottom left “Pipeline” menu.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Choose on which Patient to iterate the pipeline (reminder: patients K49 and K51 got missing files)</li>
 <li>In iteration mode, there is no need to initialize the pipeline. It is automatically done before each iterated run.</li>
 </ul>
