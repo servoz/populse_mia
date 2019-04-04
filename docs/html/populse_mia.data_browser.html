@@ -31,8 +31,8 @@
       <div class="content">
         
         
-  <div class="section" id="populse-mia-data-browser-package">
-<h1>populse_mia.data_browser package<a class="headerlink" href="#populse-mia-data-browser-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-populse_mia.data_browser">
+<span id="populse-mia-data-browser-package"></span><h1>populse_mia.data_browser package<a class="headerlink" href="#module-populse_mia.data_browser" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -82,6 +82,28 @@ to update the placeholder text
 reset the rows</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.data_browser.advanced_search.AdvancedSearch.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>data_browser</em>, <em>scans_list=None</em>, <em>tags_list=None</em>, <em>from_pipeline=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/advanced_search.html#AdvancedSearch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.advanced_search.AdvancedSearch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the AdvancedSearch class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>data_browser</strong> – parent data browser widget</li>
+<li><strong>scans_list</strong> – current list of the documents</li>
+<li><strong>tags_list</strong> – list of the visualized tags</li>
+<li><strong>from_pipeline</strong> – True if the widget is called from the pipeline</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>manager</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.data_browser.advanced_search.AdvancedSearch.add_row">
 <code class="descname">add_row</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/advanced_search.html#AdvancedSearch.add_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.advanced_search.AdvancedSearch.add_row" title="Permalink to this definition">¶</a></dt>
@@ -425,6 +447,20 @@ user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The tab
 </table>
 <p>Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.</p>
 <dl class="method">
+<dt id="populse_mia.data_browser.count_table.CountTable.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/count_table.html#CountTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.count_table.CountTable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the Count Table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.data_browser.count_table.CountTable.add_tag">
 <code class="descname">add_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/count_table.html#CountTable.add_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.count_table.CountTable.add_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a tag to visualize in the count table</p>
@@ -570,6 +606,24 @@ Pipeline Manager
 - update_database: update the database in the software</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.data_browser.data_browser.DataBrowser.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DataBrowser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DataBrowser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the data_browser class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>main_window</strong> – main window of the software</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.data_browser.data_browser.DataBrowser.add_tag_infos">
 <code class="descname">add_tag_infos</code><span class="sig-paren">(</span><em>new_tag_name</em>, <em>new_default_value</em>, <em>tag_type</em>, <em>new_tag_description</em>, <em>new_tag_unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DataBrowser.add_tag_infos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DataBrowser.add_tag_infos" title="Permalink to this definition">¶</a></dt>
@@ -738,6 +792,12 @@ Pipeline Manager
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QItemDelegate</span></code></p>
 <p>Delegate that is used to handle dates in the TableDataBrowser.</p>
 <dl class="method">
+<dt id="populse_mia.data_browser.data_browser.DateFormatDelegate.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DateFormatDelegate.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DateFormatDelegate.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.data_browser.data_browser.DateFormatDelegate.createEditor">
 <code class="descname">createEditor</code><span class="sig-paren">(</span><em>parent</em>, <em>option</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DateFormatDelegate.createEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DateFormatDelegate.createEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of the createEditor method, called to generate the widget.</p>
@@ -751,6 +811,12 @@ Pipeline Manager
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QItemDelegate</span></code></p>
 <p>Delegate that is used to handle date &amp; time in the TableDataBrowser.</p>
 <dl class="method">
+<dt id="populse_mia.data_browser.data_browser.DateTimeFormatDelegate.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DateTimeFormatDelegate.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DateTimeFormatDelegate.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.data_browser.data_browser.DateTimeFormatDelegate.createEditor">
 <code class="descname">createEditor</code><span class="sig-paren">(</span><em>parent</em>, <em>option</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#DateTimeFormatDelegate.createEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.DateTimeFormatDelegate.createEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of the createEditor method, called to generate the widget.</p>
@@ -763,6 +829,12 @@ Pipeline Manager
 <em class="property">class </em><code class="descclassname">populse_mia.data_browser.data_browser.</code><code class="descname">NumberFormatDelegate</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#NumberFormatDelegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.NumberFormatDelegate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QItemDelegate</span></code></p>
 <p>Delegate that is used to handle numbers in the TableDataBrowser.</p>
+<dl class="method">
+<dt id="populse_mia.data_browser.data_browser.NumberFormatDelegate.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#NumberFormatDelegate.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.NumberFormatDelegate.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.data_browser.data_browser.NumberFormatDelegate.createEditor">
 <code class="descname">createEditor</code><span class="sig-paren">(</span><em>parent</em>, <em>option</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#NumberFormatDelegate.createEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.NumberFormatDelegate.createEditor" title="Permalink to this definition">¶</a></dt>
@@ -848,6 +920,12 @@ the table
 - visualized_tags_pop_up: display the visualized tags pop-up</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.data_browser.data_browser.TableDataBrowser.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>data_browser</em>, <em>tags_to_display</em>, <em>update_values</em>, <em>activate_selection</em>, <em>link_viewer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#TableDataBrowser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.TableDataBrowser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.data_browser.data_browser.TableDataBrowser.add_column">
 <code class="descname">add_column</code><span class="sig-paren">(</span><em>column</em>, <em>tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#TableDataBrowser.add_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.TableDataBrowser.add_column" title="Permalink to this definition">¶</a></dt>
@@ -1238,6 +1316,12 @@ Only called when switching project to completely reset the table</p>
 <p>Delegate that is used to handle times in the TableDataBrowser.</p>
 <p># TODO : Update params</p>
 <dl class="method">
+<dt id="populse_mia.data_browser.data_browser.TimeFormatDelegate.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#TimeFormatDelegate.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.TimeFormatDelegate.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.data_browser.data_browser.TimeFormatDelegate.createEditor">
 <code class="descname">createEditor</code><span class="sig-paren">(</span><em>parent</em>, <em>option</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/data_browser.html#TimeFormatDelegate.createEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.data_browser.TimeFormatDelegate.createEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of the createEditor method, called to generate the widget.</p>
@@ -1327,6 +1411,12 @@ the selected image
 display it correctly</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.data_browser.mini_viewer.MiniViewer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/mini_viewer.html#MiniViewer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.mini_viewer.MiniViewer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.data_browser.mini_viewer.MiniViewer.boxSlider">
 <code class="descname">boxSlider</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/mini_viewer.html#MiniViewer.boxSlider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.mini_viewer.MiniViewer.boxSlider" title="Permalink to this definition">¶</a></dt>
@@ -1621,6 +1711,27 @@ display it correctly</p>
 </dd>
 </dl>
 <dl class="method">
+<dt id="populse_mia.data_browser.modify_table.ModifyTable.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>value</em>, <em>types</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/modify_table.html#ModifyTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.modify_table.ModifyTable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the ModifyTable class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – Instance of project</li>
+<li><strong>value</strong> – List of values of the cell</li>
+<li><strong>types</strong> – Value types</li>
+<li><strong>scans</strong> – Scans of the rows</li>
+<li><strong>tags</strong> – Tags of the columns</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.data_browser.modify_table.ModifyTable.fill_table">
 <code class="descname">fill_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/modify_table.html#ModifyTable.fill_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.modify_table.ModifyTable.fill_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fills the table</p>
@@ -1657,6 +1768,12 @@ Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.data_browser.rapid_search.RapidSearch.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>databrowser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/rapid_search.html#RapidSearch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.rapid_search.RapidSearch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="populse_mia.data_browser.rapid_search.RapidSearch.prepare_filter">
 <em class="property">static </em><code class="descname">prepare_filter</code><span class="sig-paren">(</span><em>search</em>, <em>tags</em>, <em>scans</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_browser/rapid_search.html#RapidSearch.prepare_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_browser.rapid_search.RapidSearch.prepare_filter" title="Permalink to this definition">¶</a></dt>
@@ -1697,9 +1814,6 @@ Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-populse_mia.data_browser">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.data_browser" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

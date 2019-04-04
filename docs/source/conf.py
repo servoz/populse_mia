@@ -175,3 +175,9 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+
+
+autodoc_default_options = {
+    'special-members': '__init__',
+}
+

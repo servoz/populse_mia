@@ -1,6 +1,11 @@
 populse\_mia.image\_viewer package
 ==================================
 
+.. automodule:: populse_mia.image_viewer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -13,10 +18,3 @@ populse\_mia.image\_viewer.image\_viewer module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: populse_mia.image_viewer
-    :members:
-    :undoc-members:
-    :show-inheritance:

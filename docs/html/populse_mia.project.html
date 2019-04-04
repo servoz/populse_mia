@@ -31,8 +31,8 @@
       <div class="content">
         
         
-  <div class="section" id="populse-mia-project-package">
-<h1>populse_mia.project package<a class="headerlink" href="#populse-mia-project-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-populse_mia.project">
+<span id="populse-mia-project-package"></span><h1>populse_mia.project package<a class="headerlink" href="#module-populse_mia.project" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -78,6 +78,12 @@ file
 </dd>
 </dl>
 <dl class="method">
+<dt id="populse_mia.project.controller.ImportProgress.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.project.controller.ImportProgress.onProgress">
 <code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal to set the import progressbar value</p>
@@ -108,6 +114,12 @@ file
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.project.controller.ImportWorker.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="populse_mia.project.controller.ImportWorker.notifyProgress">
 <code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
@@ -218,6 +230,53 @@ populse_db and some of its methods</p>
 <p class="last">empty schema</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.project.database_mia.DatabaseMIA.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>string_engine</strong> – <p>Database engine</p>
+<p>The engine is constructed this way: dialect[+driver]://user:password&#64;host/dbname[?key=value..]</p>
+<p>The dialect can be mysql, oracle, postgresql, mssql, or sqlite</p>
+<p>The driver is the name of a DBAPI, such as psycopg2, pyodbc, or cx_oracle</p>
+<p>For sqlite databases, the file can be not existing yet, it will be created in this case</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd><ul class="first last">
+<li>”mysql://scott:tiger&#64;hostname/dbname”</li>
+<li>”postgresql://scott:tiger&#64;localhost/test”</li>
+<li>”sqlite:///foo.db”</li>
+<li>”oracle+cx_oracle://scott:tiger&#64;tnsname”</li>
+<li>”mssql+pyodbc://scott:tiger&#64;mydsn”</li>
+</ul>
+</dd>
+</dl>
+<p>See sqlalchemy documentation for more precisions about the engine: <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/engines.html">http://docs.sqlalchemy.org/en/latest/core/engines.html</a></p>
+</li>
+<li><strong>caches</strong> – Bool to know if the caches (the rows of the database are stored in dictionaries) must be used (Put True if you count on having a lot of data) =&gt; False by default</li>
+<li><strong>list_tables</strong> – Bool to know if tables must be created to store list values (Put True to have a pure SQL version of IN operator in filters) =&gt; True by default</li>
+<li><strong>query_type</strong> – Type of query to use for the filters (‘sql’, ‘python’, ‘mixed’, or ‘guess’) =&gt; ‘mixed’ by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – <ul class="simple">
+<li>If string_engine is invalid</li>
+<li>If caches is invalid</li>
+<li>If list_tables is invalid</li>
+<li>If query_type is invalid</li>
+<li>If the schema is not coherent with the API (the database is not a populse_db database)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -389,6 +448,12 @@ are linked with AND or OR and all composed of:
 - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
 - A value</p>
 <dl class="method">
+<dt id="populse_mia.project.filter.Filter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.project.filter.Filter.generate_filter">
 <code class="descname">generate_filter</code><span class="sig-paren">(</span><em>current_project</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.generate_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the filter to the given list of scans</p>
@@ -484,6 +549,12 @@ are linked with AND or OR and all composed of:
 - unsaveModifications: unsaves the pending operations of the project</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.project.project.Project.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.project.project.Project.add_clinical_tags">
 <code class="descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.add_clinical_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
@@ -764,9 +835,6 @@ otherwise does nothing.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-populse_mia.project">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.project" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

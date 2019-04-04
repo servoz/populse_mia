@@ -131,7 +131,7 @@ subpackages/modules,To construct the mia's pipeline library.
 def launch_mia():
     """Actual launch of the mia software.
 
-    Overload the sys.excepthook handler with the my_excepthook private
+    Overload the sys.excepthook handler with the _my_excepthook private
     function. Check if the software is already opened in another instance.
     If not, the list of opened projects is cleared. Checks if saved projects
     known in the mia software still exist, and updates if necessary.
@@ -141,21 +141,21 @@ def launch_mia():
 
     :Contains:
         :Private function:
-            - my_excepthook(etype, evalue, tback) : Log all uncaught
+            - _my_excepthook(etype, evalue, tback) : Log all uncaught
               exceptions in non-interactive mode.
 
               :Contains:
                 :Private function:
-                  - clean_up() : Cleans up the mia software during "normal"
+                  - _clean_up() : Cleans up the mia software during "normal"
                     closing.
-            - verify_saved_projects(): Verify if the projects saved in \
+            - _verify_saved_projects(): Verify if the projects saved in \
               saved_projects.yml are still on the disk
 
 
-    :func my_excepthook:
+    :func _my_excepthook:
        All python exceptions are handled by function, stored in
        sys.excepthook. By overloading the sys.excepthook handler with
-       my_excepthook function, this last function is called whenever
+       _my_excepthook function, this last function is called whenever
        there is a unhandled exception (so one that exits the interpreter).
        We take advantage of it to clean up mia software before closing.
 
@@ -163,10 +163,10 @@ def launch_mia():
         :param evalue: exception instance
         :param tback: traceback object
 
-    **Func clean_up:**
+    **Func _clean_up:**
             Make a clean up of the opened projects just before exiting mia.
 
-    :func verify_saved_projects:
+    :func _verify_saved_projects:
 
         :return: the list of the deleted projects
 
@@ -177,9 +177,9 @@ def launch_mia():
     from populse_mia.project.project import Project
     from populse_mia.software_properties.config import Config
 
-    def my_excepthook(etype, evalue, tback):
+    def _my_excepthook(etype, evalue, tback):
 
-        def clean_up():
+        def _clean_up():
             from populse_mia.software_properties.config import Config
 
             global main_window
@@ -199,13 +199,13 @@ def launch_mia():
 
         # log the exception here
         print("\nException hooking in progress ...")
-        clean_up()
+        _clean_up()
         # then call the default handler
         sys.__excepthook__(etype, evalue, tback)
         # there was some issue/error/problem, so exiting
         sys.exit(1)
 
-    def verify_saved_projects():
+    def _verify_saved_projects():
 
         # Populse_MIA imports
         from populse_mia.software_properties.saved_projects \
@@ -224,7 +224,7 @@ def launch_mia():
     global main_window
     app = QApplication(sys.argv)
     QApplication.setOverrideCursor(Qt.WaitCursor)
-    sys.excepthook = my_excepthook
+    sys.excepthook = _my_excepthook
 
     # working from the scripts directory
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -241,7 +241,7 @@ def launch_mia():
         config = Config()
         config.set_opened_projects([])
 
-    deleted_projects = verify_saved_projects()
+    deleted_projects = _verify_saved_projects()
     project = Project(None, True)
     main_window = MainWindow(project, deleted_projects=deleted_projects)
     main_window.show()
@@ -278,18 +278,18 @@ def main():
 
     :Contains:
         :Private function:
-            - browse_mia_path(dialog): The user define the mia_path parameter.
-            - ok_mia_path(dialog): Check the mia_path parameter then if it
+            - _browse_mia_path(dialog): The user define the mia_path parameter.
+            - _ok_mia_path(dialog): Check the mia_path parameter then if it
                is valid close the 'MIA path selection' window.
 
-    :func browse_mia_path:
-        This method goes with the ok_mia_path function, the latter will use the
+    :func _browse_mia_path:
+        This method goes with the _ok_mia_path function, the latter will use the
         value of the mia_path parameter, defined here.
 
         :param dialog: QtWidgets.QDialog object ('msg' in the main function)
 
-    :func ok_mia_path:
-        This method goes with the browse_mia_path function, the latter having
+    :func _ok_mia_path:
+        This method goes with the _browse_mia_path function, the latter having
         allowed the definition of the mia_path parameter, the objective here
         is to check if the value of this parameter is valid. The dev_mode='no'
         and mia_path parameters are saved in the, mandatory in user mode,
@@ -303,10 +303,10 @@ def main():
 
     """
 
-    def browse_mia_path(dialog):
+    def _browse_mia_path(dialog):
         """The user define the mia_path parameter.
 
-        This method goes with the ok_mia_path function, the latter will use the
+        This method goes with the _ok_mia_path function, the latter will use the
         value of the mia_path parameter, defined here.
 
         :param dialog: QtWidgets.QDialog object ('msg' in the main function)
@@ -317,11 +317,11 @@ def main():
                                                          "path")
         dialog.file_line_edit.setText(dname)
 
-    def ok_mia_path(dialog):
+    def _ok_mia_path(dialog):
         """Check the mia_path parameter then if it is valid close the 'MIA path
            selection' window.
 
-        This method goes with the browse_mia_path function, the latter having
+        This method goes with the _browse_mia_path function, the latter having
         allowed the definition of the mia_path parameter, the objective here
         is to check if the value of this parameter is valid. The dev_mode='no'
         and mia_path parameters are saved in the, mandatory in user mode,
@@ -448,14 +448,14 @@ def main():
             msg.file_line_edit = QLineEdit()
             msg.file_line_edit.setFixedWidth(400)
             file_button = QPushButton("Browse")
-            file_button.clicked.connect(partial(browse_mia_path, msg))
+            file_button.clicked.connect(partial(_browse_mia_path, msg))
             vbox_layout.addWidget(file_label)
             hbox_layout.addWidget(msg.file_line_edit)
             hbox_layout.addWidget(file_button)
             vbox_layout.addLayout(hbox_layout)
             hbox_layout = QHBoxLayout()
             msg.ok_button = QPushButton("Ok")
-            msg.ok_button.clicked.connect(partial(ok_mia_path, msg))
+            msg.ok_button.clicked.connect(partial(_ok_mia_path, msg))
             hbox_layout.addWidget(msg.ok_button)
             vbox_layout.addLayout(hbox_layout)
             msg.setLayout(vbox_layout)
@@ -509,11 +509,11 @@ def verify_processes():
 
     :Contains:
         :Private function:
-            - deepCompDic(old_dic, new_dic, level="0"): Try to keep the
+            - _deepCompDic(old_dic, new_dic, level="0"): Try to keep the
               previous configuration existing before the update of the
               packages.
 
-    :func deepCompDic:
+    :func _deepCompDic:
         Recursive comparison of the old_dic and new _dic dictionary. If all
         keys are recursively identical, the final value at the end of the
         whole tree in old_dic is kept in the new _dic. To sum up, this
@@ -539,7 +539,7 @@ def verify_processes():
     from populse_mia.software_properties.config import Config
     from populse_mia.utils.utils import verCmp
 
-    def deepCompDic(old_dic, new_dic, level="0"):
+    def _deepCompDic(old_dic, new_dic, level="0"):
         """Try to keep the previous configuration existing before the update
            of the packages.
 
@@ -580,7 +580,7 @@ def verify_processes():
                     return False
 
             # keep the same configuration for the pipeline in new and old dic
-            elif deepCompDic(old_dic[str(key)], new_dic[str(key)], level="+1"):
+            elif _deepCompDic(old_dic[str(key)], new_dic[str(key)], level="+1"):
                 new_dic[str(key)] = old_dic[str(key)]
 
     proc_content = False
@@ -845,7 +845,7 @@ def verify_processes():
         # try to keep the previous configuration before the update
         # of the packages
         if (isinstance(proc_content, dict)) and ('Packages' in proc_content):
-            deepCompDic(proc_content['Packages'], final_pckgs['Packages'])
+            _deepCompDic(proc_content['Packages'], final_pckgs['Packages'])
 
             for item in proc_content['Packages']:
 

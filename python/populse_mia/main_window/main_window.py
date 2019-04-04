@@ -54,10 +54,9 @@ class MainWindow(QMainWindow):
     """Main window class, initializes the software appearance and defines
 interactions with the user.
 
-    - Attributes :
-        :Parameter project: current project in the software
-        :Parameter test: boolean if the widget is launched from unit tests or not
-        :Parameter deleted_projects: projects that have been deleted
+    :param project: current project in the software
+    :param test: boolean if the widget is launched from unit tests or not
+    :param deleted_projects: projects that have been deleted
 
 ..  Methods:
         - add_clinical_tags: adds the clinical tags to the database and the
@@ -100,7 +99,16 @@ interactions with the user.
     """
 
     def __init__(self, project, test=False, deleted_projects=None):
+        """Main window class, initializes the software appearance and defines
+        interactions with the user.
 
+            :Parameter:
+                - :project: current project in the software
+                - :test: boolean if the widget is launched from unit tests
+                     or not
+                - :deleted_projects: projects that have been deleted
+
+        """
         super(MainWindow, self).__init__()
 
         QApplication.restoreOverrideCursor()

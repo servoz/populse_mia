@@ -1,12 +1,10 @@
 populse\_mia.pipeline\_manager package
 ======================================
 
-Subpackages
------------
-
-.. toctree::
-
-    populse_mia.pipeline_manager.capsul_files
+.. automodule:: populse_mia.pipeline_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Submodules
 ----------
@@ -60,10 +58,3 @@ populse\_mia.pipeline\_manager.process\_mia module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: populse_mia.pipeline_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:

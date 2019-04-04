@@ -31,23 +31,8 @@
       <div class="content">
         
         
-  <div class="section" id="populse-mia-pipeline-manager-package">
-<h1>populse_mia.pipeline_manager package<a class="headerlink" href="#populse-mia-pipeline-manager-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html">populse_mia.pipeline_manager.capsul_files package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-pipeline-developper-view-module">populse_mia.pipeline_manager.capsul_files.pipeline_developper_view module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-pipeline-tools-module">populse_mia.pipeline_manager.capsul_files.pipeline_tools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#populse-mia-pipeline-manager-capsul-files-test-save-module">populse_mia.pipeline_manager.capsul_files.test_save module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populse_mia.pipeline_manager.capsul_files.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+  <div class="section" id="module-populse_mia.pipeline_manager">
+<span id="populse-mia-pipeline-manager-package"></span><h1>populse_mia.pipeline_manager package<a class="headerlink" href="#module-populse_mia.pipeline_manager" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -83,6 +68,25 @@
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the IterationTable widget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>scan_list</strong> – list of the selected database files</li>
+<li><strong>main_window</strong> – software’s main_window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.add_tag">
 <code class="descname">add_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.add_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.add_tag" title="Permalink to this definition">¶</a></dt>
@@ -208,6 +212,26 @@ filtering is done, the filter is saved in the process.</p>
 </dd>
 </dl>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>node_name</em>, <em>node</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the Filter Widget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>node_name</strong> – name of the current node</li>
+<li><strong>node</strong> – instance of the corresponding Input_Filter node</li>
+<li><strong>main_window</strong> – parent main window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.ok_clicked">
 <code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.ok_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.ok_clicked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the filter to the process and closes the widget</p>
@@ -279,6 +303,26 @@ filtering is done, the filter is saved in the process.</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.node_controller.NodeController.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>pipeline_manager_tab</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the Node Controller</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>scan_list</strong> – list of the selected database files</li>
+<li><strong>pipeline_manager_tab</strong> – parent widget</li>
+<li><strong>main_window</strong> – main window of the software</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.clearLayout">
 <code class="descname">clearLayout</code><span class="sig-paren">(</span><em>layout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.clearLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.clearLayout" title="Permalink to this definition">¶</a></dt>
@@ -475,6 +519,29 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 </dd>
 </dl>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scans_list</em>, <em>process</em>, <em>node_name</em>, <em>plug_name</em>, <em>node_controller</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the PlugFilter widget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>scans_list</strong> – list of database files to filter</li>
+<li><strong>process</strong> – process instance of the selected node</li>
+<li><strong>node_name</strong> – name of the current node</li>
+<li><strong>plug_name</strong> – name of the selected node plug</li>
+<li><strong>node_controller</strong> – parent node controller</li>
+<li><strong>main_window</strong> – parent main window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.ok_clicked">
 <code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.ok_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.ok_clicked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the new value to the node plug and closes the widget</p>
@@ -577,6 +644,20 @@ if hasattr(self.process, ‘filters’):</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the PipelineEditor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_link">
 <code class="descname">add_link</code><span class="sig-paren">(</span><em>source</em>, <em>dest</em>, <em>active</em>, <em>weak</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.add_link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_link" title="Permalink to this definition">¶</a></dt>
@@ -866,6 +947,25 @@ This method is called after each action in the PipelineEditor.</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the Pipeline Editor tabs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>scan_list</strong> – list of the selected database files</li>
+<li><strong>main_window</strong> – main window of the software</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.check_modifications">
 <code class="descname">check_modifications</code><span class="sig-paren">(</span><em>current_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.check_modifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.check_modifications" title="Permalink to this definition">¶</a></dt>
@@ -1381,6 +1481,12 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
 <p>Init progress bar</p>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.get_bricks_number">
 <code class="descname">get_bricks_number</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress.get_bricks_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.get_bricks_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the number of bricks in the current pipeline
@@ -1400,6 +1506,12 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">InitWorker</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
 <p>Thread doing the pipeline initialization</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.add_plug_value_to_database">
 <code class="descname">add_plug_value_to_database</code><span class="sig-paren">(</span><em>p_value</em>, <em>brick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.add_plug_value_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.add_plug_value_to_database" title="Permalink to this definition">¶</a></dt>
@@ -1464,6 +1576,25 @@ Trailing ” <a href="#id3"><span class="problematic" id="id4">*</span></a>” a
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the Pipeline Manager tab</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project</strong> – current project in the software</li>
+<li><strong>scan_list</strong> – list of the selected database files</li>
+<li><strong>main_window</strong> – main window of the software</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database">
 <code class="descname">add_plug_value_to_database</code><span class="sig-paren">(</span><em>p_value</em>, <em>brick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.add_plug_value_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database" title="Permalink to this definition">¶</a></dt>
@@ -1717,6 +1848,12 @@ the inputs and are stored in the database.</p>
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">RunProgress</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
 <p>Run progress bar</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -1724,6 +1861,12 @@ the inputs and are stored in the database.</p>
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">RunWorker</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
 <p>Thread doing the pipeline run</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.run">
 <code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.run" title="Permalink to this definition">¶</a></dt>
@@ -1744,6 +1887,12 @@ the inputs and are stored in the database.</p>
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.process_library.</code><code class="descname">DictionaryTreeModel</code><span class="sig-paren">(</span><em>root</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#DictionaryTreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.DictionaryTreeModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QAbstractItemModel</span></code></p>
 <p>Data model providing a tree of an arbitrary dictionary</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.DictionaryTreeModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>root</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#DictionaryTreeModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.DictionaryTreeModel.columnCount">
 <code class="descname">columnCount</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#DictionaryTreeModel.columnCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.columnCount" title="Permalink to this definition">¶</a></dt>
@@ -1833,6 +1982,12 @@ the inputs and are stored in the database.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QSortFilterProxyModel</span></code></p>
 <p>Just a test for the moment. Should be useful to use in the file dialog.</p>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.FileFilterProxyModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#FileFilterProxyModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.FileFilterProxyModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.FileFilterProxyModel.filterAcceptsRow">
 <code class="descname">filterAcceptsRow</code><span class="sig-paren">(</span><em>self</em>, <em>int</em>, <em>QModelIndex</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#FileFilterProxyModel.filterAcceptsRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.FileFilterProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1853,6 +2008,12 @@ processes that it is containing.</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.InstallProcesses.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>main_window</em>, <em>folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#InstallProcesses.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.InstallProcesses.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.InstallProcesses.get_filename">
 <code class="descname">get_filename</code><span class="sig-paren">(</span><em>folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#InstallProcesses.get_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.InstallProcesses.get_filename" title="Permalink to this definition">¶</a></dt>
@@ -1884,6 +2045,12 @@ processes that it is containing.</p>
 <dt id="populse_mia.pipeline_manager.process_library.Node">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.process_library.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>name</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.Node.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#Node.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.Node.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.Node.addChild">
 <code class="descname">addChild</code><span class="sig-paren">(</span><em>child</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#Node.addChild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.Node.addChild" title="Permalink to this definition">¶</a></dt>
@@ -1990,6 +2157,24 @@ The user can check or not each module/package</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.PackageLibrary.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>package_tree</em>, <em>paths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#PackageLibrary.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibrary.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the PackageLibrary widget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>package_tree</strong> – representation of the packages as a tree-dictionary</li>
+<li><strong>paths</strong> – list of paths to add to the system to import the packages</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.PackageLibrary.fill_item">
 <code class="descname">fill_item</code><span class="sig-paren">(</span><em>item</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#PackageLibrary.fill_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibrary.fill_item" title="Permalink to this definition">¶</a></dt>
@@ -2120,6 +2305,12 @@ package where a change of status where done.</p>
 </dd>
 </dl>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.PackageLibraryDialog.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#PackageLibraryDialog.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of the PackageLibraryDialog widget</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package">
 <code class="descname">add_package</code><span class="sig-paren">(</span><em>module_name</em>, <em>class_name=None</em>, <em>show_error=False</em>, <em>init_package_tree=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#PackageLibraryDialog.add_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a package and its modules to the package tree</p>
@@ -2233,6 +2424,12 @@ package where a change of status where done.</p>
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.process_library.</code><code class="descname">ProcessHelp</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#ProcessHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessHelp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>A widget that displays information about the selected process.</p>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.ProcessHelp.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#ProcessHelp.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessHelp.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the help.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -2254,6 +2451,12 @@ package where a change of status where done.</p>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#ProcessLibrary.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibrary.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="populse_mia.pipeline_manager.process_library.ProcessLibrary.item_library_clicked">
 <code class="descname">item_library_clicked</code><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibrary.item_library_clicked" title="Permalink to this definition">¶</a></dt>
@@ -2334,6 +2537,12 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>main_window=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#ProcessLibraryWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the ProcessLibraryWidget</p>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.load_config">
 <em class="property">static </em><code class="descname">load_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_library.html#ProcessLibraryWidget.load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.load_config" title="Permalink to this definition">¶</a></dt>
@@ -2442,6 +2651,12 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 </ul>
 </div>
 <dl class="method">
+<dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the Process class.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.get_brick_to_update">
 <code class="descname">get_brick_to_update</code><span class="sig-paren">(</span><em>bricks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.get_brick_to_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.get_brick_to_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the brick to update, given the scan list of bricks</p>
@@ -2545,9 +2760,6 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-populse_mia.pipeline_manager">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.pipeline_manager" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
