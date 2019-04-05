@@ -24,8 +24,7 @@ from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, \
 
 
 class AdvancedSearch(QWidget):
-    """
-    Class that manages the widget of the advanced search
+    """Class that manages the widget of the advanced search
 
     The advanced search creates a complex query to the database and is a
     combination of several "query lines" which are linked with AND or OR and
@@ -35,21 +34,14 @@ class AdvancedSearch(QWidget):
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
 
-    Attributes:
-        - project: current project in the software
-        - data_browser: parent data browser widget
-        - scans_list: current list of the documents
-        - tags_list: list of the visualized tags
-        - from_pipeline: True if the widget is called from the pipeline manager
-
     Methods:
         - add_row: adds a row
         - apply_filter: applies an opened filter
         - clearLayout: called to clear a layout
         - displayConditionRules: sets the list of condition choices,
-        depending on the tag type
+          depending on the tag type
         - displayValueRules: called when the condition choice is changed,
-        to update the placeholder text
+          to update the placeholder text
         - get_filters: gets the filters in list form
         - launch_search: called to start the search
         - prepare_filters: prepares the str representation of the filter
@@ -65,17 +57,15 @@ class AdvancedSearch(QWidget):
 
     def __init__(self, project, data_browser, scans_list=None,
                  tags_list=None, from_pipeline=False):
-        """
-        Initialization of the AdvancedSearch class
+        """Initialization of the AdvancedSearch class
 
         :param project: current project in the software
         :param data_browser: parent data browser widget
         :param scans_list: current list of the documents
         :param tags_list: list of the visualized tags
         :param from_pipeline: True if the widget is called from the pipeline
-        manager
+          manager
         """
-
         super().__init__()
 
         if scans_list is None:
@@ -94,11 +84,12 @@ class AdvancedSearch(QWidget):
         self.search = QPushButton("Search")
         self.search.setFixedWidth(100)
 
+
     def add_row(self):
         """
-        Adds a row
+        Add a row
         """
-
+        print("Called")
         row_layout = []
 
         # NOT choice
@@ -621,12 +612,10 @@ class AdvancedSearch(QWidget):
             row[0] = link_choice
 
     def rows_borders_removed(self):
-        """
-        inks and adds row removed from every row
-        """
+        """inks and adds row removed from every row"""
 
         # We remove all the links and the add rows
-        for i in range (0, len(self.rows)):
+        for i in range(0, len(self.rows)):
             # Plus removed from every row
             if self.rows[i][6] is not None:
                 self.rows[i][6].setParent(None)
