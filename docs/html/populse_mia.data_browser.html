@@ -31,8 +31,8 @@
       <div class="content">
         
         
-  <div class="section" id="module-populse_mia.data_browser">
-<span id="populse-mia-data-browser-package"></span><h1>populse_mia.data_browser package<a class="headerlink" href="#module-populse_mia.data_browser" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="populse-mia-data-browser-package">
+<h1>populse_mia.data_browser package<a class="headerlink" href="#populse-mia-data-browser-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -61,25 +61,34 @@ all composed of:
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>add_row: adds a row</li>
 <li>apply_filter: applies an opened filter</li>
 <li>clearLayout: called to clear a layout</li>
-<li>displayConditionRules: sets the list of condition choices,</li>
+<li><dl class="first docutils">
+<dt>displayConditionRules: sets the list of condition choices,</dt>
+<dd>depending on the tag type</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>displayValueRules: called when the condition choice is changed,</dt>
+<dd>to update the placeholder text</dd>
+</dl>
+</li>
+<li>get_filters: gets the filters in list form</li>
+<li>launch_search: called to start the search</li>
+<li>prepare_filters: prepares the str representation of the filter</li>
+<li>refresh_search: refreshes the widget</li>
+<li>remove_row: removes a row</li>
+<li>rows_borders_added: adds the links and the added row to the good rows</li>
+<li>rows_borders_removed: links and adds row removed from every row</li>
+<li>rowsContainsWidget: checks if the widget is still used</li>
+<li><dl class="first docutils">
+<dt>show_search: called when the Advanced Search button is clicked,</dt>
+<dd>reset the rows</dd>
+</dl>
+</li>
 </ul>
-<p class="last">depending on the tag type
-- displayValueRules: called when the condition choice is changed,
-to update the placeholder text
-- get_filters: gets the filters in list form
-- launch_search: called to start the search
-- prepare_filters: prepares the str representation of the filter
-- refresh_search: refreshes the widget
-- remove_row: removes a row
-- rows_borders_added: adds the links and the added row to the good rows
-- rows_borders_removed: links and adds row removed from every row
-- rowsContainsWidget: checks if the widget is still used
-- show_search: called when the Advanced Search button is clicked,
-reset the rows</p>
 </dd>
 </dl>
 <dl class="method">
@@ -95,13 +104,13 @@ reset the rows</p>
 <li><strong>data_browser</strong> – parent data browser widget</li>
 <li><strong>scans_list</strong> – current list of the documents</li>
 <li><strong>tags_list</strong> – list of the visualized tags</li>
-<li><strong>from_pipeline</strong> – True if the widget is called from the pipeline</li>
+<li><strong>from_pipeline</strong> – True if the widget is called from the pipeline
+manager</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>manager</p>
 </dd></dl>
 
 <dl class="method">
@@ -183,12 +192,13 @@ placeholder text</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>replace_all_by_fields</strong> – to replace All visualized tags by the</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>replace_all_by_fields</strong> – to replace All visualized tags by the
+list of visible fields</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Lists of filters (fields, conditions, values, links, nots)</td>
 </tr>
 </tbody>
 </table>
-<p>list of visible fields
-:return: Lists of filters (fields, conditions, values, links, nots)</p>
 </dd></dl>
 
 <dl class="method">
@@ -205,20 +215,22 @@ placeholder text</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>links</strong> – list of links (AND/OR)</li>
 <li><strong>fields</strong> – list of list of fields</li>
-<li><strong>conditions</strong> – list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</li>
+<li><strong>conditions</strong> – list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,
+BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</li>
+<li><strong>values</strong> – list of values</li>
+<li><strong>nots</strong> – list of negations (“” or NOT)</li>
+<li><strong>scans</strong> – list of scans to search in</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str representation of the filter</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
-:param values: list of values
-:param nots: list of negations (“” or NOT)
-:param scans: list of scans to search in
-:return: str representation of the filter</p>
 </dd></dl>
 
 <dl class="method">
@@ -581,7 +593,7 @@ user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The tab
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>add_tag_infos: add the tag after add tag pop-up</li>
 <li>add_tag_pop_up: display the add tag pop-up</li>
 <li>advanced_search: launch the advanced search</li>
@@ -591,19 +603,28 @@ user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The tab
 <li>create_actions: create the actions of the tab</li>
 <li>create_toolbar_menus: create the toolbar menu at the top of the tab</li>
 <li>count_table_pop_up: open the count table</li>
-<li>move_splitter: check if the viewer’s splitter is at its lowest</li>
+<li><dl class="first docutils">
+<dt>move_splitter: check if the viewer’s splitter is at its lowest</dt>
+<dd>position</dd>
+</dl>
+</li>
+<li>open_filter: open a project filter that has already been saved</li>
+<li>open_filter_infos: apply the current filter</li>
+<li>remove_tag_infos: remove user tags after the pop-up</li>
+<li>remove_tag_pop_up: display the pop-up to remove user tags</li>
+<li>reset_search_bar: reset the rapid search bar</li>
+<li><dl class="first docutils">
+<dt>search_str: search a string in the table and updates the</dt>
+<dd>visualized documents</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>send_documents_to_pipeline: send the current list of scans to the</dt>
+<dd>Pipeline Manager</dd>
+</dl>
+</li>
+<li>update_database: update the database in the software</li>
 </ul>
-<p class="last">position
-- open_filter: open a project filter that has already been saved
-- open_filter_infos: apply the current filter
-- remove_tag_infos: remove user tags after the pop-up
-- remove_tag_pop_up: display the pop-up to remove user tags
-- reset_search_bar: reset the rapid search bar
-- search_str: search a string in the table and updates the
-visualized documents
-- send_documents_to_pipeline: send the current list of scans to the
-Pipeline Manager
-- update_database: update the database in the software</p>
 </dd>
 </dl>
 <dl class="method">
@@ -851,7 +872,7 @@ Pipeline Manager
 their associated tags.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><table class="first docutils field-list" frame="void" rules="none">
+<dd><table class="first last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -867,57 +888,73 @@ their associated tags.</p>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">boolean to specify if edition is enabled</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">param activate_selection:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">dictionary containing information about</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">dictionary containing information about
+the processes that has been run to generate documents</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param link_viewer:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">boolean to specify if the table is linked to a
+viewer</td>
 </tr>
 </tbody>
 </table>
-<p class="last">the processes that has been run to generate
-documents
-:param link_viewer: boolean to specify if the table is linked to a
-viewer</p>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>add_column: add a column to the table</li>
 <li>add_columns: add columns</li>
 <li>add_path: call a pop-up to add any document to the project</li>
 <li>add_rows: insert rows if they are not already in the table</li>
-<li>change_cell_color: changes the background color and the value of</li>
+<li><dl class="first docutils">
+<dt>change_cell_color: changes the background color and the value of</dt>
+<dd>cells when edited by the user</dd>
+</dl>
+</li>
+<li>clear_cell: clear the selected cells</li>
+<li>context_menu_table: create the context menu of the table</li>
+<li><dl class="first docutils">
+<dt>display_unreset_values: display an error message when trying to</dt>
+<dd>reset user tags</dd>
+</dl>
+</li>
+<li>fill_cells_update_table: initialize and fills the cells of the table</li>
+<li>fill_headers: initialize and fill the headers of the table</li>
+<li>get_current_filter: get the current data browser selection</li>
+<li>get_index_insertion: get index insertion of a new column</li>
+<li>get_scan_row: return the row index of the scan</li>
+<li>get_tag_column: return the column index of the tag</li>
+<li>mouseReleaseEvent: called when clicking released on cells</li>
+<li><dl class="first docutils">
+<dt>multiple_sort_infos: sort the table according to the tags specify</dt>
+<dd>in list_tags</dd>
+</dl>
+</li>
+<li>multiple_sort_pop_up: display the multiple sort pop-up</li>
+<li>remove_scan: remove documents from table and project</li>
+<li>reset_cell: reset the selected cells to their original values</li>
+<li>reset_column: reset the selected columns to their original values</li>
+<li>reset_row: reset the selected rows to their original values</li>
+<li>section_moved: called when the columns of the data_browser are moved</li>
+<li><dl class="first docutils">
+<dt>select_all_column: called when single clicking on the column header</dt>
+<dd>to select the whole column</dd>
+</dl>
+</li>
+<li>select_all_columns: called from context menu to select the columns</li>
+<li>selection_changed: called when the selection is changed</li>
+<li>show_brick_history: show brick history pop-up</li>
+<li>sort_column: sort the current column</li>
+<li>sort_updated: called when the button advanced search is called</li>
+<li>update_colors: update the background of all the cells</li>
+<li>update_selection: called after searches to update the selection</li>
+<li>update_table: fill the table with the project’s data</li>
+<li>update_visualized_columns: update the visualized tags</li>
+<li><dl class="first docutils">
+<dt>update_visualized_rows: update the list of documents (scans) in</dt>
+<dd>the table</dd>
+</dl>
+</li>
+<li>visualized_tags_pop_up: display the visualized tags pop-up</li>
 </ul>
-<p class="last">cells when edited by the user
-- clear_cell: clear the selected cells
-- context_menu_table: create the context menu of the table
-- display_unreset_values: display an error message when trying to
-reset user tags
-- fill_cells_update_table: initialize and fills the cells of the table
-- fill_headers: initialize and fill the headers of the table
-- get_current_filter: get the current data browser selection
-- get_index_insertion: get index insertion of a new column
-- get_scan_row: return the row index of the scan
-- get_tag_column: return the column index of the tag
-- mouseReleaseEvent: called when clicking released on cells
-- multiple_sort_infos: sort the table according to the tags specify
-in list_tags
-- multiple_sort_pop_up: display the multiple sort pop-up
-- remove_scan: remove documents from table and project
-- reset_cell: reset the selected cells to their original values
-- reset_column: reset the selected columns to their original values
-- reset_row: reset the selected rows to their original values
-- section_moved: called when the columns of the data_browser are moved
-- select_all_column: called when single clicking on the column header
-to select the whole column
-- select_all_columns: called from context menu to select the columns
-- selection_changed: called when the selection is changed
-- show_brick_history: show brick history pop-up
-- sort_column: sort the current column
-- sort_updated: called when the button advanced search is called
-- update_colors: update the background of all the cells
-- update_selection: called after searches to update the selection
-- update_table: fill the table with the project’s data
-- update_visualized_columns: update the visualized tags
-- update_visualized_rows: update the list of documents (scans) in
-the table
-- visualized_tags_pop_up: display the visualized tags pop-up</p>
 </dd>
 </dl>
 <dl class="method">
@@ -1042,11 +1079,11 @@ otherwise the list of the visible paths in the data browser is returned</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of scans corresponding to the current selection in</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of scans corresponding to the current selection in
+the data browser</td>
 </tr>
 </tbody>
 </table>
-<p>the data browser</p>
 </dd></dl>
 
 <dl class="method">
@@ -1345,70 +1382,100 @@ dimension:</p>
 <blockquote>
 <div><ul class="simple">
 <li>3D: display all the slices.</li>
-<li>4D: display the middle slice of the third dimension for each time</li>
+<li><dl class="first docutils">
+<dt>4D: display the middle slice of the third dimension for each time</dt>
+<dd>of the fourth dimension.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>5D: display the middle slice of the third dimension for the first</dt>
+<dd>time of the fourth dimension for each time of the fifth dimension.</dd>
+</dl>
+</li>
 </ul>
-<p>of the fourth dimension.
-- 5D: display the middle slice of the third dimension for the first
-time of the fourth dimension for each time of the fifth dimension.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Note:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>idx corresponds to the index of the displayed image</li>
 <li>idx in [0, self.max_scans]</li>
-<li>most of the class’s attributes are lists of 0 to self.max_scans</li>
+<li><dl class="first docutils">
+<dt>most of the class’s attributes are lists of 0 to self.max_scans</dt>
+<dd>elements</dd>
+</dl>
+</li>
 </ul>
-<p class="last">elements</p>
 </dd>
 <dt>Attributes:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>project: current project in the software</li>
 <li>img: list of the selected images (as 3, 4 or 5D arrays)</li>
 <li>a1: list of the “3D” sliders</li>
 <li>a2: list of the “4D” sliders</li>
 <li>a3: list of the “5D” sliders</li>
-<li>imageLabel: list of labels on which to set the current image as a</li>
+<li><dl class="first docutils">
+<dt>imageLabel: list of labels on which to set the current image as a</dt>
+<dd>QPixmap</dd>
+</dl>
+</li>
+<li>txta1: list of labels “m/n” on the side of a1 sliders</li>
+<li>txta2: list of labels “m/n” on the side of a2 sliders</li>
+<li>txta3: list of labels “m/n” on the side of a3 sliders</li>
+<li>label3d: list of “3D: ” labels</li>
+<li>label4d: list of “5D: ” labels</li>
+<li>label5d: list of “5D: ” labels</li>
+<li>im_2D: list of the current 2D images to display</li>
+<li>label_description: list of the tag values to display</li>
 </ul>
-<p class="last">QPixmap
-- txta1: list of labels “m/n” on the side of a1 sliders
-- txta2: list of labels “m/n” on the side of a2 sliders
-- txta3: list of labels “m/n” on the side of a3 sliders
-- label3d: list of “3D: ” labels
-- label4d: list of “5D: ” labels
-- label5d: list of “5D: ” labels
-- im_2D: list of the current 2D images to display
-- label_description: list of the tag values to display</p>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first simple">
+<dd><ul class="first last simple">
 <li>update_nb_slices: updates the config file and the thumbnails</li>
-<li>check_box_slices_state_changed: updates the config file and the</li>
+<li><dl class="first docutils">
+<dt>check_box_slices_state_changed: updates the config file and the</dt>
+<dd>thumbnails</dd>
+</dl>
+</li>
+<li>check_box_cursors_state_changed: updates the config file</li>
+<li>verify_slices: verifies the number of selected documents</li>
+<li>show_slices: creates the thumbnails from the selected file paths</li>
+<li>setThumbnail: sets the thumbnail tag value under the image frame</li>
+<li>clearLayouts: clears the final layout</li>
+<li>createLayouts: creates the layouts</li>
+<li>image_to_pixmap: creates a 2D pixmap from a N-D Nifti image</li>
+<li>createSlider: creates a slider</li>
+<li>enableSliders: enables each slider of the selected index</li>
+<li><dl class="first docutils">
+<dt>boxSlider: creates sliders, their connections and thumbnail labels</dt>
+<dd>for a selected index</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>displayPosValue: displays the position of each cursor for the</dt>
+<dd>selected index</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>createFieldValue: creates a field where will be displayed the</dt>
+<dd>position of a cursor</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>createDimensionLabels: creates the dimension labels for the</dt>
+<dd>selected index</dd>
+</dl>
+</li>
+<li>changePosValue: changes the value of a cursor for the selected index</li>
+<li>navigImage: displays the 2D image for the selected index</li>
+<li><dl class="first docutils">
+<dt>indexImage: updates the sliders values depending on the size of</dt>
+<dd>the selected image</dd>
+</dl>
+</li>
+<li>openTagsPopUp: opens a pop-up to select the legend of the thumbnails</li>
+<li>image2DModifications: applies modifications to the image to
+display it correctly</li>
 </ul>
-<p class="last">thumbnails
-- check_box_cursors_state_changed: updates the config file
-- verify_slices: verifies the number of selected documents
-- show_slices: creates the thumbnails from the selected file paths
-- setThumbnail: sets the thumbnail tag value under the image frame
-- clearLayouts: clears the final layout
-- createLayouts: creates the layouts
-- image_to_pixmap: creates a 2D pixmap from a N-D Nifti image
-- createSlider: creates a slider
-- enableSliders: enables each slider of the selected index
-- boxSlider: creates sliders, their connections and thumbnail labels
-for a selected index
-- displayPosValue: displays the position of each cursor for the
-selected index
-- createFieldValue: creates a field where will be displayed the
-position of a cursor
-- createDimensionLabels: creates the dimension labels for the
-selected index
-- changePosValue: changes the value of a cursor for the selected index
-- navigImage: displays the 2D image for the selected index
-- indexImage: updates the sliders values depending on the size of
-the selected image
-- openTagsPopUp: opens a pop-up to select the legend of the thumbnails
-- image2DModifications: applies modifications to the image to
-display it correctly</p>
 </dd>
 </dl>
 <dl class="method">
@@ -1814,6 +1881,9 @@ Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="module-populse_mia.data_browser">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.data_browser" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

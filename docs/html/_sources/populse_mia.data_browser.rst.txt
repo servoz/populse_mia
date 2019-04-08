@@ -1,11 +1,6 @@
 populse\_mia.data\_browser package
 ==================================
 
-.. automodule:: populse_mia.data_browser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -58,3 +53,10 @@ populse\_mia.data\_browser.rapid\_search module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.data_browser
+    :members:
+    :undoc-members:
+    :show-inheritance:

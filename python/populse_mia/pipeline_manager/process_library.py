@@ -750,8 +750,7 @@ class PackageLibraryDialog(QDialog):
             self.line_edit.setText(file_name)
 
     def add_package_with_text(self):
-        """
-        Adds a package from the line edit's text
+        """Adds a package from the line edit's text
 
         """
         if self.is_path:  # Currently the self.is_path = False
@@ -835,7 +834,8 @@ class PackageLibraryDialog(QDialog):
         :package_library.package_tree: current package tree known in Package Library window
 
         :show_error: display error in a message box in case of error. If False,
-        errors are silent and error messages returned at the end of execution
+           errors are silent and error messages returned at the end of execution
+
         """
 
         if init_package_tree is True:

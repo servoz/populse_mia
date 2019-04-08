@@ -1,3 +1,7 @@
+.. :orphan: is used below to try to remove the following warning: checking consistency... /home/econdami/Git_Projects/populse_mia/docs/source/populse_mia.pipeline_manager.capsul_files.rst: WARNING: document isn't included in any toctree
+   
+:orphan:
+   
 populse\_mia.pipeline\_manager.capsul\_files package
 ====================================================
 

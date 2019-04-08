@@ -36,7 +36,7 @@ from populse_mia.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.pop_ups.pop_up_select_iteration import PopUpSelectIteration
 from populse_mia.pipeline_manager.iteration_table import IterationTable
 
-# from populse_mia.pipeline_manager.capsul_files.pipeline_developper_view import PipelineDevelopperView
+
 #from capsul.qt_gui.widgets.pipeline_developper_view import PipelineDevelopperView
 
 from populse_mia.project.project import COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, \

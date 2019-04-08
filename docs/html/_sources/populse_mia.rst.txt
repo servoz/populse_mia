@@ -1,11 +1,6 @@
 populse\_mia package
 ====================
 
-.. automodule:: populse_mia
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 
@@ -65,3 +60,10 @@ populse\_mia.test module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia
+    :members:
+    :undoc-members:
+    :show-inheritance:

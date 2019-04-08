@@ -452,8 +452,7 @@ class NodeController(QWidget):
 
 
 class PlugFilter(QWidget):
-    """
-    Filter widget used on a node plug
+    """Filter widget used on a node plug
 
     The widget displays a browser with the selected files of the database,
     a rapid search and an advanced search to filter these files. Once the
@@ -506,13 +505,12 @@ class PlugFilter(QWidget):
         self.process = process
         self.plug_name = plug_name
 
-        '''
-        # If the filter is saved in the node plug (not the case now)
-        if hasattr(self.process, 'filters'):
-            if self.plug_name in self.process.filters.keys():
-                print("Already a filter for {0} plug of {1} process".format(self.plug_name, self.process.name))
-                # TODO: fill the advanced search with the corresponding filter
-        '''
+    
+#        # If the filter is saved in the node plug (not the case now)
+#        if hasattr(self.process, 'filters'):
+#            if self.plug_name in self.process.filters.keys():
+#                print("Already a filter for {0} plug of {1} process".format(self.plug_name, self.process.name))
+#                # TODO: fill the advanced search with the corresponding filter:orphan:
 
         # Verifying that the scan names begin not with a "/" or a "\"
         if scans_list:

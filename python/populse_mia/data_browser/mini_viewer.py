@@ -35,7 +35,21 @@ class MiniViewer(QWidget):
     image per scan with cursors to move in five dimensions or with all images
     of the greater dimension of the scan.
 
-    ..
+    When the latter is selected, the displayed images depends on their
+    dimension:
+
+        - 3D: display all the slices.
+        - 4D: display the middle slice of the third dimension for each time
+           of the fourth dimension.
+        - 5D: display the middle slice of the third dimension for the first
+           time of the fourth dimension for each time of the fifth dimension.
+
+    Note:
+        - idx corresponds to the index of the displayed image
+        - idx in [0, self.max_scans]
+        - most of the class's attributes are lists of 0 to self.max_scans
+           elements
+
     Methods:
         - __init__: initialise the MiniViewer object
         - boxSlider: create sliders, their connections and thumbnail labels

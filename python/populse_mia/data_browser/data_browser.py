@@ -91,16 +91,16 @@ class DataBrowser(QWidget):
         - create_toolbar_menus: create the toolbar menu at the top of the tab
         - count_table_pop_up: open the count table
         - move_splitter: check if the viewer's splitter is at its lowest
-        position
+           position
         - open_filter: open a project filter that has already been saved
         - open_filter_infos: apply the current filter
         - remove_tag_infos: remove user tags after the pop-up
         - remove_tag_pop_up: display the pop-up to remove user tags
         - reset_search_bar: reset the rapid search bar
         - search_str: search a string in the table and updates the
-        visualized documents
+           visualized documents
         - send_documents_to_pipeline: send the current list of scans to the
-        Pipeline Manager
+           Pipeline Manager
         - update_database: update the database in the software
 
     """
@@ -691,10 +691,9 @@ class TableDataBrowser(QTableWidget):
         :param tags_to_display: list of tags to display
         :param update_values: boolean to specify if edition is enabled
         :param activate_selection: dictionary containing information about
-        the processes that has been run to generate
-        documents
+           the processes that has been run to generate documents
         :param link_viewer: boolean to specify if the table is linked to a
-        viewer
+           viewer
 
     Methods:
         - add_column: add a column to the table
@@ -702,11 +701,11 @@ class TableDataBrowser(QTableWidget):
         - add_path: call a pop-up to add any document to the project
         - add_rows: insert rows if they are not already in the table
         - change_cell_color: changes the background color and the value of
-        cells when edited by the user
+           cells when edited by the user
         - clear_cell: clear the selected cells
         - context_menu_table: create the context menu of the table
         - display_unreset_values: display an error message when trying to
-        reset user tags
+           reset user tags
         - fill_cells_update_table: initialize and fills the cells of the table
         - fill_headers: initialize and fill the headers of the table
         - get_current_filter: get the current data browser selection
@@ -715,7 +714,7 @@ class TableDataBrowser(QTableWidget):
         - get_tag_column: return the column index of the tag
         - mouseReleaseEvent: called when clicking released on cells
         - multiple_sort_infos: sort the table according to the tags specify
-        in list_tags
+           in list_tags
         - multiple_sort_pop_up: display the multiple sort pop-up
         - remove_scan: remove documents from table and project
         - reset_cell: reset the selected cells to their original values
@@ -723,7 +722,7 @@ class TableDataBrowser(QTableWidget):
         - reset_row: reset the selected rows to their original values
         - section_moved: called when the columns of the data_browser are moved
         - select_all_column: called when single clicking on the column header
-        to select the whole column
+           to select the whole column
         - select_all_columns: called from context menu to select the columns
         - selection_changed: called when the selection is changed
         - show_brick_history: show brick history pop-up
@@ -734,7 +733,7 @@ class TableDataBrowser(QTableWidget):
         - update_table: fill the table with the project's data
         - update_visualized_columns: update the visualized tags
         - update_visualized_rows: update the list of documents (scans) in
-        the table
+           the table
         - visualized_tags_pop_up: display the visualized tags pop-up
 
     """
@@ -1484,7 +1483,8 @@ class TableDataBrowser(QTableWidget):
         otherwise the list of the visible paths in the data browser is returned
 
         :return: the list of scans corresponding to the current selection in
-        the data browser
+           the data browser
+
         """
 
         return_list = []

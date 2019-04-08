@@ -1,11 +1,6 @@
 populse\_mia.main\_window package
 =================================
 
-.. automodule:: populse_mia.main_window
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -18,3 +13,10 @@ populse\_mia.main\_window.main\_window module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: populse_mia.main_window
+    :members:
+    :undoc-members:
+    :show-inheritance:

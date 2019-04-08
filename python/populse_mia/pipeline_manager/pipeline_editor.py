@@ -292,7 +292,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     def get_tab_name_by_index(self, idx):
         """
         Gets the tab name of the editor at the given index.
-        Trailing " *" and ampersand ("&") characters are removed.
+        Trailing " \*" and ampersand ("&") characters are removed.
 
         :param idx: index of the editor
         :return: the tab name corresponding to the index
@@ -308,7 +308,7 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     def get_current_tab_name(self):
         """
         Gets the tab name of the editor in the current tab.
-        Trailing " *" and ampersand ("&") characters are removed.
+        Trailing " \*" and ampersand ("&") characters are removed.
 
         :return: the current tab name
         """
