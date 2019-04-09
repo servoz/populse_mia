@@ -281,7 +281,6 @@ class AdvancedSearch(QWidget):
 
         tag_name = field.currentText()
         tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
-        print(tag_row)
         no_operators_tags = []
         for list_type in LIST_TYPES:
             no_operators_tags.append(list_type)
@@ -464,7 +463,6 @@ class AdvancedSearch(QWidget):
         :return: str representation of the filter
         """
 
-        print(fields)
         row_queries = []
         final_query = ""
 
