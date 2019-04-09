@@ -74,7 +74,6 @@ class PipelineManagerTab(QWidget):
         - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
         - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
         - init_pipeline: initializes the current pipeline of the pipeline editor
-        - init_pipeline: initializes the current pipeline of the pipeline editor (without progress bar)
         - runPipeline: runs the current pipeline of the pipeline editor
         - displayNodeParameters: displays the node controller when a node is clicked
     """
