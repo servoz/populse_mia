@@ -371,7 +371,6 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         :param editor: searched pipeline editor
         :return: the index corresponding to the editor
         """
-
         for idx in range(self.count()-1):
             if self.get_editor_by_index(idx) == editor:
                 return idx
@@ -386,15 +385,16 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         return self.get_current_editor().scene.pipeline
 
     def save_pipeline(self, new_file_name=None):
-        """
-        Saves the pipeline of the current editor
+        """Saves the pipeline of the current editor.
 
         """
         if new_file_name is None:
             # Doing a "Save as" action
-            new_file_name = os.path.basename(self.get_current_editor().save_pipeline())
+            new_file_name = os.path.basename(self.get_current_editor(
+                                                              ).save_pipeline())
 
-            if new_file_name and os.path.basename(self.get_current_filename()) != new_file_name:
+            if (new_file_name and
+                os.path.basename(self.get_current_filename()) != new_file_name):
                 self.setTabText(self.currentIndex(), new_file_name)
         else:
             # Saving the current pipeline
@@ -416,11 +416,12 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
             old_pos = pipeline.node_position
             pipeline.node_position = posdict
             save_pipeline(pipeline, new_file_name)
-            self.get_current_editor()._pipeline_filename = unicode(new_file_name)
+            self.get_current_editor()._pipeline_filename = unicode(
+                                                                  new_file_name)
             pipeline.node_position = old_pos
-
             self.pipeline_saved.emit(new_file_name)
-            self.setTabText(self.currentIndex(), os.path.basename(new_file_name))
+            self.setTabText(self.currentIndex(),
+                            os.path.basename(new_file_name))
 
     def load_pipeline(self, filename=None):
         """
@@ -1338,15 +1339,27 @@ class PipelineEditor(PipelineDevelopperView):
             pop_up.exec_()
 
     def save_pipeline(self, filename=None):
-        """
-        Saves the pipeline
+        """Saves the pipeline
 
         :return: the pipeline file name
-        """ 
+        """
         config = Config()
         if not filename:
             pipeline = self.scene.pipeline
-            folder = os.path.abspath(os.path.join(config.get_mia_path(), 'processes', 'User_processes'))
+            folder = os.path.abspath(os.path.join(config.get_mia_path(),
+                                                  'processes',
+                                                  'User_processes'))
+
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+
+            if not os.path.isfile(os.path.abspath(os.path.join(folder,
+                                                               '__init__.py'))):
+                                  
+                with open(os.path.abspath(os.path.join(folder, '__init__.py')),
+                          'w'):
+                    pass
+
             filename = QtWidgets.QFileDialog.getSaveFileName(
                 None, 'Save the pipeline', folder,
                 'Compatible files (*.py);; All (*)')[0]
@@ -1399,21 +1412,22 @@ class PipelineEditor(PipelineDevelopperView):
 
 
 def save_pipeline(pipeline, filename):
-    '''
-    Save the pipeline either in XML or .py source file
+    '''Save the pipeline either in XML or .py source file
+
     '''
     formats = {'.py': save_py_pipeline,
                '.xml': save_xml_pipeline}
-
     saved = False
+    
     for ext, writer in six.iteritems(formats):
+        
         if filename.endswith(ext):
             writer(pipeline, filename)
             saved = True
             break
-        
+
     if not saved:
-        # fallback to XML
+        # fallback to .py
         save_py_pipeline(pipeline, filename)
 
 def get_path(name, dictionary, prev_paths=None):
