@@ -20,20 +20,26 @@ from populse_mia.project.project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC
 
 class ProcessMIA(Process):
     """
-    Class overriding the default capsul Process class, in order to personalize the run in MIA
+    Class overriding the default capsul Process class, in order to personalize
+       the run in MIA
 
     Methods:
         - _after_run_process: method called after the process being run
         - _before_run_process: method called before running the process
-        - get_brick_to_update: gives the brick to update given the scan list of bricks
-        - get_scan_bricks: gives the list of bricks given an output value
-        - list_outputs: generates the outputs of the process (need to be overridden)
-        - manage_brick_after_run: manages the brick history after the run (Done status)
-        - manage_brick_before_run: updates process history before running the process
-        - manage_brick_output_after_run: manages the bricks history before the run
-        - manage_brick_output_before_run: manages the bricks history before the run
-        - manage_matlab_launch_parameters: sets the Matlab's config parameters when a Nipype process is used
-        - remove_brick_output: removes the bricks from the outputs
+        - get_brick_to_update: give the brick to update given the scan list
+           of bricks
+        - get_scan_bricks: give the list of bricks given an output value
+        - list_outputs: generates the outputs of the process (need to be
+           overridden)
+        - manage_brick_after_run: update process history after the run
+           (Done status)
+        - manage_brick_before_run: update process history before running
+           the process
+        - manage_brick_output_after_run: manage the bricks history before
+           the run
+        - manage_brick_output_before_run: manage the bricks history before
+           the run
+        - remove_brick_output: remove the bricks from the outputs
 
 
 
@@ -169,17 +175,6 @@ class ProcessMIA(Process):
             self.project.session.set_value(COLLECTION_BRICK, brick_to_update,
                                            BRICK_EXEC, "Not Done")
             self.project.saveModifications()
-
-    def manage_matlab_launch_parameters(self):
-        """
-        Sets the Matlab's config parameters when a Nipype process is used
-        """
-
-        if hasattr(self, "process"):
-            self.process.inputs.use_mcr = self.use_mcr
-            self.process.inputs.paths = self.paths
-            self.process.inputs.matlab_cmd = self.matlab_cmd
-            self.process.inputs.mfile = self.mfile
 
     def remove_brick_output(self, brick, output):
         """
