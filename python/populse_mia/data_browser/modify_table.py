@@ -9,32 +9,26 @@
 from datetime import datetime
 
 # PyQt5 imports
-from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout,\
+    QTableWidgetItem, QPushButton, QMessageBox
 
 # Populse_MIA imports
 from populse_mia.utils.utils import check_value_type
 from populse_mia.project.project import COLLECTION_CURRENT
 
 # Populse_db imports
-from populse_db.database import FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_STRING, \
-    FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
+from populse_db.database import FIELD_TYPE_LIST_INTEGER, \
+    FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_DATE, \
+    FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME
 
 
 class ModifyTable(QDialog):
     """
-    Is called when the user wants to verify precisely the scans of the project.
-
-    Attributes:
-        - project: current project in the software
-        - values: list of values of the cell
-        - types: value types
-        - scans: scans of the rows
-        - tags: tags of the columns
-        - table: table widget
+    Verify precisely the scans of the project when called by the user.
 
     Methods:
-        - fill_table: fills the table
-        - update_table_values: updates the table in the database
+        - fill_table: fill the table
+        - update_table_values: update the table in the database
     """
 
     def __init__(self, project, value, types, scans, tags):
@@ -85,9 +79,7 @@ class ModifyTable(QDialog):
         self.setLayout(self.v_box_final)
 
     def fill_table(self):
-        """
-        Fills the table
-        """
+        """Fill the table."""
         # Sizes
         self.table.setColumnCount(len(self.value))
         self.table.setRowCount(1)
@@ -116,9 +108,8 @@ class ModifyTable(QDialog):
             self.table.setFixedHeight(total_height + 40)
 
     def update_table_values(self):
-        """
-        Updates the table in the database after Ok is clicked
-        """
+        """Update the table in the database when the 'OK' button is clicked."""
+
         valid = True
 
         # For each value, type checked
@@ -141,7 +132,9 @@ class ModifyTable(QDialog):
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)
                 msg.setText("Invalid value")
-                msg.setInformativeText("The value " + text + " is invalid with the type " + type_problem)
+                msg.setInformativeText("The value " + text +
+                                       " is invalid with the type " +
+                                       type_problem)
                 msg.setWindowTitle("Warning")
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.buttonClicked.connect(msg.close)
@@ -154,7 +147,8 @@ class ModifyTable(QDialog):
             for cell in range (0, len(self.scans)):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
-                tag_object = self.project.session.get_field(COLLECTION_CURRENT, tag)
+                tag_object = self.project.session.get_field(
+                    COLLECTION_CURRENT, tag)
                 tag_type = tag_object.type
 
                 database_value = []
@@ -184,6 +178,7 @@ class ModifyTable(QDialog):
                         database_value.append(subvalue)
 
                 # Database updated for every cell
-                self.project.session.set_value(COLLECTION_CURRENT, scan, tag, database_value)
+                self.project.session.set_value(
+                    COLLECTION_CURRENT, scan, tag, database_value)
 
             self.close()

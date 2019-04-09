@@ -14,18 +14,20 @@ from populse_mia.project.project import TAG_FILENAME, TAG_BRICKS
 
 
 class RapidSearch(QLineEdit):
-    """
-    Widget used to search for a pattern in the table (for all the visualized tags).
+    """Widget used to search for a pattern in the table (for all the visualized
+       tags).
 
-    Enter % to replace any string, _ to replace any character , *Not Defined* for the scans with missing value(s).
+    Enter % to replace any string, _ to replace any character , *Not Defined*
+    for the scans with missing value(s).
     Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”
 
     Attributes:
         - databrowser: parent data browser widget
 
     Methods:
-        - prepare_not_defined_filter: prepares the rapid search filter for not defined values
         - prepare_filter: prepares the rapid search filter
+        - prepare_not_defined_filter: prepares the rapid search filter for not
+          defined values
     """
 
     def __init__(self, databrowser):
@@ -33,16 +35,18 @@ class RapidSearch(QLineEdit):
         super().__init__()
 
         self.databrowser = databrowser
-        self.setPlaceholderText("Rapid search, enter % to replace any string, _ to replace any character ," +
-                                " *Not Defined* for the scans with missing value(s),  " +
-                                "dates are in the following format: yyyy-mm-dd hh:mm:ss.fff")
+        self.setPlaceholderText("Rapid search, enter % to replace any string,"
+                                " _ to replace any character, *Not Defined* "
+                                "for the scans with missing value(s), "
+                                "dates are in the following format: "
+                                "yyyy-mm-dd hh:mm:ss.fff")
 
     def prepare_not_defined_filter(self, tags):
-        """
-        Prepares the rapid search filter for not defined values
+        """Prepare the rapid search filter for not defined values.
 
         :param tags: list of tags to take into account
-        :return: str filter corresponding to the rapid search for not defined values
+        :return: str filter corresponding to the rapid search for not defined
+          values
         """
 
         query = ""
@@ -68,8 +72,7 @@ class RapidSearch(QLineEdit):
 
     @staticmethod
     def prepare_filter(search, tags, scans):
-        """
-        Prepares the rapid search filter
+        """Prepare the rapid search filter.
 
         :param search: Search (str)
         :param tags: List of tags to take into account

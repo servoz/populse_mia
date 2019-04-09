@@ -1812,7 +1812,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline.nodes['smooth1'].set_plug_value('out_prefix', 'TEST')
 
         # Initialization of the pipeline
-        self.main_window.pipeline_manager.initPipeline()
+        self.main_window.pipeline_manager.init_pipeline()
 
         # Verifying the results
         self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('_smoothed_files'),
@@ -1873,7 +1873,7 @@ class TestMIAPipelineManager(unittest.TestCase):
     #     pipeline.nodes['roi_list_generator1'].set_plug_value('pos', ['TEST1', 'TEST2'])
     #
     #     # Initialization/run of the pipeline
-    #     self.main_window.pipeline_manager.initPipeline()
+    #     self.main_window.pipeline_manager.init_pipeline()
     #     self.main_window.pipeline_manager.runPipeline()
     #
     #     # Verifying the results
@@ -1958,7 +1958,7 @@ class TestMIAPipelineManager(unittest.TestCase):
     #     pipeline.nodes['coregister1'].set_plug_value('source', nii_path)
     #
     #     # Initialization/run of the pipeline
-    #     self.main_window.pipeline_manager.initPipeline()
+    #     self.main_window.pipeline_manager.init_pipeline()
     #
     #     # Verifying the results
     #     self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('smoothed_files'),

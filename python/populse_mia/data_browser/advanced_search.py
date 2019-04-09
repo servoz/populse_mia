@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*- #
+"""
+Module to define the advanced search.
+
+Contains:
+    Class:
+        - AdvancedSearch
+"""
+
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -24,8 +34,7 @@ from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, \
 
 
 class AdvancedSearch(QWidget):
-    """
-    Class that manages the widget of the advanced search
+    """Class that manages the widget of the advanced search
 
     The advanced search creates a complex query to the database and is a
     combination of several "query lines" which are linked with AND or OR and
@@ -35,48 +44,42 @@ class AdvancedSearch(QWidget):
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
 
-    Attributes:
-        - project: current project in the software
-        - data_browser: parent data browser widget
-        - scans_list: current list of the documents
-        - tags_list: list of the visualized tags
-        - from_pipeline: True if the widget is called from the pipeline manager
-
     Methods:
-        - add_row: adds a row
-        - apply_filter: applies an opened filter
-        - clearLayout: called to clear a layout
-        - displayConditionRules: sets the list of condition choices,
+        - add_search_bar: create and define the advanced research bar
+        - apply_filter: apply an opened filter to update the table.
+        - displayConditionRules: set the list of condition choices,
            depending on the tag type
-        - displayValueRules: called when the condition choice is changed,
-           to update the placeholder text
-        - get_filters: gets the filters in list form
-        - launch_search: called to start the search
-        - prepare_filters: prepares the str representation of the filter
-        - refresh_search: refreshes the widget
-        - remove_row: removes a row
-        - rows_borders_added: adds the links and the added row to the good rows
-        - rows_borders_removed: links and adds row removed from every row
-        - rowsContainsWidget: checks if the widget is still used
-        - show_search: called when the Advanced Search button is clicked,
-           reset the rows
+        - displayValueRules: update the placeholder text when the
+           condition choice is changed,
+        - get_filters: get the filters in list form
+        - launch_search: start the search and update the table
+        - prepare_filters: prepare the str representation of the filter
+        - refresh_search: refresh the widget
+        - remove_row: remove a row
+        - rows_borders_added: add the links and the added row to the good rows
+        - rows_borders_removed: link and adds row removed from every row
+        - show_search: reset the rows when the Advanced Search button is
+           clicked,
+
+
+
+       - clearLayout: called to clear a layout (not using it resolve issue #72)
+       - rowsContainsWidget: check if the widget is still used
 
     """
 
     def __init__(self, project, data_browser, scans_list=None,
                  tags_list=None, from_pipeline=False):
-        """
-        Initialization of the AdvancedSearch class
+        """Initialization of the AdvancedSearch class
 
         :param project: current project in the software
         :param data_browser: parent data browser widget
         :param scans_list: current list of the documents
         :param tags_list: list of the visualized tags
         :param from_pipeline: True if the widget is called from the pipeline
-           manager
+          manager
 
         """
-
         super().__init__()
 
         if scans_list is None:
@@ -95,11 +98,8 @@ class AdvancedSearch(QWidget):
         self.search = QPushButton("Search")
         self.search.setFixedWidth(100)
 
-    def add_row(self):
-        """
-        Adds a row
-        """
-
+    def add_search_bar(self):
+        """Create and define the advanced research bar."""
         row_layout = []
 
         # NOT choice
@@ -176,8 +176,7 @@ class AdvancedSearch(QWidget):
         self.displayConditionRules(field_choice, condition_choice)
 
     def apply_filter(self, filter):
-        """
-        Applies an opened filter
+        """Apply an opened filter to update the table.
 
         :param filter: Filter object opened to apply
         """
@@ -191,7 +190,7 @@ class AdvancedSearch(QWidget):
         fields = filter.fields
 
         for i in range(0, len(nots)):
-            self.add_row()
+            self.add_search_bar()
             row = self.rows[i]
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
@@ -255,26 +254,26 @@ class AdvancedSearch(QWidget):
 
         self.dataBrowser.table_data.update_visualized_rows(old_rows)
 
-    def clearLayout(self, layout):
-        """
-        Called to clear a layout
-
-        :param layout: layout to clear
-        """
-        if layout is not None:
-            while layout.count():
-                item = layout.takeAt(0)
-                widget = item.widget()
-                # We clear the widget only if the row does not exist anymore
-                if widget is not None and not self.rowsContainsWidget(widget):
-                    pass
-                    widget.deleteLater()
-                else:
-                    self.clearLayout(item.layout())
+    # def clearLayout(self, layout):
+    #     """
+    #     Called to clear a layout
+    #
+    #     :param layout: layout to clear
+    #     """
+    #     if layout is not None:
+    #         while layout.count():
+    #             item = layout.takeAt(0)
+    #             widget = item.widget()
+    #             # We clear the widget only if the row does not exist anymore
+    #             if widget is not None and not self.rowsContainsWidget(
+    #                     widget):
+    #                 pass
+    #                 widget.deleteLater()
+    #             else:
+    #                 self.clearLayout(item.layout())
 
     def displayConditionRules(self, field, condition):
-        """
-        Sets the list of condition choices, depending on the tag type
+        """Set the list of condition choices, depending on the tag type
 
         :param field: field
         :param condition: condition
@@ -282,31 +281,30 @@ class AdvancedSearch(QWidget):
 
         tag_name = field.currentText()
         tag_row = self.project.session.get_field(COLLECTION_CURRENT, tag_name)
-
         no_operators_tags = []
         for list_type in LIST_TYPES:
             no_operators_tags.append(list_type)
         no_operators_tags.append(FIELD_TYPE_STRING)
         no_operators_tags.append(FIELD_TYPE_BOOLEAN)
+        no_operators_tags.append(None)
 
-        if tag_row is not None and tag_row.type in no_operators_tags:
+        if (tag_row is not None and tag_row.type in no_operators_tags) or \
+                tag_name == "All visualized tags":
             condition.removeItem(condition.findText("<"))
             condition.removeItem(condition.findText(">"))
             condition.removeItem(condition.findText("<="))
             condition.removeItem(condition.findText(">="))
             condition.removeItem(condition.findText("BETWEEN"))
-
-        if tag_row is not None and tag_row.type in LIST_TYPES:
-            condition.removeItem(condition.findText("IN"))
-
-        if tag_row is None or tag_row.type not in no_operators_tags:
+        elif tag_row is None or tag_row.type not in no_operators_tags:
             operators_to_reput = ["<", ">", "<=", ">=", "BETWEEN"]
             for operator in operators_to_reput:
                 is_op_existing = condition.findText(operator) != -1
                 if not is_op_existing:
                     condition.addItem(operator)
 
-        if tag_row is None or tag_row.type not in LIST_TYPES:
+        if tag_row is not None and tag_row.type in LIST_TYPES:
+            condition.removeItem(condition.findText("IN"))
+        elif tag_row is None or tag_row.type not in LIST_TYPES:
             operators_to_reput = ["IN"]
             for operator in operators_to_reput:
                 is_op_existing = condition.findText(operator) != -1
@@ -316,9 +314,8 @@ class AdvancedSearch(QWidget):
         condition.model().sort(0)
 
     def displayValueRules(self, choice, value):
-        """
-        Called when the condition choice is changed, to update the
-        placeholder text
+        """Update the placeholder text. when the condition choice is
+           changed.
 
         :param choice: choice
         :param value: value
@@ -342,8 +339,7 @@ class AdvancedSearch(QWidget):
             value.setPlaceholderText("")
 
     def get_filters(self, replace_all_by_fields):
-        """
-        Gets the filters in list form
+        """Get the filters in a list
 
         :param replace_all_by_fields: to replace All visualized tags by the
            list of visible fields
@@ -406,9 +402,7 @@ class AdvancedSearch(QWidget):
         return fields, conditions, values, links, nots
 
     def launch_search(self):
-        """
-        Called to start the search
-        """
+        """Start the search and update the table"""
 
         # Filters gotten
         (fields, conditions, values, links, nots) = self.get_filters(True)
@@ -457,11 +451,10 @@ class AdvancedSearch(QWidget):
 
     @staticmethod
     def prepare_filters(links, fields, conditions, values, nots, scans):
-        """
-        Prepares the str representation of the filter
+        """Prepare the str representation of the filter
 
         :param links: list of links (AND/OR)
-        :param fields: list of list of fields
+        :param fields: list of fields
         :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
            BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
         :param values: list of values
@@ -535,30 +528,30 @@ class AdvancedSearch(QWidget):
 
     def refresh_search(self):
         """
-        Refreshes the widget
+        Refresh the widget
         """
 
         # Old values stored
         (fields, conditions, values, links, nots) = self.get_filters(False)
 
         # We remove the old layout
-        self.clearLayout(self.layout())
+        # self.clearLayout(self.layout())
         QObjectCleanupHandler().add(self.layout())
 
         # Links and add rows removed from every row
         self.rows_borders_removed()
 
-        # Links and add rows reput in the good rows
+        # Links and add rows put back in the good rows
         self.rows_borders_added(links)
 
         master_layout = QVBoxLayout()
         main_layout = QGridLayout()
 
         # Everything added to the layout
-        for i in range (0, len(self.rows)):
+        for i in range(0, len(self.rows)):
             for j in range(0, 7):
                 widget = self.rows[i][j]
-                if widget != None:
+                if widget is not None:
                     main_layout.addWidget(widget, i, j)
 
         # Search button added at the end
@@ -575,8 +568,7 @@ class AdvancedSearch(QWidget):
         self.setLayout(master_layout)
 
     def remove_row(self, row_layout):
-        """
-        Removes a row
+        """Remove a row
 
         :param row_layout: Row to remove
         """
@@ -590,8 +582,7 @@ class AdvancedSearch(QWidget):
         self.refresh_search()
 
     def rows_borders_added(self, links):
-        """
-        Adds the links and the added row to the good rows
+        """Add the links and the added row to the good rows
 
         :param links: Old links to reput
         """
@@ -600,15 +591,15 @@ class AdvancedSearch(QWidget):
         sources_images_dir = os.path.join(
             os.path.dirname(os.path.dirname(
                 os.path.realpath(__file__))), "sources_images")
-        add_row_label = ClickableLabel()
-        add_row_label.setObjectName('plus')
-        add_row_picture = QPixmap(
+        add_search_bar_label = ClickableLabel()
+        add_search_bar_label.setObjectName('plus')
+        add_search_bar_picture = QPixmap(
             os.path.relpath(
                 os.path.join(sources_images_dir, "green_plus.png")))
-        add_row_picture = add_row_picture.scaledToHeight(20)
-        add_row_label.setPixmap(add_row_picture)
-        add_row_label.clicked.connect(self.add_row)
-        self.rows[len(self.rows) - 1][6] = add_row_label
+        add_search_bar_picture = add_search_bar_picture.scaledToHeight(20)
+        add_search_bar_label.setPixmap(add_search_bar_picture)
+        add_search_bar_label.clicked.connect(self.add_search_bar)
+        self.rows[len(self.rows) - 1][6] = add_search_bar_label
 
         # Link added to every row, except the first one
         for i in range(1, len(self.rows)):
@@ -622,12 +613,10 @@ class AdvancedSearch(QWidget):
             row[0] = link_choice
 
     def rows_borders_removed(self):
-        """
-        inks and adds row removed from every row
-        """
+        """Link and add row removed from every row"""
 
         # We remove all the links and the add rows
-        for i in range (0, len(self.rows)):
+        for i in range(0, len(self.rows)):
             # Plus removed from every row
             if self.rows[i][6] is not None:
                 self.rows[i][6].setParent(None)
@@ -639,24 +628,21 @@ class AdvancedSearch(QWidget):
                 self.rows[i][0].deleteLater()
                 self.rows[i][0] = None
 
-    def rowsContainsWidget(self, widget):
-        """
-        Checks if the widget is still used
-
-        :param widget: widget to check
-        :return: True or False
-        """
-        for row in self.rows:
-            if widget in row:
-                return True
-        return False
+    # def rowsContainsWidget(self, widget):
+    #     """Check if the widget is still used
+    #
+    #     :param widget: widget to check
+    #     :return: True or False
+    #     """
+    #     for row in self.rows:
+    #         if widget in row:
+    #             return True
+    #     return False
 
     def show_search(self):
-        """
-        Called when the Advanced Search button is clicked, reset the rows
-        """
+        """Reset the rows when the Advanced Search button is clicked"""
         self.rows = []
-        self.add_row()
+        self.add_search_bar()
 
 
 

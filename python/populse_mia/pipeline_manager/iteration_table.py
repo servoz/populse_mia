@@ -11,38 +11,34 @@ import os
 # PyQt5 imports
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import  QTableWidgetItem, QPushButton, QVBoxLayout, QWidget, \
-    QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
+from PyQt5.QtWidgets import QTableWidgetItem, QPushButton, QVBoxLayout, \
+    QWidget,  QHBoxLayout, QCheckBox, QTableWidget, QComboBox, QLabel
 
 # MIA imports
 from populse_mia.pipeline_manager.process_mia import ProcessMIA
-from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from populse_mia.pop_ups.pop_up_select_tag_count_table import \
+    PopUpSelectTagCountTable
 from populse_mia.project.project import COLLECTION_CURRENT, TAG_FILENAME
 from populse_mia.utils.tools import ClickableLabel
 
 
 class IterationTable(QWidget):
-    """
-    Widget that handles pipeline iteration.
-
-    Attributes:
-        - project: current project in the software
-        - scan_list: list of the selected database files
-        - iteration_scans: list of the selected scans for the current iteration step
-        - main_window: software's main_window
-        - iterated_tag: tag on which to iterate
-        - values_list: list that contains lists of all the values that the visualized tags can take
+    """Widget that handles pipeline iteration.
 
     Methods:
-        - refresh_layout: updates the layout of the widget
         - add_tag: adds a tag to visualize in the iteration table
-        - remove_tag: removes a tag to visualize in the iteration table
-        - update_table: updates the iteration table
-        - select_visualized_tag: opens a pop-up to let the user select which tag to visualize in the iteration table
+        - emit_iteration_table_updated: emits a signal when the iteration
+           scans have been updated
         - fill_values: fill values_list depending on the visualized tags
-        - select_iterated_tag: opens a pop-up to let the user select on which tag to iterate
+        - refresh_layout: updates the layout of the widget
+        - remove_tag: removes a tag to visualize in the iteration table
+        - select_iterated_tag: opens a pop-up to let the user select on which
+           tag to iterate
+        - select_visualized_tag: opens a pop-up to let the user select which
+           tag to visualize in the iteration table
         - update_iterated_tag: updates the widget
-        - emit_iteration_table_updated: emits a signal when the iteration scans have been updated
+        - update_table: updates the iteration table
+
     """
 
     iteration_table_updated = pyqtSignal(list)
@@ -62,7 +58,8 @@ class IterationTable(QWidget):
         self.project = project
 
         if not scan_list:
-            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.scan_list = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
         else:
             self.scan_list = scan_list
 
@@ -74,7 +71,8 @@ class IterationTable(QWidget):
 
         # Checkbox to choose to iterate the pipeline or not
         self.check_box_iterate = QCheckBox("Iterate pipeline")
-        self.check_box_iterate.stateChanged.connect(self.emit_iteration_table_updated)
+        self.check_box_iterate.stateChanged.connect(
+            self.emit_iteration_table_updated)
 
         # Label "Iterate over:"
         self.label_iterate = QLabel("Iterate over:")
@@ -84,7 +82,8 @@ class IterationTable(QWidget):
 
         # Push button to select the tag to iterate
         self.iterated_tag_push_button = QPushButton("Select")
-        self.iterated_tag_push_button.clicked.connect(self.select_iteration_tag)
+        self.iterated_tag_push_button.clicked.connect(
+            self.select_iteration_tag)
 
         # QComboBox
         self.combo_box = QComboBox()
@@ -96,16 +95,20 @@ class IterationTable(QWidget):
         # Label tag
         self.label_tags = QLabel("Tags to visualize:")
 
-        # Each push button will allow the user to visualize a tag in the iteration browser
+        # Each push button will allow the user to visualize a tag in
+        # the iteration browser
         push_button_tag_1 = QPushButton()
         push_button_tag_1.setText("SequenceName")
-        push_button_tag_1.clicked.connect(lambda: self.select_visualized_tag(0))
+        push_button_tag_1.clicked.connect(
+            lambda: self.select_visualized_tag(0))
 
         push_button_tag_2 = QPushButton()
         push_button_tag_2.setText("AcquisitionDate")
-        push_button_tag_2.clicked.connect(lambda: self.select_visualized_tag(1))
+        push_button_tag_2.clicked.connect(
+            lambda: self.select_visualized_tag(1))
 
-        # The list of all the push buttons (the user can add as many as he or she wants)
+        # The list of all the push buttons
+        # (the user can add as many as he or she wants)
         self.push_buttons = []
         self.push_buttons.insert(0, push_button_tag_1)
         self.push_buttons.insert(1, push_button_tag_2)
@@ -113,15 +116,18 @@ class IterationTable(QWidget):
         # Labels to add/remove a tag (a push button)
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                                          "sources_images")
-        add_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
+        sources_images_dir = os.path.join(
+            os.path.dirname(os.path.dirname(
+                os.path.realpath(__file__))), "sources_images")
+        add_tag_picture = QPixmap(os.path.relpath(os.path.join(
+            sources_images_dir, "green_plus.png")))
         add_tag_picture = add_tag_picture.scaledToHeight(15)
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)
 
         self.remove_tag_label = ClickableLabel()
-        remove_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "red_minus.png")))
+        remove_tag_picture = QPixmap(os.path.relpath(os.path.join(
+            sources_images_dir, "red_minus.png")))
         remove_tag_picture = remove_tag_picture.scaledToHeight(20)
         self.remove_tag_label.setPixmap(remove_tag_picture)
         self.remove_tag_label.clicked.connect(self.remove_tag)
@@ -132,10 +138,10 @@ class IterationTable(QWidget):
         self.refresh_layout()
 
     def refresh_layout(self):
-        """
-        Updates the layout of the widget
-        Called in widget's initialization and when a tag push button is added or removed.
+        """Update the layout of the widget.
 
+        Called in widget's initialization and when a tag push button
+        is added or removed.
         """
 
         first_v_layout = QVBoxLayout()
@@ -171,9 +177,9 @@ class IterationTable(QWidget):
         self.v_layout.addLayout(self.h_box)
 
     def add_tag(self):
-        """
-        Adds a tag to visualize in the iteration table
+        """Add a tag to visualize in the iteration table.
 
+        Used only for tests
         """
 
         idx = len(self.push_buttons)
@@ -184,12 +190,11 @@ class IterationTable(QWidget):
         self.refresh_layout()
 
     def remove_tag(self):
-        """
-        Removes a tag to visualize in the iteration table
-        Removes also the corresponding values in values_list
+        """Remove a tag to visualize in the iteration table.
 
+        Used only for tests.
         """
-
+        print("called")
         push_button = self.push_buttons[-1]
         push_button.deleteLater()
         push_button = None
