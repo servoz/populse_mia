@@ -44,22 +44,19 @@ else:
 
 class NodeController(QWidget):
     """
-    Controller that allows to change the input and output values of a pipeline node
-
-    Attributes:
-        - node_name: name of the selected node
-        - project: current project in the software
-        - scan_list: list of the selected database files
+    Allow to change the input and output values of a pipeline node
 
     Methods:
-        - display_parameters: displays the parameters of the selected node
-        - update_parameters: updates the parameters values
-        - get_index_from_plug_name: returns the index of the plug label
-        - update_node_name: updates the name of the selected node
-        - update_plug_value: updates the value of a node plug
-        - display_filter: displays a filter widget
-        - update_plug_value_from_filter: updates the plug value from a filter result
-        - clearLayout: clears the layouts of the widget
+        - clearLayout: clear the layouts of the widget
+        - display_filter: display a filter widget
+        - display_parameters: display the parameters of the selected node
+        - get_index_from_plug_name: return the index of the plug label
+        - update_node_name: update the name of the selected node
+        - update_parameters: update the parameters values
+        - update_plug_value: update the value of a node plug
+        - update_plug_value_from_filter: update the plug value from a filter
+           result
+
     """
 
     value_changed = pyqtSignal(list)

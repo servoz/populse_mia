@@ -39,37 +39,21 @@ from populse_mia.utils.utils import verCmp
 from capsul.api import get_process_instance
 
 # soma-base import
-#from soma.path import find_in_path
 
 
 class ProcessLibraryWidget(QWidget):
     """
     Widget that handles the available Capsul's processes in the software
 
-    Attributes:
-        - process_library: library of the selected processes
-        - pkg_library: widget to control which processes to show in the process library
-        - packages: tree-dictionary that is the representation of the process library.
-                    A dictionary, where keys are the name of a module (brick) and values
-                    are 'process_enabled' or 'process_disabled'. Key can be a submodule. 
-                    In this case the value is a dictionary where keys are the name of a
-                    module (brick) and values are 'process_enabled' or 'process_disabled'.
-                    etc. ex. {'User_processes': {'Double_smooth': 'process_enabled',
-                    'Filter_test': 'process_disabled'}, 'nipype': {'interfaces':
-                    {'BIDSDataGrabber': 'process_enabled', 'fsl': {'AR1Image':
-                    'process_disabled'}}}}.
-        - paths: list of path to add to the system path
-
     Methods:
-        - update_config: updates the config and loads the corresponding packages
-        - update_process_library: updates the tree of the process library
-        - open_pkg_lib: opens the package library
         - load_config: read the config in process_config.yml and return it as a dictionary
         - load_packages: sets packages and paths to the widget and to the system paths
+        - open_pkg_lib: opens the package library
         - save_config: saves the current config to process_config.yml
+        - update_config: updates the config and loads the corresponding packages
+        - update_process_library: updates the tree of the process library
+
     """
-
-
 
     def __init__(self, main_window=None):
         """
