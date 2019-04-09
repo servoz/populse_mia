@@ -61,21 +61,21 @@ class PipelineManagerTab(QWidget):
     Widget that handles the Pipeline Manager tab.
 
     Methods:
-        - undo: undo the last action made on the current pipeline editor
-        - redo: redo the last undone action on the current pipeline editor
-        - update_clinical_mode: updates the visibility of widgets/actions depending of the chosen mode
-        - update_scans_list: updates the user-selected list of scans
-        - update_project: updates the project attribute of several objects
         - controller_value_changed: updates history when a pipeline node is changed
-        - updateProcessLibrary: updates the library of processes when a pipeline is saved
+        - displayNodeParameters: displays the node controller when a node is clicked
+        - init_pipeline: initializes the current pipeline of the pipeline editor
+        - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
         - loadPipeline: loads a pipeline to the pipeline editor
+        - redo: redo the last undone action on the current pipeline editor
+        - runPipeline: runs the current pipeline of the pipeline editor
+        - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
         - savePipeline: saves the current pipeline of the pipeline editor
         - savePipelineAs: saves the current pipeline of the pipeline editor under another name
-        - loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor
-        - saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor
-        - init_pipeline: initializes the current pipeline of the pipeline editor
-        - runPipeline: runs the current pipeline of the pipeline editor
-        - displayNodeParameters: displays the node controller when a node is clicked
+        - undo: undo the last action made on the current pipeline editor
+        - updateProcessLibrary: updates the library of processes when a pipeline is saved
+        - update_clinical_mode: updates the visibility of widgets/actions depending of the chosen mode
+        - update_project: updates the project attribute of several objects
+        - update_scans_list: updates the user-selected list of scans
     """
 
     item_library_clicked = QtCore.Signal(str)
@@ -1792,9 +1792,9 @@ class RunProgress(QProgressDialog):
     def __init__(self, diagram_view):
 
         super(RunProgress, self).__init__("Please wait while the pipeline is "
-                                          "being run...", None, 0, 0)
+                                          "running...", None, 0, 0)
 
-        self.setWindowTitle("Pipeline run")
+        self.setWindowTitle("Pipeline running")
         self.setWindowFlags(
             Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.setModal(True)

@@ -11,7 +11,6 @@ import sys
 import six
 import yaml
 from traits.api import TraitError
-from builtins import getattr
 
 # PyQt5 imports
 from PyQt5 import QtGui, QtWidgets, QtCore
@@ -45,42 +44,42 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
     """
     Tab widget that contains pipeline editors
 
-    Attributes:
-        - project: current project in the software
-        - scan_list: list of the selected database files
-        - main_window: main window of the software
-        - undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab
-        - redos: dictionary containing as values the redo list and as keys the name of the corresponding tab
-
     Methods:
-        - new_tab: creates a new tab and a new editor
-        - close_tab: closes the selected tab and editor
-        - set_current_editor_by_tab_name: sets the current editor
-        - get_current_editor: gets the instance of the current editor
-        - get_tab_name_by_index: gets the tab title from its index in the editors
-        - get_filename_by_index: gets the pipeline filename from its index in the editors
-        - get_index_by_tab_name: gets the index of the editor corresponding to the given tab name
-        - get_index_by_filename: gets the index of the editor corresponding to the given pipeline filename
-        - get_current_tab_name: gets the tab title of the current editor
-        - get_current_filename: gets the file name of the current pipeline
-        - get_current_pipeline: gets the instance of the current pipeline
-        - save_pipeline: saves the pipeline of the current editor
-        - load_pipeline: loads a new pipeline
-        - save_pipeline_parameters: saves the pipeline parameters of the current editor
-        - load_pipeline_parameters: loads parameters to the pipeline of the current editor
-        - emit_node_clicked: emits a signal when a node is clicked
-        - emit_switch_clicked: emits a signal when a switch is clicked
-        - emit_pipeline_saved: emits a signal when a pipeline is saved
-        - update_pipeline_editors: updates editors
-        - update_history: updates undo/redo history of an editor
-        - reset_pipeline: resets the pipeline of the current editor
-        - update_scans_list: updates the list of database scans in every editor
-        - open_sub_pipeline: opens a sub-pipeline in a new tab
-        - open_filter: opens a filter widget
-        - export_to_db_scans: exports the input of a filter to "database_scans"
-        - check_modifications: checks if the nodes of the current pipeline have been modified
-        - has_pipeline_nodes: checks if any of the pipelines in the editor tabs have pipeline nodes
-
+        - check_modifications: check if the nodes of the current pipeline have
+           been modified
+        - close_tab: close the selected tab and editor
+        - emit_node_clicked: emit a signal when a node is clicked
+        - emit_pipeline_saved: emit a signal when a pipeline is saved
+        - emit_switch_clicked: emit a signal when a switch is clicked
+        - export_to_db_scans: export the input of a filter to 'database_scans'
+        - get_current_editor: get the instance of the current editor
+        - get_current_filename: get the file name of the current pipeline
+        - get_current_pipeline: get the instance of the current pipeline
+        - get_current_tab_name: get the tab title of the current editor
+        - get_filename_by_index: get the pipeline filename from its index in
+           the editors
+        - get_index_by_filename: get the index of the editor corresponding to
+           the given pipeline filename
+        - get_index_by_tab_name: get the index of the editor corresponding to
+           the given tab name
+        - get_tab_name_by_index: get the tab title from its index in the
+           editors
+        - has_pipeline_nodes: check if any of the pipelines in the editor tabs
+           have pipeline nodes
+        - load_pipeline: load a new pipeline
+        - load_pipeline_parameters: load parameters to the pipeline of the
+           current editor
+        - new_tab: create a new tab and a new editor
+        - open_filter: open a filter widget
+        - open_sub_pipeline: open a sub-pipeline in a new tab
+        - reset_pipeline: reset the pipeline of the current editor
+        - save_pipeline: save the pipeline of the current editor
+        - save_pipeline_parameters: save the pipeline parameters of the
+           current editor
+        - set_current_editor_by_tab_name: set the current editor
+        - update_history: update undo/redo history of an editor
+        - update_pipeline_editors: update editors
+        - update_scans_list: update the list of database scans in every editor
     """
 
     pipeline_saved = QtCore.pyqtSignal(str)

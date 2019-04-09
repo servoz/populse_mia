@@ -11,7 +11,7 @@ from traits.trait_base import Undefined
 from traits.trait_handlers import TraitListObject
 
 # Capsul imports
-from capsul.process.process import Process
+from capsul.api import Process
 
 # Populse_MIA imports
 from populse_mia.project.project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
@@ -23,47 +23,25 @@ class ProcessMIA(Process):
     Class overriding the default capsul Process class, in order to personalize the run in MIA
 
     Methods:
-        - manage_matlab_launch_parameters: sets the Matlab's config parameters when a Nipype process is used
-        - list_outputs: generates the outputs of the process (need to be overridden)
-        - _before_run_process: method called before running the process
         - _after_run_process: method called after the process being run
-        - manage_brick_before_run: updates process history, before running the process
+        - _before_run_process: method called before running the process
+        - get_brick_to_update: gives the brick to update given the scan list of bricks
+        - get_scan_bricks: gives the list of bricks given an output value
+        - list_outputs: generates the outputs of the process (need to be overridden)
         - manage_brick_after_run: manages the brick history after the run (Done status)
-        - get_scan_bricks: gives the list of bricks, given an output value
-        - get_brick_to_update: gives the brick to update, given the scan list of bricks
-        - remove_brick_output: removes the bricks from the outputs
-        - manage_brick_output_before_run: manages the bricks history before the run
+        - manage_brick_before_run: updates process history before running the process
         - manage_brick_output_after_run: manages the bricks history before the run
+        - manage_brick_output_before_run: manages the bricks history before the run
+        - manage_matlab_launch_parameters: sets the Matlab's config parameters when a Nipype process is used
+        - remove_brick_output: removes the bricks from the outputs
+
+
+
     """
 
     def __init__(self):
         super(ProcessMIA, self).__init__()
         # self.filters = {}  # use if the filters are set on plugs
-
-    def manage_matlab_launch_parameters(self):
-        """
-        Sets the Matlab's config parameters when a Nipype process is used
-        """
-
-        if hasattr(self, "process"):
-            self.process.inputs.use_mcr = self.use_mcr
-            self.process.inputs.paths = self.paths
-            self.process.inputs.matlab_cmd = self.matlab_cmd
-            self.process.inputs.mfile = self.mfile
-
-    def list_outputs(self):
-        """
-        Generates the outputs of the process (need to be overridden)
-        """
-        pass
-
-    def _before_run_process(self):
-        """
-        Method called before running the process
-        It adds the exec status Not Done and exec time to the process history
-        """
-
-        self.manage_brick_before_run()
 
     def _after_run_process(self, run_process_result):
         """
@@ -76,46 +54,13 @@ class ProcessMIA(Process):
         self.manage_brick_after_run()
         return run_process_result
 
-    def manage_brick_before_run(self):
+    def _before_run_process(self):
         """
-        Updates process history, before running the process
+        Method called before running the process
+        It adds the exec status Not Done and exec time to the process history
         """
 
-        outputs = self.get_outputs()
-        for output_name in outputs:
-            output_value = outputs[output_name]
-            if output_value not in ["<undefined>", Undefined]:
-                if type(output_value) in [list, TraitListObject]:
-                    for single_value in output_value:
-                        self.manage_brick_output_before_run(single_value)
-                else:
-                    self.manage_brick_output_before_run(output_value)
-
-    def manage_brick_after_run(self):
-        """
-        Manages the brick history after the run (Done status)
-        """
-        outputs = self.get_outputs()
-        for output_name in outputs:
-            output_value = outputs[output_name]
-            if output_value not in ["<undefined>", Undefined]:
-                if type(output_value) in [list, TraitListObject]:
-                    for single_value in output_value:
-                        self.manage_brick_output_after_run(single_value)
-                else:
-                    self.manage_brick_output_after_run(output_value)
-
-    def get_scan_bricks(self, output_value):
-        """
-        Gives the list of bricks, given an output value
-
-        :param output_value: output value
-        :return: list of bricks related to the output
-        """
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-            if scan in str(output_value):
-                return self.project.session.get_value(COLLECTION_CURRENT, scan, TAG_BRICKS)
-        return []
+        self.manage_brick_before_run()
 
     def get_brick_to_update(self, bricks):
         """
@@ -147,6 +92,95 @@ class ProcessMIA(Process):
                     self.project.saveModifications()
             return brick_to_keep
 
+    def get_scan_bricks(self, output_value):
+        """
+        Gives the list of bricks, given an output value
+
+        :param output_value: output value
+        :return: list of bricks related to the output
+        """
+        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+            if scan in str(output_value):
+                return self.project.session.get_value(COLLECTION_CURRENT, scan, TAG_BRICKS)
+        return []
+
+    def list_outputs(self):
+        """
+        Generates the outputs of the process (need to be overridden)
+        """
+        pass
+
+    def manage_brick_after_run(self):
+        """
+        Manages the brick history after the run (Done status)
+        """
+        outputs = self.get_outputs()
+        for output_name in outputs:
+            output_value = outputs[output_name]
+            if output_value not in ["<undefined>", Undefined]:
+                if type(output_value) in [list, TraitListObject]:
+                    for single_value in output_value:
+                        self.manage_brick_output_after_run(single_value)
+                else:
+                    self.manage_brick_output_after_run(output_value)
+
+    def manage_brick_before_run(self):
+        """
+        Updates process history, before running the process
+        """
+
+        outputs = self.get_outputs()
+        for output_name in outputs:
+            output_value = outputs[output_name]
+            if output_value not in ["<undefined>", Undefined]:
+                if type(output_value) in [list, TraitListObject]:
+                    for single_value in output_value:
+                        self.manage_brick_output_before_run(single_value)
+                else:
+                    self.manage_brick_output_before_run(output_value)
+
+    def manage_brick_output_after_run(self, output_value):
+        """
+        Manages the bricks history before the run
+
+        :param output_value: output value
+        """
+
+        scan_bricks_history = self.get_scan_bricks(output_value)
+        brick_to_update = self.get_brick_to_update(scan_bricks_history)
+        if brick_to_update is not None:
+            self.project.session.set_value(COLLECTION_BRICK, brick_to_update,
+                                           BRICK_EXEC, "Done")
+            self.project.saveModifications()
+
+    def manage_brick_output_before_run(self, output_value):
+        """
+        Manages the bricks history before the run
+
+        :param output_value: output value
+        """
+
+        scan_bricks_history = self.get_scan_bricks(output_value)
+        brick_to_update = self.get_brick_to_update(scan_bricks_history)
+        if brick_to_update is not None:
+            self.project.session.set_value(COLLECTION_BRICK, brick_to_update,
+                                           BRICK_EXEC_TIME,
+                                           datetime.datetime.now())
+            self.project.session.set_value(COLLECTION_BRICK, brick_to_update,
+                                           BRICK_EXEC, "Not Done")
+            self.project.saveModifications()
+
+    def manage_matlab_launch_parameters(self):
+        """
+        Sets the Matlab's config parameters when a Nipype process is used
+        """
+
+        if hasattr(self, "process"):
+            self.process.inputs.use_mcr = self.use_mcr
+            self.process.inputs.paths = self.paths
+            self.process.inputs.matlab_cmd = self.matlab_cmd
+            self.process.inputs.mfile = self.mfile
+
     def remove_brick_output(self, brick, output):
         """
         Removes the bricks from the outputs
@@ -167,31 +201,3 @@ class ProcessMIA(Process):
                 self.project.session.set_value(COLLECTION_CURRENT, scan, TAG_BRICKS, output_bricks)
                 self.project.session.set_value(COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
                 self.project.saveModifications()
-
-    def manage_brick_output_before_run(self, output_value):
-        """
-        Manages the bricks history before the run
-
-        :param output_value: output value
-        """
-
-        scan_bricks_history = self.get_scan_bricks(output_value)
-        brick_to_update = self.get_brick_to_update(scan_bricks_history)
-        if brick_to_update is not None:
-            self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC_TIME,
-                                      datetime.datetime.now())
-            self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC, "Not Done")
-            self.project.saveModifications()
-
-    def manage_brick_output_after_run(self, output_value):
-        """
-        Manages the bricks history before the run
-
-        :param output_value: output value
-        """
-
-        scan_bricks_history = self.get_scan_bricks(output_value)
-        brick_to_update = self.get_brick_to_update(scan_bricks_history)
-        if brick_to_update is not None:
-            self.project.session.set_value(COLLECTION_BRICK, brick_to_update, BRICK_EXEC, "Done")
-            self.project.saveModifications()
