@@ -54,7 +54,7 @@ class IterationTable(QWidget):
 
         QWidget.__init__(self)
 
-        ProcessMIA.project = project
+        ProcessMIA.set_project(project)
         self.project = project
 
         if not scan_list:

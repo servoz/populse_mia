@@ -41,17 +41,16 @@ class ProcessMIA(Process):
            the run
         - remove_brick_output: remove the bricks from the outputs
 
-
-
     """
+
+    project = None
 
     def __init__(self):
         super(ProcessMIA, self).__init__()
         # self.filters = {}  # use if the filters are set on plugs
 
     def _after_run_process(self, run_process_result):
-        """
-        Method called after the process being run
+        """Method called after the process being run.
 
         :param run_process_result: Result of the run process
         :return: the result of the run process
@@ -61,16 +60,15 @@ class ProcessMIA(Process):
         return run_process_result
 
     def _before_run_process(self):
-        """
-        Method called before running the process
-        It adds the exec status Not Done and exec time to the process history
+        """Method called before running the process.
+
+        Add the exec status Not Done and exec time to the process history
         """
 
         self.manage_brick_before_run()
 
     def get_brick_to_update(self, bricks):
-        """
-        Gives the brick to update, given the scan list of bricks
+        """Give the brick to update, given the scan list of bricks.
 
         :param bricks: list of scan bricks
         :return: Brick to update
@@ -99,8 +97,7 @@ class ProcessMIA(Process):
             return brick_to_keep
 
     def get_scan_bricks(self, output_value):
-        """
-        Gives the list of bricks, given an output value
+        """Give the list of bricks, given an output value.
 
         :param output_value: output value
         :return: list of bricks related to the output
@@ -111,9 +108,7 @@ class ProcessMIA(Process):
         return []
 
     def list_outputs(self):
-        """
-        Generates the outputs of the process (need to be overridden)
-        """
+        """Override the outputs of the process"""
         pass
 
     def manage_brick_after_run(self):
@@ -196,3 +191,8 @@ class ProcessMIA(Process):
                 self.project.session.set_value(COLLECTION_CURRENT, scan, TAG_BRICKS, output_bricks)
                 self.project.session.set_value(COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
                 self.project.saveModifications()
+
+    @staticmethod
+    def set_project(project):
+        process = ProcessMIA()
+        process.project = project

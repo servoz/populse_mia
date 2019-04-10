@@ -645,31 +645,25 @@ class PipelineEditor(PipelineDevelopperView):
     """
     View to edit a pipeline graphically
 
-    Attributes:
-        - project: current project in the software
-        - main_window: main window of the software
-        - undos: list of actions to undo
-        - redos: list of actions to redo
-
     Methods:
+        - _del_link: deletes a link
+        - _export_plug: export a plug to a pipeline global input or output
+        - _release_grab_link: method called when a link is released
+        - _remove_plug: removes a plug
+        - add_link: add a link between two nodes
+        - add_process: adds a process to the pipeline
+        - check_modifications: checks if the nodes of the pipeline have been modified
+        - del_node: deletes a node
         - dragEnterEvent: event handler when the mouse enters the widget
         - dragMoveEvent: event handler when the mouse moves in the widget
         - dropEvent: event handler when something is dropped in the widget
+        - export_node_plugs: exports all the plugs of a node
         - find_process: finds the dropped process in the system's paths
+        - get_current_filename: returns the relative path the pipeline was last saved to. Empty if never saved.
+        - save_pipeline: saves the pipeline
         - update_history: updates the history for undos and redos
-        - add_process: adds a process to the pipeline
-        - del_node: deletes a node
-        - _release_grab_link: method called when a link is released
-        - add_link: add a link between two nodes
-        - _del_link: deletes a link
         - update_node_name: updates a node name
         - update_plug_value: updates a plug value
-        - _export_plug: export a plug to a pipeline global input or output
-        - export_node_plugs: exports all the plugs of a node
-        - _remove_plug: removes a plug
-        - save_pipeline: saves the pipeline
-        - check_modifications: checks if the nodes of the pipeline have been modified
-        - get_current_filename: returns the relative path the pipeline was last saved to. Empty if never saved.
     """
 
     pipeline_saved = QtCore.pyqtSignal(str)
@@ -1429,6 +1423,7 @@ def save_pipeline(pipeline, filename):
     if not saved:
         # fallback to .py
         save_py_pipeline(pipeline, filename)
+
 
 def get_path(name, dictionary, prev_paths=None):
     """

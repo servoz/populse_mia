@@ -90,7 +90,7 @@ class PipelineManagerTab(QWidget):
         """
 
         config = Config()
-        ProcessMIA.project = project
+        ProcessMIA.set_project(project)
         self.project = project
         if not scan_list:
             self.scan_list = self.project.session.get_documents_names(
@@ -676,11 +676,11 @@ class PipelineManagerTab(QWidget):
 
             # Getting the list of the outputs of the node according
             # to its inputs
+
             try:
                 self.inheritance_dict = None
                 (process_outputs,
                  self.inheritance_dict) = process.list_outputs()
-
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
 
@@ -719,7 +719,7 @@ class PipelineManagerTab(QWidget):
                 # necessary (ex. if config.get_spm_standalone_path() is
                 # None, etc ...)
 
-                #                if (isinstance(process, NipypeProcess)) and (key in
+                # if (isinstance(process, NipypeProcess)) and (key in
                 # keys2consider) and (inputs[key] == "<undefined>"):
 
                 # update launching parameters for IRMaGe_processes bricks
@@ -1249,7 +1249,7 @@ class PipelineManagerTab(QWidget):
         self.nodeController.visibles_tags = \
             self.project.session.get_shown_tags()
         self.iterationTable.project = project
-        ProcessMIA.project = project
+        ProcessMIA.set_project(project)
 
     def update_scans_list(self, iteration_list):
         """
@@ -1506,282 +1506,293 @@ class InitWorker(QThread):
 
             self.project.saveModifications()
 
-    def init_pipeline(self, pipeline):
-
-        main_pipeline = False
-
-        # If the initialisation is launch for the main pipeline
-        if not pipeline:
-            pipeline = get_process_instance(
-                self.diagramView.get_current_pipeline())
-            main_pipeline = True
-
-        # Test, if it works, comment.
-        if hasattr(pipeline, 'pipeline_steps'):
-            pipeline.pipeline_steps.on_trait_change(
-                self.diagramView.get_current_editor()._reset_pipeline,
-                remove=True)
-        pipeline.on_trait_change(
-            self.diagramView.get_current_editor()._reset_pipeline,
-            'selection_changed', remove=True)
-        pipeline.on_trait_change(
-            self.diagramView.get_current_editor()._reset_pipeline,
-            'user_traits_changed', remove=True)
-
-        # nodes_to_check contains the node names that need to be update
-        nodes_to_check = []
-
-        # nodes_inputs_ratio is a dictionary whose keys are the node names
-        # and whose values are a list of two elements: the first one being
-        # the number of activated mandatory input plugs, the second one being
-        # the total number of mandatory input plugs of the corresponding node
-        nodes_inputs_ratio = {}
-
-        # nodes_inputs_ratio_list contains the ratio between the number of
-        # activated mandatory input plugs and the total number of mandatory
-        # input plugs of the corresponding node (the order is the same
-        # as nodes_to_check)
-        nodes_inputs_ratio_list = []
-
-        for node_name, node in pipeline.nodes.items():
-            nb_plugs_from_in = 0
-            nb_plugs = 0
-
-            for plug_name, plug in node.plugs.items():
-                if plug.links_from and not plug.output and not plug.optional:
-                    nb_plugs += 1
-                    # If the link come from the pipeline "global" inputs, it is
-                    # added to compute the ratio
-                    if list(plug.links_from)[0][0] == "":
-                        nb_plugs_from_in += 1
-
-            if nb_plugs == 0:
-                ratio = 0
-            else:
-                ratio = nb_plugs_from_in / nb_plugs
-
-            nodes_to_check.append(node_name)
-            nodes_inputs_ratio[node_name] = [nb_plugs_from_in, nb_plugs]
-            nodes_inputs_ratio_list.append(ratio)
-
-        # Sorting the nodes_to_check list as the order (the nodes having
-        # the highest ratio
-        # being at the end of the list)
-        nodes_to_check = [x for _, x in sorted(zip(nodes_inputs_ratio_list, nodes_to_check))]
-
-        idx = self.progress.value()
-
-        while nodes_to_check:
-            # Finding one node that has a ratio of 1, which means that all
-            # of its mandatory
-            # inputs are "connected"
-            key_name = [key for key, value in nodes_inputs_ratio.items() if value[0] == value[1]]
-            if key_name:
-
-                # This node can be initialized so it is placed at the end of
-                # the nodes_to_check list
-                nodes_to_check.append(key_name[0])
-
-                # It can also be removed from the dictionary
-                del nodes_inputs_ratio[key_name[0]]
-
-            # Reversing the list so that the node to be initialized is at
-            # the first place
-            # Using OrderedDict allows to remove the duplicate in the
-            # list without losing the order. So if key_name[0] appears
-            # twice, it will stay at the first place
-            nodes_to_check = list(
-                OrderedDict((x, True) for x in nodes_to_check[::-1]).keys())
-
-            node_name = nodes_to_check.pop(0)
-
-            nodes_to_check = nodes_to_check[::-1]
-
-            # Inputs/Outputs nodes will be automatically updated with the
-            # method update_nodes_and_plugs_activation of the pipeline object
-            if node_name in ['', 'inputs', 'outputs']:
-                continue
-
-            # progressbar
-            idx += 1
-            self.notifyProgress.emit(idx)
-            sleep(0.1)
-
-            # If the node is a pipeline node,
-            # each of its nodes has to be initialised
-            node = pipeline.nodes[node_name]
-            if isinstance(node, PipelineNode):
-                sub_pipeline = node.process
-                self.init_pipeline(sub_pipeline)
-                for plug_name in node.plugs.keys():
-                    # If the plug is an output and is
-                    if hasattr(node.plugs[plug_name], 'links_to'):
-                        # connected to another one
-                        list_info_link = list(node.plugs[plug_name].links_to)
-                        for info_link in list_info_link:
-                            # The third element of info_link contains the
-                            if info_link[2] in pipeline.nodes.values():
-                                # destination node object
-                                dest_node_name = info_link[0]
-                                if dest_node_name:
-                                    # Adding the destination node name and
-                                    # incrementing the input counter of the
-                                    # latter if it is not the pipeline
-                                    # "global" outputs ('')
-                                    nodes_to_check.append(dest_node_name)
-                                    nodes_inputs_ratio[dest_node_name][0] += 1
-
-                pipeline.update_nodes_and_plugs_activation()
-                continue
-
-            # Adding the brick to the bricks history
-            self.brick_id = str(uuid.uuid4())
-            self.project.session.add_document(COLLECTION_BRICK, self.brick_id)
-
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_NAME, node_name)
-
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_INIT_TIME,
-                                           datetime.datetime.now())
-
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_INIT, "Not Done")
-            self.project.saveModifications()
-
-            process = node.process
-
-            # Getting the list of the outputs of the node
-            # according to its inputs
-            try:
-                self.inheritance_dict = None
-                (process_outputs,
-                 self.inheritance_dict) = process.list_outputs()
-            except TraitError:
-                print("TRAIT ERROR for node {0}".format(node_name))
-            except ValueError:
-                process_outputs = process.list_outputs()
-                print("No inheritance dict for the process "
-                      "{0}.".format(node_name))
-            # If the process has no "list_outputs" method,
-            # which is the case for Nipype's
-            except AttributeError:
-                # interfaces
-                try:
-                    process_outputs = process._nipype_interface._list_outputs()
-                    # Nipype Process outputs are always "private" for Capsul
-                    tmp_dict = {}
-                    for key, value in process_outputs.items():
-                        tmp_dict['_' + key] = process_outputs[key]
-                    process_outputs = tmp_dict
-                # TODO: test which kind of error can
-                except Exception:
-                    # generate a Nipype interface
-                    print("No output list method for the process "
-                          "{0}.".format(node_name))
-                    process_outputs = {}
-
-            # Adding I/O to database history
-            inputs = process.get_inputs()
-            for key in inputs:
-                value = inputs[key]
-                if value is Undefined:
-                    inputs[key] = "<undefined>"
-            outputs = process.get_outputs()
-            for key in outputs:
-                value = outputs[key]
-                if value is Undefined:
-                    outputs[key] = "<undefined>"
-            self.project.saveModifications()
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_INPUTS, inputs)
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_OUTPUTS, outputs)
-
-            if process_outputs:
-                for plug_name, plug_value in process_outputs.items():
-                    node = pipeline.nodes[node_name]
-                    if plug_name not in node.plugs.keys():
-                        continue
-                    if plug_value not in ["<undefined>", Undefined]:
-                        self.add_plug_value_to_database(plug_value,
-                                                        self.brick_id)
-
-                    list_info_link = list(node.plugs[plug_name].links_to)
-
-                    # If the output is connected to another node,
-                    # the latter is added to nodes_to_check
-                    for info_link in list_info_link:
-                        dest_node_name = info_link[0]
-                        if dest_node_name:
-                            # Adding the destination node name and incrementing
-                            # the input counter of the latter
-                            nodes_to_check.append(dest_node_name)
-                            nodes_inputs_ratio[dest_node_name][0] += 1
-
-                    try:
-                        pipeline.nodes[node_name].set_plug_value(plug_name,
-                                                                 plug_value)
-                    except TraitError:
-                        if type(plug_value) is list and len(plug_value) == 1:
-                            try:
-                                pipeline.nodes[node_name].set_plug_value(
-                                    plug_name, plug_value[0])
-                            except TraitError:
-                                print("Trait error for {0} plug of {1} "
-                                      "node".format(plug_name, node_name))
-                                pass
-
-                    pipeline.update_nodes_and_plugs_activation()
-
-            # Adding I/O to database history again to update outputs
-            inputs = process.get_inputs()
-            for key in inputs:
-                value = inputs[key]
-                if value is Undefined:
-                    inputs[key] = "<undefined>"
-            outputs = process.get_outputs()
-            for key in outputs:
-                value = outputs[key]
-                if value is Undefined:
-                    outputs[key] = "<undefined>"
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_INPUTS, inputs)
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_OUTPUTS, outputs)
-
-            # Setting brick init state if init finished correctly
-            self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
-                                           BRICK_INIT, "Done")
-            self.project.saveModifications()
-
-        # Test, if it works, comment.
-        pipeline.on_trait_change(
-            self.diagramView.get_current_editor()._reset_pipeline,
-            'selection_changed', dispatch='ui')
-        pipeline.on_trait_change(
-            self.diagramView.get_current_editor()._reset_pipeline,
-            'user_traits_changed', dispatch='ui')
-        if hasattr(pipeline, 'pipeline_steps'):
-            pipeline.pipeline_steps.on_trait_change(
-                self.diagramView.get_current_editor()._reset_pipeline,
-                dispatch='ui')
-
-        # Updating the node controller
-        if main_pipeline:
-            node_controller_node_name = self.nodeController.node_name
-            if node_controller_node_name in ['inputs', 'outputs']:
-                node_controller_node_name = ''
-            self.nodeController.display_parameters(
-                self.nodeController.node_name,
-                pipeline.nodes[node_controller_node_name].process, pipeline)
-
-    def run(self):
-        self.init_pipeline(self.pipeline)
-        idx = self.progress.value()
-        idx += 1
-        self.progress.setValue(idx)
-        QApplication.processEvents()
+    # def init_pipeline(self, pipeline):
+    #
+    #     main_pipeline = False
+    #
+    #     # If the initialisation is launch for the main pipeline
+    #     if not pipeline:
+    #         pipeline = get_process_instance(
+    #             self.diagramView.get_current_pipeline())
+    #         main_pipeline = True
+    #
+    #     # Test, if it works, comment.
+    #     if hasattr(pipeline, 'pipeline_steps'):
+    #         pipeline.pipeline_steps.on_trait_change(
+    #             self.diagramView.get_current_editor()._reset_pipeline,
+    #             remove=True)
+    #     pipeline.on_trait_change(
+    #         self.diagramView.get_current_editor()._reset_pipeline,
+    #         'selection_changed', remove=True)
+    #     pipeline.on_trait_change(
+    #         self.diagramView.get_current_editor()._reset_pipeline,
+    #         'user_traits_changed', remove=True)
+    #
+    #     # nodes_to_check contains the node names that need to be update
+    #     nodes_to_check = []
+    #
+    #     # nodes_inputs_ratio is a dictionary whose keys are the node names
+    #     # and whose values are a list of two elements: the first one being
+    #     # the number of activated mandatory input plugs, the second one being
+    #     # the total number of mandatory input plugs of the corresponding node
+    #     nodes_inputs_ratio = {}
+    #
+    #     # nodes_inputs_ratio_list contains the ratio between the number of
+    #     # activated mandatory input plugs and the total number of mandatory
+    #     # input plugs of the corresponding node (the order is the same
+    #     # as nodes_to_check)
+    #     nodes_inputs_ratio_list = []
+    #
+    #     for node_name, node in pipeline.nodes.items():
+    #         nb_plugs_from_in = 0
+    #         nb_plugs = 0
+    #
+    #         for plug_name, plug in node.plugs.items():
+    #             if plug.links_from and not plug.output and not plug.optional:
+    #                 nb_plugs += 1
+    #                 # If the link come from the pipeline "global" inputs, it is
+    #                 # added to compute the ratio
+    #                 if list(plug.links_from)[0][0] == "":
+    #                     nb_plugs_from_in += 1
+    #
+    #         if nb_plugs == 0:
+    #             ratio = 0
+    #         else:
+    #             ratio = nb_plugs_from_in / nb_plugs
+    #
+    #         nodes_to_check.append(node_name)
+    #         nodes_inputs_ratio[node_name] = [nb_plugs_from_in, nb_plugs]
+    #         nodes_inputs_ratio_list.append(ratio)
+    #
+    #     # Sorting the nodes_to_check list as the order (the nodes having
+    #     # the highest ratio
+    #     # being at the end of the list)
+    #     nodes_to_check = [x for _, x in sorted(zip(nodes_inputs_ratio_list, nodes_to_check))]
+    #
+    #     idx = self.progress.value()
+    #
+    #     while nodes_to_check:
+    #         # Finding one node that has a ratio of 1, which means that all
+    #         # of its mandatory
+    #         # inputs are "connected"
+    #         key_name = [key for key, value in nodes_inputs_ratio.items() if value[0] == value[1]]
+    #         if key_name:
+    #
+    #             # This node can be initialized so it is placed at the end of
+    #             # the nodes_to_check list
+    #             nodes_to_check.append(key_name[0])
+    #
+    #             # It can also be removed from the dictionary
+    #             del nodes_inputs_ratio[key_name[0]]
+    #
+    #         # Reversing the list so that the node to be initialized is at
+    #         # the first place
+    #         # Using OrderedDict allows to remove the duplicate in the
+    #         # list without losing the order. So if key_name[0] appears
+    #         # twice, it will stay at the first place
+    #         nodes_to_check = list(
+    #             OrderedDict((x, True) for x in nodes_to_check[::-1]).keys())
+    #
+    #         node_name = nodes_to_check.pop(0)
+    #
+    #         nodes_to_check = nodes_to_check[::-1]
+    #
+    #         # Inputs/Outputs nodes will be automatically updated with the
+    #         # method update_nodes_and_plugs_activation of the pipeline object
+    #         if node_name in ['', 'inputs', 'outputs']:
+    #             continue
+    #
+    #         # progressbar
+    #         idx += 1
+    #         self.notifyProgress.emit(idx)
+    #         sleep(0.1)
+    #
+    #         # If the node is a pipeline node,
+    #         # each of its nodes has to be initialised
+    #         node = pipeline.nodes[node_name]
+    #         if isinstance(node, PipelineNode):
+    #             sub_pipeline = node.process
+    #             self.init_pipeline(sub_pipeline)
+    #             for plug_name in node.plugs.keys():
+    #                 # If the plug is an output and is
+    #                 if hasattr(node.plugs[plug_name], 'links_to'):
+    #                     # connected to another one
+    #                     list_info_link = list(node.plugs[plug_name].links_to)
+    #                     for info_link in list_info_link:
+    #                         # The third element of info_link contains the
+    #                         if info_link[2] in pipeline.nodes.values():
+    #                             # destination node object
+    #                             dest_node_name = info_link[0]
+    #                             if dest_node_name:
+    #                                 # Adding the destination node name and
+    #                                 # incrementing the input counter of the
+    #                                 # latter if it is not the pipeline
+    #                                 # "global" outputs ('')
+    #                                 nodes_to_check.append(dest_node_name)
+    #                                 nodes_inputs_ratio[dest_node_name][0] += 1
+    #
+    #             pipeline.update_nodes_and_plugs_activation()
+    #             continue
+    #
+    #         # Adding the brick to the bricks history
+    #         self.brick_id = str(uuid.uuid4())
+    #         self.project.session.add_document(COLLECTION_BRICK, self.brick_id)
+    #
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_NAME, node_name)
+    #
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_INIT_TIME,
+    #                                        datetime.datetime.now())
+    #
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_INIT, "Not Done")
+    #         self.project.saveModifications()
+    #
+    #         process = node.process
+    #
+    #         print("##############################################")
+    #         print("##############################################")
+    #         print("##############################################")
+    #         print(process)
+    #         print(node)
+    #         print(pipeline)
+    #         print("##############################################")
+    #         print("##############################################")
+    #         print("##############################################")
+    #         # Getting the list of the outputs of the node
+    #         # according to its inputs
+    #         try:
+    #             self.inheritance_dict = None
+    #             print("Hello")
+    #             (process_outputs,
+    #              self.inheritance_dict) = process.list_outputs()
+    #         except TraitError:
+    #             print("TRAIT ERROR for node {0}".format(node_name))
+    #         except ValueError:
+    #             print("Prout")
+    #             process_outputs = process.list_outputs()
+    #             print("No inheritance dict for the process "
+    #                   "{0}.".format(node_name))
+    #         # If the process has no "list_outputs" method,
+    #         # which is the case for Nipype's
+    #         except AttributeError:
+    #             # interfaces
+    #             try:
+    #                 process_outputs = process._nipype_interface._list_outputs()
+    #                 # Nipype Process outputs are always "private" for Capsul
+    #                 tmp_dict = {}
+    #                 for key, value in process_outputs.items():
+    #                     tmp_dict['_' + key] = process_outputs[key]
+    #                 process_outputs = tmp_dict
+    #             # TODO: test which kind of error can
+    #             except Exception:
+    #                 # generate a Nipype interface
+    #                 print("No output list method for the process "
+    #                       "{0}.".format(node_name))
+    #                 process_outputs = {}
+    #
+    #         # Adding I/O to database history
+    #         inputs = process.get_inputs()
+    #         for key in inputs:
+    #             value = inputs[key]
+    #             if value is Undefined:
+    #                 inputs[key] = "<undefined>"
+    #         outputs = process.get_outputs()
+    #         for key in outputs:
+    #             value = outputs[key]
+    #             if value is Undefined:
+    #                 outputs[key] = "<undefined>"
+    #         self.project.saveModifications()
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_INPUTS, inputs)
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_OUTPUTS, outputs)
+    #
+    #         if process_outputs:
+    #             for plug_name, plug_value in process_outputs.items():
+    #                 node = pipeline.nodes[node_name]
+    #                 if plug_name not in node.plugs.keys():
+    #                     continue
+    #                 if plug_value not in ["<undefined>", Undefined]:
+    #                     self.add_plug_value_to_database(plug_value,
+    #                                                     self.brick_id)
+    #
+    #                 list_info_link = list(node.plugs[plug_name].links_to)
+    #
+    #                 # If the output is connected to another node,
+    #                 # the latter is added to nodes_to_check
+    #                 for info_link in list_info_link:
+    #                     dest_node_name = info_link[0]
+    #                     if dest_node_name:
+    #                         # Adding the destination node name and incrementing
+    #                         # the input counter of the latter
+    #                         nodes_to_check.append(dest_node_name)
+    #                         nodes_inputs_ratio[dest_node_name][0] += 1
+    #
+    #                 try:
+    #                     pipeline.nodes[node_name].set_plug_value(plug_name,
+    #                                                              plug_value)
+    #                 except TraitError:
+    #                     if type(plug_value) is list and len(plug_value) == 1:
+    #                         try:
+    #                             pipeline.nodes[node_name].set_plug_value(
+    #                                 plug_name, plug_value[0])
+    #                         except TraitError:
+    #                             print("Trait error for {0} plug of {1} "
+    #                                   "node".format(plug_name, node_name))
+    #                             pass
+    #
+    #                 pipeline.update_nodes_and_plugs_activation()
+    #
+    #         # Adding I/O to database history again to update outputs
+    #         inputs = process.get_inputs()
+    #         for key in inputs:
+    #             value = inputs[key]
+    #             if value is Undefined:
+    #                 inputs[key] = "<undefined>"
+    #         outputs = process.get_outputs()
+    #         for key in outputs:
+    #             value = outputs[key]
+    #             if value is Undefined:
+    #                 outputs[key] = "<undefined>"
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_INPUTS, inputs)
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_OUTPUTS, outputs)
+    #
+    #         # Setting brick init state if init finished correctly
+    #         self.project.session.set_value(COLLECTION_BRICK, self.brick_id,
+    #                                        BRICK_INIT, "Done")
+    #         self.project.saveModifications()
+    #
+    #     # Test, if it works, comment.
+    #     pipeline.on_trait_change(
+    #         self.diagramView.get_current_editor()._reset_pipeline,
+    #         'selection_changed', dispatch='ui')
+    #     pipeline.on_trait_change(
+    #         self.diagramView.get_current_editor()._reset_pipeline,
+    #         'user_traits_changed', dispatch='ui')
+    #     if hasattr(pipeline, 'pipeline_steps'):
+    #         pipeline.pipeline_steps.on_trait_change(
+    #             self.diagramView.get_current_editor()._reset_pipeline,
+    #             dispatch='ui')
+    #
+    #     # Updating the node controller
+    #     if main_pipeline:
+    #         node_controller_node_name = self.nodeController.node_name
+    #         if node_controller_node_name in ['inputs', 'outputs']:
+    #             node_controller_node_name = ''
+    #         self.nodeController.display_parameters(
+    #             self.nodeController.node_name,
+    #             pipeline.nodes[node_controller_node_name].process, pipeline)
+    #
+    # def run(self):
+    #     self.init_pipeline(self.pipeline)
+    #     idx = self.progress.value()
+    #     idx += 1
+    #     self.progress.setValue(idx)
+    #     QApplication.processEvents()
 
 
 class RunProgress(QProgressDialog):
