@@ -14,14 +14,17 @@ from traits.trait_handlers import TraitListObject
 from capsul.api import Process
 
 # Populse_MIA imports
-from populse_mia.project.project import COLLECTION_BRICK, BRICK_EXEC, BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, \
-    COLLECTION_CURRENT, BRICK_OUTPUTS
+from populse_mia.project.project import COLLECTION_BRICK, BRICK_EXEC, \
+    BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, COLLECTION_CURRENT, \
+    BRICK_OUTPUTS
 
 
 class ProcessMIA(Process):
     """
     Class overriding the default capsul Process class, in order to personalize
-       the run in MIA
+       the run for MIA bricks.
+
+   This class is mainly used by MIA bricks.
 
     Methods:
         - _after_run_process: method called after the process being run
@@ -39,11 +42,11 @@ class ProcessMIA(Process):
            the run
         - manage_brick_output_before_run: manage the bricks history before
            the run
+        - manage_matlab_launch_parameters: Set the Matlab's config parameters
+           when a Nipype process is used
         - remove_brick_output: remove the bricks from the outputs
 
     """
-
-    project = None
 
     def __init__(self):
         super(ProcessMIA, self).__init__()
@@ -171,6 +174,18 @@ class ProcessMIA(Process):
                                            BRICK_EXEC, "Not Done")
             self.project.saveModifications()
 
+    def manage_matlab_launch_parameters(self):
+        """Set the Matlab's config parameters when a Nipype process is used
+
+        Called in bricks.
+        """
+
+        if hasattr(self, "process"):
+            self.process.inputs.use_mcr = self.use_mcr
+            self.process.inputs.paths = self.paths
+            self.process.inputs.matlab_cmd = self.matlab_cmd
+            self.process.inputs.mfile = self.mfile
+
     def remove_brick_output(self, brick, output):
         """
         Removes the bricks from the outputs
@@ -192,7 +207,4 @@ class ProcessMIA(Process):
                 self.project.session.set_value(COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
                 self.project.saveModifications()
 
-    @staticmethod
-    def set_project(project):
-        process = ProcessMIA()
-        process.project = project
+

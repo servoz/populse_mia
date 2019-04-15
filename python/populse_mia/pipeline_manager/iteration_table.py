@@ -54,7 +54,9 @@ class IterationTable(QWidget):
 
         QWidget.__init__(self)
 
-        ProcessMIA.set_project(project)
+        #Necessary for using MIA bricks
+        ProcessMIA.project = project
+
         self.project = project
 
         if not scan_list:
@@ -204,7 +206,7 @@ class IterationTable(QWidget):
 
     def update_table(self):
         """
-        Updates the iteration table
+        Update the iteration table
 
         """
 
@@ -252,7 +254,7 @@ class IterationTable(QWidget):
 
     def select_visualized_tag(self, idx):
         """
-        Opens a pop-up to let the user select which tag to visualize in the iteration table
+        Open a pop-up to let the user select which tag to visualize in the iteration table
 
         :param idx: index of the clicked push button
         """
@@ -294,7 +296,7 @@ class IterationTable(QWidget):
 
     def select_iteration_tag(self):
         """
-        Opens a pop-up to let the user select on which tag to iterate
+        Open a pop-up to let the user select on which tag to iterate
 
         """
 
@@ -306,7 +308,7 @@ class IterationTable(QWidget):
 
     def update_iterated_tag(self, tag_name):
         """
-        Updates the widget when the iterated tag is modified
+        Update the widget when the iterated tag is modified
 
         :param tag_name: name of the iterated tag
         """
@@ -336,7 +338,7 @@ class IterationTable(QWidget):
 
     def emit_iteration_table_updated(self):
         """
-        Emits a signal when the iteration scans have been updated
+        Emit a signal when the iteration scans have been updated
 
         """
 

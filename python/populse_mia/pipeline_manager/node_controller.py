@@ -18,15 +18,18 @@ from traits.api import Undefined, TraitError
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QMessageBox, QToolButton, QDialog, QDialogButtonBox, QApplication
+    QLabel, QLineEdit, QGroupBox, QMessageBox, QToolButton, QDialog, \
+    QDialogButtonBox, QApplication
 
 # soma-base imports
 from soma.controller import trait_ids
 
 # Populse_MIA imports
 from populse_mia.data_browser.advanced_search import AdvancedSearch
-from populse_mia.data_browser.data_browser import TableDataBrowser, not_defined_value
-from populse_mia.pop_ups.pop_up_select_tag_count_table import PopUpSelectTagCountTable
+from populse_mia.data_browser.data_browser import TableDataBrowser, \
+    not_defined_value
+from populse_mia.pop_ups.pop_up_select_tag_count_table import \
+    PopUpSelectTagCountTable
 from populse_mia.pop_ups.pop_up_visualized_tags import PopUpVisualizedTags
 from populse_mia.project.project import TAG_FILENAME, COLLECTION_CURRENT
 from populse_mia.project.filter import Filter
@@ -84,11 +87,11 @@ class NodeController(QWidget):
 
     def display_parameters(self, node_name, process, pipeline):
         """
-        Displays the parameters of the selected node
+        Display the parameters of the selected node
 
-        The node parameters are read and line labels/line edits/push buttons are
-        created for each of them. This methods consists mainly in widget and layout
-        organization.
+        The node parameters are read and line labels/line edits/push buttons
+        are created for each of them. This methods consists mainly in widget
+        and layout organization.
 
         :param node_name: name of the node
         :param process: process of the node
@@ -118,7 +121,8 @@ class NodeController(QWidget):
         # The pipeline global inputs and outputs node name cannot be modified
         if self.node_name not in ('inputs', 'outputs'):
             self.line_edit_node_name.setText(self.node_name)
-            self.line_edit_node_name.returnPressed.connect(partial(self.update_node_name, pipeline))
+            self.line_edit_node_name.returnPressed.connect(
+                partial(self.update_node_name, pipeline))
         else:
             self.line_edit_node_name.setText('Pipeline inputs/outputs')
             self.line_edit_node_name.setReadOnly(True)
@@ -147,19 +151,23 @@ class NodeController(QWidget):
 
                 self.line_edit_input.insert(idx, QLineEdit())
                 self.line_edit_input[idx].setText(str(value))
-                self.line_edit_input[idx].returnPressed.connect(partial(self.update_plug_value, 'in',
-                                                                        name, pipeline, type(value)))
+                self.line_edit_input[idx].returnPressed.connect(
+                    partial(self.update_plug_value, 'in', name, pipeline,
+                            type(value)))
 
                 h_box = QHBoxLayout()
                 h_box.addWidget(label_input)
                 h_box.addWidget(self.line_edit_input[idx])
 
-                # Adding the possibility to filter pipeline global inputs except if the input is "database_scans"
+                # Adding the possibility to filter pipeline global
+                # inputs except if the input is "database_scans"
                 # which means that the scans will be filtered with InputFilter
                 if self.node_name == "inputs" and name != "database_scans":
                     parameters = (idx, pipeline, type(value))
                     push_button = QPushButton('Filter')
-                    push_button.clicked.connect(partial(self.display_filter, self.node_name, name, parameters, process))
+                    push_button.clicked.connect(
+                        partial(self.display_filter, self.node_name, name,
+                                parameters, process))
                     h_box.addWidget(push_button)
 
                 self.v_box_inputs.addLayout(h_box)
@@ -183,8 +191,9 @@ class NodeController(QWidget):
 
             self.line_edit_output.insert(idx, QLineEdit())
             self.line_edit_output[idx].setText(str(value))
-            self.line_edit_output[idx].returnPressed.connect(partial(self.update_plug_value, 'out',
-                                                                     name, pipeline, type(value)))
+            self.line_edit_output[idx].returnPressed.connect(
+                partial(self.update_plug_value, 'out', name, pipeline,
+                        type(value)))
 
             h_box = QHBoxLayout()
             h_box.addWidget(label_output)
@@ -204,7 +213,7 @@ class NodeController(QWidget):
 
     def update_parameters(self, process=None):
         """
-        Updates the parameters values
+        Update the parameters values
 
         :param process: process of the node
         """
@@ -236,7 +245,7 @@ class NodeController(QWidget):
 
     def get_index_from_plug_name(self, plug_name, in_or_out):
         """
-        Returns the index of the plug label.
+        Return the index of the plug label.
 
         :param plug_name: name of the plug
         :param in_or_out: "in" if the plug is an input plug, "out" else
@@ -254,7 +263,7 @@ class NodeController(QWidget):
 
     def update_node_name(self, pipeline, new_node_name=None):
         """
-        Changes the name of the selected node and updates the pipeline.
+        Change the name of the selected node and updates the pipeline.
 
         Because the nodes are stored in a dictionary, we have to create
         a new node that has the same traits as the selected one and create
@@ -319,7 +328,7 @@ class NodeController(QWidget):
 
     def update_plug_value(self, in_or_out, plug_name, pipeline, value_type, new_value=None):
         """
-        Updates the value of a node plug
+        Update the value of a node plug
 
         :param in_or_out: "in" if the plug is an input plug, "out" else
         :param plug_name: name of the plug
@@ -393,7 +402,7 @@ class NodeController(QWidget):
 
     def display_filter(self, node_name, plug_name, parameters, process):
         """
-        Displays a filter widget
+        Display a filter widget
 
         :param node_name: name of the node
         :param plug_name: name of the plug
@@ -406,7 +415,7 @@ class NodeController(QWidget):
 
     def update_plug_value_from_filter(self, plug_name, parameters, filter_res_list):
         """
-        Updates the plug value from a filter result
+        Update the plug value from a filter result
 
         :param plug_name: name of the plug
         :param parameters: tuple containing the index of the plug, the current pipeline instance and the type of the plug value
@@ -430,7 +439,7 @@ class NodeController(QWidget):
 
     def clearLayout(self, layout):
         """
-        Clears the layouts of the widget
+        Clear the layouts of the widget
 
         :param layout: widget with a layout
         :return:
@@ -468,12 +477,12 @@ class PlugFilter(QWidget):
         - table_data: browser that displays the database files to filter
 
     Methods:
-        - update_tag_to_filter: updates the tag to Filter
-        - update_tags: updates the list of visualized tags
+        - update_tag_to_filter: update the tag to Filter
+        - update_tags: update the list of visualized tags
         - reset_search_bar: reset the search bar of the rapid search
-        - search_str: updates the files to display in the browser
+        - search_str: update the files to display in the browser
         - ok_clicked: sets the new value to the node plug and closes the widget
-        - set_plug_value: emits a signal to set the file names to the node plug
+        - set_plug_value: emit a signal to set the file names to the node plug
     """
 
     plug_value_changed = pyqtSignal(list)
@@ -591,7 +600,7 @@ class PlugFilter(QWidget):
 
     def update_tag_to_filter(self):
         """
-        Updates the tag to Filter
+        Update the tag to Filter
 
         """
 
@@ -601,7 +610,7 @@ class PlugFilter(QWidget):
 
     def update_tags(self):
         """
-        Updates the list of visualized tags
+        Update the list of visualized tags
 
         """
 
@@ -652,7 +661,7 @@ class PlugFilter(QWidget):
 
     def search_str(self, str_search):
         """
-        Updates the files to display in the browser
+        Update the files to display in the browser
         :param str_search: string typed in the rapid search
         """
 
@@ -687,7 +696,7 @@ class PlugFilter(QWidget):
 
     def ok_clicked(self):
         """
-        Sets the new value to the node plug and closes the widget
+        Set the new value to the node plug and closes the widget
 
         """
 
@@ -706,7 +715,7 @@ class PlugFilter(QWidget):
 
     def set_plug_value(self):
         """
-        Emits a signal to set the file names to the node plug
+        Emit a signal to set the file names to the node plug
 
         """
 
@@ -757,10 +766,10 @@ class FilterWidget(QWidget):
         - visible_tags: tags that are visible in the current project
 
     Methods:
-        - update_tag_to_filter: updates the tag to Filter
-        - update_tags: updates the list of visualized tags
+        - update_tag_to_filter: update the tag to Filter
+        - update_tags: update the list of visualized tags
         - reset_search_bar: reset the search bar of the rapid search
-        - search_str: updates the files to display in the browser
+        - search_str: update the files to display in the browser
         - ok_clicked: sets the filter to the process and closes the widget
         - set_plug_value: sets the output of the filter to the output of the node
     """
@@ -869,7 +878,7 @@ class FilterWidget(QWidget):
 
     def update_tag_to_filter(self):
         """
-        Updates the tag to Filter
+        Update the tag to Filter
 
         """
 
@@ -879,7 +888,7 @@ class FilterWidget(QWidget):
 
     def update_tags(self):
         """
-        Updates the list of visualized tags
+        Update the list of visualized tags
 
         """
 
@@ -930,7 +939,7 @@ class FilterWidget(QWidget):
 
     def search_str(self, str_search):
         """
-        Updates the files to display in the browser
+        Update the files to display in the browser
 
         :param str_search: string typed in the rapid search
         """
@@ -961,7 +970,7 @@ class FilterWidget(QWidget):
 
     def ok_clicked(self):
         """
-        Sets the filter to the process and closes the widget
+        Set the filter to the process and closes the widget
 
         """
         if isinstance(self.process, ProcessMIA):
@@ -974,7 +983,7 @@ class FilterWidget(QWidget):
 
     def set_output_value(self):
         """
-        Sets the output of the filter to the output of the node
+        Set the output of the filter to the output of the node
 
         """
 
