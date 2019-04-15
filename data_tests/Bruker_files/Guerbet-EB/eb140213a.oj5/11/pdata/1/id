@@ -1,10 +1,3 @@
-##TITLE=Parameter List
-##JCAMPDX=4.24
-##DATATYPE=Parameter Values
-##ORIGIN=Bruker BioSpin MRI GmbH
-##OWNER=omontigo
-$$ Thu Feb 13 11:37:09 2014 CET (UT+1h)  omontigo
-$$ /opt/PV5.1/data/omontigo/nmr/eb140213a.oj5/11/pdata/1/id
-##$DATASET_KEY=( 65 )
-<2.16.756.5.5.100.3611280983.5744.1392287829.3779>
-##END=
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c1d0abfdf38edd5b646dbaa291a26845a5657ceed06a424aa3a15b64ce582e1
+size 306
