@@ -971,10 +971,9 @@ class TableDataBrowser(QTableWidget):
 
         idx = 0
         for scan in rows:
-
             # Scan added only if it's not already in the table
             if self.get_scan_row(scan) is None:
-
+                print(1)
                 rowCount = self.rowCount()
                 self.insertRow(rowCount)
 
@@ -1038,7 +1037,8 @@ class TableDataBrowser(QTableWidget):
                                     item.flags() & ~Qt.ItemIsEditable)
                     self.setItem(rowCount, column, item)
 
-        self.setSortingEnabled(True)
+        # Crash if self.setSortingEnabled(True) because it calls sortByColumn()
+        # self.setSortingEnabled(False)
 
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
@@ -1328,7 +1328,6 @@ class TableDataBrowser(QTableWidget):
 
     def fill_cells_update_table(self):
         """Initialize and fill the cells of the table"""
-
         cells_number = len(self.scans_to_visualize) * len(
             self.horizontalHeader())
         self.progress = QProgressDialog(
@@ -1346,7 +1345,6 @@ class TableDataBrowser(QTableWidget):
         idx = 0
         row = 0
         for scan in self.scans_to_visualize:
-
             for column in range(0, len(self.horizontalHeader())):
 
                 idx += 1
@@ -1368,7 +1366,6 @@ class TableDataBrowser(QTableWidget):
                         COLLECTION_CURRENT, scan, current_tag)
                     # The scan has a value for the tag
                     if current_value is not None:
-
                         if current_tag != TAG_BRICKS:
                             set_item_data(
                                 item, current_value,
@@ -1376,14 +1373,18 @@ class TableDataBrowser(QTableWidget):
                                     COLLECTION_CURRENT, current_tag).type)
                         else:
                             # Tag bricks, display list with buttons
+                            # Initialization of a widget, it is necessary
+                            # to remove it after a sort
                             widget = QWidget()
                             widget.moveToThread(
                                 QApplication.instance().thread())
                             layout = QVBoxLayout()
                             for brick_number in range(0, len(current_value)):
                                 brick_uuid = current_value[brick_number]
+
                                 brick_name = self.project.session.get_value(
                                     COLLECTION_BRICK, brick_uuid, BRICK_NAME)
+
                                 brick_name_button = QPushButton(brick_name)
                                 brick_name_button.moveToThread(
                                     QApplication.instance().thread())
@@ -1404,11 +1405,32 @@ class TableDataBrowser(QTableWidget):
                             font.setBold(True)
                             item.setFont(font)
                         else:
+                            # The scan does not have a brick
+                            # Remove previous initialization of QWidget in cell
+                            self.setCellWidget(row, column, None)
                             set_item_data(item, "", FIELD_TYPE_STRING)
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                             # bricks not editable
                 self.setItem(row, column, item)
             row += 1
+
+        # We apply the saved sort when the project is opened or after the
+        # tab is changed
+        # Saved sort applied if it exists
+        self.setSortingEnabled(True)
+
+        tag_to_sort = self.project.getSortedTag()
+        column_to_sort = self.get_tag_column(tag_to_sort)
+        sort_order = self.project.getSortOrder()
+
+        self.itemChanged.connect(self.change_cell_color)
+
+        if column_to_sort is not None:
+            self.horizontalHeader().setSortIndicator(
+                column_to_sort, sort_order)
+        else:
+            self.horizontalHeader().setSortIndicator(0, 0)
+
 
         self.resizeRowsToContents()
         self.resizeColumnsToContents()
@@ -1514,8 +1536,8 @@ class TableDataBrowser(QTableWidget):
         :param scan: scan filename
         :return: index of the row of the scan
         """
-
         for row in range(0, self.rowCount()):
+        #for row in range(0, len(self.scans_to_visualize)):
             item = self.item(row, 0)
             scan_name = item.text()
             if scan_name == scan:
@@ -2115,7 +2137,7 @@ class TableDataBrowser(QTableWidget):
             # We select the columns of the row if it was selected
             tags = scan[1]
             for tag in tags:
-                if self.get_tag_column(tag) is not None:
+                if self.get_tag_column(tag) is not None :
                     item_to_select = self.item(row, self.get_tag_column(tag))
                     item_to_select.setSelected(True)
 
@@ -2149,21 +2171,6 @@ class TableDataBrowser(QTableWidget):
 
         # Cells filled
         self.fill_cells_update_table()
-
-        # Saved sort applied if it exists
-        self.setSortingEnabled(True)
-
-        tag_to_sort = self.project.getSortedTag()
-        column_to_sort = self.get_tag_column(tag_to_sort)
-        sort_order = self.project.getSortOrder()
-
-        self.itemChanged.connect(self.change_cell_color)
-
-        if column_to_sort is not None:
-            self.horizontalHeader().setSortIndicator(
-                column_to_sort, sort_order)
-        else:
-            self.horizontalHeader().setSortIndicator(0, 0)
 
         self.itemChanged.disconnect()
 
@@ -2224,7 +2231,6 @@ class TableDataBrowser(QTableWidget):
 
         :param old_scans: old list of scans
         """
-
         self.itemChanged.disconnect()
 
         if self.activate_selection:
@@ -2232,7 +2238,7 @@ class TableDataBrowser(QTableWidget):
 
         # Scans that are not visible anymore are hidden
         for scan in old_scans:
-            if not scan in self.scans_to_visualize:
+            if scan not in self.scans_to_visualize:
                 self.setRowHidden(self.get_scan_row(scan), True)
 
         # Scans that became visible must be visible
