@@ -1,14 +1,3 @@
-##TITLE=Parameter List
-##JCAMPDX=4.24
-##DATATYPE=Parameter Values
-##ORIGIN=Bruker BioSpin MRI GmbH
-##OWNER=omontigo
-$$ Fri Feb 14 09:32:42 2014 CET (UT+1h)  omontigo
-$$ /opt/PV5.1/data/omontigo/nmr/eb140214a.ok2/AdjResult/2.16.756.5.5.100.3611280983.15317.1392366725.65/result.jcamp
-##$ACQ_BF=( 1 )
-(<1H>, 200.342080028258)
-##$PVM_TuneShimFreqOffs=( 1 )
-3.26409720763365
-##$PVM_StudyShim=(0, 613, 0, 0, 0, -168, -453, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-0)
-##END=
+version https://git-lfs.github.com/spec/v1
+oid sha256:c819c3799ae87882ea16c077b2148cf16257eab58d161412099ce99fd2eeefd5
+size 459
