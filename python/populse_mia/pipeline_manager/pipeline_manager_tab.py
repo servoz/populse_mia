@@ -1046,12 +1046,10 @@ class PipelineManagerTab(QWidget):
                         idx_combo_box)
                     self.iterationTable.update_table()
 
-                    print("LOOK")
                     self.progress = InitProgress(self.project,
                                                  self.pipelineEditorTabs, None)
                     self.progress.show()
                     self.progress.exec()
-                    print("OVER")
 
                     self.progress = RunProgress(self.pipelineEditorTabs)
                     self.progress.show()
@@ -1666,26 +1664,15 @@ class InitWorker(QThread):
 
             process = node.process
 
-            print("##############################################")
-            print("##############################################")
-            print("##############################################")
-            print(process)
-            print(node)
-            print(pipeline)
-            print("##############################################")
-            print("##############################################")
-            print("##############################################")
             # Getting the list of the outputs of the node
             # according to its inputs
             try:
                 self.inheritance_dict = None
-                print("Hello")
                 (process_outputs,
                  self.inheritance_dict) = process.list_outputs()
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
             except ValueError:
-                print("Prout")
                 process_outputs = process.list_outputs()
                 print("No inheritance dict for the process "
                       "{0}.".format(node_name))
