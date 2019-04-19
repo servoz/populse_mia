@@ -482,13 +482,12 @@ class PipelineManagerTab(QWidget):
         #     self.progress.exec()
         #
         # else:
-        if pipeline is None:
-            name = os.path.basename(
-                self.pipelineEditorTabs.get_current_filename())
-            self.main_window.statusBar().showMessage(
-                'Pipeline "{0}" is getting initialized. '
-                'Please wait.'.format(name))
-            QApplication.processEvents()
+        name = os.path.basename(
+            self.pipelineEditorTabs.get_current_filename())
+        self.main_window.statusBar().showMessage(
+            'Pipeline "{0}" is getting initialized. '
+            'Please wait.'.format(name))
+        QApplication.processEvents()
 
         config = Config()
         main_pipeline = False
@@ -527,7 +526,6 @@ class PipelineManagerTab(QWidget):
         nodes_inputs_ratio_list = []
 
         for node_name, node in pipeline.nodes.items():
-
             # Updating the project attribute of the processes
             if hasattr(node, 'process'):
                 process = node.process
@@ -566,7 +564,6 @@ class PipelineManagerTab(QWidget):
             # inputs are "connected"
             key_name = [key for key, value in nodes_inputs_ratio.items() if
                         value[0] == value[1]]
-
             if key_name:
                 # This node can be initialized so it is placed at the
                 # end of the nodes_to_check list
@@ -597,7 +594,6 @@ class PipelineManagerTab(QWidget):
             # If the node is a pipeline node,
             # each of its nodes has to be initialised
             node = pipeline.nodes[node_name]
-
             if isinstance(node, PipelineNode):
                 sub_pipeline = node.process
                 self.init_pipeline(sub_pipeline)
@@ -687,7 +683,6 @@ class PipelineManagerTab(QWidget):
 
             # Getting the list of the outputs of the node according
             # to its inputs
-
             try:
                 self.inheritance_dict = None
                 (process_outputs,
@@ -885,10 +880,8 @@ class PipelineManagerTab(QWidget):
                 self.nodeController.node_name,
                 pipeline.nodes[node_controller_node_name].process,
                 pipeline)
-
-        if pipeline is None:
-            self.main_window.statusBar().showMessage(
-                'Pipeline "{0}" has been initialized.'.format(name))
+        self.main_window.statusBar().showMessage(
+            'Pipeline "{0}" has been initialized.'.format(name))
 
     def loadPipeline(self):
         """
@@ -1032,9 +1025,15 @@ class PipelineManagerTab(QWidget):
             ui_iteration = PopUpSelectIteration(iterated_tag, tag_values)
             if ui_iteration.exec():
                 tag_values = ui_iteration.final_values
+                pipeline_progress = dict()
+                pipeline_progress['size'] = len(tag_values)
+                pipeline_progress['counter'] = 1
+                pipeline_progress['tag'] = iterated_tag
                 for tag_value in tag_values:
-
                     # Status bar update
+                    pipeline_progress['tag_value'] = tag_value
+                    self.init_pipeline()
+
                     self.main_window.statusBar().showMessage(
                         'Pipeline "{0}" is getting run for {1} {2}. '
                         'Please wait.'.format(name, iterated_tag, tag_value))
@@ -1046,16 +1045,16 @@ class PipelineManagerTab(QWidget):
                         idx_combo_box)
                     self.iterationTable.update_table()
 
-                    print("LOOK")
-                    self.progress = InitProgress(self.project,
-                                                 self.pipelineEditorTabs, None)
+                    self.progress = RunProgress(self.pipelineEditorTabs,
+                                                pipeline_progress)
                     self.progress.show()
                     self.progress.exec()
-                    print("OVER")
-
-                    self.progress = RunProgress(self.pipelineEditorTabs)
-                    self.progress.show()
-                    self.progress.exec()
+                    pipeline_progress['counter'] += 1
+                    # # self.init_pipeline(self.pipeline)
+                    # idx = self.progress.value()
+                    # idx += 1
+                    # self.progress.setValue(idx)
+                    # QApplication.processEvents()
 
             self.main_window.statusBar().showMessage(
                 'Pipeline "{0}" has been run for {1} {2}. Please wait.'.format(
@@ -1355,71 +1354,6 @@ class PipelineManagerTab(QWidget):
         self.processLibrary.pkg_library.save()
 
 
-class InitProgress(QProgressDialog):
-    """
-    Init progress bar
-    """
-
-    def __init__(self, project, diagram_view, pipeline):
-
-        super(InitProgress, self).__init__("Please wait while the pipeline is "
-                                           "being initialized...", None, 0, 0)
-
-        if not pipeline:
-            nodes_to_check = []
-            for node_name in diagram_view.get_current_pipeline().nodes.keys():
-                nodes_to_check.append(node_name)
-            bricks_number = self.get_bricks_number(
-                diagram_view.get_current_pipeline())
-        else:
-            bricks_number = self.get_bricks_number(pipeline)
-        self.setMaximum(bricks_number)
-        self.setWindowTitle("Pipeline initialization")
-        self.setWindowFlags(
-            Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.setModal(False)
-        self.setAttribute(Qt.WA_DeleteOnClose, True)
-
-        self.project = project
-        self.diagramView = diagram_view
-        self.pipeline = pipeline
-
-        self.setMinimumDuration(0)
-        self.setValue(0)
-
-        self.worker = InitWorker(
-            self.project, self.diagramView, self.pipeline, self)
-        self.worker.finished.connect(self.close)
-        self.worker.notifyProgress.connect(self.onProgress)
-        self.worker.start()
-
-    def onProgress(self, i):
-        """
-        Signal to set the pipeline initialization progressbar value
-        """
-
-        self.setValue(i)
-
-    def get_bricks_number(self, pipeline):
-        """
-        Give the number of bricks in the current pipeline
-        :return: The number of bricks to initialize in the current pipeline
-        """
-
-        number_of_bricks = 0
-        for node_name in pipeline.nodes.keys():
-            if node_name in ['', 'inputs', 'outputs']:
-                continue
-            node = pipeline.nodes[node_name]
-            if isinstance(node, PipelineNode):
-                sub_pipeline = node.process
-                number_of_bricks += self.get_bricks_number(sub_pipeline)
-                continue
-            else:
-                number_of_bricks += 1
-        return number_of_bricks + 1
-
-
 class InitWorker(QThread):
     """
     Thread doing the pipeline initialization
@@ -1666,26 +1600,15 @@ class InitWorker(QThread):
 
             process = node.process
 
-            print("##############################################")
-            print("##############################################")
-            print("##############################################")
-            print(process)
-            print(node)
-            print(pipeline)
-            print("##############################################")
-            print("##############################################")
-            print("##############################################")
             # Getting the list of the outputs of the node
             # according to its inputs
             try:
                 self.inheritance_dict = None
-                print("Hello")
                 (process_outputs,
                  self.inheritance_dict) = process.list_outputs()
             except TraitError:
                 print("TRAIT ERROR for node {0}".format(node_name))
             except ValueError:
-                print("Prout")
                 process_outputs = process.list_outputs()
                 print("No inheritance dict for the process "
                       "{0}.".format(node_name))
@@ -1815,12 +1738,20 @@ class RunProgress(QProgressDialog):
     Run progress bar
     """
 
-    def __init__(self, diagram_view):
+    def __init__(self, diagram_view, settings=None):
 
         super(RunProgress, self).__init__("Please wait while the pipeline is "
                                           "running...", None, 0, 0)
 
-        self.setWindowTitle("Pipeline running")
+        if settings:
+            self.setWindowTitle(
+                "Pipeline is running {0}/{1}".format(
+                    settings["counter"], settings["size"]))
+            self.setLabelText('Pipeline is running for {0} in {1}. '
+                              'Please wait.'.format(settings['tag_value'],
+                                                    settings['tag']))
+        else:
+            self.setWindowTitle("Pipeline running")
         self.setWindowFlags(
             Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.setModal(True)
