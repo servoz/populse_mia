@@ -1354,6 +1354,74 @@ class PipelineManagerTab(QWidget):
         self.processLibrary.pkg_library.save()
 
 
+class InitProgress(QProgressDialog):
+    """
+    Init progress bar
+    """
+
+    def __init__(self, project, diagram_view, pipeline):
+
+        super(InitProgress, self).__init__("Please wait while the pipeline is "
+                                           "being initialized...", None, 0, 0)
+
+        if not pipeline:
+            nodes_to_check = []
+            for node_name in diagram_view.get_current_pipeline().nodes.keys():
+                nodes_to_check.append(node_name)
+            bricks_number = self.get_bricks_number(
+                diagram_view.get_current_pipeline())
+
+        else:
+            bricks_number = self.get_bricks_number(pipeline)
+            
+        self.setMaximum(bricks_number)
+        self.setWindowTitle("Pipeline initialization")
+        self.setWindowFlags(
+            Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.setModal(False)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+
+        self.project = project
+        self.diagramView = diagram_view
+        self.pipeline = pipeline
+
+        self.setMinimumDuration(0)
+        self.setValue(0)
+
+        self.worker = InitWorker(
+            self.project, self.diagramView, self.pipeline, self)
+
+        self.worker.finished.connect(self.close)
+        self.worker.notifyProgress.connect(self.onProgress)
+        self.worker.start()
+
+    def onProgress(self, i):
+        """
+        Signal to set the pipeline initialization progressbar value
+        """
+
+        self.setValue(i)
+
+    def get_bricks_number(self, pipeline):
+        """
+        Give the number of bricks in the current pipeline
+        :return: The number of bricks to initialize in the current pipeline
+        """
+
+        number_of_bricks = 0
+        for node_name in pipeline.nodes.keys():
+            if node_name in ['', 'inputs', 'outputs']:
+                continue
+            node = pipeline.nodes[node_name]
+            if isinstance(node, PipelineNode):
+                sub_pipeline = node.process
+                number_of_bricks += self.get_bricks_number(sub_pipeline)
+                continue
+            else:
+                number_of_bricks += 1
+        return number_of_bricks + 1
+
+
 class InitWorker(QThread):
     """
     Thread doing the pipeline initialization
@@ -1457,6 +1525,7 @@ class InitWorker(QThread):
 
     def init_pipeline(self, pipeline):
 
+        config = Config()
         main_pipeline = False
 
         # If the initialisation is launch for the main pipeline
@@ -1599,6 +1668,47 @@ class InitWorker(QThread):
             self.project.saveModifications()
 
             process = node.process
+            libProcName = str(process).split('.')[0].split('_')[0][1:]
+
+            if libProcName in ['IRMaGe', 'mia', 'User']:
+                # update launching parameters for IRMaGe_processes bricks
+                # IRMaGe_processes is deprecated
+                # update launching parameters for mia_processes bricks
+                # mia_processes is the official process library for mia
+                # update launching parameters for User_processes bricks
+                # this is the library for bricks development
+
+                print('\nUpdating the launching parameters for {0} '
+                      'process node: {1} ...\n'.format(libProcName,
+                                                       node_name))
+
+                # TODO 'except' instead of 'if' to test matlab launch ?
+                # Test for matlab launch
+                if config.get_use_spm_standalone() == 'yes':
+                    pipeline.nodes[node_name].process.use_mcr = True
+                    pipeline.nodes[node_name].process.paths = \
+                        config.get_spm_standalone_path().split()
+                    pipeline.nodes[node_name].process.matlab_cmd = \
+                        config.get_matlab_command()
+
+                elif config.get_use_spm() == 'yes':
+                    pipeline.nodes[node_name].process.use_mcr = False
+                    pipeline.nodes[node_name].process.paths = \
+                        config.get_spm_path().split()
+                    pipeline.nodes[node_name].process.matlab_cmd = \
+                        config.get_matlab_command()
+
+                # Test for matlab launch
+                if not os.path.isdir(
+                        os.path.abspath(
+                            self.project.folder + os.sep + 'scripts')):
+                    os.mkdir(os.path.abspath(
+                        self.project.folder + os.sep + 'scripts'))
+
+                pipeline.nodes[node_name].process.output_directory = \
+                    os.path.abspath(
+                        self.project.folder + os.sep + 'scripts')
+                pipeline.nodes[node_name].process.mfile = True
 
             # Getting the list of the outputs of the node
             # according to its inputs
@@ -1632,10 +1742,81 @@ class InitWorker(QThread):
 
             # Adding I/O to database history
             inputs = process.get_inputs()
+
             for key in inputs:
-                value = inputs[key]
-                if value is Undefined:
+
+                if inputs[key] is Undefined:
                     inputs[key] = "<undefined>"
+
+                # Could be cleaner to do some tests with warning pop up if
+                # necessary (ex. if config.get_spm_standalone_path() is
+                # None, etc ...)
+
+                #                if (isinstance(process, NipypeProcess)) and (key in
+                # keys2consider) and (inputs[key] == "<undefined>"):
+
+                # update launching parameters for IRMaGe_processes bricks
+                # Test for matlab launch
+                if 'NipypeProcess' in str(process.__class__):
+                    print('\nUpdating the launching parameters for nipype '
+                          'process node: {0} ...'.format(node_name))
+                    # plugs to be filled automatically
+                    keys2consider = ['use_mcr', 'paths',
+                                     'matlab_cmd', 'output_directory']
+                    # use_mcr parameter
+                    if (key == keys2consider[0]) and (
+                            config.get_use_spm_standalone() == 'yes'):
+                        inputs[key] = True
+                    elif (key == keys2consider[0]) and (
+                            config.get_use_spm_standalone() == 'no'):
+                        inputs[key] = False
+                    # paths  parameter
+                    if (key == keys2consider[1]) and (
+                            config.get_use_spm_standalone() == 'yes'):
+                        inputs[
+                            key] = config.get_spm_standalone_path().split()
+                    elif (key == keys2consider[1]) and (
+                            config.get_use_spm() == 'yes'):
+                        inputs[key] = config.get_spm_path().split()
+                    # matlab_cmd parameter
+                    if (key == keys2consider[2]) and (
+                            config.get_use_spm_standalone() == 'yes'):
+                        inputs[key] = (config.get_spm_standalone_path() +
+                                       '/run_spm12.sh ' +
+                                       config.get_matlab_standalone_path() +
+                                       ' script')
+                    elif key == keys2consider[2] and \
+                            config.get_use_spm_standalone() == 'no':
+                        inputs[key] = config.get_matlab_path()
+
+                    # output_directory parameter
+                    if key == keys2consider[3]:
+
+                        if not os.path.isdir(os.path.abspath(
+                                self.project.folder + '/scripts')):
+                            os.mkdir(os.path.abspath(
+                                self.project.folder + '/scripts'))
+
+                        inputs[key] = os.path.abspath(
+                            self.project.folder + '/scripts')
+
+                    try:
+                        pipeline.nodes[node_name].set_plug_value(
+                            key, inputs[key])
+
+                    except TraitError:
+
+                        if isinstance(inputs[key], list) and len(
+                                inputs[key]) == 1:
+
+                            try:
+                                pipeline.nodes[key].set_plug_value(
+                                    key, inputs[key][0])
+
+                            except TraitError:
+                                print("Trait error for {0} plug of {1} "
+                                      "node".format(key, inputs[key]))
+
             outputs = process.get_outputs()
             for key in outputs:
                 value = outputs[key]
@@ -1718,12 +1899,13 @@ class InitWorker(QThread):
 
         # Updating the node controller
         if main_pipeline:
-            node_controller_node_name = self.nodeController.node_name
-            if node_controller_node_name in ['inputs', 'outputs']:
-                node_controller_node_name = ''
-            self.nodeController.display_parameters(
-                self.nodeController.node_name,
-                pipeline.nodes[node_controller_node_name].process, pipeline)
+            pass
+            #node_controller_node_name = self.nodeController.node_name
+            #if node_controller_node_name in ['inputs', 'outputs']:
+            #    node_controller_node_name = ''
+            #self.nodeController.display_parameters(
+            #    self.nodeController.node_name,
+            #    pipeline.nodes[node_controller_node_name].process, pipeline)
 
     def run(self):
         self.init_pipeline(self.pipeline)
