@@ -1,24 +1,3 @@
-##TITLE=Parameter List
-##JCAMPDX=4.24
-##DATATYPE=Parameter Values
-##ORIGIN=Bruker BioSpin MRI GmbH
-##OWNER=omontigo
-$$ Tue Feb 11 10:53:35 2014 CET (UT+1h)  omontigo
-$$ /opt/PV5.1/data/omontigo/nmr/eb140211a.oh4/5/pdata/1/roi
-##$ROI_version=( 20 )
-<Version 2.0>
-##$ROI_n=1
-##$ROI_par=( 1 )
-(RoiSquare, <>, 4, 0, 0, -1)
-##$ROI_dpar=( 4 )
-0.5 0.5 0.1 0.1
-##$ROI_dpar_off=( 1 )
-0
-##$ROI_cpar_off=( 1 )
-0
-##$ROI_ndx=0
-##$ROI_dpar_ndx=( 4 )
-0.5 0.5 0.1 0.1
-##$ROI_cpar_ndx=( 1 )
-<>
-##END=
+version https://git-lfs.github.com/spec/v1
+oid sha256:053350bd149b361ddf5cc353b4cfba4a58c6717013d16417d5f6c44a70585135
+size 484

@@ -1,25 +1,3 @@
-##TITLE=Parameter List
-##JCAMPDX=4.24
-##DATATYPE=Parameter Values
-##ORIGIN=Bruker BioSpin MRI GmbH
-##OWNER=omontigo
-$$ Thu Feb 13 09:02:48 2014 CET (UT+1h)  omontigo
-$$ /opt/PV5.1/data/omontigo/nmr/eb140213a.oj2/3/AdjStatePerScan
-##$AdjScanStateCompleted=Yes
-##$AdjScanStateAdjName=( 1, 128 )
-<RCVR_Standard>
-##$AdjScanStateCategory=( 1 )
-RCVR
-##$AdjScanStateAdjustPars=( 1, 1024 )
-<RG>
-##$AdjScanStateTime=( 1, 21 )
-<09:02:29 13 Feb 2014>
-##$AdjScanStateExpno=( 1 )
-3
-##$AdjScanStateState=( 1 )
-adj_successful
-##$AdjScanStateResultId=( 1, 65 )
-<>
-##$AdjScanStateMethod=( 1, 128 )
-<DtiEpi>
-##END=
+version https://git-lfs.github.com/spec/v1
+oid sha256:6dff4ec261782384709a3e6405a5748d945a027ddb6ae5e0f22c08b162fa42cf
+size 597

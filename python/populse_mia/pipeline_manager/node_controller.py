@@ -180,7 +180,6 @@ class NodeController(QWidget):
         self.button_group_outputs = QGroupBox('Outputs')
         self.v_box_outputs = QVBoxLayout()
         idx = 0
-
         for name, trait in process.traits(output=True).items():
             label_output = QLabel()
             label_output.setText(str(name))
