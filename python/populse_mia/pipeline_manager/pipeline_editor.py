@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*- #
+"""
+
+
+Contains:
+    Class:
+        -
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -1426,9 +1436,7 @@ class PipelineEditor(PipelineDevelopperView):
 
 
 def save_pipeline(pipeline, filename):
-    '''Save the pipeline either in XML or .py source file
-
-    '''
+    """Save the pipeline either in XML or .py source file"""
     formats = {'.py': save_py_pipeline,
                '.xml': save_xml_pipeline}
     saved = False
@@ -1447,7 +1455,7 @@ def save_pipeline(pipeline, filename):
 
 def get_path(name, dictionary, prev_paths=None):
     """
-    This recursive function returns the package path to the selected sub-pipeline.
+    Return the package path to the selected sub-pipeline.
 
     :param name: name of the sub-pipeline
     :param dictionary: package tree (read from process_config.yml)
@@ -1461,7 +1469,8 @@ def get_path(name, dictionary, prev_paths=None):
     # new_paths is a list containing the packages to the desired module
     new_paths = prev_paths.copy()
     for idx, (key, value) in enumerate(dictionary.items()):
-        # If the value is a string, this means that this is a "leaf" of the tree
+        # If the value is a string, this means
+        # that this is a "leaf" of the tree
         # so the key is a module name.
         if isinstance(value, str):
             if key == name:
@@ -1469,11 +1478,13 @@ def get_path(name, dictionary, prev_paths=None):
                 return new_paths
             else:
                 continue
-        # Else, this means that the value is still a dictionary, we are still in the tree
+        # Else, this means that the value is still a dictionary,
+        # we are still in the tree
         else:
             new_paths.append(key)
             final_res = get_path(name, value, new_paths)
-            # final_res is None if the module name has not been found in the tree
+            # final_res is None if the module name has not
+            # been found in the tree
             if final_res:
                 return final_res
             else:
@@ -1482,7 +1493,7 @@ def get_path(name, dictionary, prev_paths=None):
 
 def find_filename(paths_list, packages_list, file_name):
     """
-    Finds the corresponding file name in the paths list of process_config.yml.
+    Find the corresponding file name in the paths list of process_config.yml.
 
     :param paths_list: list of all the paths contained in process_config.yml
     :param packages_list: packages path
@@ -1497,7 +1508,8 @@ def find_filename(paths_list, packages_list, file_name):
             for package in packages_list:
                 new_path = os.path.join(new_path, package)
 
-            # Making sure that the filename is found (has somme issues with case sensitivity)
+            # Making sure that the filename is found (has somme issues
+            # with case sensitivity)
             for f in os.listdir(new_path):
                 new_file = os.path.join(new_path, f)
                 if os.path.isfile(new_file) and f.lower() == filename.lower():
