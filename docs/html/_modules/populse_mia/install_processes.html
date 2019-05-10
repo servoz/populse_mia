@@ -1,0 +1,191 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.install_processes &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.install_processes</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.install_processes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Script used to install MIA processes easily.</span>
+<span class="sd">MIA_processes.zip needs to be placed in MIA&#39;s root folder (same place as this script)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+
+<span class="c1"># Soma import</span>
+<span class="kn">from</span> <span class="nn">soma.path</span> <span class="k">import</span> <span class="n">find_in_path</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+
+<span class="c1">###################################################################</span>
+<span class="c1"># ZIP FILE TO UNZIP</span>
+<span class="c1">#</span>
+<span class="n">path_to_zip_file</span> <span class="o">=</span> <span class="s1">&#39;MIA_processes.zip&#39;</span>
+<span class="c1">#</span>
+<span class="c1">###################################################################</span>
+
+
+<div class="viewcode-block" id="add_package"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_processes.add_package">[docs]</a><span class="k">def</span> <span class="nf">add_package</span><span class="p">(</span><span class="n">proc_dic</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a package and its modules to the package tree</span>
+
+
+<span class="sd">    :param proc_dic: the process tree-dictionary</span>
+<span class="sd">    :param module_name: name of the module</span>
+<span class="sd">    :return: proc_dic: the modified process tree-dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">module_name</span><span class="p">:</span>
+
+        <span class="c1"># Reloading the package</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="n">pkg</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+
+        <span class="c1"># Checking if there are subpackages</span>
+        <span class="k">for</span> <span class="n">importer</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">ispkg</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="n">__path__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ispkg</span><span class="p">:</span>
+                <span class="n">add_package</span><span class="p">(</span><span class="n">proc_dic</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">modname</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())):</span>
+            <span class="c1"># Checking each class of in the package</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">find_in_path</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Updating the tree&#39;s dictionnary</span>
+                    <span class="n">path_list</span> <span class="o">=</span> <span class="n">module_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                    <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">proc_dic</span>
+                    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="n">path_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                                <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;process_enabled&#39;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                                <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">proc_dic</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="c1"># Extraction of the zipped content</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extracting MIA processes...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_to_zip_file</span><span class="p">):</span>
+        <span class="n">zip_ref</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">path_to_zip_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{0}</span><span class="s2"> not found in MIA&#39;s root folder&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_zip_file</span><span class="p">))</span>
+
+    <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="s1">&#39;processes&#39;</span><span class="p">)</span>
+    <span class="n">zip_ref</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MIA processes extracted&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Process config update</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updating process config...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">,</span> <span class="s1">&#39;process_config.yml&#39;</span><span class="p">)):</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">,</span> <span class="s1">&#39;process_config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">,</span> <span class="s1">&#39;process_config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                <span class="n">process_dic</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                            <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>    
+                <span class="n">process_dic</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">process_dic</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">process_dic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">process_dic</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">process_dic</span><span class="p">[</span><span class="s2">&quot;Packages&quot;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">process_dic</span><span class="p">[</span><span class="s2">&quot;Paths&quot;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;processes&#39;</span><span class="p">))</span>
+    <span class="n">final_package_dic</span> <span class="o">=</span> <span class="n">add_package</span><span class="p">(</span><span class="n">packages</span><span class="p">,</span> <span class="s2">&quot;MIA_processes&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;processes&#39;</span><span class="p">))</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;processes&#39;</span><span class="p">)))</span>
+
+    <span class="n">process_dic</span><span class="p">[</span><span class="s2">&quot;Packages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_package_dic</span>
+    <span class="n">process_dic</span><span class="p">[</span><span class="s2">&quot;Paths&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">paths</span>
+    <span class="c1"># Idea: Should we encrypt the path ?</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">,</span> <span class="s1">&#39;process_config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">process_dic</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process config updated&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

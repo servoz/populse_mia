@@ -18,7 +18,7 @@ Non-Populse member
 
 * `Fork <https://help.github.com/articles/fork-a-repo/>`_ Populse_MIA on GitHub and clone your Populse_MIA repository
 
-    * Make sure to have git installed (`git documentation <https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control>`_)
+    * Make sure to have git (`git documentation <https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control>`_) and git-lfs installed (`git-lfs documentation <https://git-lfs.github.com/>`_).
 
     * If not, install it (depending of your distribution, `package management system <https://en.wikipedia.org/wiki/Package_manager>`_ can be different): ::
 
@@ -27,8 +27,8 @@ Non-Populse member
 
     * Get source code from Github using HTTPS or SSH. Replace [mia_install_dir] with a directory of your choice::
 
-        git clone https://github.com/your_user_name/populse_mia.git [mia_install_dir] # using HTTPS
-        git clone git@github.com:your_user_name/populse_mia.git [mia_install_dir] # using SSH
+        git lfs clone https://github.com/your_user_name/populse_mia.git [mia_install_dir] # using HTTPS
+        git lfs clone git@github.com:your_user_name/populse_mia.git [mia_install_dir] # using SSH
 
     * Then, install the Python module distribution::
 
@@ -61,8 +61,8 @@ Populse member
 
     * Get source code from Github using HTTPS or SSH. Replace [mia_install_dir] with a directory of your choice::
 
-        git clone https://github.com/populse/populse_mia.git [mia_install_dir] # using HTTPS
-        git clone git@github.com:populse/populse_mia.git [mia_install_dir] # using SSH
+        git lfs clone https://github.com/populse/populse_mia.git [mia_install_dir] # using HTTPS
+        git lfs clone git@github.com:populse/populse_mia.git [mia_install_dir] # using SSH
 
     * Then, install the Python module distribution::
 

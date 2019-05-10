@@ -1,5 +1,7 @@
 .. :orphan: is used below to try to remove the following warning: checking consistency... /home/econdami/Git_Projects/populse_mia/docs/source/documentation/mri_file_manager.rst: WARNING: document isn't included in any toctree
-:orphan:
+
+   :orphan:
+   
 .. toctree::
 
 +-----------------------+---------------------------------------+---------------------------------------------------+--------------------------------------------------+
@@ -10,7 +12,11 @@
 MRI File Manager documentation
 ==============================
 
-This page is a user guide for the MRI File Manager. To launch this Populse third party software and import MRI data to the current analysis project, select the "Import" action of the "File" menu.
+This page is a user guide for the MRI File Manager, in the context of mia. More detailed documentation is available with the executables codes of the mri_conv_ software, hosted in the Populse project.
+
+To launch this Populse third party software and import MRI data to the current analysis project, select the "Import" action of the "File" menu.
+
+|
 
 .. image:: ../images/mri_file_manager_1.png
    :align: center
@@ -60,4 +66,4 @@ This page is a user guide for the MRI File Manager. To launch this Populse third
    :align: center
    :name: MRIFileManager5
 
-
+.. _mri_conv: https://github.com/populse/mri_conv

@@ -69,11 +69,8 @@ Pipeline creation
 Pipeline iteration
 ------------------
 
-To be able to iterate the pipeline correctly, you will need a filter process that is only available in the MIA_processes packages that is not included in the original software. 
+To be able to iterate the pipeline correctly, you will need a filter process that is ready to use in the mia_processes package, since the 1.1.1 release (Input_filter brick). The mia_processes package is available from the `Cheese Shop`_.
 
-If you want to have access to this special package, ask a Populse organization member. 
-
-Once you have downloaded the "MIA_processes" package, to install it, go to More > Install processes > From folder in Populse_MIA's menu bar and browse to the package. Click on “Install package”. The package is then stored in the process library.
 
 * Add the previously saved pipeline in a new editor by dragging it from the process library (under User_processes) and dropping it to the pipeline editor.
 
@@ -166,3 +163,5 @@ Once you have downloaded the "MIA_processes" package, to install it, go to More 
 .. image:: ../images/pipeline_example_13.png
    :align: center
    :name: Pipeline example 13
+
+.. _`Cheese Shop`: https://pypi.org/search/?q=mia_processes

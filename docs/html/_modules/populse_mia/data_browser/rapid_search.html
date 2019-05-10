@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.data_browser.rapid_search &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.data_browser.rapid_search</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.data_browser.rapid_search</h1><div class="highlight"><pre>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="c1"># PyQt5 import</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QLineEdit</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.project.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_BRICKS</span>
+
+
+<div class="viewcode-block" id="RapidSearch"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.rapid_search.RapidSearch">[docs]</a><span class="k">class</span> <span class="nc">RapidSearch</span><span class="p">(</span><span class="n">QLineEdit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Widget used to search for a pattern in the table (for all the visualized</span>
+<span class="sd">       tags).</span>
+
+<span class="sd">    Enter % to replace any string, _ to replace any character , *Not Defined*</span>
+<span class="sd">    for the scans with missing value(s).</span>
+<span class="sd">    Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        - databrowser: parent data browser widget</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - prepare_filter: prepares the rapid search filter</span>
+<span class="sd">        - prepare_not_defined_filter: prepares the rapid search filter for not</span>
+<span class="sd">          defined values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RapidSearch.__init__"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.rapid_search.RapidSearch.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span> <span class="o">=</span> <span class="n">databrowser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Rapid search, enter % to replace any string,&quot;</span>
+                                <span class="s2">&quot; _ to replace any character, *Not Defined* &quot;</span>
+                                <span class="s2">&quot;for the scans with missing value(s), &quot;</span>
+                                <span class="s2">&quot;dates are in the following format: &quot;</span>
+                                <span class="s2">&quot;yyyy-mm-dd hh:mm:ss.fff&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RapidSearch.prepare_not_defined_filter"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.rapid_search.RapidSearch.prepare_not_defined_filter">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_not_defined_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the rapid search filter for not defined values.</span>
+
+<span class="sd">        :param tags: list of tags to take into account</span>
+<span class="sd">        :return: str filter corresponding to the rapid search for not defined</span>
+<span class="sd">          values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="n">TAG_BRICKS</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">or_to_write</span><span class="p">:</span>
+                    <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; OR &quot;</span>
+
+                <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot;} == null)&quot;</span>
+
+                <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_search</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="k">return</span> <span class="n">query</span></div>
+
+<div class="viewcode-block" id="RapidSearch.prepare_filter"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.rapid_search.RapidSearch.prepare_filter">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">prepare_filter</span><span class="p">(</span><span class="n">search</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">scans</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the rapid search filter.</span>
+
+<span class="sd">        :param search: Search (str)</span>
+<span class="sd">        :param tags: List of tags to take into account</span>
+<span class="sd">        :param scans: List of scans to search into</span>
+<span class="sd">        :return: str filter corresponding to the rapid search</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="n">TAG_BRICKS</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">or_to_write</span><span class="p">:</span>
+                    <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; OR &quot;</span>
+
+                <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot;} LIKE </span><span class="se">\&quot;</span><span class="s2">%&quot;</span> <span class="o">+</span> <span class="n">search</span> <span class="o">+</span> <span class="s2">&quot;%</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
+
+                <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scans</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="k">return</span> <span class="n">query</span></div></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

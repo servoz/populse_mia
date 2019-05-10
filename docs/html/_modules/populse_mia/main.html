@@ -1,0 +1,886 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.main &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.main</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.main</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*- # Character encoding, recommended</span>
+<span class="sd">&quot;&quot;&quot;The first module used at the runtime of mia.</span>
+
+<span class="sd">Basically, this module is dedicated to the initialisation of the basic</span>
+<span class="sd">parameters and the various checks necessary for a successful launch of the</span>
+<span class="sd">mia&#39;s GUI.</span>
+
+<span class="sd">:Contains:</span>
+<span class="sd">    :Class:</span>
+<span class="sd">        - PackagesInstall</span>
+
+<span class="sd">    :Function:</span>
+
+<span class="sd">        - launch_mia</span>
+<span class="sd">        - main</span>
+<span class="sd">        - verify_processes</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">###############################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">###############################################################################</span>
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="c1"># PyQt5 imports</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QDir</span><span class="p">,</span> <span class="n">QLockFile</span><span class="p">,</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span><span class="n">QApplication</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span>
+                             <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">)</span>
+
+<span class="c1"># soma-base imports</span>
+<span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.Qt</span> <span class="k">import</span> <span class="n">QMessageBox</span>
+
+<span class="n">main_window</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="PackagesInstall"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.PackagesInstall">[docs]</a><span class="k">class</span> <span class="nc">PackagesInstall</span><span class="p">:</span>
+    
+    <span class="sd">&quot;&quot;&quot;Help to make available a pipeline package in the mia pipeline library,</span>
+<span class="sd">in a recursive way.</span>
+
+<span class="sd">    :Contains:</span>
+<span class="sd">        :Method:</span>
+<span class="sd">            - __init__</span>
+<span class="sd">            - add_package</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PackagesInstall.__init__"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.PackagesInstall.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialise the packages instance attribute.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">packages</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="PackagesInstall.add_package"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.PackagesInstall.add_package">[docs]</a>    <span class="k">def</span> <span class="nf">add_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provide recursive representation of a package and its</span>
+<span class="sd">subpackages/modules, to construct the mia&#39;s pipeline library.</span>
+
+<span class="sd">        :Parameters:</span>
+<span class="sd">            - :module_name: name of the module to add in the pipeline</span>
+<span class="sd">               library</span>
+<span class="sd">            - :class_name: only this pipeline will be add to the pipeline</span>
+<span class="sd">               library (optional)</span>
+
+<span class="sd">        :returns: dictionary of dictionaries containing</span>
+<span class="sd">           package/subpackages/pipelines status.</span>
+<span class="sd">           ex: {package: {subpackage: {pipeline: &#39;process_enabled&#39;}}}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">module_name</span><span class="p">:</span>
+
+            <span class="c1"># reloading the package</span>
+            <span class="k">if</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+                <span class="n">pkg</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+
+                <span class="c1"># check if there are subpackages, in this case explore them</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">modname</span><span class="p">,</span> <span class="n">ispkg</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="n">__path__</span><span class="p">):</span>
+
+                    <span class="k">if</span> <span class="n">ispkg</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Exploring subpackages  of </span><span class="si">{0}</span><span class="s1"> ...&#39;</span>
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module_name</span><span class="p">))</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">modname</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_package</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">modname</span><span class="p">),</span>
+                                         <span class="n">class_name</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())):</span>
+
+                    <span class="k">if</span> <span class="n">class_name</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">class_name</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># checking each class in the package</span>
+                    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+
+                        <span class="c1"># updating the tree&#39;s dictionary</span>
+                        <span class="n">path_list</span> <span class="o">=</span> <span class="n">module_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                        <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                        <span class="n">pkg_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span>
+
+                        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">:</span>
+
+                            <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+
+                                <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="n">path_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                                    <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;process_enabled&#39;</span>
+
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                                    <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+
+            <span class="k">except</span> <span class="n">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">When attempting to add a package and its modules to &#39;</span>
+                      <span class="s1">&#39;the package tree, the following exception was caught:&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span></div></div>
+
+
+<div class="viewcode-block" id="launch_mia"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.launch_mia">[docs]</a><span class="k">def</span> <span class="nf">launch_mia</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Actual launch of the mia software.</span>
+
+<span class="sd">    Overload the sys.excepthook handler with the _my_excepthook private</span>
+<span class="sd">    function. Check if the software is already opened in another instance.</span>
+<span class="sd">    If not, the list of opened projects is cleared. Checks if saved projects</span>
+<span class="sd">    known in the mia software still exist, and updates if necessary.</span>
+<span class="sd">    Instantiates a &#39;project&#39; object that handles projects and their</span>
+<span class="sd">    associated database anf finally launch of the mia&#39;s GUI.</span>
+
+
+<span class="sd">    **Contains: Private function:**</span>
+<span class="sd">        - *_my_excepthook(etype, evalue, tback)*</span>
+<span class="sd">           Log all uncaught exceptions in non-interactive mode.</span>
+
+<span class="sd">           All python exceptions are handled by function, stored in</span>
+<span class="sd">           sys.excepthook. By overloading the sys.excepthook handler with</span>
+<span class="sd">           _my_excepthook function, this last function is called whenever</span>
+<span class="sd">           there is a unhandled exception (so one that exits the interpreter).</span>
+<span class="sd">           We take advantage of it to clean up mia software before closing.</span>
+
+<span class="sd">            :Parameters:</span>
+<span class="sd">                - :etype: exception class</span>
+<span class="sd">                - :evalue: exception instance</span>
+<span class="sd">                - :tback: traceback object</span>
+
+<span class="sd">            **Contains: Private function:**</span>
+<span class="sd">              - *_clean_up()*</span>
+<span class="sd">                 Cleans up the mia software during &quot;normal&quot; closing.</span>
+
+<span class="sd">                 Make a clean up of the opened projects just before exiting</span>
+<span class="sd">                 mia.</span>
+<span class="sd">        - *_verify_saved_projects()*</span>
+<span class="sd">               Verify if the projects saved in saved_projects.yml are still</span>
+<span class="sd">               on the disk.</span>
+
+<span class="sd">               :Returns: the list of the deleted projects</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># populse_mia imports</span>
+    <span class="kn">from</span> <span class="nn">populse_mia.main_window.main_window</span> <span class="k">import</span> <span class="n">MainWindow</span>
+    <span class="kn">from</span> <span class="nn">populse_mia.project.project</span> <span class="k">import</span> <span class="n">Project</span>
+    <span class="kn">from</span> <span class="nn">populse_mia.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
+
+    <span class="k">def</span> <span class="nf">_my_excepthook</span><span class="p">(</span><span class="n">etype</span><span class="p">,</span> <span class="n">evalue</span><span class="p">,</span> <span class="n">tback</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">_clean_up</span><span class="p">():</span>
+            <span class="kn">from</span> <span class="nn">populse_mia.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
+
+            <span class="k">global</span> <span class="n">main_window</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+            <span class="n">opened_projects</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_opened_projects</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">opened_projects</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">set_opened_projects</span><span class="p">(</span><span class="n">opened_projects</span><span class="p">)</span>
+                <span class="n">main_window</span><span class="o">.</span><span class="n">remove_raw_files_useless</span><span class="p">()</span>
+
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">opened_projects</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">set_opened_projects</span><span class="p">(</span><span class="n">opened_projects</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Clean up before closing mia done ...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># log the exception here</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Exception hooking in progress ...&quot;</span><span class="p">)</span>
+        <span class="n">_clean_up</span><span class="p">()</span>
+        <span class="c1"># then call the default handler</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">__excepthook__</span><span class="p">(</span><span class="n">etype</span><span class="p">,</span> <span class="n">evalue</span><span class="p">,</span> <span class="n">tback</span><span class="p">)</span>
+        <span class="c1"># there was some issue/error/problem, so exiting</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_verify_saved_projects</span><span class="p">():</span>
+
+        <span class="c1"># Populse_MIA imports</span>
+        <span class="kn">from</span> <span class="nn">populse_mia.software_properties.saved_projects</span> \
+            <span class="kn">import</span> <span class="nn">SavedProjects</span>
+
+        <span class="n">saved_projects_object</span> <span class="o">=</span> <span class="n">SavedProjects</span><span class="p">()</span>
+        <span class="n">saved_projects_list</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">saved_projects_object</span><span class="o">.</span><span class="n">pathsList</span><span class="p">)</span>
+        <span class="n">deleted_projects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">saved_project</span> <span class="ow">in</span> <span class="n">saved_projects_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">saved_project</span><span class="p">):</span>
+                <span class="n">deleted_projects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">saved_project</span><span class="p">)</span>
+                <span class="n">saved_projects_object</span><span class="o">.</span><span class="n">removeSavedProject</span><span class="p">(</span><span class="n">saved_project</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">deleted_projects</span>
+
+    <span class="k">global</span> <span class="n">main_window</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">QApplication</span><span class="o">.</span><span class="n">setOverrideCursor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WaitCursor</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">excepthook</span> <span class="o">=</span> <span class="n">_my_excepthook</span>
+
+    <span class="c1"># working from the scripts directory</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+    <span class="n">lock_file</span> <span class="o">=</span> <span class="n">QLockFile</span><span class="p">(</span><span class="n">QDir</span><span class="o">.</span><span class="n">temp</span><span class="p">()</span><span class="o">.</span><span class="n">absoluteFilePath</span><span class="p">(</span>
+        <span class="s1">&#39;lock_file_populse_mia.lock&#39;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lock_file</span><span class="o">.</span><span class="n">tryLock</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="c1"># software already opened in another instance</span>
+        <span class="k">pass</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># no instances of the software is opened, the list of opened projects</span>
+        <span class="c1"># can be cleared</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_opened_projects</span><span class="p">([])</span>
+
+    <span class="n">deleted_projects</span> <span class="o">=</span> <span class="n">_verify_saved_projects</span><span class="p">()</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">main_window</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">deleted_projects</span><span class="o">=</span><span class="n">deleted_projects</span><span class="p">)</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Make basic configuration check then actual launch of mia.</span>
+
+<span class="sd">    Checks if MIA is called from the site/dist packages (user mode) or from a</span>
+<span class="sd">    cloned git repository (developer mode). Tries to update the dev_mode</span>
+<span class="sd">    parameter accordingly and the mia_path if necessary, in the</span>
+<span class="sd">    ~/.populse_mia/configuration.yml file (this file must be available from</span>
+<span class="sd">    the ~/.populse_mia directory). Launches the verify_processes()</span>
+<span class="sd">    function, then the launch_mia() function (mia&#39;s real launch !!). When</span>
+<span class="sd">    mia is exited, if the ~/.populse_mia/configuration.yml exists, sets the</span>
+<span class="sd">    dev_mode parameter to &#39;no&#39;.</span>
+
+<span class="sd">    - If launched from a cloned git repository (&#39;developer mode&#39;):</span>
+<span class="sd">        - adds the good path to the sys.path</span>
+<span class="sd">        - if the ~/.populse_mia/configuration.yml exists, updates</span>
+<span class="sd">          the dev_mode parameter to &#39;yes&#39;</span>
+<span class="sd">        - if the ~/.populse_mia/configuration.yml is not existing</span>
+<span class="sd">          nothing is done (in developer mode, the mia_path is the</span>
+<span class="sd">          cloned git repository.</span>
+<span class="sd">    - If launched from the site/dist packages (&#39;user mode&#39;):</span>
+<span class="sd">        - if the ~/.populse_mia/configuration.yml exists, updates</span>
+<span class="sd">          the dev_mode parameter to &quot;no&quot; and, if not found, update</span>
+<span class="sd">          the mia_path parameter.</span>
+<span class="sd">        - if the file ~/.populse_mia/configuration.yml file does</span>
+<span class="sd">          not exist or if the returned mia_path parameter is incorrect, a</span>
+<span class="sd">          valid mia_path path is requested from the user, in order</span>
+<span class="sd">          to try to fix a corruption of this file.</span>
+
+<span class="sd">    :Contains:</span>
+<span class="sd">        :Private function:</span>
+<span class="sd">            - *_browse_mia_path()*</span>
+<span class="sd">                The user define the mia_path parameter.</span>
+
+<span class="sd">                This method goes with the _ok_mia_path function, the latter will use</span>
+<span class="sd">                the value of the mia_path parameter, defined here.</span>
+
+<span class="sd">                :Parameters dialog: QtWidgets.QDialog object (&#39;msg&#39; in the main</span>
+<span class="sd">                   function)</span>
+
+<span class="sd">            - *_ok_mia_path(dialog)*</span>
+<span class="sd">               Check the mia_path parameter then if it</span>
+<span class="sd">               is valid close the &#39;MIA path selection&#39; window.</span>
+
+<span class="sd">               This method goes with the _browse_mia_path function, the latter</span>
+<span class="sd">               having allowed the definition of the mia_path parameter,</span>
+<span class="sd">               the objective here is to check if the value of this parameter</span>
+<span class="sd">               is valid. The dev_mode=&#39;no&#39; and mia_path parameters are saved</span>
+<span class="sd">               in the, mandatory in user mode,</span>
+<span class="sd">               ~/.populse_mia/configuration.yml file. Then the</span>
+<span class="sd">               verify_processes function is used through a try/except blocks</span>
+<span class="sd">               to check if the mia_path parameter value is valid. If an</span>
+<span class="sd">               exception is raised during the verify_processes function,</span>
+<span class="sd">               the &quot;MIA path selection&quot; window is not closed and the user is</span>
+<span class="sd">               prompted again to set the mia_path parameter.</span>
+
+<span class="sd">               :Parameters dialog: QtWidgets.QDialog object</span>
+<span class="sd">                  (&#39;msg&#39; in the main function)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_browse_mia_path</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+
+        <span class="n">dname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="n">dialog</span><span class="p">,</span> <span class="s2">&quot;Please select MIA &quot;</span>
+                                                         <span class="s2">&quot;path&quot;</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ok_mia_path</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+
+        <span class="n">mia_home_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
+        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">New values in ~/.populse_mia/configuration.yml: &#39;</span><span class="p">,</span>
+              <span class="n">mia_home_config</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">verify_processes</span><span class="p">()</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Could not fetch the &#39;</span>
+                  <span class="s1">&#39;configuration file: </span><span class="si">{0}</span><span class="s1"> ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - Error: &quot;</span>
+                               <span class="s2">&quot;mia path directory incorrect&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error : Please select the MIA path (directory with</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                        <span class="s2">&quot;the processes, properties &amp; resources directories): &quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+    <span class="n">dot_mia_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.populse_mia&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;configuration.yml&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>  <span class="c1"># &quot;developer&quot; mode</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Populse_MIA in &quot;developer&quot; mode&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))))</span>
+
+        <span class="c1"># Populse_MIA imports                      ## Not a clean import. </span>
+        <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span> <span class="c1">## To be modified if possible during</span>
+                                                   <span class="c1">## the switch to the VMC architecture!</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{0}</span><span class="s1"> has been detected.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                
+                <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                    <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                                <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;yes&quot;</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span>
+                          <span class="n">configfile</span><span class="p">,</span>
+                          <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{0}</span><span class="s1"> has not been detected.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))</span>
+
+        <span class="n">verify_processes</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;user&quot; mode</span>
+
+        <span class="c1"># Populse_MIA imports                      ## Not a clean import. </span>
+        <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span> <span class="c1">## To be modified if possible during</span>
+                                                   <span class="c1">## the switch to the VMC architecture!</span>
+        <span class="k">try</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">)):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">The </span><span class="si">{0}</span><span class="s1"> directory is created ...&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                
+                <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                    <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                                <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+
+            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
+            
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                
+            <span class="n">verify_processes</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># the configuration.yml file does not exist</span>
+            <span class="c1"># or has not been correctly read ...</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">A probleme has been detected when opening&#39;</span>
+                  <span class="s1">&#39; the ~/.populse_mia/configuration.yml file&#39;</span>
+                  <span class="s1">&#39; or with the parameters returned from this file: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">mia_home_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
+
+            <span class="c1"># open popup, user choose the path to .populse_mia/populse_mia</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">QDialog</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - mia path selection&quot;</span><span class="p">)</span>
+            <span class="n">vbox_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+            <span class="n">hbox_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+            <span class="n">file_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Please select the MIA path (directory with</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                                <span class="s2">&quot;the processes, properties &amp; resources &quot;</span>
+                                <span class="s2">&quot;directories): &quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">file_line_edit</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+            <span class="n">file_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse&quot;</span><span class="p">)</span>
+            <span class="n">file_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_browse_mia_path</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+            <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">file_label</span><span class="p">)</span>
+            <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">file_line_edit</span><span class="p">)</span>
+            <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">file_button</span><span class="p">)</span>
+            <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_layout</span><span class="p">)</span>
+            <span class="n">hbox_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Ok&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_ok_mia_path</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+            <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span><span class="p">)</span>
+            <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_layout</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_layout</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">app</span>
+
+    <span class="n">launch_mia</span><span class="p">()</span>
+
+    <span class="c1"># set the dev_mode to &quot;no&quot; when exiting mia,</span>
+    <span class="c1"># if ~/.populse_mia/configuration.yml file exists</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">):</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                            <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>    
+                <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="verify_processes"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.verify_processes">[docs]</a><span class="k">def</span> <span class="nf">verify_processes</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Install or update to the last version available on the station, of the \</span>
+<span class="sd">       nipype and the mia_processes processes libraries.</span>
+
+<span class="sd">    By default, mia provides two process libraries in the pipeline library</span>
+<span class="sd">    (available in Pipeline Manager tab). The nipype, given as it is because</span>
+<span class="sd">    it is developed by another team (https://github.com/nipy/nipype), and</span>
+<span class="sd">    mia_processes which is developed under the umbrella of populse</span>
+<span class="sd">    (https://github.com/populse/mia_processes). When installing mia in</span>
+<span class="sd">    user mode, these two libraries are automatically installed on the</span>
+<span class="sd">    station. The idea is to use the versioning available with pypi</span>
+<span class="sd">    (https://pypi.org/). Thus, it is sufficient for the user to change the</span>
+<span class="sd">    version of the library installed on the station (pip install...) to</span>
+<span class="sd">    also change the version available in mia. Indeed, when starting mia, the</span>
+<span class="sd">    verify_processes function will install or update nipype and</span>
+<span class="sd">    mia_processes libraries in the pipeline library. Currently it is</span>
+<span class="sd">    mandatory to have nipype and may_processes installed in the station.</span>
+<span class="sd">    All these informations, as well as the installed versions and package</span>
+<span class="sd">    paths are saved in the  mia_path/properties/process_config.yml file.</span>
+<span class="sd">    When an upgrade or downgrade is performed for a package, the last</span>
+<span class="sd">    configuration used by the user is kept (if a pipeline was visible, it</span>
+<span class="sd">    remains so and vice versa). However, if a new pipeline is available in</span>
+<span class="sd">    the new version it is automatically marked as visible in the library.</span>
+
+<span class="sd">    :Contains:</span>
+<span class="sd">        :Private function:</span>
+<span class="sd">            - *_deepCompDic()*</span>
+
+<span class="sd">               Try to keep the previous configuration existing before the</span>
+<span class="sd">               update of the packages.</span>
+
+<span class="sd">               Recursive comparison of the old_dic and new _dic dictionary. If</span>
+<span class="sd">               all keys are recursively identical, the final value at the end</span>
+<span class="sd">               of the whole tree in old_dic is kept in the new _dic. To sum</span>
+<span class="sd">               up, this function is used to keep up the user display</span>
+<span class="sd">               preferences in the processes library of the Pipeline Manager</span>
+<span class="sd">               Editor.</span>
+
+<span class="sd">               **param old_dic**: the dic representation of the previous</span>
+<span class="sd">                 package configuration</span>
+
+<span class="sd">               **param new_dic**: the dic representation of the new package \</span>
+<span class="sd">                  configuration</span>
+
+<span class="sd">               **param level**: the index level in the package (0: root,</span>
+<span class="sd">                   +1: in a subpackage/pipeline)</span>
+
+<span class="sd">               :returns: True if the current level is a pipeline that existed</span>
+<span class="sd">                   in the old configuration, False if the</span>
+<span class="sd">                   package/subpackage/pipeline did not exist</span>
+
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># populse_mia imports</span>
+    <span class="kn">from</span> <span class="nn">populse_mia.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
+    <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+
+    <span class="k">def</span> <span class="nf">_deepCompDic</span><span class="p">(</span><span class="n">old_dic</span><span class="p">,</span> <span class="n">new_dic</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">):</span>
+
+        <span class="n">PY3</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="k">if</span> <span class="n">PY3</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_dic</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_dic</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">old_dic</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_dic</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;+1&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># keep the same configuration for the pipeline in new and old dic</span>
+            <span class="k">elif</span> <span class="n">_deepCompDic</span><span class="p">(</span><span class="n">old_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span> <span class="n">new_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;+1&quot;</span><span class="p">):</span>
+                <span class="n">new_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">old_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
+
+    <span class="n">proc_content</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">nipypeVer</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">miaProcVer</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">pack2install</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">proc_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;process_config.yml&#39;</span><span class="p">)</span>
+    <span class="c1"># check if nipype and mia_processes are available on the station</span>
+    <span class="c1"># if not available inform the user to install them</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Checking the installed versions of nipype and mia_processes ...&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;***************************************************************&#39;</span><span class="p">)</span>
+    <span class="n">pkg_error</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;nipype&#39;</span><span class="p">)</span>
+        <span class="n">nipypeVer</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;nipype&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__version__</span>
+        
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pkg_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;nipype&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">37</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MIA warning: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">37</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">)</span>
+        <span class="n">miaProcVer</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pkg_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">37</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MIA warning: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">37</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+   
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg_error</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia -  warning: ModuleNotFoundError!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg_error</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> package not found !</span><span class="se">\n</span><span class="s2">Please install &quot;</span>
+                        <span class="s2">&quot;the package and &quot;</span>
+                        <span class="s2">&quot;start again mia ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_error</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> and </span><span class="si">{1}</span><span class="s2"> packages not found !</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;Please install the packages and start again mia &quot;</span>
+                        <span class="s2">&quot;...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_error</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pkg_error</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">app</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">proc_config</span><span class="p">):</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">proc_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                <span class="n">proc_content</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                         <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>    
+                <span class="n">proc_content</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Packages&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">):</span>
+        <span class="n">othPckg</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">]</span>
+                   <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">,</span> <span class="s1">&#39;nipype&#39;</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;othPckg&#39;</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">():</span>
+        <span class="c1"># othPckg: a list containing all packages, other than nipype and</span>
+        <span class="c1"># mia_processes, used during the previous launch of mia.</span>
+        
+        <span class="k">for</span> <span class="n">pckg</span> <span class="ow">in</span> <span class="n">othPckg</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="n">pckg</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># try to update the sys.path for the processes/ directory</span>
+                <span class="c1"># currently used</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span>
+                                                     <span class="s1">&#39;processes&#39;</span><span class="p">))</span> <span class="ow">in</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">))</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">)))</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="nb">__import__</span><span class="p">(</span><span class="n">pckg</span><span class="p">)</span>
+
+                        <span class="c1"># update the Paths parameter (processes/ directory</span>
+                        <span class="c1"># currently used) saved later in the</span>
+                        <span class="c1"># mia_path/properties/process_config.yml file</span>
+                        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;Paths&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">)</span>
+                                <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">))):</span>
+
+                            <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                                    <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">))</span> <span class="ow">in</span>
+                                     <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">])</span>
+                                    <span class="ow">and</span> <span class="p">(</span>
+                                            <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                                                <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span>
+                                                <span class="s1">&#39;processes&#39;</span><span class="p">))</span> <span class="ow">in</span>
+                                                <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">])):</span>
+                                <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                                        <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">)))</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span>
+                                             <span class="s1">&#39;processes&#39;</span><span class="p">))]</span>
+
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">proc_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span>
+                                      <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                        <span class="c1"># finally the processes/ directory currently used is</span>
+                        <span class="c1"># removed from the sys.path because this directory is</span>
+                        <span class="c1"># now added to the Paths parameter in the</span>
+                        <span class="c1"># mia_path/properties/process_config.yml file</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">)))</span>
+
+                    <span class="c1"># if an exception is raised, ask to the user to remove the</span>
+                    <span class="c1"># package from the pipeline library or reload it</span>
+                    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                        <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - warning: </span><span class="si">{0}</span><span class="s2">&quot;</span>
+                                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">((</span><span class="s2">&quot;At least, </span><span class="si">{0}</span><span class="s2"> has not been found in </span><span class="si">{1}</span><span class="s2">.&quot;</span>
+                                     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">To prevent mia crash when using it, &quot;</span>
+                                     <span class="s2">&quot;please remove (see File &gt; Package &quot;</span>
+                                     <span class="s2">&quot;library manager) or load again (see More&quot;</span>
+                                     <span class="s2">&quot; &gt; Install processes) the corresponding &quot;</span>
+                                     <span class="s2">&quot;process library.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                                <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">))))</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                        <span class="k">del</span> <span class="n">app</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">)))</span>
+
+                <span class="c1"># the processes/ directory being already in the sys.path, the</span>
+                <span class="c1"># package is certainly not properly installed in the processes/</span>
+                <span class="c1"># directory</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No module named &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pckg</span><span class="p">))</span>
+                    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - warning: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">((</span><span class="s2">&quot;At least, </span><span class="si">{0}</span><span class="s2"> has not been found in </span><span class="si">{1}</span><span class="s2">.&quot;</span>
+                                 <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">To prevent mia crash when using it, &quot;</span>
+                                 <span class="s2">&quot;please remove (see File &gt; Package &quot;</span>
+                                 <span class="s2">&quot;library manager) or load again (see More&quot;</span>
+                                 <span class="s2">&quot; &gt; Install processes) the corresponding &quot;</span>
+                                 <span class="s2">&quot;process library.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">))))</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                    <span class="k">del</span> <span class="n">app</span>
+
+    <span class="c1"># the file mia_path/properties/process_config.yml is corrupted or</span>
+    <span class="c1"># no pipeline processes was available during the previous use of mia or</span>
+    <span class="c1"># their version is not known</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="s1">&#39;Packages&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">)):</span>
+        <span class="n">pack2install</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nipype.interfaces&#39;</span><span class="p">,</span> <span class="s1">&#39;mia_processes&#39;</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># during the previous use of mia, nipype was not available or its</span>
+        <span class="c1"># version was not known or its version was different from the one</span>
+        <span class="c1"># currently available on the station</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Packages&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;nipype&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">]))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">in</span>
+                                                      <span class="n">proc_content</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;nipype&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">]))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">in</span>
+                                                      <span class="n">proc_content</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;nipype&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">])</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">][</span><span class="s1">&#39;nipype&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nipypeVer</span><span class="p">)):</span>
+            <span class="n">pack2install</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;nipype.interfaces&#39;</span><span class="p">)</span>
+
+        <span class="c1"># during the previous use of mia, mia_processes was not available or</span>
+        <span class="c1"># its version was not known or its version was different from the one</span>
+        <span class="c1"># currently available on the station</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Packages&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">]))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">in</span>
+                                                      <span class="n">proc_content</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">]))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">in</span>
+                                                      <span class="n">proc_content</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">])</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">][</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">miaProcVer</span><span class="p">)):</span>
+            <span class="n">pack2install</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mia_processes&#39;</span><span class="p">)</span>
+
+    <span class="n">final_pckgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># final_pckgs: the final dic of dic with the</span>
+    <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Packages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># informations about the</span>
+    <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Versions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># installed packages, their</span>
+    <span class="c1">#             version, and the path to access</span>
+    <span class="c1">#             them</span>
+    <span class="k">for</span> <span class="n">pckg</span> <span class="ow">in</span> <span class="n">pack2install</span><span class="p">:</span>
+        <span class="c1"># pack2install: a list containing the package (nipype and/or</span>
+        <span class="c1"># mia_processes) to install</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="n">PackagesInstall</span><span class="p">()</span>
+        <span class="c1"># pckg_dic: a dic of dic representation of a package and its</span>
+        <span class="c1"># subpackages/modules Ex. {package: {subpackage: {pipeline:</span>
+        <span class="c1"># &#39;process_enabled&#39;}}}</span>
+        <span class="n">pckg_dic</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">add_package</span><span class="p">(</span><span class="n">pckg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pckg_dic</span><span class="p">:</span>
+            <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Packages&quot;</span><span class="p">][</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">pckg_dic</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;nipype&#39;</span> <span class="ow">in</span> <span class="n">pckg</span><span class="p">:</span>  <span class="c1"># Save the packages version</span>
+            <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Versions&quot;</span><span class="p">][</span><span class="s2">&quot;nipype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nipypeVer</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">** Upgrading the </span><span class="si">{0}</span><span class="s1"> library processes to </span><span class="si">{1}</span><span class="s1"> version ...&#39;</span>
+                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pckg</span><span class="p">,</span> <span class="n">nipypeVer</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="s1">&#39;mia_processes&#39;</span> <span class="ow">in</span> <span class="n">pckg</span><span class="p">:</span>
+            <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Versions&quot;</span><span class="p">][</span><span class="s2">&quot;mia_processes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">miaProcVer</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">** Upgrading the </span><span class="si">{0}</span><span class="s1"> library processes to </span><span class="si">{1}</span><span class="s1"> version ...&#39;</span>
+                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pckg</span><span class="p">,</span> <span class="n">miaProcVer</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">pack2install</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;nipype&quot;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pack2install</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">** The nipype library processes in mia use already the &#39;</span>
+                  <span class="s1">&#39;installed version &#39;</span><span class="p">,</span> <span class="n">nipypeVer</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;mia_processes&quot;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pack2install</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">** The mia_processes library in mia use already the &#39;</span>
+                  <span class="s1">&#39;installed version &#39;</span><span class="p">,</span> <span class="n">miaProcVer</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Paths&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">):</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">]:</span>  <span class="c1"># Save the path to the packages</span>
+                <span class="n">final_pckgs</span><span class="p">[</span><span class="s2">&quot;Paths&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Paths&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Versions&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">):</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">]:</span>
+
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_pckgs</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">]:</span>
+                    <span class="n">final_pckgs</span><span class="p">[</span><span class="s1">&#39;Versions&#39;</span><span class="p">][</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">proc_content</span><span class="p">[</span>
+                        <span class="s1">&#39;Versions&#39;</span><span class="p">][</span><span class="n">item</span><span class="p">]</span>
+
+        <span class="c1"># try to keep the previous configuration before the update</span>
+        <span class="c1"># of the packages</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_content</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Packages&#39;</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">):</span>
+            <span class="n">_deepCompDic</span><span class="p">(</span><span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">],</span> <span class="n">final_pckgs</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">proc_content</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">]:</span>
+
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_pckgs</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">]:</span>
+                    <span class="n">final_pckgs</span><span class="p">[</span><span class="s1">&#39;Packages&#39;</span><span class="p">][</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">proc_content</span><span class="p">[</span>
+                        <span class="s1">&#39;Packages&#39;</span><span class="p">][</span><span class="n">item</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">proc_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_pckgs</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">- mia use already the installed version of nipype and &#39;</span>
+              <span class="s1">&#39;mia_processes (</span><span class="si">{0}</span><span class="s1"> and </span><span class="si">{1}</span><span class="s1"> respectively)&#39;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nipypeVer</span><span class="p">,</span> <span class="n">miaProcVer</span><span class="p">))</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># this will only be executed when this module is run directly</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
