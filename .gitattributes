@@ -1,4 +1,5 @@
 data_tests/** filter=lfs diff=lfs merge=lfs -text
-data_tests/Bruker_files filter=lfs diff=lfs merge=lfs -text
-data_tests/Nifti_files filter=lfs diff=lfs merge=lfs -text
-data_tests/Philips_files filter=lfs diff=lfs merge=lfs -text
+resources/mia/** filter=lfs diff=lfs merge=lfs -text
+resources/spm12/** filter=lfs diff=lfs merge=lfs -text
+developer_doc/images/*png filter=lfs diff=lfs merge=lfs -text
+python/populse_mia/sources_images/*png filter=lfs diff=lfs merge=lfs -text
