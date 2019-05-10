@@ -8,7 +8,7 @@ One way to apply a pull request (there are others !!!)
 
 2. Local cloning of this fork:
     * In your local station:
-        * git clone xxx # xxx can be found on the forked project in the GitHub site page (i.e. see the green button "Clone or download", for ex. xxx = https://github.com/servoz/populse_mia.git)
+        * git lfs clone xxx # xxx can be found on the forked project in the GitHub site page (i.e. see the green button "Clone or download", for ex. xxx = https://github.com/servoz/populse_mia.git)
 
 3. Some configurations:
     * In the local station and in the project (for ex. in  /home/toto/Git_Projects/populse_mia/):
