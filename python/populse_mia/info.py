@@ -44,26 +44,54 @@ LICENSE = 'CeCILL'
 VERSION = __version__
 CLASSIFIERS = CLASSIFIERS
 PLATFORMS = 'OS Independent'
-REQUIRES = [
-  'SIP',  
-  'pyqt5',
-  'pyyaml',
-  'python-dateutil',
-  'sqlalchemy',
-  'lark-parser',
-  'scipy',
-  'nibabel',
-  'snakeviz',
-  'pillow',
-  'matplotlib',
-  'traits',
-  'capsul',
-  'soma_workflow',
-  'nipype',
-  'scikit-image',
-  'populse-db',
-  'mia-processes' 
+
+if sys.version_info < (3 , 6) and sys.version_info >= (3 , 5):
+    REQUIRES = [
+        'capsul',
+        'lark-parser',
+        'matplotlib<3.1',
+        'mia-processes',
+        'nibabel',
+        'nipype',
+        'pillow',
+        'populse-db',
+        'pyqt5',
+        'python-dateutil',
+        'pyyaml',
+        'scikit-image',
+        'scipy',
+        'SIP',
+        'sqlalchemy',
+        'snakeviz',
+        'soma_workflow',
+        'traits',
 ]
+
+elif sys.version_info >= (3 , 6):
+    REQUIRES = [
+        'capsul',
+        'lark-parser',
+        'matplotlib',
+        'mia-processes',
+        'nibabel',
+        'nipype',
+        'pillow',
+        'populse-db',
+        'pyqt5',
+        'python-dateutil',
+        'pyyaml',
+        'scikit-image',
+        'scipy',
+        'SIP',  
+        'sqlalchemy',
+        'snakeviz',
+        'soma_workflow',
+        'traits',
+]
+
+else:
+    sys.exit("The populse_mia is ensured to work with Python >= 3.5")
+
 EXTRA_REQUIRES = {
     'doc': [
         'sphinx>=1.0',
