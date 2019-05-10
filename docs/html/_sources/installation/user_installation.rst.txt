@@ -1,5 +1,6 @@
 .. :orphan: is used below to try to remove the following warning: checking consistency... /home/econdami/Git_Projects/populse_mia/docs/source/installation/user_installation.rst: WARNING: document isn't included in any toctree
-:orphan:
+  :orphan:
+
 .. toctree::
 
 +-----------------------+------------------------------------------------------+-------------------------------------+--------------------------------------------------+
@@ -35,6 +36,10 @@ Populse_MIA is ensured to work under Python's 3.5, 3.6 and 3.7 versions.
 * Make sure to have git installed. You can verify it by typing the following in a command line: ::
 
         git --version
+
+* Make sure to have git-lfs installed. You can verify it by typing the following in a command line: ::
+
+        git-lfs -v
 
 * If you are installing Populse_MIA on Windows, make sure to have Microsoft Visual C++ installed.
 

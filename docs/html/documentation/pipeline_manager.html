@@ -80,10 +80,10 @@
 <p>The pipeline editor is a graphical tool to create pipelines. It is composed of several tabs to work on several pipelines at the same time. In the following, the current tab will be called “current editor”.</p>
 <p>The menu on the top left of the Pipeline Manager tab contains several actions impacting the current editor:</p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><dl class="first docutils">
 <dt>Load pipeline</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Loads a saved pipeline in a new editor (or in the current editor if there is only one editor and it is empty)</li>
 </ul>
 </dd>
@@ -91,7 +91,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Save pipeline</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Saves the pipeline of the current editor (shortcut: Ctrl+S)</li>
 </ul>
 </dd>
@@ -99,7 +99,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Save pipeline as</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Saves the pipeline of the current editor under another name (shortcut: Ctrl+Shift+S)</li>
 </ul>
 </dd>
@@ -107,7 +107,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Load pipeline parameters</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Loads a parameters set and apply them to the pipeline global inputs/outputs</li>
 </ul>
 </dd>
@@ -115,7 +115,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Save pipeline parameters</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Saves the pipeline global inputs/outputs to a json file</li>
 </ul>
 </dd>
@@ -123,7 +123,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Initialize pipeline</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Creates the output file names for each process in the current pipeline and stores them to the database</li>
 <li>For the processes that interact with the database, verifies that the fields are filled</li>
 </ul>
@@ -132,7 +132,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>Run pipeline</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Executes the current pipeline</li>
 </ul>
 </dd>
@@ -165,10 +165,10 @@
 <p>Note 4: if you right-click on a node or on the pipeline editor background, you can also export plugs (mandatory or not, input, output or both). This method is usually faster to export plugs.</p>
 <img alt="../_images/pipeline_tuto_2.png" class="align-center" id="pipeline-tutorial-2" src="../_images/pipeline_tuto_2.png" />
 <p>Now the pipeline is only composed of one process with exported inputs/output. It is still possible to add another process to modify it.</p>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>Add another SPM smooth process and make it follow the first one.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Right-click on the link between the output of the “smooth1” node and the pipeline output and select “remove link”. The pipeline is disabled.</li>
 <li>Connect the “_smoothed_files” plug of the “smooth1” node to the “in_files” plug of the “smooth2” node by dragging from “_smoothed_files” and dropping to “in_files”.</li>
 <li>Connect the “_smoothed_files” plug of the “smooth2” node to the “_smoothed_files” global output by dragging from “_smoothed_files” and dropping to “in_files”. The pipeline in enabled.</li>
@@ -185,10 +185,10 @@
 <li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu</li>
 </ul>
 <img alt="../_images/pipeline_tuto_4.png" class="align-center" id="pipeline-tutorial-4" src="../_images/pipeline_tuto_4.png" />
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>The pipeline is now stored in the process library under “User_processes”. You can use it as a process and add it to a new pipeline editor.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>You can visualize the pipeline by double-clicking on the node.</li>
 <li>You can edit the pipeline by right-clicking on the node and selecting “Open sub-pipeline”. It will open “double_smooth.py” in a new editor tab.</li>
 </ul>
@@ -243,10 +243,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>You can also modify the plug values by hand</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>Note: the “output_directory” of a Nipype process corresponds to the folder where Nipype writes the Matlab scripts during execution and has to be set.</li>
 </ul>
 </dd>
@@ -257,10 +257,10 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
 <dt>The pipeline inputs are now correctly set and it can be initialized. Select “Initialize pipeline” in the Pipeline Manager’s “Pipeline” menu.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>During the initialization step, the output files are created (but still empty) and stored in the database with information about their ancestors (their input files and parameters)</li>
 </ul>
 </dd>
@@ -289,11 +289,12 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<ul class="simple">
-<li>Go to the Pipeline Manager and check the “Iterate pipeline” check box to activate the iteration table.</li>
+<ul>
+<li><p class="first">Go to the Pipeline Manager and check the “Iterate pipeline” check box to activate the iteration table.</p>
+</li>
 <li><dl class="first docutils">
 <dt>Select on which tag to iterate the pipeline by clicking on the “Select” push button and select “Patient”.</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>“Patient” is not a tag that comes from the data, it has been added manually.</li>
 </ul>
 </dd>
@@ -301,7 +302,7 @@
 </li>
 <li><dl class="first docutils">
 <dt>You can visualize for each “Patient” value which documents are associated thanks to the combo box</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li>The visualized tags are by default “SequenceName” and “AcquisitionDate” but can be changed at the bottom at the widget by clicking on the push buttons.</li>
 </ul>
 </dd>

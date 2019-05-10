@@ -44,27 +44,38 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>Widget that handles pipeline iteration.</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>scan_list: list of the selected database files</li>
-<li>iteration_scans: list of the selected scans for the current iteration step</li>
-<li>main_window: software’s main_window</li>
-<li>iterated_tag: tag on which to iterate</li>
-<li>values_list: list that contains lists of all the values that the visualized tags can take</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>refresh_layout: updates the layout of the widget</li>
-<li>add_tag: adds a tag to visualize in the iteration table</li>
-<li>remove_tag: removes a tag to visualize in the iteration table</li>
-<li>update_table: updates the iteration table</li>
-<li>select_visualized_tag: opens a pop-up to let the user select which tag to visualize in the iteration table</li>
-<li>fill_values: fill values_list depending on the visualized tags</li>
-<li>select_iterated_tag: opens a pop-up to let the user select on which tag to iterate</li>
-<li>update_iterated_tag: updates the widget</li>
-<li>emit_iteration_table_updated: emits a signal when the iteration scans have been updated</li>
+<dd><ul class="first last">
+<li><p class="first">add_tag: adds a tag to visualize in the iteration table</p>
+</li>
+<li><dl class="first docutils">
+<dt>emit_iteration_table_updated: emits a signal when the iteration</dt>
+<dd><p class="first last">scans have been updated</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">fill_values: fill values_list depending on the visualized tags</p>
+</li>
+<li><p class="first">refresh_layout: updates the layout of the widget</p>
+</li>
+<li><p class="first">remove_tag: removes a tag to visualize in the iteration table</p>
+</li>
+<li><dl class="first docutils">
+<dt>select_iterated_tag: opens a pop-up to let the user select on which</dt>
+<dd><p class="first last">tag to iterate</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>select_visualized_tag: opens a pop-up to let the user select which</dt>
+<dd><p class="first last">tag to visualize in the iteration table</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">update_iterated_tag: updates the widget</p>
+</li>
+<li><p class="first">update_table: updates the iteration table</p>
+</li>
 </ul>
 </dd>
 </dl>
@@ -90,13 +101,14 @@
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.add_tag">
 <code class="descname">add_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.add_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.add_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a tag to visualize in the iteration table</p>
+<dd><p>Add a tag to visualize in the iteration table.</p>
+<p>Used only for tests</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.emit_iteration_table_updated">
 <code class="descname">emit_iteration_table_updated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.emit_iteration_table_updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.emit_iteration_table_updated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emits a signal when the iteration scans have been updated</p>
+<dd><p>Emit a signal when the iteration scans have been updated</p>
 </dd></dl>
 
 <dl class="method">
@@ -121,27 +133,28 @@
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.refresh_layout">
 <code class="descname">refresh_layout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.refresh_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.refresh_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the layout of the widget
-Called in widget’s initialization and when a tag push button is added or removed.</p>
+<dd><p>Update the layout of the widget.</p>
+<p>Called in widget’s initialization and when a tag push button
+is added or removed.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.remove_tag">
 <code class="descname">remove_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.remove_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.remove_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes a tag to visualize in the iteration table
-Removes also the corresponding values in values_list</p>
+<dd><p>Remove a tag to visualize in the iteration table.</p>
+<p>Used only for tests.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.select_iteration_tag">
 <code class="descname">select_iteration_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.select_iteration_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.select_iteration_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a pop-up to let the user select on which tag to iterate</p>
+<dd><p>Open a pop-up to let the user select on which tag to iterate</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.select_visualized_tag">
 <code class="descname">select_visualized_tag</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.select_visualized_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.select_visualized_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a pop-up to let the user select which tag to visualize in the iteration table</p>
+<dd><p>Open a pop-up to let the user select which tag to visualize in the iteration table</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -155,7 +168,7 @@ Removes also the corresponding values in values_list</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.update_iterated_tag">
 <code class="descname">update_iterated_tag</code><span class="sig-paren">(</span><em>tag_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.update_iterated_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.update_iterated_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the widget when the iterated tag is modified</p>
+<dd><p>Update the widget when the iterated tag is modified</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -169,7 +182,7 @@ Removes also the corresponding values in values_list</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.iteration_table.IterationTable.update_table">
 <code class="descname">update_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/iteration_table.html#IterationTable.update_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.iteration_table.IterationTable.update_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the iteration table</p>
+<dd><p>Update the iteration table</p>
 </dd></dl>
 
 </dd></dl>
@@ -201,13 +214,23 @@ filtering is done, the filter is saved in the process.</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>update_tag_to_filter: updates the tag to Filter</li>
-<li>update_tags: updates the list of visualized tags</li>
-<li>reset_search_bar: reset the search bar of the rapid search</li>
-<li>search_str: updates the files to display in the browser</li>
-<li>ok_clicked: sets the filter to the process and closes the widget</li>
-<li>set_plug_value: sets the output of the filter to the output of the node</li>
+<dd><ul class="first last">
+<li><p class="first">update_tag_to_filter: update the tag to Filter</p>
+</li>
+<li><p class="first">update_tags: update the list of visualized tags</p>
+</li>
+<li><p class="first">reset_search_bar: reset the search bar of the rapid search</p>
+</li>
+<li><p class="first">search_str: update the files to display in the browser</p>
+</li>
+<li><p class="first">ok_clicked: sets the filter to the process and closes the widget</p>
+</li>
+<li><dl class="first docutils">
+<dt>set_plug_value: sets the output of the filter to the output of the</dt>
+<dd><p class="first last">node</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -234,7 +257,7 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.ok_clicked">
 <code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.ok_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the filter to the process and closes the widget</p>
+<dd><p>Set the filter to the process and closes the widget</p>
 </dd></dl>
 
 <dl class="method">
@@ -246,7 +269,7 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.search_str">
 <code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.search_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the files to display in the browser</p>
+<dd><p>Update the files to display in the browser</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -260,19 +283,19 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.set_output_value">
 <code class="descname">set_output_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.set_output_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.set_output_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the output of the filter to the output of the node</p>
+<dd><p>Set the output of the filter to the output of the node</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.update_tag_to_filter">
 <code class="descname">update_tag_to_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.update_tag_to_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.update_tag_to_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the tag to Filter</p>
+<dd><p>Update the tag to Filter</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.FilterWidget.update_tags">
 <code class="descname">update_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#FilterWidget.update_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.FilterWidget.update_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the list of visualized tags</p>
+<dd><p>Update the list of visualized tags</p>
 </dd></dl>
 
 </dd></dl>
@@ -281,25 +304,30 @@ filtering is done, the filter is saved in the process.</p>
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.node_controller.</code><code class="descname">NodeController</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>pipeline_manager_tab</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
-<p>Controller that allows to change the input and output values of a pipeline node</p>
+<p>Allow to change the input and output values of a pipeline node</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>node_name: name of the selected node</li>
-<li>project: current project in the software</li>
-<li>scan_list: list of the selected database files</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>display_parameters: displays the parameters of the selected node</li>
-<li>update_parameters: updates the parameters values</li>
-<li>get_index_from_plug_name: returns the index of the plug label</li>
-<li>update_node_name: updates the name of the selected node</li>
-<li>update_plug_value: updates the value of a node plug</li>
-<li>display_filter: displays a filter widget</li>
-<li>update_plug_value_from_filter: updates the plug value from a filter result</li>
-<li>clearLayout: clears the layouts of the widget</li>
+<dd><ul class="first last">
+<li><p class="first">clearLayout: clear the layouts of the widget</p>
+</li>
+<li><p class="first">display_filter: display a filter widget</p>
+</li>
+<li><p class="first">display_parameters: display the parameters of the selected node</p>
+</li>
+<li><p class="first">get_index_from_plug_name: return the index of the plug label</p>
+</li>
+<li><p class="first">update_node_name: update the name of the selected node</p>
+</li>
+<li><p class="first">update_parameters: update the parameters values</p>
+</li>
+<li><p class="first">update_plug_value: update the value of a node plug</p>
+</li>
+<li><dl class="first docutils">
+<dt>update_plug_value_from_filter: update the plug value from a filter</dt>
+<dd><p class="first last">result</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -326,7 +354,7 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.clearLayout">
 <code class="descname">clearLayout</code><span class="sig-paren">(</span><em>layout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.clearLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.clearLayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clears the layouts of the widget</p>
+<dd><p>Clear the layouts of the widget</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -342,7 +370,7 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.display_filter">
 <code class="descname">display_filter</code><span class="sig-paren">(</span><em>node_name</em>, <em>plug_name</em>, <em>parameters</em>, <em>process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.display_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.display_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Displays a filter widget</p>
+<dd><p>Display a filter widget</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -350,7 +378,8 @@ filtering is done, the filter is saved in the process.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>node_name</strong> – name of the node</li>
 <li><strong>plug_name</strong> – name of the plug</li>
-<li><strong>parameters</strong> – tuple containing the index of the plug, the current pipeline instance and the type of the plug value</li>
+<li><strong>parameters</strong> – tuple containing the index of the plug, the current
+pipeline instance and the type of the plug value</li>
 <li><strong>process</strong> – process of the node</li>
 </ul>
 </td>
@@ -362,10 +391,10 @@ filtering is done, the filter is saved in the process.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.display_parameters">
 <code class="descname">display_parameters</code><span class="sig-paren">(</span><em>node_name</em>, <em>process</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.display_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.display_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Displays the parameters of the selected node</p>
-<p>The node parameters are read and line labels/line edits/push buttons are
-created for each of them. This methods consists mainly in widget and layout
-organization.</p>
+<dd><p>Display the parameters of the selected node</p>
+<p>The node parameters are read and line labels/line edits/push buttons
+are created for each of them. This methods consists mainly in widget
+and layout organization.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -384,7 +413,7 @@ organization.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.get_index_from_plug_name">
 <code class="descname">get_index_from_plug_name</code><span class="sig-paren">(</span><em>plug_name</em>, <em>in_or_out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.get_index_from_plug_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.get_index_from_plug_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the index of the plug label.</p>
+<dd><p>Return the index of the plug label.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -405,7 +434,7 @@ organization.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.update_node_name">
 <code class="descname">update_node_name</code><span class="sig-paren">(</span><em>pipeline</em>, <em>new_node_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.update_node_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.update_node_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the name of the selected node and updates the pipeline.</p>
+<dd><p>Change the name of the selected node and updates the pipeline.</p>
 <p>Because the nodes are stored in a dictionary, we have to create
 a new node that has the same traits as the selected one and create
 new links that are the same than the selected node.</p>
@@ -415,7 +444,8 @@ new links that are the same than the selected node.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>pipeline</strong> – current pipeline</li>
-<li><strong>new_node_name</strong> – new node name (is None except when this method is called from an undo/redo)</li>
+<li><strong>new_node_name</strong> – new node name (is None except when this method
+is called from an undo/redo)</li>
 </ul>
 </td>
 </tr>
@@ -426,7 +456,7 @@ new links that are the same than the selected node.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.update_parameters">
 <code class="descname">update_parameters</code><span class="sig-paren">(</span><em>process=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.update_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.update_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the parameters values</p>
+<dd><p>Update the parameters values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -440,7 +470,7 @@ new links that are the same than the selected node.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.update_plug_value">
 <code class="descname">update_plug_value</code><span class="sig-paren">(</span><em>in_or_out</em>, <em>plug_name</em>, <em>pipeline</em>, <em>value_type</em>, <em>new_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.update_plug_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.update_plug_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the value of a node plug</p>
+<dd><p>Update the value of a node plug</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -450,7 +480,8 @@ new links that are the same than the selected node.</p>
 <li><strong>plug_name</strong> – name of the plug</li>
 <li><strong>pipeline</strong> – current pipeline</li>
 <li><strong>value_type</strong> – type of the plug value</li>
-<li><strong>new_value</strong> – new value for the plug (is None except when this method is called from an undo/redo)</li>
+<li><strong>new_value</strong> – new value for the plug (is None except when this
+method is called from an undo/redo)</li>
 </ul>
 </td>
 </tr>
@@ -461,14 +492,15 @@ new links that are the same than the selected node.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.NodeController.update_plug_value_from_filter">
 <code class="descname">update_plug_value_from_filter</code><span class="sig-paren">(</span><em>plug_name</em>, <em>parameters</em>, <em>filter_res_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#NodeController.update_plug_value_from_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.NodeController.update_plug_value_from_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the plug value from a filter result</p>
+<dd><p>Update the plug value from a filter result</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>plug_name</strong> – name of the plug</li>
-<li><strong>parameters</strong> – tuple containing the index of the plug, the current pipeline instance and the type of the plug value</li>
+<li><strong>parameters</strong> – tuple containing the index of the plug,
+the current pipeline instance and the type of the plug value</li>
 <li><strong>filter_res_list</strong> – list of the filtered files</li>
 </ul>
 </td>
@@ -509,12 +541,12 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 </dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
-<li>update_tag_to_filter: updates the tag to Filter</li>
-<li>update_tags: updates the list of visualized tags</li>
+<li>update_tag_to_filter: update the tag to Filter</li>
+<li>update_tags: update the list of visualized tags</li>
 <li>reset_search_bar: reset the search bar of the rapid search</li>
-<li>search_str: updates the files to display in the browser</li>
+<li>search_str: update the files to display in the browser</li>
 <li>ok_clicked: sets the new value to the node plug and closes the widget</li>
-<li>set_plug_value: emits a signal to set the file names to the node plug</li>
+<li>set_plug_value: emit a signal to set the file names to the node plug</li>
 </ul>
 </dd>
 </dl>
@@ -544,7 +576,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.ok_clicked">
 <code class="descname">ok_clicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.ok_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.ok_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the new value to the node plug and closes the widget</p>
+<dd><p>Set the new value to the node plug and closes the widget</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -561,26 +593,26 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.search_str">
 <code class="descname">search_str</code><span class="sig-paren">(</span><em>str_search</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.search_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.search_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the files to display in the browser
+<dd><p>Update the files to display in the browser
 :param str_search: string typed in the rapid search</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.set_plug_value">
 <code class="descname">set_plug_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.set_plug_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.set_plug_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emits a signal to set the file names to the node plug</p>
+<dd><p>Emit a signal to set the file names to the node plug</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.update_tag_to_filter">
 <code class="descname">update_tag_to_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.update_tag_to_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.update_tag_to_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the tag to Filter</p>
+<dd><p>Update the tag to Filter</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.node_controller.PlugFilter.update_tags">
 <code class="descname">update_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/node_controller.html#PlugFilter.update_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.node_controller.PlugFilter.update_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the list of visualized tags</p>
+<dd><p>Update the list of visualized tags</p>
 </dd></dl>
 
 </dd></dl>
@@ -593,47 +625,84 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 </div>
 <div class="section" id="module-populse_mia.pipeline_manager.pipeline_editor">
 <span id="populse-mia-pipeline-manager-pipeline-editor-module"></span><h2>populse_mia.pipeline_manager.pipeline_editor module<a class="headerlink" href="#module-populse_mia.pipeline_manager.pipeline_editor" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Class:</dt>
+<dd><ul class="first last simple">
+<li>PipelineEditorTabs</li>
+<li>PipelineEditor</li>
+</ul>
+</dd>
+<dt>Function :</dt>
+<dd><ul class="first last simple">
+<li>save_pipeline</li>
+<li>get_path</li>
+<li>find_filename</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">PipelineEditor</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.qt_gui.widgets.pipeline_developper_view.PipelineDevelopperView</span></code></p>
 <p>View to edit a pipeline graphically</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>main_window: main window of the software</li>
-<li>undos: list of actions to undo</li>
-<li>redos: list of actions to redo</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>dragEnterEvent: event handler when the mouse enters the widget</li>
-<li>dragMoveEvent: event handler when the mouse moves in the widget</li>
-<li>dropEvent: event handler when something is dropped in the widget</li>
-<li>find_process: finds the dropped process in the system’s paths</li>
-<li>update_history: updates the history for undos and redos</li>
-<li>add_process: adds a process to the pipeline</li>
-<li>del_node: deletes a node</li>
-<li>_release_grab_link: method called when a link is released</li>
-<li>add_link: add a link between two nodes</li>
-<li>_del_link: deletes a link</li>
-<li>update_node_name: updates a node name</li>
-<li>update_plug_value: updates a plug value</li>
-<li>_export_plug: export a plug to a pipeline global input or output</li>
-<li>export_node_plugs: exports all the plugs of a node</li>
-<li>_remove_plug: removes a plug</li>
-<li>save_pipeline: saves the pipeline</li>
-<li>check_modifications: checks if the nodes of the pipeline have been modified</li>
-<li>get_current_filename: returns the relative path the pipeline was last saved to. Empty if never saved.</li>
+<dd><ul class="first last">
+<li><p class="first">_del_link: deletes a link</p>
+</li>
+<li><p class="first">_export_plug: export a plug to a pipeline global input or output</p>
+</li>
+<li><p class="first">_release_grab_link: method called when a link is released</p>
+</li>
+<li><p class="first">_remove_plug: removes a plug</p>
+</li>
+<li><p class="first">add_link: add a link between two nodes</p>
+</li>
+<li><p class="first">add_process: adds a process to the pipeline</p>
+</li>
+<li><dl class="first docutils">
+<dt>check_modifications: checks if the nodes of the pipeline have been</dt>
+<dd><p class="first last">modified</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">del_node: deletes a node</p>
+</li>
+<li><p class="first">dragEnterEvent: event handler when the mouse enters the widget</p>
+</li>
+<li><p class="first">dragMoveEvent: event handler when the mouse moves in the widget</p>
+</li>
+<li><p class="first">dropEvent: event handler when something is dropped in the widget</p>
+</li>
+<li><p class="first">export_node_plugs: exports all the plugs of a node</p>
+</li>
+<li><p class="first">find_process: finds the dropped process in the system’s paths</p>
+</li>
+<li><dl class="first docutils">
+<dt>get_current_filename: returns the relative path the pipeline was</dt>
+<dd><p class="first last">last saved to. Empty if never saved.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">save_pipeline: saves the pipeline</p>
+</li>
+<li><p class="first">update_history: updates the history for undos and redos</p>
+</li>
+<li><p class="first">update_node_name: updates a node name</p>
+</li>
+<li><p class="first">update_plug_value: updates a plug value</p>
+</li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialization of the PipelineEditor</p>
+<dd><p>Initialization of the PipelineEditor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -647,7 +716,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_link">
 <code class="descname">add_link</code><span class="sig-paren">(</span><em>source</em>, <em>dest</em>, <em>active</em>, <em>weak</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.add_link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_link" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a link between two nodes.</p>
+<dd><p>Add a link between two nodes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -657,8 +726,10 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <li><strong>dest</strong> – tuple containing the node and plug destination names</li>
 <li><strong>active</strong> – boolean that is True if the link is activated</li>
 <li><strong>weak</strong> – boolean that is True if the link is weak</li>
-<li><strong>from_undo</strong> – boolean that is True if the action has been made using an undo</li>
-<li><strong>from_redo</strong> – boolean that is True if the action has been made using a redo</li>
+<li><strong>from_undo</strong> – boolean that is True if the action has been made
+using an undo</li>
+<li><strong>from_redo</strong> – boolean that is True if the action has been made
+using a redo</li>
 </ul>
 </td>
 </tr>
@@ -669,7 +740,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_process">
 <code class="descname">add_process</code><span class="sig-paren">(</span><em>class_process</em>, <em>node_name=None</em>, <em>from_undo=False</em>, <em>from_redo=False</em>, <em>links=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.add_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.add_process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a process to the pipeline</p>
+<dd><p>Add a process to the pipeline.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -690,21 +761,23 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.check_modifications">
 <code class="descname">check_modifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.check_modifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.check_modifications" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the nodes of the pipeline have been modified</p>
+<dd><p>Check if the nodes of the pipeline have been modified.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.del_node">
 <code class="descname">del_node</code><span class="sig-paren">(</span><em>node_name=None</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.del_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.del_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a node</p>
+<dd><p>Delete a node.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>node_name</strong> – name of the corresponding node (using when undo/redo) (str)</li>
-<li><strong>from_undo</strong> – boolean that is True if the action has been made using an undo</li>
-<li><strong>from_redo</strong> – boolean that is True if the action has been made using a redo</li>
+<li><strong>node_name</strong> – name of the corresponding node (using when undo/redo)</li>
+<li><strong>from_undo</strong> – boolean, True if the action has been made using an
+undo</li>
+<li><strong>from_redo</strong> – boolean, True if the action has been made using a
+redo</li>
 </ul>
 </td>
 </tr>
@@ -715,7 +788,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dragEnterEvent">
 <code class="descname">dragEnterEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.dragEnterEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dragEnterEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler when the mouse enters the widget</p>
+<dd><p>Event handler when the mouse enters the widget.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -729,7 +802,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dragMoveEvent">
 <code class="descname">dragMoveEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.dragMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dragMoveEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler when the mouse moves in the widget</p>
+<dd><p>Event handler when the mouse moves in the widget.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -743,14 +816,21 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dropEvent">
 <code class="descname">dropEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.dropEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.dropEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler when something is dropped in the widget
-:param event: event</p>
+<dd><p>Event handler when something is dropped in the widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> – event</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.export_node_plugs">
 <code class="descname">export_node_plugs</code><span class="sig-paren">(</span><em>node_name</em>, <em>inputs=True</em>, <em>outputs=True</em>, <em>optional=False</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.export_node_plugs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.export_node_plugs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports all the plugs of a node</p>
+<dd><p>Export all the plugs of a node</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -772,7 +852,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.find_process">
 <code class="descname">find_process</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.find_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.find_process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the dropped process in the system’s paths</p>
+<dd><p>Find the dropped process in the system’s paths.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -786,7 +866,8 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.get_current_filename">
 <code class="descname">get_current_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.get_current_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.get_current_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the relative path the pipeline was last saved to. Empty if never saved.</p>
+<dd><p>Return the relative path the pipeline was last saved to.
+Empty if never saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -810,7 +891,7 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.save_pipeline">
 <code class="descname">save_pipeline</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.save_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.save_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the pipeline</p>
+<dd><p>Save the pipeline.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -824,16 +905,19 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_history">
 <code class="descname">update_history</code><span class="sig-paren">(</span><em>history_maker</em>, <em>from_undo</em>, <em>from_redo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.update_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the history for undos and redos
+<dd><p>Update the history for undos and redos.
 This method is called after each action in the PipelineEditor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>history_maker</strong> – list that contains information about what has been done</li>
-<li><strong>from_undo</strong> – boolean that is True if the action has been made using an undo</li>
-<li><strong>from_redo</strong> – boolean that is True if the action has been made using a redo</li>
+<li><strong>history_maker</strong> – list that contains information about what has
+been done</li>
+<li><strong>from_undo</strong> – boolean that is True if the action has been made
+using an undo</li>
+<li><strong>from_redo</strong> – boolean that is True if the action has been made
+using a redo</li>
 </ul>
 </td>
 </tr>
@@ -844,7 +928,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_node_name">
 <code class="descname">update_node_name</code><span class="sig-paren">(</span><em>old_node</em>, <em>old_node_name</em>, <em>new_node_name</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.update_node_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_node_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a node name</p>
+<dd><p>Update a node name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -853,8 +937,10 @@ This method is called after each action in the PipelineEditor.</p>
 <li><strong>old_node</strong> – Node object to change</li>
 <li><strong>old_node_name</strong> – original name of the node (str)</li>
 <li><strong>new_node_name</strong> – new name of the node (str)</li>
-<li><strong>from_undo</strong> – boolean that is True if the action has been made using an undo</li>
-<li><strong>from_redo</strong> – boolean that is True if the action has been made using a redo</li>
+<li><strong>from_undo</strong> – boolean, True if the action has been made using an
+undo</li>
+<li><strong>from_redo</strong> – boolean, True if the action has been made using a
+redo</li>
 </ul>
 </td>
 </tr>
@@ -865,7 +951,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_plug_value">
 <code class="descname">update_plug_value</code><span class="sig-paren">(</span><em>node_name</em>, <em>new_value</em>, <em>plug_name</em>, <em>value_type</em>, <em>from_undo=False</em>, <em>from_redo=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditor.update_plug_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditor.update_plug_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a plug value</p>
+<dd><p>Update a plug value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -875,13 +961,15 @@ This method is called after each action in the PipelineEditor.</p>
 <li><strong>new_value</strong> – new value to set to the plug</li>
 <li><strong>plug_name</strong> – name of the plug to change (str)</li>
 <li><strong>value_type</strong> – type of the new value</li>
-<li><strong>from_undo</strong> – boolean that is True if the action has been made using an undo</li>
-<li><strong>from_redo</strong> – boolean that is True if the action has been made using a redo</li>
+<li><strong>from_undo</strong> – boolean, True if the action has been made using an</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<p>undo
+:param from_redo: boolean, True if the action has been made using a
+redo</p>
 </dd></dl>
 
 </dd></dl>
@@ -892,51 +980,101 @@ This method is called after each action in the PipelineEditor.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QTabWidget</span></code></p>
 <p>Tab widget that contains pipeline editors</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>scan_list: list of the selected database files</li>
-<li>main_window: main window of the software</li>
-<li>undos: dictionary containing as values the undo list and as keys the pipeline in the corresponding tab</li>
-<li>redos: dictionary containing as values the redo list and as keys the name of the corresponding tab</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>new_tab: creates a new tab and a new editor</li>
-<li>close_tab: closes the selected tab and editor</li>
-<li>set_current_editor_by_tab_name: sets the current editor</li>
-<li>get_current_editor: gets the instance of the current editor</li>
-<li>get_tab_name_by_index: gets the tab title from its index in the editors</li>
-<li>get_filename_by_index: gets the pipeline filename from its index in the editors</li>
-<li>get_index_by_tab_name: gets the index of the editor corresponding to the given tab name</li>
-<li>get_index_by_filename: gets the index of the editor corresponding to the given pipeline filename</li>
-<li>get_current_tab_name: gets the tab title of the current editor</li>
-<li>get_current_filename: gets the file name of the current pipeline</li>
-<li>get_current_pipeline: gets the instance of the current pipeline</li>
-<li>save_pipeline: saves the pipeline of the current editor</li>
-<li>load_pipeline: loads a new pipeline</li>
-<li>save_pipeline_parameters: saves the pipeline parameters of the current editor</li>
-<li>load_pipeline_parameters: loads parameters to the pipeline of the current editor</li>
-<li>emit_node_clicked: emits a signal when a node is clicked</li>
-<li>emit_switch_clicked: emits a signal when a switch is clicked</li>
-<li>emit_pipeline_saved: emits a signal when a pipeline is saved</li>
-<li>update_pipeline_editors: updates editors</li>
-<li>update_history: updates undo/redo history of an editor</li>
-<li>reset_pipeline: resets the pipeline of the current editor</li>
-<li>update_scans_list: updates the list of database scans in every editor</li>
-<li>open_sub_pipeline: opens a sub-pipeline in a new tab</li>
-<li>open_filter: opens a filter widget</li>
-<li>export_to_db_scans: exports the input of a filter to “database_scans”</li>
-<li>check_modifications: checks if the nodes of the current pipeline have been modified</li>
-<li>has_pipeline_nodes: checks if any of the pipelines in the editor tabs have pipeline nodes</li>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>check_modifications: check if the nodes of the current pipeline have</dt>
+<dd><p class="first last">been modified</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">close_tab: close the selected tab and editor</p>
+</li>
+<li><p class="first">emit_node_clicked: emit a signal when a node is clicked</p>
+</li>
+<li><p class="first">emit_pipeline_saved: emit a signal when a pipeline is saved</p>
+</li>
+<li><p class="first">emit_switch_clicked: emit a signal when a switch is clicked</p>
+</li>
+<li><p class="first">export_to_db_scans: export the input of a filter to ‘database_scans’</p>
+</li>
+<li><p class="first">get_current_editor: get the instance of the current editor</p>
+</li>
+<li><p class="first">get_current_filename: get the file name of the current pipeline</p>
+</li>
+<li><p class="first">get_current_pipeline: get the instance of the current pipeline</p>
+</li>
+<li><p class="first">get_current_tab_name: get the tab title of the current editor</p>
+</li>
+<li><dl class="first docutils">
+<dt>get_filename_by_index: get the pipeline filename from its index in</dt>
+<dd><p class="first last">the editors</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_index_by_filename: get the index of the editor corresponding to</dt>
+<dd><p class="first last">the given pipeline filename</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_index_by_tab_name: get the index of the editor corresponding to</dt>
+<dd><p class="first last">the given tab name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_tab_name_by_index: get the tab title from its index in the</dt>
+<dd><p class="first last">editors</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>has_pipeline_nodes: check if any of the pipelines in the editor tabs</dt>
+<dd><p class="first last">have pipeline nodes</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">load_pipeline: load a new pipeline</p>
+</li>
+<li><dl class="first docutils">
+<dt>load_pipeline_parameters: load parameters to the pipeline of the</dt>
+<dd><p class="first last">current editor</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">new_tab: create a new tab and a new editor</p>
+</li>
+<li><p class="first">open_filter: open a filter widget</p>
+</li>
+<li><p class="first">open_sub_pipeline: open a sub-pipeline in a new tab</p>
+</li>
+<li><p class="first">reset_pipeline: reset the pipeline of the current editor</p>
+</li>
+<li><p class="first">save_pipeline: save the pipeline of the current editor</p>
+</li>
+<li><dl class="first docutils">
+<dt>save_pipeline_parameters: save the pipeline parameters of the</dt>
+<dd><p class="first last">current editor</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">set_current_editor_by_tab_name: set the current editor</p>
+</li>
+<li><p class="first">update_history: update undo/redo history of an editor</p>
+</li>
+<li><p class="first">update_pipeline_editors: update editors</p>
+</li>
+<li><p class="first">update_scans_list: update the list of database scans in every editor</p>
+</li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialization of the Pipeline Editor tabs</p>
+<dd><p>Initialization of the Pipeline Editor tabs.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -955,13 +1093,13 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.check_modifications">
 <code class="descname">check_modifications</code><span class="sig-paren">(</span><em>current_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.check_modifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.check_modifications" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the nodes of the current pipeline have been modified</p>
+<dd><p>Check if the nodes of the current pipeline have been modified</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.close_tab">
 <code class="descname">close_tab</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.close_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.close_tab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes the selected tab and editor</p>
+<dd><p>Close the selected tab and editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -975,7 +1113,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_node_clicked">
 <code class="descname">emit_node_clicked</code><span class="sig-paren">(</span><em>node_name</em>, <em>process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.emit_node_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_node_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emits a signal when a node is clicked</p>
+<dd><p>Emit a signal when a node is clicked.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -993,7 +1131,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_pipeline_saved">
 <code class="descname">emit_pipeline_saved</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.emit_pipeline_saved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_pipeline_saved" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emits a signal when a pipeline is saved</p>
+<dd><p>Emit a signal when a pipeline is saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1007,7 +1145,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_switch_clicked">
 <code class="descname">emit_switch_clicked</code><span class="sig-paren">(</span><em>node_name</em>, <em>switch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.emit_switch_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.emit_switch_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emits a signal when a switch is clicked</p>
+<dd><p>Emit a signal when a switch is clicked.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1025,7 +1163,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.export_to_db_scans">
 <code class="descname">export_to_db_scans</code><span class="sig-paren">(</span><em>node_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.export_to_db_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.export_to_db_scans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports the input of a filter to “database_scans” plug</p>
+<dd><p>Export the input of a filter to “database_scans” plug.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1039,7 +1177,7 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_editor">
 <code class="descname">get_current_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_current_editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_editor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the instance of the current editor</p>
+<dd><p>Get the instance of the current editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1053,8 +1191,11 @@ This method is called after each action in the PipelineEditor.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_filename">
 <code class="descname">get_current_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_current_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the relative path to the file the pipeline in the current editor has been last saved to.
-If the pipeline has never been saved, returns the title of the tab.</p>
+<dd><dl class="docutils">
+<dt>Get the relative path to the file the pipeline in the current editor</dt>
+<dd>has been last saved to.</dd>
+</dl>
+<p>If the pipeline has never been saved, returns the title of the tab.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1068,7 +1209,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_pipeline">
 <code class="descname">get_current_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_current_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the instance of the current pipeline</p>
+<dd><p>Get the instance of the current pipeline.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1082,7 +1223,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_tab_name">
 <code class="descname">get_current_tab_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_current_tab_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_current_tab_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the tab name of the editor in the current tab.
+<dd><p>Get the tab name of the editor in the current tab.
 Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1097,7 +1238,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_file_name">
 <code class="descname">get_editor_by_file_name</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_editor_by_file_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_file_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the instance of an editor from its file name</p>
+<dd><p>Get the instance of an editor from its file name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1113,7 +1254,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_index">
 <code class="descname">get_editor_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_editor_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the instance of an editor from its index in the editors</p>
+<dd><p>Get the instance of an editor from its index in the editors.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1129,7 +1270,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_tab_name">
 <code class="descname">get_editor_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_editor_by_tab_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_editor_by_tab_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the instance of an editor from its tab name</p>
+<dd><p>Get the instance of an editor from its tab name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1145,8 +1286,11 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_filename_by_index">
 <code class="descname">get_filename_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_filename_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_filename_by_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the relative path to the file the pipeline in the editor at the given index has been last saved to.
-If the pipeline has never been saved, returns the title of the tab.</p>
+<dd><dl class="docutils">
+<dt>Get the relative path to the file the pipeline in the editor at the</dt>
+<dd>given index has been last saved to.</dd>
+</dl>
+<p>If the pipeline has never been saved, returns the title of the tab.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1162,7 +1306,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_editor">
 <code class="descname">get_index_by_editor</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_index_by_editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_editor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the index of the editor corresponding to the given editor</p>
+<dd><p>Get the index of the editor corresponding to the given editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1178,7 +1322,10 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_filename">
 <code class="descname">get_index_by_filename</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_index_by_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the index of the first editor corresponding to the given pipeline filename</p>
+<dd><dl class="docutils">
+<dt>Get the index of the first editor corresponding to the given</dt>
+<dd>pipeline filename</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1194,7 +1341,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_tab_name">
 <code class="descname">get_index_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_index_by_tab_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_index_by_tab_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the index of the editor corresponding to the given tab name</p>
+<dd><p>Get the index of the editor corresponding to the given tab name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1210,7 +1357,7 @@ If the pipeline has never been saved, returns the title of the tab.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_tab_name_by_index">
 <code class="descname">get_tab_name_by_index</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.get_tab_name_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.get_tab_name_by_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the tab name of the editor at the given index.
+<dd><p>Get the tab name of the editor at the given index.
 Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1227,7 +1374,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.has_pipeline_nodes">
 <code class="descname">has_pipeline_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.has_pipeline_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.has_pipeline_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if any of the pipelines in the editor tabs have pipeline nodes</p>
+<dd><p>Check if any of the pipelines in the editor tabs have pipeline nodes</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1241,12 +1388,13 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.load_pipeline">
 <code class="descname">load_pipeline</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.load_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.load_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads a new pipeline</p>
+<dd><p>Load a new pipeline.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – not None only when this method is called from “open_sub_pipeline”</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – not None only when this method is called from
+“open_sub_pipeline”</td>
 </tr>
 </tbody>
 </table>
@@ -1255,13 +1403,13 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.load_pipeline_parameters">
 <code class="descname">load_pipeline_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.load_pipeline_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.load_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads parameters to the pipeline of the current editor</p>
+<dd><p>Load parameters to the pipeline of the current editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.new_tab">
 <code class="descname">new_tab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.new_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.new_tab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new tab and a new editor and makes the new tab current</p>
+<dd><p>Create a new tab and a new editor and makes the new tab current.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1272,7 +1420,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.open_filter">
 <code class="descname">open_filter</code><span class="sig-paren">(</span><em>node_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.open_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.open_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a filter widget</p>
+<dd><p>Open a filter widget.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1286,7 +1434,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.open_sub_pipeline">
 <code class="descname">open_sub_pipeline</code><span class="sig-paren">(</span><em>sub_pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.open_sub_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.open_sub_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a sub-pipeline in a new tab.</p>
+<dd><p>Open a sub-pipeline in a new tab.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1305,25 +1453,25 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.reset_pipeline">
 <code class="descname">reset_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.reset_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.reset_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets the pipeline of the current editor</p>
+<dd><p>Reset the pipeline of the current editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.save_pipeline">
 <code class="descname">save_pipeline</code><span class="sig-paren">(</span><em>new_file_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.save_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.save_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the pipeline of the current editor</p>
+<dd><p>Save the pipeline of the current editor.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.save_pipeline_parameters">
 <code class="descname">save_pipeline_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.save_pipeline_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.save_pipeline_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the pipeline parameters of the current editor</p>
+<dd><p>Save the pipeline parameters of the current editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_editor">
 <code class="descname">set_current_editor_by_editor</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.set_current_editor_by_editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_editor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the current editor</p>
+<dd><p>Set the current editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1337,7 +1485,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_file_name">
 <code class="descname">set_current_editor_by_file_name</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.set_current_editor_by_file_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_file_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the current editor</p>
+<dd><p>Set the current editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1351,7 +1499,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_tab_name">
 <code class="descname">set_current_editor_by_tab_name</code><span class="sig-paren">(</span><em>tab_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.set_current_editor_by_tab_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.set_current_editor_by_tab_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the current editor</p>
+<dd><p>Set the current editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1370,7 +1518,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_history">
 <code class="descname">update_history</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.update_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates undo/redo history of an editor</p>
+<dd><p>Update undo/redo history of an editor</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1384,7 +1532,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_pipeline_editors">
 <code class="descname">update_pipeline_editors</code><span class="sig-paren">(</span><em>editor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.update_pipeline_editors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_pipeline_editors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update editors</p>
+<dd><p>Update editor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1398,7 +1546,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_scans_list">
 <code class="descname">update_scans_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#PipelineEditorTabs.update_scans_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.PipelineEditorTabs.update_scans_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the list of database scans in every editor</p>
+<dd><p>Update the list of database scans in every editor</p>
 </dd></dl>
 
 </dd></dl>
@@ -1406,7 +1554,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="function">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.find_filename">
 <code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">find_filename</code><span class="sig-paren">(</span><em>paths_list</em>, <em>packages_list</em>, <em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#find_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.find_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the corresponding file name in the paths list of process_config.yml.</p>
+<dd><p>Find the corresponding file name in the paths list of process_config.yml.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1428,7 +1576,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="function">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.get_path">
 <code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">get_path</code><span class="sig-paren">(</span><em>name</em>, <em>dictionary</em>, <em>prev_paths=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.get_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>This recursive function returns the package path to the selected sub-pipeline.</p>
+<dd><p>Return the package path to the selected sub-pipeline.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1450,7 +1598,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="function">
 <dt id="populse_mia.pipeline_manager.pipeline_editor.save_pipeline">
 <code class="descclassname">populse_mia.pipeline_manager.pipeline_editor.</code><code class="descname">save_pipeline</code><span class="sig-paren">(</span><em>pipeline</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_editor.html#save_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_editor.save_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the pipeline either in XML or .py source file</p>
+<dd><p>Save the pipeline either in XML or .py source file.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1461,104 +1609,51 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 </div>
 <div class="section" id="module-populse_mia.pipeline_manager.pipeline_manager_tab">
 <span id="populse-mia-pipeline-manager-pipeline-manager-tab-module"></span><h2>populse_mia.pipeline_manager.pipeline_manager_tab module<a class="headerlink" href="#module-populse_mia.pipeline_manager.pipeline_manager_tab" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress">
-<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">InitProgress</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
-<p>Init progress bar</p>
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.get_bricks_number">
-<code class="descname">get_bricks_number</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress.get_bricks_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.get_bricks_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the number of bricks in the current pipeline
-:return: The number of bricks to initialize in the current pipeline</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.onProgress">
-<code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitProgress.onProgress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal to set the pipeline initialization progressbar value</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker">
-<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">InitWorker</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
-<p>Thread doing the pipeline initialization</p>
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>diagram_view</em>, <em>pipeline</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.add_plug_value_to_database">
-<code class="descname">add_plug_value_to_database</code><span class="sig-paren">(</span><em>p_value</em>, <em>brick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.add_plug_value_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.add_plug_value_to_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the plug value to the database.
-:param p_value: plug value, a file name or a list of file names
-:param brick: brick of the value</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.init_pipeline">
-<code class="descname">init_pipeline</code><span class="sig-paren">(</span><em>pipeline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.init_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.init_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.notifyProgress">
-<code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#InitWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.InitWorker.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<p>Module to define pipeline manager tab appearance, settings and methods.</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Class:</dt>
+<dd><ul class="first last simple">
+<li>PipelineManagerTab</li>
+<li>RunProgress</li>
+<li>RunWorker</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="class">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">PipelineManagerTab</code><span class="sig-paren">(</span><em>project</em>, <em>scan_list</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>Widget that handles the Pipeline Manager tab.</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>processLibrary: library of processes to drag &amp; drop to a pipeline editor</li>
-<li>pipelineEditorTabs: graphical pipeline editor composed of several tabs</li>
-<li>nodeController: controller that displays parameters when a node is clicked</li>
-<li>iterationTable: widgets that handles pipeline iteration</li>
-<li>project: current project in the software</li>
-<li>scan_list: list of the selected database files</li>
-<li>iteration_table_scans_list: list of the scans contained in the iteration table</li>
-<li>main_window: main window of the software</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
-<li>undo: undo the last action made on the current pipeline editor</li>
-<li>redo: redo the last undone action on the current pipeline editor</li>
-<li>update_clinical_mode: updates the visibility of widgets/actions depending of the chosen mode</li>
-<li>update_scans_list: updates the user-selected list of scans</li>
-<li>update_project: updates the project attribute of several objects</li>
-<li>controller_value_changed: updates history when a pipeline node is changed</li>
-<li>updateProcessLibrary: updates the library of processes when a pipeline is saved</li>
+<li>controller_value_changed: updates history when a pipeline node is
+changed</li>
+<li>displayNodeParameters: displays the node controller when a node is
+clicked</li>
+<li>init_pipeline: initializes the current pipeline of the pipeline
+editor</li>
+<li>loadParameters: loads pipeline parameters to the current pipeline of
+the pipeline editor</li>
 <li>loadPipeline: loads a pipeline to the pipeline editor</li>
-<li>savePipeline: saves the current pipeline of the pipeline editor</li>
-<li>savePipelineAs: saves the current pipeline of the pipeline editor under another name</li>
-<li>loadParameters: loads pipeline parameters to the current pipeline of the pipeline editor</li>
-<li>saveParameters: save the pipeline parameters of the the current pipeline of the pipeline editor</li>
-<li>initPipeline: initializes the current pipeline of the pipeline editor</li>
-<li>init_pipeline: initializes the current pipeline of the pipeline editor (without progress bar)</li>
+<li>redo: redo the last undone action on the current pipeline editor</li>
 <li>runPipeline: runs the current pipeline of the pipeline editor</li>
-<li>displayNodeParameters: displays the node controller when a node is clicked</li>
+<li>saveParameters: save the pipeline parameters of the the current
+pipeline of the pipeline editor</li>
+<li>savePipeline: saves the current pipeline of the pipeline editor</li>
+<li>savePipelineAs: saves the current pipeline of the pipeline editor
+under another name</li>
+<li>undo: undo the last action made on the current pipeline editor</li>
+<li>updateProcessLibrary: updates the library of processes when a
+pipeline is saved</li>
+<li>update_clinical_mode: updates the visibility of widgets/actions
+depending of the chosen mode</li>
+<li>update_project: updates the project attribute of several objects</li>
+<li>update_scans_list: updates the user-selected list of scans</li>
 </ul>
 </dd>
 </dl>
@@ -1584,7 +1679,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database">
 <code class="descname">add_plug_value_to_database</code><span class="sig-paren">(</span><em>p_value</em>, <em>brick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.add_plug_value_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the plug value to the database.</p>
+<dd><p>Add the plug value to the database.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1602,14 +1697,15 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_process_to_preview">
 <code class="descname">add_process_to_preview</code><span class="sig-paren">(</span><em>class_process</em>, <em>node_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.add_process_to_preview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_process_to_preview" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a process to the pipeline</p>
+<dd><p>Add a process to the pipeline</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>class_process</strong> – process class’s name (str)</li>
-<li><strong>node_name</strong> – name of the corresponding node (using when undo/redo) (str)</li>
+<li><strong>node_name</strong> – name of the corresponding node
+(using when undo/redo) (str)</li>
 </ul>
 </td>
 </tr>
@@ -1620,7 +1716,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.controller_value_changed">
 <code class="descname">controller_value_changed</code><span class="sig-paren">(</span><em>signal_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.controller_value_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.controller_value_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates history when a pipeline node is changed</p>
+<dd><p>Update history when a pipeline node is changed</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1634,7 +1730,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.displayNodeParameters">
 <code class="descname">displayNodeParameters</code><span class="sig-paren">(</span><em>node_name</em>, <em>process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.displayNodeParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.displayNodeParameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Displays the node controller when a node is clicked</p>
+<dd><p>Display the node controller when a node is clicked</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1655,7 +1751,7 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.find_process">
 <code class="descname">find_process</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.find_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.find_process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the dropped process in the system’s paths</p>
+<dd><p>Find the dropped process in the system’s paths</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1667,25 +1763,9 @@ Trailing ” *” and ampersand (“&amp;”) characters are removed.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.initPipeline">
-<code class="descname">initPipeline</code><span class="sig-paren">(</span><em>pipeline=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.initPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.initPipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the current pipeline of the pipeline editor</p>
-<p>During the initialization, the every output file is created empty depending on
-the inputs and are stored in the database.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pipeline</strong> – used to initialize a sub-pipeline</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.init_pipeline">
 <code class="descname">init_pipeline</code><span class="sig-paren">(</span><em>pipeline=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.init_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.init_pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the current pipeline of the pipeline editor</p>
+<dd><p>Initialize the current pipeline of the pipeline editor</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1704,13 +1784,13 @@ the inputs and are stored in the database.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.loadParameters">
 <code class="descname">loadParameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.loadParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.loadParameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads pipeline parameters to the current pipeline of the pipeline editor</p>
+<dd><p>Load pipeline parameters to the current pipeline of the pipeline editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.loadPipeline">
 <code class="descname">loadPipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.loadPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.loadPipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads a pipeline to the pipeline editor</p>
+<dd><p>Load a pipeline to the pipeline editor</p>
 </dd></dl>
 
 <dl class="method">
@@ -1737,25 +1817,26 @@ the inputs and are stored in the database.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.runPipeline">
 <code class="descname">runPipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.runPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.runPipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the current pipeline of the pipeline editor</p>
+<dd><p>Run the current pipeline of the pipeline editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.saveParameters">
 <code class="descname">saveParameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.saveParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.saveParameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the pipeline parameters of the the current pipeline of the pipeline editor</p>
+<dd><p>Save the pipeline parameters of the the current pipeline of the
+pipeline editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.savePipeline">
 <code class="descname">savePipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.savePipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.savePipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the current pipeline of the pipeline editor</p>
+<dd><p>Save the current pipeline of the pipeline editor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.savePipelineAs">
 <code class="descname">savePipelineAs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.savePipelineAs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.savePipelineAs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the current pipeline of the pipeline editor under another name</p>
+<dd><p>Save the current pipeline of the pipeline editor under another name</p>
 </dd></dl>
 
 <dl class="method">
@@ -1782,7 +1863,7 @@ the inputs and are stored in the database.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.updateProcessLibrary">
 <code class="descname">updateProcessLibrary</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.updateProcessLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.updateProcessLibrary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the library of processes when a pipeline is saved</p>
+<dd><p>Update the library of processes when a pipeline is saved</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1796,13 +1877,13 @@ the inputs and are stored in the database.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_clinical_mode">
 <code class="descname">update_clinical_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.update_clinical_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_clinical_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the visibility of widgets/actions depending of the chosen mode</p>
+<dd><p>Update the visibility of widgets/actions depending of the chosen mode</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_project">
 <code class="descname">update_project</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.update_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_project" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the project attribute of several objects</p>
+<dd><p>Update the project attribute of several objects</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1816,7 +1897,7 @@ the inputs and are stored in the database.</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_scans_list">
 <code class="descname">update_scans_list</code><span class="sig-paren">(</span><em>iteration_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#PipelineManagerTab.update_scans_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.update_scans_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the user-selected list of scans</p>
+<dd><p>Update the user-selected list of scans</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1831,12 +1912,25 @@ the inputs and are stored in the database.</p>
 
 <dl class="class">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress">
-<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">RunProgress</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">RunProgress</code><span class="sig-paren">(</span><em>diagram_view</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
-<p>Run progress bar</p>
+<p>Create the pipeline progress bar and launch the thread.</p>
+<p>The progress bar is closed when the thread finishes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>diagram_view</strong> – A pipelineEditorTabs</li>
+<li><strong>settings</strong> – dictionary of settings when the pipeline is iterated</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>diagram_view</em>, <em>settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunProgress.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -1846,7 +1940,7 @@ the inputs and are stored in the database.</p>
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.pipeline_manager_tab.</code><code class="descname">RunWorker</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
-<p>Thread doing the pipeline run</p>
+<p>Run the pipeline</p>
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>diagram_view</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/pipeline_manager_tab.html#RunWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.pipeline_manager_tab.RunWorker.__init__" title="Permalink to this definition">¶</a></dt>
@@ -2489,33 +2583,16 @@ errors are silent and error messages returned at the end of execution</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>Widget that handles the available Capsul’s processes in the software</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>process_library: library of the selected processes</li>
-<li>pkg_library: widget to control which processes to show in the process library</li>
-<li><dl class="first docutils">
-<dt>packages: tree-dictionary that is the representation of the process library.</dt>
-<dd>A dictionary, where keys are the name of a module (brick) and values
-are ‘process_enabled’ or ‘process_disabled’. Key can be a submodule. 
-In this case the value is a dictionary where keys are the name of a
-module (brick) and values are ‘process_enabled’ or ‘process_disabled’.
-etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
-‘Filter_test’: ‘process_disabled’}, ‘nipype’: {‘interfaces’:
-{‘BIDSDataGrabber’: ‘process_enabled’, ‘fsl’: {‘AR1Image’:
-‘process_disabled’}}}}.</dd>
-</dl>
-</li>
-<li>paths: list of path to add to the system path</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
+<li>load_config: read the config in process_config.yml and return it as
+a dictionary</li>
+<li>load_packages: sets packages and paths to the widget and to the
+system paths</li>
+<li>open_pkg_lib: opens the package library</li>
+<li>save_config: saves the current config to process_config.yml</li>
 <li>update_config: updates the config and loads the corresponding packages</li>
 <li>update_process_library: updates the tree of the process library</li>
-<li>open_pkg_lib: opens the package library</li>
-<li>load_config: read the config in process_config.yml and return it as a dictionary</li>
-<li>load_packages: sets packages and paths to the widget and to the system paths</li>
-<li>save_config: saves the current config to process_config.yml</li>
 </ul>
 </dd>
 </dl>
@@ -2606,24 +2683,71 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA">
 <em class="property">class </em><code class="descclassname">populse_mia.pipeline_manager.process_mia.</code><code class="descname">ProcessMIA</code><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">capsul.process.process.Process</span></code></p>
-<p>Class overriding the default capsul Process class, in order to personalize the run in MIA</p>
-<dl class="docutils">
+<blockquote>
+<div><dl class="docutils">
+<dt>Class overriding the default capsul Process class, in order to personalize</dt>
+<dd>the run for MIA bricks.</dd>
+</dl>
+</div></blockquote>
+<p>This class is mainly used by MIA bricks.</p>
+<blockquote>
+<div><dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>manage_matlab_launch_parameters: sets the Matlab’s config parameters when a Nipype process is used</li>
-<li>list_outputs: generates the outputs of the process (need to be overridden)</li>
-<li>_before_run_process: method called before running the process</li>
-<li>_after_run_process: method called after the process being run</li>
-<li>manage_brick_before_run: updates process history, before running the process</li>
-<li>manage_brick_after_run: manages the brick history after the run (Done status)</li>
-<li>get_scan_bricks: gives the list of bricks, given an output value</li>
-<li>get_brick_to_update: gives the brick to update, given the scan list of bricks</li>
-<li>remove_brick_output: removes the bricks from the outputs</li>
-<li>manage_brick_output_before_run: manages the bricks history before the run</li>
-<li>manage_brick_output_after_run: manages the bricks history before the run</li>
+<dd><ul class="first last">
+<li><p class="first">_after_run_process: method called after the process being run</p>
+</li>
+<li><p class="first">_before_run_process: method called before running the process</p>
+</li>
+<li><dl class="first docutils">
+<dt>get_brick_to_update: give the brick to update given the scan list</dt>
+<dd><p class="first last">of bricks</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">get_scan_bricks: give the list of bricks given an output value</p>
+</li>
+<li><dl class="first docutils">
+<dt>list_outputs: generates the outputs of the process (need to be</dt>
+<dd><p class="first last">overridden)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>manage_brick_after_run: update process history after the run</dt>
+<dd><p class="first last">(Done status)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>manage_brick_before_run: update process history before running</dt>
+<dd><p class="first last">the process</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>manage_brick_output_after_run: manage the bricks history before</dt>
+<dd><p class="first last">the run</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>manage_brick_output_before_run: manage the bricks history before</dt>
+<dd><p class="first last">the run</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>manage_matlab_launch_parameters: Set the Matlab’s config parameters</dt>
+<dd><p class="first last">when a Nipype process is used</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">remove_brick_output: remove the bricks from the outputs</p>
+</li>
 </ul>
 </dd>
 </dl>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <ul class="last simple">
@@ -2641,7 +2765,7 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.get_brick_to_update">
 <code class="descname">get_brick_to_update</code><span class="sig-paren">(</span><em>bricks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.get_brick_to_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.get_brick_to_update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the brick to update, given the scan list of bricks</p>
+<dd><p>Give the brick to update, given the scan list of bricks.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -2657,7 +2781,7 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.get_scan_bricks">
 <code class="descname">get_scan_bricks</code><span class="sig-paren">(</span><em>output_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.get_scan_bricks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.get_scan_bricks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the list of bricks, given an output value</p>
+<dd><p>Give the list of bricks, given an output value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -2673,7 +2797,7 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.list_outputs">
 <code class="descname">list_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.list_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.list_outputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates the outputs of the process (need to be overridden)</p>
+<dd><p>Override the outputs of the process</p>
 </dd></dl>
 
 <dl class="method">
@@ -2719,7 +2843,8 @@ etc. ex. {‘User_processes’: {‘Double_smooth’: ‘process_enabled’,
 <dl class="method">
 <dt id="populse_mia.pipeline_manager.process_mia.ProcessMIA.manage_matlab_launch_parameters">
 <code class="descname">manage_matlab_launch_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/pipeline_manager/process_mia.html#ProcessMIA.manage_matlab_launch_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.pipeline_manager.process_mia.ProcessMIA.manage_matlab_launch_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the Matlab’s config parameters when a Nipype process is used</p>
+<dd><p>Set the Matlab’s config parameters when a Nipype process is used</p>
+<p>Called in bricks.</p>
 </dd></dl>
 
 <dl class="method">

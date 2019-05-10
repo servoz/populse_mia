@@ -1,0 +1,653 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.utils.utils &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.utils.utils</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.utils.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="nn">dateutil.parser</span>
+
+<span class="c1"># PyQt5 imports</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">,</span> <span class="n">QTime</span><span class="p">,</span> <span class="n">QDate</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QMessageBox</span>
+
+<span class="c1"># Populse_db imports</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_LIST_STRING</span>
+
+<span class="k">def</span> <span class="nf">check_value_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">is_subvalue</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks the type of a new value</span>
+
+<span class="sd">    :param value: Value of the cell</span>
+<span class="sd">    :param value_type: Type expected</span>
+<span class="sd">    :param is_subvalue: To know if the value is a subvalue of a list</span>
+<span class="sd">    :return: True if the value is valid to replace the old one, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_STRING</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">is_valid_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_value_type</span><span class="p">(</span><span class="n">subvalue</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">is_valid_value</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">is_valid_value</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATE</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_TIME</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span> <span class="nf">message_already_exists</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Displays a message box to tell that a name already exists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;This name already exists in this parent folder&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">set_filters_directory_as_default</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the filters directory as default (Json files)</span>
+
+<span class="sd">    :param dialog: current file dialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">))):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">))</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">)))</span>
+
+<span class="k">def</span> <span class="nf">set_item_data</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the item data in the data browser</span>
+
+<span class="sd">    :param item: item to set</span>
+<span class="sd">    :param value: new item value</span>
+<span class="sd">    :param value_type: new value type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDateTime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDateTime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">))</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDate</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QTime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QTime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">set_projects_directory_as_default</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the projects directory as default</span>
+
+<span class="sd">    :param dialog: current file dialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">projects_directory</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_projects_save_path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">table_to_database</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares the value to the database</span>
+
+<span class="sd">    :param value: Value to convert</span>
+<span class="sd">    :param value_type: Value type</span>
+<span class="sd">    :return: The value converted for the database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyDateTime</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">date_typed</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">date_typed</span> <span class="o">=</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date_typed</span>
+
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyDate</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyTime</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+        <span class="n">old_list</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">list_to_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">old_element</span> <span class="ow">in</span> <span class="n">old_list</span><span class="p">:</span>
+            <span class="n">list_to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_to_database</span><span class="p">(</span><span class="n">old_element</span><span class="p">,</span> <span class="n">value_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;list_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">list_to_return</span>
+
+<span class="k">def</span> <span class="nf">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Version comparator.</span>
+
+<span class="sd">    The verCmp() function returns a boolean value to indicate whether its</span>
+<span class="sd">    first argument (first_ver) is equal to, less or equal to, or greater or</span>
+<span class="sd">    equal to its second argument (sec_ver), as follows:</span>
+<span class="sd">    - if third argument (comp) is &#39;eq&#39;: when the first argument is equal to the</span>
+<span class="sd">      second argument, return True (False if not).</span>
+<span class="sd">    - if third argument (comp) is &#39;sup&#39;: when the first argument is greater</span>
+<span class="sd">      than the second argument, return True (False if not).</span>
+<span class="sd">    - if third argument (comp) is &#39;inf&#39;: when the first argument is less than</span>
+<span class="sd">      the second argument, return True (False if not).</span>
+
+<span class="sd">    :param first_ver: the version of a package (a string; ex. &#39;0.13.0&#39;)</span>
+<span class="sd">    :param sec_ver: the version of a package (a string; ex. &#39;0.13.0&#39;)</span>
+<span class="sd">    :param comp: comparator argument (accepted values: &#39;sup&#39;, &#39;inf&#39; and &#39;eq&#39; )</span>
+<span class="sd">    </span>
+<span class="sd">    :returns: False or True</span>
+
+<span class="sd">    Contains:</span>
+<span class="sd">        Private function:</span>
+<span class="sd">        - normalise</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform a version of a package to a corresponding list of integer.</span>
+
+<span class="sd">        :returns: a list of integer (ex. [0, 13, 0])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\.0+)*$&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;eq&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">==</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">elif</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;sup&#39;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="s1">&#39;eq&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">elif</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="s1">&#39;eq&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="c1">#from populse_mia.software_properties.config import Config</span>
+
+<span class="c1"># Populse_db imports</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_LIST_STRING</span>
+
+<div class="viewcode-block" id="check_value_type"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.check_value_type">[docs]</a><span class="k">def</span> <span class="nf">check_value_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">is_subvalue</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks the type of a new value</span>
+
+<span class="sd">    :param value: Value of the cell</span>
+<span class="sd">    :param value_type: Type expected</span>
+<span class="sd">    :param is_subvalue: To know if the value is a subvalue of a list</span>
+<span class="sd">    :return: True if the value is valid to replace the old one, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_STRING</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">is_valid_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_value_type</span><span class="p">(</span><span class="n">subvalue</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">is_valid_value</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">is_valid_value</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATE</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span> <span class="ow">or</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_TIME</span> <span class="ow">and</span> <span class="n">is_subvalue</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="message_already_exists"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.message_already_exists">[docs]</a><span class="k">def</span> <span class="nf">message_already_exists</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Displays a message box to tell that a name already exists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;This name already exists in this parent folder&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="set_filters_directory_as_default"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.set_filters_directory_as_default">[docs]</a><span class="k">def</span> <span class="nf">set_filters_directory_as_default</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the filters directory as default (Json files)</span>
+
+<span class="sd">    :param dialog: current file dialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">))):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">))</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;filters&#39;</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="set_item_data"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.set_item_data">[docs]</a><span class="k">def</span> <span class="nf">set_item_data</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the item data in the data browser</span>
+
+<span class="sd">    :param item: item to set</span>
+<span class="sd">    :param value: new item value</span>
+<span class="sd">    :param value_type: new value type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">:</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subvalue</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_list</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDateTime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDateTime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">))</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QDate</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QTime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">QTime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">:</span>
+        <span class="n">value_prepared</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">,</span> <span class="n">QVariant</span><span class="p">(</span><span class="n">value_prepared</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="set_projects_directory_as_default"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.set_projects_directory_as_default">[docs]</a><span class="k">def</span> <span class="nf">set_projects_directory_as_default</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the projects directory as default</span>
+
+<span class="sd">    :param dialog: current file dialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">projects_directory</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_projects_save_path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span><span class="n">projects_directory</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="table_to_database"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.table_to_database">[docs]</a><span class="k">def</span> <span class="nf">table_to_database</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares the value to the database</span>
+
+<span class="sd">    :param value: Value to convert</span>
+<span class="sd">    :param value_type: Value type</span>
+<span class="sd">    :return: The value converted for the database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyDateTime</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="n">date_typed</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">date_typed</span> <span class="o">=</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date_typed</span>
+
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QDate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyDate</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">toPyTime</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+        <span class="n">old_list</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">list_to_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">old_element</span> <span class="ow">in</span> <span class="n">old_list</span><span class="p">:</span>
+            <span class="n">list_to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_to_database</span><span class="p">(</span><span class="n">old_element</span><span class="p">,</span> <span class="n">value_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;list_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">list_to_return</span></div>
+
+<div class="viewcode-block" id="verCmp"><a class="viewcode-back" href="../../../populse_mia.utils.html#populse_mia.utils.utils.verCmp">[docs]</a><span class="k">def</span> <span class="nf">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Version comparator.</span>
+
+<span class="sd">    The verCmp() function returns a boolean value to indicate whether its</span>
+<span class="sd">    first argument (first_ver) is equal to, less or equal to, or greater or</span>
+<span class="sd">    equal to its second argument (sec_ver), as follows:</span>
+<span class="sd">    - if third argument (comp) is &#39;eq&#39;: when the first argument is equal to the</span>
+<span class="sd">      second argument, return True (False if not).</span>
+<span class="sd">    - if third argument (comp) is &#39;sup&#39;: when the first argument is greater</span>
+<span class="sd">      than the second argument, return True (False if not).</span>
+<span class="sd">    - if third argument (comp) is &#39;inf&#39;: when the first argument is less than</span>
+<span class="sd">      the second argument, return True (False if not).</span>
+
+<span class="sd">    :param first_ver: the version of a package (a string; ex. &#39;0.13.0&#39;)</span>
+<span class="sd">    :param sec_ver: the version of a package (a string; ex. &#39;0.13.0&#39;)</span>
+<span class="sd">    :param comp: comparator argument (accepted values: &#39;sup&#39;, &#39;inf&#39; and &#39;eq&#39; )</span>
+<span class="sd">    </span>
+<span class="sd">    :returns: False or True</span>
+
+<span class="sd">    Contains:</span>
+<span class="sd">        Private function:</span>
+<span class="sd">        - normalise</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform a version of a package to a corresponding list of integer.</span>
+
+<span class="sd">        :returns: a list of integer (ex. [0, 13, 0])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\.0+)*$&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;eq&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">==</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">elif</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;sup&#39;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="s1">&#39;eq&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">elif</span> <span class="n">comp</span> <span class="o">==</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">normalise</span><span class="p">(</span><span class="n">first_ver</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">normalise</span><span class="p">(</span><span class="n">sec_ver</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">verCmp</span><span class="p">(</span><span class="n">first_ver</span><span class="p">,</span> <span class="n">sec_ver</span><span class="p">,</span> <span class="s1">&#39;eq&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="c1">#####################################################################################</span>
+<span class="c1"># Populse_MIA imports ## !To break a circular dependency import:!</span>
+                      <span class="c1">## The easiest way to fix circular dependency imports is to move the path import</span>
+                      <span class="c1">## to the end of the module. http://effbot.org/zone/import-confusion.htm</span>
+                      <span class="c1">## This not desirable, to be modified if possible during</span>
+                      <span class="c1">## the switch to the VMC architecture!</span>
+<span class="kn">from</span> <span class="nn">populse_mia.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

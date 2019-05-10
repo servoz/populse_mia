@@ -1,0 +1,318 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.install_mia &#8212; populse_mia 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>populse_mia 1.0.0 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.install_mia</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.install_mia</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="c1"># PyQt5 imports</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+
+
+<div class="viewcode-block" id="MIAInstallWidget"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget">[docs]</a><span class="k">class</span> <span class="nc">MIAInstallWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MIAInstallWidget.__init__"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_label_text</span> <span class="o">=</span> <span class="s1">&#39;Welcome to Populse_MIA installation.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_label_text</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_label_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_label_font</span><span class="p">)</span>
+
+        <span class="n">h_box_top_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">h_box_top_label</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">h_box_top_label</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_label</span><span class="p">)</span>
+        <span class="n">h_box_top_label</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">middle_label_text</span> <span class="o">=</span> <span class="s1">&#39;Please select an installation path and a folder to store your future projects.&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">middle_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">middle_label_text</span><span class="p">)</span>
+        <span class="n">h_box_middle_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">h_box_middle_label</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">h_box_middle_label</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">middle_label</span><span class="p">)</span>
+        <span class="n">h_box_middle_label</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Groupbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">()</span>
+
+        <span class="n">mia_path_default</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># to determine from the system (ex: for Windows: Program Files)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Populse_MIA installation path:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_choice</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="n">mia_path_default</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_browse</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_browse</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse_mia_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot; ? &quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;background-color:rgb(150,150,200)&quot;</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">17</span><span class="p">)</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegion</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegion</span><span class="o">.</span><span class="n">Ellipse</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="o">.</span><span class="n">setMask</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+        <span class="n">tool_tip_message</span> <span class="o">=</span> <span class="s2">&quot;Two folders will be created in the selected folder:</span><span class="se">\n</span><span class="s2">- populse_mia: containing &quot;</span> \
+                           <span class="s2">&quot;populse_mia&#39;s configuration and resources files.</span><span class="se">\n</span><span class="s2">- MRIFileManager: containing &quot;</span> \
+                           <span class="s2">&quot;the file converter used in Populse_MIA.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tool_tip_message</span><span class="p">)</span>
+
+        <span class="n">h_box_mia_path</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">h_box_mia_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mia_path_choice</span><span class="p">)</span>
+        <span class="n">h_box_mia_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mia_path_browse</span><span class="p">)</span>
+        <span class="n">h_box_mia_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mia_path_info</span><span class="p">)</span>
+
+        <span class="n">v_box_mia_path</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">v_box_mia_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mia_path_label</span><span class="p">)</span>
+        <span class="n">v_box_mia_path</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">h_box_mia_path</span><span class="p">)</span>
+
+        <span class="n">projects_path_default</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># setting a default value for the projects?</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Populse_MIA projects path:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_choice</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="n">projects_path_default</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_browse</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_browse</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse_projects_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot; ? &quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;background-color:rgb(150,150,200)&quot;</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">17</span><span class="p">)</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegion</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegion</span><span class="o">.</span><span class="n">Ellipse</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="o">.</span><span class="n">setMask</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+        <span class="n">tool_tip_message</span> <span class="o">=</span> <span class="s1">&#39;A &quot;projects&quot; folder will be created in this specified folder.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tool_tip_message</span><span class="p">)</span>
+
+        <span class="n">h_box_projects_path</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">h_box_projects_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projects_path_choice</span><span class="p">)</span>
+        <span class="n">h_box_projects_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projects_path_browse</span><span class="p">)</span>
+        <span class="n">h_box_projects_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projects_path_info</span><span class="p">)</span>
+
+        <span class="n">v_box_projects_path</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">v_box_projects_path</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projects_path_label</span><span class="p">)</span>
+        <span class="n">v_box_projects_path</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">h_box_projects_path</span><span class="p">)</span>
+
+        <span class="n">v_box_paths</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">v_box_paths</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">v_box_mia_path</span><span class="p">)</span>
+        <span class="n">v_box_paths</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">v_box_projects_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupbox</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">v_box_paths</span><span class="p">)</span>
+
+        <span class="c1"># Push buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_button_install</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Install&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_button_install</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_button_cancel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Cancel&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_button_cancel</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+
+        <span class="n">h_box_buttons</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">h_box_buttons</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">h_box_buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_button_install</span><span class="p">)</span>
+        <span class="n">h_box_buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_button_cancel</span><span class="p">)</span>
+
+        <span class="c1"># Final layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">h_box_top_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">h_box_middle_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">h_box_buttons</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Populse_MIA installation&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.browse_mia_path"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.browse_mia_path">[docs]</a>    <span class="k">def</span> <span class="nf">browse_mia_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">folder_name</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Select a folder where to install Populse_MIA&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">folder_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_choice</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.browse_projects_path"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.browse_projects_path">[docs]</a>    <span class="k">def</span> <span class="nf">browse_projects_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">folder_name</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span>\
+            <span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Select a folder where to store Populse_MIA&#39;s projects&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">folder_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_choice</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.install"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Checking that the specified paths are correct</span>
+        <span class="n">mia_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mia_path_choice</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">mia_path</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The selected path for Populse_MIA must be an existing folder&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Populse_MIA path is not valid&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="n">projects_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projects_path_choice</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">projects_path</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The selected path for Populse_MIA&#39;s projects must be an existing folder&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Populse_MIA&#39;s projects path is not valid&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">projects_path</span><span class="p">,</span> <span class="s1">&#39;projects&#39;</span><span class="p">)):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;A &quot;projects&quot; folder already exists in the selected path for the projects&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">)</span>
+            <span class="c1"># msg.buttonClicked.connect(msg.close)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok_or_abort</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+        <span class="c1"># If the user has clicked on &quot;Cancel&quot; the installation is aborted</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_flag</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Creating a &quot;projects&quot; folder in the specified projects folder</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">projects_path</span><span class="p">,</span> <span class="s1">&#39;projects&#39;</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">projects_path</span><span class="p">,</span> <span class="s1">&#39;projects&#39;</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error creating the &quot;projects&quot; folder: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Moving populse_mia folder to the specified location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_directory</span><span class="p">(</span><span class="s1">&#39;populse_mia&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mia_path</span><span class="p">))</span>
+
+        <span class="c1"># Moving MRIFileManager folder to the specified location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_directory</span><span class="p">(</span><span class="s1">&#39;MRIFileManager&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mia_path</span><span class="p">))</span>
+
+        <span class="c1"># Adding both mia, MRIFileManager and projects paths to Populse_MIA&#39;s config</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mia_path</span><span class="p">,</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span> <span class="s1">&#39;config.yml&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+            <span class="n">config_dic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+            <span class="n">config_dic</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mia_path</span><span class="p">,</span> <span class="s1">&#39;populse_mia&#39;</span><span class="p">)</span>
+            <span class="n">config_dic</span><span class="p">[</span><span class="s2">&quot;projects_save_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">projects_path</span><span class="p">,</span> <span class="s1">&#39;projects&#39;</span><span class="p">)</span>
+            <span class="n">config_dic</span><span class="p">[</span><span class="s2">&quot;mri_conv_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mia_path</span><span class="p">,</span> <span class="s1">&#39;MRIFileManager&#39;</span><span class="p">,</span> <span class="s1">&#39;MRIFileManager.jar&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="n">config_dic</span><span class="p">,</span> <span class="n">config_file</span><span class="p">)</span>
+
+        <span class="c1"># Installing Populse_MIA&#39;s modules using pip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">install_package</span><span class="p">(</span><span class="s1">&#39;populse_mia&#39;</span><span class="p">)</span>  <span class="c1"># Not available yet</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.ok_or_abort"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.ok_or_abort">[docs]</a>    <span class="k">def</span> <span class="nf">ok_or_abort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">buttonRole</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">AcceptRole</span><span class="p">:</span>  <span class="c1"># &quot;OK&quot; has been clicked</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project_flag</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.copy_directory"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.copy_directory">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">copy_directory</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+        <span class="c1"># Directories are the same</span>
+        <span class="k">except</span> <span class="n">shutil</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Directory not copied. Error: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+        <span class="c1"># Any error saying that the directory doesn&#39;t exist</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Directory not copied. Error: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.load_config"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+                
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+            
+            <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.save_config"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.save_config">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="n">config_dic</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config_dic</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MIAInstallWidget.install_package"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.install_mia.MIAInstallWidget.install_package">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">install_package</span><span class="p">(</span><span class="n">package</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">importlib</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pip</span>
+            <span class="n">pip</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="n">package</span><span class="p">])</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mia_install_widget</span> <span class="o">=</span> <span class="n">MIAInstallWidget</span><span class="p">()</span>
+
+    <span class="c1"># Setting the window to the middle of the screen</span>
+    <span class="n">frame_gm</span> <span class="o">=</span> <span class="n">mia_install_widget</span><span class="o">.</span><span class="n">frameGeometry</span><span class="p">()</span>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screenNumber</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+    <span class="n">center_point</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screenGeometry</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">frame_gm</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">center_point</span><span class="p">)</span>
+    <span class="n">mia_install_widget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">frame_gm</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
+
+    <span class="n">mia_install_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
