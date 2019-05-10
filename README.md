@@ -23,24 +23,23 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
 * From source, for Linux distributions
   * A compatible version of Python must be installed
-  * Install a Version Control System, for example [git](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control), and clone the source codes
-    * Depending of your distribution, [package management system](https://en.wikipedia.org/wiki/Package_manager) can be different
-
-          sudo apt-get install git # Debian like
-          sudo dnf install git # Fedora 22 and later
-          # etc.
-
-    * Get source code from Github. Replace [mia_install_dir] with a directory of your choice
-
-          git clone https://github.com/populse/populse_mia.git [mia_install_dir]
-
-  * Or download the zip file (populse_mia-master.zip) of the project ([green button "Clone or download"](https://github.com/populse/populse_mia))
+  * Install a Version Control System, for example [git](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control). Depending of your distribution, [package management system](https://en.wikipedia.org/wiki/Package_manager) can be different
   
-     * Extract the data in the directory of your choice [mia_install_dir]
+        sudo apt-get install git # Debian like
+        sudo dnf install git # Fedora 22 and later
+        # etc.
+  * We use Git extension for versioning large files ([Git LFS](https://git-lfs.github.com/)) of the populse_mia project. We therefore recommend to [install git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation).
+  * Clone the source codes
+
+    * Get source codes from Github. Replace [mia_install_dir] with a directory of your choice
+
+          git lfs clone https://github.com/populse/populse_mia.git [mia_install_dir]
+
+    * Or download the zip file (populse_mia-master.zip) of the project ([green button "Clone or download"](https://github.com/populse/populse_mia)), then extract the data in the directory of your choice [mia_install_dir]
 
            unzip populse_mia-master.zip -d [mia_install_dir]  # In this case [mia_install_dir] becomes [mia_install_dir]/populse_mia-master
 	
-  * Then, install the Python module distribution
+  * Install the Python module distribution
 
         cd [mia_install_dir]  
         sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
@@ -70,29 +69,30 @@ The documentation is available on populse_mia's website here: [https://populse.g
 * Code coverage calculated by the python module codecov
 * The module is ensured to work with Python >= 3.5
 * The module is ensured to work on the platforms Linux, OSX and Windows
-* The script of tests is python/populse_mia/src/scripts/test.py, so the following command launches the tests:
+* The script of tests is python/populse_mia/test.py, so the following command launches the tests:
 
-      python3 python/populse_mia/src/scripts/test.py (from populse_mia root folder, for example [mia_install_dir])
+      python3 python/populse_mia/test.py (from populse_mia root folder, for example [mia_install_dir])
 
 # Requirements
 
-* SIP
-* pyqt5
-* pyyaml
-* python-dateutil
-* sqlalchemy
-* lark-parser
-* scipy
-* nibabel
-* snakeviz
-* pillow
-* matplotlib
-* traits
 * capsul
-* soma_workflow
+* lark-parser
+* matplotlib
+* mia-processes
+* nibabel
 * nipype
-* scikit-image
+* pillow
 * populse-db
+* pyqt5
+* python-dateutil
+* pyyaml
+* scikit-image
+* scipy
+* SIP
+* sqlalchemy
+* snakeviz
+* soma_workflow
+* traits
 
 # Other packages used
 
