@@ -23,7 +23,6 @@ with open(os.path.join(python_dir, 'populse_mia', 'info.py')) as f:
     code = f.read()
     exec(code, release_info)
 
-
 # Build the setup
 setup(
     name=release_info["NAME"],
