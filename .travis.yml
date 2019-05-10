@@ -33,6 +33,16 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link --overwrite freetype; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libpng; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install git-lfs; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then git lfs install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then git lfs pull; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install software-properties-common; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:git-core/ppa; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install git-lfs; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then git lfs install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then git lfs pull; fi
+
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libpng-dev; fi
