@@ -248,6 +248,12 @@ def launch_mia():
     app.exec()
 
 
+def check_python_version():
+    if sys.version_info[:2] < (3, 5):
+        raise AssertionError("The populse_mia is ensured to work with Python "
+                             ">= 3.5")
+
+
 def main():
     """Make basic configuration check then actual launch of mia.
 
@@ -443,6 +449,7 @@ def main():
             msg.exec()
             del app
 
+    check_python_version()
     launch_mia()
 
     # set the dev_mode to "no" when exiting mia,

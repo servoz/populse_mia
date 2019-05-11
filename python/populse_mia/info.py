@@ -16,7 +16,11 @@ CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
                'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
                'Topic :: Software Development :: Libraries :: Python Modules',
                'Operating System :: OS Independent',
-               'Programming Language :: Python',
+               'Programming Language :: Python :: 3.5',
+               'Programming Language :: Python :: 3.6',
+               'Programming Language :: Python :: 3.7',
+               'Programming Language :: Python :: 3.8',
+               'Programming Language :: Python :: 3 :: Only',
                'Topic :: Scientific/Engineering',
                'Topic :: Utilities']
 
@@ -90,7 +94,8 @@ elif sys.version_info >= (3 , 6):
 ]
 
 else:
-    sys.exit("The populse_mia is ensured to work with Python >= 3.5")
+    # python < 3.5 is not compatible anyway
+    REQUIRES = []
 
 EXTRA_REQUIRES = {
     'doc': [
