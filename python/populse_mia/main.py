@@ -123,7 +123,7 @@ subpackages/modules, to construct the mia's pipeline library.
                                     pkg_iter[element] = {}
                                     pkg_iter = pkg_iter[element]
 
-            except ModuleNotFoundError as e:
+            except ImportError as e:
                 print('\nWhen attempting to add a package and its modules to '
                       'the package tree, the following exception was caught:')
                 print('{0}'.format(e))
