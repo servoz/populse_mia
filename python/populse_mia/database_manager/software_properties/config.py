@@ -198,8 +198,8 @@ class Config:
                         "dev_mode"] == "yes":  # Only for developer mode
                         self.dev_mode = True
                         return os.path.abspath(os.path.join(
-                            os.path.realpath(__file__), '..', '..', '..',
-                            '..', '..'))
+                            os.path.realpath(__file__), '..', '..', '..', '..',
+                            '..'))
                     self.dev_mode = False
                     return mia_home_config["mia_path"]  # Only for user mode
 
