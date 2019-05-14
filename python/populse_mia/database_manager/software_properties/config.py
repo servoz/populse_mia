@@ -396,6 +396,7 @@ class Config:
         :return: Returns a dictionary of the contents of config.yml
 
         """
+        print(self.get_mia_path())
         with open(os.path.join(self.get_mia_path(), 'properties',
                                'config.yml'), 'r') as stream:
             try:
