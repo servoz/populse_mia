@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.project package &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.database_manager.project package &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.project package</span></h2>
+        <h2 class="heading"><span>populse_mia.database_manager.project package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -32,12 +32,12 @@
         
         
   <div class="section" id="populse-mia-project-package">
-<h1>populse_mia.project package<a class="headerlink" href="#populse-mia-project-package" title="Permalink to this headline">¶</a></h1>
+<h1>populse_mia.database_manager.project package<a class="headerlink" href="#populse-mia-project-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.project.controller">
-<span id="populse-mia-project-controller-module"></span><h2>populse_mia.project.controller module<a class="headerlink" href="#module-populse_mia.project.controller" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.database_manager.project.controller">
+<span id="populse-mia-project-controller-module"></span><h2>populse_mia.database_manager.project.controller module<a class="headerlink" href="#module-populse_mia.database_manager.project.controller" title="Permalink to this headline">¶</a></h2>
 <p>Module to handle the importation from MRIFileManager and its progress</p>
 <dl class="docutils">
 <dt>Contains:</dt>
@@ -56,8 +56,8 @@ file
 </dd>
 </dl>
 <dl class="class">
-<dt id="populse_mia.project.controller.ImportProgress">
-<em class="property">class </em><code class="descclassname">populse_mia.project.controller.</code><code class="descname">ImportProgress</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportProgress" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportProgress">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.controller.</code><code class="descname">ImportProgress</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
 <p>Handle the progress bar.</p>
 <dl class="docutils">
@@ -78,22 +78,22 @@ file
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.project.controller.ImportProgress.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportProgress.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.controller.ImportProgress.onProgress">
-<code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportProgress.onProgress">
+<code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal to set the import progressbar value</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="populse_mia.project.controller.ImportWorker">
-<em class="property">class </em><code class="descclassname">populse_mia.project.controller.</code><code class="descname">ImportWorker</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportWorker" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportWorker">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.controller.</code><code class="descname">ImportWorker</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
 <p>Manage threads.</p>
 <dl class="docutils">
@@ -115,19 +115,19 @@ file
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.project.controller.ImportWorker.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportWorker.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="populse_mia.project.controller.ImportWorker.notifyProgress">
-<code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportWorker.notifyProgress">
+<code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.controller.ImportWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.ImportWorker.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#ImportWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the QThread run method. Executed when the worker is
 started, fills the database and updates the progress.</p>
 </dd></dl>
@@ -135,8 +135,8 @@ started, fills the database and updates the progress.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.project.controller.read_log">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#read_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.read_log" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.read_log">
+<code class="descclassname">populse_mia.database_manager.project.controller.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#read_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.read_log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the evolution of the progress bar and returns its feedback, a list
 of the paths to each data file that was loaded.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -157,8 +157,8 @@ of the paths to each data file that was loaded.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.project.controller.tags_from_file">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">tags_from_file</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#tags_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.tags_from_file" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.tags_from_file">
+<code class="descclassname">populse_mia.database_manager.project.controller.</code><code class="descname">tags_from_file</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#tags_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.tags_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of [tag, value] contained in a Json file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -178,8 +178,8 @@ of the paths to each data file that was loaded.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="populse_mia.project.controller.verify_scans">
-<code class="descclassname">populse_mia.project.controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#verify_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.controller.verify_scans" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.controller.verify_scans">
+<code class="descclassname">populse_mia.database_manager.project.controller.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/controller.html#verify_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.controller.verify_scans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the project’s scans have been modified.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -194,8 +194,8 @@ of the paths to each data file that was loaded.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.project.database_mia">
-<span id="populse-mia-project-database-mia-module"></span><h2>populse_mia.project.database_mia module<a class="headerlink" href="#module-populse_mia.project.database_mia" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.database_manager.project.database_mia">
+<span id="populse-mia-project-database-mia-module"></span><h2>populse_mia.database_manager.project.database_mia module<a class="headerlink" href="#module-populse_mia.database_manager.project.database_mia" title="Permalink to this headline">¶</a></h2>
 <p>Module that contains class to override the default behaviour of
 populse_db and some of its methods</p>
 <dl class="docutils">
@@ -205,8 +205,8 @@ populse_db and some of its methods</p>
 -DatabaseSessionMIA</dd>
 </dl>
 <dl class="class">
-<dt id="populse_mia.project.database_mia.DatabaseMIA">
-<em class="property">class </em><code class="descclassname">populse_mia.project.database_mia.</code><code class="descname">DatabaseMIA</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseMIA">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.database_mia.</code><code class="descname">DatabaseMIA</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.Database</span></code></p>
 <p>Class overriding the default behavior of populse_db</p>
 <dl class="docutils">
@@ -231,8 +231,8 @@ populse_db and some of its methods</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseMIA.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseMIA.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization of the database</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -280,8 +280,8 @@ populse_db and some of its methods</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA">
-<em class="property">class </em><code class="descclassname">populse_mia.project.database_mia.</code><code class="descname">DatabaseSessionMIA</code><span class="sig-paren">(</span><em>database</em>, <em>session</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.database_mia.</code><code class="descname">DatabaseSessionMIA</code><span class="sig-paren">(</span><em>database</em>, <em>session</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.DatabaseSession</span></code></p>
 <p>Class overriding the database session of populse_db</p>
 <dl class="docutils">
@@ -296,8 +296,8 @@ populse_db and some of its methods</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_collection">
-<code class="descname">add_collection</code><span class="sig-paren">(</span><em>name</em>, <em>primary_key</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_collection" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_collection">
+<code class="descname">add_collection</code><span class="sig-paren">(</span><em>name</em>, <em>primary_key</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the method adding a collection of populse_db</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -318,8 +318,8 @@ populse_db and some of its methods</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_field">
-<code class="descname">add_field</code><span class="sig-paren">(</span><em>collection</em>, <em>name</em>, <em>field_type</em>, <em>description</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em>, <em>index=False</em>, <em>flush=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_field" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_field">
+<code class="descname">add_field</code><span class="sig-paren">(</span><em>collection</em>, <em>name</em>, <em>field_type</em>, <em>description</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em>, <em>index=False</em>, <em>flush=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a field to the database, if it does not already exist</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -349,8 +349,8 @@ False if in the middle of filling fields) =&gt; True by default</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.add_fields">
-<code class="descname">add_fields</code><span class="sig-paren">(</span><em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.add_fields" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_fields">
+<code class="descname">add_fields</code><span class="sig-paren">(</span><em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.add_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.add_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the list of fields</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -364,8 +364,8 @@ False if in the middle of filling fields) =&gt; True by default</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.get_shown_tags">
-<code class="descname">get_shown_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.get_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.get_shown_tags" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.get_shown_tags">
+<code class="descname">get_shown_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.get_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.get_shown_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Give the list of visible tags</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -378,8 +378,8 @@ False if in the middle of filling fields) =&gt; True by default</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.database_mia.DatabaseSessionMIA.set_shown_tags">
-<code class="descname">set_shown_tags</code><span class="sig-paren">(</span><em>field_showed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.set_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.database_mia.DatabaseSessionMIA.set_shown_tags" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.set_shown_tags">
+<code class="descname">set_shown_tags</code><span class="sig-paren">(</span><em>field_showed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/database_mia.html#DatabaseSessionMIA.set_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.database_mia.DatabaseSessionMIA.set_shown_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the list of visible tags</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -394,8 +394,8 @@ False if in the middle of filling fields) =&gt; True by default</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.project.filter">
-<span id="populse-mia-project-filter-module"></span><h2>populse_mia.project.filter module<a class="headerlink" href="#module-populse_mia.project.filter" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.database_manager.project.filter">
+<span id="populse-mia-project-filter-module"></span><h2>populse_mia.database_manager.project.filter module<a class="headerlink" href="#module-populse_mia.database_manager.project.filter" title="Permalink to this headline">¶</a></h2>
 <p>Module that handle the filter class which contains the results of both
 rapid and advanced search</p>
 <dl class="docutils">
@@ -404,8 +404,8 @@ rapid and advanced search</p>
 -Filter</dd>
 </dl>
 <dl class="class">
-<dt id="populse_mia.project.filter.Filter">
-<em class="property">class </em><code class="descclassname">populse_mia.project.filter.</code><code class="descname">Filter</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.filter.Filter">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.filter.</code><code class="descname">Filter</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.filter.Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that represent a Filter, containing the results of both rapid and
 advanced search</p>
@@ -448,14 +448,14 @@ are linked with AND or OR and all composed of:
 - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
 - A value</p>
 <dl class="method">
-<dt id="populse_mia.project.filter.Filter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.filter.Filter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.filter.Filter.generate_filter">
-<code class="descname">generate_filter</code><span class="sig-paren">(</span><em>current_project</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.generate_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.filter.Filter.generate_filter">
+<code class="descname">generate_filter</code><span class="sig-paren">(</span><em>current_project</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.generate_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the filter to the given list of scans</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -476,8 +476,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.filter.Filter.json_format">
-<code class="descname">json_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.json_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.filter.Filter.json_format" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.filter.Filter.json_format">
+<code class="descname">json_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/filter.html#Filter.json_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.filter.Filter.json_format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the filter as a dictionary</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -492,8 +492,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.project.project">
-<span id="populse-mia-project-project-module"></span><h2>populse_mia.project.project module<a class="headerlink" href="#module-populse_mia.project.project" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.database_manager.project.project">
+<span id="populse-mia-project-project-module"></span><h2>populse_mia.database_manager.project.project module<a class="headerlink" href="#module-populse_mia.database_manager.project.project" title="Permalink to this headline">¶</a></h2>
 <p>Module that handle the projects and their database.</p>
 <dl class="docutils">
 <dt>Contains:</dt>
@@ -501,8 +501,8 @@ are linked with AND or OR and all composed of:
 - Project</dd>
 </dl>
 <dl class="class">
-<dt id="populse_mia.project.project.Project">
-<em class="property">class </em><code class="descclassname">populse_mia.project.project.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project">
+<em class="property">class </em><code class="descclassname">populse_mia.database_manager.project.project.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that handles projects and their associated database.</p>
 <dl class="docutils">
@@ -550,14 +550,14 @@ are linked with AND or OR and all composed of:
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.project.project.Project.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.add_clinical_tags">
-<code class="descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.add_clinical_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.add_clinical_tags">
+<code class="descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.add_clinical_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add new clinical tags to the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -570,8 +570,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getDate">
-<code class="descname">getDate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getDate" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getDate">
+<code class="descname">getDate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getDate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the date of creation of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -585,8 +585,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getFilter">
-<code class="descname">getFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getFilter" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getFilter">
+<code class="descname">getFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a Filter object from its name</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -601,8 +601,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getFilterName">
-<code class="descname">getFilterName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getFilterName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getFilterName" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getFilterName">
+<code class="descname">getFilterName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getFilterName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getFilterName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input box to type the name of the filter to save.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -615,8 +615,8 @@ are linked with AND or OR and all composed of:
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getName">
-<code class="descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getName" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getName">
+<code class="descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -631,8 +631,8 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getSortOrder">
-<code class="descname">getSortOrder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getSortOrder" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getSortOrder">
+<code class="descname">getSortOrder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getSortOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the sort order of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -646,8 +646,8 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.getSortedTag">
-<code class="descname">getSortedTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.getSortedTag" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.getSortedTag">
+<code class="descname">getSortedTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.getSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.getSortedTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sorted tag of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -661,8 +661,8 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.hasUnsavedModifications">
-<code class="descname">hasUnsavedModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.hasUnsavedModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.hasUnsavedModifications" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.hasUnsavedModifications">
+<code class="descname">hasUnsavedModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.hasUnsavedModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.hasUnsavedModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return if the project has unsaved modifications or not.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -676,20 +676,20 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.init_filters">
-<code class="descname">init_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.init_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.init_filters" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.init_filters">
+<code class="descname">init_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.init_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.init_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the filters at project opening.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.loadProperties">
-<code class="descname">loadProperties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.loadProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.loadProperties" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.loadProperties">
+<code class="descname">loadProperties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.loadProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.loadProperties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the properties file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.redo">
-<code class="descname">redo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.redo" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.redo">
+<code class="descname">redo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.redo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redo the last action made by the user on the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -702,8 +702,8 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.reput_values">
-<code class="descname">reput_values</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.reput_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.reput_values" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.reput_values">
+<code class="descname">reput_values</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.reput_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.reput_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-put the value objects in the database.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -716,21 +716,21 @@ otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.saveConfig">
-<code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.saveConfig" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.saveConfig">
+<code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.saveConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the changes in the properties file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.saveModifications">
-<code class="descname">saveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.saveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.saveModifications" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.saveModifications">
+<code class="descname">saveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.saveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.saveModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the pending operations of the project (actions
 still not saved).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.save_current_filter">
-<code class="descname">save_current_filter</code><span class="sig-paren">(</span><em>custom_filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.save_current_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.save_current_filter">
+<code class="descname">save_current_filter</code><span class="sig-paren">(</span><em>custom_filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.save_current_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the current filter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -743,8 +743,8 @@ still not saved).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.setCurrentFilter">
-<code class="descname">setCurrentFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setCurrentFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.setCurrentFilter" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.setCurrentFilter">
+<code class="descname">setCurrentFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setCurrentFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.setCurrentFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the current filter of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -757,8 +757,8 @@ still not saved).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.setDate">
-<code class="descname">setDate</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.setDate" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.setDate">
+<code class="descname">setDate</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.setDate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the date of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -771,8 +771,8 @@ still not saved).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.setName">
-<code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.setName" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.setName">
+<code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.setName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the name of the project if it’s not Unnamed project,
 otherwise does nothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -786,8 +786,8 @@ otherwise does nothing.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.setSortOrder">
-<code class="descname">setSortOrder</code><span class="sig-paren">(</span><em>order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.setSortOrder" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.setSortOrder">
+<code class="descname">setSortOrder</code><span class="sig-paren">(</span><em>order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.setSortOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the sort order of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -800,8 +800,8 @@ otherwise does nothing.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.setSortedTag">
-<code class="descname">setSortedTag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.setSortedTag" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.setSortedTag">
+<code class="descname">setSortedTag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.setSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.setSortedTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the sorted tag of the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -814,8 +814,8 @@ otherwise does nothing.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.undo">
-<code class="descname">undo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.undo" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.undo">
+<code class="descname">undo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.undo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Undo the last action made by the user on the project.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -828,16 +828,16 @@ otherwise does nothing.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.project.project.Project.unsaveModifications">
-<code class="descname">unsaveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.unsaveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.project.project.Project.unsaveModifications" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.database_manager.project.project.Project.unsaveModifications">
+<code class="descname">unsaveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/project/project.html#Project.unsaveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.project.project.Project.unsaveModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unsave the pending operations of the project.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="module-populse_mia.project">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.project" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-populse_mia.database_manager.project">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.database_manager.project" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

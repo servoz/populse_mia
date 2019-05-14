@@ -6,13 +6,13 @@ Subpackages
 
 .. toctree::
 
-    populse_mia.data_browser
+    populse_mia.user_interface.data_browser
     populse_mia.image_viewer
-    populse_mia.main_window
-    populse_mia.pipeline_manager
-    populse_mia.pop_ups
-    populse_mia.project
-    populse_mia.software_properties
+    populse_mia.user_interface.main_window
+    populse_mia.user_interface.pipeline_manager
+    populse_mia.user_interface.pop_ups
+    populse_mia.database_manager.project
+    populse_mia.database_manager.software_properties
 ..    populse_mia.sources_images
     populse_mia.utils
 

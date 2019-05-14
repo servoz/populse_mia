@@ -21,10 +21,10 @@ import unittest
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from populse_mia.project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
+from populse_mia.database_manager.project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
-from populse_mia.main_window.main_window import MainWindow
-from populse_mia.software_properties.config import Config
+from populse_mia.user_interface.main_window import MainWindow
+from populse_mia.database_manager.software_properties.config import Config
 from capsul.api import get_process_instance
 
 
@@ -1583,7 +1583,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
         pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
 
-        from populse_mia.pipeline_manager.pipeline_editor import save_pipeline
+        from populse_mia.user_interface.pipeline_manager.pipeline_editor import save_pipeline
         filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
         save_pipeline(pipeline, filename)
         self.main_window.pipeline_manager.updateProcessLibrary(filename)

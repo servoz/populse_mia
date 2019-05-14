@@ -50,7 +50,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     import nibabel as nib  # used to read and save Nifti images
     from nipype.interfaces import spm  # used to use SPM's Smooth
     from scipy.ndimage.filters import gaussian_filter  # used to apply the smoothing on an array
-    from populse_mia.pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
+    from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
     
     
     class SmoothSpmScipy(ProcessMIA):

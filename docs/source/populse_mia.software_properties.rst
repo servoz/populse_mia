@@ -7,7 +7,7 @@ Submodules
 populse\_mia.software\_properties.config module
 -----------------------------------------------
 
-.. automodule:: populse_mia.software_properties.config
+.. automodule:: populse_mia.database_manager.software_properties.config
     :members:
     :undoc-members:
     :show-inheritance:
@@ -15,7 +15,7 @@ populse\_mia.software\_properties.config module
 populse\_mia.software\_properties.saved\_projects module
 --------------------------------------------------------
 
-.. automodule:: populse_mia.software_properties.saved_projects
+.. automodule:: populse_mia.database_manager.software_properties.saved_projects
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ populse\_mia.software\_properties.saved\_projects module
 Module contents
 ---------------
 
-.. automodule:: populse_mia.software_properties
+.. automodule:: populse_mia.database_manager.software_properties
     :members:
     :undoc-members:
     :show-inheritance:

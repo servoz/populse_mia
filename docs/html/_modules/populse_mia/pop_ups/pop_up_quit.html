@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.pop_ups.pop_up_quit &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.user_interface.pop_ups.pop_up_quit &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.pop_ups.pop_up_quit</span></h2>
+        <h2 class="heading"><span>populse_mia.user_interface.pop_ups.pop_up_quit</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -31,7 +31,7 @@
       <div class="content">
         
         
-  <h1>Source code for populse_mia.pop_ups.pop_up_quit</h1><div class="highlight"><pre>
+  <h1>Source code for populse_mia.user_interface.pop_ups.pop_up_quit</h1><div class="highlight"><pre>
 <span></span><span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
@@ -45,7 +45,7 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QLabel</span>
 
 
-<div class="viewcode-block" id="PopUpQuit"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit">[docs]</a><span class="k">class</span> <span class="nc">PopUpQuit</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit">[docs]</a><span class="k">class</span> <span class="nc">PopUpQuit</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user closes the software and the current project has been modified</span>
 
@@ -64,7 +64,7 @@
     <span class="n">do_not_save_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
     <span class="n">cancel_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PopUpQuit.__init__"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
@@ -96,7 +96,7 @@
         <span class="n">push_button_do_not_save</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_not_save_clicked</span><span class="p">)</span>
         <span class="n">push_button_cancel</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cancel_clicked</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PopUpQuit.save_as_clicked"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit.save_as_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit.save_as_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit.save_as_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes the actions to save the project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -104,21 +104,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bool_exit</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PopUpQuit.do_not_save_clicked"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit.do_not_save_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">do_not_save_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit.do_not_save_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit.do_not_save_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">do_not_save_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes the actions not to save the project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bool_exit</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PopUpQuit.cancel_clicked"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit.cancel_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit.cancel_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit.cancel_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes the actions to cancel the action</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bool_exit</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PopUpQuit.can_exit"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_quit.PopUpQuit.can_exit">[docs]</a>    <span class="k">def</span> <span class="nf">can_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpQuit.can_exit"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_quit.PopUpQuit.can_exit">[docs]</a>    <span class="k">def</span> <span class="nf">can_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of bool_exit</span>
 

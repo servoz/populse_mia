@@ -123,7 +123,7 @@ subpackages/modules, to construct the mia's pipeline library.
                                     pkg_iter[element] = {}
                                     pkg_iter = pkg_iter[element]
 
-            except ModuleNotFoundError as e:
+            except ImportError as e:
                 print('\nWhen attempting to add a package and its modules to '
                       'the package tree, the following exception was caught:')
                 print('{0}'.format(e))
@@ -173,14 +173,14 @@ def launch_mia():
     """
 
     # populse_mia imports
-    from populse_mia.main_window.main_window import MainWindow
-    from populse_mia.project.project import Project
-    from populse_mia.software_properties.config import Config
+    from populse_mia.user_interface.main_window import MainWindow
+    from populse_mia.database_manager.project.project import Project
+    from populse_mia.database_manager.software_properties.config import Config
 
     def _my_excepthook(etype, evalue, tback):
 
         def _clean_up():
-            from populse_mia.software_properties.config import Config
+            from populse_mia.database_manager.software_properties.config import Config
 
             global main_window
             config = Config()
@@ -208,7 +208,7 @@ def launch_mia():
     def _verify_saved_projects():
 
         # Populse_MIA imports
-        from populse_mia.software_properties.saved_projects \
+        from populse_mia.database_manager.software_properties.saved_projects \
             import SavedProjects
 
         saved_projects_object = SavedProjects()
@@ -527,7 +527,7 @@ def verify_processes():
     """
 
     # populse_mia imports
-    from populse_mia.software_properties.config import Config
+    from populse_mia.database_manager.software_properties.config import Config
     from populse_mia.utils.utils import verCmp
 
     def _deepCompDic(old_dic, new_dic, level="0"):

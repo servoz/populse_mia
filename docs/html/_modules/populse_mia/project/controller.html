@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.project.controller &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.database_manager.project.controller &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.project.controller</span></h2>
+        <h2 class="heading"><span>populse_mia.database_manager.project.controller</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -31,7 +31,7 @@
       <div class="content">
         
         
-  <h1>Source code for populse_mia.project.controller</h1><div class="highlight"><pre>
+  <h1>Source code for populse_mia.database_manager.project.controller</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
 <span class="sd">&quot;&quot;&quot;Module to handle the importation from MRIFileManager and its progress</span>
 
@@ -72,10 +72,10 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QProgressDialog</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.project.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">populse_mia.database_manager.project.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
     <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> \
     <span class="n">TYPE_NII</span>
-<span class="kn">from</span> <span class="nn">populse_mia.project.database_mia</span> <span class="k">import</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">populse_mia.database_manager.project.database_mia</span> <span class="k">import</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> \
     <span class="n">TAG_ORIGIN_USER</span>
 
 <span class="c1"># Populse_db imports</span>
@@ -86,7 +86,7 @@
     <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span>
 
 
-<div class="viewcode-block" id="ImportProgress"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportProgress">[docs]</a><span class="k">class</span> <span class="nc">ImportProgress</span><span class="p">(</span><span class="n">QProgressDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportProgress"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportProgress">[docs]</a><span class="k">class</span> <span class="nc">ImportProgress</span><span class="p">(</span><span class="n">QProgressDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Handle the progress bar.</span>
 
 <span class="sd">    Attributes;</span>
@@ -97,7 +97,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ImportProgress.__init__"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportProgress.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportProgress.__init__"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportProgress.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImportProgress</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="s2">&quot;Please wait while the paths are being imported...&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
@@ -114,13 +114,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">notifyProgress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onProgress</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ImportProgress.onProgress"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportProgress.onProgress">[docs]</a>    <span class="k">def</span> <span class="nf">onProgress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportProgress.onProgress"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportProgress.onProgress">[docs]</a>    <span class="k">def</span> <span class="nf">onProgress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Signal to set the import progressbar value&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ImportWorker"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportWorker">[docs]</a><span class="k">class</span> <span class="nc">ImportWorker</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportWorker"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportWorker">[docs]</a><span class="k">class</span> <span class="nc">ImportWorker</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Manage threads.</span>
 
 <span class="sd">    Attributes:</span>
@@ -133,7 +133,7 @@
     <span class="c1"># Used to fill the progress bar</span>
     <span class="n">notifyProgress</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ImportWorker.__init__"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportWorker.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportWorker.__init__"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportWorker.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span>
@@ -143,7 +143,7 @@
         <span class="c1"># the thread</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scans_added</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="ImportWorker.run"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.ImportWorker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportWorker.run"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.ImportWorker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the QThread run method. Executed when the worker is</span>
 <span class="sd">        started, fills the database and updates the progress.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -373,7 +373,7 @@
         <span class="c1"># prof.print_stats()</span>
 
 
-<div class="viewcode-block" id="read_log"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.read_log">[docs]</a><span class="k">def</span> <span class="nf">read_log</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
+<div class="viewcode-block" id="read_log"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.read_log">[docs]</a><span class="k">def</span> <span class="nf">read_log</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Show the evolution of the progress bar and returns its feedback, a list</span>
 <span class="sd">    of the paths to each data file that was loaded.</span>
 
@@ -400,7 +400,7 @@
 <span class="c1">#</span>
 <span class="c1">#     project.saveModifications()</span>
 
-<div class="viewcode-block" id="tags_from_file"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.tags_from_file">[docs]</a><span class="k">def</span> <span class="nf">tags_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="tags_from_file"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.tags_from_file">[docs]</a><span class="k">def</span> <span class="nf">tags_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a list of [tag, value] contained in a Json file.</span>
 
 <span class="sd">    :param file_path: file path of the Json file (without the extension)</span>
@@ -414,7 +414,7 @@
     <span class="k">return</span> <span class="n">json_tags</span></div>
 
 
-<div class="viewcode-block" id="verify_scans"><a class="viewcode-back" href="../../../populse_mia.project.html#populse_mia.project.controller.verify_scans">[docs]</a><span class="k">def</span> <span class="nf">verify_scans</span><span class="p">(</span><span class="n">project</span><span class="p">):</span>
+<div class="viewcode-block" id="verify_scans"><a class="viewcode-back" href="../../../populse_mia.database_manager.project.html#populse_mia.database_manager.project.controller.verify_scans">[docs]</a><span class="k">def</span> <span class="nf">verify_scans</span><span class="p">(</span><span class="n">project</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if the project&#39;s scans have been modified.</span>
 
 <span class="sd">    :param project: current project in the software</span>

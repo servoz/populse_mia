@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.pipeline_manager.process_library &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.user_interface.pipeline_manager.process_library &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.pipeline_manager.process_library</span></h2>
+        <h2 class="heading"><span>populse_mia.user_interface.pipeline_manager.process_library</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -31,7 +31,7 @@
       <div class="content">
         
         
-  <h1>Source code for populse_mia.pipeline_manager.process_library</h1><div class="highlight"><pre>
+  <h1>Source code for populse_mia.user_interface.pipeline_manager.process_library</h1><div class="highlight"><pre>
 <span></span><span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
@@ -66,7 +66,7 @@
     <span class="n">QMessageBox</span>
 
 <span class="c1"># Populse_MIA import</span>
-<span class="kn">from</span> <span class="nn">populse_mia.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">populse_mia.database_manager.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
 
 <span class="c1"># capsul import</span>
@@ -76,7 +76,7 @@
 <span class="c1"># soma-base import</span>
 
 
-<div class="viewcode-block" id="ProcessLibraryWidget"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget">[docs]</a><span class="k">class</span> <span class="nc">ProcessLibraryWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget">[docs]</a><span class="k">class</span> <span class="nc">ProcessLibraryWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widget that handles the available Capsul&#39;s processes in the software</span>
 
@@ -92,7 +92,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the ProcessLibraryWidget</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -135,7 +135,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pkg_library</span> <span class="o">=</span> <span class="n">PackageLibraryDialog</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pkg_library</span><span class="o">.</span><span class="n">signal_save</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_process_library</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.update_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.update_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the config and loads the corresponding packages</span>
 
@@ -144,7 +144,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">process_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_packages</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.update_process_library"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.update_process_library">[docs]</a>    <span class="k">def</span> <span class="nf">update_process_library</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.update_process_library"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.update_process_library">[docs]</a>    <span class="k">def</span> <span class="nf">update_process_library</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the tree of the process library</span>
 
@@ -154,7 +154,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">process_library</span><span class="o">.</span><span class="n">package_tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">process_library</span><span class="o">.</span><span class="n">load_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">packages</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.open_pkg_lib"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.open_pkg_lib">[docs]</a>    <span class="k">def</span> <span class="nf">open_pkg_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.open_pkg_lib"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.open_pkg_lib">[docs]</a>    <span class="k">def</span> <span class="nf">open_pkg_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens the package library</span>
 
@@ -162,7 +162,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pkg_library</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.load_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.load_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_config</span><span class="p">():</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read the config in process_config.yml and return it as a dictionary</span>
@@ -189,7 +189,7 @@
             <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.load_packages"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.load_packages">[docs]</a>    <span class="k">def</span> <span class="nf">load_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.load_packages"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.load_packages">[docs]</a>    <span class="k">def</span> <span class="nf">load_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets packages and paths to the widget and to the system paths</span>
 
@@ -215,7 +215,7 @@
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="ProcessLibraryWidget.save_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibraryWidget.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibraryWidget.save_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves the current config to process_config.yml</span>
 
@@ -232,9 +232,9 @@
                       <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
@@ -242,10 +242,10 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.addChild"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.addChild">[docs]</a>    <span class="k">def</span> <span class="nf">addChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.addChild"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.addChild">[docs]</a>    <span class="k">def</span> <span class="nf">addChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.insertChild"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.insertChild">[docs]</a>    <span class="k">def</span> <span class="nf">insertChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.insertChild"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.insertChild">[docs]</a>    <span class="k">def</span> <span class="nf">insertChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -253,7 +253,7 @@
         <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Node.removeChild"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.removeChild">[docs]</a>    <span class="k">def</span> <span class="nf">removeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.removeChild"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.removeChild">[docs]</a>    <span class="k">def</span> <span class="nf">removeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -261,7 +261,7 @@
         <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Node.attrs"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.attrs">[docs]</a>    <span class="k">def</span> <span class="nf">attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.attrs"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.attrs">[docs]</a>    <span class="k">def</span> <span class="nf">attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
         <span class="n">keyvalued</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
@@ -270,7 +270,7 @@
                     <span class="n">keyvalued</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">keyvalued</span></div>
 
-<div class="viewcode-block" id="Node.to_list"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.to_list">[docs]</a>    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.to_list"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_list">[docs]</a>    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
@@ -279,7 +279,7 @@
             <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-<div class="viewcode-block" id="Node.to_dict"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Node.to_dict"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
             <span class="n">child</span><span class="o">.</span><span class="n">_recurse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">d</span></div>
@@ -314,20 +314,20 @@
 
     <span class="n">value</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">())</span>
 
-<div class="viewcode-block" id="Node.child"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.child">[docs]</a>    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.child"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.child">[docs]</a>    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">row</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Node.childCount"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.childCount">[docs]</a>    <span class="k">def</span> <span class="nf">childCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.childCount"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.childCount">[docs]</a>    <span class="k">def</span> <span class="nf">childCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.parent"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.parent"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span></div>
 
-<div class="viewcode-block" id="Node.row"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.row">[docs]</a>    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.row"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.row">[docs]</a>    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.log"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabLevel</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.log"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabLevel</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="n">tabLevel</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -346,7 +346,7 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Node.data"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.data"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
             <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
@@ -358,27 +358,27 @@
         <span class="k">elif</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
 
-<div class="viewcode-block" id="Node.setData"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.setData"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Node.resource"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.Node.resource">[docs]</a>    <span class="k">def</span> <span class="nf">resource</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.resource"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.resource">[docs]</a>    <span class="k">def</span> <span class="nf">resource</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span></div></div>
 
 
-<div class="viewcode-block" id="DictionaryTreeModel"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel">[docs]</a><span class="k">class</span> <span class="nc">DictionaryTreeModel</span><span class="p">(</span><span class="n">QAbstractItemModel</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel">[docs]</a><span class="k">class</span> <span class="nc">DictionaryTreeModel</span><span class="p">(</span><span class="n">QAbstractItemModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Data model providing a tree of an arbitrary dictionary&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DictionaryTreeModel.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DictionaryTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span> <span class="o">=</span> <span class="n">root</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.mimeTypes"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.mimeTypes">[docs]</a>    <span class="k">def</span> <span class="nf">mimeTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.mimeTypes"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeTypes">[docs]</a>    <span class="k">def</span> <span class="nf">mimeTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;component/name&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.mimeData"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.mimeData">[docs]</a>    <span class="k">def</span> <span class="nf">mimeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.mimeData"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeData">[docs]</a>    <span class="k">def</span> <span class="nf">mimeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
         <span class="n">mimedata</span> <span class="o">=</span> <span class="n">QMimeData</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -387,7 +387,7 @@
                 <span class="n">mimedata</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s1">&#39;component/name&#39;</span><span class="p">,</span> <span class="n">QByteArray</span><span class="p">(</span><span class="n">txt</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">mimedata</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.rowCount"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.rowCount">[docs]</a>    <span class="k">def</span> <span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.rowCount"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.rowCount">[docs]</a>    <span class="k">def</span> <span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;the number of rows is the number of children&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span>
@@ -396,11 +396,11 @@
 
         <span class="k">return</span> <span class="n">parentNode</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.columnCount"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.columnCount">[docs]</a>    <span class="k">def</span> <span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.columnCount"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.columnCount">[docs]</a>    <span class="k">def</span> <span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Number of columns is always 1 &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.data"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.data"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the data requested by the view&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -410,7 +410,7 @@
         <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span> <span class="ow">or</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.setData"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.setData"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;this method gets called when the user changes data&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
@@ -419,7 +419,7 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.headerData"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.headerData"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the name of the requested column&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -427,7 +427,7 @@
             <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;Value&quot;</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.flags"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.flags"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;everything is enable and selectable. Only the leaves can be dragged. &quot;&quot;&quot;</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -435,7 +435,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.parent"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.parent"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the parent from given index&quot;&quot;&quot;</span>
         <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
@@ -444,7 +444,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">parentNode</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parentNode</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.index"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.index"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns an index from given row, column and parent&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">childItem</span> <span class="o">=</span> <span class="n">parentNode</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
@@ -454,7 +454,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">QModelIndex</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.getNode"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.getNode">[docs]</a>    <span class="k">def</span> <span class="nf">getNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.getNode"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode">[docs]</a>    <span class="k">def</span> <span class="nf">getNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns a Node() from given index&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
@@ -463,7 +463,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.insertRows"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.insertRows">[docs]</a>    <span class="k">def</span> <span class="nf">insertRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.insertRows"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.insertRows">[docs]</a>    <span class="k">def</span> <span class="nf">insertRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;insert rows from starting position and number given by rows&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beginInsertRows</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -476,7 +476,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">endInsertRows</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">success</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.removeRows"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.removeRows">[docs]</a>    <span class="k">def</span> <span class="nf">removeRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.removeRows"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.removeRows">[docs]</a>    <span class="k">def</span> <span class="nf">removeRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;remove the rows from position to position+rows&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beginRemoveRows</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -487,11 +487,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">endRemoveRows</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">success</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.to_dict"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.DictionaryTreeModel.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DictionaryTreeModel.to_dict"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="node_structure_from_dict"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.node_structure_from_dict">[docs]</a><span class="k">def</span> <span class="nf">node_structure_from_dict</span><span class="p">(</span><span class="n">datadict</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="node_structure_from_dict"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.node_structure_from_dict">[docs]</a><span class="k">def</span> <span class="nf">node_structure_from_dict</span><span class="p">(</span><span class="n">datadict</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;returns a hierarchical node stucture required by the TreeModel&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
         <span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;Root&#39;</span><span class="p">)</span>
@@ -538,7 +538,7 @@
     <span class="k">return</span> <span class="n">root_node</span></div>
 
 
-<div class="viewcode-block" id="ProcessLibrary"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibrary">[docs]</a><span class="k">class</span> <span class="nc">ProcessLibrary</span><span class="p">(</span><span class="n">QTreeView</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibrary"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary">[docs]</a><span class="k">class</span> <span class="nc">ProcessLibrary</span><span class="p">(</span><span class="n">QTreeView</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tree to display the available Capsul&#39;s processes</span>
 
@@ -553,11 +553,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">item_library_clicked</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ProcessLibrary.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibrary.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ProcessLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_dictionary</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ProcessLibrary.load_dictionary"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibrary.load_dictionary">[docs]</a>    <span class="k">def</span> <span class="nf">load_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibrary.load_dictionary"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.load_dictionary">[docs]</a>    <span class="k">def</span> <span class="nf">load_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads a dictionary to the tree</span>
 
@@ -569,7 +569,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expandAll</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ProcessLibrary.to_dict"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibrary.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibrary.to_dict"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dictionary from the current tree</span>
 
@@ -577,7 +577,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ProcessLibrary.mousePressEvent"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessLibrary.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessLibrary.mousePressEvent"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="c1"># print(&#39;idx&#39;,dir(idx.model()))</span>
         <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isValid</span><span class="p">:</span>
@@ -594,7 +594,7 @@
         <span class="k">return</span> <span class="n">QTreeView</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="PackageLibraryDialog"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog">[docs]</a><span class="k">class</span> <span class="nc">PackageLibraryDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog">[docs]</a><span class="k">class</span> <span class="nc">PackageLibraryDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dialog that controls which processes to show in the process library</span>
 
@@ -620,7 +620,7 @@
 
     <span class="n">signal_save</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PackageLibraryDialog.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization of the PackageLibraryDialog widget</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -703,7 +703,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">h_box</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.load_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PackageLibraryDialog.load_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.load_config">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_config</span><span class="p">():</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the config and loads the corresponding packages</span>
@@ -725,7 +725,7 @@
             <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.update_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.update_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the process_config and package_library attributes</span>
 
@@ -736,7 +736,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">generate_tree</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.load_packages"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.load_packages">[docs]</a>    <span class="k">def</span> <span class="nf">load_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.load_packages"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.load_packages">[docs]</a>    <span class="k">def</span> <span class="nf">load_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the tree of the process library</span>
 
@@ -755,7 +755,7 @@
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.save_config"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.save_config"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves the current config to process_config.yml</span>
 
@@ -769,7 +769,7 @@
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_config</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                       <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.browse_package"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.browse_package">[docs]</a>    <span class="k">def</span> <span class="nf">browse_package</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.browse_package"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.browse_package">[docs]</a>    <span class="k">def</span> <span class="nf">browse_package</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a browser to select a package</span>
 
@@ -791,7 +791,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_path</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.add_package_with_text"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package_with_text">[docs]</a>    <span class="k">def</span> <span class="nf">add_package_with_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.add_package_with_text"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.add_package_with_text">[docs]</a>    <span class="k">def</span> <span class="nf">add_package_with_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds a package from the line edit&#39;s text</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -872,7 +872,7 @@
                 <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.add_package"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.add_package">[docs]</a>    <span class="k">def</span> <span class="nf">add_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="PackageLibraryDialog.add_package"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.add_package">[docs]</a>    <span class="k">def</span> <span class="nf">add_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">init_package_tree</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a package and its modules to the package tree</span>
@@ -1001,7 +1001,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;No package selected!&#39;</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.remove_package_with_text"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.remove_package_with_text">[docs]</a>    <span class="k">def</span> <span class="nf">remove_package_with_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.remove_package_with_text"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.remove_package_with_text">[docs]</a>    <span class="k">def</span> <span class="nf">remove_package_with_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes the package in the line edit from the package tree</span>
 
@@ -1019,7 +1019,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">status_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">old_status</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.remove_package"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.remove_package">[docs]</a>    <span class="k">def</span> <span class="nf">remove_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.remove_package"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.remove_package">[docs]</a>    <span class="k">def</span> <span class="nf">remove_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes a package from the package tree</span>
 
@@ -1073,7 +1073,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">generate_tree</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="PackageLibraryDialog.save"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibraryDialog.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibraryDialog.save"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves the tree to the process_config.yml file</span>
 
@@ -1105,7 +1105,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="import_file"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.import_file">[docs]</a><span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="import_file"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.import_file">[docs]</a><span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Import a python module from a path. 3.4+ only.</span>
 
@@ -1124,13 +1124,13 @@
     <span class="k">return</span> <span class="n">mod</span></div>
 
 
-<div class="viewcode-block" id="FileFilterProxyModel"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.FileFilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FileFilterProxyModel</span><span class="p">(</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
+<div class="viewcode-block" id="FileFilterProxyModel"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FileFilterProxyModel</span><span class="p">(</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Just a test for the moment. Should be useful to use in the file dialog. &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FileFilterProxyModel.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.FileFilterProxyModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileFilterProxyModel.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FileFilterProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FileFilterProxyModel.filterAcceptsRow"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.FileFilterProxyModel.filterAcceptsRow">[docs]</a>    <span class="k">def</span> <span class="nf">filterAcceptsRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_row</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">):</span>
+<div class="viewcode-block" id="FileFilterProxyModel.filterAcceptsRow"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.filterAcceptsRow">[docs]</a>    <span class="k">def</span> <span class="nf">filterAcceptsRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_row</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">):</span>
         <span class="n">source_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
         <span class="n">index0</span> <span class="o">=</span> <span class="n">source_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">source_row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">)</span>
         <span class="c1"># Always show directories</span>
@@ -1164,7 +1164,7 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="PackageLibrary"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary">[docs]</a><span class="k">class</span> <span class="nc">PackageLibrary</span><span class="p">(</span><span class="n">QTreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary">[docs]</a><span class="k">class</span> <span class="nc">PackageLibrary</span><span class="p">(</span><span class="n">QTreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tree that displays the user-added packages and their modules</span>
 <span class="sd">    The user can check or not each module/package</span>
@@ -1182,7 +1182,7 @@
 <span class="sd">        - fill_item: fills the items of the tree recursively</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PackageLibrary.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_tree</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_tree</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization of the PackageLibrary widget</span>
 
@@ -1198,7 +1198,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setHeaderLabel</span><span class="p">(</span><span class="s2">&quot;Packages&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.update_checks"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.update_checks">[docs]</a>    <span class="k">def</span> <span class="nf">update_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.update_checks"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.update_checks">[docs]</a>    <span class="k">def</span> <span class="nf">update_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the checks of the tree from an item</span>
 
@@ -1215,7 +1215,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.set_module_view"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.set_module_view">[docs]</a>    <span class="k">def</span> <span class="nf">set_module_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.set_module_view"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.set_module_view">[docs]</a>    <span class="k">def</span> <span class="nf">set_module_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets if a module has to be enabled or disabled in the process library</span>
 
@@ -1255,7 +1255,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Package not found&#39;</span><span class="p">)</span>
                 <span class="k">break</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.recursive_checks"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.recursive_checks">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.recursive_checks"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks/unchecks all child items</span>
 
@@ -1270,7 +1270,7 @@
             <span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.recursive_checks_from_child"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.recursive_checks_from_child">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks_from_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.recursive_checks_from_child"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks_from_child">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks_from_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks/unchecks all parent items</span>
 
@@ -1302,7 +1302,7 @@
                     <span class="n">parent</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.generate_tree"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.generate_tree">[docs]</a>    <span class="k">def</span> <span class="nf">generate_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.generate_tree"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.generate_tree">[docs]</a>    <span class="k">def</span> <span class="nf">generate_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates the package tree</span>
 
@@ -1312,7 +1312,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_tree</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.fill_item"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.PackageLibrary.fill_item">[docs]</a>    <span class="k">def</span> <span class="nf">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="PackageLibrary.fill_item"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.fill_item">[docs]</a>    <span class="k">def</span> <span class="nf">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills the items of the tree recursively</span>
 
@@ -1356,11 +1356,11 @@
             <span class="n">item</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ProcessHelp"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessHelp">[docs]</a><span class="k">class</span> <span class="nc">ProcessHelp</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessHelp"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp">[docs]</a><span class="k">class</span> <span class="nc">ProcessHelp</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A widget that displays information about the selected process.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="ProcessHelp.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.ProcessHelp.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessHelp.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Generate the help.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ProcessHelp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -1369,7 +1369,7 @@
         <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">help</span><span class="p">())</span></div></div>
 
 
-<div class="viewcode-block" id="InstallProcesses"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.InstallProcesses">[docs]</a><span class="k">class</span> <span class="nc">InstallProcesses</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="InstallProcesses"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses">[docs]</a><span class="k">class</span> <span class="nc">InstallProcesses</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A widget that allows to browse a Python package or a zip file to install the</span>
 <span class="sd">    processes that it is containing.</span>
@@ -1381,7 +1381,7 @@
 
     <span class="n">process_installed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="InstallProcesses.__init__"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.InstallProcesses.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+<div class="viewcode-block" id="InstallProcesses.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">InstallProcesses</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">main_window</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Install processes&#39;</span><span class="p">)</span>
@@ -1419,7 +1419,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">browser_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="InstallProcesses.get_filename"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.InstallProcesses.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+<div class="viewcode-block" id="InstallProcesses.get_filename"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a file dialog to get the folder or zip file to install</span>
 
@@ -1444,7 +1444,7 @@
         <span class="k">elif</span> <span class="n">filename</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="InstallProcesses.install"><a class="viewcode-back" href="../../../populse_mia.pipeline_manager.html#populse_mia.pipeline_manager.process_library.InstallProcesses.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="InstallProcesses.install"><a class="viewcode-back" href="../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Installs the selected file/folder on Populse_MIA</span>
 <span class="sd">        &quot;&quot;&quot;</span>
