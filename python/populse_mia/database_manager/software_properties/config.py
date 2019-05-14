@@ -199,7 +199,7 @@ class Config:
                         self.dev_mode = True
                         return os.path.abspath(os.path.join(
                             os.path.realpath(__file__), '..', '..', '..',
-                            '..'))
+                            '..', '..'))
                     self.dev_mode = False
                     return mia_home_config["mia_path"]  # Only for user mode
 
@@ -227,6 +227,8 @@ class Config:
             #    return os.path.abspath(os.path.join(os.path.realpath(
             #    __file__), '..', '..', '..', '..'))
             except (KeyError, AttributeError):
+                print(os.path.abspath(os.path.join(os.path.realpath(
+                    __file__), '..', '..', '..', '..')))
                 return os.path.abspath(os.path.join(os.path.realpath(
                     __file__), '..', '..', '..', '..'))
 
