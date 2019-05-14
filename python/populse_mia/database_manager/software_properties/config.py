@@ -197,9 +197,11 @@ class Config:
                             mia_home_config[
                         "dev_mode"] == "yes":  # Only for developer mode
                         self.dev_mode = True
-                        return os.path.abspath(os.path.join(
-                            os.path.realpath(__file__), '..', '..', '..', '..',
-                            '..'))
+                        config_path = os.path.dirname(os.path.realpath(
+                            __file__))
+                        while "properties" not in os.listdir(config_path):
+                            config_path = os.path.dirname(config_path)
+                        return config_path
                     self.dev_mode = False
                     return mia_home_config["mia_path"]  # Only for user mode
 
@@ -227,10 +229,11 @@ class Config:
             #    return os.path.abspath(os.path.join(os.path.realpath(
             #    __file__), '..', '..', '..', '..'))
             except (KeyError, AttributeError):
-                print(os.path.abspath(os.path.join(os.path.realpath(
-                    __file__), '..', '..', '..', '..')))
-                return os.path.abspath(os.path.join(os.path.realpath(
-                    __file__), '..', '..', '..', '..'))
+                config_path = os.path.dirname(os.path.realpath(
+                    __file__))
+                while "properties" not in os.listdir(config_path):
+                    config_path = os.path.dirname(config_path)
+                return config_path
 
     def get_mri_conv_path(self):
         """Get the MRIManager.jar path.
@@ -396,7 +399,6 @@ class Config:
         :return: Returns a dictionary of the contents of config.yml
 
         """
-        print(self.get_mia_path())
         with open(os.path.join(self.get_mia_path(), 'properties',
                                'config.yml'), 'r') as stream:
             try:
