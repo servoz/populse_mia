@@ -78,12 +78,13 @@ class DataBrowser(QWidget):
     Methods:
         - add_tag_infos: add the tag after add tag pop-up
         - add_tag_pop_up: display the add tag pop-up
-        - advanced_search: launch the advanced search
         - clone_tag_infos: clone the tag after the clone tag pop-up
         - clone_tag_pop_up: display the clone tag pop-up
-        - connect_viewer: display the selected documents in the viewer
+        - connect_actions: connect actions method to views
+        - connect_mini_viewer: display the selected documents in the viewer
+        - connect_toolbar: connect toolbar views to methods
         - create_view_actions: create the actions of the tab
-        - create_toolbar_menus: create the toolbar menu at the top of the tab
+        - create_toolbar_view: create the toolbar views
         - count_table_pop_up: open the count table
         - move_splitter: check if the viewer's splitter is at its lowest
            position
@@ -92,6 +93,7 @@ class DataBrowser(QWidget):
         - remove_tag_infos: remove user tags after the pop-up
         - remove_tag_pop_up: display the pop-up to remove user tags
         - reset_search_bar: reset the rapid search bar
+        - run_advanced_search: launch the advanced search
         - search_str: search a string in the table and updates the
            visualized documents
         - send_documents_to_pipeline: send the current list of scans to the
@@ -112,16 +114,33 @@ class DataBrowser(QWidget):
 
         super(DataBrowser, self).__init__()
 
-        self.create_view_actions()
-        self.create_toolbar_menus()
+        # Define actions
+        self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
+        self.clone_tag_action = QAction("Clone tag", self)
+        self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
+        self.save_filter_action = QAction("Save current filter", self)
+        self.open_filter_action = QAction(
+            "Open filter", self, shortcut="Ctrl+F")
 
-        # TABLE
+        # Initialize MIA functions
+        self.search_bar = RapidSearch(self)
+        self.viewer = MiniViewer(self.project)
+        self.advanced_search = AdvancedSearch(self.project, self)
 
-        # Frame behind the table
+        # Initialize Qt objects
+        self.addRowLabel = ClickableLabel()
         self.frame_table_data = QtWidgets.QFrame(self)
-        self.frame_table_data.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_table_data.setObjectName("frame_table_data")
+        self.send_documents_to_pipeline_button = QPushButton(
+            "Send documents to the Pipeline Manager")
+        self.frame_visualization = QtWidgets.QFrame(self)
+        self.splitter_vertical = QSplitter(Qt.Vertical)
+        self.frame_advanced_search = QtWidgets.QFrame(self)
+        self.advanced_search_button = QPushButton()
+        self.button_cross = QToolButton()
+        self.menu_toolbar = QToolBar()
+        self.frame_test = QFrame()
+        self.visualized_tags_button = QPushButton()
+        self.count_table_button = QPushButton()
 
         # Main table that will display the tags
         self.table_data = TableDataBrowser(
@@ -129,88 +148,13 @@ class DataBrowser(QWidget):
         self.table_data.setObjectName("table_data")
 
         # LAYOUTS #
-
-        vbox_table = QVBoxLayout()
-        vbox_table.addWidget(self.table_data)
-
-        # Add path button under the table
-        hbox_layout = QHBoxLayout()
-
-        sources_images_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-            "sources_images")
-        self.addRowLabel = ClickableLabel()
-        self.addRowLabel.setObjectName('plus')
-        add_row_picture = QPixmap(
-            os.path.relpath(
-                os.path.join(sources_images_dir, "green_plus.png")))
-        add_row_picture = add_row_picture.scaledToHeight(20)
-        self.addRowLabel.setPixmap(add_row_picture)
-        self.addRowLabel.setFixedWidth(20)
-        self.addRowLabel.setToolTip(
-            'Add data without using the MRI converter tool (File>Import)')
-        self.addRowLabel.clicked.connect(self.table_data.add_path)
-
-        hbox_layout.addWidget(self.addRowLabel)
-
-        hbox_layout.addStretch(1)
-
-        self.send_documents_to_pipeline_button = QPushButton(
-            "Send documents to the Pipeline Manager")
-        self.send_documents_to_pipeline_button.clicked.connect(
-            self.send_documents_to_pipeline)
-        hbox_layout.addWidget(self.send_documents_to_pipeline_button)
-
-        vbox_table.addLayout(hbox_layout)
-
-        self.frame_table_data.setLayout(vbox_table)
-
-        # VISUALIZATION
-
-        # Visualization frame, label and text edit (bot.0tom left of the
-        # screen in the application)
-        self.frame_visualization = QtWidgets.QFrame(self)
-        self.frame_visualization.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_visualization.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_visualization.setObjectName("frame_5")
-
-        self.viewer = MiniViewer(self.project)
-        self.viewer.setObjectName("viewer")
-        self.viewer.adjustSize()
-
-        hbox_viewer = QHBoxLayout()
-        hbox_viewer.addWidget(self.viewer)
-
-        self.frame_visualization.setLayout(hbox_viewer)
-
-        # ADVANCED SEARCH
-
-        self.frame_advanced_search = QtWidgets.QFrame(self)
-        self.frame_advanced_search.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_advanced_search.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_advanced_search.setObjectName("frame_search")
-        self.frame_advanced_search.setHidden(True)
-        self.advanced_search = AdvancedSearch(self.project, self)
-        layout_search = QGridLayout()
-        layout_search.addWidget(self.advanced_search)
-        self.frame_advanced_search.setLayout(layout_search)
-
-        # SPLITTER AND LAYOUT
-
-        self.splitter_vertical = QSplitter(Qt.Vertical)
-        self.splitter_vertical.addWidget(self.frame_advanced_search)
-        self.splitter_vertical.addWidget(self.frame_table_data)
-        self.splitter_vertical.addWidget(self.frame_visualization)
-        self.splitter_vertical.splitterMoved.connect(self.move_splitter)
-
-        vbox_splitter = QVBoxLayout(self)
-        vbox_splitter.addWidget(self.menu_toolbar)
-        vbox_splitter.addWidget(self.splitter_vertical)
-
-        self.setLayout(vbox_splitter)
+        self.create_toolbar_view()
+        self.create_layout()
 
         # Image viewer updated
-        self.connect_viewer()
+        self.connect_toolbar()
+        self.connect_actions()
+        self.connect_mini_viewer()
 
     def add_tag_infos(self, new_tag_name, new_default_value, tag_type,
                       new_tag_description, new_tag_unit):
@@ -262,7 +206,7 @@ class DataBrowser(QWidget):
         self.pop_up_add_tag = PopUpAddTag(self, self.project)
         self.pop_up_add_tag.show()
 
-    def advanced_search(self):
+    def run_advanced_search(self):
         """Launch the advanced search."""
 
         if self.frame_advanced_search.isHidden():
@@ -349,7 +293,16 @@ class DataBrowser(QWidget):
         self.pop_up_clone_tag = PopUpCloneTag(self, self.project)
         self.pop_up_clone_tag.show()
 
-    def connect_viewer(self):
+    def connect_actions(self):
+        self.add_tag_action.triggered.connect(self.add_tag_pop_up)
+        self.clone_tag_action.triggered.connect(self.clone_tag_pop_up)
+        self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
+        self.save_filter_action.triggered.connect(
+            lambda: self.project.save_current_filter(
+                self.advanced_search.get_filters(False)))
+        self.open_filter_action.triggered.connect(self.open_filter)
+
+    def connect_mini_viewer(self):
         """Display the selected documents in the viewer."""
 
         if self.splitter_vertical.sizes()[1] == \
@@ -374,35 +327,22 @@ class DataBrowser(QWidget):
 
             self.viewer.verify_slices(full_names)
 
+    def connect_toolbar(self):
+        self.search_bar.textChanged.connect(self.search_str)
+        self.button_cross.clicked.connect(self.reset_search_bar)
+        self.advanced_search_button.clicked.connect(self.run_advanced_search)
+        self.count_table_button.clicked.connect(self.count_table_pop_up)
+        self.visualized_tags_button.clicked.connect(
+            lambda: self.table_data.visualized_tags_pop_up())
+        # self.search_bar.textChanged.connect(self.delay_event)
+
     def count_table_pop_up(self):
         """Open the count table pop-up"""
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
-    def create_view_actions(self):
-        """Create the actions of the tab"""
-        self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
-        self.add_tag_action.triggered.connect(self.add_tag_pop_up)
-
-        self.clone_tag_action = QAction("Clone tag", self)
-        self.clone_tag_action.triggered.connect(self.clone_tag_pop_up)
-
-        self.remove_tag_action = QAction("Remove tag", self, shortcut="Ctrl+R")
-        self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
-
-        self.save_filter_action = QAction("Save current filter", self)
-        self.save_filter_action.triggered.connect(
-            lambda: self.project.save_current_filter(
-                self.advanced_search.get_filters(False)))
-
-        self.open_filter_action = QAction(
-            "Open filter", self, shortcut="Ctrl+F")
-        self.open_filter_action.triggered.connect(self.open_filter)
-
-    def create_toolbar_menus(self):
+    def create_toolbar_view(self):
         """Create the toolbar menu at the top of the tab"""
-        self.menu_toolbar = QToolBar()
-
         tags_tool_button = QToolButton()
         tags_tool_button.setText('Tags')
         tags_tool_button.setPopupMode(QToolButton.MenuButtonPopup)
@@ -420,39 +360,25 @@ class DataBrowser(QWidget):
         filters_menu.addAction(self.open_filter_action)
         filters_tool_button.setMenu(filters_menu)
 
-        self.search_bar = RapidSearch(self)
-        self.search_bar.textChanged.connect(self.search_str)
-        # self.search_bar.textChanged.connect(self.delay_event)
-
         sources_images_dir = os.path.join(
             os.path.dirname(
                 os.path.dirname(os.path.realpath(__file__))), "sources_images")
-        self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
         self.button_cross.setIcon(
             QIcon(os.path.join(sources_images_dir, 'gray_cross.png')))
-        self.button_cross.clicked.connect(self.reset_search_bar)
 
         search_bar_layout = QHBoxLayout()
         search_bar_layout.setSpacing(0)
         search_bar_layout.addWidget(self.search_bar)
         search_bar_layout.addWidget(self.button_cross)
 
-        self.advanced_search_button = QPushButton()
         self.advanced_search_button.setText('Advanced search')
-        self.advanced_search_button.clicked.connect(self.advanced_search)
 
-        self.frame_test = QFrame()
         self.frame_test.setLayout(search_bar_layout)
 
-        self.visualized_tags_button = QPushButton()
         self.visualized_tags_button.setText('Visualized tags')
-        self.visualized_tags_button.clicked.connect(
-            lambda: self.table_data.visualized_tags_pop_up())
 
-        self.count_table_button = QPushButton()
         self.count_table_button.setText('Count table')
-        self.count_table_button.clicked.connect(self.count_table_pop_up)
 
         self.menu_toolbar.addWidget(tags_tool_button)
         self.menu_toolbar.addSeparator()
@@ -465,6 +391,85 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(self.visualized_tags_button)
         self.menu_toolbar.addSeparator()
         self.menu_toolbar.addWidget(self.count_table_button)
+
+    def create_layout(self):
+        self.frame_table_data.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_table_data.setObjectName("frame_table_data")
+
+        vbox_table = QVBoxLayout()
+        vbox_table.addWidget(self.table_data)
+
+        # Add path button under the table
+        hbox_layout = QHBoxLayout()
+
+        sources_images_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            "sources_images")
+
+        self.addRowLabel.setObjectName('plus')
+        add_row_picture = QPixmap(
+            os.path.relpath(
+                os.path.join(sources_images_dir, "green_plus.png")))
+        add_row_picture = add_row_picture.scaledToHeight(20)
+        self.addRowLabel.setPixmap(add_row_picture)
+        self.addRowLabel.setFixedWidth(20)
+        self.addRowLabel.setToolTip(
+            'Add data without using the MRI converter tool (File>Import)')
+        self.addRowLabel.clicked.connect(self.table_data.add_path)
+
+        hbox_layout.addWidget(self.addRowLabel)
+
+        hbox_layout.addStretch(1)
+
+        self.send_documents_to_pipeline_button.clicked.connect(
+            self.send_documents_to_pipeline)
+        hbox_layout.addWidget(self.send_documents_to_pipeline_button)
+
+        vbox_table.addLayout(hbox_layout)
+
+        self.frame_table_data.setLayout(vbox_table)
+
+        # VISUALIZATION
+
+        # Visualization frame, label and text edit (bot.0tom left of the
+        # screen in the application)
+
+        self.frame_visualization.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_visualization.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_visualization.setObjectName("frame_5")
+
+        self.viewer.setObjectName("viewer")
+        self.viewer.adjustSize()
+
+        hbox_viewer = QHBoxLayout()
+        hbox_viewer.addWidget(self.viewer)
+
+        self.frame_visualization.setLayout(hbox_viewer)
+
+        # ADVANCED SEARCH
+
+        self.frame_advanced_search.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_advanced_search.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_advanced_search.setObjectName("frame_search")
+        self.frame_advanced_search.setHidden(True)
+
+        layout_search = QGridLayout()
+        layout_search.addWidget(self.advanced_search)
+        self.frame_advanced_search.setLayout(layout_search)
+
+        # SPLITTER AND LAYOUT
+
+        self.splitter_vertical.addWidget(self.frame_advanced_search)
+        self.splitter_vertical.addWidget(self.frame_table_data)
+        self.splitter_vertical.addWidget(self.frame_visualization)
+        self.splitter_vertical.splitterMoved.connect(self.move_splitter)
+
+        vbox_splitter = QVBoxLayout(self)
+        vbox_splitter.addWidget(self.menu_toolbar)
+        vbox_splitter.addWidget(self.splitter_vertical)
+
+        self.setLayout(vbox_splitter)
 
     # def delay_event(self, str_search):
     #     """
@@ -480,7 +485,7 @@ class DataBrowser(QWidget):
         """Check if the viewer's splitter is at its lowest position."""
         if self.splitter_vertical.sizes()[1] != \
                 self.splitter_vertical.minimumHeight():
-            self.connect_viewer()
+            self.connect_mini_viewer()
 
     def open_filter(self):
         """Open a project filter that has already been saved"""
@@ -2017,7 +2022,7 @@ class TableDataBrowser(QTableWidget):
 
         # image_viewer updated
         if self.link_viewer:
-            self.data_browser.connect_viewer()
+            self.data_browser.connect_mini_viewer()
 
     def show_brick_history(self):
         """Show brick history pop-up."""
