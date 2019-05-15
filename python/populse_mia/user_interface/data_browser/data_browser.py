@@ -42,14 +42,9 @@ from populse_mia.user_interface.data_browser.advanced_search import AdvancedSear
 from populse_mia.user_interface.data_browser.count_table import CountTable
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.user_interface.data_browser.mini_viewer import MiniViewer
-from populse_mia.user_interface.pop_ups import PopUpMultipleSort
-from populse_mia.user_interface.pop_ups import PopUpProperties
-from populse_mia.user_interface.pop_ups import PopUpShowBrick
-from populse_mia.user_interface.pop_ups import PopUpAddPath
-from populse_mia.user_interface.pop_ups import PopUpAddTag
-from populse_mia.user_interface.pop_ups import PopUpCloneTag
-from populse_mia.user_interface.pop_ups import PopUpRemoveTag
-from populse_mia.user_interface.pop_ups import PopUpSelectFilter
+from populse_mia.user_interface.pop_ups import PopUpMultipleSort, \
+    PopUpProperties, PopUpShowBrick, PopUpAddPath, PopUpAddTag, \
+    PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter
 from populse_mia.user_interface.pop_ups import \
     PopUpDataBrowserCurrentSelection
 from populse_mia.utils.tools import ClickableLabel
@@ -87,7 +82,7 @@ class DataBrowser(QWidget):
         - clone_tag_infos: clone the tag after the clone tag pop-up
         - clone_tag_pop_up: display the clone tag pop-up
         - connect_viewer: display the selected documents in the viewer
-        - create_actions: create the actions of the tab
+        - create_view_actions: create the actions of the tab
         - create_toolbar_menus: create the toolbar menu at the top of the tab
         - count_table_pop_up: open the count table
         - move_splitter: check if the viewer's splitter is at its lowest
@@ -117,7 +112,7 @@ class DataBrowser(QWidget):
 
         super(DataBrowser, self).__init__()
 
-        self.create_actions()
+        self.create_view_actions()
         self.create_toolbar_menus()
 
         # TABLE
@@ -384,7 +379,7 @@ class DataBrowser(QWidget):
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
-    def create_actions(self):
+    def create_view_actions(self):
         """Create the actions of the tab"""
         self.add_tag_action = QAction("Add tag", self, shortcut="Ctrl+A")
         self.add_tag_action.triggered.connect(self.add_tag_pop_up)

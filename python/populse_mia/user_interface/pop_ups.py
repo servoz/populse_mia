@@ -912,6 +912,24 @@ class PopUpClosePipeline(QDialog):
         return self.bool_exit
 
 
+class PopUpDeletedProject(QMessageBox):
+    """Indicate the names of deleted project when the software starts"""
+    def __init__(self, deleted_projects):
+        super().__init__()
+
+        message = "These projects have been deleted:\n"
+        for deleted_project in deleted_projects:
+            message += "- {0}\n".format(deleted_project)
+
+        self.setIcon(QMessageBox.Warning)
+        self.setText("Deleted projects")
+        self.setInformativeText(message)
+        self.setWindowTitle("Warning")
+        self.setStandardButtons(QMessageBox.Ok)
+        self.buttonClicked.connect(self.close)
+        self.exec()
+
+
 class PopUpDataBrowserCurrentSelection(QDialog):
     """
     Is called to display the current data_browser selection
@@ -2475,6 +2493,7 @@ class PopUpSeeAllProjects(QDialog):
             if project_switched:
                 self.accept()
                 self.close()
+
 
 class PopUpSelectFilter(PopUpFilterSelection):
     """

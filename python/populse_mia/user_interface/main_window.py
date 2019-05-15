@@ -40,13 +40,9 @@ from populse_mia.user_interface.pipeline_manager.process_library import InstallP
     PackageLibraryDialog
 import populse_mia.database_manager.project.controller as controller
 from populse_mia.database_manager.project.project import Project, COLLECTION_CURRENT
-from populse_mia.user_interface.pop_ups import PopUpNewProject
-from populse_mia.user_interface.pop_ups import PopUpOpenProject
-from populse_mia.user_interface.pop_ups import PopUpPreferences
-from populse_mia.user_interface.pop_ups import PopUpProperties
-from populse_mia.user_interface.pop_ups import PopUpSaveProjectAs
-from populse_mia.user_interface.pop_ups import PopUpQuit
-from populse_mia.user_interface.pop_ups import PopUpSeeAllProjects
+from populse_mia.user_interface.pop_ups import PopUpDeletedProject, \
+    PopUpNewProject, PopUpOpenProject, PopUpPreferences, PopUpProperties, \
+    PopUpSaveProjectAs, PopUpQuit, PopUpSeeAllProjects
 
 
 class MainWindow(QMainWindow):
@@ -56,42 +52,43 @@ class MainWindow(QMainWindow):
 
     Methods:
         - __init__ : initialise the object MainWindow
-        - add_clinical_tags: adds the clinical tags to the database and the
+        - add_clinical_tags: add the clinical tags to the database and the
           data browser
-        - check_unsaved_modifications: checks if there are differences
+        - check_unsaved_modifications: check if there are differences
           between the current project and the database
-        - closeEvent: overrides the closing event to check if there are
+        - closeEvent: override the closing event to check if there are
           unsaved modifications
-        - create_actions: creates the actions in each menu
-        - create_menus: creates the menu-bar
-        - create_project_pop_up: creates a new project
-        - create_tabs: creates the tabs
-        - documentation: opens the documentation in a web browser
-        - import_data: calls the import software (MRI File Manager)
-        - install_processes_pop_up: opens the install processes pop-up
-        - open_project_pop_up: opens a pop-up to open a project and updates
+        - create_view_actions: create the actions in each menu
+        - create_view_menus: create the menu-bar
+        - create_view_window: create the main window view
+        - create_project_pop_up: create a new project
+        - create_tabs: create the tabs
+        - documentation: open the documentation in a web browser
+        - import_data: call the import software (MRI File Manager)
+        - install_processes_pop_up: open the install processes pop-up
+        - open_project_pop_up: open a pop-up to open a project and updates
           the recent projects
-        - open_recent_project: opens a recent project
-        - package_library_pop_up: opens the package library pop-up
-        - project_properties_pop_up: opens the project properties pop-up
-        - redo: redoes the last action made by the user
-        - remove_raw_files_useless: removes the useless raw files of the
+        - open_recent_project: open a recent project
+        - package_library_pop_up: open the package library pop-up
+        - project_properties_pop_up: open the project properties pop-up
+        - redo: redo the last action made by the user
+        - remove_raw_files_useless: remove the useless raw files of the
           current project
-        - save: saves either the current project or the current pipeline
-        - save_as: saves either the current project or the current pipeline
+        - save: save either the current project or the current pipeline
+        - save_as: save either the current project or the current pipeline
           under a new name
-        - save_project_as: opens a pop-up to save the current project as
+        - save_project_as: open a pop-up to save the current project as
         - saveChoice: checks if the project needs to be saved as or just saved
-        - see_all_projects: opens a pop-up to show the recent projects
-        - software_preferences_pop_up: opens the MIA2 preferences pop-up
+        - see_all_projects: open a pop-up to show the recent projects
+        - software_preferences_pop_up: open the MIA2 preferences pop-up
         - switch_project: switches project if it's possible
         - tab_changed: method called when the tab is changed
         - undo: undoes the last action made by the user
-        - update_package_library_action: updates the package library action
+        - update_package_library_action: update the package library action
           depending on the mode
-        - update_project: updates the project once the database has been
+        - update_project: update the project once the database has been
           updated
-        - update_recent_projects_actions: updates the list of recent projects
+        - update_recent_projects_actions: update the list of recent projects
 
     """
 
@@ -111,52 +108,25 @@ class MainWindow(QMainWindow):
         QApplication.restoreOverrideCursor()
 
         if deleted_projects is not None and deleted_projects:
-            message = "These projects have been deleted:\n"
-            for deleted_project in deleted_projects:
-                message += "- {0}\n".format(deleted_project)
+            self.msg = PopUpDeletedProject(deleted_projects)
 
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setText("Deleted projects")
-            msg.setInformativeText(message)
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
-
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))),
-                                          "sources_images")
+        self.config = Config()
+        self.windowName = "MIA - Multiparametric Image Analysis"
+        self.projectName = "Unnamed project"
         self.project = project
         self.test = test
-        app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
-        self.setWindowIcon(app_icon)
 
         self.saved_projects = SavedProjects()
         self.saved_projects_list = self.saved_projects.pathsList
 
         self.saved_projects_actions = []
 
-        self.config = Config()
-        background_color = self.config.getBackgroundColor()
-        text_color = self.config.getTextColor()
-        self.windowName = "MIA - Multiparametric Image Analysis"
-        if self.config.dev_mode:
-            self.windowName += " (Developer mode)"
-        self.windowName += " - "
-        self.projectName = "Unnamed project"
+        # Define main window view
+        self.create_view_window()
 
-        self.setStyleSheet("background-color:" + background_color +
-                           ";color:" + text_color + ";")
-
-        # Create actions & menus
-        self.create_actions()
-        self.create_menus()
-
-        self.statusBar().showMessage('Please create a new project (Ctrl+N) or '
-                                     'open an existing project (Ctrl+O)')
-
-        self.setWindowTitle(self.windowName + self.projectName)
+        # Create actions & menus views
+        self.create_view_actions()
+        self.create_view_menus()
 
         # Create Tabs
         self.create_tabs()
@@ -219,7 +189,7 @@ class MainWindow(QMainWindow):
         else:
             event.ignore()
 
-    def create_actions(self):
+    def create_view_actions(self):
         """Create the actions and their shortcuts in each menu"""
 
         sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
@@ -304,8 +274,8 @@ class MainWindow(QMainWindow):
         self.action_install_processes_zip.triggered.connect(lambda:
                                 self.install_processes_pop_up(folder=False))
 
-    def create_menus(self):
-        """Create the menu-bar."""
+    def create_view_menus(self):
+        """Create the menu-bar view."""
 
         # Menubar
         self.menu_file = self.menuBar().addMenu('File')
@@ -357,6 +327,27 @@ class MainWindow(QMainWindow):
         self.menu_install_process.addAction(
             self.action_install_processes_folder)
         self.menu_install_process.addAction(self.action_install_processes_zip)
+
+    def create_view_window(self):
+        """Create the main window view."""
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.realpath(__file__))),
+            "sources_images")
+        app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
+        self.setWindowIcon(app_icon)
+        background_color = self.config.getBackgroundColor()
+        text_color = self.config.getTextColor()
+
+        if self.config.dev_mode:
+            self.windowName += " (Developer mode)"
+        self.windowName += " - "
+
+        self.setStyleSheet("background-color:" + background_color +
+                           ";color:" + text_color + ";")
+        self.statusBar().showMessage('Please create a new project (Ctrl+N) or '
+                                     'open an existing project (Ctrl+O)')
+
+        self.setWindowTitle(self.windowName + self.projectName)
 
     def create_project_pop_up(self):
         """Create a new project."""
@@ -477,7 +468,40 @@ class MainWindow(QMainWindow):
             self.data_browser.advanced_search.rows = []
 
         else:
-            pass
+            # Currently, if user close the mri_conv without importing data,
+            # the code exit is not 0. Could be interesting to catch a
+            # particular code exit in this case to avoid to display the
+            # following popup. Opening an issue in the mri_conv project
+
+            print(
+                "\nmri_conv, did not work properly. Current absolute path to "
+                "MRIManager.jar defined in File > MIA Preferences:\n{0}\n"
+                .format(config.get_mri_conv_path()))
+
+            if not os.path.isfile(config.get_mri_conv_path()):
+                mssgText = ("Warning: mri_conv did not work properly. The "
+                            "current absolute path to MRIManager.jar doesn't "
+                            "seem to be correctly defined.\nCurrent absolute "
+                            "path to MRIManager.jar defined in\nFile > MIA "
+                            "Preferences:\n{0}"
+                            .format(config.get_mri_conv_path()))
+
+            else:
+                mssgText = ("Warning : mri_conv did not work properly. Please "
+                            "check if the currently installed mri_conv Java "
+                            "ARchive is not corrupted.\nCurrent absolute path "
+                            "to MRIManager.jar defined in\nFile > MIA "
+                            "Preferences:\n{0}"
+                            .format(config.get_mri_conv_path()))
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowTitle("populse_mia - Warning: "
+                               "Data import issue!")
+            msg.setText(mssgText)
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
     def open_project_pop_up(self):
         """Open a pop-up to open a project and updates the recent projects."""
