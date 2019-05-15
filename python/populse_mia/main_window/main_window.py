@@ -448,9 +448,6 @@ class MainWindow(QMainWindow):
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         config = Config()
-
-        #input('prout avant')
-        
         code_exit = subprocess.call(['java', '-Xmx4096M', '-jar',
                                       config.get_mri_conv_path(),
                                      '[ExportNifti] ' + os.path.join(
@@ -460,12 +457,6 @@ class MainWindow(QMainWindow):
                                      'CreationDate-SeqNumber-Protocol-'
                                      'SequenceName-AcquisitionTime',
                                      'CloseAfterExport'])
-
-        #input('prout apres')
-
-        print('\nprout code_exit: ', code_exit)
-        print('\nprout config.get_mri_conv_path(): ', config.get_mri_conv_path())
-
         # 'NoLogExport'if we don't want log export
 
         if code_exit == 0:
