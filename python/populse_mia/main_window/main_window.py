@@ -448,6 +448,9 @@ class MainWindow(QMainWindow):
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         config = Config()
+
+        #input('prout avant')
+        
         code_exit = subprocess.call(['java', '-Xmx4096M', '-jar',
                                       config.get_mri_conv_path(),
                                      '[ExportNifti] ' + os.path.join(
@@ -457,6 +460,12 @@ class MainWindow(QMainWindow):
                                      'CreationDate-SeqNumber-Protocol-'
                                      'SequenceName-AcquisitionTime',
                                      'CloseAfterExport'])
+
+        #input('prout apres')
+
+        print('\nprout code_exit: ', code_exit)
+        print('\nprout config.get_mri_conv_path(): ', config.get_mri_conv_path())
+
         # 'NoLogExport'if we don't want log export
 
         if code_exit == 0:
@@ -477,7 +486,39 @@ class MainWindow(QMainWindow):
             self.data_browser.advanced_search.rows = []
 
         else:
-            pass
+            # Currently, if user close the mri_conv without importing data,
+            # the code exit is not 0. Could be interesting to catch a
+            # particular code exit in this case to avoid to display the
+            # following popup. Opening an issue in the mri_conv project
+            
+            print("\nmri_conv, did not work properly. Current absolute path to "
+                  "MRIManager.jar defined in File > MIA Preferences:\n{0}\n"
+                  .format(config.get_mri_conv_path()))
+            
+            if not os.path.isfile(config.get_mri_conv_path()):
+                mssgText = ("Warning: mri_conv did not work properly. The "
+                            "current absolute path to MRIManager.jar doesn't "
+                            "seem to be correctly defined.\nCurrent absolute "
+                            "path to MRIManager.jar defined in\nFile > MIA "
+                            "Preferences:\n{0}"
+                            .format(config.get_mri_conv_path()))
+
+            else:
+                mssgText = ("Warning : mri_conv did not work properly. Please "
+                            "check if the currently installed mri_conv Java "
+                            "ARchive is not corrupted.\nCurrent absolute path "
+                            "to MRIManager.jar defined in\nFile > MIA "
+                            "Preferences:\n{0}"
+                            .format(config.get_mri_conv_path()))
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setWindowTitle("populse_mia - Warning: "
+                               "Data import issue!")
+            msg.setText(mssgText)
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
     def open_project_pop_up(self):
         """Open a pop-up to open a project and updates the recent projects."""
