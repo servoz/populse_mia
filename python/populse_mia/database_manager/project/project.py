@@ -24,6 +24,7 @@ import glob
 
 # PyQt5 imports
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
+from PyQt5.QtCore import QCoreApplication
 
 # Populse_MIA imports
 from populse_mia.utils.utils import verCmp
@@ -63,7 +64,7 @@ TYPE_NII = "Scan"
 TYPE_MAT = "Matrix"
 
 
-class Project:
+class Project():
     """Class that handles projects and their associated database.
 
     Attributes:
@@ -79,7 +80,7 @@ class Project:
         - getSortOrder: return the sort order of the project
         - getSortedTag: return the sorted tag of the project
         - hasUnsavedModifications: return if the project has unsaved
-        modifications or not
+          modifications or not
         - init_filters: initialize the filters at project opening
         - loadProperties: load the properties file
         - redo: redo the last action made by the user on the project
@@ -89,11 +90,13 @@ class Project:
         - setCurrentFilter: set the current filter of the project
         - setDate: set the date of the project
         - saveModifications: save the pending operations of the project
-        (actions still not saved)
+          (actions still not saved)
         - setName: set the name of the project
         - setSortOrder: set the sort order of the project
         - setSortedTag: set the sorted tag of the project
         - undo: undo the last action made by the user on the project
+        - unsavedModifications(self, value): Modify the window title
+          depending of whether the project has unsaved modifications or not.
         - unsaveModifications: unsaves the pending operations of the project
     """
 
@@ -249,10 +252,11 @@ class Project:
 
         self.properties = self.loadProperties()
 
-        self.unsavedModifications = False
+        self._unsavedModifications = False
         self.undos = []
         self.redos = []
         self.init_filters()
+
 
     def add_clinical_tags(self):
         """Add new clinical tags to the project.
@@ -390,7 +394,6 @@ class Project:
 
         :param table: table on which to apply the modifications
         """
-
         # To avoid circular imports
         from populse_mia.user_interface.data_browser.data_browser import not_defined_value
 
@@ -398,6 +401,7 @@ class Project:
         if len(self.redos) > 0:
             to_redo = self.redos.pop()
             self.undos.append(to_redo)
+            self.unsavedModifications = True
             # We pop the redo action in the undo stack
             # The first element of the list is the type of action made by
             # the user (add_tag, remove_tags, add_scans, remove_scans,
@@ -696,6 +700,7 @@ class Project:
             # made by the user (add_tag,
             # remove_tags, add_scans, remove_scans, or modified_values)
             action = to_undo[0]
+            self.unsavedModifications = True
             if action == "add_tag":
                 # For removing the tag added, we just have to memorize
                 # the tag name, and remove it
@@ -831,6 +836,27 @@ class Project:
                 # Columns updated
                 table.update_visualized_columns(
                     old_tags, self.session.get_shown_tags())
+
+
+    @property
+    def unsavedModifications(self):
+        return self._unsavedModifications
+
+    @unsavedModifications.setter
+    def unsavedModifications(self, value):
+        """ Modify the window title depending of whether the project has
+           unsaved modifications or not.
+
+        :param value: boolean
+        """
+        self._unsavedModifications = value
+        app = QCoreApplication.instance()
+        if self._unsavedModifications :
+            if app.title()[-1] != "*":
+                app.set_title(app.title()+"*")
+        else:
+            if app.title()[-1] == "*":
+                app.set_title(app.title()[:-1])
 
     def unsaveModifications(self):
         """Unsave the pending operations of the project."""

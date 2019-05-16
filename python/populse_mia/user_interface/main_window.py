@@ -26,6 +26,7 @@ import glob
 
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, \
     QMainWindow, QMessageBox, QMenu, QPushButton, \
     QApplication, QLabel
@@ -107,6 +108,11 @@ class MainWindow(QMainWindow):
 
         QApplication.restoreOverrideCursor()
 
+        # We associate these methods and the instance to be able to call them
+        # from anywhere.
+        QCoreApplication.instance().title = self.windowTitle
+        QCoreApplication.instance().set_title = self.setWindowTitle
+
         if deleted_projects is not None and deleted_projects:
             self.msg = PopUpDeletedProject(deleted_projects)
 
@@ -124,7 +130,19 @@ class MainWindow(QMainWindow):
         # Define main window view
         self.create_view_window()
 
-        # Create actions & menus views
+        # Menubar
+        self.menu_file = self.menuBar().addMenu('File')
+        self.menu_edition = self.menuBar().addMenu('Edit')
+        self.menu_help = self.menuBar().addMenu('Help')
+        self.menu_about = self.menuBar().addMenu('About')
+        self.menu_more = self.menuBar().addMenu('More')
+        self.menu_install_process = QMenu('Install processes', self)
+        self.menu_saved_projects = QMenu('Saved projects', self)
+        self.action_save_project = self.menu_file.addAction("Save project")
+        self.action_save_project_as = self.menu_file.addAction("Save "
+                                                               "project as")
+
+        # Initialize actions & menus views
         self.create_view_actions()
         self.create_view_menus()
 
@@ -277,25 +295,12 @@ class MainWindow(QMainWindow):
     def create_view_menus(self):
         """Create the menu-bar view."""
 
-        # Menubar
-        self.menu_file = self.menuBar().addMenu('File')
-        self.menu_edition = self.menuBar().addMenu('Edit')
-        self.menu_help = self.menuBar().addMenu('Help')
-        self.menu_about = self.menuBar().addMenu('About')
-        self.menu_more = self.menuBar().addMenu('More')
-        self.menu_install_process = QMenu('Install processes', self)
         self.menu_more.addMenu(self.menu_install_process)
-
-        # Submenu of menu_file menu
-        self.menu_saved_projects = QMenu('Saved projects', self)
 
         # Actions in the "File" menu
         self.menu_file.addAction(self.action_create)
         self.menu_file.addAction(self.action_open)
 
-        self.action_save_project = self.menu_file.addAction("Save project")
-        self.action_save_project_as = self.menu_file.addAction("Save "
-                                                               "project as")
         self.action_save_project.triggered.connect(self.saveChoice)
         self.action_save_project_as.triggered.connect(self.save_project_as)
 
