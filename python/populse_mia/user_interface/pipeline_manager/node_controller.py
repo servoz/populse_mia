@@ -26,6 +26,7 @@ from soma.controller import trait_ids
 
 # Populse_MIA imports
 from populse_mia.user_interface.data_browser.advanced_search import AdvancedSearch
+from populse_mia.user_interface.data_browser.rapid_search import RapidSearch
 from populse_mia.user_interface.data_browser.data_browser import TableDataBrowser, \
     not_defined_value
 from populse_mia.user_interface.pop_ups import \
@@ -85,6 +86,42 @@ class NodeController(QWidget):
         # Layouts
         self.v_box_final = QVBoxLayout()
         self.h_box_node_name = QHBoxLayout()
+
+    def clearLayout(self, layout):
+        """
+        Clear the layouts of the widget
+
+        :param layout: widget with a layout
+        :return:
+        """
+        for i in reversed(range(len(layout.children()))):
+            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
+                layout.layout().itemAt(i).widget().setParent(None)
+            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout or \
+                    type(layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
+                layout.layout().itemAt(i).deleteLater()
+                for j in reversed(range(len(layout.layout().itemAt(i)))):
+                    layout.layout().itemAt(i).itemAt(j).widget().setParent(
+                        None)
+
+        if layout.layout() is not None:
+            sip.delete(layout.layout())
+
+    def display_filter(self, node_name, plug_name, parameters, process):
+        """
+        Display a filter widget
+
+        :param node_name: name of the node
+        :param plug_name: name of the plug
+        :param parameters: tuple containing the index of the plug, the current
+           pipeline instance and the type of the plug value
+        :param process: process of the node
+        """
+        self.pop_up = PlugFilter(self.project, self.scan_list, process,
+                                 node_name, plug_name, self, self.main_window)
+        self.pop_up.show()
+        self.pop_up.plug_value_changed.connect(
+            partial(self.update_plug_value_from_filter, plug_name, parameters))
 
     def display_parameters(self, node_name, process, pipeline):
         """
@@ -211,39 +248,6 @@ class NodeController(QWidget):
 
         self.setLayout(self.v_box_final)
 
-    def update_parameters(self, process=None):
-        """
-        Update the parameters values
-
-        :param process: process of the node
-        """
-
-        if process is None:
-            try:
-                process = self.current_process
-            except AttributeError:
-                # if no node has been clicked, no need to update the widget
-                return
-
-        idx = 0
-        for name, trait in process.user_traits().items():
-            if name == 'nodes_activation':
-                continue
-            if not trait.output:
-                try:
-                    value = getattr(process, name)
-                except TraitError:
-                    value = Undefined
-                self.line_edit_input[idx].setText(str(value))
-                idx += 1
-
-        idx = 0
-
-        for name, trait in process.traits(output=True).items():
-            value = getattr(process, name)
-            self.line_edit_output[idx].setText(str(value))
-            idx += 1
-
     def get_index_from_plug_name(self, plug_name, in_or_out):
         """
         Return the index of the plug label.
@@ -336,6 +340,39 @@ class NodeController(QWidget):
                 'Node name "{0}" has been changed to "{1}".'.format(
                     old_node_name, new_node_name))
 
+    def update_parameters(self, process=None):
+        """
+        Update the parameters values
+
+        :param process: process of the node
+        """
+
+        if process is None:
+            try:
+                process = self.current_process
+            except AttributeError:
+                # if no node has been clicked, no need to update the widget
+                return
+
+        idx = 0
+        for name, trait in process.user_traits().items():
+            if name == 'nodes_activation':
+                continue
+            if not trait.output:
+                try:
+                    value = getattr(process, name)
+                except TraitError:
+                    value = Undefined
+                self.line_edit_input[idx].setText(str(value))
+                idx += 1
+
+        idx = 0
+
+        for name, trait in process.traits(output=True).items():
+            value = getattr(process, name)
+            self.line_edit_output[idx].setText(str(value))
+            idx += 1
+
     def update_plug_value(self, in_or_out, plug_name, pipeline, value_type,
                           new_value=None):
         """
@@ -414,22 +451,6 @@ class NodeController(QWidget):
             'Plug "{0}" of node "{1}" has been changed to "{2}".'.format(
                 plug_name, node_name, new_value))
 
-    def display_filter(self, node_name, plug_name, parameters, process):
-        """
-        Display a filter widget
-
-        :param node_name: name of the node
-        :param plug_name: name of the plug
-        :param parameters: tuple containing the index of the plug, the current
-           pipeline instance and the type of the plug value
-        :param process: process of the node
-        """
-        self.pop_up = PlugFilter(self.project, self.scan_list, process,
-                                 node_name, plug_name, self, self.main_window)
-        self.pop_up.show()
-        self.pop_up.plug_value_changed.connect(
-            partial(self.update_plug_value_from_filter, plug_name, parameters))
-
     def update_plug_value_from_filter(self, plug_name, parameters,
                                       filter_res_list):
         """
@@ -457,26 +478,6 @@ class NodeController(QWidget):
 
         self.update_plug_value("in", plug_name, pipeline, value_type, res)
 
-    def clearLayout(self, layout):
-        """
-        Clear the layouts of the widget
-
-        :param layout: widget with a layout
-        :return:
-        """
-        for i in reversed(range(len(layout.children()))):
-            if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
-                layout.layout().itemAt(i).widget().setParent(None)
-            if type(layout.layout().itemAt(i)) == QtWidgets.QHBoxLayout or \
-                    type(layout.layout().itemAt(i)) == QtWidgets.QVBoxLayout:
-                layout.layout().itemAt(i).deleteLater()
-                for j in reversed(range(len(layout.layout().itemAt(i)))):
-                    layout.layout().itemAt(i).itemAt(j).widget().setParent(
-                        None)
-
-        if layout.layout() is not None:
-            sip.delete(layout.layout())
-
 
 class PlugFilter(QWidget):
     """Filter widget used on a node plug
@@ -485,24 +486,12 @@ class PlugFilter(QWidget):
     a rapid search and an advanced search to filter these files. Once the
     filtering is done, the result (as a list of files) is set to the plug.
 
-    Attributes:
-        - advanced_search: advanced search widget to build a complex filter
-        - main_window: parent main window
-        - plug_name: name of the selected node plug
-        - plug_value_changed: event emitted when the filtering has been done
-        - process: process instance of the selected node
-        - project: current project in the software
-        - node_controller: parent node controller
-        - rapid_search: rapid search widget to build a simple filter
-        - scans_list: list of database files to filter
-        - table_data: browser that displays the database files to filter
-
     Methods:
+        - ok_clicked: set the new value to the node plug and closes the widget
         - update_tag_to_filter: update the tag to Filter
         - update_tags: update the list of visualized tags
         - reset_search_bar: reset the search bar of the rapid search
         - search_str: update the files to display in the browser
-        - ok_clicked: sets the new value to the node plug and closes the widget
         - set_plug_value: emit a signal to set the file names to the node plug
     """
 
@@ -627,58 +616,24 @@ class PlugFilter(QWidget):
         self.setMinimumWidth(0.6 * width)
         self.setMinimumHeight(0.8 * height)
 
-    def update_tag_to_filter(self):
+    def ok_clicked(self):
         """
-        Update the tag to Filter
-
-        """
-
-        popUp = PopUpSelectTagCountTable(self.project,
-                                         self.node_controller.visibles_tags,
-                                         self.push_button_tag_filter.text())
-        if popUp.exec_():
-            self.push_button_tag_filter.setText(popUp.selected_tag)
-
-    def update_tags(self):
-        """
-        Update the list of visualized tags
+        Set the new value to the node plug and closes the widget
 
         """
 
-        dialog = QDialog()
-        visualized_tags = PopUpVisualizedTags(
-            self.project,
-            self.node_controller.visibles_tags)
-        layout = QVBoxLayout()
-        layout.addWidget(visualized_tags)
-        buttons_layout = QHBoxLayout()
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok |
-                                   QDialogButtonBox.Cancel)
-        buttons.accepted.connect(dialog.accept)
-        buttons.rejected.connect(dialog.reject)
-        buttons_layout.addWidget(buttons)
-        layout.addLayout(buttons_layout)
-        dialog.setLayout(layout)
-        dialog.show()
-        dialog.setMinimumHeight(600)
-        dialog.setMinimumWidth(600)
-        if dialog.exec():
-            new_visibilities = []
-            for x in range(visualized_tags.list_widget_selected_tags.count()):
-                visible_tag = visualized_tags.list_widget_selected_tags.item(
-                    x).text()
-                new_visibilities.append(visible_tag)
-            new_visibilities.append(TAG_FILENAME)
-            self.table_data.update_visualized_columns(
-                self.node_controller.visibles_tags, new_visibilities)
-            self.node_controller.visibles_tags = new_visibilities
-            for row in self.advanced_search.rows:
-                fields = row[2]
-                fields.clear()
-                for visible_tag in new_visibilities:
-                    fields.addItem(visible_tag)
-                fields.model().sort(0)
-                fields.addItem("All visualized tags")
+        # To use if the filters are set on plugs, which is not the case
+        # if isinstance(self.process, ProcessMIA):
+        #     (fields, conditions, values, links, nots) =
+        #     self.advanced_search.get_filters(False)
+        #
+        #
+        #     plug_filter = Filter(None, nots, values, fields,
+        #     links, conditions, "")
+        #     self.process.filters[self.plug_name] = plug_filter
+
+        self.set_plug_value()
+        self.close()
 
     def reset_search_bar(self):
         """
@@ -733,25 +688,6 @@ class PlugFilter(QWidget):
         # Rows updated
         self.table_data.update_visualized_rows(old_scan_list)
 
-    def ok_clicked(self):
-        """
-        Set the new value to the node plug and closes the widget
-
-        """
-
-        # To use if the filters are set on plugs, which is not the case
-        # if isinstance(self.process, ProcessMIA):
-        #     (fields, conditions, values, links, nots) =
-        #     self.advanced_search.get_filters(False)
-        #
-        #
-        #     plug_filter = Filter(None, nots, values, fields,
-        #     links, conditions, "")
-        #     self.process.filters[self.plug_name] = plug_filter
-
-        self.set_plug_value()
-        self.close()
-
     def set_plug_value(self):
         """
         Emit a signal to set the file names to the node plug
@@ -787,6 +723,59 @@ class PlugFilter(QWidget):
                 result_names.append(value)
 
         self.plug_value_changed.emit(result_names)
+
+    def update_tag_to_filter(self):
+        """
+        Update the tag to Filter
+
+        """
+
+        popUp = PopUpSelectTagCountTable(self.project,
+                                         self.node_controller.visibles_tags,
+                                         self.push_button_tag_filter.text())
+        if popUp.exec_():
+            self.push_button_tag_filter.setText(popUp.selected_tag)
+
+    def update_tags(self):
+        """
+        Update the list of visualized tags
+
+        """
+
+        dialog = QDialog()
+        visualized_tags = PopUpVisualizedTags(
+            self.project,
+            self.node_controller.visibles_tags)
+        layout = QVBoxLayout()
+        layout.addWidget(visualized_tags)
+        buttons_layout = QHBoxLayout()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok |
+                                   QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        buttons_layout.addWidget(buttons)
+        layout.addLayout(buttons_layout)
+        dialog.setLayout(layout)
+        dialog.show()
+        dialog.setMinimumHeight(600)
+        dialog.setMinimumWidth(600)
+        if dialog.exec():
+            new_visibilities = []
+            for x in range(visualized_tags.list_widget_selected_tags.count()):
+                visible_tag = visualized_tags.list_widget_selected_tags.item(
+                    x).text()
+                new_visibilities.append(visible_tag)
+            new_visibilities.append(TAG_FILENAME)
+            self.table_data.update_visualized_columns(
+                self.node_controller.visibles_tags, new_visibilities)
+            self.node_controller.visibles_tags = new_visibilities
+            for row in self.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in new_visibilities:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")
 
 
 class FilterWidget(QWidget):
@@ -831,8 +820,7 @@ class FilterWidget(QWidget):
 
         super(FilterWidget, self).__init__(None)
 
-        from populse_mia.user_interface.data_browser.rapid_search import RapidSearch
-
+        self.setWindowTitle("Filter - " + node_name)
         self.project = project
         self.visible_tags = self.project.session.get_shown_tags()
         self.node = node
@@ -852,8 +840,6 @@ class FilterWidget(QWidget):
 
         self.scan_list = scan_list
 
-        self.setWindowTitle("Filter - " + node_name)
-
         # Graphical components
         self.table_data = TableDataBrowser(self.project, self,
                                            self.visible_tags, False, False)
@@ -868,23 +854,11 @@ class FilterWidget(QWidget):
         # Filter information
         filter_to_apply = node.process.filter
 
-        search_bar_layout = QHBoxLayout()
-
+        # Search
         self.rapid_search = RapidSearch(self)
         if filter_to_apply.search_bar:
             self.rapid_search.setText(filter_to_apply.search_bar)
         self.rapid_search.textChanged.connect(partial(self.search_str))
-
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))), "sources_images")
-        self.button_cross = QToolButton()
-        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
-        self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir,
-                                                     'gray_cross.png')))
-        self.button_cross.clicked.connect(self.reset_search_bar)
-
-        search_bar_layout.addWidget(self.rapid_search)
-        search_bar_layout.addWidget(self.button_cross)
 
         self.advanced_search = AdvancedSearch(self.project, self,
                                               self.scan_list,
@@ -893,10 +867,29 @@ class FilterWidget(QWidget):
         self.advanced_search.show_search()
         self.advanced_search.apply_filter(filter_to_apply)
 
+        # Initialize Qt objects
+        self.button_cross = QToolButton()
+        self.push_button_tag_filter = QPushButton(TAG_FILENAME)
+
+        self.layout_view()
+
+    def layout_view(self):
+
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.realpath(__file__))), "sources_images")
+
+        self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
+        self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir,
+                                                     'gray_cross.png')))
+        self.button_cross.clicked.connect(self.reset_search_bar)
+
+        search_bar_layout = QHBoxLayout()
+        search_bar_layout.addWidget(self.rapid_search)
+        search_bar_layout.addWidget(self.button_cross)
+
         push_button_tags = QPushButton("Visualized tags")
         push_button_tags.clicked.connect(self.update_tags)
 
-        self.push_button_tag_filter = QPushButton(TAG_FILENAME)
         self.push_button_tag_filter.clicked.connect(self.update_tag_to_filter)
 
         push_button_ok = QPushButton("OK")
@@ -926,55 +919,20 @@ class FilterWidget(QWidget):
         self.setMinimumWidth(0.6 * width)
         self.setMinimumHeight(0.8 * height)
 
-    def update_tag_to_filter(self):
+    def ok_clicked(self):
         """
-        Update the tag to Filter
-
-        """
-
-        pop_up = PopUpSelectTagCountTable(self.project, self.visible_tags,
-                                          self.push_button_tag_filter.text())
-        if pop_up.exec_():
-            self.push_button_tag_filter.setText(pop_up.selected_tag)
-
-    def update_tags(self):
-        """
-        Update the list of visualized tags
+        Set the filter to the process and closes the widget
 
         """
+        if isinstance(self.process, ProcessMIA):
+            (fields, conditions,
+             values, links, nots) = self.advanced_search.get_filters(False)
+            filt = Filter(None, nots, values,
+                          fields, links, conditions, self.rapid_search.text())
+            self.process.filter = filt
 
-        dialog = QDialog()
-        visualized_tags = PopUpVisualizedTags(self.project, self.visible_tags)
-        layout = QVBoxLayout()
-        layout.addWidget(visualized_tags)
-        buttons_layout = QHBoxLayout()
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok |
-                                   QDialogButtonBox.Cancel)
-        buttons.accepted.connect(dialog.accept)
-        buttons.rejected.connect(dialog.reject)
-        buttons_layout.addWidget(buttons)
-        layout.addLayout(buttons_layout)
-        dialog.setLayout(layout)
-        dialog.show()
-        dialog.setMinimumHeight(600)
-        dialog.setMinimumWidth(600)
-        if dialog.exec():
-            new_visibilities = []
-            for x in range(visualized_tags.list_widget_selected_tags.count()):
-                visible_tag = visualized_tags.list_widget_selected_tags.item(
-                    x).text()
-                new_visibilities.append(visible_tag)
-            new_visibilities.append(TAG_FILENAME)
-            self.table_data.update_visualized_columns(self.visible_tags,
-                                                      new_visibilities)
-            self.node_controller.visibles_tags = new_visibilities
-            for row in self.advanced_search.rows:
-                fields = row[2]
-                fields.clear()
-                for visible_tag in new_visibilities:
-                    fields.addItem(visible_tag)
-                fields.model().sort(0)
-                fields.addItem("All visualized tags")
+        self.set_output_value()
+        self.close()
 
     def reset_search_bar(self):
         """
@@ -1026,21 +984,6 @@ class FilterWidget(QWidget):
         # Rows updated
         self.table_data.update_visualized_rows(old_scan_list)
 
-    def ok_clicked(self):
-        """
-        Set the filter to the process and closes the widget
-
-        """
-        if isinstance(self.process, ProcessMIA):
-            (fields, conditions,
-             values, links, nots) = self.advanced_search.get_filters(False)
-            filt = Filter(None, nots, values,
-                          fields, links, conditions, self.rapid_search.text())
-            self.process.filter = filt
-
-        self.set_output_value()
-        self.close()
-
     def set_output_value(self):
         """
         Set the output of the filter to the output of the node
@@ -1067,3 +1010,52 @@ class FilterWidget(QWidget):
 
         self.node.set_plug_value("output", result_files)
 
+    def update_tag_to_filter(self):
+        """
+        Update the tag to Filter
+
+        """
+
+        pop_up = PopUpSelectTagCountTable(self.project, self.visible_tags,
+                                          self.push_button_tag_filter.text())
+        if pop_up.exec_():
+            self.push_button_tag_filter.setText(pop_up.selected_tag)
+
+    def update_tags(self):
+        """
+        Update the list of visualized tags
+
+        """
+
+        dialog = QDialog()
+        visualized_tags = PopUpVisualizedTags(self.project, self.visible_tags)
+        layout = QVBoxLayout()
+        layout.addWidget(visualized_tags)
+        buttons_layout = QHBoxLayout()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok |
+                                   QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        buttons_layout.addWidget(buttons)
+        layout.addLayout(buttons_layout)
+        dialog.setLayout(layout)
+        dialog.show()
+        dialog.setMinimumHeight(600)
+        dialog.setMinimumWidth(600)
+        if dialog.exec():
+            new_visibilities = []
+            for x in range(visualized_tags.list_widget_selected_tags.count()):
+                visible_tag = visualized_tags.list_widget_selected_tags.item(
+                    x).text()
+                new_visibilities.append(visible_tag)
+            new_visibilities.append(TAG_FILENAME)
+            self.table_data.update_visualized_columns(self.visible_tags,
+                                                      new_visibilities)
+            self.node_controller.visibles_tags = new_visibilities
+            for row in self.advanced_search.rows:
+                fields = row[2]
+                fields.clear()
+                for visible_tag in new_visibilities:
+                    fields.addItem(visible_tag)
+                fields.model().sort(0)
+                fields.addItem("All visualized tags")

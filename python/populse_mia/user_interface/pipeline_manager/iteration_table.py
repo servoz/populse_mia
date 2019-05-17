@@ -139,6 +139,61 @@ class IterationTable(QWidget):
         self.setLayout(self.v_layout)
         self.refresh_layout()
 
+    def add_tag(self):
+        """Add a tag to visualize in the iteration table.
+
+        Used only for tests
+        """
+
+        idx = len(self.push_buttons)
+        push_button = QPushButton()
+        push_button.setText('Tag n°' + str(len(self.push_buttons) + 1))
+        push_button.clicked.connect(lambda: self.select_visualized_tag(idx))
+        self.push_buttons.insert(len(self.push_buttons), push_button)
+        self.refresh_layout()
+
+    def emit_iteration_table_updated(self):
+        """
+        Emit a signal when the iteration scans have been updated
+
+        """
+
+        if self.check_box_iterate.checkState():
+            if hasattr(self, 'scans'):
+                self.iteration_table_updated.emit(self.iteration_scans)
+            else:
+                self.iteration_table_updated.emit(self.scan_list)
+        else:
+            self.iteration_table_updated.emit(self.scan_list)
+
+    def fill_values(self, idx):
+        """
+        Fill values_list depending on the visualized tags
+
+        :param idx:
+        """
+
+        """ Method that fills the values list when a tag is added
+        or removed. """
+        tag_name = self.push_buttons[idx].text()
+        values = []
+        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
+            if current_value is not None:
+                values.append(current_value)
+
+        idx_to_fill = len(self.values_list)
+        while len(self.values_list) <= idx:
+            self.values_list.insert(idx_to_fill, [])
+            idx_to_fill += 1
+
+        if self.values_list[idx] is not None:
+            self.values_list[idx] = []
+
+        for value in values:
+            if value not in self.values_list[idx]:
+                self.values_list[idx].append(value)
+
     def refresh_layout(self):
         """Update the layout of the widget.
 
@@ -178,19 +233,6 @@ class IterationTable(QWidget):
 
         self.v_layout.addLayout(self.h_box)
 
-    def add_tag(self):
-        """Add a tag to visualize in the iteration table.
-
-        Used only for tests
-        """
-
-        idx = len(self.push_buttons)
-        push_button = QPushButton()
-        push_button.setText('Tag n°' + str(len(self.push_buttons) + 1))
-        push_button.clicked.connect(lambda: self.select_visualized_tag(idx))
-        self.push_buttons.insert(len(self.push_buttons), push_button)
-        self.refresh_layout()
-
     def remove_tag(self):
         """Remove a tag to visualize in the iteration table.
 
@@ -202,6 +244,62 @@ class IterationTable(QWidget):
         del self.push_buttons[-1]
         del self.values_list[-1]
         self.refresh_layout()
+
+    def select_iteration_tag(self):
+        """
+        Open a pop-up to let the user select on which tag to iterate
+
+        """
+
+        ui_select = PopUpSelectTagCountTable(self.project,
+                                             self.project.session.get_fields_names(COLLECTION_CURRENT),
+                                             self.iterated_tag)
+        if ui_select.exec_():
+            self.update_iterated_tag(ui_select.selected_tag)
+
+    def select_visualized_tag(self, idx):
+        """
+        Open a pop-up to let the user select which tag to visualize in the iteration table
+
+        :param idx: index of the clicked push button
+        """
+
+        popUp = PopUpSelectTagCountTable(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
+                                         self.push_buttons[idx].text())
+        if popUp.exec_():
+            self.push_buttons[idx].setText(popUp.selected_tag)
+            self.fill_values(idx)
+            self.update_table()
+
+    def update_iterated_tag(self, tag_name):
+        """
+        Update the widget when the iterated tag is modified
+
+        :param tag_name: name of the iterated tag
+        """
+
+        if not self.scan_list:
+            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+
+        self.iterated_tag_push_button.setText(tag_name)
+        self.iterated_tag = tag_name
+        self.iterated_tag_label.setText(tag_name + ":")
+
+        # Update combo_box
+        scans_names = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        scans_names = list(set(scans_names).intersection(self.scan_list))
+
+        # tag_values_list contains all the values that can take the iterated tag
+        self.tag_values_list = []
+        for scan_name in scans_names:
+            tag_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            if str(tag_value) not in self.tag_values_list:
+                self.tag_values_list.append(str(tag_value))
+
+        self.combo_box.clear()
+        self.combo_box.addItems(self.tag_values_list)
+
+        self.update_table()
 
     def update_table(self):
         """
@@ -250,101 +348,3 @@ class IterationTable(QWidget):
 
         # This will change the scans list in the current Pipeline Manager tab
         self.iteration_table_updated.emit(self.iteration_scans)
-
-    def select_visualized_tag(self, idx):
-        """
-        Open a pop-up to let the user select which tag to visualize in the iteration table
-
-        :param idx: index of the clicked push button
-        """
-
-        popUp = PopUpSelectTagCountTable(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
-                                         self.push_buttons[idx].text())
-        if popUp.exec_():
-            self.push_buttons[idx].setText(popUp.selected_tag)
-            self.fill_values(idx)
-            self.update_table()
-
-    def fill_values(self, idx):
-        """
-        Fill values_list depending on the visualized tags
-
-        :param idx:
-        """
-
-        """ Method that fills the values list when a tag is added
-        or removed. """
-        tag_name = self.push_buttons[idx].text()
-        values = []
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
-            if current_value is not None:
-                values.append(current_value)
-
-        idx_to_fill = len(self.values_list)
-        while len(self.values_list) <= idx:
-            self.values_list.insert(idx_to_fill, [])
-            idx_to_fill += 1
-
-        if self.values_list[idx] is not None:
-            self.values_list[idx] = []
-
-        for value in values:
-            if value not in self.values_list[idx]:
-                self.values_list[idx].append(value)
-
-    def select_iteration_tag(self):
-        """
-        Open a pop-up to let the user select on which tag to iterate
-
-        """
-
-        ui_select = PopUpSelectTagCountTable(self.project,
-                                             self.project.session.get_fields_names(COLLECTION_CURRENT),
-                                             self.iterated_tag)
-        if ui_select.exec_():
-            self.update_iterated_tag(ui_select.selected_tag)
-
-    def update_iterated_tag(self, tag_name):
-        """
-        Update the widget when the iterated tag is modified
-
-        :param tag_name: name of the iterated tag
-        """
-
-        if not self.scan_list:
-            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
-
-        self.iterated_tag_push_button.setText(tag_name)
-        self.iterated_tag = tag_name
-        self.iterated_tag_label.setText(tag_name + ":")
-
-        # Update combo_box
-        scans_names = self.project.session.get_documents_names(COLLECTION_CURRENT)
-        scans_names = list(set(scans_names).intersection(self.scan_list))
-
-        # tag_values_list contains all the values that can take the iterated tag
-        self.tag_values_list = []
-        for scan_name in scans_names:
-            tag_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
-            if str(tag_value) not in self.tag_values_list:
-                self.tag_values_list.append(str(tag_value))
-
-        self.combo_box.clear()
-        self.combo_box.addItems(self.tag_values_list)
-
-        self.update_table()
-
-    def emit_iteration_table_updated(self):
-        """
-        Emit a signal when the iteration scans have been updated
-
-        """
-
-        if self.check_box_iterate.checkState():
-            if hasattr(self, 'scans'):
-                self.iteration_table_updated.emit(self.iteration_scans)
-            else:
-                self.iteration_table_updated.emit(self.scan_list)
-        else:
-            self.iteration_table_updated.emit(self.scan_list)

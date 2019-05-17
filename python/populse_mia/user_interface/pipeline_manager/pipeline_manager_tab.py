@@ -71,29 +71,30 @@ class PipelineManagerTab(QWidget):
     Widget that handles the Pipeline Manager tab.
 
     Methods:
-        - controller_value_changed: updates history when a pipeline node is
+        - controller_value_changed: update history when a pipeline node is
           changed
-        - displayNodeParameters: displays the node controller when a node is
+        - displayNodeParameters: display the node controller when a node is
           clicked
-        - init_pipeline: initializes the current pipeline of the pipeline
+        - init_pipeline: initialize the current pipeline of the pipeline
           editor
-        - loadParameters: loads pipeline parameters to the current pipeline of
+        - layout_view : initialize layout for the pipeline manager
+        - loadParameters: load pipeline parameters to the current pipeline of
           the pipeline editor
-        - loadPipeline: loads a pipeline to the pipeline editor
+        - loadPipeline: load a pipeline to the pipeline editor
         - redo: redo the last undone action on the current pipeline editor
-        - runPipeline: runs the current pipeline of the pipeline editor
+        - runPipeline: run the current pipeline of the pipeline editor
         - saveParameters: save the pipeline parameters of the the current
           pipeline of the pipeline editor
-        - savePipeline: saves the current pipeline of the pipeline editor
-        - savePipelineAs: saves the current pipeline of the pipeline editor
+        - savePipeline: save the current pipeline of the pipeline editor
+        - savePipelineAs: save the current pipeline of the pipeline editor
           under another name
         - undo: undo the last action made on the current pipeline editor
-        - updateProcessLibrary: updates the library of processes when a
+        - updateProcessLibrary: update the library of processes when a
           pipeline is saved
-        - update_clinical_mode: updates the visibility of widgets/actions
+        - update_clinical_mode: update the visibility of widgets/actions
           depending of the chosen mode
-        - update_project: updates the project attribute of several objects
-        - update_scans_list: updates the user-selected list of scans
+        - update_project: update the project attribute of several objects
+        - update_scans_list: update the user-selected list of scans
     """
 
     item_library_clicked = QtCore.Signal(str)
@@ -126,12 +127,9 @@ class PipelineManagerTab(QWidget):
         self.iteration_table_scans_list = []
 
         QWidget.__init__(self)
-        self.setWindowTitle("Diagram editor")
 
         self.verticalLayout = QVBoxLayout(self)
-
         self.processLibrary = ProcessLibraryWidget(self.main_window)
-
         self.processLibrary.process_library.item_library_clicked.connect(
             self.item_library_clicked)
         self.item_library_clicked.connect(self._show_preview)
@@ -145,7 +143,6 @@ class PipelineManagerTab(QWidget):
             self.displayNodeParameters)
         self.pipelineEditorTabs.pipeline_saved.connect(
             self.updateProcessLibrary)
-
         self.nodeController = NodeController(
             self.project, self.scan_list, self, self.main_window)
         self.nodeController.visibles_tags = \
@@ -156,9 +153,11 @@ class PipelineManagerTab(QWidget):
         self.iterationTable.iteration_table_updated.connect(
             self.update_scans_list)
 
-        self.scrollArea = QScrollArea()
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setWidget(self.nodeController)
+        self.previewBlock = PipelineDevelopperView(
+            pipeline=None, allow_open_controller=False,
+            show_sub_pipelines=True, enable_edition=False)
+
+        self.startedConnection = None
 
         # Actions
         self.load_pipeline_action = QAction("Load pipeline", self)
@@ -186,71 +185,25 @@ class PipelineManagerTab(QWidget):
         self.run_pipeline_action = QAction("Run pipeline", self)
         self.run_pipeline_action.triggered.connect(self.runPipeline)
 
-        # Toolbar
-        self.menu_toolbar = QToolBar()
-
-        self.tags_menu = QMenu()
-        self.tags_menu.addAction(self.load_pipeline_action)
-        self.tags_menu.addAction(self.save_pipeline_action)
-        self.tags_menu.addAction(self.save_pipeline_as_action)
-        self.tags_menu.addSeparator()
-        self.tags_menu.addAction(self.load_pipeline_parameters_action)
-        self.tags_menu.addAction(self.save_pipeline_parameters_action)
-        self.tags_menu.addSeparator()
-        self.tags_menu.addAction(self.init_pipeline_action)
-        self.tags_menu.addAction(self.run_pipeline_action)
-
         if config.get_clinical_mode() == 'yes':
             self.save_pipeline_action.setDisabled(True)
             self.save_pipeline_as_action.setDisabled(True)
-
-        self.tags_tool_button = QtWidgets.QToolButton()
-        self.tags_tool_button.setText('Pipeline')
-        self.tags_tool_button.setPopupMode(
-            QtWidgets.QToolButton.MenuButtonPopup)
-        self.tags_tool_button.setMenu(self.tags_menu)
-
-        # Layouts
-        self.hLayout = QHBoxLayout()
-        self.hLayout.addWidget(self.tags_tool_button)
-        self.hLayout.addStretch(1)
-
-        self.splitterRight = QSplitter(Qt.Vertical)
-        self.splitterRight.addWidget(self.iterationTable)
-        self.splitterRight.addWidget(self.scrollArea)
-        self.splitterRight.setSizes([400, 400])
-
-        # previewScene = QGraphicsScene()
-        # previewScene.setSceneRect(QtCore.QRectF())
-        # self.previewDiagram = QGraphicsView()
-        # self.previewDiagram.setEnabled(False)
-
-        self.previewBlock = PipelineDevelopperView(
-            pipeline=None, allow_open_controller=False,
-            show_sub_pipelines=True, enable_edition=False)
-
-        self.splitter0 = QSplitter(Qt.Vertical)
-        self.splitter0.addWidget(self.processLibrary)
-        self.splitter0.addWidget(self.previewBlock)
-
-        self.splitter1 = QSplitter(Qt.Horizontal)
-        self.splitter1.addWidget(self.splitter0)
-        self.splitter1.addWidget(self.pipelineEditorTabs)
-        self.splitter1.addWidget(self.splitterRight)
-        self.splitter1.setSizes([200, 800, 200])
-
-        if config.get_clinical_mode() == 'yes':
             self.processLibrary.setHidden(True)
             self.previewBlock.setHidden(True)
 
-        # self.splitter2 = QSplitter(Qt.Vertical)
-        # self.splitter2.addWidget(self.splitter1)
-        # self.splitter2.setSizes([800, 100])
+        # Initialize toolbar
+        self.menu_toolbar = QToolBar()
+        self.tags_menu = QMenu()
+        self.tags_tool_button = QtWidgets.QToolButton()
+        self.scrollArea = QScrollArea()
 
-        self.verticalLayout.addLayout(self.hLayout)
-        self.verticalLayout.addWidget(self.splitter1)
+        # Initialize Qt layout
+        self.hLayout = QHBoxLayout()
+        self.splitterRight = QSplitter(Qt.Vertical)
+        self.splitter0 = QSplitter(Qt.Vertical)
+        self.splitter1 = QSplitter(Qt.Horizontal)
 
-        self.startedConnection = None
+        self.layout_view()
 
         # To undo/redo
         self.nodeController.value_changed.connect(
@@ -893,6 +846,58 @@ class PipelineManagerTab(QWidget):
                 pipeline)
         self.main_window.statusBar().showMessage(
             'Pipeline "{0}" has been initialized.'.format(name))
+
+    def layout_view(self):
+        """Initialize layout for the pipeline manager tab"""
+        self.setWindowTitle("Diagram editor")
+
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setWidget(self.nodeController)
+
+        # Toolbar
+        self.tags_menu.addAction(self.load_pipeline_action)
+        self.tags_menu.addAction(self.save_pipeline_action)
+        self.tags_menu.addAction(self.save_pipeline_as_action)
+        self.tags_menu.addSeparator()
+        self.tags_menu.addAction(self.load_pipeline_parameters_action)
+        self.tags_menu.addAction(self.save_pipeline_parameters_action)
+        self.tags_menu.addSeparator()
+        self.tags_menu.addAction(self.init_pipeline_action)
+        self.tags_menu.addAction(self.run_pipeline_action)
+
+        self.tags_tool_button.setText('Pipeline')
+        self.tags_tool_button.setPopupMode(
+            QtWidgets.QToolButton.MenuButtonPopup)
+        self.tags_tool_button.setMenu(self.tags_menu)
+
+        # Layouts
+
+        self.hLayout.addWidget(self.tags_tool_button)
+        self.hLayout.addStretch(1)
+
+        self.splitterRight.addWidget(self.iterationTable)
+        self.splitterRight.addWidget(self.scrollArea)
+        self.splitterRight.setSizes([400, 400])
+
+        # previewScene = QGraphicsScene()
+        # previewScene.setSceneRect(QtCore.QRectF())
+        # self.previewDiagram = QGraphicsView()
+        # self.previewDiagram.setEnabled(False)
+
+        self.splitter0.addWidget(self.processLibrary)
+        self.splitter0.addWidget(self.previewBlock)
+
+        self.splitter1.addWidget(self.splitter0)
+        self.splitter1.addWidget(self.pipelineEditorTabs)
+        self.splitter1.addWidget(self.splitterRight)
+        self.splitter1.setSizes([200, 800, 200])
+
+        # self.splitter2 = QSplitter(Qt.Vertical)
+        # self.splitter2.addWidget(self.splitter1)
+        # self.splitter2.setSizes([800, 100])
+
+        self.verticalLayout.addLayout(self.hLayout)
+        self.verticalLayout.addWidget(self.splitter1)
 
     def loadPipeline(self):
         """
