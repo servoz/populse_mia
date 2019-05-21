@@ -130,7 +130,7 @@ class MainWindow(QMainWindow):
         # Define main window view
         self.create_view_window()
 
-        # Menubar
+        # Initialize menu
         self.menu_file = self.menuBar().addMenu('File')
         self.menu_edition = self.menuBar().addMenu('Edit')
         self.menu_help = self.menuBar().addMenu('Help')
@@ -138,11 +138,35 @@ class MainWindow(QMainWindow):
         self.menu_more = self.menuBar().addMenu('More')
         self.menu_install_process = QMenu('Install processes', self)
         self.menu_saved_projects = QMenu('Saved projects', self)
+
+        # Initialize menu actions
+        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.realpath(__file__))),
+            "sources_images")
         self.action_save_project = self.menu_file.addAction("Save project")
         self.action_save_project_as = self.menu_file.addAction("Save "
                                                                "project as")
+        self.action_create = QAction('New project', self)
+        self.action_open = QAction('Open project', self)
+        self.action_save = QAction('Save', self)
+        self.action_save_as = QAction('Save as', self)
+        self.action_import = QAction(QIcon(os.path.join(sources_images_dir,
+                                                        'Blue.png')),
+                                     'Import', self)
+        self.action_see_all_projects = QAction('See all projects', self)
+        self.action_project_properties = QAction('Project properties', self)
+        self.action_software_preferences = QAction('MIA preferences', self)
+        self.action_package_library = QAction('Package library manager', self)
+        self.action_exit = QAction(QIcon(os.path.join(sources_images_dir,
+                                                      'exit.png')), 'Exit',
+                                   self)
+        self.action_undo = QAction('Undo', self)
+        self.action_redo = QAction('Redo', self)
+        self.action_documentation = QAction('Documentation', self)
+        self.action_install_processes_folder = QAction('From folder', self)
+        self.action_install_processes_zip = QAction('From zip file', self)
 
-        # Initialize actions & menus views
+        # Connect actions & menus views
         self.create_view_actions()
         self.create_view_menus()
 
@@ -210,60 +234,31 @@ class MainWindow(QMainWindow):
     def create_view_actions(self):
         """Create the actions and their shortcuts in each menu"""
 
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))),
-                                          "sources_images")
-        self.action_create = QAction('New project', self)
         self.action_create.setShortcut('Ctrl+N')
-
-        self.action_open = QAction('Open project', self)
         self.action_open.setShortcut('Ctrl+O')
-
-        self.action_save = QAction('Save', self)
         self.action_save.setShortcut('Ctrl+S')
         self.addAction(self.action_save)
 
-        self.action_save_as = QAction('Save as', self)
         self.action_save_as.setShortcut('Ctrl+Shift+S')
         self.addAction(self.action_save_as)
 
-        self.action_import = QAction(QIcon( os.path.join(sources_images_dir,
-                                                         'Blue.png')),
-                                     'Import', self)
         self.action_import.setShortcut('Ctrl+I')
 
         for i in range(self.config.get_max_projects()):
             self.saved_projects_actions.append(QAction(self, visible=False,
                                             triggered=self.open_recent_project)
                                                )
-
-        self.action_see_all_projects = QAction('See all projects', self)
-
-        self.action_project_properties = QAction('Project properties', self)
-
-        self.action_software_preferences = QAction('MIA preferences', self)
-
-        self.action_package_library = QAction('Package library manager', self)
         if Config().get_clinical_mode() == 'yes':
             self.action_package_library.setDisabled(True)
         else:
             self.action_package_library.setEnabled(True)
 
-        self.action_exit = QAction(QIcon(os.path.join(sources_images_dir,
-                                                      'exit.png')), 'Exit',
-                                   self)
         self.action_exit.setShortcut('Ctrl+W')
 
-        self.action_undo = QAction('Undo', self)
         self.action_undo.setShortcut('Ctrl+Z')
 
-        self.action_redo = QAction('Redo', self)
         self.action_redo.setShortcut('Ctrl+Y')
 
-        self.action_documentation = QAction('Documentation', self)
-
-        self.action_install_processes_folder = QAction('From folder', self)
-        self.action_install_processes_zip = QAction('From zip file', self)
         # if Config().get_clinical_mode() == 'yes':
         #     self.action_install_processes.setDisabled(True)
         # else:
