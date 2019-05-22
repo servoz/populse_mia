@@ -19,7 +19,7 @@ Contains:
 
 # Populse_MIA imports
 from populse_mia.user_interface import data_browser
-from populse_mia.database_manager.project import project
+from populse_mia.data_manager import project
 
 
 class Filter:

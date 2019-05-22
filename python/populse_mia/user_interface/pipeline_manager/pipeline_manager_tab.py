@@ -47,14 +47,14 @@ from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.user_interface.pop_ups import PopUpSelectIteration
 from populse_mia.user_interface.pipeline_manager.iteration_table import IterationTable
 
-from populse_mia.database_manager.project.project import COLLECTION_CURRENT, \
+from populse_mia.data_manager.project import COLLECTION_CURRENT, \
     COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
     BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, \
     TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
 from populse_mia.user_interface.pipeline_manager.node_controller import NodeController
 from populse_mia.user_interface.pipeline_manager.pipeline_editor import PipelineEditorTabs
 from populse_mia.user_interface.pipeline_manager.process_library import ProcessLibraryWidget
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config
 
 if sys.version_info[0] >= 3:
     unicode = str

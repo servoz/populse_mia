@@ -21,10 +21,10 @@ import unittest
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from populse_mia.database_manager.project.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
+from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from populse_mia.user_interface.main_window import MainWindow
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config
 from capsul.api import get_process_instance
 
 

@@ -10,7 +10,6 @@ mia's GUI.
         - PackagesInstall
 
     :Function:
-
         - launch_mia
         - main
         - verify_processes
@@ -174,13 +173,13 @@ def launch_mia():
 
     # populse_mia imports
     from populse_mia.user_interface.main_window import MainWindow
-    from populse_mia.database_manager.project.project import Project
-    from populse_mia.database_manager.software_properties.config import Config
+    from populse_mia.data_manager.project import Project
+    from populse_mia.software_properties import Config
 
     def _my_excepthook(etype, evalue, tback):
 
         def _clean_up():
-            from populse_mia.database_manager.software_properties.config import Config
+            from populse_mia.software_properties import Config
 
             global main_window
             config = Config()
@@ -208,7 +207,7 @@ def launch_mia():
     def _verify_saved_projects():
 
         # Populse_MIA imports
-        from populse_mia.database_manager.software_properties.saved_projects \
+        from populse_mia.data_manager.project_properties \
             import SavedProjects
 
         saved_projects_object = SavedProjects()
@@ -527,7 +526,7 @@ def verify_processes():
     """
 
     # populse_mia imports
-    from populse_mia.database_manager.software_properties.config import Config
+    from populse_mia.software_properties import Config
     from populse_mia.utils.utils import verCmp
 
     def _deepCompDic(old_dic, new_dic, level="0"):

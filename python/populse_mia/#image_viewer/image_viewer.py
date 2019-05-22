@@ -22,7 +22,7 @@
 #     QAction, QTextEdit, QTableWidget, QTableWidgetItem, QToolBar, QToolButton, QAbstractScrollArea
 # from scipy.ndimage import rotate  # to work with NumPy arrays
 #
-# from populse_mia.database_manager.software_properties.config import Config
+# from populse_mia.software_properties import Config
 #
 # import nibabel as nib  # to read nifti file
 # import numpy as np  # a N-dimensional array object

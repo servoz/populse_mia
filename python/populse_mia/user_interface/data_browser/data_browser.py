@@ -50,12 +50,12 @@ from populse_mia.user_interface.pop_ups import \
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import check_value_type, set_item_data, \
     table_to_database
-from populse_mia.database_manager.project.project import COLLECTION_CURRENT, \
+from populse_mia.data_manager.project import COLLECTION_CURRENT, \
     COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, \
     TAG_FILENAME, TAG_BRICKS, BRICK_NAME
-from populse_mia.database_manager.project.database_mia import TAG_ORIGIN_BUILTIN, \
+from populse_mia.data_manager.database_mia import TAG_ORIGIN_BUILTIN, \
     TAG_ORIGIN_USER
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, \

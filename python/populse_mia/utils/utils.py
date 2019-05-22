@@ -303,7 +303,7 @@ def verCmp(first_ver, sec_ver, comp):
             return False
 
 # Populse_MIA imports
-#from populse_mia.database_manager.software_properties.config import Config
+#from populse_mia.software_properties import Config
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN, \
@@ -599,4 +599,4 @@ def verCmp(first_ver, sec_ver, comp):
                       ## to the end of the module. http://effbot.org/zone/import-confusion.htm
                       ## This not desirable, to be modified if possible during
                       ## the switch to the VMC architecture!
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config

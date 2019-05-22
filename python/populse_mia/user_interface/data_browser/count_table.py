@@ -21,7 +21,7 @@ from PyQt5.QtCore import Qt
 from populse_mia.user_interface.pop_ups import PopUpSelectTagCountTable
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import set_item_data, table_to_database
-from populse_mia.database_manager.project.project import COLLECTION_CURRENT, TAG_FILENAME
+from populse_mia.data_manager.project import COLLECTION_CURRENT, TAG_FILENAME
 
 
 class CountTable(QDialog):

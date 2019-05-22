@@ -20,7 +20,7 @@ import yaml
 
 # Populse_MIA imports
 from populse_mia.utils.utils import verCmp
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config
 
 
 class SavedProjects:

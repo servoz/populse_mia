@@ -32,15 +32,15 @@ from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, \
     QApplication, QLabel
 
 # Populse_MIA imports
-from populse_mia.database_manager.software_properties.saved_projects import SavedProjects
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.data_manager.project_properties import SavedProjects
+from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser.data_browser import DataBrowser
 from populse_mia.user_interface.pipeline_manager.pipeline_manager_tab import \
     PipelineManagerTab
 from populse_mia.user_interface.pipeline_manager.process_library import InstallProcesses, \
     PackageLibraryDialog
-import populse_mia.database_manager.project.controller as controller
-from populse_mia.database_manager.project.project import Project, COLLECTION_CURRENT
+import populse_mia.data_manager.data_loader as data_loader
+from populse_mia.data_manager.project import Project, COLLECTION_CURRENT
 from populse_mia.user_interface.pop_ups import PopUpDeletedProject, \
     PopUpNewProject, PopUpOpenProject, PopUpPreferences, PopUpProperties, \
     PopUpSaveProjectAs, PopUpQuit, PopUpSeeAllProjects
@@ -453,7 +453,7 @@ class MainWindow(QMainWindow):
         if code_exit == 0:
 
             # Database filled
-            new_scans = controller.read_log(self.project, self)
+            new_scans = data_loader.read_log(self.project, self)
 
             # Table updated
             documents = self.project.session.get_documents_names(
@@ -878,7 +878,7 @@ class MainWindow(QMainWindow):
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()
                         return False
-                    problem_list = controller.verify_scans(temp_database)
+                    problem_list = data_loader.verify_scans(temp_database)
 
                     # Message if invalid files
                     if problem_list:

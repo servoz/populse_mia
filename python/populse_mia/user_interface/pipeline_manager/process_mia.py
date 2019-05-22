@@ -14,7 +14,7 @@ from traits.trait_handlers import TraitListObject
 from capsul.api import Process
 
 # Populse_MIA imports
-from populse_mia.database_manager.project.project import COLLECTION_BRICK, BRICK_EXEC, \
+from populse_mia.data_manager.project import COLLECTION_BRICK, BRICK_EXEC, \
     BRICK_EXEC_TIME, TAG_BRICKS, COLLECTION_INITIAL, COLLECTION_CURRENT, \
     BRICK_OUTPUTS
 

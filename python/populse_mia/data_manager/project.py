@@ -28,10 +28,10 @@ from PyQt5.QtCore import QCoreApplication
 
 # Populse_MIA imports
 from populse_mia.utils.utils import verCmp
-from populse_mia.database_manager.project.filter import Filter
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.data_manager.filter import Filter
+from populse_mia.software_properties import Config
 from populse_mia.utils.utils import set_item_data
-from populse_mia.database_manager.project.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, \
+from populse_mia.data_manager.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, \
     TAG_ORIGIN_USER
 
 # Populse_db imports

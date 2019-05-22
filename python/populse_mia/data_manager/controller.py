@@ -38,10 +38,10 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QProgressDialog
 
 # Populse_MIA imports
-from populse_mia.database_manager.project.project import COLLECTION_CURRENT, \
+from populse_mia.data_manager.project import COLLECTION_CURRENT, \
     COLLECTION_INITIAL, TAG_CHECKSUM, TAG_TYPE, TAG_FILENAME, \
     TYPE_NII
-from populse_mia.database_manager.project.database_mia import TAG_ORIGIN_BUILTIN, \
+from populse_mia.data_manager.database_mia import TAG_ORIGIN_BUILTIN, \
     TAG_ORIGIN_USER
 
 # Populse_db imports

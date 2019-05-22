@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidget, QVBoxLayout, QHBoxLayout,\
 
 # Populse_MIA imports
 from populse_mia.utils.utils import check_value_type
-from populse_mia.database_manager.project.project import COLLECTION_CURRENT
+from populse_mia.data_manager.project import COLLECTION_CURRENT
 
 # Populse_db imports
 from populse_db.database import FIELD_TYPE_LIST_INTEGER, \

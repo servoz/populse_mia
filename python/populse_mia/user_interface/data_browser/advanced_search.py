@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, \
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel
-from populse_mia.database_manager.project.project import TAG_FILENAME, COLLECTION_CURRENT
+from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
 
 # Populse_db imports
 from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, \

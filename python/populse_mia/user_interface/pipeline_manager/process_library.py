@@ -32,7 +32,7 @@ from soma.qt_gui.qt_backend.Qt import QWidget, QTreeWidget, QLabel, \
     QMessageBox
 
 # Populse_MIA import
-from populse_mia.database_manager.software_properties.config import Config
+from populse_mia.software_properties import Config
 from populse_mia.utils.utils import verCmp
 
 # capsul import
@@ -790,7 +790,7 @@ class PackageLibraryDialog(QDialog):
                     try:
                         __import__(part)
 
-                    except ModuleNotFoundError:
+                    except ImportError:
 
                         try:
                             flag = True
@@ -1432,7 +1432,7 @@ class InstallProcesses(QDialog):
                 try:
                     __import__(module_name)
 
-                except ModuleNotFoundError as er:
+                except ImportError as er:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Critical)
                     msg.setText(('During the installation of {0}, '
@@ -1444,7 +1444,7 @@ class InstallProcesses(QDialog):
                     msg.setStandardButtons(QMessageBox.Ok)
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
-                    raise ModuleNotFoundError(
+                    raise ImportError(
                         'The {0} brick may not been installed'.format(
                             module_name))
 

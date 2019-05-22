@@ -32,8 +32,8 @@ from populse_mia.user_interface.data_browser.data_browser import TableDataBrowse
 from populse_mia.user_interface.pop_ups import \
     PopUpSelectTagCountTable
 from populse_mia.user_interface.pop_ups import PopUpVisualizedTags
-from populse_mia.database_manager.project.project import TAG_FILENAME, COLLECTION_CURRENT
-from populse_mia.database_manager.project.filter import Filter
+from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
+from populse_mia.data_manager.filter import Filter
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 
 if sys.version_info[0] >= 3:
@@ -515,7 +515,7 @@ class PlugFilter(QWidget):
 
         from populse_mia.user_interface.data_browser.rapid_search import \
             RapidSearch
-        from populse_mia.database_manager.project.project import \
+        from populse_mia.data_manager.project import \
             COLLECTION_CURRENT
 
         self.project = project
