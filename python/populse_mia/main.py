@@ -10,6 +10,7 @@ mia's GUI.
         - PackagesInstall
 
     :Function:
+
         - launch_mia
         - main
         - verify_processes
@@ -39,6 +40,21 @@ from PyQt5.QtWidgets import (QApplication, QDialog, QPushButton, QLabel,
 
 # soma-base imports
 from soma.qt_gui.qt_backend.Qt import QMessageBox
+
+# Adding populse_mia path to the sys.path if in developer mode
+if not os.path.dirname(os.path.dirname(
+        os.path.realpath(__file__))) in sys.path:
+    print('\nPopulse_MIA in "developer" mode')
+    sys.path.insert(0, os.path.dirname(os.path.dirname(
+        os.path.realpath(__file__))))
+    DEV_MODE = True
+
+# populse_mia imports
+from populse_mia.user_interface.main_window import MainWindow
+from populse_mia.data_manager.project import Project
+from populse_mia.software_properties import Config
+from populse_mia.utils.utils import verCmp
+from populse_mia.data_manager.project_properties import SavedProjects
 
 main_window = None
 
@@ -171,15 +187,9 @@ def launch_mia():
 
     """
 
-    # populse_mia imports
-    from populse_mia.user_interface.main_window import MainWindow
-    from populse_mia.data_manager.project import Project
-    from populse_mia.software_properties import Config
-
     def _my_excepthook(etype, evalue, tback):
 
         def _clean_up():
-            from populse_mia.software_properties import Config
 
             global main_window
             config = Config()
@@ -205,10 +215,6 @@ def launch_mia():
         sys.exit(1)
 
     def _verify_saved_projects():
-
-        # Populse_MIA imports
-        from populse_mia.data_manager.project_properties \
-            import SavedProjects
 
         saved_projects_object = SavedProjects()
         saved_projects_list = copy.deepcopy(saved_projects_object.pathsList)
@@ -266,7 +272,6 @@ def main():
     dev_mode parameter to 'no'.
 
     - If launched from a cloned git repository ('developer mode'):
-        - adds the good path to the sys.path
         - if the ~/.populse_mia/configuration.yml exists, updates
           the dev_mode parameter to 'yes'
         - if the ~/.populse_mia/configuration.yml is not existing
@@ -351,15 +356,7 @@ def main():
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia",
                                   "configuration.yml")
 
-    if not os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))) in sys.path:  # "developer" mode
-        print('\nPopulse_MIA in "developer" mode')
-        sys.path.insert(0, os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))))
-
-        # Populse_MIA imports                      ## Not a clean import. 
-        from populse_mia.utils.utils import verCmp ## To be modified if possible during
-                                                   ## the switch to the VMC architecture!
+    if not DEV_MODE:
 
         if os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
@@ -387,9 +384,6 @@ def main():
 
     else:  # "user" mode
 
-        # Populse_MIA imports                      ## Not a clean import. 
-        from populse_mia.utils.utils import verCmp ## To be modified if possible during
-                                                   ## the switch to the VMC architecture!
         try:
             
             if not os.path.exists(os.path.dirname(dot_mia_config)):
@@ -524,10 +518,6 @@ def verify_processes():
 
 
     """
-
-    # populse_mia imports
-    from populse_mia.software_properties import Config
-    from populse_mia.utils.utils import verCmp
 
     def _deepCompDic(old_dic, new_dic, level="0"):
 
@@ -839,3 +829,4 @@ def verify_processes():
 if __name__ == '__main__':
     # this will only be executed when this module is run directly
     main()
+
