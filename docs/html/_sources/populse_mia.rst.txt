@@ -1,19 +1,20 @@
 populse\_mia package
 ====================
 
+.. automodule:: populse_mia
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
 .. toctree::
 
-    populse_mia.user_interface.data_browser
-    populse_mia.image_viewer
-    populse_mia.user_interface.main_window
-    populse_mia.user_interface.pipeline_manager
-    populse_mia.user_interface.pop_ups
-    populse_mia.database_manager.project
-    populse_mia.database_manager.software_properties
-..    populse_mia.sources_images
+    populse_mia.#image_viewer
+    populse_mia.data_manager
+    populse_mia.sources_images
+    populse_mia.user_interface
     populse_mia.utils
 
 Submodules
@@ -51,6 +52,14 @@ populse\_mia.main module
     :undoc-members:
     :show-inheritance:
 
+populse\_mia.software\_properties module
+----------------------------------------
+
+.. automodule:: populse_mia.software_properties
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 populse\_mia.test module
 ------------------------
 
@@ -60,10 +69,3 @@ populse\_mia.test module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: populse_mia
-    :members:
-    :undoc-members:
-    :show-inheritance:

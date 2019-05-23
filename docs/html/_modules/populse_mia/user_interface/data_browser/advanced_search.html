@@ -1,0 +1,699 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.user_interface.data_browser.advanced_search &#8212; populse_mia 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../../index.html">
+          <span>populse_mia 1.1.1 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.user_interface.data_browser.advanced_search</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.user_interface.data_browser.advanced_search</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module to define the advanced search.</span>
+
+<span class="sd">Contains:</span>
+<span class="sd">    Class:</span>
+<span class="sd">        - AdvancedSearch</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># PyQt5 imports</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QObjectCleanupHandler</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QPixmap</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> \
+    <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QMessageBox</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.tools</span> <span class="k">import</span> <span class="n">ClickableLabel</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
+
+<span class="c1"># Populse_db imports</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> \
+    <span class="n">FIELD_TYPE_BOOLEAN</span>
+
+
+<div class="viewcode-block" id="AdvancedSearch"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch">[docs]</a><span class="k">class</span> <span class="nc">AdvancedSearch</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class that manages the widget of the advanced search</span>
+
+<span class="sd">    The advanced search creates a complex query to the database and is a</span>
+<span class="sd">    combination of several &quot;query lines&quot; which are linked with AND or OR and</span>
+<span class="sd">    all composed of:</span>
+<span class="sd">    - A negation or not</span>
+<span class="sd">    - A tag name or all visible tags</span>
+<span class="sd">    - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)</span>
+<span class="sd">    - A value</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - add_search_bar: create and define the advanced research bar</span>
+<span class="sd">        - apply_filter: apply an opened filter to update the table.</span>
+<span class="sd">        - displayConditionRules: set the list of condition choices,</span>
+<span class="sd">           depending on the tag type</span>
+<span class="sd">        - displayValueRules: update the placeholder text when the</span>
+<span class="sd">           condition choice is changed,</span>
+<span class="sd">        - get_filters: get the filters in list form</span>
+<span class="sd">        - launch_search: start the search and update the table</span>
+<span class="sd">        - prepare_filters: prepare the str representation of the filter</span>
+<span class="sd">        - refresh_search: refresh the widget</span>
+<span class="sd">        - remove_row: remove a row</span>
+<span class="sd">        - rows_borders_added: add the links and the added row to the good rows</span>
+<span class="sd">        - rows_borders_removed: link and adds row removed from every row</span>
+<span class="sd">        - show_search: reset the rows when the Advanced Search button is</span>
+<span class="sd">           clicked,</span>
+
+
+
+<span class="sd">       - clearLayout: called to clear a layout (not using it resolve issue #72)</span>
+<span class="sd">       - rowsContainsWidget: check if the widget is still used</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AdvancedSearch.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">data_browser</span><span class="p">,</span> <span class="n">scans_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">tags_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_pipeline</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the AdvancedSearch class</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param data_browser: parent data browser widget</span>
+<span class="sd">        :param scans_list: current list of the documents</span>
+<span class="sd">        :param tags_list: list of the visualized tags</span>
+<span class="sd">        :param from_pipeline: True if the widget is called from the pipeline</span>
+<span class="sd">          manager</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">scans_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scans_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">tags_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tags_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span> <span class="o">=</span> <span class="n">data_browser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span> <span class="o">=</span> <span class="n">scans_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags_list</span> <span class="o">=</span> <span class="n">tags_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_pipeline</span> <span class="o">=</span> <span class="n">from_pipeline</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">search</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Search&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.add_search_bar"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.add_search_bar">[docs]</a>    <span class="k">def</span> <span class="nf">add_search_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create and define the advanced research bar.&quot;&quot;&quot;</span>
+        <span class="n">row_layout</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># NOT choice</span>
+        <span class="n">not_choice</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
+        <span class="n">not_choice</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;not&#39;</span><span class="p">)</span>
+        <span class="n">not_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">not_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;NOT&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Field choice</span>
+        <span class="n">field_choice</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
+        <span class="n">field_choice</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags_list</span><span class="p">:</span>
+                <span class="n">field_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">():</span>
+                <span class="n">field_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">field_choice</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">field_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;All visualized tags&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Value choice</span>
+        <span class="n">condition_value</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="n">condition_value</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Condition choice</span>
+        <span class="n">condition_choice</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;==&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;!=&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&gt;=&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;BETWEEN&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;IN&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;CONTAINS&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;HAS VALUE&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;HAS NO VALUE&quot;</span><span class="p">)</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Signal to update the placeholder text of the value</span>
+        <span class="n">condition_choice</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">displayValueRules</span><span class="p">(</span><span class="n">condition_choice</span><span class="p">,</span> <span class="n">condition_value</span><span class="p">))</span>
+
+        <span class="c1"># Signal to update the list of conditions, depending on the tag type</span>
+        <span class="n">field_choice</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">displayConditionRules</span><span class="p">(</span><span class="n">field_choice</span><span class="p">,</span> <span class="n">condition_choice</span><span class="p">))</span>
+
+        <span class="c1"># Minus to remove the row</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">remove_row_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
+        <span class="n">remove_row_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;red_minus.png&quot;</span><span class="p">)))</span>
+        <span class="n">remove_row_picture</span> <span class="o">=</span> <span class="n">remove_row_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">remove_row_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">remove_row_picture</span><span class="p">)</span>
+
+        <span class="c1"># Everything appended to the row</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># Link room</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">not_choice</span><span class="p">)</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_choice</span><span class="p">)</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition_choice</span><span class="p">)</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition_value</span><span class="p">)</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remove_row_label</span><span class="p">)</span>
+        <span class="n">row_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># Add row room</span>
+
+        <span class="c1"># Signal to remove the row</span>
+        <span class="n">remove_row_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_row</span><span class="p">(</span><span class="n">row_layout</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_search</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">displayConditionRules</span><span class="p">(</span><span class="n">field_choice</span><span class="p">,</span> <span class="n">condition_choice</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.apply_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.apply_filter">[docs]</a>    <span class="k">def</span> <span class="nf">apply_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply an opened filter to update the table.</span>
+
+<span class="sd">        :param filter: Filter object opened to apply</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Data</span>
+        <span class="n">nots</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">nots</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">conditions</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">links</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">fields</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nots</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_search_bar</span><span class="p">()</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">links</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">nots</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># Replacing all visualized tags by the current list of visible tags</span>
+            <span class="k">if</span> <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;All visualized tags&quot;</span><span class="p">:</span>
+                <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">()</span>
+
+            <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">conditions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+        <span class="n">old_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span>
+
+        <span class="c1"># Filter applied only if at least one row</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nots</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Result gotten</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">filter_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_filters</span><span class="p">(</span>
+                    <span class="n">links</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nots</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">filter_documents</span><span class="p">(</span>
+                    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">filter_query</span><span class="p">)</span>
+
+                <span class="c1"># data_browser updated with the new selection</span>
+                <span class="n">result_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+                    <span class="n">document</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">)</span> <span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+                <span class="c1"># Error message if the search can&#39;t be done,</span>
+                <span class="c1"># and visualization of all scans in the data_browser</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+                    <span class="s2">&quot;Error in the search&quot;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span>
+                    <span class="s2">&quot;The search has encountered a problem, you can correct it &quot;</span>
+                    <span class="s2">&quot;and launch it again.&quot;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                <span class="n">result_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span>
+
+            <span class="c1"># data_browser updated with the new selection</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span> <span class="o">=</span> <span class="n">result_names</span>
+
+        <span class="c1"># Otherwise, all the scans are reput</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># data_browser updated with every scan</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
+                        <span class="n">COLLECTION_CURRENT</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_rows</span><span class="p">)</span></div>
+
+    <span class="c1"># def clearLayout(self, layout):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Called to clear a layout</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param layout: layout to clear</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     if layout is not None:</span>
+    <span class="c1">#         while layout.count():</span>
+    <span class="c1">#             item = layout.takeAt(0)</span>
+    <span class="c1">#             widget = item.widget()</span>
+    <span class="c1">#             # We clear the widget only if the row does not exist anymore</span>
+    <span class="c1">#             if widget is not None and not self.rowsContainsWidget(</span>
+    <span class="c1">#                     widget):</span>
+    <span class="c1">#                 pass</span>
+    <span class="c1">#                 widget.deleteLater()</span>
+    <span class="c1">#             else:</span>
+    <span class="c1">#                 self.clearLayout(item.layout())</span>
+
+<div class="viewcode-block" id="AdvancedSearch.displayConditionRules"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.displayConditionRules">[docs]</a>    <span class="k">def</span> <span class="nf">displayConditionRules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the list of condition choices, depending on the tag type</span>
+
+<span class="sd">        :param field: field</span>
+<span class="sd">        :param condition: condition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tag_name</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="n">tag_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">list_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+            <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_type</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FIELD_TYPE_STRING</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">tag_row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">no_operators_tags</span><span class="p">)</span> <span class="ow">or</span> \
+                <span class="n">tag_name</span> <span class="o">==</span> <span class="s2">&quot;All visualized tags&quot;</span><span class="p">:</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">))</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">))</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">))</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;&gt;=&quot;</span><span class="p">))</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;BETWEEN&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">tag_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">no_operators_tags</span><span class="p">:</span>
+            <span class="n">operators_to_reput</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;BETWEEN&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="n">operators_to_reput</span><span class="p">:</span>
+                <span class="n">is_op_existing</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_op_existing</span><span class="p">:</span>
+                    <span class="n">condition</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tag_row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s2">&quot;IN&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">tag_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+            <span class="n">operators_to_reput</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IN&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="n">operators_to_reput</span><span class="p">:</span>
+                <span class="n">is_op_existing</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_op_existing</span><span class="p">:</span>
+                    <span class="n">condition</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+
+        <span class="n">condition</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.displayValueRules"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.displayValueRules">[docs]</a>    <span class="k">def</span> <span class="nf">displayValueRules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the placeholder text. when the condition choice is</span>
+<span class="sd">           changed.</span>
+
+<span class="sd">        :param choice: choice</span>
+<span class="sd">        :param value: value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;BETWEEN&quot;</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please separate the two inclusive borders of the range by a &quot;</span>
+                <span class="s2">&quot;semicolon and a space&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">choice</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;IN&quot;</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please separate each list item by a &quot;</span>
+                                     <span class="s2">&quot;semicolon and a space&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">choice</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;HAS VALUE&quot;</span> \
+                <span class="ow">or</span> <span class="n">choice</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;HAS NO VALUE&quot;</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.get_filters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.get_filters">[docs]</a>    <span class="k">def</span> <span class="nf">get_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace_all_by_fields</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the filters in a list</span>
+
+<span class="sd">        :param replace_all_by_fields: to replace All visualized tags by the</span>
+<span class="sd">           list of visible fields</span>
+<span class="sd">        :return: Lists of filters (fields, conditions, values, links, nots)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Lists to get all the data of the search</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">child</span> <span class="o">=</span> <span class="n">widget</span>
+                    <span class="n">child_name</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">objectName</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">child_name</span> <span class="o">==</span> <span class="s1">&#39;link&#39;</span><span class="p">:</span>
+                        <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+                    <span class="k">elif</span> <span class="n">child_name</span> <span class="o">==</span> <span class="s1">&#39;condition&#39;</span><span class="p">:</span>
+                        <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+                    <span class="k">elif</span> <span class="n">child_name</span> <span class="o">==</span> <span class="s1">&#39;field&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;All visualized tags&quot;</span><span class="p">:</span>
+                            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">()])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">replace_all_by_fields</span><span class="p">:</span>
+                                <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">())</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">()])</span>
+                    <span class="k">elif</span> <span class="n">child_name</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">displayText</span><span class="p">())</span>
+                    <span class="k">elif</span> <span class="n">child_name</span> <span class="o">==</span> <span class="s1">&#39;not&#39;</span><span class="p">:</span>
+                        <span class="n">nots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+
+        <span class="n">operators</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;BETWEEN&quot;</span><span class="p">]</span>
+        <span class="n">no_operators_tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">list_type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+            <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_type</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FIELD_TYPE_STRING</span><span class="p">)</span>
+        <span class="n">no_operators_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">)</span>
+
+        <span class="c1"># Converting BETWEEN and IN values into lists</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">conditions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;BETWEEN&quot;</span> <span class="ow">or</span> <span class="n">conditions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IN&quot;</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">conditions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IN&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                    <span class="n">tag_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+                        <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
+                        <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">conditions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+                    <span class="n">tag_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+                        <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">tag_row</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">no_operators_tags</span><span class="p">:</span>
+                        <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">nots</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.launch_search"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.launch_search">[docs]</a>    <span class="k">def</span> <span class="nf">launch_search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start the search and update the table&quot;&quot;&quot;</span>
+
+        <span class="c1"># Filters gotten</span>
+        <span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">nots</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filters</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">old_scans_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Result gotten</span>
+            <span class="n">filter_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_filters</span><span class="p">(</span>
+                <span class="n">links</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nots</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">filter_documents</span><span class="p">(</span>
+                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">filter_query</span><span class="p">)</span>
+
+            <span class="c1"># data_browser updated with the new selection</span>
+            <span class="n">result_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span>
+                <span class="n">document</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">)</span> <span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_pipeline</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span><span class="o">.</span><span class="n">nots</span> <span class="o">=</span> <span class="n">nots</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span><span class="o">.</span><span class="n">links</span> <span class="o">=</span> <span class="n">links</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span><span class="o">.</span><span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="c1"># Error message if the search can&#39;t be done, and visualization</span>
+            <span class="c1"># of all scans in the databrowser</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+                <span class="s2">&quot;Error in the search&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span>
+                <span class="s2">&quot;The search has encountered a problem, you can correct it &quot;</span>
+                <span class="s2">&quot;and launch it again.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="n">result_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_visualize</span> <span class="o">=</span> <span class="n">result_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_search</span> <span class="o">=</span> <span class="n">result_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataBrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scans_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.prepare_filters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.prepare_filters">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">prepare_filters</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nots</span><span class="p">,</span> <span class="n">scans</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the str representation of the filter</span>
+
+<span class="sd">        :param links: list of links (AND/OR)</span>
+<span class="sd">        :param fields: list of fields</span>
+<span class="sd">        :param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</span>
+<span class="sd">           BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</span>
+<span class="sd">        :param values: list of values</span>
+<span class="sd">        :param nots: list of negations (&quot;&quot; or NOT)</span>
+<span class="sd">        :param scans: list of scans to search in</span>
+<span class="sd">        :return: str representation of the filter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">row_queries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">final_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># For each row of constraint</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)):</span>
+            <span class="n">row_fields</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">row_condition</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">row_value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">row_not</span> <span class="o">=</span> <span class="n">nots</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+
+            <span class="n">row_query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span>
+
+            <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">row_field</span> <span class="ow">in</span> <span class="n">row_fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row_condition</span> <span class="o">==</span> <span class="s2">&quot;IN&quot;</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} &quot;</span> <span class="o">+</span> \
+                                      <span class="n">row_condition</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> \
+                                      <span class="nb">str</span><span class="p">(</span><span class="n">row_value</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                <span class="k">elif</span> <span class="n">row_condition</span> <span class="o">==</span> <span class="s2">&quot;BETWEEN&quot;</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;(({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} &gt;= </span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                                      <span class="n">row_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">) AND (&quot;</span> <span class="o">+</span> <span class="n">row_field</span>\
+                                      <span class="o">+</span> <span class="s2">&quot; &lt;= </span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">row_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">))&quot;</span>
+                <span class="k">elif</span> <span class="n">row_condition</span> <span class="o">==</span> <span class="s2">&quot;HAS VALUE&quot;</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} != null)&quot;</span>
+                <span class="k">elif</span> <span class="n">row_condition</span> <span class="o">==</span> <span class="s2">&quot;HAS NO VALUE&quot;</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} == null)&quot;</span>
+                <span class="k">elif</span> <span class="n">row_condition</span> <span class="o">==</span> <span class="s2">&quot;CONTAINS&quot;</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} LIKE </span><span class="se">\&quot;</span><span class="s2">%&quot;</span> <span class="o">+</span> \
+                                      <span class="n">row_value</span> <span class="o">+</span> <span class="s2">&quot;%</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot;({&quot;</span> <span class="o">+</span> <span class="n">row_field</span> <span class="o">+</span> <span class="s2">&quot;} &quot;</span> <span class="o">+</span> \
+                                      <span class="n">row_condition</span> <span class="o">+</span> <span class="s2">&quot; </span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">row_value</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">)&quot;</span>
+
+                <span class="c1"># Putting OR between conditions if several tags to search in</span>
+                <span class="k">if</span> <span class="n">or_to_write</span><span class="p">:</span>
+                    <span class="n">row_field_query</span> <span class="o">=</span> <span class="s2">&quot; OR &quot;</span> <span class="o">+</span> <span class="n">row_field_query</span>
+
+                <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">row_query</span> <span class="o">+=</span> <span class="n">row_field_query</span>
+
+            <span class="n">row_query</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+            <span class="n">row_queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_query</span><span class="p">)</span>
+
+            <span class="c1"># Negation added if needed</span>
+            <span class="k">if</span> <span class="n">row_not</span> <span class="o">==</span> <span class="s2">&quot;NOT&quot;</span><span class="p">:</span>
+                <span class="n">row_queries</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;(NOT &quot;</span> <span class="o">+</span> <span class="n">row_queries</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="n">final_query</span> <span class="o">+=</span> <span class="n">row_queries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Putting the link between each row</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)):</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">final_query</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">link</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">row_queries</span><span class="p">[</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Taking into account the list of scans</span>
+        <span class="n">final_query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">scans</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="n">final_query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">final_query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="k">return</span> <span class="n">final_query</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.refresh_search"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.refresh_search">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refresh the widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Old values stored</span>
+        <span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">nots</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filters</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># We remove the old layout</span>
+        <span class="c1"># self.clearLayout(self.layout())</span>
+        <span class="n">QObjectCleanupHandler</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">())</span>
+
+        <span class="c1"># Links and add rows removed from every row</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_borders_removed</span><span class="p">()</span>
+
+        <span class="c1"># Links and add rows put back in the good rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_borders_added</span><span class="p">(</span><span class="n">links</span><span class="p">)</span>
+
+        <span class="n">master_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">main_layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
+
+        <span class="c1"># Everything added to the layout</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+                <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+        <span class="c1"># Search button added at the end</span>
+        <span class="n">search_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">search_layout</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;search layout&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">launch_search</span><span class="p">)</span>
+
+        <span class="n">search_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">)</span>
+        <span class="n">search_layout</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># New layout added</span>
+        <span class="n">master_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">main_layout</span><span class="p">)</span>
+        <span class="n">master_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">search_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">master_layout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.remove_row"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.remove_row">[docs]</a>    <span class="k">def</span> <span class="nf">remove_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_layout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove a row</span>
+
+<span class="sd">        :param row_layout: Row to remove</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># We remove the row only if there is at least 2 rows, because we</span>
+        <span class="c1"># always must keep at least one</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">row_layout</span><span class="p">)</span>
+
+        <span class="c1"># We refresh the view</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_search</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.rows_borders_added"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.rows_borders_added">[docs]</a>    <span class="k">def</span> <span class="nf">rows_borders_added</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add the links and the added row to the good rows</span>
+
+<span class="sd">        :param links: Old links to reput</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Plus added to the last row</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">add_search_bar_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
+        <span class="n">add_search_bar_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;plus&#39;</span><span class="p">)</span>
+        <span class="n">add_search_bar_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;green_plus.png&quot;</span><span class="p">)))</span>
+        <span class="n">add_search_bar_picture</span> <span class="o">=</span> <span class="n">add_search_bar_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">add_search_bar_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">add_search_bar_picture</span><span class="p">)</span>
+        <span class="n">add_search_bar_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_search_bar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_search_bar_label</span>
+
+        <span class="c1"># Link added to every row, except the first one</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)):</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">link_choice</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
+            <span class="n">link_choice</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">)</span>
+            <span class="n">link_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;AND&quot;</span><span class="p">)</span>
+            <span class="n">link_choice</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;OR&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">link_choice</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">links</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">link_choice</span></div>
+
+<div class="viewcode-block" id="AdvancedSearch.rows_borders_removed"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.rows_borders_removed">[docs]</a>    <span class="k">def</span> <span class="nf">rows_borders_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Link and add row removed from every row&quot;&quot;&quot;</span>
+
+        <span class="c1"># We remove all the links and the add rows</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)):</span>
+            <span class="c1"># Plus removed from every row</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># Link removed from every row</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># def rowsContainsWidget(self, widget):</span>
+    <span class="c1">#     &quot;&quot;&quot;Check if the widget is still used</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param widget: widget to check</span>
+    <span class="c1">#     :return: True or False</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     for row in self.rows:</span>
+    <span class="c1">#         if widget in row:</span>
+    <span class="c1">#             return True</span>
+    <span class="c1">#     return False</span>
+
+<div class="viewcode-block" id="AdvancedSearch.show_search"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.show_search">[docs]</a>    <span class="k">def</span> <span class="nf">show_search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the rows when the Advanced Search button is clicked&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_search_bar</span><span class="p">()</span></div></div>
+
+
+
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

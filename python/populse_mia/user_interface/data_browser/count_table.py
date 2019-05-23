@@ -28,33 +28,43 @@ class CountTable(QDialog):
     """
     Tool to precisely verify the scans of the project.
 
-    It is composed of push buttons on its top, each one corresponding to a tag selected by the user.
-    When, the "Count scans" button is clicked, a table is created with all the combinations possible
-    for the values of the first n-1 tags. Then, the m values that can take the last tag are displayed
-    in the header of the m last columns of the table. The cells are then filled with a green plus or
-    a red cross depending on if there is at least a scan that has all the tags values or not.
+    It is composed of push buttons on its top, each one corresponding to a tag
+    selected by the user.
+    When, the "Count scans" button is clicked, a table is created with all the
+    combinations possible for the values of the first n-1 tags. Then,
+    the m values that can take the  last tag are displayed in the header of
+    the m last columns of the table. The cells are then filled with a green
+    plus or a red cross depending on if there is at least a scan that has
+    all the tags values or not.
 
     Attributes:
         - project: current project in the software
-        - values_list: list that contains lists of all the values that the visualized tags can take
+        - values_list: list that contains lists of all the values that the
+          visualized tags can take
 
     Methods:
         - refresh_layout: updates the layout of the widget
         - add_tag: adds a tag to visualize in the count table
         - remove_tag: removes a tag to visualize in the count table
-        - select_tag: opens a pop-up to select which tag to visualize in the count table
+        - select_tag: opens a pop-up to select which tag to visualize in
+          the count table
         - fill_values: fill values_list depending on the visualized tags
-        - count_scans: counts the number of scans depending on the selected tags and displays the result in the table
-        - fill_headers: fills the headers of the table depending on the selected tags
-        - fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags
+        - count_scans: counts the number of scans depending on the selected
+          tags and displays the result in the table
+        - fill_headers: fills the headers of the table depending on the
+          selected tags
+        - fill_first_tags: fills the cells of the table corresponding to the
+          (n-1) first selected tags
         - fill_last_tag: fills the cells corresponding to the last selected tag
         - prepare_filter: prepares the filter in order to fill the count table
 
     :Example:
 
-    Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
-    T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
-    and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the table will be:
+    Assume that the current project has scans for two patients (P1 and P2)
+    and three time points (T1, T2 and T3). For each (patient, time point),
+    several sequences have been made (two RARE, one MDEFT and one FLASH).
+    Selecting [PatientName, TimePoint, SequenceName] as tags, the table will
+    be:
 
     +-------------+-----------+------+-------+-------+
     | PatientName | TimePoint | RARE | MDEFT | FLASH |
@@ -72,11 +82,12 @@ class CountTable(QDialog):
     | P2          | T3        | v(2) | v(1)  | v(1)  |
     +-------------+-----------+------+-------+-------+
 
-    with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
-    SequenceName).
+    with v(n) meaning that n scans corresponds of the selected values for
+    (PatientName, TimePoint,SequenceName).
 
-    If no scans corresponds for a triplet value, a red cross will be displayed. For example, if the
-    user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The table will be:
+    If no scans corresponds for a triplet value, a red cross will be
+    displayed. For example, if the user forgets to import one RARE for P1 at
+    T2 and one FLASH for P2 at T3. The table will be:
 
     +-------------+-----------+------+-------+-------+
     | PatientName | TimePoint | RARE | MDEFT | FLASH |
@@ -94,7 +105,8 @@ class CountTable(QDialog):
     | P2          | T3        | v(2) | v(1)  | x     |
     +-------------+-----------+------+-------+-------+
 
-    Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.
+    Thus, thanks to the CountTable tool, he or she directly knows if some
+    scans are missing.
 
     """
 
@@ -130,23 +142,26 @@ class CountTable(QDialog):
         push_button_tag_2.setText("Tag n°2")
         push_button_tag_2.clicked.connect(lambda: self.select_tag(1))
 
-        # The list of all the push buttons (the user can add as many as he or she wants)
+        # The list of all the push buttons
+        # (the user can add as many as he or she wants)
         self.push_buttons = []
         self.push_buttons.insert(0, push_button_tag_1)
         self.push_buttons.insert(1, push_button_tag_2)
 
         # Labels to add/remove a tag (a push button)
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                                          "sources_images")
+        sources_images_dir = os.path.join(os.path.dirname(
+            os.path.dirname(os.path.realpath(__file__))), "sources_images")
         self.remove_tag_label = ClickableLabel()
-        remove_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "red_minus.png")))
+        remove_tag_picture = QPixmap(os.path.relpath(os.path.join(
+            sources_images_dir, "red_minus.png")))
         remove_tag_picture = remove_tag_picture.scaledToHeight(20)
         self.remove_tag_label.setPixmap(remove_tag_picture)
         self.remove_tag_label.clicked.connect(self.remove_tag)
 
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
-        add_tag_picture = QPixmap(os.path.relpath(os.path.join(sources_images_dir, "green_plus.png")))
+        add_tag_picture = QPixmap(os.path.relpath(os.path.join(
+            sources_images_dir, "green_plus.png")))
         add_tag_picture = add_tag_picture.scaledToHeight(15)
         self.add_tag_label.setPixmap(add_tag_picture)
         self.add_tag_label.clicked.connect(self.add_tag)
@@ -215,8 +230,10 @@ class CountTable(QDialog):
         :param idx: the index of the selected push button
         """
 
-        pop_up = PopUpSelectTagCountTable(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
-                                          self.push_buttons[idx].text())
+        pop_up = PopUpSelectTagCountTable(
+            self.project,
+            self.project.session.get_fields_names(COLLECTION_CURRENT),
+            self.push_buttons[idx].text())
         if pop_up.exec_():
             if pop_up.selected_tag is not None:
                 self.push_buttons[idx].setText(pop_up.selected_tag)
@@ -231,8 +248,10 @@ class CountTable(QDialog):
 
         tag_name = self.push_buttons[idx].text()
         values = []
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
+        for scan in self.project.session.get_documents_names(
+                COLLECTION_CURRENT):
+            current_value = self.project.session.get_value(
+                COLLECTION_CURRENT, scan, tag_name)
             if current_value is not None:
                 values.append(current_value)
 
@@ -250,13 +269,15 @@ class CountTable(QDialog):
 
     def count_scans(self):
         """
-        Counts the number of scans depending on the selected tags and displays the result in the table
+        Counts the number of scans depending on the selected tags and
+          displays the result in the table
         """
 
         for tag_values in self.values_list:
             if len(tag_values) == 0:
                 return
-        if self.project.session.get_field(COLLECTION_CURRENT, self.push_buttons[-1].text()) is None:
+        if self.project.session.get_field(
+                COLLECTION_CURRENT, self.push_buttons[-1].text()) is None:
             return
 
         # Clearing the table
@@ -303,7 +324,8 @@ class CountTable(QDialog):
         # idx_last_tag corresponds to the index of the (n-1)th tag
         self.idx_last_tag = idx_end
         last_tag = self.push_buttons[len(self.values_list) - 1].text()
-        last_tag_type = self.project.session.get_field(COLLECTION_CURRENT, last_tag).type
+        last_tag_type = self.project.session.get_field(
+            COLLECTION_CURRENT, last_tag).type
         for header_name in self.values_list[-1]:
             idx_end += 1
             item = QTableWidgetItem()
@@ -320,8 +342,8 @@ class CountTable(QDialog):
         self.table.setVerticalHeaderItem(self.nb_row, item)
 
     def fill_first_tags(self):
-        """
-        Fills the cells of the table corresponding to the (n-1) first selected tags
+        """Fills the cells of the table corresponding to the (n-1)
+           first selected tags
         """
 
         cell_text = []
@@ -341,38 +363,51 @@ class CountTable(QDialog):
             for col in range(len(self.values_list) - 1):
                 item = QTableWidgetItem()
                 tag_name = self.push_buttons[col].text()
-                tag_type = self.project.session.get_field(COLLECTION_CURRENT, tag_name).type
+                tag_type = self.project.session.get_field(
+                    COLLECTION_CURRENT, tag_name).type
                 set_item_data(item, cell_text[col], tag_type)
                 self.table.setItem(row, col, item)
 
             # Looping from the (n-1)th tag
             col_checked = len(self.values_list) - 2
-            # Flag up will be True when all values of the tag have been iterated
+            # Flag up will be True when all values of the tag
+            # have been iterated
             flag_up = False
             while col_checked >= 0:
                 if flag_up:
-                    # In this case, the value of the right column has reach its last value
+                    # In this case, the value of the right column has
+                    # reach its last value
                     # This value has been reset to the first value
-                    if cell_text[col_checked] == self.values_list[col_checked][-1]:
-                        # If the value that has been displayed is the last one, the flag
-                        # stays the same, the value of the column on the left has to be changed
-                        cell_text[col_checked] = self.values_list[col_checked][0]
+                    if (cell_text[col_checked] == self.values_list[
+                      col_checked][-1]):
+                        # If the value that has been displayed is the
+                        # last one, the flag stays the same, the value of
+                        # the column on the left has to be changed
+                        cell_text[col_checked] = self.values_list[
+                            col_checked][0]
                     else:
                         # Else we iterate on the next value
-                        idx = self.values_list[col_checked].index(cell_text[col_checked])
-                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                        idx = self.values_list[col_checked].index(
+                            cell_text[col_checked])
+                        cell_text[col_checked] = self.values_list[
+                            col_checked][idx + 1]
                         flag_up = False
 
-                if (col_checked > 0 and len(self.values_list) - 1 > 1) or (len(self.values_list) - 1 == 1):
+                if (col_checked > 0 and len(self.values_list) - 1 > 1) or (
+                        len(self.values_list) - 1 == 1):
                     if cell_text[col_checked] == self.values_list[col_checked][-1]:
-                        # If the value that has been displayed is the last one, the flag
-                        # is set to True, the value of the column on the left has to be changed
-                        cell_text[col_checked] = self.values_list[col_checked][0]
+                        # If the value that has been displayed is the last one,
+                        # the flag is set to True, the value of the column
+                        # on the left has to be changed
+                        cell_text[col_checked] = self.values_list[
+                            col_checked][0]
                         flag_up = True
                     else:
                         # Else we iterate on the next value and reset the flag
-                        idx = self.values_list[col_checked].index(cell_text[col_checked])
-                        cell_text[col_checked] = self.values_list[col_checked][idx + 1]
+                        idx = self.values_list[col_checked].index(
+                            cell_text[col_checked])
+                        cell_text[col_checked] = self.values_list[
+                            col_checked][idx + 1]
                         flag_up = False
 
                     if not flag_up:
@@ -389,36 +424,48 @@ class CountTable(QDialog):
         # Cells of the last tag
         for col in range(self.idx_last_tag + 1, self.nb_col):
             nb_scans_ok = 0
-            # Creating a tag_list that will contain couples tag_name/tag_value that
+            # Creating a tag_list that will contain
+            # couples tag_name/tag_value that
             # will then querying the Database
             for row in range(self.nb_row):
                 tag_list = []
                 for idx_first_columns in range(self.idx_last_tag + 1):
-                    tag_name = self.table.horizontalHeaderItem(idx_first_columns).text()
-                    tag_type = self.project.session.get_field(COLLECTION_CURRENT, tag_name).type
-                    value_str = self.table.item(row, idx_first_columns).data(Qt.EditRole)
+                    tag_name = self.table.horizontalHeaderItem(
+                        idx_first_columns).text()
+                    tag_type = self.project.session.get_field(
+                        COLLECTION_CURRENT, tag_name).type
+                    value_str = self.table.item(
+                        row, idx_first_columns).data(Qt.EditRole)
                     value_database = table_to_database(value_str, tag_type)
                     tag_list.append([tag_name, value_database])
                 tag_last_columns = self.push_buttons[-1].text()
-                tag_last_columns_type = self.project.session.get_field(COLLECTION_CURRENT, tag_last_columns).type
-                value_last_columns_str = self.table.horizontalHeaderItem(col).data(Qt.EditRole)
-                value_last_columns_database = table_to_database(value_last_columns_str, tag_last_columns_type)
-                tag_list.append([tag_last_columns, value_last_columns_database])
+                tag_last_columns_type = self.project.session.get_field(
+                    COLLECTION_CURRENT, tag_last_columns).type
+                value_last_columns_str = self.table.horizontalHeaderItem(
+                    col).data(Qt.EditRole)
+                value_last_columns_database = table_to_database(
+                    value_last_columns_str, tag_last_columns_type)
+                tag_list.append([tag_last_columns,
+                                 value_last_columns_database])
 
                 item = QTableWidgetItem()
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 # Getting the list of the scans that corresponds to the couples
                 # tag_name/tag_values
-                generator_scans = self.project.session.filter_documents(COLLECTION_CURRENT,
-                                                                        self.prepare_filter(tag_list))
+                generator_scans = self.project.session.filter_documents(
+                    COLLECTION_CURRENT,
+                    self.prepare_filter(tag_list))
 
                 # List of scans created, given the generator
-                list_scans = [getattr(scan, TAG_FILENAME) for scan in generator_scans]
+                list_scans = [getattr(scan, TAG_FILENAME) for scan in
+                              generator_scans]
 
-                sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                                                  "sources_images")
+                sources_images_dir = os.path.join(os.path.dirname(
+                    os.path.dirname(os.path.realpath(__file__))),
+                    "sources_images")
                 if list_scans:
-                    icon = QIcon(os.path.join(sources_images_dir, 'green_v.png'))
+                    icon = QIcon(os.path.join(sources_images_dir,
+                                              'green_v.png'))
                     length = len(list_scans)
                     nb_scans_ok += length
                     text = str(length)
@@ -430,7 +477,8 @@ class CountTable(QDialog):
                     tool_tip = tool_tip[:-1]
                     item.setToolTip(tool_tip)
                 else:
-                    icon = QIcon(os.path.join(sources_images_dir, 'red_cross.png'))
+                    icon = QIcon(os.path.join(sources_images_dir,
+                                              'red_cross.png'))
                 item.setIcon(icon)
                 self.table.setItem(row, col, item)
 

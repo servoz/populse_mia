@@ -87,15 +87,22 @@ class ProcessMIA(Process):
         else:
             brick_to_keep = bricks[len(bricks) - 1]
             for brick in bricks:
-                exec_status = self.project.session.get_value(COLLECTION_BRICK, brick, BRICK_EXEC)
-                exec_time = self.project.session.get_value(COLLECTION_BRICK, brick, BRICK_EXEC_TIME)
-                if exec_time is None and exec_status is None and brick != brick_to_keep:
+                exec_status = self.project.session.get_value(COLLECTION_BRICK,
+                                                             brick, BRICK_EXEC)
+                exec_time = self.project.session.get_value(COLLECTION_BRICK,
+                                                           brick,
+                                                           BRICK_EXEC_TIME)
+                if (exec_time is None and exec_status is None and brick !=
+                        brick_to_keep):
                     # The other bricks not run are removed
-                    outputs = self.project.session.get_value(COLLECTION_BRICK, brick, BRICK_OUTPUTS)
+                    outputs = self.project.session.get_value(COLLECTION_BRICK,
+                                                             brick,
+                                                             BRICK_OUTPUTS)
                     for output_name in outputs:
                         output_value = outputs[output_name]
                         self.remove_brick_output(brick, output_value)
-                    self.project.session.remove_document(COLLECTION_BRICK, brick)
+                    self.project.session.remove_document(COLLECTION_BRICK,
+                                                         brick)
                     self.project.saveModifications()
             return brick_to_keep
 
@@ -105,9 +112,11 @@ class ProcessMIA(Process):
         :param output_value: output value
         :return: list of bricks related to the output
         """
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+        for scan in self.project.session.get_documents_names(
+                COLLECTION_CURRENT):
             if scan in str(output_value):
-                return self.project.session.get_value(COLLECTION_CURRENT, scan, TAG_BRICKS)
+                return self.project.session.get_value(COLLECTION_CURRENT,
+                                                      scan, TAG_BRICKS)
         return []
 
     def list_outputs(self):
@@ -201,10 +210,13 @@ class ProcessMIA(Process):
 
         for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
             if scan in output:
-                output_bricks = self.project.session.get_value(COLLECTION_CURRENT, scan, TAG_BRICKS)
+                output_bricks = self.project.session.get_value(
+                    COLLECTION_CURRENT, scan, TAG_BRICKS)
                 output_bricks.remove(brick)
-                self.project.session.set_value(COLLECTION_CURRENT, scan, TAG_BRICKS, output_bricks)
-                self.project.session.set_value(COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
+                self.project.session.set_value(
+                    COLLECTION_CURRENT, scan, TAG_BRICKS, output_bricks)
+                self.project.session.set_value(
+                    COLLECTION_INITIAL, scan, TAG_BRICKS, output_bricks)
                 self.project.saveModifications()
 
 

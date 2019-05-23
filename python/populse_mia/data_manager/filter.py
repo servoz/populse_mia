@@ -24,7 +24,7 @@ from populse_mia.data_manager import project
 
 class Filter:
     """Class that represent a Filter, containing the results of both rapid and
-    advanced search
+      advanced search
 
     Attributes:
         :param name: filter's name

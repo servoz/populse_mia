@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.user_interface.data_browser.count_table &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.data_browser.count_table &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.user_interface.data_browser.count_table</span></h2>
+        <h2 class="heading"><span>populse_mia.data_browser.count_table</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -31,7 +31,7 @@
       <div class="content">
         
         
-  <h1>Source code for populse_mia.user_interface.data_browser.count_table</h1><div class="highlight"><pre>
+  <h1>Source code for populse_mia.data_browser.count_table</h1><div class="highlight"><pre>
 <span></span><span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
@@ -52,13 +52,13 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups.pop_up_select_tag_count_table</span> <span class="k">import</span> <span class="n">PopUpSelectTagCountTable</span>
+<span class="kn">from</span> <span class="nn">populse_mia.pop_ups.pop_up_select_tag_count_table</span> <span class="k">import</span> <span class="n">PopUpSelectTagCountTable</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.tools</span> <span class="k">import</span> <span class="n">ClickableLabel</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">set_item_data</span><span class="p">,</span> <span class="n">table_to_database</span>
-<span class="kn">from</span> <span class="nn">populse_mia.database_manager.project.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">TAG_FILENAME</span>
+<span class="kn">from</span> <span class="nn">populse_mia.project.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">TAG_FILENAME</span>
 
 
-<div class="viewcode-block" id="CountTable"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable">[docs]</a><span class="k">class</span> <span class="nc">CountTable</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable">[docs]</a><span class="k">class</span> <span class="nc">CountTable</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tool to precisely verify the scans of the project.</span>
 
@@ -132,7 +132,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CountTable.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.__init__"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization of the Count Table</span>
 
@@ -198,7 +198,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountTable.refresh_layout"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.refresh_layout">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.refresh_layout"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.refresh_layout">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the layout of the widget</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -218,7 +218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CountTable.add_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.add_tag">[docs]</a>    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.add_tag"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.add_tag">[docs]</a>    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a tag to visualize in the count table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -230,7 +230,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">),</span> <span class="n">push_button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountTable.remove_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.remove_tag">[docs]</a>    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.remove_tag"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.remove_tag">[docs]</a>    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes a tag to visualize in the count table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -242,7 +242,7 @@
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountTable.select_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.select_tag"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a pop-up to select which tag to visualize in the count table</span>
 
@@ -256,7 +256,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fill_values</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CountTable.fill_values"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_values">[docs]</a>    <span class="k">def</span> <span class="nf">fill_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.fill_values"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.fill_values">[docs]</a>    <span class="k">def</span> <span class="nf">fill_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fill values_list depending on the visualized tags</span>
 
@@ -282,7 +282,7 @@
             <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CountTable.count_scans"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.count_scans">[docs]</a>    <span class="k">def</span> <span class="nf">count_scans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.count_scans"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.count_scans">[docs]</a>    <span class="k">def</span> <span class="nf">count_scans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Counts the number of scans depending on the selected tags and displays the result in the table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -320,7 +320,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountTable.fill_headers"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_headers">[docs]</a>    <span class="k">def</span> <span class="nf">fill_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.fill_headers"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.fill_headers">[docs]</a>    <span class="k">def</span> <span class="nf">fill_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills the headers of the table depending on the selected tags</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -353,7 +353,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setVerticalHeaderItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CountTable.fill_first_tags"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_first_tags">[docs]</a>    <span class="k">def</span> <span class="nf">fill_first_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.fill_first_tags"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.fill_first_tags">[docs]</a>    <span class="k">def</span> <span class="nf">fill_first_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills the cells of the table corresponding to the (n-1) first selected tags</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -415,7 +415,7 @@
 
                 <span class="n">col_checked</span> <span class="o">-=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="CountTable.fill_last_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_last_tag">[docs]</a>    <span class="k">def</span> <span class="nf">fill_last_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountTable.fill_last_tag"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.fill_last_tag">[docs]</a>    <span class="k">def</span> <span class="nf">fill_last_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills the cells corresponding to the last selected tag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -473,7 +473,7 @@
             <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CountTable.prepare_filter"><a class="viewcode-back" href="../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.prepare_filter">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="CountTable.prepare_filter"><a class="viewcode-back" href="../../../populse_mia.data_browser.html#populse_mia.data_browser.count_table.CountTable.prepare_filter">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">prepare_filter</span><span class="p">(</span><span class="n">couples</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prepares the filter in order to fill the count table</span>

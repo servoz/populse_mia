@@ -1,4 +1,4 @@
-.. :orphan: is used below to try to remove the following warning: checking consistency... /home/econdami/Git_Projects/populse_mia/docs/source/populse_mia.user_interface.pipeline_manager.capsul_files.rst: WARNING: document isn't included in any toctree
+.. :orphan: is used below to try to remove the following warning: checking consistency... /home/econdami/Git_Projects/populse_mia/docs/source/populse_mia.pipeline_manager.capsul_files.rst: WARNING: document isn't included in any toctree
    
 :orphan:
    
@@ -11,7 +11,7 @@ Submodules
 populse\_mia.pipeline\_manager.capsul\_files.pipeline\_developper\_view module
 ------------------------------------------------------------------------------
 
-.. automodule:: populse_mia.user_interface.pipeline_manager.capsul_files.pipeline_developper_view
+.. automodule:: populse_mia.pipeline_manager.capsul_files.pipeline_developper_view
     :members:
     :undoc-members:
     :show-inheritance:
@@ -19,7 +19,7 @@ populse\_mia.pipeline\_manager.capsul\_files.pipeline\_developper\_view module
 populse\_mia.pipeline\_manager.capsul\_files.pipeline\_tools module
 -------------------------------------------------------------------
 
-.. automodule:: populse_mia.user_interface.pipeline_manager.capsul_files.pipeline_tools
+.. automodule:: populse_mia.pipeline_manager.capsul_files.pipeline_tools
     :members:
     :undoc-members:
     :show-inheritance:
@@ -27,7 +27,7 @@ populse\_mia.pipeline\_manager.capsul\_files.pipeline\_tools module
 populse\_mia.pipeline\_manager.capsul\_files.test\_save module
 --------------------------------------------------------------
 
-.. automodule:: populse_mia.user_interface.pipeline_manager.capsul_files.test_save
+.. automodule:: populse_mia.pipeline_manager.capsul_files.test_save
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ populse\_mia.pipeline\_manager.capsul\_files.test\_save module
 Module contents
 ---------------
 
-.. automodule:: populse_mia.user_interface.pipeline_manager.capsul_files
+.. automodule:: populse_mia.pipeline_manager.capsul_files
     :members:
     :undoc-members:
     :show-inheritance:

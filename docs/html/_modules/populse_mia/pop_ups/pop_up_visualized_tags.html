@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.user_interface.pop_ups.pop_up_visualized_tags &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.pop_ups.pop_up_visualized_tags &#8212; populse_mia 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.user_interface.pop_ups.pop_up_visualized_tags</span></h2>
+        <h2 class="heading"><span>populse_mia.pop_ups.pop_up_visualized_tags</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -31,7 +31,7 @@
       <div class="content">
         
         
-  <h1>Source code for populse_mia.user_interface.pop_ups.pop_up_visualized_tags</h1><div class="highlight"><pre>
+  <h1>Source code for populse_mia.pop_ups.pop_up_visualized_tags</h1><div class="highlight"><pre>
 <span></span><span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
@@ -46,10 +46,10 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.database_manager.project.project</span> <span class="k">import</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
+<span class="kn">from</span> <span class="nn">populse_mia.project.project</span> <span class="k">import</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
 
 
-<div class="viewcode-block" id="PopUpVisualizedTags"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags">[docs]</a><span class="k">class</span> <span class="nc">PopUpVisualizedTags</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpVisualizedTags"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags">[docs]</a><span class="k">class</span> <span class="nc">PopUpVisualizedTags</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to update the tags that are visualized</span>
 
@@ -66,7 +66,7 @@
     <span class="c1"># Signal that will be emitted at the end to tell that the preferences have been changed</span>
     <span class="n">signal_preferences_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PopUpVisualizedTags.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">visualized_tags</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpVisualizedTags.__init__"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">visualized_tags</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -151,7 +151,7 @@
                 <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">sortItems</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PopUpVisualizedTags.search_str"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.search_str">[docs]</a>    <span class="k">def</span> <span class="nf">search_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_search</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpVisualizedTags.search_str"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.search_str">[docs]</a>    <span class="k">def</span> <span class="nf">search_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_search</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Matches the searched pattern with the tags of the project</span>
 
@@ -174,7 +174,7 @@
             <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">tag_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">sortItems</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PopUpVisualizedTags.click_select_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">click_select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpVisualizedTags.click_select_tag"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">click_select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Puts the selected tags in the &quot;selected tag&quot; table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -186,7 +186,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">left_tags</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_selected_tags</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">row</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="PopUpVisualizedTags.click_unselect_tag"><a class="viewcode-back" href="../../../populse_mia.user_interface.pop_ups.html#populse_mia.user_interface.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag">[docs]</a>    <span class="k">def</span> <span class="nf">click_unselect_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PopUpVisualizedTags.click_unselect_tag"><a class="viewcode-back" href="../../../populse_mia.pop_ups.html#populse_mia.pop_ups.pop_up_visualized_tags.PopUpVisualizedTags.click_unselect_tag">[docs]</a>    <span class="k">def</span> <span class="nf">click_unselect_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes the unselected tags from populse_mia.e &quot;selected tag&quot; table</span>
 <span class="sd">        &quot;&quot;&quot;</span>

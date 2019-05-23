@@ -18,20 +18,22 @@ Contains:
 # for details.
 ##########################################################################
 
-from sqlalchemy import create_engine, MetaData, String, Boolean, Integer, \
-    Enum, Column, Table
+from sqlalchemy import (
+    create_engine, MetaData, String, Boolean, Integer,
+    Enum, Column, Table)
 from sqlalchemy.exc import ArgumentError
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.orm import mapper
 
 # Populse_db imports
-from populse_db.database import Database, FIELD_TABLE, FIELD_TYPE_STRING, \
-    FIELD_TYPE_DATE, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_FLOAT, \
-    FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATE, \
-    FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_DATETIME, FIELD_TYPE_INTEGER, \
-    FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_BOOLEAN, \
-    FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_JSON, FIELD_TYPE_LIST_JSON, \
-    COLLECTION_TABLE, DatabaseSession, ALL_TYPES, LIST_TYPES, TYPE_TO_COLUMN
+from populse_db.database import (
+    Database, FIELD_TABLE, FIELD_TYPE_STRING,
+    FIELD_TYPE_DATE, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_FLOAT,
+    FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_DATE,
+    FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_DATETIME, FIELD_TYPE_INTEGER,
+    FIELD_TYPE_FLOAT, FIELD_TYPE_TIME, FIELD_TYPE_BOOLEAN,
+    FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_JSON, FIELD_TYPE_LIST_JSON,
+    COLLECTION_TABLE, DatabaseSession, ALL_TYPES, LIST_TYPES, TYPE_TO_COLUMN)
 from populse_db.filter import QUERY_MIXED
 
 TAG_ORIGIN_BUILTIN = "builtin"

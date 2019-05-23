@@ -22,14 +22,16 @@ Then answer each question with default values, except the following ones:
  - Create Windows command file? (y/n) [y]: n  
 """  
 """  
-The following line (22) must be uncommented from docs/source/conf.py:
- - sys.path.insert(0, os.path.abspath('../..'))
+The following lines (15-17) must be uncommented from docs/source/conf.py:
+ - import os
+ - import sys
+ - sys.path.insert(0, os.path.abspath('../../python'))
 The following line (8) must be modified from docs/Makefile:
  - BUILDDIR      = BUILD  =>  BUILDDIR      = .  
 """
 
 ## To update the api documentation (in docs/ folder)
-          sphinx-apidoc -f -o source/ ../python/populse_mia/
+          sphinx-apidoc -f -M -o source/ ../python/populse_mia/
 
 ## To generate the html pages (in docs/ folder)
           make html

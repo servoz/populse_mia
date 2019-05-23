@@ -64,7 +64,9 @@ class RapidSearch(QLineEdit):
 
                 or_to_write = True
 
-        query += " AND ({" + TAG_FILENAME + "} IN " + str(self.databrowser.table_data.scans_to_search).replace("'", "\"") + ")"
+        query += " AND ({" + TAG_FILENAME + "} IN " + str(
+            self.databrowser.table_data.scans_to_search).replace("'",
+                                                                 "\"") + ")"
 
         query = "(" + query + ")"
 
@@ -95,7 +97,8 @@ class RapidSearch(QLineEdit):
 
                 or_to_write = True
 
-        query += " AND ({" + TAG_FILENAME + "} IN " + str(scans).replace("'", "\"") + ")"
+        query += " AND ({" + TAG_FILENAME + "} IN " + str(
+            scans).replace("'", "\"") + ")"
 
         query = "(" + query + ")"
 

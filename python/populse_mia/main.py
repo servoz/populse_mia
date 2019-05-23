@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*- # Character encoding, recommended
 """The first module used at the runtime of mia.
 
+##########################################################################
+# Populse_mia - Copyright (C) IRMaGe/CEA, 2018
+# Distributed under the terms of the CeCILL license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
+# for details.
+##########################################################################
+
 Basically, this module is dedicated to the initialisation of the basic
 parameters and the various checks necessary for a successful launch of the
 mia's GUI.
@@ -53,7 +61,7 @@ if not os.path.dirname(os.path.dirname(
 from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.data_manager.project import Project
 from populse_mia.software_properties import Config
-from populse_mia.utils.utils import verCmp
+from populse_mia.software_properties import verCmp
 from populse_mia.data_manager.project_properties import SavedProjects
 
 main_window = None
@@ -291,8 +299,8 @@ def main():
             - *_browse_mia_path()*
                 The user define the mia_path parameter.
 
-                This method goes with the _ok_mia_path function, the latter will use
-                the value of the mia_path parameter, defined here.
+                This method goes with the _ok_mia_path function, the latter
+                will use the value of the mia_path parameter, defined here.
 
                 :Parameters dialog: QtWidgets.QDialog object ('msg' in the main
                    function)
@@ -403,7 +411,8 @@ def main():
             mia_home_config["dev_mode"] = "no"
             
             with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-                yaml.dump(mia_home_config, configfile, default_flow_style=False,
+                yaml.dump(mia_home_config, configfile,
+                          default_flow_style=False,
                           allow_unicode=True)
                 
             verify_processes()
@@ -543,7 +552,8 @@ def verify_processes():
                     return False
 
             # keep the same configuration for the pipeline in new and old dic
-            elif _deepCompDic(old_dic[str(key)], new_dic[str(key)], level="+1"):
+            elif (_deepCompDic(old_dic[str(key)], new_dic[str(key)],
+                               level="+1")):
                 new_dic[str(key)] = old_dic[str(key)]
 
     proc_content = False

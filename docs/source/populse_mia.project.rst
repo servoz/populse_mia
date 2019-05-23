@@ -7,7 +7,7 @@ Submodules
 populse\_mia.project.controller module
 --------------------------------------
 
-.. automodule:: populse_mia.database_manager.project.controller
+.. automodule:: populse_mia.project.controller
     :members:
     :undoc-members:
     :show-inheritance:
@@ -15,7 +15,7 @@ populse\_mia.project.controller module
 populse\_mia.project.database\_mia module
 -----------------------------------------
 
-.. automodule:: populse_mia.database_manager.project.database_mia
+.. automodule:: populse_mia.project.database_mia
     :members:
     :undoc-members:
     :show-inheritance:
@@ -23,7 +23,7 @@ populse\_mia.project.database\_mia module
 populse\_mia.project.filter module
 ----------------------------------
 
-.. automodule:: populse_mia.database_manager.project.filter
+.. automodule:: populse_mia.project.filter
     :members:
     :undoc-members:
     :show-inheritance:
@@ -31,7 +31,7 @@ populse\_mia.project.filter module
 populse\_mia.project.project module
 -----------------------------------
 
-.. automodule:: populse_mia.database_manager.project.project
+.. automodule:: populse_mia.project.project
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ populse\_mia.project.project module
 Module contents
 ---------------
 
-.. automodule:: populse_mia.database_manager.project
+.. automodule:: populse_mia.project
     :members:
     :undoc-members:
     :show-inheritance:

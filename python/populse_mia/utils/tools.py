@@ -15,11 +15,9 @@ class ClickableLabel(QLabel):
     """
     QLabel with a clicked signal
 
-    Attributes:
-        - clicked: signal to emit when the label is clicked
-
     Methods:
-        - mousePressEvent: overrides the mousePressEvent method by emitting the clicked signal
+        - mousePressEvent: overrides the mousePressEvent method by emitting
+          the clicked signal
     """
 
     # Signal that will be emitted when the widget is clicked

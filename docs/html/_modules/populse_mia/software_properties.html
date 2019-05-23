@@ -1,0 +1,702 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.software_properties &#8212; populse_mia 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>populse_mia 1.1.1 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.software_properties</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.software_properties</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="sd">&quot;&quot;&quot;Module that handle the configuration of the software</span>
+
+<span class="sd">Load and save the parameters from the miniviewer and the MIA preferences</span>
+<span class="sd">pop-up in the config.yml file.</span>
+
+<span class="sd">Contains:</span>
+<span class="sd">    Class:</span>
+<span class="sd">    -Config</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Object that handles the configuration of the software</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - get_clinical_mode: returns the value of &quot;clinical mode&quot; checkbox</span>
+<span class="sd">        in the preferences</span>
+<span class="sd">        - get_matlab_command: returns Matlab command</span>
+<span class="sd">        - get_matlab_path: returns the path of Matlab&#39;s executable</span>
+<span class="sd">        - get_matlab_standalone_path: returns the path of Matlab Compiler</span>
+<span class="sd">        Runtime</span>
+<span class="sd">        - get_max_projects: returns the maximum number of projects displayed in</span>
+<span class="sd">         the &quot;Saved projects&quot; menu</span>
+<span class="sd">        - get_mia_path: returns the software&#39;s install path</span>
+<span class="sd">        - get_projects_save_path: returns the folder where the projects are</span>
+<span class="sd">        saved</span>
+<span class="sd">        - get_spm_path: returns the path of SPM12 (license version)</span>
+<span class="sd">        - get_spm_standalone_path: returns the path of SPM12 (standalone</span>
+<span class="sd">        version)</span>
+<span class="sd">        - get_use_matlab: returns the value of &quot;use matlab&quot; checkbox in the</span>
+<span class="sd">        preferences</span>
+<span class="sd">        - get_mri_conv_path: sets the MRIManager.jar path</span>
+<span class="sd">        - get_use_spm: returns the value of &quot;use spm&quot; checkbox in the</span>
+<span class="sd">        preferences</span>
+<span class="sd">        - get_use_spm_standalone: returns the value of &quot;use spm standalone&quot;</span>
+<span class="sd">        checkbox in the preferences</span>
+<span class="sd">        - getBackgroundColor: returns the background color</span>
+<span class="sd">        - getChainCursors: returns if the &quot;chain cursors&quot; checkbox of the</span>
+<span class="sd">        mini viewer is activated</span>
+<span class="sd">        - getNbAllSlicesMax: returns the maximum number of slices to display in</span>
+<span class="sd">        the mini viewer</span>
+<span class="sd">        - get_opened_projects: returns the opened projects</span>
+<span class="sd">        - getPathData: returns the data&#39;s path</span>
+<span class="sd">        - getPathToProjectsDBFile: returns the already-saved projects&#39;s path</span>
+<span class="sd">        - getPathToProjectsFolder: returns the project&#39;s path</span>
+<span class="sd">        - getShowAllSlices: returns if the &quot;show all slices&quot; checkbox of the</span>
+<span class="sd">        mini viewer is activated</span>
+<span class="sd">        - getTextColor: return the text color</span>
+<span class="sd">        - getThumbnailTag: returns the tag that is displayed in the mini viewer</span>
+<span class="sd">        - isAutoSave: checks if auto-save mode is activated</span>
+<span class="sd">        - loadConfig: reads the config in the config.yml file</span>
+<span class="sd">        - saveConfig: saves the config to the config.yml file</span>
+<span class="sd">        - setAutoSave: sets the auto-save mode</span>
+<span class="sd">        - setBackgroundColor: sets the background color</span>
+<span class="sd">        - set_clinical_mode: sets the value of &quot;clinical mode&quot; checkbox in</span>
+<span class="sd">        the preferences</span>
+<span class="sd">        - set_matlab_path: sets the path of Matlab&#39;s executable</span>
+<span class="sd">        - set_matlab_standalone_path: sets the path of Matlab Compiler Runtime</span>
+<span class="sd">        - set_max_projects: sets the maximum number of projects displayed in</span>
+<span class="sd">        the &quot;Saved projects&quot; menu</span>
+<span class="sd">        - set_mia_path: sets the software&#39;s install path</span>
+<span class="sd">        - set_mri_conv_path: sets the MRIManager.jar path</span>
+<span class="sd">        - set_projects_save_path: sets the folder where the projects are saved</span>
+<span class="sd">        - set_spm_path: sets the path of SPM12 (license version)</span>
+<span class="sd">        - set_spm_standalone_path: sets the path of SPM12 (standalone version)</span>
+<span class="sd">        - set_use_matlab: sets the value of &quot;use matlab&quot; checkbox in the</span>
+<span class="sd">        preferences</span>
+<span class="sd">        - set_use_spm: sets the value of &quot;use spm&quot; checkbox in the preferences</span>
+<span class="sd">        - set_use_spm_standalone: sets the value of &quot;use spm standalone&quot;</span>
+<span class="sd">        checkbox in the preferences</span>
+<span class="sd">        - setChainCursors: sets the &quot;chain cursors&quot; checkbox of the mini viewer</span>
+<span class="sd">        - setNbAllSlicesMax: sets the maximum number of slices to display in</span>
+<span class="sd">        the mini viewer</span>
+<span class="sd">        - set_opened_projects: sets the opened projects</span>
+<span class="sd">        - setPathToData: sets the data&#39;s path</span>
+<span class="sd">        - setShowAllSlices: sets the &quot;show all slices&quot; checkbox of the mini</span>
+<span class="sd">        viewer</span>
+<span class="sd">        - setTextColor: sets the text color</span>
+<span class="sd">        - setThumbnailTag: sets the tag that is displayed in the mini viewer</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Config.__init__"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadConfig</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;mia_path&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.get_clinical_mode"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_clinical_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_clinical_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get if clinical mode is disabled or enabled in the preferences.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;clinical_mode&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;yes&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_matlab_command"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_matlab_command">[docs]</a>    <span class="k">def</span> <span class="nf">get_matlab_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get Matlab command.</span>
+
+<span class="sd">        :return: Returns path to matlab executable or nothing if matlab</span>
+<span class="sd">        path not specified</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm_standalone&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm_standalone&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> \
+                   <span class="s1">&#39;run_spm12.sh </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
+                                                 <span class="s2">&quot;matlab_standalone&quot;</span><span class="p">])</span> <span class="o">+</span> \
+                   <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39; script&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Config.get_matlab_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_matlab_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_matlab_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to the matlab executable.</span>
+
+<span class="sd">        :return: String of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_matlab_standalone_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_matlab_standalone_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_matlab_standalone_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to matlab compiler runtime.</span>
+
+<span class="sd">        :return: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab_standalone&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_max_projects"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_max_projects">[docs]</a>    <span class="k">def</span> <span class="nf">get_max_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the maximum number of projects displayed in the &quot;Saved</span>
+<span class="sd">        projects&quot; menu.</span>
+
+<span class="sd">        :return: Integer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;max_projects&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">5</span></div>
+
+<div class="viewcode-block" id="Config.get_mia_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_mia_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_mia_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to the folder containing the processes, properties</span>
+<span class="sd">        and resources folders of mia (mia_path).</span>
+
+<span class="sd">        During the mia installation, the mia_path is defined and stored in the</span>
+<span class="sd">        configuration.yml file, located in the .populse_mia folder (himself</span>
+<span class="sd">        located in the user&#39;s home). If mia is launched in developer mode,</span>
+<span class="sd">        mia path is the cloned git repository. If mia is launched in user</span>
+<span class="sd">        mode, mia path must compulsorily be returned from the mia_path</span>
+<span class="sd">        parameter of the configuration.yml</span>
+
+<span class="sd">        :return: string of path to mia folder</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dot_mia_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span>
+                                      <span class="s2">&quot;.populse_mia&quot;</span><span class="p">,</span> <span class="s2">&quot;configuration.yml&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">):</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                        <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span>
+                                                    <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>    
+                        <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="s2">&quot;dev_mode&quot;</span> <span class="ow">in</span> <span class="n">mia_home_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> \
+                            <span class="n">mia_home_config</span><span class="p">[</span>
+                        <span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>  <span class="c1"># Only for developer mode</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
+                            <span class="vm">__file__</span><span class="p">))</span>
+                        <span class="k">while</span> <span class="s2">&quot;properties&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+                            <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">config_path</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>  <span class="c1"># Only for user mode</span>
+
+                <span class="c1"># except yaml.YAMLError:</span>
+                <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+                <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+                <span class="c1"># except KeyError:</span>
+                <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+                <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+
+                <span class="k">except</span> <span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Mia path (where is located the processes, &#39;</span>
+                          <span class="s1">&#39;the properties and resources folders) has not &#39;</span>
+                          <span class="s1">&#39;been found ...&#39;</span><span class="p">)</span>
+                    <span class="c1"># return os.path.abspath(os.path.join(os.path.realpath(</span>
+                    <span class="c1"># __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Only for developer mode</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>
+            <span class="c1"># except KeyError:</span>
+            <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+            <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+            <span class="c1"># except AttributeError:</span>
+            <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+            <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
+                    <span class="vm">__file__</span><span class="p">))</span>
+                <span class="k">while</span> <span class="s2">&quot;properties&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+                    <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">config_path</span></div>
+
+<div class="viewcode-block" id="Config.get_mri_conv_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_mri_conv_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_mri_conv_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the MRIManager.jar path.</span>
+
+<span class="sd">        :return: string of the path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mri_conv_path&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_opened_projects"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_opened_projects">[docs]</a>    <span class="k">def</span> <span class="nf">get_opened_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get opened projects.</span>
+
+<span class="sd">        :return: list of opened projects</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;opened_projects&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.get_projects_save_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_projects_save_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_projects_save_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path where projects are saved.</span>
+
+<span class="sd">        :return: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;projects_save_path&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span>
+                                              <span class="s1">&#39;projects&#39;</span><span class="p">)):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;projects&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;projects&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Config.get_spm_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_spm_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_spm_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path of SPM12.</span>
+
+<span class="sd">        :return: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_spm_standalone_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_spm_standalone_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_spm_standalone_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the path to the SPM12 (standalone version).</span>
+
+<span class="sd">        :return: String of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm_standalone&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_use_matlab"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_use_matlab">[docs]</a>    <span class="k">def</span> <span class="nf">get_use_matlab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of &quot;use matlab&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;no&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_use_spm"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_use_spm">[docs]</a>    <span class="k">def</span> <span class="nf">get_use_spm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of &quot;use spm&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;no&quot;</span></div>
+
+<div class="viewcode-block" id="Config.get_use_spm_standalone"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_use_spm_standalone">[docs]</a>    <span class="k">def</span> <span class="nf">get_use_spm_standalone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of &quot;use spm standalone&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm_standalone&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;no&quot;</span></div>
+
+<div class="viewcode-block" id="Config.getBackgroundColor"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getBackgroundColor">[docs]</a>    <span class="k">def</span> <span class="nf">getBackgroundColor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get background color.</span>
+
+<span class="sd">        :return: string of the background color</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;background_color&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getChainCursors"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getChainCursors">[docs]</a>    <span class="k">def</span> <span class="nf">getChainCursors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of the checkbox &#39;chain cursor&#39; in miniviewer.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;chain_cursors&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getNbAllSlicesMax"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getNbAllSlicesMax">[docs]</a>    <span class="k">def</span> <span class="nf">getNbAllSlicesMax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get number the maximum number of slices to display in the</span>
+<span class="sd">        miniviewer.</span>
+
+<span class="sd">        :return: Integer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;nb_slices_max&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getPathToProjectsFolder"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getPathToProjectsFolder">[docs]</a>    <span class="k">def</span> <span class="nf">getPathToProjectsFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the project&#39;s path.</span>
+
+<span class="sd">        :return: string of the path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;paths&quot;</span><span class="p">][</span><span class="s2">&quot;projects&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getShowAllSlices"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getShowAllSlices">[docs]</a>    <span class="k">def</span> <span class="nf">getShowAllSlices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get whether the show_all_slices parameters was enabled</span>
+<span class="sd">        or not in the miniviewer.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#Used in MiniViewer</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;show_all_slices&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getTextColor"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getTextColor">[docs]</a>    <span class="k">def</span> <span class="nf">getTextColor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the text color.</span>
+
+<span class="sd">        :return: string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;text_color&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.getThumbnailTag"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getThumbnailTag">[docs]</a>    <span class="k">def</span> <span class="nf">getThumbnailTag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the tag of the thumbnail displayed in the miniviewer.</span>
+
+<span class="sd">        :return: string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;thumbnail_tag&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.isAutoSave"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.isAutoSave">[docs]</a>    <span class="k">def</span> <span class="nf">isAutoSave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get if the auto-save mode is enabled or not.</span>
+
+<span class="sd">        :return: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># used only in tests and when the background/text color is changed</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;auto_save&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Config.loadConfig"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.loadConfig">[docs]</a>    <span class="k">def</span> <span class="nf">loadConfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read the config in the config.yml file.</span>
+
+<span class="sd">        :return: Returns a dictionary of the contents of config.yml</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verCmp</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="s1">&#39;5.1&#39;</span><span class="p">,</span> <span class="s1">&#39;sup&#39;</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+                
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+                
+            <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Config.saveConfig"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.saveConfig">[docs]</a>    <span class="k">def</span> <span class="nf">saveConfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the current parameters in the config.yml file.&quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> \
+                <span class="n">configfile</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Config.set_clinical_mode"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_clinical_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_clinical_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clinical_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enable of disable clinical mode.</span>
+
+<span class="sd">        :param: clinical_mode: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;clinical_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clinical_mode</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_matlab_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_matlab_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_matlab_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the path of Matlab&#39;s executable.</span>
+
+<span class="sd">        :param: path: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_matlab_standalone_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_matlab_standalone_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_matlab_standalone_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the path of Matlab Compiler Runtime.</span>
+
+<span class="sd">        :param: path: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab_standalone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_max_projects"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_max_projects">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_max_projects</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum number of projects displayed in</span>
+<span class="sd">        the &quot;Saved projects&quot; menu.</span>
+
+<span class="sd">        :param: nb_max_projects: Integer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;max_projects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb_max_projects</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_mri_conv_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_mri_conv_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_mri_conv_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the MRIManager.jar path.</span>
+
+<span class="sd">        :param: path: string of the path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mri_conv_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_opened_projects"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_opened_projects">[docs]</a>    <span class="k">def</span> <span class="nf">set_opened_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_projects</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the list of opened projects and saves the modification.</span>
+
+<span class="sd">        :param: new_projects: List of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;opened_projects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_projects</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_projects_save_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_projects_save_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_projects_save_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the folder where the projects are saved.</span>
+
+<span class="sd">        :param: path: string of path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;projects_save_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_spm_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_spm_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_spm_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the path of SPM12 (license version).</span>
+
+<span class="sd">        :param: path: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_spm_standalone_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_spm_standalone_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_spm_standalone_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the path of SPM12 (standalone version).</span>
+
+<span class="sd">        :param: path: string of path</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm_standalone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_use_matlab"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_use_matlab">[docs]</a>    <span class="k">def</span> <span class="nf">set_use_matlab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_matlab</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value of &quot;use matlab&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :param: use_matlab: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_matlab</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_use_spm"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_use_spm">[docs]</a>    <span class="k">def</span> <span class="nf">set_use_spm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_spm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value of &quot;use spm&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :param: use_spm: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_spm</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.set_use_spm_standalone"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.set_use_spm_standalone">[docs]</a>    <span class="k">def</span> <span class="nf">set_use_spm_standalone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_spm_standalone</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value of &quot;use spm standalone&quot; checkbox in the preferences.</span>
+
+<span class="sd">        :param:use_spm_standalone: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm_standalone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_spm_standalone</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setAutoSave"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setAutoSave">[docs]</a>    <span class="k">def</span> <span class="nf">setAutoSave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set auto-save mode.</span>
+
+<span class="sd">        :param: save: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;auto_save&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setBackgroundColor"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setBackgroundColor">[docs]</a>    <span class="k">def</span> <span class="nf">setBackgroundColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set background color and save configuration.</span>
+
+<span class="sd">        :param: color: Color string (&#39;Black&#39;, &#39;Blue&#39;, &#39;Green&#39;, &#39;Grey&#39;,</span>
+<span class="sd">            &#39;Orange&#39;, &#39;Red&#39;, &#39;Yellow&#39;, &#39;White&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;background_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setChainCursors"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setChainCursors">[docs]</a>    <span class="k">def</span> <span class="nf">setChainCursors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain_cursors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value of the checkbox &#39;chain cursor&#39; in the miniviewer.</span>
+
+<span class="sd">        :param: chain_cursors: Boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;chain_cursors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_cursors</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setNbAllSlicesMax"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setNbAllSlicesMax">[docs]</a>    <span class="k">def</span> <span class="nf">setNbAllSlicesMax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_slices_max</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the number of slices to display in the miniviewer.</span>
+
+<span class="sd">        :param: nb_slices_max: Int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;nb_slices_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb_slices_max</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setShowAllSlices"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setShowAllSlices">[docs]</a>    <span class="k">def</span> <span class="nf">setShowAllSlices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_all_slices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the show_all_slides setting in miniviewer.</span>
+
+<span class="sd">        :param: show_all_slices: Boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;show_all_slices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">show_all_slices</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setTextColor"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setTextColor">[docs]</a>    <span class="k">def</span> <span class="nf">setTextColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set text color and save configuration.</span>
+
+<span class="sd">        :param: color: Color string (&#39;Black&#39;, &#39;Blue&#39;, &#39;Green&#39;, &#39;Grey&#39;,</span>
+<span class="sd">            &#39;Orange&#39;, &#39;Red&#39;, &#39;Yellow&#39;, &#39;White&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;text_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setThumbnailTag"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setThumbnailTag">[docs]</a>    <span class="k">def</span> <span class="nf">setThumbnailTag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thumbnail_tag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the tag that is displayed in the mini viewer.</span>
+
+<span class="sd">        :param: thumbnail_tag: String</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;thumbnail_tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thumbnail_tag</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div></div>
+
+    <span class="c1"># def set_mia_path(self, path):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param:#         path:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :return:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     self.config[&quot;mia_path&quot;] = path</span>
+    <span class="c1">#     # Then save the modification</span>
+    <span class="c1">#     self.saveConfig()</span>
+
+    <span class="c1"># def getPathData(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Get the path tp the data directory</span>
+    <span class="c1">#     :return: returns the path to the data directory</span>
+    <span class="c1">#</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     return self.config[&quot;paths&quot;][&quot;data&quot;]</span>
+
+    <span class="c1"># def getPathToProjectsDBFile(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :return:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     folder = self.getPathToProjectsFolder()</span>
+    <span class="c1">#     return os.path.join(folder, &#39;projects.json&#39;)</span>
+
+    <span class="c1"># def setPathToData(self,path):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param:#         path:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :return:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     if path is not None and path != &#39;&#39;:</span>
+    <span class="c1">#         self.config[&quot;paths&quot;][&quot;data&quot;] = path</span>
+    <span class="c1">#         # Then save the modification</span>
+    <span class="c1">#         self.saveConfig()</span>
+
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

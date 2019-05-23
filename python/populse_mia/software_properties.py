@@ -20,9 +20,68 @@ Contains:
 
 import os
 import yaml
+import re
 
-# Populse_MIA imports
-from populse_mia.utils.utils import verCmp
+
+def verCmp(first_ver, sec_ver, comp):
+    """Version comparator.
+
+    The verCmp() function returns a boolean value to indicate whether its
+    first argument (first_ver) is equal to, less or equal to, or greater or
+    equal to its second argument (sec_ver), as follows:
+    - if third argument (comp) is 'eq': when the first argument is equal to the
+      second argument, return True (False if not).
+    - if third argument (comp) is 'sup': when the first argument is greater
+      than the second argument, return True (False if not).
+    - if third argument (comp) is 'inf': when the first argument is less than
+      the second argument, return True (False if not).
+
+    :param first_ver: the version of a package (a string; ex. '0.13.0')
+    :param sec_ver: the version of a package (a string; ex. '0.13.0')
+    :param comp: comparator argument (accepted values: 'sup', 'inf' and 'eq' )
+
+    :returns: False or True
+
+    Contains:
+        Private function:
+        - normalise
+
+     """
+
+    def normalise(v):
+        """Transform a version of a package to a corresponding list of integer.
+
+        :returns: a list of integer (ex. [0, 13, 0])
+
+        """
+
+        return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+
+    if comp == 'eq':
+
+        if normalise(first_ver) == normalise(sec_ver):
+            return True
+
+        else:
+            return False
+
+    elif comp == 'sup':
+
+        if (normalise(first_ver) > normalise(sec_ver)) or (
+        verCmp(first_ver, sec_ver, 'eq')):
+            return True
+
+        else:
+            return False
+
+    elif comp == 'inf':
+
+        if (normalise(first_ver) < normalise(sec_ver)) or (
+        verCmp(first_ver, sec_ver, 'eq')):
+            return True
+
+        else:
+            return False
 
 
 class Config:
@@ -122,10 +181,10 @@ class Config:
 
         """
         if self.config["use_spm_standalone"] == "yes":
-            return '{0}'.format(self.config["spm_standalone"]) + os.sep + \
-                   'run_spm12.sh {0}'.format(self.config[
-                                                 "matlab_standalone"]) + \
-                   os.sep + ' script'
+            return ('{0}'.format(self.config["spm_standalone"]) + os.sep +
+                    'run_spm12.sh {0}'.format(self.config[
+                                                 "matlab_standalone"]) +
+                    os.sep + ' script')
         elif self.config["use_matlab"] == "yes":
             return self.config["matlab"]
         else:
@@ -193,9 +252,9 @@ class Config:
                     else:    
                         mia_home_config = yaml.load(stream)
 
-                    if "dev_mode" in mia_home_config.keys() and \
-                            mia_home_config[
-                        "dev_mode"] == "yes":  # Only for developer mode
+                    if ("dev_mode" in mia_home_config.keys() and
+                            mia_home_config["dev_mode"] == "yes"):
+                        # Only for developer mode
                         self.dev_mode = True
                         config_path = os.path.dirname(os.path.realpath(
                             __file__))
@@ -648,4 +707,7 @@ class Config:
     #         self.config["paths"]["data"] = path
     #         # Then save the modification
     #         self.saveConfig()
+
+
+
 

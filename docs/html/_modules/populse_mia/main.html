@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.main &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.main &#8212; populse_mia 1.1.1 documentation</title>
     <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>populse_mia 1.0.0 documentation</span></a></h1>
+          <span>populse_mia 1.1.1 documentation</span></a></h1>
         <h2 class="heading"><span>populse_mia.main</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -74,6 +74,21 @@
 
 <span class="c1"># soma-base imports</span>
 <span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.Qt</span> <span class="k">import</span> <span class="n">QMessageBox</span>
+
+<span class="c1"># Adding populse_mia path to the sys.path if in developer mode</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Populse_MIA in &quot;developer&quot; mode&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))))</span>
+    <span class="n">DEV_MODE</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># populse_mia imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.main_window</span> <span class="k">import</span> <span class="n">MainWindow</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project_properties</span> <span class="k">import</span> <span class="n">SavedProjects</span>
 
 <span class="n">main_window</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -157,7 +172,7 @@
                                     <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                                     <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
 
-            <span class="k">except</span> <span class="n">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">When attempting to add a package and its modules to &#39;</span>
                       <span class="s1">&#39;the package tree, the following exception was caught:&#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
@@ -206,15 +221,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># populse_mia imports</span>
-    <span class="kn">from</span> <span class="nn">populse_mia.user_interface.main_window</span> <span class="k">import</span> <span class="n">MainWindow</span>
-    <span class="kn">from</span> <span class="nn">populse_mia.database_manager.project.project</span> <span class="k">import</span> <span class="n">Project</span>
-    <span class="kn">from</span> <span class="nn">populse_mia.database_manager.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
-
     <span class="k">def</span> <span class="nf">_my_excepthook</span><span class="p">(</span><span class="n">etype</span><span class="p">,</span> <span class="n">evalue</span><span class="p">,</span> <span class="n">tback</span><span class="p">):</span>
 
         <span class="k">def</span> <span class="nf">_clean_up</span><span class="p">():</span>
-            <span class="kn">from</span> <span class="nn">populse_mia.database_manager.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
 
             <span class="k">global</span> <span class="n">main_window</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
@@ -240,10 +249,6 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_verify_saved_projects</span><span class="p">():</span>
-
-        <span class="c1"># Populse_MIA imports</span>
-        <span class="kn">from</span> <span class="nn">populse_mia.database_manager.software_properties.saved_projects</span> \
-            <span class="kn">import</span> <span class="nn">SavedProjects</span>
 
         <span class="n">saved_projects_object</span> <span class="o">=</span> <span class="n">SavedProjects</span><span class="p">()</span>
         <span class="n">saved_projects_list</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">saved_projects_object</span><span class="o">.</span><span class="n">pathsList</span><span class="p">)</span>
@@ -282,6 +287,12 @@
     <span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="check_python_version"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.check_python_version">[docs]</a><span class="k">def</span> <span class="nf">check_python_version</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;The populse_mia is ensured to work with Python &quot;</span>
+                             <span class="s2">&quot;&gt;= 3.5&quot;</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Make basic configuration check then actual launch of mia.</span>
 
@@ -295,7 +306,6 @@
 <span class="sd">    dev_mode parameter to &#39;no&#39;.</span>
 
 <span class="sd">    - If launched from a cloned git repository (&#39;developer mode&#39;):</span>
-<span class="sd">        - adds the good path to the sys.path</span>
 <span class="sd">        - if the ~/.populse_mia/configuration.yml exists, updates</span>
 <span class="sd">          the dev_mode parameter to &#39;yes&#39;</span>
 <span class="sd">        - if the ~/.populse_mia/configuration.yml is not existing</span>
@@ -380,15 +390,7 @@
     <span class="n">dot_mia_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.populse_mia&quot;</span><span class="p">,</span>
                                   <span class="s2">&quot;configuration.yml&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>  <span class="c1"># &quot;developer&quot; mode</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Populse_MIA in &quot;developer&quot; mode&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))))</span>
-
-        <span class="c1"># Populse_MIA imports                      ## Not a clean import. </span>
-        <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span> <span class="c1">## To be modified if possible during</span>
-                                                   <span class="c1">## the switch to the VMC architecture!</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">DEV_MODE</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{0}</span><span class="s1"> has been detected.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))</span>
@@ -416,9 +418,6 @@
 
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;user&quot; mode</span>
 
-        <span class="c1"># Populse_MIA imports                      ## Not a clean import. </span>
-        <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span> <span class="c1">## To be modified if possible during</span>
-                                                   <span class="c1">## the switch to the VMC architecture!</span>
         <span class="k">try</span><span class="p">:</span>
             
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">)):</span>
@@ -477,6 +476,7 @@
             <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
             <span class="k">del</span> <span class="n">app</span>
 
+    <span class="n">check_python_version</span><span class="p">()</span>
     <span class="n">launch_mia</span><span class="p">()</span>
 
     <span class="c1"># set the dev_mode to &quot;no&quot; when exiting mia,</span>
@@ -552,10 +552,6 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># populse_mia imports</span>
-    <span class="kn">from</span> <span class="nn">populse_mia.database_manager.software_properties.config</span> <span class="k">import</span> <span class="n">Config</span>
-    <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
 
     <span class="k">def</span> <span class="nf">_deepCompDic</span><span class="p">(</span><span class="n">old_dic</span><span class="p">,</span> <span class="n">new_dic</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">):</span>
 
@@ -867,6 +863,7 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="c1"># this will only be executed when this module is run directly</span>
     <span class="n">main</span><span class="p">()</span>
+
 </pre></div>
 
       </div>

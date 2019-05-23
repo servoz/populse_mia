@@ -7,7 +7,7 @@
 # from PyQt5 import QtWidgets, QtGui, QtCore
 #
 # # Populse_MIA imports
-# from populse_mia.utils.utils import verCmp
+# from populse_mia.software_properties import verCmp
 #
 #
 # class MIAInstallWidget(QtWidgets.QWidget):

@@ -1,0 +1,261 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>populse_mia.user_interface.pipeline_manager.process_mia &#8212; populse_mia 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../../index.html">
+          <span>populse_mia 1.1.1 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.user_interface.pipeline_manager.process_mia</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for populse_mia.user_interface.pipeline_manager.process_mia</h1><div class="highlight"><pre>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
+<span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">traits.trait_base</span> <span class="k">import</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">traits.trait_handlers</span> <span class="k">import</span> <span class="n">TraitListObject</span>
+
+<span class="c1"># Capsul imports</span>
+<span class="kn">from</span> <span class="nn">capsul.api</span> <span class="k">import</span> <span class="n">Process</span>
+
+<span class="c1"># Populse_MIA imports</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">BRICK_EXEC</span><span class="p">,</span> \
+    <span class="n">BRICK_EXEC_TIME</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
+    <span class="n">BRICK_OUTPUTS</span>
+
+
+<div class="viewcode-block" id="ProcessMIA"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA">[docs]</a><span class="k">class</span> <span class="nc">ProcessMIA</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class overriding the default capsul Process class, in order to personalize</span>
+<span class="sd">       the run for MIA bricks.</span>
+
+<span class="sd">   This class is mainly used by MIA bricks.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - _after_run_process: method called after the process being run</span>
+<span class="sd">        - _before_run_process: method called before running the process</span>
+<span class="sd">        - get_brick_to_update: give the brick to update given the scan list</span>
+<span class="sd">           of bricks</span>
+<span class="sd">        - get_scan_bricks: give the list of bricks given an output value</span>
+<span class="sd">        - list_outputs: generates the outputs of the process (need to be</span>
+<span class="sd">           overridden)</span>
+<span class="sd">        - manage_brick_after_run: update process history after the run</span>
+<span class="sd">           (Done status)</span>
+<span class="sd">        - manage_brick_before_run: update process history before running</span>
+<span class="sd">           the process</span>
+<span class="sd">        - manage_brick_output_after_run: manage the bricks history before</span>
+<span class="sd">           the run</span>
+<span class="sd">        - manage_brick_output_before_run: manage the bricks history before</span>
+<span class="sd">           the run</span>
+<span class="sd">        - manage_matlab_launch_parameters: Set the Matlab&#39;s config parameters</span>
+<span class="sd">           when a Nipype process is used</span>
+<span class="sd">        - remove_brick_output: remove the bricks from the outputs</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ProcessMIA.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ProcessMIA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+        <span class="c1"># self.filters = {}  # use if the filters are set on plugs</span>
+
+    <span class="k">def</span> <span class="nf">_after_run_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_process_result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method called after the process being run.</span>
+
+<span class="sd">        :param run_process_result: Result of the run process</span>
+<span class="sd">        :return: the result of the run process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_after_run</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">run_process_result</span>
+
+    <span class="k">def</span> <span class="nf">_before_run_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method called before running the process.</span>
+
+<span class="sd">        Add the exec status Not Done and exec time to the process history</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_before_run</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ProcessMIA.get_brick_to_update"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.get_brick_to_update">[docs]</a>    <span class="k">def</span> <span class="nf">get_brick_to_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bricks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Give the brick to update, given the scan list of bricks.</span>
+
+<span class="sd">        :param bricks: list of scan bricks</span>
+<span class="sd">        :return: Brick to update</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">bricks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bricks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bricks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">bricks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">brick_to_keep</span> <span class="o">=</span> <span class="n">bricks</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">bricks</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">brick</span> <span class="ow">in</span> <span class="n">bricks</span><span class="p">:</span>
+                <span class="n">exec_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">BRICK_EXEC</span><span class="p">)</span>
+                <span class="n">exec_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">BRICK_EXEC_TIME</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">exec_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exec_status</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">brick</span> <span class="o">!=</span> <span class="n">brick_to_keep</span><span class="p">:</span>
+                    <span class="c1"># The other bricks not run are removed</span>
+                    <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">BRICK_OUTPUTS</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+                        <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">remove_brick_output</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">output_value</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">brick_to_keep</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.get_scan_bricks"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.get_scan_bricks">[docs]</a>    <span class="k">def</span> <span class="nf">get_scan_bricks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Give the list of bricks, given an output value.</span>
+
+<span class="sd">        :param output_value: output value</span>
+<span class="sd">        :return: list of bricks related to the output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">scan</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_value</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.list_outputs"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.list_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override the outputs of the process&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.manage_brick_after_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_after_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Manages the brick history after the run (Done status)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+            <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">output_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;undefined&gt;&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">TraitListObject</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">single_value</span> <span class="ow">in</span> <span class="n">output_value</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_after_run</span><span class="p">(</span><span class="n">single_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_after_run</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.manage_brick_before_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_before_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates process history, before running the process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+            <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">output_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;undefined&gt;&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">TraitListObject</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">single_value</span> <span class="ow">in</span> <span class="n">output_value</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_before_run</span><span class="p">(</span><span class="n">single_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_before_run</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.manage_brick_output_after_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_output_after_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_output_after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Manages the bricks history before the run</span>
+
+<span class="sd">        :param output_value: output value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">scan_bricks_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scan_bricks</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span>
+        <span class="n">brick_to_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_brick_to_update</span><span class="p">(</span><span class="n">scan_bricks_history</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">brick_to_update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick_to_update</span><span class="p">,</span>
+                                           <span class="n">BRICK_EXEC</span><span class="p">,</span> <span class="s2">&quot;Done&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.manage_brick_output_before_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_output_before_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_output_before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Manages the bricks history before the run</span>
+
+<span class="sd">        :param output_value: output value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">scan_bricks_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scan_bricks</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span>
+        <span class="n">brick_to_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_brick_to_update</span><span class="p">(</span><span class="n">scan_bricks_history</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">brick_to_update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick_to_update</span><span class="p">,</span>
+                                           <span class="n">BRICK_EXEC_TIME</span><span class="p">,</span>
+                                           <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick_to_update</span><span class="p">,</span>
+                                           <span class="n">BRICK_EXEC</span><span class="p">,</span> <span class="s2">&quot;Not Done&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.manage_matlab_launch_parameters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_matlab_launch_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">manage_matlab_launch_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the Matlab&#39;s config parameters when a Nipype process is used</span>
+
+<span class="sd">        Called in bricks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">use_mcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_mcr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">matlab_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matlab_cmd</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">mfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mfile</span></div>
+
+<div class="viewcode-block" id="ProcessMIA.remove_brick_output"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.remove_brick_output">[docs]</a>    <span class="k">def</span> <span class="nf">remove_brick_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes the bricks from the outputs</span>
+
+<span class="sd">        :param output: output</span>
+<span class="sd">        :param brick: brick</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">TraitListObject</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">single_value</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_brick_output</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">single_value</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">output_bricks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">)</span>
+                <span class="n">output_bricks</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">brick</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">output_bricks</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">output_bricks</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div></div>
+
+
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, populse.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

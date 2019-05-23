@@ -30,39 +30,42 @@ import os
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
-from PyQt5.QtWidgets import QTableWidgetItem, QMenu, QFrame, QToolBar, \
-    QToolButton, QAction, QMessageBox, QPushButton, QProgressDialog, \
-    QDoubleSpinBox, QDateTimeEdit, QDateEdit, QTimeEdit, QApplication, \
-    QWidget, QVBoxLayout, QTableWidget, QHBoxLayout, QSplitter, QGridLayout,\
-    QItemDelegate, QAbstractItemView
+from PyQt5.QtWidgets import (
+    QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,
+    QMessageBox, QPushButton, QProgressDialog, QDoubleSpinBox,
+    QDateTimeEdit, QDateEdit, QTimeEdit, QApplication, QWidget, QVBoxLayout,
+    QTableWidget, QHBoxLayout, QSplitter, QGridLayout, QItemDelegate,
+    QAbstractItemView)
 
 # Populse_MIA imports
 from populse_mia.user_interface.data_browser.rapid_search import RapidSearch
-from populse_mia.user_interface.data_browser.advanced_search import AdvancedSearch
+from populse_mia.user_interface.data_browser.advanced_search import (
+    AdvancedSearch)
 from populse_mia.user_interface.data_browser.count_table import CountTable
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.user_interface.data_browser.mini_viewer import MiniViewer
-from populse_mia.user_interface.pop_ups import PopUpMultipleSort, \
-    PopUpProperties, PopUpShowBrick, PopUpAddPath, PopUpAddTag, \
-    PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter
-from populse_mia.user_interface.pop_ups import \
-    PopUpDataBrowserCurrentSelection
+from populse_mia.user_interface.pop_ups import (
+    PopUpMultipleSort, PopUpProperties, PopUpShowBrick, PopUpAddPath,
+    PopUpAddTag, PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter)
+from populse_mia.user_interface.pop_ups import (
+    PopUpDataBrowserCurrentSelection)
 from populse_mia.utils.tools import ClickableLabel
-from populse_mia.utils.utils import check_value_type, set_item_data, \
-    table_to_database
-from populse_mia.data_manager.project import COLLECTION_CURRENT, \
-    COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM, \
-    TAG_FILENAME, TAG_BRICKS, BRICK_NAME
-from populse_mia.data_manager.database_mia import TAG_ORIGIN_BUILTIN, \
-    TAG_ORIGIN_USER
+from populse_mia.utils.utils import (
+    check_value_type, set_item_data, table_to_database)
+from populse_mia.data_manager.project import (
+    COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM,
+    TAG_FILENAME, TAG_BRICKS, BRICK_NAME)
+from populse_mia.data_manager.database_mia import (
+    TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER)
 from populse_mia.software_properties import Config
 
 # Populse_db imports
-from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, \
-    FIELD_TYPE_DATETIME, FIELD_TYPE_DATE, FIELD_TYPE_TIME, \
-    FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, \
-    FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_FLOAT, \
-    FIELD_TYPE_LIST_BOOLEAN, LIST_TYPES
+from populse_db.database import (
+    FIELD_TYPE_STRING, FIELD_TYPE_FLOAT, FIELD_TYPE_DATETIME,
+    FIELD_TYPE_DATE, FIELD_TYPE_TIME, FIELD_TYPE_LIST_DATE,
+    FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_INTEGER,
+    FIELD_TYPE_LIST_STRING, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_BOOLEAN,
+    LIST_TYPES)
 
 # Variable shown everywhere when no value for the tag
 not_defined_value = "*Not Defined*"
@@ -1109,12 +1112,12 @@ class TableDataBrowser(QTableWidget):
             return
 
         # Nothing to do if list
-        if FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME \
-                in cells_types or FIELD_TYPE_LIST_TIME in cells_types or \
-                FIELD_TYPE_LIST_INTEGER in cells_types or \
-                FIELD_TYPE_LIST_STRING in cells_types or \
-                FIELD_TYPE_LIST_FLOAT in cells_types or \
-                FIELD_TYPE_LIST_BOOLEAN in cells_types:
+        if (FIELD_TYPE_LIST_DATE in cells_types or FIELD_TYPE_LIST_DATETIME
+                in cells_types or FIELD_TYPE_LIST_TIME in cells_types or
+                FIELD_TYPE_LIST_INTEGER in cells_types or
+                FIELD_TYPE_LIST_STRING in cells_types or
+                FIELD_TYPE_LIST_FLOAT in cells_types or
+                FIELD_TYPE_LIST_BOOLEAN in cells_types):
             self.itemChanged.connect(self.change_cell_color)
             return
 
@@ -2090,9 +2093,9 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(230, 230, 230)  # Grey
 
                         # Raw tag
-                        elif self.project.session.get_field(
-                                COLLECTION_CURRENT, tag).origin == \
-                                TAG_ORIGIN_BUILTIN:
+                        elif (self.project.session.get_field(
+                                COLLECTION_CURRENT, tag).origin ==
+                                TAG_ORIGIN_BUILTIN):
                             current_value = self.project.session.get_value(
                                 COLLECTION_CURRENT, scan, tag)
                             initial_value = self.project.session.get_value(
@@ -2204,8 +2207,8 @@ class TableDataBrowser(QTableWidget):
             self.setColumnHidden(self.get_tag_column(tag), False)
 
         # Update the list of tags in the advanced search if it's opened
-        if hasattr(self.data_browser, "frame_advanced_search") and \
-                not self.data_browser.frame_advanced_search.isHidden():
+        if (hasattr(self.data_browser, "frame_advanced_search") and
+                not self.data_browser.frame_advanced_search.isHidden()):
             for row in self.data_browser.advanced_search.rows:
                 fields = row[2]
                 fields.clear()

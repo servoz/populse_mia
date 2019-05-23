@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.database_manager.software_properties package &#8212; populse_mia 1.0.0 documentation</title>
+    <title>populse_mia.software_properties package &#8212; populse_mia 1.1.1 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,8 +18,8 @@
     <link rel="search" title="Search" href="search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>populse_mia 1.0.0 documentation</span></a></h1>
-        <h2 class="heading"><span>populse_mia.database_manager.software_properties package</span></h2>
+          <span>populse_mia 1.1.1 documentation</span></a></h1>
+        <h2 class="heading"><span>populse_mia.software_properties package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
@@ -32,12 +32,18 @@
         
         
   <div class="section" id="populse-mia-software-properties-package">
-<h1>populse_mia.database_manager.software_properties package<a class="headerlink" href="#populse-mia-software-properties-package" title="Permalink to this headline">¶</a></h1>
+<h1>populse_mia.software_properties package<a class="headerlink" href="#populse-mia-software-properties-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.database_manager.software_properties.config">
-<span id="populse-mia-software-properties-config-module"></span><h2>populse_mia.database_manager.software_properties.config module<a class="headerlink" href="#module-populse_mia.database_manager.software_properties.config" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="populse-mia-software-properties-config-module">
+<h2>populse_mia.software_properties.config module<a class="headerlink" href="#populse-mia-software-properties-config-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="populse-mia-software-properties-saved-projects-module">
+<h2>populse_mia.software_properties.saved_projects module<a class="headerlink" href="#populse-mia-software-properties-saved-projects-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-populse_mia.software_properties">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.software_properties" title="Permalink to this headline">¶</a></h2>
 <p>Module that handle the configuration of the software</p>
 <p>Load and save the parameters from the miniviewer and the MIA preferences
 pop-up in the config.yml file.</p>
@@ -47,8 +53,8 @@ pop-up in the config.yml file.</p>
 -Config</dd>
 </dl>
 <dl class="class">
-<dt id="populse_mia.database_manager.software_properties.config.Config">
-<em class="property">class </em><code class="descclassname">populse_mia.database_manager.software_properties.config.</code><code class="descname">Config</code><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config">
+<em class="property">class </em><code class="descclassname">populse_mia.software_properties.</code><code class="descname">Config</code><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Object that handles the configuration of the software</p>
 <dl class="docutils">
@@ -125,14 +131,14 @@ viewer
 </dd>
 </dl>
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getBackgroundColor">
-<code class="descname">getBackgroundColor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getBackgroundColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getBackgroundColor" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getBackgroundColor">
+<code class="descname">getBackgroundColor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getBackgroundColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getBackgroundColor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get background color.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,8 +151,8 @@ viewer
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getChainCursors">
-<code class="descname">getChainCursors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getChainCursors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getChainCursors" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getChainCursors">
+<code class="descname">getChainCursors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getChainCursors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getChainCursors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value of the checkbox ‘chain cursor’ in miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -159,8 +165,8 @@ viewer
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getNbAllSlicesMax">
-<code class="descname">getNbAllSlicesMax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getNbAllSlicesMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getNbAllSlicesMax" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getNbAllSlicesMax">
+<code class="descname">getNbAllSlicesMax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getNbAllSlicesMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getNbAllSlicesMax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number the maximum number of slices to display in the
 miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -174,8 +180,8 @@ miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getPathToProjectsFolder">
-<code class="descname">getPathToProjectsFolder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getPathToProjectsFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getPathToProjectsFolder" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getPathToProjectsFolder">
+<code class="descname">getPathToProjectsFolder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getPathToProjectsFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getPathToProjectsFolder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the project’s path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -188,8 +194,8 @@ miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getShowAllSlices">
-<code class="descname">getShowAllSlices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getShowAllSlices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getShowAllSlices" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getShowAllSlices">
+<code class="descname">getShowAllSlices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getShowAllSlices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getShowAllSlices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get whether the show_all_slices parameters was enabled
 or not in the miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -203,8 +209,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getTextColor">
-<code class="descname">getTextColor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getTextColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getTextColor" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getTextColor">
+<code class="descname">getTextColor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getTextColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getTextColor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the text color.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -217,8 +223,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.getThumbnailTag">
-<code class="descname">getThumbnailTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.getThumbnailTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.getThumbnailTag" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.getThumbnailTag">
+<code class="descname">getThumbnailTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.getThumbnailTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.getThumbnailTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the tag of the thumbnail displayed in the miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -231,8 +237,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_clinical_mode">
-<code class="descname">get_clinical_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_clinical_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_clinical_mode" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_clinical_mode">
+<code class="descname">get_clinical_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_clinical_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_clinical_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get if clinical mode is disabled or enabled in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -245,8 +251,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_matlab_command">
-<code class="descname">get_matlab_command</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_matlab_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_matlab_command" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_matlab_command">
+<code class="descname">get_matlab_command</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_matlab_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_matlab_command" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Matlab command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -260,8 +266,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_matlab_path">
-<code class="descname">get_matlab_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_matlab_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_matlab_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_matlab_path">
+<code class="descname">get_matlab_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_matlab_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_matlab_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path to the matlab executable.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -274,8 +280,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_matlab_standalone_path">
-<code class="descname">get_matlab_standalone_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_matlab_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_matlab_standalone_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_matlab_standalone_path">
+<code class="descname">get_matlab_standalone_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_matlab_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_matlab_standalone_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path to matlab compiler runtime.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -288,8 +294,8 @@ or not in the miniviewer.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_max_projects">
-<code class="descname">get_max_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_max_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_max_projects" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_max_projects">
+<code class="descname">get_max_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_max_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_max_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the maximum number of projects displayed in the “Saved
 projects” menu.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -303,8 +309,8 @@ projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_mia_path">
-<code class="descname">get_mia_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_mia_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_mia_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_mia_path">
+<code class="descname">get_mia_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_mia_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_mia_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path to the folder containing the processes, properties
 and resources folders of mia (mia_path).</p>
 <p>During the mia installation, the mia_path is defined and stored in the
@@ -324,8 +330,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_mri_conv_path">
-<code class="descname">get_mri_conv_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_mri_conv_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_mri_conv_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_mri_conv_path">
+<code class="descname">get_mri_conv_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_mri_conv_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_mri_conv_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the MRIManager.jar path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -338,8 +344,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_opened_projects">
-<code class="descname">get_opened_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_opened_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_opened_projects" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_opened_projects">
+<code class="descname">get_opened_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_opened_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_opened_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get opened projects.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -352,8 +358,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_projects_save_path">
-<code class="descname">get_projects_save_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_projects_save_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_projects_save_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_projects_save_path">
+<code class="descname">get_projects_save_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_projects_save_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_projects_save_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path where projects are saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -366,8 +372,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_spm_path">
-<code class="descname">get_spm_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_spm_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_spm_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_spm_path">
+<code class="descname">get_spm_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_spm_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_spm_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path of SPM12.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -380,8 +386,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_spm_standalone_path">
-<code class="descname">get_spm_standalone_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_spm_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_spm_standalone_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_spm_standalone_path">
+<code class="descname">get_spm_standalone_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_spm_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_spm_standalone_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path to the SPM12 (standalone version).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -394,8 +400,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_use_matlab">
-<code class="descname">get_use_matlab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_use_matlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_use_matlab" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_use_matlab">
+<code class="descname">get_use_matlab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_use_matlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_use_matlab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value of “use matlab” checkbox in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -408,8 +414,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_use_spm">
-<code class="descname">get_use_spm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_use_spm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_use_spm" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_use_spm">
+<code class="descname">get_use_spm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_use_spm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_use_spm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value of “use spm” checkbox in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -422,8 +428,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.get_use_spm_standalone">
-<code class="descname">get_use_spm_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.get_use_spm_standalone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.get_use_spm_standalone" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.get_use_spm_standalone">
+<code class="descname">get_use_spm_standalone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.get_use_spm_standalone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.get_use_spm_standalone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value of “use spm standalone” checkbox in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -436,8 +442,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.isAutoSave">
-<code class="descname">isAutoSave</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.isAutoSave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.isAutoSave" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.isAutoSave">
+<code class="descname">isAutoSave</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.isAutoSave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.isAutoSave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get if the auto-save mode is enabled or not.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -450,8 +456,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.loadConfig">
-<code class="descname">loadConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.loadConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.loadConfig" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.loadConfig">
+<code class="descname">loadConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.loadConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.loadConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the config in the config.yml file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -464,14 +470,14 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.saveConfig">
-<code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.saveConfig" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.saveConfig">
+<code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.saveConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the current parameters in the config.yml file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setAutoSave">
-<code class="descname">setAutoSave</code><span class="sig-paren">(</span><em>save</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setAutoSave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setAutoSave" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setAutoSave">
+<code class="descname">setAutoSave</code><span class="sig-paren">(</span><em>save</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setAutoSave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setAutoSave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set auto-save mode.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -484,8 +490,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setBackgroundColor">
-<code class="descname">setBackgroundColor</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setBackgroundColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setBackgroundColor" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setBackgroundColor">
+<code class="descname">setBackgroundColor</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setBackgroundColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setBackgroundColor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set background color and save configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -499,8 +505,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setChainCursors">
-<code class="descname">setChainCursors</code><span class="sig-paren">(</span><em>chain_cursors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setChainCursors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setChainCursors" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setChainCursors">
+<code class="descname">setChainCursors</code><span class="sig-paren">(</span><em>chain_cursors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setChainCursors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setChainCursors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the value of the checkbox ‘chain cursor’ in the miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -513,8 +519,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setNbAllSlicesMax">
-<code class="descname">setNbAllSlicesMax</code><span class="sig-paren">(</span><em>nb_slices_max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setNbAllSlicesMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setNbAllSlicesMax" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setNbAllSlicesMax">
+<code class="descname">setNbAllSlicesMax</code><span class="sig-paren">(</span><em>nb_slices_max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setNbAllSlicesMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setNbAllSlicesMax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the number of slices to display in the miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -527,8 +533,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setShowAllSlices">
-<code class="descname">setShowAllSlices</code><span class="sig-paren">(</span><em>show_all_slices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setShowAllSlices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setShowAllSlices" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setShowAllSlices">
+<code class="descname">setShowAllSlices</code><span class="sig-paren">(</span><em>show_all_slices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setShowAllSlices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setShowAllSlices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the show_all_slides setting in miniviewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -541,8 +547,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setTextColor">
-<code class="descname">setTextColor</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setTextColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setTextColor" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setTextColor">
+<code class="descname">setTextColor</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setTextColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setTextColor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set text color and save configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -556,8 +562,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.setThumbnailTag">
-<code class="descname">setThumbnailTag</code><span class="sig-paren">(</span><em>thumbnail_tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.setThumbnailTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.setThumbnailTag" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.setThumbnailTag">
+<code class="descname">setThumbnailTag</code><span class="sig-paren">(</span><em>thumbnail_tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.setThumbnailTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.setThumbnailTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the tag that is displayed in the mini viewer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -570,8 +576,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_clinical_mode">
-<code class="descname">set_clinical_mode</code><span class="sig-paren">(</span><em>clinical_mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_clinical_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_clinical_mode" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_clinical_mode">
+<code class="descname">set_clinical_mode</code><span class="sig-paren">(</span><em>clinical_mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_clinical_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_clinical_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enable of disable clinical mode.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -584,8 +590,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_matlab_path">
-<code class="descname">set_matlab_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_matlab_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_matlab_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_matlab_path">
+<code class="descname">set_matlab_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_matlab_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_matlab_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the path of Matlab’s executable.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -598,8 +604,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_matlab_standalone_path">
-<code class="descname">set_matlab_standalone_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_matlab_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_matlab_standalone_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_matlab_standalone_path">
+<code class="descname">set_matlab_standalone_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_matlab_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_matlab_standalone_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the path of Matlab Compiler Runtime.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -612,8 +618,8 @@ parameter of the configuration.yml</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_max_projects">
-<code class="descname">set_max_projects</code><span class="sig-paren">(</span><em>nb_max_projects</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_max_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_max_projects" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_max_projects">
+<code class="descname">set_max_projects</code><span class="sig-paren">(</span><em>nb_max_projects</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_max_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_max_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the maximum number of projects displayed in
 the “Saved projects” menu.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -627,8 +633,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_mri_conv_path">
-<code class="descname">set_mri_conv_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_mri_conv_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_mri_conv_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_mri_conv_path">
+<code class="descname">set_mri_conv_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_mri_conv_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_mri_conv_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the MRIManager.jar path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -641,8 +647,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_opened_projects">
-<code class="descname">set_opened_projects</code><span class="sig-paren">(</span><em>new_projects</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_opened_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_opened_projects" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_opened_projects">
+<code class="descname">set_opened_projects</code><span class="sig-paren">(</span><em>new_projects</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_opened_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_opened_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the list of opened projects and saves the modification.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -655,8 +661,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_projects_save_path">
-<code class="descname">set_projects_save_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_projects_save_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_projects_save_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_projects_save_path">
+<code class="descname">set_projects_save_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_projects_save_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_projects_save_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the folder where the projects are saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -669,8 +675,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_spm_path">
-<code class="descname">set_spm_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_spm_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_spm_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_spm_path">
+<code class="descname">set_spm_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_spm_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_spm_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the path of SPM12 (license version).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -683,8 +689,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_spm_standalone_path">
-<code class="descname">set_spm_standalone_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_spm_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_spm_standalone_path" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_spm_standalone_path">
+<code class="descname">set_spm_standalone_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_spm_standalone_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_spm_standalone_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the path of SPM12 (standalone version).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -697,8 +703,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_use_matlab">
-<code class="descname">set_use_matlab</code><span class="sig-paren">(</span><em>use_matlab</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_use_matlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_use_matlab" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_use_matlab">
+<code class="descname">set_use_matlab</code><span class="sig-paren">(</span><em>use_matlab</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_use_matlab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_use_matlab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the value of “use matlab” checkbox in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -711,8 +717,8 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_use_spm">
-<code class="descname">set_use_spm</code><span class="sig-paren">(</span><em>use_spm</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_use_spm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_use_spm" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_use_spm">
+<code class="descname">set_use_spm</code><span class="sig-paren">(</span><em>use_spm</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_use_spm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_use_spm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the value of “use spm” checkbox in the preferences.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -725,119 +731,14 @@ the “Saved projects” menu.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="populse_mia.database_manager.software_properties.config.Config.set_use_spm_standalone">
-<code class="descname">set_use_spm_standalone</code><span class="sig-paren">(</span><em>use_spm_standalone</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/config.html#Config.set_use_spm_standalone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.config.Config.set_use_spm_standalone" title="Permalink to this definition">¶</a></dt>
+<dt id="populse_mia.software_properties.Config.set_use_spm_standalone">
+<code class="descname">set_use_spm_standalone</code><span class="sig-paren">(</span><em>use_spm_standalone</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#Config.set_use_spm_standalone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.Config.set_use_spm_standalone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the value of “use spm standalone” checkbox in the preferences.</p>
 <p>:param:use_spm_standalone: boolean</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-populse_mia.database_manager.software_properties.saved_projects">
-<span id="populse-mia-software-properties-saved-projects-module"></span><h2>populse_mia.database_manager.software_properties.saved_projects module<a class="headerlink" href="#module-populse_mia.database_manager.software_properties.saved_projects" title="Permalink to this headline">¶</a></h2>
-<p>Module that contains the class to handle the projects saved in the software.</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd>Class:
-- SavedProjects</dd>
-</dl>
-<dl class="class">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects">
-<em class="property">class </em><code class="descclassname">populse_mia.database_manager.software_properties.saved_projects.</code><code class="descname">SavedProjects</code><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that handles all the projects that have been saved in the software.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>savedProjects: dictionary of all the saved projects</li>
-<li>pathsList: list of all the saved projects</li>
-</ul>
-</dd>
-<dt>Methods:</dt>
-<dd><ul class="first simple">
-<li>addSavedProject: adds a new saved project</li>
-<li>loadSavedProjects: loads the dictionary from the saved_projects.yml</li>
-</ul>
-<p class="last">file
-- saveSavedProjects: saves the dictionary to the saved_projects.yml
-file
-- removeSavedProject: removes a saved project from the config file</p>
-</dd>
-</dl>
-<dl class="method">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Initialise the savedProjects attribute from the saved_projects.yml</dt>
-<dd>file.</dd>
-</dl>
-<p>The pathsList attribute is initialised as the value correponding to 
-the “paths” key in the savedProjects dictionary.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects.addSavedProject">
-<code class="descname">addSavedProject</code><span class="sig-paren">(</span><em>newPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects.addSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects.addSavedProject" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Add a new project to save in the savedProjects and pathsList</dt>
-<dd>attributes.</dd>
-</dl>
-<p>Finally, save the savedProjects attribute in the saved_projects.yml
-file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newPath</strong> – new project’s path to add</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the new path’s list (pathsList attribute)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects.loadSavedProjects">
-<code class="descname">loadSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects.loadSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects.loadSavedProjects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the savedProjects dictionary from the saved_projects.yml file.</p>
-<p>If the saved_projects.yml file is not existing, it is created with the
-“{paths: []}” value and the returned dictionnary is {paths: []}.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the dictionary</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects.removeSavedProject">
-<code class="descname">removeSavedProject</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects.removeSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects.removeSavedProject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes a saved project from the saved_projects.yml file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path of the saved project to remove</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="populse_mia.database_manager.software_properties.saved_projects.SavedProjects.saveSavedProjects">
-<code class="descname">saveSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties/saved_projects.html#SavedProjects.saveSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.database_manager.software_properties.saved_projects.SavedProjects.saveSavedProjects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the savedProjects dictionary to the saved_projects.yml file.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-populse_mia.database_manager.software_properties">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-populse_mia.database_manager.software_properties" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

@@ -27,17 +27,18 @@ from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 from PyQt5.QtCore import QCoreApplication
 
 # Populse_MIA imports
-from populse_mia.utils.utils import verCmp
+from populse_mia.software_properties import verCmp
 from populse_mia.data_manager.filter import Filter
 from populse_mia.software_properties import Config
 from populse_mia.utils.utils import set_item_data
-from populse_mia.data_manager.database_mia import DatabaseMIA, TAG_ORIGIN_BUILTIN, \
-    TAG_ORIGIN_USER
+from populse_mia.data_manager.database_mia import (
+    DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER)
 
 # Populse_db imports
-from populse_db.database import FIELD_TYPE_STRING, FIELD_TYPE_LIST_STRING, \
-    FIELD_TYPE_JSON, FIELD_TYPE_DATETIME, \
-    FIELD_TYPE_INTEGER
+from populse_db.database import (
+    FIELD_TYPE_STRING, FIELD_TYPE_LIST_STRING,
+    FIELD_TYPE_JSON, FIELD_TYPE_DATETIME,
+    FIELD_TYPE_INTEGER)
 
 COLLECTION_CURRENT = "current"
 COLLECTION_INITIAL = "initial"
@@ -257,7 +258,6 @@ class Project():
         self.redos = []
         self.init_filters()
 
-
     def add_clinical_tags(self):
         """Add new clinical tags to the project.
 
@@ -395,7 +395,8 @@ class Project():
         :param table: table on which to apply the modifications
         """
         # To avoid circular imports
-        from populse_mia.user_interface.data_browser.data_browser import not_defined_value
+        from populse_mia.user_interface.data_browser.data_browser import (
+            not_defined_value)
 
         # We can redo if we have an action to make again
         if len(self.redos) > 0:
@@ -689,7 +690,8 @@ class Project():
         """
 
         # To avoid circular imports
-        from populse_mia.user_interface.data_browser.data_browser import not_defined_value
+        from populse_mia.user_interface.data_browser.data_browser import (
+            not_defined_value)
 
         # We can undo if we have an action to revert
         if len(self.undos) > 0:

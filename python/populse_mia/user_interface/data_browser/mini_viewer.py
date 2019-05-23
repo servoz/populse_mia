@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSi
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel
-from populse_mia.utils.utils import verCmp
+from populse_mia.software_properties import verCmp
 from populse_mia.user_interface.pop_ups import PopUpSelectTag
 from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser import data_browser
@@ -215,9 +215,11 @@ class MiniViewer(QWidget):
 
             # Loop on the thumbnails
             for idx_loop in range(min(self.max_scans, len(self.file_paths))):
-                # Disconnecting the connection when changing other cursors values
+                # Disconnecting the connection when changing other cursors
+                # values
                 cursor[idx_loop].valueChanged.disconnect()
-                # Do something only when the cursor is not the one that has been changed by the user
+                # Do something only when the cursor is not the one that has
+                # been changed by the user
                 if idx_loop != idx:
                     if cursor[idx].value() == cursor[idx].maximum():
                         value = cursor[idx_loop].maximum()
@@ -226,8 +228,10 @@ class MiniViewer(QWidget):
                         value = cursor[idx_loop].minimum()
 
                     else:
-                        # Updating the new value as the value of the cursor that has been changed by the user
-                        value = round((cursor[idx_loop].maximum() + 1) * (cursor[idx].value() + 1) /
+                        # Updating the new value as the value of the cursor
+                        # that has been changed by the user
+                        value = round((cursor[idx_loop].maximum() + 1) *
+                                      (cursor[idx].value() + 1) /
                                       max(1, cursor[idx].maximum() + 1))
                         value = min(cursor[idx_loop].maximum(), value - 1)
                         value = max(0, int(value))
@@ -236,7 +240,8 @@ class MiniViewer(QWidget):
                 # Changing the image to show
                 self.navigImage(idx_loop)
                 # Reconnecting
-                cursor[idx_loop].valueChanged.connect(partial(self.changePosValue, idx_loop, cursor_to_change))
+                cursor[idx_loop].valueChanged.connect(
+                    partial(self.changePosValue, idx_loop, cursor_to_change))
 
     def createDimensionLabels(self, idx):
         """Create the dimension labels for the selected index.
@@ -526,7 +531,8 @@ class MiniViewer(QWidget):
                 try:
                     self.img.insert(idx, nib.load(file_path))
                 except nib.filebasedimages.ImageFileError:
-                    print("Error while trying to display the image " + file_path)
+                    print("Error while trying to display the image " +
+                          file_path)
                     self.file_paths.remove(file_path)
                 except FileNotFoundError:
                     print("File " + file_path + " not existing")
@@ -578,7 +584,8 @@ class MiniViewer(QWidget):
 
                     # Looking for the tag value to display as a
                     # legend of the thumbnail
-                    file_path_base_name = os.path.relpath(self.file_paths[idx], self.project.folder)
+                    file_path_base_name = os.path.relpath(
+                        self.file_paths[idx], self.project.folder)
                     self.setThumbnail(file_path_base_name, idx)
 
                     # Layout that corresponds to the 3D dimension

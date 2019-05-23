@@ -203,15 +203,15 @@ class ImportWorker(QThread):
                             format = format.replace("mm", "%M")
                             format = format.replace("ss", "%S")
                             format = format.replace("SSS", "%f")
-                            if "%Y" in format and "%m" in format and "%d" in\
-                                    format and "%H" in format and \
-                                    "%M" in format and "%S" in format:
+                            if ("%Y" in format and "%m" in format and "%d" in
+                                    format and "%H" in format and
+                                    "%M" in format and "%S" in format):
                                 tag_type = FIELD_TYPE_DATETIME
-                            elif "%Y" in format and "%m" in format and "%d" \
-                                    in format:
+                            elif ("%Y" in format and "%m" in format and "%d"
+                                    in format):
                                 tag_type = FIELD_TYPE_DATE
-                            elif "%H" in format and "%M" in format and "%S" \
-                                    in format:
+                            elif ("%H" in format and "%M" in format and "%S"
+                                    in format):
                                 tag_type = FIELD_TYPE_TIME
 
                         if tag_name != "Json_Version":
@@ -238,9 +238,9 @@ class ImportWorker(QThread):
                                     value_prepared.append(value_single[0])
                                 value = value_prepared
 
-                        if tag_type == FIELD_TYPE_DATETIME or tag_type == \
-                                FIELD_TYPE_DATE or \
-                                tag_type == FIELD_TYPE_TIME:
+                        if (tag_type == FIELD_TYPE_DATETIME or tag_type ==
+                                FIELD_TYPE_DATE or
+                                tag_type == FIELD_TYPE_TIME):
                             if value is not None and value != "":
                                 value = datetime.strptime(value, format)
                                 if tag_type == FIELD_TYPE_TIME:
@@ -252,8 +252,8 @@ class ImportWorker(QThread):
 
                         tag_row = self.project.session.get_field(
                             COLLECTION_CURRENT, tag_name)
-                        if tag_row is None and tag_name not in \
-                                tags_names_added:
+                        if (tag_row is None and tag_name not in
+                                tags_names_added):
                             # Adding the tag as it's not in the database yet
                             tags_added.append(
                                 [COLLECTION_CURRENT, tag_name, tag_type,

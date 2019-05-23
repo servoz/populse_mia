@@ -15,7 +15,7 @@
 # from soma.path import find_in_path
 #
 # # Populse_MIA imports
-# from populse_mia.utils.utils import verCmp
+# from populse_mia.software_properties import verCmp
 #
 # ###################################################################
 # # ZIP FILE TO UNZIP

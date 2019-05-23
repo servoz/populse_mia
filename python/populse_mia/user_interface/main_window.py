@@ -27,23 +27,28 @@ import glob
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QWidget, QTabWidget, QVBoxLayout, QAction, \
-    QMainWindow, QMessageBox, QMenu, QPushButton, \
-    QApplication, QLabel
+from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QAction,
+                             QMainWindow, QMessageBox, QMenu,
+                             QPushButton, QApplication, QLabel)
 
 # Populse_MIA imports
 from populse_mia.data_manager.project_properties import SavedProjects
 from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser.data_browser import DataBrowser
-from populse_mia.user_interface.pipeline_manager.pipeline_manager_tab import \
-    PipelineManagerTab
-from populse_mia.user_interface.pipeline_manager.process_library import InstallProcesses, \
-    PackageLibraryDialog
+from populse_mia.user_interface.pipeline_manager.pipeline_manager_tab import (
+    PipelineManagerTab)
+from populse_mia.user_interface.pipeline_manager.process_library import (
+    InstallProcesses, PackageLibraryDialog)
 import populse_mia.data_manager.data_loader as data_loader
 from populse_mia.data_manager.project import Project, COLLECTION_CURRENT
-from populse_mia.user_interface.pop_ups import PopUpDeletedProject, \
-    PopUpNewProject, PopUpOpenProject, PopUpPreferences, PopUpProperties, \
-    PopUpSaveProjectAs, PopUpQuit, PopUpSeeAllProjects
+from populse_mia.user_interface.pop_ups import (PopUpDeletedProject,
+                                                PopUpNewProject,
+                                                PopUpOpenProject,
+                                                PopUpPreferences,
+                                                PopUpProperties,
+                                                PopUpSaveProjectAs,
+                                                PopUpQuit,
+                                                PopUpSeeAllProjects)
 
 
 class MainWindow(QMainWindow):
@@ -187,8 +192,8 @@ class MainWindow(QMainWindow):
         """Check if there are differences between the current project and the
         database.
 
-        :return: Boolean. True if there are unsaved modifications, \
-        False otherwise
+        :return: Boolean. True if there are unsaved modifications,
+           False otherwise
         """
         if self.project.isTempProject:
             if len(self.project.session.get_documents_names(
@@ -624,10 +629,10 @@ class MainWindow(QMainWindow):
                 scan = os.path.basename(filename)
                 # The file is removed only if it's not a scan in the project,
                 # and if it's not a logExport
-                if self.project.session.get_document(
+                if (self.project.session.get_document(
                         COLLECTION_CURRENT, os.path.join(
-                            "data", "derived_data", scan)) is None and \
-                        "logExport" not in scan:
+                            "data", "derived_data", scan)) is None and
+                        "logExport" not in scan):
                     os.remove(filename)
             for filename in glob.glob(os.path.join(
                     os.path.relpath(self.project.folder), 'data',
@@ -635,10 +640,10 @@ class MainWindow(QMainWindow):
                 scan = os.path.basename(filename)
                 # The file is removed only if it's not a scan in the project,
                 # and if it's not a logExport
-                if self.project.session.get_document(
+                if (self.project.session.get_document(
                         COLLECTION_CURRENT, os.path.join(
-                            "data","downloaded_data", scan)) \
-                        is None and "logExport" not in scan:
+                            "data", "downloaded_data", scan))
+                        is None and "logExport" not in scan):
                     os.remove(filename)
             self.project.database.__exit__(None, None, None)
 
@@ -825,7 +830,8 @@ class MainWindow(QMainWindow):
         self.pop_up_preferences.use_clinical_mode_signal.connect(
             self.add_clinical_tags)
 
-        # Modifying the options in the Pipeline Manager (verify if clinical mode)
+        # Modifying the options in the Pipeline Manager
+        # (verify if clinical mode)
         self.pop_up_preferences.signal_preferences_change.connect(
             self.pipeline_manager.update_clinical_mode)
         self.pop_up_preferences.signal_preferences_change.connect(

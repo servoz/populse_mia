@@ -43,7 +43,7 @@ from soma.utils.weak_proxy import weak_proxy
 from populse_mia.user_interface.pipeline_manager.node_controller import FilterWidget
 from populse_mia.user_interface.pop_ups import PopUpClosePipeline
 from populse_mia.software_properties import Config
-from populse_mia.utils.utils import verCmp
+from populse_mia.software_properties import verCmp
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -614,7 +614,8 @@ class PipelineEditorTabs(QtWidgets.QTabWidget):
         self.undos[editor] = editor.undos
         self.redos[editor] = editor.redos
         self.setTabText(self.currentIndex(),
-                        self.get_current_tab_name() + " *")  # make sure the " *" is there
+                        self.get_current_tab_name() + " *")
+        # make sure the " *" is there
 
     def update_pipeline_editors(self, editor):
         """Update editor.

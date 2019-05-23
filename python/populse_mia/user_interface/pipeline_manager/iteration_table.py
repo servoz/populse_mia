@@ -177,8 +177,10 @@ class IterationTable(QWidget):
         or removed. """
         tag_name = self.push_buttons[idx].text()
         values = []
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
-            current_value = self.project.session.get_value(COLLECTION_CURRENT, scan, tag_name)
+        for scan in self.project.session.get_documents_names(
+                COLLECTION_CURRENT):
+            current_value = self.project.session.get_value(COLLECTION_CURRENT,
+                                                           scan, tag_name)
             if current_value is not None:
                 values.append(current_value)
 
@@ -251,21 +253,24 @@ class IterationTable(QWidget):
 
         """
 
-        ui_select = PopUpSelectTagCountTable(self.project,
-                                             self.project.session.get_fields_names(COLLECTION_CURRENT),
-                                             self.iterated_tag)
+        ui_select = PopUpSelectTagCountTable(
+            self.project,
+            self.project.session.get_fields_names(COLLECTION_CURRENT),
+            self.iterated_tag)
         if ui_select.exec_():
             self.update_iterated_tag(ui_select.selected_tag)
 
     def select_visualized_tag(self, idx):
-        """
-        Open a pop-up to let the user select which tag to visualize in the iteration table
+        """Open a pop-up to let the user select which tag to visualize in the
+           iteration table
 
         :param idx: index of the clicked push button
         """
 
-        popUp = PopUpSelectTagCountTable(self.project, self.project.session.get_fields_names(COLLECTION_CURRENT),
-                                         self.push_buttons[idx].text())
+        popUp = PopUpSelectTagCountTable(
+            self.project,
+            self.project.session.get_fields_names(COLLECTION_CURRENT),
+            self.push_buttons[idx].text())
         if popUp.exec_():
             self.push_buttons[idx].setText(popUp.selected_tag)
             self.fill_values(idx)
@@ -279,20 +284,23 @@ class IterationTable(QWidget):
         """
 
         if not self.scan_list:
-            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.scan_list = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
 
         self.iterated_tag_push_button.setText(tag_name)
         self.iterated_tag = tag_name
         self.iterated_tag_label.setText(tag_name + ":")
 
         # Update combo_box
-        scans_names = self.project.session.get_documents_names(COLLECTION_CURRENT)
+        scans_names = self.project.session.get_documents_names(
+            COLLECTION_CURRENT)
         scans_names = list(set(scans_names).intersection(self.scan_list))
 
-        # tag_values_list contains all the values that can take the iterated tag
+        # tag_values_list contains all the values that can take iterated tag
         self.tag_values_list = []
         for scan_name in scans_names:
-            tag_value = self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)
+            tag_value = self.project.session.get_value(COLLECTION_CURRENT,
+                                                       scan_name, tag_name)
             if str(tag_value) not in self.tag_values_list:
                 self.tag_values_list.append(str(tag_value))
 
@@ -309,7 +317,8 @@ class IterationTable(QWidget):
 
         # Updating the scan list
         if not self.scan_list:
-            self.scan_list = self.project.session.get_documents_names(COLLECTION_CURRENT)
+            self.scan_list = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
 
         # Clearing the table and preparing its columns
         self.iteration_table.clear()
@@ -318,7 +327,8 @@ class IterationTable(QWidget):
         # Headers
         for idx in range(len(self.push_buttons)):
             header_name = self.push_buttons[idx].text()
-            if header_name not in self.project.session.get_fields_names(COLLECTION_CURRENT):
+            if header_name not in self.project.session.get_fields_names(
+                    COLLECTION_CURRENT):
                 print("{0} not in the project's tags".format(header_name))
                 return
 
@@ -326,13 +336,18 @@ class IterationTable(QWidget):
             item.setText(header_name)
             self.iteration_table.setHorizontalHeaderItem(idx, item)
 
-        # Searching the database scans that correspond to the iterated tag value
-        filter_query = "({" + self.iterated_tag + "} " + "==" + " \"" + self.combo_box.currentText() + "\")"
-        scans_list = self.project.session.filter_documents(COLLECTION_CURRENT, filter_query)
-        scans_res = [getattr(document, TAG_FILENAME) for document in scans_list]
+        # Searching the database scans that correspond to iterated tag value
+        filter_query = "({" + self.iterated_tag + "} " + "==" + " \"" + \
+                       self.combo_box.currentText() + "\")"
+        scans_list = self.project.session.filter_documents(COLLECTION_CURRENT,
+                                                           filter_query)
+        scans_res = [getattr(document, TAG_FILENAME)
+                     for document in scans_list]
 
-        # Taking the intersection between the found database scans and the user selection in the data_browser
-        self.iteration_scans = list(set(scans_res).intersection(self.scan_list))
+        # Taking the intersection between the found database scans and the
+        # user selection in the data_browser
+        self.iteration_scans = list(
+            set(scans_res).intersection(self.scan_list))
         self.iteration_table.setRowCount(len(self.iteration_scans))
 
         # Filling the table cells
@@ -343,7 +358,8 @@ class IterationTable(QWidget):
                 tag_name = self.push_buttons[idx].text()
 
                 item = QTableWidgetItem()
-                item.setText(str(self.project.session.get_value(COLLECTION_CURRENT, scan_name, tag_name)))
+                item.setText(str(self.project.session.get_value(
+                    COLLECTION_CURRENT, scan_name, tag_name)))
                 self.iteration_table.setItem(row, idx, item)
 
         # This will change the scans list in the current Pipeline Manager tab
