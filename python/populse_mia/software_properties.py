@@ -5,6 +5,8 @@ Load and save the parameters from the miniviewer and the MIA preferences
 pop-up in the config.yml file.
 
 Contains:
+    Function:
+    -verCmp
     Class:
     -Config
 

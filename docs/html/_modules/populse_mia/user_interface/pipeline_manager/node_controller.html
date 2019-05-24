@@ -51,21 +51,22 @@
 <span class="c1"># PyQt5 imports</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">pyqtSignal</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> \
-    <span class="n">QLabel</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QGroupBox</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> \
-    <span class="n">QDialogButtonBox</span><span class="p">,</span> <span class="n">QApplication</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span>
+    <span class="n">QGroupBox</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QDialogButtonBox</span><span class="p">,</span>
+    <span class="n">QApplication</span><span class="p">)</span>
 
 <span class="c1"># soma-base imports</span>
 <span class="kn">from</span> <span class="nn">soma.controller</span> <span class="k">import</span> <span class="n">trait_ids</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.advanced_search</span> <span class="k">import</span> <span class="n">AdvancedSearch</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.advanced_search</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">AdvancedSearch</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.rapid_search</span> <span class="k">import</span> <span class="n">RapidSearch</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="n">TableDataBrowser</span><span class="p">,</span> \
-    <span class="n">not_defined_value</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> \
-    <span class="n">PopUpSelectTagCountTable</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="n">PopUpVisualizedTags</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">TableDataBrowser</span><span class="p">,</span> <span class="n">not_defined_value</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PopUpSelectTagCountTable</span><span class="p">,</span> <span class="n">PopUpVisualizedTags</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.filter</span> <span class="k">import</span> <span class="n">Filter</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>

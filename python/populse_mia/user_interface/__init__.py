@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*- #
 
-""" JE MANGE DU BACON """
+""" User interface module, encompass the main window and its tabs
+definition, as well as pop ups.
+
+Contains:
+    Module:
+        - main_window
+        - pop_ups
+        - data_browser
+        - pop_ups
+
+"""
 
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018

@@ -58,22 +58,19 @@
 
 <span class="c1"># PyQt / PySide import, via soma</span>
 <span class="kn">from</span> <span class="nn">soma.qt_gui</span> <span class="k">import</span> <span class="n">qt_backend</span>
-<span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.QtCore</span> <span class="k">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span><span class="p">,</span> <span class="n">QModelIndex</span><span class="p">,</span> \
-    <span class="n">QAbstractItemModel</span><span class="p">,</span> <span class="n">QByteArray</span><span class="p">,</span> <span class="n">QMimeData</span>
-<span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.Qt</span> <span class="k">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> \
-    <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> \
-    <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QTreeView</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> \
-    <span class="n">QMessageBox</span>
+<span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.QtCore</span> <span class="k">import</span> <span class="p">(</span><span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span><span class="p">,</span> <span class="n">QModelIndex</span><span class="p">,</span>
+    <span class="n">QAbstractItemModel</span><span class="p">,</span> <span class="n">QByteArray</span><span class="p">,</span> <span class="n">QMimeData</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">soma.qt_gui.qt_backend.Qt</span> <span class="k">import</span> <span class="p">(</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span>
+    <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+    <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QTreeView</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span>
+    <span class="n">QMessageBox</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA import</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+<span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">verCmp</span>
 
 <span class="c1"># capsul import</span>
 <span class="kn">from</span> <span class="nn">capsul.api</span> <span class="k">import</span> <span class="n">get_process_instance</span>
-
-
-<span class="c1"># soma-base import</span>
 
 
 <div class="viewcode-block" id="ProcessLibraryWidget"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibraryWidget">[docs]</a><span class="k">class</span> <span class="nc">ProcessLibraryWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
@@ -87,7 +84,8 @@
 <span class="sd">          system paths</span>
 <span class="sd">        - open_pkg_lib: opens the package library</span>
 <span class="sd">        - save_config: saves the current config to process_config.yml</span>
-<span class="sd">        - update_config: updates the config and loads the corresponding packages</span>
+<span class="sd">        - update_config: updates the config and loads the corresponding</span>
+<span class="sd">          packages</span>
 <span class="sd">        - update_process_library: updates the tree of the process library</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -411,7 +409,7 @@
             <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.setData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;this method gets called when the user changes data&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;This method gets called when the user changes data&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
                 <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
@@ -420,7 +418,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.headerData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;returns the name of the requested column&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the name of the requested column&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;Packages&quot;</span>
@@ -428,7 +426,8 @@
                 <span class="k">return</span> <span class="s2">&quot;Value&quot;</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.flags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;everything is enable and selectable. Only the leaves can be dragged. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Everything is enable and selectable. Only the leaves can be</span>
+<span class="sd">           dragged. &quot;&quot;&quot;</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
@@ -436,7 +435,7 @@
             <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.parent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;returns the parent from given index&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the parent from given index&quot;&quot;&quot;</span>
         <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">parentNode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="p">:</span>
@@ -445,7 +444,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">parentNode</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parentNode</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.index"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;returns an index from given row, column and parent&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return an index from given row, column and parent&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">childItem</span> <span class="o">=</span> <span class="n">parentNode</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
@@ -455,7 +454,7 @@
             <span class="k">return</span> <span class="n">QModelIndex</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.getNode"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode">[docs]</a>    <span class="k">def</span> <span class="nf">getNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;returns a Node() from given index&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a Node() from given index&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
@@ -464,7 +463,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.insertRows"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.insertRows">[docs]</a>    <span class="k">def</span> <span class="nf">insertRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;insert rows from starting position and number given by rows&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Insert rows from starting position and number given by rows&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beginInsertRows</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -477,7 +476,7 @@
         <span class="k">return</span> <span class="n">success</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.removeRows"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.removeRows">[docs]</a>    <span class="k">def</span> <span class="nf">removeRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;remove the rows from position to position+rows&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Remove the rows from position to position+rows&quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beginRemoveRows</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -492,7 +491,7 @@
 
 
 <div class="viewcode-block" id="node_structure_from_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.node_structure_from_dict">[docs]</a><span class="k">def</span> <span class="nf">node_structure_from_dict</span><span class="p">(</span><span class="n">datadict</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;returns a hierarchical node stucture required by the TreeModel&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return a hierarchical node stucture required by the TreeModel&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
         <span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;Root&#39;</span><span class="p">)</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">root_node</span>
@@ -561,7 +560,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads a dictionary to the tree</span>
 
-<span class="sd">        :param d: dictionary to load. See the packages attribut in the ProcessLibraryWidget class.</span>
+<span class="sd">        :param d: dictionary to load. See the packages attribut in the</span>
+<span class="sd">          ProcessLibraryWidget class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">d</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">node_structure_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -600,19 +600,23 @@
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        - process_library: library of the selected processes</span>
-<span class="sd">        - package_library: widget to control which processes to show in the process library</span>
-<span class="sd">        - packages: tree-dictionary that is the representation of the process library</span>
+<span class="sd">        - package_library: widget to control which processes to show in the</span>
+<span class="sd">          process library</span>
+<span class="sd">        - packages: tree-dictionary that is the representation of the</span>
+<span class="sd">          process library</span>
 <span class="sd">        - paths: list of path to add to the system path</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - load_config: updates the config and loads the corresponding packages</span>
-<span class="sd">        - update_config: updates the process_config and package_library attributes</span>
+<span class="sd">        - update_config: updates the process_config and package_library</span>
+<span class="sd">          attributes</span>
 <span class="sd">        - load_packages: updates the tree of the process library</span>
 <span class="sd">        - save_config: saves the current config to process_config.yml</span>
 <span class="sd">        - browse_package: opens a browser to select a package</span>
 <span class="sd">        - add_package_with_text: adds a package from the line edit&#39;s text</span>
 <span class="sd">        - add_package: adds a package and its modules to the package tree</span>
-<span class="sd">        - remove_package_with_text: removes the package in the line edit from the package tree</span>
+<span class="sd">        - remove_package_with_text: removes the package in the line edit from</span>
+<span class="sd">          the package tree</span>
 <span class="sd">        - remove_package: removes a package from the package tree</span>
 <span class="sd">        - save: saves the tree to the process_config.yml file</span>
 <span class="sd">        - import_file: import a python module from a path</span>
@@ -782,7 +786,8 @@
 
         <span class="c1"># file_dialog.setProxyModel(FileFilterProxyModel())</span>
         <span class="n">file_dialog</span><span class="o">.</span><span class="n">setFileMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">Directory</span><span class="p">)</span>
-        <span class="c1"># file_dialog.setFileMode(QFileDialog.Directory | QFileDialog.ExistingFile)</span>
+        <span class="c1"># file_dialog.setFileMode(QFileDialog.Directory |</span>
+        <span class="c1"># QFileDialog.ExistingFile)</span>
         <span class="c1"># file_dialog.setFilter(&quot;Processes (*.py *.xml)&quot;)</span>
 
         <span class="k">if</span> <span class="n">file_dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
@@ -796,8 +801,10 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_path</span><span class="p">:</span>  <span class="c1"># Currently the self.is_path = False</span>
-            <span class="c1"># (Need to pass by the method browse_package to initialise to True and the Browse button is commented.</span>
-            <span class="c1"># Could be interesting to permit a backdoor to pass the absolute path in the field for add package,</span>
+            <span class="c1"># (Need to pass by the method browse_package to initialise to</span>
+            <span class="c1"># True and the Browse button is commented.</span>
+            <span class="c1"># Could be interesting to permit a backdoor to pass</span>
+            <span class="c1"># the absolute path in the field for add package,</span>
             <span class="c1"># to be continued... )</span>
             <span class="n">path</span><span class="p">,</span> <span class="n">package</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="c1"># Adding the module path to the system path</span>
@@ -879,12 +886,10 @@
 
 <span class="sd">        :param module_name: name of the module</span>
 <span class="sd">        :param class_name: name of the class</span>
-
-<span class="sd">        :package_library: pipeline_manager.process_library.PackageLibrary object</span>
-<span class="sd">        :package_library.package_tree: current package tree known in Package Library window</span>
-
-<span class="sd">        :show_error: display error in a message box in case of error. If False,</span>
-<span class="sd">           errors are silent and error messages returned at the end of execution</span>
+<span class="sd">        :param show_error: display error in a message box in case of error. If</span>
+<span class="sd">          False, errors are silent and error messages returned at the end of</span>
+<span class="sd">          execution</span>
+<span class="sd">        :param init_package_tree: boolean to initialize the package tree</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -949,15 +954,16 @@
                                 <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="n">class_name</span><span class="p">:</span>
                                     <span class="n">recurs</span> <span class="o">=</span> <span class="kc">True</span>
 
-                                <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> \
-                                        <span class="n">path_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">element</span> <span class="ow">is</span>
+                                        <span class="ow">not</span> <span class="n">path_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                                     <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
 
                                 <span class="k">else</span><span class="p">:</span>
 
                                     <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="n">path_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
 
-                                        <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="n">class_name</span> <span class="ow">or</span> <span class="n">recurs</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                                        <span class="k">if</span> <span class="p">(</span><span class="n">element</span> <span class="o">==</span> <span class="n">class_name</span> <span class="ow">or</span> <span class="n">recurs</span>
+                                                <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
                                             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Enabling </span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="p">(</span>
                                             <span class="n">module_name</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
                                             <span class="n">pkg_iter</span><span class="p">[</span>
@@ -968,12 +974,16 @@
 
                                         <span class="k">else</span><span class="p">:</span>
                                             <span class="nb">print</span><span class="p">(</span>
-                                                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">A not installed pipeline was detected in the </span><span class="si">%s</span><span class="s1"> library:&#39;</span> <span class="o">%</span> <span class="p">(</span>
-                                                <span class="n">path_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                                                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">A not installed pipeline &#39;</span>
+                                                <span class="s1">&#39;was detected in the </span><span class="si">%s</span><span class="s1"> &#39;</span>
+                                                <span class="s1">&#39;library:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                                             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;- </span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="p">(</span>
                                             <span class="n">module_name</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
                                             <span class="nb">print</span><span class="p">(</span>
-                                                <span class="s1">&#39;This pipeline is now installed but disabled (see File &gt; Package Library Manager to enable it) ...&#39;</span><span class="p">)</span>
+                                                <span class="s1">&#39;This pipeline is now &#39;</span>
+                                                <span class="s1">&#39;installed but disabled &#39;</span>
+                                                <span class="s1">&#39;(see File &gt; Package Library &#39;</span>
+                                                <span class="s1">&#39;Manager to enable it) ...&#39;</span><span class="p">)</span>
                                             <span class="n">pkg_iter</span><span class="p">[</span>
                                                 <span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;process_disabled&#39;</span>
 
@@ -1023,7 +1033,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes a package from the package tree</span>
 
-<span class="sd">        :param package: module&#39;s representation as a string (e.g.: nipype.interfaces.spm)</span>
+<span class="sd">        :param package: module&#39;s representation as a string</span>
+<span class="sd">           (e.g.: nipype.interfaces.spm)</span>
 <span class="sd">        :return: True if the package has been removed correctly</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">packages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">package_tree</span>
@@ -1078,7 +1089,8 @@
 <span class="sd">        Saves the tree to the process_config.yml file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Updating the packages and the paths according to the package library tree</span>
+        <span class="c1"># Updating the packages and the paths according to the</span>
+        <span class="c1"># package library tree</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">packages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">package_tree</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">paths</span>
 
@@ -1125,7 +1137,8 @@
 
 
 <div class="viewcode-block" id="FileFilterProxyModel"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FileFilterProxyModel</span><span class="p">(</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Just a test for the moment. Should be useful to use in the file dialog. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Just a test for the moment. Should be useful to use in</span>
+<span class="sd">       the file dialog. &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FileFilterProxyModel.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FileFilterProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
@@ -1143,25 +1156,24 @@
         <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.xml&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+            <span class="k">return</span> <span class="kc">True</span></div></div>
 
-    <span class="sd">&quot;&quot;&quot;def flags(self, index):</span>
-<span class="sd">        flags = super(FileFilterProxyModel, self).flags(index)</span>
-<span class="sd">        source_model = self.sourceModel()</span>
-<span class="sd">        if source_model.isDir(index):</span>
-<span class="sd">            flags |= Qt.ItemIsSelectable</span>
-<span class="sd">            return flags</span>
-
-<span class="sd">        # filter files</span>
-<span class="sd">        filename = source_model.fileName(index)</span>
-
-<span class="sd">        if filename.count(&quot;.py&quot;) + filename.count(&quot;.xml&quot;) == 0:</span>
-<span class="sd">            flags &amp;= ~Qt.ItemIsSelectable</span>
-<span class="sd">            return flags</span>
-<span class="sd">        else:</span>
-<span class="sd">            flags |= Qt.ItemIsSelectable</span>
-<span class="sd">            return flags</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+    <span class="c1"># def flags(self, index):</span>
+    <span class="c1">#     flags = super(FileFilterProxyModel, self).flags(index)</span>
+    <span class="c1">#     source_model = self.sourceModel()</span>
+    <span class="c1">#     if source_model.isDir(index):</span>
+    <span class="c1">#         flags |= Qt.ItemIsSelectable</span>
+    <span class="c1">#         return flags</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # filter files</span>
+    <span class="c1">#     filename = source_model.fileName(index)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if filename.count(&quot;.py&quot;) + filename.count(&quot;.xml&quot;) == 0:</span>
+    <span class="c1">#         flags &amp;= ~Qt.ItemIsSelectable</span>
+    <span class="c1">#         return flags</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         flags |= Qt.ItemIsSelectable</span>
+    <span class="c1">#         return flags</span>
 
 
 <div class="viewcode-block" id="PackageLibrary"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary">[docs]</a><span class="k">class</span> <span class="nc">PackageLibrary</span><span class="p">(</span><span class="n">QTreeWidget</span><span class="p">):</span>
@@ -1169,13 +1181,10 @@
 <span class="sd">    Tree that displays the user-added packages and their modules</span>
 <span class="sd">    The user can check or not each module/package</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - package_tree: representation of the packages as a tree-dictionary</span>
-<span class="sd">        - paths: list of paths to add to the system to import the packages</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - update_checks: updates the checks of the tree from an item</span>
-<span class="sd">        - set_module_view: sets if a module has to be enabled or disabled in the process library</span>
+<span class="sd">        - set_module_view: sets if a module has to be enabled or disabled in</span>
+<span class="sd">          the process library</span>
 <span class="sd">        - recursive_checks: checks/unchecks all child items</span>
 <span class="sd">        - recursive_checks_from_child: checks/unchecks all parent items</span>
 <span class="sd">        - generate_tree: generates the package tree</span>
@@ -1220,13 +1229,16 @@
 <span class="sd">        Sets if a module has to be enabled or disabled in the process library</span>
 
 <span class="sd">        :param item: item selected in the current tree</span>
-<span class="sd">        :param state: checked or not checked (Qt.Checked == 2. So if val == 2 -&gt; checkbox is checked,</span>
-<span class="sd">            and if val == 0 -&gt; checkbox is not checked)</span>
+<span class="sd">        :param state: checked or not checked (Qt.Checked == 2.</span>
+<span class="sd">          So if val == 2 -&gt; checkbox is checked, and if val == 0 -&gt; checkbox</span>
+<span class="sd">          is not checked)</span>
 <span class="sd">        :pkg_iter: dictionary where keys are the name of a module (brick)</span>
 <span class="sd">            and values are &#39;process_enabled&#39; or &#39;process_disabled&#39;.</span>
 <span class="sd">            Key can be a submodule. In this case the value is a dictionary</span>
-<span class="sd">            where keys are the name of a module (brick) and values are &#39;process_enabled&#39;</span>
-<span class="sd">            or &#39;process_disabled&#39;. etc. pkg_iter take only the modules concerning the top</span>
+<span class="sd">            where keys are the name of a module (brick) and values are &#39;process</span>
+<span class="sd">            enabled&#39;</span>
+<span class="sd">            or &#39;process_disabled&#39;. etc. pkg_iter take only the modules</span>
+<span class="sd">            concerning the top</span>
 <span class="sd">            package where a change of status where done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
@@ -1370,12 +1382,12 @@
 
 
 <div class="viewcode-block" id="InstallProcesses"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses">[docs]</a><span class="k">class</span> <span class="nc">InstallProcesses</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A widget that allows to browse a Python package or a zip file to install the</span>
-<span class="sd">    processes that it is containing.</span>
+    <span class="sd">&quot;&quot;&quot;A widget that allows to browse a Python package or a zip file to install</span>
+<span class="sd">       the processes that it is containing.</span>
 
 <span class="sd">    Methods:</span>
-<span class="sd">        - get_filename: opens a file dialog to get the folder or zip file to install</span>
+<span class="sd">        - get_filename: opens a file dialog to get the folder or zip file to</span>
+<span class="sd">          install</span>
 <span class="sd">        - install: installs the selected file/folder on Populse_MIA</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1423,20 +1435,20 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a file dialog to get the folder or zip file to install</span>
 
-<span class="sd">        :param folder: True if the dialog installs from folder, False if from zip file</span>
+<span class="sd">        :param folder: True if the dialog installs from folder,</span>
+<span class="sd">          False if from zip file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                                        <span class="n">caption</span><span class="o">=</span><span class="s1">&#39;Select a directory&#39;</span><span class="p">,</span>
-                                                        <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span>
-                                                            <span class="s2">&quot;~&quot;</span><span class="p">),</span>
-                                                        <span class="n">options</span><span class="o">=</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">ShowDirsOnly</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">caption</span><span class="o">=</span><span class="s1">&#39;Select a directory&#39;</span><span class="p">,</span>
+                <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">ShowDirsOnly</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="s1">&#39;Select a zip file&#39;</span><span class="p">,</span>
-                                                   <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span>
-                                                       <span class="s2">&quot;~&quot;</span><span class="p">),</span>
-                                                   <span class="nb">filter</span><span class="o">=</span><span class="s1">&#39;Compatible files (*.zip)&#39;</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span>
+                <span class="n">caption</span><span class="o">=</span><span class="s1">&#39;Select a zip file&#39;</span><span class="p">,</span>
+                <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span>
+                <span class="nb">filter</span><span class="o">=</span><span class="s1">&#39;Compatible files (*.zip)&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -1528,8 +1540,8 @@
                 <span class="k">return</span> <span class="n">proc_dic</span>
 
         <span class="k">def</span> <span class="nf">change_pattern_in_folder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_pattern</span><span class="p">,</span> <span class="n">new_pattern</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Changing all &quot;old_pattern&quot; pattern to &quot;new_pattern&quot; in the &quot;path&quot; folder</span>
+            <span class="sd">&quot;&quot;&quot;Changing all &quot;old_pattern&quot; pattern to &quot;new_pattern&quot; in the &quot;path&quot;</span>
+<span class="sd">              folder</span>
 <span class="sd">            :param path: path of the extracted or copied processes</span>
 <span class="sd">            :param old_pattern: old pattern</span>
 <span class="sd">            :param new_pattern: new pattern</span>
@@ -1538,7 +1550,8 @@
             <span class="k">for</span> <span class="n">dname</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 
                 <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-                    <span class="c1"># Modifying only .py files (pipelines are saved with this extension)</span>
+                    <span class="c1"># Modifying only .py files (pipelines are saved with</span>
+                    <span class="c1"># this extension)</span>
 
                     <span class="k">if</span> <span class="n">fname</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;py&#39;</span><span class="p">:</span>
                         <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dname</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
@@ -1628,11 +1641,13 @@
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
 
-            <span class="c1"># Saving all the install packages names and checking if the MIA_processes are updated</span>
+            <span class="c1"># Saving all the install packages names and checking if</span>
+            <span class="c1"># the MIA_processes are updated</span>
             <span class="n">package_names</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">mia_processes_not_found</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1"># packages_already: packages already installed in populse_mia (populse_mia/processes)</span>
+            <span class="c1"># packages_already: packages already installed in populse_</span>
+            <span class="c1"># mia (populse_mia/processes)</span>
             <span class="n">packages_already</span> <span class="o">=</span> <span class="p">[</span><span class="n">dire</span> <span class="k">for</span> <span class="n">dire</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">))</span>
                                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span>
@@ -1647,11 +1662,13 @@
                         <span class="n">member</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
 
             <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span>
-                    <span class="n">filename</span><span class="p">):</span>  <span class="c1"># !!! careful: if filename is not a zip file, filename must be a directory</span>
+                    <span class="n">filename</span><span class="p">):</span>  <span class="c1"># !!! careful: if filename is not a zip file,</span>
+                <span class="c1"># filename must be a directory</span>
                 <span class="c1"># that contains only the package(s) to install!!!</span>
                 <span class="n">packages_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)]</span>
 
-            <span class="k">for</span> <span class="n">package_name</span> <span class="ow">in</span> <span class="n">packages_name</span><span class="p">:</span>  <span class="c1"># package_name: package(s) in the zip file or in folder; one by one</span>
+            <span class="k">for</span> <span class="n">package_name</span> <span class="ow">in</span> <span class="n">packages_name</span><span class="p">:</span>
+                <span class="c1"># package_name: package(s) in the zip file or in folder</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="n">package_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">packages_already</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
                         <span class="n">package_name</span> <span class="o">==</span> <span class="s1">&#39;mia_processes&#39;</span><span class="p">):</span>
@@ -1715,15 +1732,16 @@
                     <span class="n">original_package_name</span> <span class="o">=</span> <span class="n">package_name</span>
                     <span class="n">package_name</span> <span class="o">=</span> <span class="n">package_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">date</span>
 
-                    <span class="c1"># Replacing the original package name pattern in all the extracted files by the package name</span>
+                    <span class="c1"># Replacing the original package name pattern in</span>
+                    <span class="c1"># all the extracted files by the package name</span>
                     <span class="c1"># with the date</span>
                     <span class="n">change_pattern_in_folder</span><span class="p">(</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">,</span>
                                      <span class="n">package_name</span><span class="p">),</span>
                         <span class="n">original_package_name</span><span class="p">,</span> <span class="n">package_name</span><span class="p">)</span>
 
-                <span class="n">package_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">package_name</span><span class="p">)</span>  <span class="c1"># package_names contains all the extracted packages</span>
+                <span class="n">package_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+                <span class="c1"># package_names contains all the extracted packages</span>
                 <span class="n">final_package_dic</span> <span class="o">=</span> <span class="n">add_package</span><span class="p">(</span><span class="n">packages</span><span class="p">,</span> <span class="n">package_name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
@@ -1751,7 +1769,8 @@
             <span class="k">if</span> <span class="s1">&#39;temp_dir&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
 
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># Don&#39;t know which kind of exception can be raised yet</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t know which kind of exception can be raised yet</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
@@ -1765,9 +1784,10 @@
             <span class="k">if</span> <span class="n">process_dic_orig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">process_dic_orig</span> <span class="o">=</span> <span class="p">{}</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;process_config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> \
-                    <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span>
+                                   <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;process_config.yml&#39;</span><span class="p">),</span>
+                      <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
                 <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">process_dic_orig</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -1783,7 +1803,8 @@
                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;processes&#39;</span><span class="p">,</span>
                                      <span class="n">package_name</span><span class="p">))</span>
 
-            <span class="c1"># If the error comes from a MIA_process update, the old version is restored</span>
+            <span class="c1"># If the error comes from a MIA_process update,</span>
+            <span class="c1"># the old version is restored</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">mia_processes_not_found</span><span class="p">:</span>
                 <span class="n">distutils</span><span class="o">.</span><span class="n">dir_util</span><span class="o">.</span><span class="n">copy_tree</span><span class="p">(</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder4MIA</span><span class="p">,</span> <span class="s1">&#39;mia_processes&#39;</span><span class="p">),</span>

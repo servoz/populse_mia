@@ -64,39 +64,42 @@
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QPixmap</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QFrame</span><span class="p">,</span> <span class="n">QToolBar</span><span class="p">,</span> \
-    <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QProgressDialog</span><span class="p">,</span> \
-    <span class="n">QDoubleSpinBox</span><span class="p">,</span> <span class="n">QDateTimeEdit</span><span class="p">,</span> <span class="n">QDateEdit</span><span class="p">,</span> <span class="n">QTimeEdit</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> \
-    <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span>\
-    <span class="n">QItemDelegate</span><span class="p">,</span> <span class="n">QAbstractItemView</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QFrame</span><span class="p">,</span> <span class="n">QToolBar</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span>
+    <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QProgressDialog</span><span class="p">,</span> <span class="n">QDoubleSpinBox</span><span class="p">,</span>
+    <span class="n">QDateTimeEdit</span><span class="p">,</span> <span class="n">QDateEdit</span><span class="p">,</span> <span class="n">QTimeEdit</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+    <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QItemDelegate</span><span class="p">,</span>
+    <span class="n">QAbstractItemView</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.rapid_search</span> <span class="k">import</span> <span class="n">RapidSearch</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.advanced_search</span> <span class="k">import</span> <span class="n">AdvancedSearch</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.advanced_search</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">AdvancedSearch</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.count_table</span> <span class="k">import</span> <span class="n">CountTable</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.modify_table</span> <span class="k">import</span> <span class="n">ModifyTable</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.mini_viewer</span> <span class="k">import</span> <span class="n">MiniViewer</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="n">PopUpMultipleSort</span><span class="p">,</span> \
-    <span class="n">PopUpProperties</span><span class="p">,</span> <span class="n">PopUpShowBrick</span><span class="p">,</span> <span class="n">PopUpAddPath</span><span class="p">,</span> <span class="n">PopUpAddTag</span><span class="p">,</span> \
-    <span class="n">PopUpCloneTag</span><span class="p">,</span> <span class="n">PopUpRemoveTag</span><span class="p">,</span> <span class="n">PopUpSelectFilter</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> \
-    <span class="n">PopUpDataBrowserCurrentSelection</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PopUpMultipleSort</span><span class="p">,</span> <span class="n">PopUpProperties</span><span class="p">,</span> <span class="n">PopUpShowBrick</span><span class="p">,</span> <span class="n">PopUpAddPath</span><span class="p">,</span>
+    <span class="n">PopUpAddTag</span><span class="p">,</span> <span class="n">PopUpCloneTag</span><span class="p">,</span> <span class="n">PopUpRemoveTag</span><span class="p">,</span> <span class="n">PopUpSelectFilter</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PopUpDataBrowserCurrentSelection</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.tools</span> <span class="k">import</span> <span class="n">ClickableLabel</span>
-<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">check_value_type</span><span class="p">,</span> <span class="n">set_item_data</span><span class="p">,</span> \
-    <span class="n">table_to_database</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
-    <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> \
-    <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">BRICK_NAME</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> \
-    <span class="n">TAG_ORIGIN_USER</span>
+<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">check_value_type</span><span class="p">,</span> <span class="n">set_item_data</span><span class="p">,</span> <span class="n">table_to_database</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span>
+    <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> <span class="n">TAG_ORIGIN_USER</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">LIST_TYPES</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span>
+    <span class="n">LIST_TYPES</span><span class="p">)</span>
 
 <span class="c1"># Variable shown everywhere when no value for the tag</span>
 <span class="n">not_defined_value</span> <span class="o">=</span> <span class="s2">&quot;*Not Defined*&quot;</span>
@@ -1143,12 +1146,12 @@
             <span class="k">return</span>
 
         <span class="c1"># Nothing to do if list</span>
-        <span class="k">if</span> <span class="n">FIELD_TYPE_LIST_DATE</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span> \
-                <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> <span class="n">FIELD_TYPE_LIST_TIME</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> \
-                <span class="n">FIELD_TYPE_LIST_INTEGER</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> \
-                <span class="n">FIELD_TYPE_LIST_STRING</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> \
-                <span class="n">FIELD_TYPE_LIST_FLOAT</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> \
-                <span class="n">FIELD_TYPE_LIST_BOOLEAN</span> <span class="ow">in</span> <span class="n">cells_types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">FIELD_TYPE_LIST_DATE</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span>
+                <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span> <span class="n">FIELD_TYPE_LIST_TIME</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span>
+                <span class="n">FIELD_TYPE_LIST_INTEGER</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span>
+                <span class="n">FIELD_TYPE_LIST_STRING</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span>
+                <span class="n">FIELD_TYPE_LIST_FLOAT</span> <span class="ow">in</span> <span class="n">cells_types</span> <span class="ow">or</span>
+                <span class="n">FIELD_TYPE_LIST_BOOLEAN</span> <span class="ow">in</span> <span class="n">cells_types</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">change_cell_color</span><span class="p">)</span>
             <span class="k">return</span>
 
@@ -2124,9 +2127,9 @@
                                 <span class="n">color</span><span class="o">.</span><span class="n">setRgb</span><span class="p">(</span><span class="mi">230</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">230</span><span class="p">)</span>  <span class="c1"># Grey</span>
 
                         <span class="c1"># Raw tag</span>
-                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
-                                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">origin</span> <span class="o">==</span> \
-                                <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">:</span>
+                        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+                                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">origin</span> <span class="o">==</span>
+                                <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">):</span>
                             <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
                                 <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
                             <span class="n">initial_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
@@ -2238,8 +2241,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">setColumnHidden</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tag_column</span><span class="p">(</span><span class="n">tag</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Update the list of tags in the advanced search if it&#39;s opened</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="p">,</span> <span class="s2">&quot;frame_advanced_search&quot;</span><span class="p">)</span> <span class="ow">and</span> \
-                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">frame_advanced_search</span><span class="o">.</span><span class="n">isHidden</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="p">,</span> <span class="s2">&quot;frame_advanced_search&quot;</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">frame_advanced_search</span><span class="o">.</span><span class="n">isHidden</span><span class="p">()):</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
                 <span class="n">fields</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="n">fields</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>

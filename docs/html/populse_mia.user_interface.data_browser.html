@@ -33,6 +33,23 @@
         
   <div class="section" id="module-populse_mia.user_interface.data_browser">
 <span id="populse-mia-user-interface-data-browser-package"></span><h1>populse_mia.user_interface.data_browser package<a class="headerlink" href="#module-populse_mia.user_interface.data_browser" title="Permalink to this headline">¶</a></h1>
+<p>Handle the data browser tab. Visualize, modify and search data.</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Module:</dt>
+<dd><ul class="first last simple">
+<li>advanced_search</li>
+<li>count_table</li>
+<li>data_browser</li>
+<li>mini_viewer</li>
+<li>modify_table</li>
+<li>rapid_search</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -296,16 +313,20 @@ BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</li>
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.data_browser.count_table.</code><code class="descname">CountTable</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/count_table.html#CountTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.count_table.CountTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Tool to precisely verify the scans of the project.</p>
-<p>It is composed of push buttons on its top, each one corresponding to a tag selected by the user.
-When, the “Count scans” button is clicked, a table is created with all the combinations possible
-for the values of the first n-1 tags. Then, the m values that can take the last tag are displayed
-in the header of the m last columns of the table. The cells are then filled with a green plus or
-a red cross depending on if there is at least a scan that has all the tags values or not.</p>
+<p>It is composed of push buttons on its top, each one corresponding to a tag
+selected by the user.
+When, the “Count scans” button is clicked, a table is created with all the
+combinations possible for the values of the first n-1 tags. Then,
+the m values that can take the  last tag are displayed in the header of
+the m last columns of the table. The cells are then filled with a green
+plus or a red cross depending on if there is at least a scan that has
+all the tags values or not.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
-<li>values_list: list that contains lists of all the values that the visualized tags can take</li>
+<li>values_list: list that contains lists of all the values that the
+visualized tags can take</li>
 </ul>
 </dd>
 <dt>Methods:</dt>
@@ -313,11 +334,15 @@ a red cross depending on if there is at least a scan that has all the tags value
 <li>refresh_layout: updates the layout of the widget</li>
 <li>add_tag: adds a tag to visualize in the count table</li>
 <li>remove_tag: removes a tag to visualize in the count table</li>
-<li>select_tag: opens a pop-up to select which tag to visualize in the count table</li>
+<li>select_tag: opens a pop-up to select which tag to visualize in
+the count table</li>
 <li>fill_values: fill values_list depending on the visualized tags</li>
-<li>count_scans: counts the number of scans depending on the selected tags and displays the result in the table</li>
-<li>fill_headers: fills the headers of the table depending on the selected tags</li>
-<li>fill_first_tags: fills the cells of the table corresponding to the (n-1) first selected tags</li>
+<li>count_scans: counts the number of scans depending on the selected
+tags and displays the result in the table</li>
+<li>fill_headers: fills the headers of the table depending on the
+selected tags</li>
+<li>fill_first_tags: fills the cells of the table corresponding to the
+(n-1) first selected tags</li>
 <li>fill_last_tag: fills the cells corresponding to the last selected tag</li>
 <li>prepare_filter: prepares the filter in order to fill the count table</li>
 </ul>
@@ -331,9 +356,11 @@ a red cross depending on if there is at least a scan that has all the tags value
 </tr>
 </tbody>
 </table>
-<p>Assume that the current project has scans for two patients (P1 and P2) and three time points (T1,
-T2 and T3). For each (patient, time point), several sequences have been made (two RARE, one MDEFT
-and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the table will be:</p>
+<p>Assume that the current project has scans for two patients (P1 and P2)
+and three time points (T1, T2 and T3). For each (patient, time point),
+several sequences have been made (two RARE, one MDEFT and one FLASH).
+Selecting [PatientName, TimePoint, SequenceName] as tags, the table will
+be:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="30%" />
@@ -389,10 +416,11 @@ and one FLASH). Selecting [PatientName, TimePoint, SequenceName] as tags, the ta
 </tr>
 </tbody>
 </table>
-<p>with v(n) meaning that n scans corresponds of the selected values for (PatientName, TimePoint,
-SequenceName).</p>
-<p>If no scans corresponds for a triplet value, a red cross will be displayed. For example, if the
-user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The table will be:</p>
+<p>with v(n) meaning that n scans corresponds of the selected values for
+(PatientName, TimePoint,SequenceName).</p>
+<p>If no scans corresponds for a triplet value, a red cross will be
+displayed. For example, if the user forgets to import one RARE for P1 at
+T2 and one FLASH for P2 at T3. The table will be:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="30%" />
@@ -448,7 +476,8 @@ user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The tab
 </tr>
 </tbody>
 </table>
-<p>Thus, thanks to the CountTable tool, he or she directly knows if some scans are missing.</p>
+<p>Thus, thanks to the CountTable tool, he or she directly knows if some
+scans are missing.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.count_table.CountTable.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/count_table.html#CountTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.count_table.CountTable.__init__" title="Permalink to this definition">¶</a></dt>
@@ -472,13 +501,17 @@ user forgets to import one RARE for P1 at T2 and one FLASH for P2 at T3. The tab
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.count_table.CountTable.count_scans">
 <code class="descname">count_scans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/count_table.html#CountTable.count_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.count_table.CountTable.count_scans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Counts the number of scans depending on the selected tags and displays the result in the table</p>
+<dd><dl class="docutils">
+<dt>Counts the number of scans depending on the selected tags and</dt>
+<dd>displays the result in the table</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.count_table.CountTable.fill_first_tags">
 <code class="descname">fill_first_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/count_table.html#CountTable.fill_first_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.count_table.CountTable.fill_first_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fills the cells of the table corresponding to the (n-1) first selected tags</p>
+<dd><p>Fills the cells of the table corresponding to the (n-1)
+first selected tags</p>
 </dd></dl>
 
 <dl class="method">

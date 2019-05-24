@@ -32,28 +32,32 @@ from traits.api import TraitListObject, Undefined
 
 # PyQt5 imports
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtWidgets import QMenu, QVBoxLayout, QWidget, \
-    QSplitter, QApplication, QToolBar, QAction, QHBoxLayout, QScrollArea, \
-    QMessageBox, QProgressDialog
+from PyQt5.QtWidgets import (QMenu, QVBoxLayout, QWidget, QSplitter,
+                             QApplication, QToolBar, QAction, QHBoxLayout,
+                             QScrollArea, QMessageBox, QProgressDialog)
 
 # Capsul imports
-from capsul.api import get_process_instance, StudyConfig, PipelineNode, \
-    Switch, NipypeProcess, Pipeline
-from capsul.qt_gui.widgets.pipeline_developper_view import \
-    PipelineDevelopperView
+from capsul.api import (get_process_instance, StudyConfig, PipelineNode,
+                        Switch, NipypeProcess, Pipeline)
+from capsul.qt_gui.widgets.pipeline_developper_view import (
+    PipelineDevelopperView)
 
 # Populse_MIA imports
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.user_interface.pop_ups import PopUpSelectIteration
-from populse_mia.user_interface.pipeline_manager.iteration_table import IterationTable
+from populse_mia.user_interface.pipeline_manager.iteration_table import (
+    IterationTable)
 
-from populse_mia.data_manager.project import COLLECTION_CURRENT, \
-    COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME, BRICK_OUTPUTS, \
-    BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME, TAG_TYPE, \
-    TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT
-from populse_mia.user_interface.pipeline_manager.node_controller import NodeController
-from populse_mia.user_interface.pipeline_manager.pipeline_editor import PipelineEditorTabs
-from populse_mia.user_interface.pipeline_manager.process_library import ProcessLibraryWidget
+from populse_mia.data_manager.project import (
+    COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME,
+    BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME,
+    TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT)
+from populse_mia.user_interface.pipeline_manager.node_controller import (
+    NodeController)
+from populse_mia.user_interface.pipeline_manager.pipeline_editor import (
+    PipelineEditorTabs)
+from populse_mia.user_interface.pipeline_manager.process_library import (
+    ProcessLibraryWidget)
 from populse_mia.software_properties import Config
 
 if sys.version_info[0] >= 3:

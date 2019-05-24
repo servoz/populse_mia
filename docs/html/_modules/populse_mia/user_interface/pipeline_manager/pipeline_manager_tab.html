@@ -66,28 +66,32 @@
 
 <span class="c1"># PyQt5 imports</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QThread</span><span class="p">,</span> <span class="n">pyqtSignal</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> \
-    <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QToolBar</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QScrollArea</span><span class="p">,</span> \
-    <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QProgressDialog</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span><span class="n">QMenu</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span>
+                             <span class="n">QApplication</span><span class="p">,</span> <span class="n">QToolBar</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span>
+                             <span class="n">QScrollArea</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QProgressDialog</span><span class="p">)</span>
 
 <span class="c1"># Capsul imports</span>
-<span class="kn">from</span> <span class="nn">capsul.api</span> <span class="k">import</span> <span class="n">get_process_instance</span><span class="p">,</span> <span class="n">StudyConfig</span><span class="p">,</span> <span class="n">PipelineNode</span><span class="p">,</span> \
-    <span class="n">Switch</span><span class="p">,</span> <span class="n">NipypeProcess</span><span class="p">,</span> <span class="n">Pipeline</span>
-<span class="kn">from</span> <span class="nn">capsul.qt_gui.widgets.pipeline_developper_view</span> <span class="k">import</span> \
-    <span class="n">PipelineDevelopperView</span>
+<span class="kn">from</span> <span class="nn">capsul.api</span> <span class="k">import</span> <span class="p">(</span><span class="n">get_process_instance</span><span class="p">,</span> <span class="n">StudyConfig</span><span class="p">,</span> <span class="n">PipelineNode</span><span class="p">,</span>
+                        <span class="n">Switch</span><span class="p">,</span> <span class="n">NipypeProcess</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">capsul.qt_gui.widgets.pipeline_developper_view</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PipelineDevelopperView</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="n">PopUpSelectIteration</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.iteration_table</span> <span class="k">import</span> <span class="n">IterationTable</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.iteration_table</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">IterationTable</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
-    <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">,</span> <span class="n">BRICK_OUTPUTS</span><span class="p">,</span> \
-    <span class="n">BRICK_INPUTS</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">BRICK_INIT</span><span class="p">,</span> <span class="n">BRICK_INIT_TIME</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> \
-    <span class="n">TAG_EXP_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> <span class="n">TYPE_MAT</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.node_controller</span> <span class="k">import</span> <span class="n">NodeController</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.pipeline_editor</span> <span class="k">import</span> <span class="n">PipelineEditorTabs</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_library</span> <span class="k">import</span> <span class="n">ProcessLibraryWidget</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">,</span>
+    <span class="n">BRICK_OUTPUTS</span><span class="p">,</span> <span class="n">BRICK_INPUTS</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">BRICK_INIT</span><span class="p">,</span> <span class="n">BRICK_INIT_TIME</span><span class="p">,</span>
+    <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TAG_EXP_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.node_controller</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">NodeController</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.pipeline_editor</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PipelineEditorTabs</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_library</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">ProcessLibraryWidget</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>

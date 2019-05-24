@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by

@@ -99,11 +99,11 @@
 <div class="section" id="module-populse_mia.info">
 <span id="populse-mia-info-module"></span><h2>populse_mia.info module<a class="headerlink" href="#module-populse_mia.info" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.install_mia">
-<span id="populse-mia-install-mia-module"></span><h2>populse_mia.install_mia module<a class="headerlink" href="#module-populse_mia.install_mia" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="populse-mia-install-mia-module">
+<h2>populse_mia.install_mia module<a class="headerlink" href="#populse-mia-install-mia-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.install_processes">
-<span id="populse-mia-install-processes-module"></span><h2>populse_mia.install_processes module<a class="headerlink" href="#module-populse_mia.install_processes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="populse-mia-install-processes-module">
+<h2>populse_mia.install_processes module<a class="headerlink" href="#populse-mia-install-processes-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-populse_mia.main">
 <span id="populse-mia-main-module"></span><h2>populse_mia.main module<a class="headerlink" href="#module-populse_mia.main" title="Permalink to this headline">¶</a></h2>
@@ -372,8 +372,8 @@ to try to fix a corruption of this file.</li>
 <li><dl class="first docutils">
 <dt><em>_browse_mia_path()</em></dt>
 <dd><p class="first">The user define the mia_path parameter.</p>
-<p>This method goes with the _ok_mia_path function, the latter will use
-the value of the mia_path parameter, defined here.</p>
+<p>This method goes with the _ok_mia_path function, the latter
+will use the value of the mia_path parameter, defined here.</p>
 <table class="last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -511,7 +511,9 @@ package/subpackage/pipeline did not exist</td>
 pop-up in the config.yml file.</p>
 <dl class="docutils">
 <dt>Contains:</dt>
-<dd>Class:
+<dd>Function:
+-verCmp
+Class:
 -Config</dd>
 </dl>
 <dl class="class">
@@ -1199,6 +1201,45 @@ the “Saved projects” menu.</p>
 <p>:param:use_spm_standalone: boolean</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.software_properties.verCmp">
+<code class="descclassname">populse_mia.software_properties.</code><code class="descname">verCmp</code><span class="sig-paren">(</span><em>first_ver</em>, <em>sec_ver</em>, <em>comp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#verCmp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.verCmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version comparator.</p>
+<p>The verCmp() function returns a boolean value to indicate whether its
+first argument (first_ver) is equal to, less or equal to, or greater or
+equal to its second argument (sec_ver), as follows:
+- if third argument (comp) is ‘eq’: when the first argument is equal to the</p>
+<blockquote>
+<div>second argument, return True (False if not).</div></blockquote>
+<ul class="simple">
+<li>if third argument (comp) is ‘sup’: when the first argument is greater
+than the second argument, return True (False if not).</li>
+<li>if third argument (comp) is ‘inf’: when the first argument is less than
+the second argument, return True (False if not).</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>first_ver</strong> – the version of a package (a string; ex. ‘0.13.0’)</li>
+<li><strong>sec_ver</strong> – the version of a package (a string; ex. ‘0.13.0’)</li>
+<li><strong>comp</strong> – comparator argument (accepted values: ‘sup’, ‘inf’ and ‘eq’ )</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">False or True</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Private function:
+- normalise</dd>
+</dl>
 </dd></dl>
 
 </div>

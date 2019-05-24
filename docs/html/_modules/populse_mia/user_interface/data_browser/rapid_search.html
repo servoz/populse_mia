@@ -32,7 +32,9 @@
         
         
   <h1>Source code for populse_mia.user_interface.data_browser.rapid_search</h1><div class="highlight"><pre>
-<span></span><span class="c1">##########################################################################</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
+
+<span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
 <span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
@@ -98,7 +100,9 @@
 
                 <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_search</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">scans_to_search</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span>
+                                                                 <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
@@ -129,7 +133,8 @@
 
                 <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scans</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">scans</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 

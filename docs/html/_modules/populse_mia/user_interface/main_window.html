@@ -61,23 +61,28 @@
 <span class="c1"># PyQt5 imports</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QCoreApplication</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> \
-    <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> \
-    <span class="n">QApplication</span><span class="p">,</span> <span class="n">QLabel</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span>
+                             <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span>
+                             <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project_properties</span> <span class="k">import</span> <span class="n">SavedProjects</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="n">DataBrowser</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.pipeline_manager_tab</span> <span class="k">import</span> \
-    <span class="n">PipelineManagerTab</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_library</span> <span class="k">import</span> <span class="n">InstallProcesses</span><span class="p">,</span> \
-    <span class="n">PackageLibraryDialog</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.pipeline_manager_tab</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">PipelineManagerTab</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_library</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">InstallProcesses</span><span class="p">,</span> <span class="n">PackageLibraryDialog</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">populse_mia.data_manager.data_loader</span> <span class="k">as</span> <span class="nn">data_loader</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="n">PopUpDeletedProject</span><span class="p">,</span> \
-    <span class="n">PopUpNewProject</span><span class="p">,</span> <span class="n">PopUpOpenProject</span><span class="p">,</span> <span class="n">PopUpPreferences</span><span class="p">,</span> <span class="n">PopUpProperties</span><span class="p">,</span> \
-    <span class="n">PopUpSaveProjectAs</span><span class="p">,</span> <span class="n">PopUpQuit</span><span class="p">,</span> <span class="n">PopUpSeeAllProjects</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span><span class="n">PopUpDeletedProject</span><span class="p">,</span>
+                                                <span class="n">PopUpNewProject</span><span class="p">,</span>
+                                                <span class="n">PopUpOpenProject</span><span class="p">,</span>
+                                                <span class="n">PopUpPreferences</span><span class="p">,</span>
+                                                <span class="n">PopUpProperties</span><span class="p">,</span>
+                                                <span class="n">PopUpSaveProjectAs</span><span class="p">,</span>
+                                                <span class="n">PopUpQuit</span><span class="p">,</span>
+                                                <span class="n">PopUpSeeAllProjects</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MainWindow"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.main_window.MainWindow">[docs]</a><span class="k">class</span> <span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
@@ -221,8 +226,8 @@
         <span class="sd">&quot;&quot;&quot;Check if there are differences between the current project and the</span>
 <span class="sd">        database.</span>
 
-<span class="sd">        :return: Boolean. True if there are unsaved modifications, \</span>
-<span class="sd">        False otherwise</span>
+<span class="sd">        :return: Boolean. True if there are unsaved modifications,</span>
+<span class="sd">           False otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">isTempProject</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
@@ -658,10 +663,10 @@
                 <span class="n">scan</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
                 <span class="c1"># The file is removed only if it&#39;s not a scan in the project,</span>
                 <span class="c1"># and if it&#39;s not a logExport</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
                         <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                            <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;derived_data&quot;</span><span class="p">,</span> <span class="n">scan</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> \
-                        <span class="s2">&quot;logExport&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scan</span><span class="p">:</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;derived_data&quot;</span><span class="p">,</span> <span class="n">scan</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span>
+                        <span class="s2">&quot;logExport&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scan</span><span class="p">):</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">folder</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
@@ -669,10 +674,10 @@
                 <span class="n">scan</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
                 <span class="c1"># The file is removed only if it&#39;s not a scan in the project,</span>
                 <span class="c1"># and if it&#39;s not a logExport</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
                         <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                            <span class="s2">&quot;data&quot;</span><span class="p">,</span><span class="s2">&quot;downloaded_data&quot;</span><span class="p">,</span> <span class="n">scan</span><span class="p">))</span> \
-                        <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;logExport&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scan</span><span class="p">:</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;downloaded_data&quot;</span><span class="p">,</span> <span class="n">scan</span><span class="p">))</span>
+                        <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;logExport&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scan</span><span class="p">):</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
@@ -859,7 +864,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_up_preferences</span><span class="o">.</span><span class="n">use_clinical_mode_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_clinical_tags</span><span class="p">)</span>
 
-        <span class="c1"># Modifying the options in the Pipeline Manager (verify if clinical mode)</span>
+        <span class="c1"># Modifying the options in the Pipeline Manager</span>
+        <span class="c1"># (verify if clinical mode)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_up_preferences</span><span class="o">.</span><span class="n">signal_preferences_change</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">update_clinical_mode</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_up_preferences</span><span class="o">.</span><span class="n">signal_preferences_change</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>

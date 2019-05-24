@@ -33,6 +33,23 @@
         
   <div class="section" id="module-populse_mia.user_interface.pipeline_manager">
 <span id="populse-mia-user-interface-pipeline-manager-package"></span><h1>populse_mia.user_interface.pipeline_manager package<a class="headerlink" href="#module-populse_mia.user_interface.pipeline_manager" title="Permalink to this headline">¶</a></h1>
+<p>Handle the pipeline manager tab. Allow to create and run pipelines.</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Module:</dt>
+<dd><ul class="first last simple">
+<li>iteration_table</li>
+<li>node_controller</li>
+<li>pipeline_editor</li>
+<li>pipeline_manager_tab</li>
+<li>process_library</li>
+<li>process_mia</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -154,7 +171,10 @@ is added or removed.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.select_visualized_tag">
 <code class="descname">select_visualized_tag</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/iteration_table.html#IterationTable.select_visualized_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.select_visualized_tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open a pop-up to let the user select which tag to visualize in the iteration table</p>
+<dd><dl class="docutils">
+<dt>Open a pop-up to let the user select which tag to visualize in the</dt>
+<dd>iteration table</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1986,31 +2006,32 @@ pipeline editor</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags">
 <code class="descname">flags</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>everything is enable and selectable. Only the leaves can be dragged.</p>
+<dd><p>Everything is enable and selectable. Only the leaves can be
+dragged.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode">
 <code class="descname">getNode</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.getNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a Node() from given index</p>
+<dd><p>Return a Node() from given index</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.headerData">
 <code class="descname">headerData</code><span class="sig-paren">(</span><em>section</em>, <em>orientation</em>, <em>role</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.headerData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.headerData" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the name of the requested column</p>
+<dd><p>Return the name of the requested column</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.index">
 <code class="descname">index</code><span class="sig-paren">(</span><em>row</em>, <em>column</em>, <em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns an index from given row, column and parent</p>
+<dd><p>Return an index from given row, column and parent</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.insertRows">
 <code class="descname">insertRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt5.QtCore.QModelIndex object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.insertRows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.insertRows" title="Permalink to this definition">¶</a></dt>
-<dd><p>insert rows from starting position and number given by rows</p>
+<dd><p>Insert rows from starting position and number given by rows</p>
 </dd></dl>
 
 <dl class="method">
@@ -2026,13 +2047,13 @@ pipeline editor</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent">
 <code class="descname">parent</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the parent from given index</p>
+<dd><p>Return the parent from given index</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.removeRows">
 <code class="descname">removeRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt5.QtCore.QModelIndex object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.removeRows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.removeRows" title="Permalink to this definition">¶</a></dt>
-<dd><p>remove the rows from position to position+rows</p>
+<dd><p>Remove the rows from position to position+rows</p>
 </dd></dl>
 
 <dl class="method">
@@ -2044,7 +2065,7 @@ pipeline editor</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData">
 <code class="descname">setData</code><span class="sig-paren">(</span><em>index</em>, <em>value</em>, <em>role=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#DictionaryTreeModel.setData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData" title="Permalink to this definition">¶</a></dt>
-<dd><p>this method gets called when the user changes data</p>
+<dd><p>This method gets called when the user changes data</p>
 </dd></dl>
 
 <dl class="method">
@@ -2058,7 +2079,8 @@ pipeline editor</p>
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pipeline_manager.process_library.</code><code class="descname">FileFilterProxyModel</code><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#FileFilterProxyModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QSortFilterProxyModel</span></code></p>
-<p>Just a test for the moment. Should be useful to use in the file dialog.</p>
+<p>Just a test for the moment. Should be useful to use in
+the file dialog.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#FileFilterProxyModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.__init__" title="Permalink to this definition">¶</a></dt>
@@ -2076,12 +2098,13 @@ pipeline editor</p>
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pipeline_manager.process_library.</code><code class="descname">InstallProcesses</code><span class="sig-paren">(</span><em>main_window</em>, <em>folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#InstallProcesses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>A widget that allows to browse a Python package or a zip file to install the
-processes that it is containing.</p>
 <dl class="docutils">
+<dt>A widget that allows to browse a Python package or a zip file to install</dt>
+<dd>the processes that it is containing.</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
-<li>get_filename: opens a file dialog to get the folder or zip file to install</li>
+<li>get_filename: opens a file dialog to get the folder or zip file to
+install</li>
 <li>install: installs the selected file/folder on Populse_MIA</li>
 </ul>
 </dd>
@@ -2100,7 +2123,8 @@ processes that it is containing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folder</strong> – True if the dialog installs from folder, False if from zip file</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folder</strong> – True if the dialog installs from folder,
+False if from zip file</td>
 </tr>
 </tbody>
 </table>
@@ -2218,16 +2242,11 @@ processes that it is containing.</p>
 <p>Tree that displays the user-added packages and their modules
 The user can check or not each module/package</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>package_tree: representation of the packages as a tree-dictionary</li>
-<li>paths: list of paths to add to the system to import the packages</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>update_checks: updates the checks of the tree from an item</li>
-<li>set_module_view: sets if a module has to be enabled or disabled in the process library</li>
+<li>set_module_view: sets if a module has to be enabled or disabled in
+the process library</li>
 <li>recursive_checks: checks/unchecks all child items</li>
 <li>recursive_checks_from_child: checks/unchecks all parent items</li>
 <li>generate_tree: generates the package tree</li>
@@ -2315,16 +2334,19 @@ The user can check or not each module/package</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>item</strong> – item selected in the current tree</li>
-<li><strong>state</strong> – checked or not checked (Qt.Checked == 2. So if val == 2 -&gt; checkbox is checked,
-and if val == 0 -&gt; checkbox is not checked)</li>
+<li><strong>state</strong> – checked or not checked (Qt.Checked == 2.
+So if val == 2 -&gt; checkbox is checked, and if val == 0 -&gt; checkbox
+is not checked)</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Pkg_iter:</th><td class="field-body"><p class="first last">dictionary where keys are the name of a module (brick)
 and values are ‘process_enabled’ or ‘process_disabled’.
 Key can be a submodule. In this case the value is a dictionary
-where keys are the name of a module (brick) and values are ‘process_enabled’
-or ‘process_disabled’. etc. pkg_iter take only the modules concerning the top
+where keys are the name of a module (brick) and values are ‘process
+enabled’
+or ‘process_disabled’. etc. pkg_iter take only the modules
+concerning the top
 package where a change of status where done.</p>
 </td>
 </tr>
@@ -2361,21 +2383,25 @@ package where a change of status where done.</p>
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>process_library: library of the selected processes</li>
-<li>package_library: widget to control which processes to show in the process library</li>
-<li>packages: tree-dictionary that is the representation of the process library</li>
+<li>package_library: widget to control which processes to show in the
+process library</li>
+<li>packages: tree-dictionary that is the representation of the
+process library</li>
 <li>paths: list of path to add to the system path</li>
 </ul>
 </dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>load_config: updates the config and loads the corresponding packages</li>
-<li>update_config: updates the process_config and package_library attributes</li>
+<li>update_config: updates the process_config and package_library
+attributes</li>
 <li>load_packages: updates the tree of the process library</li>
 <li>save_config: saves the current config to process_config.yml</li>
 <li>browse_package: opens a browser to select a package</li>
 <li>add_package_with_text: adds a package from the line edit’s text</li>
 <li>add_package: adds a package and its modules to the package tree</li>
-<li>remove_package_with_text: removes the package in the line edit from the package tree</li>
+<li>remove_package_with_text: removes the package in the line edit from
+the package tree</li>
 <li>remove_package: removes a package from the package tree</li>
 <li>save: saves the tree to the process_config.yml file</li>
 <li>import_file: import a python module from a path</li>
@@ -2396,22 +2422,14 @@ package where a change of status where done.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>module_name</strong> – name of the module</li>
 <li><strong>class_name</strong> – name of the class</li>
+<li><strong>show_error</strong> – display error in a message box in case of error. If
+False, errors are silent and error messages returned at the end of
+execution</li>
+<li><strong>init_package_tree</strong> – boolean to initialize the package tree</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Package_library:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">pipeline_manager.process_library.PackageLibrary object</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Package_library.package_tree:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">current package tree known in Package Library window</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Show_error:</th><td class="field-body"><p class="first last">display error in a message box in case of error. If False,
-errors are silent and error messages returned at the end of execution</p>
 </td>
 </tr>
 </tbody>
@@ -2458,7 +2476,8 @@ errors are silent and error messages returned at the end of execution</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> – module’s representation as a string (e.g.: nipype.interfaces.spm)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> – module’s representation as a string
+(e.g.: nipype.interfaces.spm)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the package has been removed correctly</td>
 </tr>
@@ -2548,7 +2567,8 @@ errors are silent and error messages returned at the end of execution</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> – dictionary to load. See the packages attribut in the ProcessLibraryWidget class.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> – dictionary to load. See the packages attribut in the
+ProcessLibraryWidget class.</td>
 </tr>
 </tbody>
 </table>
@@ -2589,7 +2609,8 @@ a dictionary</li>
 system paths</li>
 <li>open_pkg_lib: opens the package library</li>
 <li>save_config: saves the current config to process_config.yml</li>
-<li>update_config: updates the config and loads the corresponding packages</li>
+<li>update_config: updates the config and loads the corresponding
+packages</li>
 <li>update_process_library: updates the tree of the process library</li>
 </ul>
 </dd>
@@ -2671,7 +2692,7 @@ system paths</li>
 <dl class="function">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.node_structure_from_dict">
 <code class="descclassname">populse_mia.user_interface.pipeline_manager.process_library.</code><code class="descname">node_structure_from_dict</code><span class="sig-paren">(</span><em>datadict</em>, <em>parent=None</em>, <em>root_node=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#node_structure_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.node_structure_from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a hierarchical node stucture required by the TreeModel</p>
+<dd><p>Return a hierarchical node stucture required by the TreeModel</p>
 </dd></dl>
 
 </div>

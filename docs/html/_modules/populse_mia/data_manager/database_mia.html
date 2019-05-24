@@ -52,20 +52,22 @@
 <span class="c1"># for details.</span>
 <span class="c1">##########################################################################</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> \
-    <span class="n">Enum</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span>
+    <span class="n">Enum</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="k">import</span> <span class="n">ArgumentError</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.schema</span> <span class="k">import</span> <span class="n">CreateTable</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">mapper</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">Database</span><span class="p">,</span> <span class="n">FIELD_TABLE</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_JSON</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_JSON</span><span class="p">,</span> \
-    <span class="n">COLLECTION_TABLE</span><span class="p">,</span> <span class="n">DatabaseSession</span><span class="p">,</span> <span class="n">ALL_TYPES</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">TYPE_TO_COLUMN</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">Database</span><span class="p">,</span> <span class="n">FIELD_TABLE</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_JSON</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_JSON</span><span class="p">,</span>
+    <span class="n">COLLECTION_TABLE</span><span class="p">,</span> <span class="n">DatabaseSession</span><span class="p">,</span> <span class="n">ALL_TYPES</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">TYPE_TO_COLUMN</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_db.filter</span> <span class="k">import</span> <span class="n">QUERY_MIXED</span>
 
 <span class="n">TAG_ORIGIN_BUILTIN</span> <span class="o">=</span> <span class="s2">&quot;builtin&quot;</span>

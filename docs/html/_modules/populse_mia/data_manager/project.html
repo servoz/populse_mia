@@ -61,17 +61,18 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QCoreApplication</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+<span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">verCmp</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.filter</span> <span class="k">import</span> <span class="n">Filter</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">set_item_data</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="n">DatabaseMIA</span><span class="p">,</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> \
-    <span class="n">TAG_ORIGIN_USER</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">DatabaseMIA</span><span class="p">,</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> <span class="n">TAG_ORIGIN_USER</span><span class="p">)</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_JSON</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_INTEGER</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_JSON</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_INTEGER</span><span class="p">)</span>
 
 <span class="n">COLLECTION_CURRENT</span> <span class="o">=</span> <span class="s2">&quot;current&quot;</span>
 <span class="n">COLLECTION_INITIAL</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span>
@@ -291,7 +292,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">redos</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_filters</span><span class="p">()</span></div>
 
-
 <div class="viewcode-block" id="Project.add_clinical_tags"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project.add_clinical_tags">[docs]</a>    <span class="k">def</span> <span class="nf">add_clinical_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add new clinical tags to the project.</span>
 
@@ -429,7 +429,8 @@
 <span class="sd">        :param table: table on which to apply the modifications</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># To avoid circular imports</span>
-        <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="n">not_defined_value</span>
+        <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="p">(</span>
+            <span class="n">not_defined_value</span><span class="p">)</span>
 
         <span class="c1"># We can redo if we have an action to make again</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -723,7 +724,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># To avoid circular imports</span>
-        <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="n">not_defined_value</span>
+        <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.data_browser</span> <span class="k">import</span> <span class="p">(</span>
+            <span class="n">not_defined_value</span><span class="p">)</span>
 
         <span class="c1"># We can undo if we have an action to revert</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">undos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>

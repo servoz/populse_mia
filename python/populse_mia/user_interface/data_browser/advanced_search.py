@@ -21,16 +21,17 @@ import os
 # PyQt5 imports
 from PyQt5.QtCore import QObjectCleanupHandler
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QGridLayout, QComboBox, QLineEdit, \
-    QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import (
+    QWidget, QGridLayout, QComboBox, QLineEdit, QPushButton, QHBoxLayout,
+    QVBoxLayout, QMessageBox)
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
 
 # Populse_db imports
-from populse_db.database import LIST_TYPES, FIELD_TYPE_STRING, \
-    FIELD_TYPE_BOOLEAN
+from populse_db.database import (
+    LIST_TYPES, FIELD_TYPE_STRING, FIELD_TYPE_BOOLEAN)
 
 
 class AdvancedSearch(QWidget):

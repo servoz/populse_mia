@@ -17,37 +17,29 @@ from functools import partial
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import (QCheckBox, QComboBox, QLineEdit, QFileDialog,
-                             QTableWidget, QTableWidgetItem, QLabel,
-                             QPushButton, QTreeWidget, QTreeWidgetItem,
-                             QMessageBox, QHeaderView, QWidget, QHBoxLayout,
-                             QVBoxLayout, QDialogButtonBox, QDialog,
-                             QApplication)
+from PyQt5.QtWidgets import (
+    QCheckBox, QComboBox, QLineEdit, QFileDialog, QTableWidget,
+    QTableWidgetItem, QLabel, QPushButton, QTreeWidget, QTreeWidgetItem,
+    QMessageBox, QHeaderView, QWidget, QHBoxLayout, QVBoxLayout,
+    QDialogButtonBox, QDialog, QApplication)
 
 # Populse_db imports
-from populse_db.database import (FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_FLOAT,
-                                 FIELD_TYPE_LIST_DATETIME, FIELD_TYPE_DATE,
-                                 FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_STRING,
-                                 FIELD_TYPE_LIST_BOOLEAN,
-                                 FIELD_TYPE_LIST_INTEGER, LIST_TYPES,
-                                 FIELD_TYPE_STRING, FIELD_TYPE_INTEGER,
-                                 FIELD_TYPE_FLOAT, FIELD_TYPE_BOOLEAN,
-                                 FIELD_TYPE_TIME, FIELD_TYPE_DATETIME)
+from populse_db.database import (
+    FIELD_TYPE_LIST_TIME, FIELD_TYPE_LIST_FLOAT, FIELD_TYPE_LIST_DATETIME,
+    FIELD_TYPE_DATE, FIELD_TYPE_LIST_DATE, FIELD_TYPE_LIST_STRING,
+    FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_INTEGER, LIST_TYPES,
+    FIELD_TYPE_STRING, FIELD_TYPE_INTEGER, FIELD_TYPE_FLOAT,
+    FIELD_TYPE_BOOLEAN, FIELD_TYPE_TIME, FIELD_TYPE_DATETIME)
 
-from populse_mia.data_manager.database_mia import (TAG_ORIGIN_USER,
-                                                   TAG_UNIT_MS, TAG_UNIT_MM,
-                                                   TAG_UNIT_HZPIXEL,
-                                                   TAG_UNIT_DEGREE,
-                                                   TAG_UNIT_MHZ)
+from populse_mia.data_manager.database_mia import (
+    TAG_ORIGIN_USER, TAG_UNIT_MS, TAG_UNIT_MM, TAG_UNIT_HZPIXEL,
+    TAG_UNIT_DEGREE, TAG_UNIT_MHZ)
 
-from populse_mia.data_manager.project import (COLLECTION_BRICK, BRICK_NAME,
-                                              BRICK_EXEC, BRICK_EXEC_TIME,
-                                              BRICK_INIT, BRICK_INIT_TIME,
-                                              BRICK_INPUTS, BRICK_OUTPUTS,
-                                              COLLECTION_INITIAL, TAG_TYPE,
-                                              TYPE_NII, TYPE_MAT,
-                                              TAG_CHECKSUM, TAG_FILENAME,
-                                              COLLECTION_CURRENT)
+from populse_mia.data_manager.project import (
+    COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT,
+    BRICK_INIT_TIME, BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_INITIAL,
+    TAG_TYPE, TYPE_NII, TYPE_MAT, TAG_CHECKSUM, TAG_FILENAME,
+    COLLECTION_CURRENT)
 
 from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser import data_browser

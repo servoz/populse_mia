@@ -8,7 +8,6 @@ Contains:
 
 """
 
-
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -47,7 +46,6 @@ class Filter:
     - A tag name or all visible tags
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
-
 
     """
 

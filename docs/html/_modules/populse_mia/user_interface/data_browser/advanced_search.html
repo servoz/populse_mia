@@ -55,16 +55,17 @@
 <span class="c1"># PyQt5 imports</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QObjectCleanupHandler</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QPixmap</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> \
-    <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QMessageBox</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">QWidget</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span>
+    <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.tools</span> <span class="k">import</span> <span class="n">ClickableLabel</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_BOOLEAN</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">LIST_TYPES</span><span class="p">,</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="AdvancedSearch"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch">[docs]</a><span class="k">class</span> <span class="nc">AdvancedSearch</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>

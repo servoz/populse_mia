@@ -51,29 +51,29 @@
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">pyqtSignal</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QPixmap</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> \
-    <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> \
-    <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QHeaderView</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> \
-    <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QDialogButtonBox</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QApplication</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QTableWidget</span><span class="p">,</span>
+    <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span>
+    <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QHeaderView</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+    <span class="n">QDialogButtonBox</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">)</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span><span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span>
-                                 <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span>
-    <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_DATE</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">LIST_TYPES</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> \
-    <span class="n">TAG_ORIGIN_USER</span><span class="p">,</span> <span class="n">TAG_UNIT_MS</span><span class="p">,</span> <span class="n">TAG_UNIT_MM</span><span class="p">,</span> <span class="n">TAG_UNIT_HZPIXEL</span><span class="p">,</span> \
-    <span class="n">TAG_UNIT_DEGREE</span><span class="p">,</span> <span class="n">TAG_UNIT_MHZ</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">TAG_ORIGIN_USER</span><span class="p">,</span> <span class="n">TAG_UNIT_MS</span><span class="p">,</span> <span class="n">TAG_UNIT_MM</span><span class="p">,</span> <span class="n">TAG_UNIT_HZPIXEL</span><span class="p">,</span>
+    <span class="n">TAG_UNIT_DEGREE</span><span class="p">,</span> <span class="n">TAG_UNIT_MHZ</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> \
-    <span class="n">BRICK_NAME</span><span class="p">,</span> <span class="n">BRICK_EXEC</span><span class="p">,</span> <span class="n">BRICK_EXEC_TIME</span><span class="p">,</span> <span class="n">BRICK_INIT</span><span class="p">,</span> <span class="n">BRICK_INIT_TIME</span><span class="p">,</span> \
-    <span class="n">BRICK_INPUTS</span><span class="p">,</span> <span class="n">BRICK_OUTPUTS</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> \
-    <span class="n">TYPE_MAT</span><span class="p">,</span>  <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">,</span> <span class="n">BRICK_EXEC</span><span class="p">,</span> <span class="n">BRICK_EXEC_TIME</span><span class="p">,</span> <span class="n">BRICK_INIT</span><span class="p">,</span>
+    <span class="n">BRICK_INIT_TIME</span><span class="p">,</span> <span class="n">BRICK_INPUTS</span><span class="p">,</span> <span class="n">BRICK_OUTPUTS</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span>
+    <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span>
+    <span class="n">COLLECTION_CURRENT</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser</span> <span class="k">import</span> <span class="n">data_browser</span>
@@ -84,8 +84,8 @@
 
 
 <div class="viewcode-block" id="PopUpAddPath"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddPath">[docs]</a><span class="k">class</span> <span class="nc">PopUpAddPath</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Is called when the user wants to add a document to the project without importing from populse_mia.e MRI File Manager</span>
+    <span class="sd">&quot;&quot;&quot;Is called when the user wants to add a document to the project</span>
+<span class="sd">       without importing from populse_mia.e MRI File Manager</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        - project: current project in the software</span>
@@ -93,7 +93,8 @@
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: updates the &quot;scan_list&quot; attribute of several widgets</span>
-<span class="sd">        - find_type: tries to find the document type when the document is changed</span>
+<span class="sd">        - find_type: tries to find the document type when the document is</span>
+<span class="sd">           changed</span>
 <span class="sd">        - file_to_choose: lets the user choose a file to import</span>
 <span class="sd">        - save_path: adds the path to the database and the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -233,7 +234,8 @@
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - default_init_table: default init table when no previous value</span>
-<span class="sd">        - update_default_value: checks if the values are correct and updates the parent value</span>
+<span class="sd">        - update_default_value: checks if the values are correct and updates</span>
+<span class="sd">           the parent value</span>
 <span class="sd">        - add_element: one more element added to the list</span>
 <span class="sd">        - remove_element: removes the last element of the list</span>
 <span class="sd">        - resize_table: to resize the pop up depending on the table</span>
@@ -289,11 +291,12 @@
         <span class="n">cancel_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
 
         <span class="c1"># Button to add an element to the list</span>
-        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-                                          <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span><span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_element_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_element_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;plus&#39;</span><span class="p">)</span>
-        <span class="n">add_element_picture</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;green_plus.png&quot;</span><span class="p">)))</span>
+        <span class="n">add_element_picture</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;green_plus.png&quot;</span><span class="p">)))</span>
         <span class="n">add_element_picture</span> <span class="o">=</span> <span class="n">add_element_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_element_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">add_element_picture</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_element_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_element</span><span class="p">)</span>
@@ -301,7 +304,8 @@
         <span class="c1"># Button to remove the last element of the list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_element_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_element_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;minus&#39;</span><span class="p">)</span>
-        <span class="n">remove_element_picture</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;red_minus.png&quot;</span><span class="p">)))</span>
+        <span class="n">remove_element_picture</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;red_minus.png&quot;</span><span class="p">)))</span>
         <span class="n">remove_element_picture</span> <span class="o">=</span> <span class="n">remove_element_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_element_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">remove_element_picture</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_element_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_element</span><span class="p">)</span>
@@ -379,7 +383,9 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Invalid value&quot;</span><span class="p">)</span>
-                <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s2">&quot;The value &quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; is invalid with the type &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s2">&quot;The value &quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span>
+                                       <span class="s2">&quot; is invalid with the type &quot;</span> <span class="o">+</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">)</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
@@ -445,8 +451,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">LIST_TYPES</span><span class="p">:</span>
-            <span class="c1"># We display the pop up to create the list if the checkbox is checked, otherwise we do nothing</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">list_creation</span> <span class="o">=</span> <span class="n">DefaultValueListCreation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="c1"># We display the pop up to create the list if the checkbox is</span>
+            <span class="c1"># checked, otherwise we do nothing</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_creation</span> <span class="o">=</span> <span class="n">DefaultValueListCreation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_creation</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 
 
@@ -461,10 +469,12 @@
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - on_activated: type updated</span>
-<span class="sd">        - ok_action: verifies that each field is correct and send the new tag to the data browser</span>
+<span class="sd">        - ok_action: verifies that each field is correct and send the new tag</span>
+<span class="sd">           to the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_add_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpAddTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
@@ -504,7 +514,8 @@
 
         <span class="c1"># The &#39;Description value&#39; text edit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_description_value</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_description_value</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;textEdit_description_value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_description_value</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;textEdit_&quot;</span>
+                                                       <span class="s2">&quot;description_value&quot;</span><span class="p">)</span>
 
         <span class="c1"># The &#39;Unit value&#39; label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_unit_value</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -581,8 +592,10 @@
         <span class="n">_translate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_ok</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;OK&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_name</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Tag name:&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_default_value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Default value:&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_description_value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Description:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_default_value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span>
+                                                    <span class="s2">&quot;Default value:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_description_value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;Description:&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_unit_value</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Unit:&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_type</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Add a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Tag type:&quot;</span><span class="p">))</span>
 
@@ -605,23 +618,29 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_STRING</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Integer&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_INTEGER</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter an integer&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter an integer&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Float&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_FLOAT</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter a float&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter a float&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Boolean&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_BOOLEAN</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter a boolean (True or False)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter a boolean (True or False)&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Date&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATE</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter a date in the following format: dd/mm/yyyy&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter a date in the following format: dd/mm/yyyy&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Datetime&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATETIME</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter a datetime in the following format: &quot;</span>
-                                                            <span class="s2">&quot;dd/mm/yyyy hh:mm:ss.zzz&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter a datetime in the following format: &quot;</span>
+                <span class="s2">&quot;dd/mm/yyyy hh:mm:ss.zzz&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Time&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_TIME</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Please enter a time in the following format: hh:mm:ss.zzz&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter a time in the following format: hh:mm:ss.zzz&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;String List&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_LIST_STRING</span>
         <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Integer List&quot;</span><span class="p">:</span>
@@ -638,18 +657,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_LIST_TIME</span></div>
 
 <div class="viewcode-block" id="PopUpAddTag.ok_action"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddTag.ok_action">[docs]</a>    <span class="k">def</span> <span class="nf">ok_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Verifies that each field is correct and send the new tag to the data browser</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Verifies that each field is correct and send the new tag</span>
+<span class="sd">           to the data browser&quot;&quot;&quot;</span>
 
         <span class="c1"># Tag name checked</span>
         <span class="n">name_already_exists</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_tag_name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_edit_tag_name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">)):</span>
             <span class="n">name_already_exists</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Default value checked</span>
         <span class="n">default_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_default_value</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">wrong_default_value_type</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">check_value_type</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">wrong_default_value_type</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">check_value_type</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Tag name can&#39;t be empty</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_edit_tag_name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -678,7 +698,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Invalid default value&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s2">&quot;The default value &quot;</span> <span class="o">+</span> <span class="n">default_value</span> <span class="o">+</span> <span class="s2">&quot; is invalid with the type &quot;</span> <span class="o">+</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s2">&quot;The default value &quot;</span> <span class="o">+</span> <span class="n">default_value</span> <span class="o">+</span>
+                                        <span class="s2">&quot; is invalid with the type &quot;</span> <span class="o">+</span>
                                         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
@@ -694,8 +715,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_unit</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_unit</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_unit</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">add_tag_infos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_tag_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_default_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_description</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">add_tag_infos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_tag_name</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">new_default_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_description</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_unit</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
@@ -709,10 +732,12 @@
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
-<span class="sd">        - ok_action: verifies the specified name is correct and send the information to the data browser</span>
+<span class="sd">        - ok_action: verifies the specified name is correct and send the</span>
+<span class="sd">           information to the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_clone_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpCloneTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpCloneTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
@@ -739,7 +764,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span><span class="o">.</span><span class="n">setTextFormat</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AutoText</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;label_new_tag_name&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Clone a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;New tag name:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Clone a tag&quot;</span><span class="p">,</span>
+                                                   <span class="s2">&quot;New tag name:&quot;</span><span class="p">))</span>
 
         <span class="n">hbox_buttons</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
         <span class="n">hbox_buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_new_tag_name</span><span class="p">)</span>
@@ -751,7 +777,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setTextFormat</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AutoText</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;label_tag_list&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Clone a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Clone a tag&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;lineEdit_search_bar&quot;</span><span class="p">)</span>
@@ -766,7 +793,8 @@
         <span class="c1"># The list of tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;listWidget_tags&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
 
         <span class="n">vbox</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
         <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_top</span><span class="p">)</span>
@@ -815,8 +843,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">sortItems</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PopUpCloneTag.ok_action"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpCloneTag.ok_action">[docs]</a>    <span class="k">def</span> <span class="nf">ok_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Verifies the specified name is correct and send the information to the data browser</span>
+        <span class="sd">&quot;&quot;&quot;Verifies the specified name is correct and send the</span>
+<span class="sd">          information to the data browser</span>
 
 <span class="sd">        :param project: current project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -853,9 +881,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tag_to_replace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tag_to_replace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">(</span>
+                                  <span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_edit_new_tag_name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">clone_tag_infos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_to_replace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">clone_tag_infos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_to_replace</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">new_tag_name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
@@ -867,7 +897,8 @@
 <span class="sd">        - pipeline_name: name of the pipeline (basename)</span>
 <span class="sd">        - bool_save_as: boolean to True if the pipeline needs to be saved</span>
 <span class="sd">        - bool_exit: boolean to True if we can exit the editor</span>
-<span class="sd">        - save_as_signal: signal emitted to save the pipeline under another name</span>
+<span class="sd">        - save_as_signal: signal emitted to save the pipeline under another</span>
+<span class="sd">           name</span>
 <span class="sd">        - do_not_save_signal: signal emitted to close the editor</span>
 <span class="sd">        - cancel_signal: signal emitted to cancel the action</span>
 
@@ -893,7 +924,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Confirm pipeline closing&quot;</span><span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Do you want to close the pipeline without saving &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Do you want to close the pipeline without saving &#39;</span> <span class="o">+</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_save_as</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Save&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_do_not_save</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Do not save&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
@@ -992,12 +1024,15 @@
         <span class="n">vbox_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
 
         <span class="c1"># Adding databrowser table</span>
-        <span class="n">databrowser_table</span> <span class="o">=</span> <span class="n">data_browser</span><span class="o">.</span><span class="n">TableDataBrowser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="p">,</span>
-                                                                       <span class="p">[</span><span class="n">TAG_FILENAME</span><span class="p">],</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">databrowser_table</span> <span class="o">=</span> <span class="n">data_browser</span><span class="o">.</span><span class="n">TableDataBrowser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="p">,</span>
+                                                          <span class="p">[</span><span class="n">TAG_FILENAME</span><span class="p">],</span>
+                                                          <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">old_scan_list</span> <span class="o">=</span> <span class="n">databrowser_table</span><span class="o">.</span><span class="n">scans_to_visualize</span>
         <span class="n">databrowser_table</span><span class="o">.</span><span class="n">scans_to_visualize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
         <span class="n">databrowser_table</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scan_list</span><span class="p">)</span>
-        <span class="n">buttons</span> <span class="o">=</span> <span class="n">QDialogButtonBox</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">)</span>
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">QDialogButtonBox</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span>
+                                   <span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">)</span>
         <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">databrowser_table</span><span class="p">)</span>
         <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span>
         <span class="n">buttons</span><span class="o">.</span><span class="n">accepted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok_clicked</span><span class="p">)</span>
@@ -1014,8 +1049,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">nodeController</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">pipelineEditorTabs</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">nodeController</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">pipelineEditorTabs</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
@@ -1043,7 +1080,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label_filter_list</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_filter_list</span><span class="o">.</span><span class="n">setTextFormat</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AutoText</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_filter_list</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;label_filter_list&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_filter_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;main_window&quot;</span><span class="p">,</span> <span class="s2">&quot;Available filters:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_filter_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;main_window&quot;</span><span class="p">,</span>
+                                                  <span class="s2">&quot;Available filters:&quot;</span><span class="p">))</span>
 
         <span class="c1"># The search bar to search in the list of filters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1054,7 +1092,8 @@
         <span class="c1"># The list of filters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_filters</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_filters</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;listWidget_tags&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_filters</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_filters</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_ok</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_ok</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;pushButton_ok&quot;</span><span class="p">)</span>
@@ -1126,7 +1165,8 @@
 <span class="sd">    Is called when the user wants to display the current project&#39;s information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_preferences_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpInformation.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpInformation.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
@@ -1159,12 +1199,15 @@
 <span class="sd">        - list_tags: list of the selected tags</span>
 
 <span class="sd">    Methods:</span>
-<span class="sd">        - refresh_layout: updates the layouts (especially when a tag push button is added or removed)</span>
+<span class="sd">        - refresh_layout: updates the layouts (especially when a tag push</span>
+<span class="sd">          button is added or removed)</span>
 <span class="sd">        - add_tag: adds a push button</span>
-<span class="sd">        - remove_tag: removes a push buttons and makes the changes in the list of values</span>
+<span class="sd">        - remove_tag: removes a push buttons and makes the changes in the</span>
+<span class="sd">          list of values</span>
 <span class="sd">        - select_tag: calls a pop-up to choose a tag</span>
 <span class="sd">        - fill_values: fills the values list when a tag is added or removed</span>
-<span class="sd">        - sort_scans: collects the information and send them to the data browser</span>
+<span class="sd">        - sort_scans: collects the information and send them to the data</span>
+<span class="sd">          browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="PopUpMultipleSort.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpMultipleSort.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">table_data_browser</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -1189,23 +1232,26 @@
         <span class="n">push_button_tag_2</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Tag n°2&quot;</span><span class="p">)</span>
         <span class="n">push_button_tag_2</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-        <span class="c1"># The list of all the push buttons (the user can add as many as he or she wants)</span>
+        <span class="c1"># The list of all the push buttons (the user can add as many as</span>
+        <span class="c1"># he or she wants)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">push_button_tag_1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">push_button_tag_2</span><span class="p">)</span>
 
         <span class="c1"># Labels to add/remove a tag (a push button)</span>
-        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-                                          <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
-        <span class="n">remove_tag_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;red_minus.png&quot;</span><span class="p">)))</span>
+        <span class="n">remove_tag_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;red_minus.png&quot;</span><span class="p">)))</span>
         <span class="n">remove_tag_picture</span> <span class="o">=</span> <span class="n">remove_tag_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">remove_tag_picture</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_tag</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span> <span class="o">=</span> <span class="n">ClickableLabel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;plus&#39;</span><span class="p">)</span>
-        <span class="n">add_tag_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;green_plus.png&quot;</span><span class="p">)))</span>
+        <span class="n">add_tag_picture</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">sources_images_dir</span><span class="p">,</span> <span class="s2">&quot;green_plus.png&quot;</span><span class="p">)))</span>
         <span class="n">add_tag_picture</span> <span class="o">=</span> <span class="n">add_tag_picture</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">add_tag_picture</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_tag</span><span class="p">)</span>
@@ -1249,7 +1295,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">push_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">()</span>
         <span class="n">push_button</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Tag n°&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">push_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_tag</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">push_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_tag</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">),</span> <span class="n">push_button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
@@ -1270,7 +1317,9 @@
 
 <span class="sd">        :param idx: index of the pressed push button</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fill_values</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
@@ -1287,7 +1336,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
-            <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
+            <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span>
+                                                           <span class="n">scan</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">current_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span></div>
 
@@ -1307,15 +1357,20 @@
 <span class="sd">    Is called when the user wants to create a new project</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        - path: absolute path to the project&#39;s folder (without the project folder)</span>
+<span class="sd">        - path: absolute path to the project&#39;s folder (without the project</span>
+<span class="sd">          folder)</span>
 <span class="sd">        - name: name of the project</span>
-<span class="sd">        - relative_path: relative path to the new project (with the project folder)</span>
-<span class="sd">        - relative_subpath: relative path to the new project (without the project folder)</span>
+<span class="sd">        - relative_path: relative path to the new project (with the project</span>
+<span class="sd">          folder)</span>
+<span class="sd">        - relative_subpath: relative path to the new project (without the</span>
+<span class="sd">          project folder)</span>
 <span class="sd">    Method:</span>
-<span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the selected file name</span>
+<span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the</span>
+<span class="sd">          selected file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_create_project</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpNewProject.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpNewProject.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1355,14 +1410,18 @@
 <span class="sd">    Is called when the user wants to open project</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        - path: absolute path to the project&#39;s folder (without the project folder)</span>
+<span class="sd">        - path: absolute path to the project&#39;s folder (without the project</span>
+<span class="sd">          folder)</span>
 <span class="sd">        - name: name of the project</span>
-<span class="sd">        - relative_path: relative path to the new project (with the project folder)</span>
+<span class="sd">        - relative_path: relative path to the new project (with the project</span>
+<span class="sd">          folder)</span>
 <span class="sd">    Method:</span>
-<span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the selected file name</span>
+<span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the selected</span>
+<span class="sd">           file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_create_project</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpOpenProject.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpOpenProject.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1403,18 +1462,24 @@
 <span class="sd">    Methods:</span>
 <span class="sd">        - browse_matlab: called when matlab browse button is clicked</span>
 <span class="sd">        - browse_matlab_standalone: called when matlab browse button is clicked</span>
-<span class="sd">        - browse_projects_save_path: called when &quot;Projects folder&quot; browse button is clicked</span>
-<span class="sd">        - browse_mri_conv_path: called when &quot;MRIManager.jar&quot; browse button is clicked</span>
+<span class="sd">        - browse_projects_save_path: called when &quot;Projects folder&quot; browse</span>
+<span class="sd">          button is clicked</span>
+<span class="sd">        - browse_mri_conv_path: called when &quot;MRIManager.jar&quot; browse</span>
+<span class="sd">          button is clicked</span>
 <span class="sd">        - browse_spm: called when spm browse button is clicked</span>
-<span class="sd">        - browse_spm_standalone: called when spm standalone browse button is clicked</span>
-<span class="sd">        - clinical_mode_switch: called when the clinical mode checkbox is clicked</span>
+<span class="sd">        - browse_spm_standalone: called when spm standalone browse button</span>
+<span class="sd">          is clicked</span>
+<span class="sd">        - clinical_mode_switch: called when the clinical mode checkbox</span>
+<span class="sd">          is clicked</span>
 <span class="sd">        - ok_clicked: saves the modifications to the config file and apply them</span>
 <span class="sd">        - use_matlab_changed: called when the use_matlab checkbox is changed</span>
 <span class="sd">        - use_spm_changed: called when the use_spm checkbox is changed</span>
-<span class="sd">        - use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</span>
+<span class="sd">        - use_spm_standalone_changed: called when the use_spm_standalone</span>
+<span class="sd">          checkbox is changed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that the project</span>
+    <span class="c1"># has been created</span>
     <span class="n">signal_preferences_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
     <span class="n">use_clinical_mode_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
@@ -1777,7 +1842,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                                 <span class="s1">&#39;Select a folder where to save the projects&#39;</span><span class="p">)</span>
+                                                 <span class="s1">&#39;Select a folder where &#39;</span>
+                                                 <span class="s1">&#39;to save the projects&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">projects_save_path_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
@@ -1790,7 +1856,8 @@
 <span class="sd">        Called when &quot;MRIFileManager.jar&quot; browse button is clicked</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                            <span class="s1">&#39;Select the location of the MRIManager.jar file&#39;</span><span class="p">)[</span>
+                                            <span class="s1">&#39;Select the location of the &#39;</span>
+                                            <span class="s1">&#39;MRIManager.jar file&#39;</span><span class="p">)[</span>
             <span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mri_conv_path_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
@@ -1883,7 +1950,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                                 <span class="s1">&#39;Choose SPM standalone directory&#39;</span><span class="p">)</span>
+                                                 <span class="s1">&#39;Choose SPM standalone &#39;</span>
+                                                 <span class="s1">&#39;directory&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spm_standalone_choice</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
 
@@ -2061,7 +2129,8 @@
         <span class="n">config</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">(</span><span class="n">background_color</span><span class="p">)</span>
         <span class="n">config</span><span class="o">.</span><span class="n">setTextColor</span><span class="p">(</span><span class="n">text_color</span><span class="p">)</span>
         <span class="n">main_window</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
-            <span class="s2">&quot;background-color:&quot;</span> <span class="o">+</span> <span class="n">background_color</span> <span class="o">+</span> <span class="s2">&quot;;color:&quot;</span> <span class="o">+</span> <span class="n">text_color</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;background-color:&quot;</span> <span class="o">+</span> <span class="n">background_color</span> <span class="o">+</span> <span class="s2">&quot;;color:&quot;</span> <span class="o">+</span>
+            <span class="n">text_color</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">signal_preferences_change</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
@@ -2100,14 +2169,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The &#39;Visualized tags&quot; tab</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span> <span class="o">=</span> <span class="n">PopUpVisualizedTags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span> <span class="o">=</span> <span class="n">PopUpVisualizedTags</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;tab_tags&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="p">,</span> <span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Dialog&quot;</span><span class="p">,</span> <span class="s2">&quot;Visualized tags&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="p">,</span> <span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Dialog&quot;</span><span class="p">,</span>
+                                                         <span class="s2">&quot;Visualized tags&quot;</span><span class="p">))</span>
 
         <span class="c1"># The &#39;Informations&quot; tab</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tab_infos</span> <span class="o">=</span> <span class="n">PopUpInformation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tab_infos</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;tab_infos&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_infos</span><span class="p">,</span> <span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Dialog&quot;</span><span class="p">,</span> <span class="s2">&quot;Informations&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_infos</span><span class="p">,</span> <span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Dialog&quot;</span><span class="p">,</span>
+                                                          <span class="s2">&quot;Informations&quot;</span><span class="p">))</span>
 
         <span class="c1"># The &#39;OK&#39; push button</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_ok</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
@@ -2138,7 +2210,8 @@
         <span class="n">new_visibilities</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="o">.</span><span class="n">list_widget_selected_tags</span><span class="o">.</span><span class="n">count</span><span class="p">()):</span>
-            <span class="n">visible_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="o">.</span><span class="n">list_widget_selected_tags</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="n">visible_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_tags</span><span class="o">.</span><span class="n">list_widget_selected_tags</span><span class="o">.</span><span class="n">item</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
             <span class="n">new_visibilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">visible_tag</span><span class="p">)</span>
 
         <span class="n">new_visibilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TAG_FILENAME</span><span class="p">)</span>
@@ -2149,14 +2222,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">redos</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="c1"># Columns updated</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_columns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_columns</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_shown_tags</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="PopUpQuit"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpQuit">[docs]</a><span class="k">class</span> <span class="nc">PopUpQuit</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Is called when the user closes the software and the current project has been modified</span>
+<span class="sd">    Is called when the user closes the software and the current project has</span>
+<span class="sd">      been modified</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        - database: current database in the project</span>
@@ -2183,7 +2258,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Confirm exit&quot;</span><span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Do you want to exit without saving &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Do you want to exit without saving &#39;</span> <span class="o">+</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
 
         <span class="n">push_button_save_as</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Save&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="n">push_button_do_not_save</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Do not save&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
@@ -2228,8 +2304,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PopUpQuit.can_exit"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpQuit.can_exit">[docs]</a>    <span class="k">def</span> <span class="nf">can_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the value of bool_exit</span>
+        <span class="sd">&quot;&quot;&quot;Return the value of bool_exit</span>
 
 <span class="sd">        :return: bool_exit value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2237,8 +2312,8 @@
 
 
 <div class="viewcode-block" id="PopUpRemoveTag"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveTag">[docs]</a><span class="k">class</span> <span class="nc">PopUpRemoveTag</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">     Is called when the user wants to remove a user tag from populse_mia.e project</span>
+    <span class="sd">&quot;&quot;&quot;Is called when the user wants to remove a user tag from</span>
+<span class="sd">       populse_mia.e project</span>
 
 <span class="sd">     Attributes:</span>
 <span class="sd">         - project: current project in the software</span>
@@ -2249,7 +2324,8 @@
 <span class="sd">         - ok_action: verifies the selected tags and send the information to the data browser</span>
 <span class="sd">     &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the project has been created</span>
+    <span class="c1"># Signal that will be emitted at the end to tell that</span>
+    <span class="c1"># the project has been created</span>
     <span class="n">signal_remove_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpRemoveTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
@@ -2275,7 +2351,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setTextFormat</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AutoText</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;label_tag_list&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Remove a tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;Remove a tag&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;lineEdit_search_bar&quot;</span><span class="p">)</span>
@@ -2290,7 +2367,8 @@
         <span class="c1"># The list of tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;listWidget_tags&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">MultiSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">MultiSelection</span><span class="p">)</span>
 
         <span class="n">vbox</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
         <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_top</span><span class="p">)</span>
@@ -2353,16 +2431,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to save a project under another name</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - path: absolute path to the project&#39;s folder (without the project folder)</span>
-<span class="sd">        - name: name of the project</span>
-<span class="sd">        - relative_path: relative path to the new project (with the project folder)</span>
-<span class="sd">        - relative_subpath: relative path to the new project (without the project folder)</span>
 <span class="sd">    Method:</span>
-<span class="sd">        - return_value: sets the widget&#39;s attributes depending on the selected file name</span>
+<span class="sd">        - return_value: sets the widget&#39;s attributes depending on the</span>
+<span class="sd">          selected file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Signal that will be emitted at the end to tell that the new file name has been chosen</span>
+    <span class="c1"># Signal that will be emitted at the end to tell</span>
+    <span class="c1"># that the new file name has been chosen</span>
     <span class="n">signal_saved_project</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpSaveProjectAs.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSaveProjectAs.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2386,7 +2461,8 @@
         <span class="n">file_name_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_name_tuple</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">projects_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;projects&#39;</span><span class="p">)</span>
+            <span class="n">projects_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;projects&#39;</span><span class="p">)</span>
             <span class="n">projects_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">projects_folder</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">file_name</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="o">!=</span> <span class="n">projects_folder</span><span class="p">:</span>
                 <span class="n">entire_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
@@ -2395,9 +2471,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">relative_subpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span>
+                        <span class="ow">not</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                    <span class="c1"># A signal is emitted to tell that the project has been created</span>
+                    <span class="c1"># A signal is emitted to tell that the project</span>
+                    <span class="c1"># has been created</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">signal_saved_project</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">utils</span><span class="o">.</span><span class="n">message_already_exists</span><span class="p">()</span>
@@ -2409,19 +2487,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to create a see all the projects</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - main_window: main window of the software</span>
-<span class="sd">        - path: absolute path to the selected project&#39;s folder (without the project folder)</span>
-<span class="sd">        - name: name of the selected project</span>
-<span class="sd">        - relative_path: relative path to the selected project (with the project folder)</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - checkState: checks if the project still exists and returns the corresponding icon</span>
-<span class="sd">        - itemToPath: returns the path of the first selected item</span>
+<span class="sd">        - item_to_path: returns the path of the first selected item</span>
 <span class="sd">        - open_project: switches to the selected project</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSeeAllProjects.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saved_projects</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param saved_projects: List of saved projects</span>
+<span class="sd">        :param main_window: Main window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mainWindow</span> <span class="o">=</span> <span class="n">main_window</span>
@@ -2482,10 +2558,11 @@
 <span class="sd">        Checks if the project still exists and returns the corresponding icon</span>
 
 <span class="sd">        :param path: path of the project</span>
-<span class="sd">        :return: either a green &quot;v&quot; or a red cross depending on the existence of the project</span>
+<span class="sd">        :return: either a green &quot;v&quot; or a red cross depending on</span>
+<span class="sd">          the existence of the project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-                                          <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)):</span>
             <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s1">&#39;green_v.png&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2523,7 +2600,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">entire_path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 
-            <span class="n">project_switched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mainWindow</span><span class="o">.</span><span class="n">switch_project</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">project_switched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mainWindow</span><span class="o">.</span><span class="n">switch_project</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">project_switched</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
@@ -2593,7 +2671,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">iterated_tag</span> <span class="o">=</span> <span class="n">iterated_tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag_values</span> <span class="o">=</span> <span class="n">tag_values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">final_values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Iterate pipeline run over tag </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterated_tag</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Iterate pipeline run over tag </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterated_tag</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">v_box</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
 
@@ -2644,15 +2723,16 @@
 
 
 <div class="viewcode-block" id="PopUpTagSelection"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpTagSelection">[docs]</a><span class="k">class</span> <span class="nc">PopUpTagSelection</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Is called when the user wants to update the tags that are visualized in the data browser</span>
+    <span class="sd">&quot;&quot;&quot;Is called when the user wants to update the tags that are visualized in</span>
+<span class="sd">       the data browser</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        - project: current project in the software</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
-<span class="sd">        - item_clicked: checks the checkbox of an item when the latter is clicked</span>
+<span class="sd">        - item_clicked: checks the checkbox of an item when the latter</span>
+<span class="sd">          is clicked</span>
 <span class="sd">        - ok_clicked: actions when the &quot;OK&quot; button is clicked</span>
 <span class="sd">        - cancel_clicked: closes the pop-up</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2667,7 +2747,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setTextFormat</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AutoText</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;label_tag_list&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;main_window&quot;</span><span class="p">,</span> <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_tag_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;main_window&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;Available tags:&quot;</span><span class="p">))</span>
 
         <span class="c1"># The search bar to search in the list of tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -2678,7 +2759,8 @@
         <span class="c1"># The list of tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;listWidget_tags&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_widget_tags</span><span class="o">.</span><span class="n">itemClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_clicked</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">push_button_ok</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -2718,12 +2800,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">return_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">str_search</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span>
+                    <span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="n">TAG_CHECKSUM</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">str_search</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">tag</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
                         <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span>
+                    <span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="n">TAG_CHECKSUM</span><span class="p">:</span>
                     <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
 
@@ -2762,18 +2846,18 @@
 
 
 <div class="viewcode-block" id="PopUpSelectTag"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectTag">[docs]</a><span class="k">class</span> <span class="nc">PopUpSelectTag</span><span class="p">(</span><span class="n">PopUpTagSelection</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Is called when the user wants to update the tag to display in the mini viewer</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - config: current config of the software</span>
+    <span class="sd">&quot;&quot;&quot;Is called when the user wants to update the tag to display in the mini</span>
+<span class="sd">      viewer</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the mini viewer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSelectTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PopUpSelectTag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>

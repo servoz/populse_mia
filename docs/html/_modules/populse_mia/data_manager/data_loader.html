@@ -72,18 +72,19 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QProgressDialog</span>
 
 <span class="c1"># Populse_MIA imports</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> \
-    <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> \
-    <span class="n">TYPE_NII</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span> \
-    <span class="n">TAG_ORIGIN_USER</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span>
+    <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.database_mia</span> <span class="k">import</span> <span class="p">(</span><span class="n">TAG_ORIGIN_BUILTIN</span><span class="p">,</span>
+                                                   <span class="n">TAG_ORIGIN_USER</span><span class="p">)</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">FIELD_TYPE_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_TIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_INTEGER</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_BOOLEAN</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ImportProgress"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportProgress">[docs]</a><span class="k">class</span> <span class="nc">ImportProgress</span><span class="p">(</span><span class="n">QProgressDialog</span><span class="p">):</span>
@@ -237,15 +238,15 @@
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;%M&quot;</span><span class="p">)</span>
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ss&quot;</span><span class="p">,</span> <span class="s2">&quot;%S&quot;</span><span class="p">)</span>
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="ow">in</span>\
-                                    <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> \
-                                    <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span> <span class="ow">in</span> <span class="nb">format</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="ow">in</span>
+                                    <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span>
+                                    <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span> <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATETIME</span>
-                            <span class="k">elif</span> <span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> \
-                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">:</span>
+                            <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span>
+                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATE</span>
-                            <span class="k">elif</span> <span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span> \
-                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">:</span>
+                            <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span>
+                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_TIME</span>
 
                         <span class="k">if</span> <span class="n">tag_name</span> <span class="o">!=</span> <span class="s2">&quot;Json_Version&quot;</span><span class="p">:</span>
@@ -272,9 +273,9 @@
                                     <span class="n">value_prepared</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value_single</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                                 <span class="n">value</span> <span class="o">=</span> <span class="n">value_prepared</span>
 
-                        <span class="k">if</span> <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span> <span class="ow">or</span> <span class="n">tag_type</span> <span class="o">==</span> \
-                                <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span> \
-                                <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span> <span class="ow">or</span> <span class="n">tag_type</span> <span class="o">==</span>
+                                <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span>
+                                <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">):</span>
                             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                                 <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
@@ -286,8 +287,8 @@
 
                         <span class="n">tag_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
                             <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">tag_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tag_name</span> <span class="ow">not</span> <span class="ow">in</span> \
-                                <span class="n">tags_names_added</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">tag_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tag_name</span> <span class="ow">not</span> <span class="ow">in</span>
+                                <span class="n">tags_names_added</span><span class="p">):</span>
                             <span class="c1"># Adding the tag as it&#39;s not in the database yet</span>
                             <span class="n">tags_added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="p">[</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">tag_type</span><span class="p">,</span>

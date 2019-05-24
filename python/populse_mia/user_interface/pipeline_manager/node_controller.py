@@ -17,21 +17,22 @@ from traits.api import Undefined, TraitError
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGroupBox, QMessageBox, QToolButton, QDialog, \
-    QDialogButtonBox, QApplication
+from PyQt5.QtWidgets import (
+    QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QLineEdit,
+    QGroupBox, QMessageBox, QToolButton, QDialog, QDialogButtonBox,
+    QApplication)
 
 # soma-base imports
 from soma.controller import trait_ids
 
 # Populse_MIA imports
-from populse_mia.user_interface.data_browser.advanced_search import AdvancedSearch
+from populse_mia.user_interface.data_browser.advanced_search import (
+    AdvancedSearch)
 from populse_mia.user_interface.data_browser.rapid_search import RapidSearch
-from populse_mia.user_interface.data_browser.data_browser import TableDataBrowser, \
-    not_defined_value
-from populse_mia.user_interface.pop_ups import \
-    PopUpSelectTagCountTable
-from populse_mia.user_interface.pop_ups import PopUpVisualizedTags
+from populse_mia.user_interface.data_browser.data_browser import (
+    TableDataBrowser, not_defined_value)
+from populse_mia.user_interface.pop_ups import (
+    PopUpSelectTagCountTable, PopUpVisualizedTags)
 from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
 from populse_mia.data_manager.filter import Filter
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA

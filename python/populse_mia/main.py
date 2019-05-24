@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*- # Character encoding, recommended
 """The first module used at the runtime of mia.
 
-##########################################################################
-# Populse_mia - Copyright (C) IRMaGe/CEA, 2018
-# Distributed under the terms of the CeCILL license, as published by
-# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
-# http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
-# for details.
-##########################################################################
-
 Basically, this module is dedicated to the initialisation of the basic
 parameters and the various checks necessary for a successful launch of the
 mia's GUI.
@@ -24,6 +16,7 @@ mia's GUI.
         - verify_processes
 
 """
+
 ###############################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -31,7 +24,6 @@ mia's GUI.
 # http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 # for details.
 ###############################################################################
-
 
 import sys
 import os

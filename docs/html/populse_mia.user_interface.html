@@ -33,7 +33,22 @@
         
   <div class="section" id="module-populse_mia.user_interface">
 <span id="populse-mia-user-interface-package"></span><h1>populse_mia.user_interface package<a class="headerlink" href="#module-populse_mia.user_interface" title="Permalink to this headline">¶</a></h1>
-<p>JE MANGE DU BACON</p>
+<p>User interface module, encompass the main window and its tabs
+definition, as well as pop ups.</p>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd><dl class="first last docutils">
+<dt>Module:</dt>
+<dd><ul class="first last simple">
+<li>main_window</li>
+<li>pop_ups</li>
+<li>data_browser</li>
+<li>pop_ups</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -202,7 +217,8 @@ database.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Boolean. True if there are unsaved modifications,         False otherwise</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Boolean. True if there are unsaved modifications,
+False otherwise</td>
 </tr>
 </tbody>
 </table>
@@ -438,12 +454,21 @@ projects menus.</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>default_init_table: default init table when no previous value</li>
-<li>update_default_value: checks if the values are correct and updates the parent value</li>
-<li>add_element: one more element added to the list</li>
-<li>remove_element: removes the last element of the list</li>
-<li>resize_table: to resize the pop up depending on the table</li>
+<dd><ul class="first last">
+<li><p class="first">default_init_table: default init table when no previous value</p>
+</li>
+<li><dl class="first docutils">
+<dt>update_default_value: checks if the values are correct and updates</dt>
+<dd><p class="first last">the parent value</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">add_element: one more element added to the list</p>
+</li>
+<li><p class="first">remove_element: removes the last element of the list</p>
+</li>
+<li><p class="first">resize_table: to resize the pop up depending on the table</p>
+</li>
 </ul>
 </dd>
 </dl>
@@ -510,8 +535,9 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.user_interface.pop_ups.PopUpAddPath">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pop_ups.</code><code class="descname">PopUpAddPath</code><span class="sig-paren">(</span><em>project</em>, <em>databrowser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpAddPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpAddPath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to add a document to the project without importing from populse_mia.e MRI File Manager</p>
 <dl class="docutils">
+<dt>Is called when the user wants to add a document to the project</dt>
+<dd>without importing from populse_mia.e MRI File Manager</dd>
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
@@ -519,11 +545,19 @@ We need to override the MousePressEvent</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>ok_clicked: updates the “scan_list” attribute of several widgets</li>
-<li>find_type: tries to find the document type when the document is changed</li>
-<li>file_to_choose: lets the user choose a file to import</li>
-<li>save_path: adds the path to the database and the data browser</li>
+<dd><ul class="first last">
+<li><p class="first">ok_clicked: updates the “scan_list” attribute of several widgets</p>
+</li>
+<li><dl class="first docutils">
+<dt>find_type: tries to find the document type when the document is</dt>
+<dd><p class="first last">changed</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">file_to_choose: lets the user choose a file to import</p>
+</li>
+<li><p class="first">save_path: adds the path to the database and the data browser</p>
+</li>
 </ul>
 </dd>
 </dl>
@@ -567,9 +601,15 @@ We need to override the MousePressEvent</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>on_activated: type updated</li>
-<li>ok_action: verifies that each field is correct and send the new tag to the data browser</li>
+<dd><ul class="first last">
+<li><p class="first">on_activated: type updated</p>
+</li>
+<li><dl class="first docutils">
+<dt>ok_action: verifies that each field is correct and send the new tag</dt>
+<dd><p class="first last">to the data browser</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -582,7 +622,8 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpAddTag.ok_action">
 <code class="descname">ok_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpAddTag.ok_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpAddTag.ok_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies that each field is correct and send the new tag to the data browser</p>
+<dd><p>Verifies that each field is correct and send the new tag
+to the data browser</p>
 </dd></dl>
 
 <dl class="method">
@@ -619,9 +660,15 @@ We need to override the MousePressEvent</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>search_str: matches the searched pattern with the tags of the project</li>
-<li>ok_action: verifies the specified name is correct and send the information to the data browser</li>
+<dd><ul class="first last">
+<li><p class="first">search_str: matches the searched pattern with the tags of the project</p>
+</li>
+<li><dl class="first docutils">
+<dt>ok_action: verifies the specified name is correct and send the</dt>
+<dd><p class="first last">information to the data browser</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -634,7 +681,10 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpCloneTag.ok_action">
 <code class="descname">ok_action</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpCloneTag.ok_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpCloneTag.ok_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies the specified name is correct and send the information to the data browser</p>
+<dd><dl class="docutils">
+<dt>Verifies the specified name is correct and send the</dt>
+<dd>information to the data browser</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -677,13 +727,23 @@ We need to override the MousePressEvent</p>
 <p>Is called when the user closes a pipeline editor that has been modified</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>pipeline_name: name of the pipeline (basename)</li>
-<li>bool_save_as: boolean to True if the pipeline needs to be saved</li>
-<li>bool_exit: boolean to True if we can exit the editor</li>
-<li>save_as_signal: signal emitted to save the pipeline under another name</li>
-<li>do_not_save_signal: signal emitted to close the editor</li>
-<li>cancel_signal: signal emitted to cancel the action</li>
+<dd><ul class="first last">
+<li><p class="first">pipeline_name: name of the pipeline (basename)</p>
+</li>
+<li><p class="first">bool_save_as: boolean to True if the pipeline needs to be saved</p>
+</li>
+<li><p class="first">bool_exit: boolean to True if we can exit the editor</p>
+</li>
+<li><dl class="first docutils">
+<dt>save_as_signal: signal emitted to save the pipeline under another</dt>
+<dd><p class="first last">name</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">do_not_save_signal: signal emitted to close the editor</p>
+</li>
+<li><p class="first">cancel_signal: signal emitted to cancel the action</p>
+</li>
 </ul>
 </dd>
 <dt>Methods:</dt>
@@ -884,12 +944,15 @@ We need to override the MousePressEvent</p>
 </dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
-<li>refresh_layout: updates the layouts (especially when a tag push button is added or removed)</li>
+<li>refresh_layout: updates the layouts (especially when a tag push
+button is added or removed)</li>
 <li>add_tag: adds a push button</li>
-<li>remove_tag: removes a push buttons and makes the changes in the list of values</li>
+<li>remove_tag: removes a push buttons and makes the changes in the
+list of values</li>
 <li>select_tag: calls a pop-up to choose a tag</li>
 <li>fill_values: fills the values list when a tag is added or removed</li>
-<li>sort_scans: collects the information and send them to the data browser</li>
+<li>sort_scans: collects the information and send them to the data
+browser</li>
 </ul>
 </dd>
 </dl>
@@ -961,15 +1024,19 @@ We need to override the MousePressEvent</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
+<li>path: absolute path to the project’s folder (without the project
+folder)</li>
 <li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
-<li>relative_subpath: relative path to the new project (without the project folder)</li>
+<li>relative_path: relative path to the new project (with the project
+folder)</li>
+<li>relative_subpath: relative path to the new project (without the
+project folder)</li>
 </ul>
 </dd>
 <dt>Method:</dt>
 <dd><ul class="first last simple">
-<li>get_filename: sets the widget’s attributes depending on the selected file name</li>
+<li>get_filename: sets the widget’s attributes depending on the
+selected file name</li>
 </ul>
 </dd>
 </dl>
@@ -1010,14 +1077,21 @@ We need to override the MousePressEvent</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
+<li>path: absolute path to the project’s folder (without the project
+folder)</li>
 <li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
+<li>relative_path: relative path to the new project (with the project
+folder)</li>
 </ul>
 </dd>
 <dt>Method:</dt>
-<dd><ul class="first last simple">
-<li>get_filename: sets the widget’s attributes depending on the selected file name</li>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>get_filename: sets the widget’s attributes depending on the selected</dt>
+<dd><p class="first last">file name</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -1058,15 +1132,20 @@ We need to override the MousePressEvent</p>
 <dd><ul class="first last simple">
 <li>browse_matlab: called when matlab browse button is clicked</li>
 <li>browse_matlab_standalone: called when matlab browse button is clicked</li>
-<li>browse_projects_save_path: called when “Projects folder” browse button is clicked</li>
-<li>browse_mri_conv_path: called when “MRIManager.jar” browse button is clicked</li>
+<li>browse_projects_save_path: called when “Projects folder” browse
+button is clicked</li>
+<li>browse_mri_conv_path: called when “MRIManager.jar” browse
+button is clicked</li>
 <li>browse_spm: called when spm browse button is clicked</li>
-<li>browse_spm_standalone: called when spm standalone browse button is clicked</li>
-<li>clinical_mode_switch: called when the clinical mode checkbox is clicked</li>
+<li>browse_spm_standalone: called when spm standalone browse button
+is clicked</li>
+<li>clinical_mode_switch: called when the clinical mode checkbox
+is clicked</li>
 <li>ok_clicked: saves the modifications to the config file and apply them</li>
 <li>use_matlab_changed: called when the use_matlab checkbox is changed</li>
 <li>use_spm_changed: called when the use_spm checkbox is changed</li>
-<li>use_spm_standalone_changed: called when the use_spm_standalone checkbox is changed</li>
+<li>use_spm_standalone_changed: called when the use_spm_standalone
+checkbox is changed</li>
 </ul>
 </dd>
 </dl>
@@ -1204,8 +1283,9 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.user_interface.pop_ups.PopUpQuit">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pop_ups.</code><code class="descname">PopUpQuit</code><span class="sig-paren">(</span><em>database</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpQuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpQuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user closes the software and the current project has been modified</p>
 <dl class="docutils">
+<dt>Is called when the user closes the software and the current project has</dt>
+<dd>been modified</dd>
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>database: current database in the project</li>
@@ -1230,7 +1310,7 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpQuit.can_exit">
 <code class="descname">can_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpQuit.can_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpQuit.can_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of bool_exit</p>
+<dd><p>Return the value of bool_exit</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1280,8 +1360,9 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.user_interface.pop_ups.PopUpRemoveTag">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pop_ups.</code><code class="descname">PopUpRemoveTag</code><span class="sig-paren">(</span><em>databrowser</em>, <em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpRemoveTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpRemoveTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to remove a user tag from populse_mia.e project</p>
 <dl class="docutils">
+<dt>Is called when the user wants to remove a user tag from</dt>
+<dd>populse_mia.e project</dd>
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
@@ -1334,17 +1415,10 @@ We need to override the MousePressEvent</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
 <p>Is called when the user wants to save a project under another name</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>path: absolute path to the project’s folder (without the project folder)</li>
-<li>name: name of the project</li>
-<li>relative_path: relative path to the new project (with the project folder)</li>
-<li>relative_subpath: relative path to the new project (without the project folder)</li>
-</ul>
-</dd>
 <dt>Method:</dt>
 <dd><ul class="first last simple">
-<li>return_value: sets the widget’s attributes depending on the selected file name</li>
+<li>return_value: sets the widget’s attributes depending on the
+selected file name</li>
 </ul>
 </dd>
 </dl>
@@ -1381,18 +1455,10 @@ We need to override the MousePressEvent</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to create a see all the projects</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>main_window: main window of the software</li>
-<li>path: absolute path to the selected project’s folder (without the project folder)</li>
-<li>name: name of the selected project</li>
-<li>relative_path: relative path to the selected project (with the project folder)</li>
-</ul>
-</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>checkState: checks if the project still exists and returns the corresponding icon</li>
-<li>itemToPath: returns the path of the first selected item</li>
+<li>item_to_path: returns the path of the first selected item</li>
 <li>open_project: switches to the selected project</li>
 </ul>
 </dd>
@@ -1400,7 +1466,18 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>saved_projects</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSeeAllProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>saved_projects</strong> – List of saved projects</li>
+<li><strong>main_window</strong> – Main window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1413,7 +1490,8 @@ We need to override the MousePressEvent</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path of the project</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">either a green “v” or a red cross depending on the existence of the project</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">either a green “v” or a red cross depending on
+the existence of the project</td>
 </tr>
 </tbody>
 </table>
@@ -1511,14 +1589,9 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectTag">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pop_ups.</code><code class="descname">PopUpSelectTag</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#populse_mia.user_interface.pop_ups.PopUpTagSelection" title="populse_mia.user_interface.pop_ups.PopUpTagSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.user_interface.pop_ups.PopUpTagSelection</span></code></a></p>
-<p>Is called when the user wants to update the tag to display in the mini viewer</p>
 <dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>project: current project in the software</li>
-<li>config: current config of the software</li>
-</ul>
-</dd>
+<dt>Is called when the user wants to update the tag to display in the mini</dt>
+<dd>viewer</dd>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>ok_clicked: saves the modifications and updates the mini viewer</li>
@@ -1528,7 +1601,14 @@ We need to override the MousePressEvent</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectTag.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectTag.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectTag.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1628,8 +1708,9 @@ We need to override the MousePressEvent</p>
 <dt id="populse_mia.user_interface.pop_ups.PopUpTagSelection">
 <em class="property">class </em><code class="descclassname">populse_mia.user_interface.pop_ups.</code><code class="descname">PopUpTagSelection</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpTagSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpTagSelection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
-<p>Is called when the user wants to update the tags that are visualized in the data browser</p>
 <dl class="docutils">
+<dt>Is called when the user wants to update the tags that are visualized in</dt>
+<dd>the data browser</dd>
 <dt>Attributes:</dt>
 <dd><ul class="first last simple">
 <li>project: current project in the software</li>
@@ -1638,7 +1719,8 @@ We need to override the MousePressEvent</p>
 <dt>Methods:</dt>
 <dd><ul class="first last simple">
 <li>search_str: matches the searched pattern with the tags of the project</li>
-<li>item_clicked: checks the checkbox of an item when the latter is clicked</li>
+<li>item_clicked: checks the checkbox of an item when the latter
+is clicked</li>
 <li>ok_clicked: actions when the “OK” button is clicked</li>
 <li>cancel_clicked: closes the pop-up</li>
 </ul>

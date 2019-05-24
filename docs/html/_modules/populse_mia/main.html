@@ -50,6 +50,7 @@
 <span class="sd">        - verify_processes</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1">###############################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
@@ -57,7 +58,6 @@
 <span class="c1"># http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html</span>
 <span class="c1"># for details.</span>
 <span class="c1">###############################################################################</span>
-
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.main_window</span> <span class="k">import</span> <span class="n">MainWindow</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">Project</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">verCmp</span>
+<span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">verCmp</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project_properties</span> <span class="k">import</span> <span class="n">SavedProjects</span>
 
 <span class="n">main_window</span> <span class="o">=</span> <span class="kc">None</span>
@@ -325,8 +325,8 @@
 <span class="sd">            - *_browse_mia_path()*</span>
 <span class="sd">                The user define the mia_path parameter.</span>
 
-<span class="sd">                This method goes with the _ok_mia_path function, the latter will use</span>
-<span class="sd">                the value of the mia_path parameter, defined here.</span>
+<span class="sd">                This method goes with the _ok_mia_path function, the latter</span>
+<span class="sd">                will use the value of the mia_path parameter, defined here.</span>
 
 <span class="sd">                :Parameters dialog: QtWidgets.QDialog object (&#39;msg&#39; in the main</span>
 <span class="sd">                   function)</span>
@@ -437,7 +437,8 @@
             <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
             
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
-                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span>
+                          <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 
             <span class="n">verify_processes</span><span class="p">()</span>
@@ -577,7 +578,8 @@
                     <span class="k">return</span> <span class="kc">False</span>
 
             <span class="c1"># keep the same configuration for the pipeline in new and old dic</span>
-            <span class="k">elif</span> <span class="n">_deepCompDic</span><span class="p">(</span><span class="n">old_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span> <span class="n">new_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;+1&quot;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">_deepCompDic</span><span class="p">(</span><span class="n">old_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span> <span class="n">new_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span>
+                               <span class="n">level</span><span class="o">=</span><span class="s2">&quot;+1&quot;</span><span class="p">)):</span>
                 <span class="n">new_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">old_dic</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
 
     <span class="n">proc_content</span> <span class="o">=</span> <span class="kc">False</span>

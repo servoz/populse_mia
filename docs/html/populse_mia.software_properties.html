@@ -49,7 +49,9 @@
 pop-up in the config.yml file.</p>
 <dl class="docutils">
 <dt>Contains:</dt>
-<dd>Class:
+<dd>Function:
+-verCmp
+Class:
 -Config</dd>
 </dl>
 <dl class="class">
@@ -737,6 +739,45 @@ the “Saved projects” menu.</p>
 <p>:param:use_spm_standalone: boolean</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="populse_mia.software_properties.verCmp">
+<code class="descclassname">populse_mia.software_properties.</code><code class="descname">verCmp</code><span class="sig-paren">(</span><em>first_ver</em>, <em>sec_ver</em>, <em>comp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/software_properties.html#verCmp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.software_properties.verCmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version comparator.</p>
+<p>The verCmp() function returns a boolean value to indicate whether its
+first argument (first_ver) is equal to, less or equal to, or greater or
+equal to its second argument (sec_ver), as follows:
+- if third argument (comp) is ‘eq’: when the first argument is equal to the</p>
+<blockquote>
+<div>second argument, return True (False if not).</div></blockquote>
+<ul class="simple">
+<li>if third argument (comp) is ‘sup’: when the first argument is greater
+than the second argument, return True (False if not).</li>
+<li>if third argument (comp) is ‘inf’: when the first argument is less than
+the second argument, return True (False if not).</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>first_ver</strong> – the version of a package (a string; ex. ‘0.13.0’)</li>
+<li><strong>sec_ver</strong> – the version of a package (a string; ex. ‘0.13.0’)</li>
+<li><strong>comp</strong> – comparator argument (accepted values: ‘sup’, ‘inf’ and ‘eq’ )</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">False or True</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Contains:</dt>
+<dd>Private function:
+- normalise</dd>
+</dl>
 </dd></dl>
 
 </div>

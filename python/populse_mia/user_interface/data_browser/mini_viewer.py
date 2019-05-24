@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -19,7 +21,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5 import QtCore
 from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtWidgets import QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox
+from PyQt5.QtWidgets import (
+    QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox)
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel

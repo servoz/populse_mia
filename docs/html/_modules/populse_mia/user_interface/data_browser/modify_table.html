@@ -43,17 +43,18 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 
 <span class="c1"># PyQt5 imports</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span>\
-    <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QMessageBox</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">QDialog</span><span class="p">,</span> <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span>
+    <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="p">)</span>
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">check_value_type</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">COLLECTION_CURRENT</span>
 
 <span class="c1"># Populse_db imports</span>
-<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> \
-    <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span>
+<span class="kn">from</span> <span class="nn">populse_db.database</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">FIELD_TYPE_LIST_INTEGER</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_FLOAT</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_STRING</span><span class="p">,</span>
+    <span class="n">FIELD_TYPE_LIST_DATE</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_DATETIME</span><span class="p">,</span> <span class="n">FIELD_TYPE_LIST_TIME</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ModifyTable"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.modify_table.ModifyTable">[docs]</a><span class="k">class</span> <span class="nc">ModifyTable</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
