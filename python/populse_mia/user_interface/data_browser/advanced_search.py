@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import (
 
 # Populse_MIA imports
 from populse_mia.utils.tools import ClickableLabel
+from populse_mia.software_properties import Config
 from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
 
 # Populse_db imports
@@ -150,8 +151,7 @@ class AdvancedSearch(QWidget):
             lambda: self.displayConditionRules(field_choice, condition_choice))
 
         # Minus to remove the row
-        sources_images_dir = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         remove_row_label = ClickableLabel()
         remove_row_picture = QPixmap(os.path.relpath(
             os.path.join(sources_images_dir, "red_minus.png")))
@@ -589,9 +589,7 @@ class AdvancedSearch(QWidget):
         """
 
         # Plus added to the last row
-        sources_images_dir = os.path.join(
-            os.path.dirname(os.path.dirname(
-                os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         add_search_bar_label = ClickableLabel()
         add_search_bar_label.setObjectName('plus')
         add_search_bar_picture = QPixmap(

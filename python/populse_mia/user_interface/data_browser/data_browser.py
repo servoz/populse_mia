@@ -363,9 +363,7 @@ class DataBrowser(QWidget):
         filters_menu.addAction(self.open_filter_action)
         filters_tool_button.setMenu(filters_menu)
 
-        sources_images_dir = os.path.join(
-            os.path.dirname(
-                os.path.dirname(os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
         self.button_cross.setIcon(
             QIcon(os.path.join(sources_images_dir, 'gray_cross.png')))
@@ -406,9 +404,7 @@ class DataBrowser(QWidget):
         # Add path button under the table
         hbox_layout = QHBoxLayout()
 
-        sources_images_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-            "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
 
         self.addRowLabel.setObjectName('plus')
         add_row_picture = QPixmap(

@@ -36,6 +36,7 @@ from populse_mia.user_interface.pop_ups import (
 from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
 from populse_mia.data_manager.filter import Filter
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
+from populse_mia.software_properties import Config
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -568,8 +569,7 @@ class PlugFilter(QWidget):
         self.rapid_search = RapidSearch(self)
         self.rapid_search.textChanged.connect(partial(self.search_str))
 
-        sources_images_dir = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.button_cross = QToolButton()
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
         self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir,
@@ -876,8 +876,7 @@ class FilterWidget(QWidget):
 
     def layout_view(self):
 
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
 
         self.button_cross.setStyleSheet('background-color:rgb(255, 255, 255);')
         self.button_cross.setIcon(QIcon(os.path.join(sources_images_dir,

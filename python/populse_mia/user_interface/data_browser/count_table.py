@@ -18,6 +18,7 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt
 
 # Populse_MIA imports
+from populse_mia.software_properties import Config
 from populse_mia.user_interface.pop_ups import PopUpSelectTagCountTable
 from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import set_item_data, table_to_database
@@ -149,8 +150,7 @@ class CountTable(QDialog):
         self.push_buttons.insert(1, push_button_tag_2)
 
         # Labels to add/remove a tag (a push button)
-        sources_images_dir = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.remove_tag_label = ClickableLabel()
         remove_tag_picture = QPixmap(os.path.relpath(os.path.join(
             sources_images_dir, "red_minus.png")))
@@ -460,9 +460,7 @@ class CountTable(QDialog):
                 list_scans = [getattr(scan, TAG_FILENAME) for scan in
                               generator_scans]
 
-                sources_images_dir = os.path.join(os.path.dirname(
-                    os.path.dirname(os.path.realpath(__file__))),
-                    "sources_images")
+                sources_images_dir = Config().getSourceImageDir()
                 if list_scans:
                     icon = QIcon(os.path.join(sources_images_dir,
                                               'green_v.png'))

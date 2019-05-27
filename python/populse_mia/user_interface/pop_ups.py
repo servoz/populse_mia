@@ -257,8 +257,7 @@ class DefaultValueListCreation(QDialog):
         cancel_button.clicked.connect(self.close)
 
         # Button to add an element to the list
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))),"sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.add_element_label = ClickableLabel()
         self.add_element_label.setObjectName('plus')
         add_element_picture = QtGui.QPixmap(os.path.relpath(os.path.join(
@@ -1205,8 +1204,7 @@ class PopUpMultipleSort(QDialog):
         self.push_buttons.insert(1, push_button_tag_2)
 
         # Labels to add/remove a tag (a push button)
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.remove_tag_label = ClickableLabel()
         remove_tag_picture = QPixmap(os.path.relpath(os.path.join(
             sources_images_dir, "red_minus.png")))
@@ -2527,8 +2525,7 @@ class PopUpSeeAllProjects(QDialog):
         :return: either a green "v" or a red cross depending on
           the existence of the project
         """
-        sources_images_dir = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         if os.path.exists(os.path.join(path)):
             icon = QIcon(os.path.join(sources_images_dir, 'green_v.png'))
         else:

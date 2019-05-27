@@ -20,6 +20,7 @@ from populse_mia.user_interface.pop_ups import \
     PopUpSelectTagCountTable
 from populse_mia.data_manager.project import COLLECTION_CURRENT, TAG_FILENAME
 from populse_mia.utils.tools import ClickableLabel
+from populse_mia.software_properties import Config
 
 
 class IterationTable(QWidget):
@@ -118,9 +119,7 @@ class IterationTable(QWidget):
         # Labels to add/remove a tag (a push button)
         self.add_tag_label = ClickableLabel()
         self.add_tag_label.setObjectName('plus')
-        sources_images_dir = os.path.join(
-            os.path.dirname(os.path.dirname(
-                os.path.realpath(__file__))), "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         add_tag_picture = QPixmap(os.path.relpath(os.path.join(
             sources_images_dir, "green_plus.png")))
         add_tag_picture = add_tag_picture.scaledToHeight(15)

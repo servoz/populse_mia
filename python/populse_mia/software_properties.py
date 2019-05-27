@@ -419,6 +419,10 @@ class Config:
         """
         return self.config["paths"]["projects"]
 
+    def getSourceImageDir(self):
+        """Get the source directory for project images"""
+        return self.config["source_image_dir"]
+
     def getShowAllSlices(self):
         """Get whether the show_all_slices parameters was enabled
         or not in the miniviewer.
@@ -644,6 +648,12 @@ class Config:
         :param: show_all_slices: Boolean
         """
         self.config["show_all_slices"] = show_all_slices
+        # Then save the modification
+        self.saveConfig()
+
+    def setSourceImageDir(self, source_image_dir):
+        """Set the source directory for project images"""
+        self.config["source_image_dir"] = source_image_dir
         # Then save the modification
         self.saveConfig()
 

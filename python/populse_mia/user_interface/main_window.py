@@ -122,6 +122,8 @@ class MainWindow(QMainWindow):
             self.msg = PopUpDeletedProject(deleted_projects)
 
         self.config = Config()
+        self.config.setSourceImageDir(os.path.join(os.path.dirname(
+            os.path.dirname(os.path.realpath(__file__))), "sources_images"))
         self.windowName = "MIA - Multiparametric Image Analysis"
         self.projectName = "Unnamed project"
         self.project = project
@@ -144,10 +146,15 @@ class MainWindow(QMainWindow):
         self.menu_install_process = QMenu('Install processes', self)
         self.menu_saved_projects = QMenu('Saved projects', self)
 
+        # Initialize tabs
+        self.tabs = QTabWidget()
+        self.data_browser = DataBrowser(self.project, self)
+        self.image_viewer = QLabel("Coming soon...")
+        self.pipeline_manager = PipelineManagerTab(self.project, [], self)
+        self.centralWindow = QWidget()
+
         # Initialize menu actions
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))),
-            "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         self.action_save_project = self.menu_file.addAction("Save project")
         self.action_save_project_as = self.menu_file.addAction("Save "
                                                                "project as")
@@ -335,9 +342,7 @@ class MainWindow(QMainWindow):
 
     def create_view_window(self):
         """Create the main window view."""
-        sources_images_dir = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.realpath(__file__))),
-            "sources_images")
+        sources_images_dir = Config().getSourceImageDir()
         app_icon = QIcon(os.path.join(sources_images_dir, 'brain_mri.jpeg'))
         self.setWindowIcon(app_icon)
         background_color = self.config.getBackgroundColor()
@@ -396,28 +401,23 @@ class MainWindow(QMainWindow):
         classes."""
         self.config = Config()
 
-        self.tabs = QTabWidget()
         self.tabs.setAutoFillBackground(False)
         self.tabs.setStyleSheet('QTabBar{font-size:16pt;text-align: center}')
         self.tabs.setMovable(True)
 
-        self.data_browser = DataBrowser(self.project, self)
         self.tabs.addTab(self.data_browser, "Data Browser")
 
         # To uncomment when the Data Viewer will be created
         # self.image_viewer = ImageViewer()
-        self.image_viewer = QLabel("Coming soon...")
         self.tabs.addTab(self.image_viewer, "Data Viewer")
-
-        self.pipeline_manager = PipelineManagerTab(self.project, [], self)
         self.tabs.addTab(self.pipeline_manager, "Pipeline Manager")
 
         self.tabs.currentChanged.connect(self.tab_changed)
-
         vertical_layout = QVBoxLayout()
         vertical_layout.addWidget(self.tabs)
-        self.centralWindow = QWidget()
+
         self.centralWindow.setLayout(vertical_layout)
+
 
     @staticmethod
     def documentation():
