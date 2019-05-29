@@ -43,11 +43,14 @@ from soma.qt_gui.qt_backend.Qt import QMessageBox
 
 # Adding populse_mia path to the sys.path if in developer mode
 if not os.path.dirname(os.path.dirname(
-        os.path.realpath(__file__))) in sys.path:
+        os.path.realpath(__file__))) in sys.path:           # "developer" mode
     print('\nPopulse_MIA in "developer" mode')
     sys.path.insert(0, os.path.dirname(os.path.dirname(
         os.path.realpath(__file__))))
     DEV_MODE = True
+
+else:                                                       # "user" mode
+    DEV_MODE = False
 
 # populse_mia imports
 from populse_mia.user_interface.main_window import MainWindow
@@ -356,7 +359,7 @@ def main():
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia",
                                   "configuration.yml")
 
-    if not DEV_MODE:
+    if DEV_MODE:                         # "developer" mode
 
         if os.path.isfile(dot_mia_config):
             print('\n{0} has been detected.'.format(dot_mia_config))
@@ -382,7 +385,7 @@ def main():
 
         verify_processes()
 
-    else:  # "user" mode
+    else:                                # "user" mode
 
         try:
             
