@@ -65,7 +65,7 @@
 </ul>
 <p>This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.</p>
 <ul class="simple">
-<li><strong>_run_process()</strong></li>
+<li><strong>run_process_mia()</strong></li>
 </ul>
 <p>This method is called during a pipeline run. It has to contain the desired processing and need no return value.</p>
 </div></blockquote>
@@ -84,10 +84,10 @@
 <span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>  <span class="c1"># used to read and save Nifti images</span>
 <span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>  <span class="c1"># used to use SPM&#39;s Smooth</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>  <span class="c1"># used to apply the smoothing on an array</span>
-<span class="kn">from</span> <span class="nn">populse_mia.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>  <span class="c1"># base class that the created process has to inherit from</span>
+<span class="kn">from</span> <span class="nn">mia_processes.process_mia</span> <span class="k">import</span> <span class="n">Process_Mia</span>  <span class="c1"># base class that the created process has to inherit from</span>
 
 
-<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">ProcessMIA</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">Process_Mia</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -110,6 +110,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># Depending on the chosen method, the output dictionary will be generated differently</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
@@ -141,7 +142,8 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;method&quot; input has to be &quot;SPM&quot; or &quot;Scipy&quot; for a Smooth process&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_run_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run_process_mia</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># Depending on the chosen method, the output file will be generated differently</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>

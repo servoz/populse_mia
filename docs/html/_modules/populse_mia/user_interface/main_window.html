@@ -156,6 +156,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">PopUpDeletedProject</span><span class="p">(</span><span class="n">deleted_projects</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setSourceImageDir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span> <span class="s2">&quot;sources_images&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span> <span class="o">=</span> <span class="s2">&quot;MIA - Multiparametric Image Analysis&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">projectName</span> <span class="o">=</span> <span class="s2">&quot;Unnamed project&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -178,10 +180,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">menu_install_process</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s1">&#39;Install processes&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">menu_saved_projects</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s1">&#39;Saved projects&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
+        <span class="c1"># Initialize tabs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span> <span class="o">=</span> <span class="n">QTabWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span> <span class="o">=</span> <span class="n">DataBrowser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_viewer</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Coming soon...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_manager</span> <span class="o">=</span> <span class="n">PipelineManagerTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWindow</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+
         <span class="c1"># Initialize menu actions</span>
-        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-            <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">getSourceImageDir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_save_project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_file</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Save project&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_save_project_as</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_file</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Save &quot;</span>
                                                                <span class="s2">&quot;project as&quot;</span><span class="p">)</span>
@@ -369,9 +376,7 @@
 
 <div class="viewcode-block" id="MainWindow.create_view_window"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.main_window.MainWindow.create_view_window">[docs]</a>    <span class="k">def</span> <span class="nf">create_view_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create the main window view.&quot;&quot;&quot;</span>
-        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-            <span class="s2">&quot;sources_images&quot;</span><span class="p">)</span>
+        <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">getSourceImageDir</span><span class="p">()</span>
         <span class="n">app_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sources_images_dir</span><span class="p">,</span> <span class="s1">&#39;brain_mri.jpeg&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">app_icon</span><span class="p">)</span>
         <span class="n">background_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getBackgroundColor</span><span class="p">()</span>
@@ -430,28 +435,23 @@
 <span class="sd">        classes.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span> <span class="o">=</span> <span class="n">QTabWidget</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">setAutoFillBackground</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;QTabBar{font-size:16pt;text-align: center}&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span> <span class="o">=</span> <span class="n">DataBrowser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="p">,</span> <span class="s2">&quot;Data Browser&quot;</span><span class="p">)</span>
 
         <span class="c1"># To uncomment when the Data Viewer will be created</span>
         <span class="c1"># self.image_viewer = ImageViewer()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">image_viewer</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Coming soon...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_viewer</span><span class="p">,</span> <span class="s2">&quot;Data Viewer&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_manager</span> <span class="o">=</span> <span class="n">PipelineManagerTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="p">,</span> <span class="s2">&quot;Pipeline Manager&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">currentChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_changed</span><span class="p">)</span>
-
         <span class="n">vertical_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
         <span class="n">vertical_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">centralWindow</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">centralWindow</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vertical_layout</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="MainWindow.documentation"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.main_window.MainWindow.documentation">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">documentation</span><span class="p">():</span>

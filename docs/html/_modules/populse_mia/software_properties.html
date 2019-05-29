@@ -453,6 +453,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;paths&quot;</span><span class="p">][</span><span class="s2">&quot;projects&quot;</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="Config.getSourceImageDir"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getSourceImageDir">[docs]</a>    <span class="k">def</span> <span class="nf">getSourceImageDir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the source directory for project images&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_image_dir&quot;</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="Config.getShowAllSlices"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.getShowAllSlices">[docs]</a>    <span class="k">def</span> <span class="nf">getShowAllSlices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get whether the show_all_slices parameters was enabled</span>
 <span class="sd">        or not in the miniviewer.</span>
@@ -678,6 +682,12 @@
 <span class="sd">        :param: show_all_slices: Boolean</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;show_all_slices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">show_all_slices</span>
+        <span class="c1"># Then save the modification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Config.setSourceImageDir"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.setSourceImageDir">[docs]</a>    <span class="k">def</span> <span class="nf">setSourceImageDir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_image_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the source directory for project images&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_image_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_image_dir</span>
         <span class="c1"># Then save the modification</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
 

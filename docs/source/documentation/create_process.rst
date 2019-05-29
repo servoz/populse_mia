@@ -28,7 +28,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.
 
 
-    * **_run_process()**
+    * **run_process_mia()**
 
     This method is called during a pipeline run. It has to contain the desired processing and need no return value.
 
@@ -50,10 +50,10 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     import nibabel as nib  # used to read and save Nifti images
     from nipype.interfaces import spm  # used to use SPM's Smooth
     from scipy.ndimage.filters import gaussian_filter  # used to apply the smoothing on an array
-    from populse_mia.pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
+    from mia_processes.process_mia import Process_Mia  # base class that the created process has to inherit from
     
     
-    class SmoothSpmScipy(ProcessMIA):
+    class SmoothSpmScipy(Process_Mia):
     
         def __init__(self):
             super(SmoothSpmScipy, self).__init__()
@@ -76,6 +76,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
             self.process = spm.Smooth()
     
         def list_outputs(self):
+            super(SmoothSpmScipy, self).__init__()
             # Depending on the chosen method, the output dictionary will be generated differently
             if self.method in ['SPM', 'Scipy']:
                 if self.method == 'SPM':
@@ -107,7 +108,8 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
                 print('"method" input has to be "SPM" or "Scipy" for a Smooth process')
                 return {}
     
-        def _run_process(self):
+        def run_process_mia(self):
+            super(SmoothSpmScipy, self).__init__()
             # Depending on the chosen method, the output file will be generated differently
             if self.method in ['SPM', 'Scipy']:
                 if self.method == 'SPM':
