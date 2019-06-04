@@ -45,10 +45,16 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
 
 **Example:** creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy's gaussian filtering function. ::
 
-    import os
+    # Trait import
     from traits.api import Float
+    from nipype.interfaces.base import OutputMultiPath, InputMultiPath, File, traits
+    from nipype.interfaces.spm.base import ImageFileSPM
+
+    from mia_processes.process_mia import Process_Mia
+
+    # Other import
+    import os
     from nipype.interfaces import spm
-    from mia_processes.process_mia import Process_Mia  # base class that the created process has to inherit from
     
     
     class Smooth(Process_Mia):
