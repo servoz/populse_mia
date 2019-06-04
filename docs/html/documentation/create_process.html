@@ -80,119 +80,107 @@
 </div>
 <p><strong>Example:</strong> creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy’s gaussian filtering function.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">traits.api</span> <span class="k">as</span> <span class="nn">traits</span>  <span class="c1"># used to declare the inputs/outputs of the process</span>
-<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>  <span class="c1"># used to read and save Nifti images</span>
-<span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>  <span class="c1"># used to use SPM&#39;s Smooth</span>
-<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>  <span class="c1"># used to apply the smoothing on an array</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="k">import</span> <span class="n">Float</span>
+<span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>
 <span class="kn">from</span> <span class="nn">mia_processes.process_mia</span> <span class="k">import</span> <span class="n">Process_Mia</span>  <span class="c1"># base class that the created process has to inherit from</span>
 
 
-<span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">Process_Mia</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Smooth</span><span class="p">(</span><span class="n">Process_Mia</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Smooth</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="c1"># Inputs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;in_file&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;3D input file&#39;</span><span class="p">))</span>  <span class="c1"># Mandatory plug</span>
+        <span class="c1"># Inputs description</span>
+        <span class="n">in_files_desc</span> <span class="o">=</span> <span class="s1">&#39;List of files to smooth. A list of items which are an existing, uncompressed file (valid extensions: [.img, .nii, .hdr]).&#39;</span>
+        <span class="n">fwhm_desc</span> <span class="o">=</span> <span class="s1">&#39;Full-width at half maximum (FWHM) of the Gaussian smoothing kernel in mm. A list of 3 items which are a float of fwhm for each dimension.&#39;</span>
+        <span class="n">data_type_desc</span> <span class="o">=</span> <span class="s1">&#39;Data type of the output images (an integer [int or long]).&#39;</span>
+        <span class="n">implicit_masking_desc</span> <span class="o">=</span> <span class="s1">&#39;A mask implied by a particular voxel value (a boolean).&#39;</span>
+        <span class="n">out_prefix_desc</span> <span class="o">=</span> <span class="s1">&#39;Specify  the string to be prepended to the filenames of the smoothed image file(s) (a string).&#39;</span>
 
-        <span class="c1"># For inputs/outputs that are lists, it is possible to specify which the type of the list element (here</span>
-        <span class="c1"># traits.Float(). The second value ([1.0, 1.0, 1.0]) corresponds to the default value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;fwhm&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">traits</span><span class="o">.</span><span class="n">Float</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                           <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;List of fwhm for each dimension (in mm)&#39;</span><span class="p">))</span>
+        <span class="c1"># Outputs description</span>
+        <span class="n">smoothed_files_desc</span> <span class="o">=</span> <span class="s1">&#39;The smoothed files (a list of items which are an existing file name).&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;out_prefix&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Output file prefix&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                             <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Method used (either &quot;SPM&quot; or &quot;Scipy&quot;)&#39;</span><span class="p">))</span>
+        <span class="c1"># Input traits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;in_files&quot;</span><span class="p">,</span>
+                       <span class="n">InputMultiPath</span><span class="p">(</span><span class="n">ImageFileSPM</span><span class="p">(),</span>
+                                      <span class="n">copyfile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                      <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                      <span class="n">desc</span><span class="o">=</span><span class="n">in_files_desc</span><span class="p">))</span>
+        <span class="sd">&#39;&#39;&#39;self.add_trait(&quot;fwhm&quot;, traits.Either(traits.Float(),</span>
+<span class="sd">                       traits.List(traits.Float()), default_value=[6, 6, 6], output=False, optional=True))&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;fwhm&quot;</span><span class="p">,</span>
+                       <span class="n">traits</span><span class="o">.</span><span class="n">List</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+                                   <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                   <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">desc</span><span class="o">=</span> <span class="n">fwhm_desc</span><span class="p">))</span>
 
-        <span class="c1"># Output</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;smoothed_file&quot;</span><span class="p">,</span> <span class="n">traits</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Output file&#39;</span><span class="p">))</span>  <span class="c1"># Mandatory plug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
+                       <span class="n">traits</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                  <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">desc</span><span class="o">=</span><span class="n">data_type_desc</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;implicit_masking&quot;</span><span class="p">,</span>
+                       <span class="n">traits</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                   <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">desc</span><span class="o">=</span><span class="n">implicit_masking_desc</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;out_prefix&quot;</span><span class="p">,</span>
+                       <span class="n">traits</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span>
+                                     <span class="n">usedefault</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                     <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">desc</span><span class="o">=</span><span class="n">out_prefix_desc</span><span class="p">))</span>
+
+        <span class="c1"># Output traits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_trait</span><span class="p">(</span><span class="s2">&quot;smoothed_files&quot;</span><span class="p">,</span>
+                       <span class="n">OutputMultiPath</span><span class="p">(</span><span class="n">File</span><span class="p">(),</span>
+                                       <span class="n">output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">desc</span><span class="o">=</span><span class="n">smoothed_files_desc</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">spm</span><span class="o">.</span><span class="n">Smooth</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">change_dir</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="c1"># Depending on the chosen method, the output dictionary will be generated differently</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
-                <span class="c1"># Nipype interfaces have already a _list_outputs method that generates the output dictionary</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="p">{}</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
-                <span class="n">nipype_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">_list_outputs</span><span class="p">()</span>  <span class="c1"># Generates: {&#39;smoothed_files&#39; : [out_filename]}</span>
-                <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">:</span> <span class="n">nipype_dict</span><span class="p">[</span><span class="s1">&#39;smoothed_files&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Generating the filename by hand</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="p">{}</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>
-                    <span class="n">out_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="n">filename</span>
-                    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">)}</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Smooth</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">()</span>
 
-            <span class="c1"># Generating the inheritance dictionary</span>
-            <span class="n">inheritance_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;smoothed_file&#39;</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">}</span>
-
-            <span class="k">return</span> <span class="n">output_dict</span><span class="p">,</span> <span class="n">inheritance_dict</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;method&quot; input has to be &quot;SPM&quot; or &quot;Scipy&quot; for a Smooth process&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">_list_outputs</span><span class="p">()</span>
+
+        <span class="n">inheritance_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;smoothed_files&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">fullname</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                    <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fullname</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span><span class="p">:</span>
+                        <span class="n">filename_without_prefix</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span><span class="p">):]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">filename_without_prefix</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">):]</span>
+
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename_without_prefix</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span><span class="p">:</span>
+                        <span class="n">inheritance_dict</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename_without_prefix</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">inheritance_dict</span>
 
     <span class="k">def</span> <span class="nf">run_process_mia</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SmoothSpmScipy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="c1"># Depending on the chosen method, the output file will be generated differently</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;Scipy&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;SPM&#39;</span><span class="p">:</span>
-                <span class="c1"># Make sure to call the manage_matlab_launch_parameters method to set the config parameters</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">manage_matlab_launch_parameters</span><span class="p">()</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
-                    <span class="k">return</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span>  <span class="c1"># The input for a SPM Smooth is &quot;in_files&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Smooth</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run_process_mia</span><span class="p">()</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># Running the interface</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_files</span><span class="p">):</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">in_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">implicit_masking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">implicit_masking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span>
 
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;in_file&quot; plug is mandatory for a Smooth process&#39;</span><span class="p">)</span>
-                    <span class="k">return</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_image</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>  <span class="c1"># Loading the nibabel image</span>
-                    <span class="n">input_image_header</span> <span class="o">=</span> <span class="n">input_image</span><span class="o">.</span><span class="n">header</span>
-                    <span class="n">input_array</span> <span class="o">=</span> <span class="n">input_image</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>  <span class="c1"># Getting the 3D volume as a numpy array</span>
-
-                    <span class="c1"># Getting the image resolution in x, y and z</span>
-                    <span class="n">x_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-                    <span class="n">y_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
-                    <span class="n">z_resolution</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">input_image_header</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
-
-                    <span class="c1"># Convert the fwhm for each dimension from mm to pixel</span>
-                    <span class="n">x_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">x_resolution</span>
-                    <span class="n">y_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_resolution</span>
-                    <span class="n">z_fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">z_resolution</span>
-                    <span class="n">pixel_fwhm</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_fwhm</span><span class="p">,</span> <span class="n">y_fwhm</span><span class="p">,</span> <span class="n">z_fwhm</span><span class="p">]</span>
-
-                    <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="n">pixel_fwhm_dim</span> <span class="o">/</span> <span class="mf">2.355</span> <span class="k">for</span> <span class="n">pixel_fwhm_dim</span> <span class="ow">in</span> <span class="n">pixel_fwhm</span><span class="p">]</span>  <span class="c1"># Converting fwmh to sigma</span>
-                    <span class="n">output_array</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>  <span class="c1"># Filtering the array</span>
-
-                    <span class="c1"># Creating a new Nifti image with the affine/header of the input_image</span>
-                    <span class="n">output_image</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">output_array</span><span class="p">,</span> <span class="n">input_image</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">input_image</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-
-                    <span class="c1"># Saving the image</span>
-                    <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">)</span>
-                    <span class="n">out_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="n">filename</span>
-                    <span class="n">nib</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_image</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">))</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;method&quot; input has to be &quot;SPM&quot; or &quot;Scipy&quot; for a Smooth process&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
