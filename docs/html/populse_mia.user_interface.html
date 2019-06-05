@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.user_interface package &#8212; populse_mia 1.1.1 documentation</title>
+    <title>populse_mia.user_interface package &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="search" title="Search" href="search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>populse_mia 1.1.1 documentation</span></a></h1>
+          <span>populse_mia 1.2.1 documentation</span></a></h1>
         <h2 class="heading"><span>populse_mia.user_interface package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -164,7 +164,7 @@ interactions with the user.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first last">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first last simple">
 <li><table class="first docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -454,21 +454,16 @@ projects menus.</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">default_init_table: default init table when no previous value</p>
-</li>
+<dd><ul class="first last simple">
+<li>default_init_table: default init table when no previous value</li>
 <li><dl class="first docutils">
 <dt>update_default_value: checks if the values are correct and updates</dt>
-<dd><p class="first last">the parent value</p>
-</dd>
+<dd>the parent value</dd>
 </dl>
 </li>
-<li><p class="first">add_element: one more element added to the list</p>
-</li>
-<li><p class="first">remove_element: removes the last element of the list</p>
-</li>
-<li><p class="first">resize_table: to resize the pop up depending on the table</p>
-</li>
+<li>add_element: one more element added to the list</li>
+<li>remove_element: removes the last element of the list</li>
+<li>resize_table: to resize the pop up depending on the table</li>
 </ul>
 </dd>
 </dl>
@@ -545,19 +540,15 @@ We need to override the MousePressEvent</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">ok_clicked: updates the “scan_list” attribute of several widgets</p>
-</li>
+<dd><ul class="first last simple">
+<li>ok_clicked: updates the “scan_list” attribute of several widgets</li>
 <li><dl class="first docutils">
 <dt>find_type: tries to find the document type when the document is</dt>
-<dd><p class="first last">changed</p>
-</dd>
+<dd>changed</dd>
 </dl>
 </li>
-<li><p class="first">file_to_choose: lets the user choose a file to import</p>
-</li>
-<li><p class="first">save_path: adds the path to the database and the data browser</p>
-</li>
+<li>file_to_choose: lets the user choose a file to import</li>
+<li>save_path: adds the path to the database and the data browser</li>
 </ul>
 </dd>
 </dl>
@@ -601,13 +592,11 @@ We need to override the MousePressEvent</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">on_activated: type updated</p>
-</li>
+<dd><ul class="first last simple">
+<li>on_activated: type updated</li>
 <li><dl class="first docutils">
 <dt>ok_action: verifies that each field is correct and send the new tag</dt>
-<dd><p class="first last">to the data browser</p>
-</dd>
+<dd>to the data browser</dd>
 </dl>
 </li>
 </ul>
@@ -660,13 +649,11 @@ to the data browser</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">search_str: matches the searched pattern with the tags of the project</p>
-</li>
+<dd><ul class="first last simple">
+<li>search_str: matches the searched pattern with the tags of the project</li>
 <li><dl class="first docutils">
 <dt>ok_action: verifies the specified name is correct and send the</dt>
-<dd><p class="first last">information to the data browser</p>
-</dd>
+<dd>information to the data browser</dd>
 </dl>
 </li>
 </ul>
@@ -727,23 +714,17 @@ to the data browser</p>
 <p>Is called when the user closes a pipeline editor that has been modified</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
-<dd><ul class="first last">
-<li><p class="first">pipeline_name: name of the pipeline (basename)</p>
-</li>
-<li><p class="first">bool_save_as: boolean to True if the pipeline needs to be saved</p>
-</li>
-<li><p class="first">bool_exit: boolean to True if we can exit the editor</p>
-</li>
+<dd><ul class="first last simple">
+<li>pipeline_name: name of the pipeline (basename)</li>
+<li>bool_save_as: boolean to True if the pipeline needs to be saved</li>
+<li>bool_exit: boolean to True if we can exit the editor</li>
 <li><dl class="first docutils">
 <dt>save_as_signal: signal emitted to save the pipeline under another</dt>
-<dd><p class="first last">name</p>
-</dd>
+<dd>name</dd>
 </dl>
 </li>
-<li><p class="first">do_not_save_signal: signal emitted to close the editor</p>
-</li>
-<li><p class="first">cancel_signal: signal emitted to cancel the action</p>
-</li>
+<li>do_not_save_signal: signal emitted to close the editor</li>
+<li>cancel_signal: signal emitted to cancel the action</li>
 </ul>
 </dd>
 <dt>Methods:</dt>
@@ -1085,11 +1066,10 @@ folder)</li>
 </ul>
 </dd>
 <dt>Method:</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li><dl class="first docutils">
 <dt>get_filename: sets the widget’s attributes depending on the selected</dt>
-<dd><p class="first last">file name</p>
-</dd>
+<dd>file name</dd>
 </dl>
 </li>
 </ul>

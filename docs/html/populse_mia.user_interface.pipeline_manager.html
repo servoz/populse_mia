@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>populse_mia.user_interface.pipeline_manager package &#8212; populse_mia 1.1.1 documentation</title>
+    <title>populse_mia.user_interface.pipeline_manager package &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="search" title="Search" href="search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>populse_mia 1.1.1 documentation</span></a></h1>
+          <span>populse_mia 1.2.1 documentation</span></a></h1>
         <h2 class="heading"><span>populse_mia.user_interface.pipeline_manager package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -62,37 +62,28 @@
 <p>Widget that handles pipeline iteration.</p>
 <dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">add_tag: adds a tag to visualize in the iteration table</p>
-</li>
+<dd><ul class="first last simple">
+<li>add_tag: adds a tag to visualize in the iteration table</li>
 <li><dl class="first docutils">
 <dt>emit_iteration_table_updated: emits a signal when the iteration</dt>
-<dd><p class="first last">scans have been updated</p>
-</dd>
+<dd>scans have been updated</dd>
 </dl>
 </li>
-<li><p class="first">fill_values: fill values_list depending on the visualized tags</p>
-</li>
-<li><p class="first">refresh_layout: updates the layout of the widget</p>
-</li>
-<li><p class="first">remove_tag: removes a tag to visualize in the iteration table</p>
-</li>
+<li>fill_values: fill values_list depending on the visualized tags</li>
+<li>refresh_layout: updates the layout of the widget</li>
+<li>remove_tag: removes a tag to visualize in the iteration table</li>
 <li><dl class="first docutils">
 <dt>select_iterated_tag: opens a pop-up to let the user select on which</dt>
-<dd><p class="first last">tag to iterate</p>
-</dd>
+<dd>tag to iterate</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>select_visualized_tag: opens a pop-up to let the user select which</dt>
-<dd><p class="first last">tag to visualize in the iteration table</p>
-</dd>
+<dd>tag to visualize in the iteration table</dd>
 </dl>
 </li>
-<li><p class="first">update_iterated_tag: updates the widget</p>
-</li>
-<li><p class="first">update_table: updates the iteration table</p>
-</li>
+<li>update_iterated_tag: updates the widget</li>
+<li>update_table: updates the iteration table</li>
 </ul>
 </dd>
 </dl>
@@ -234,21 +225,15 @@ filtering is done, the filter is saved in the process.</p>
 </ul>
 </dd>
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">update_tag_to_filter: update the tag to Filter</p>
-</li>
-<li><p class="first">update_tags: update the list of visualized tags</p>
-</li>
-<li><p class="first">reset_search_bar: reset the search bar of the rapid search</p>
-</li>
-<li><p class="first">search_str: update the files to display in the browser</p>
-</li>
-<li><p class="first">ok_clicked: sets the filter to the process and closes the widget</p>
-</li>
+<dd><ul class="first last simple">
+<li>update_tag_to_filter: update the tag to Filter</li>
+<li>update_tags: update the list of visualized tags</li>
+<li>reset_search_bar: reset the search bar of the rapid search</li>
+<li>search_str: update the files to display in the browser</li>
+<li>ok_clicked: sets the filter to the process and closes the widget</li>
 <li><dl class="first docutils">
 <dt>set_plug_value: sets the output of the filter to the output of the</dt>
-<dd><p class="first last">node</p>
-</dd>
+<dd>node</dd>
 </dl>
 </li>
 </ul>
@@ -332,25 +317,17 @@ filtering is done, the filter is saved in the process.</p>
 <p>Allow to change the input and output values of a pipeline node</p>
 <dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">clearLayout: clear the layouts of the widget</p>
-</li>
-<li><p class="first">display_filter: display a filter widget</p>
-</li>
-<li><p class="first">display_parameters: display the parameters of the selected node</p>
-</li>
-<li><p class="first">get_index_from_plug_name: return the index of the plug label</p>
-</li>
-<li><p class="first">update_node_name: update the name of the selected node</p>
-</li>
-<li><p class="first">update_parameters: update the parameters values</p>
-</li>
-<li><p class="first">update_plug_value: update the value of a node plug</p>
-</li>
+<dd><ul class="first last simple">
+<li>clearLayout: clear the layouts of the widget</li>
+<li>display_filter: display a filter widget</li>
+<li>display_parameters: display the parameters of the selected node</li>
+<li>get_index_from_plug_name: return the index of the plug label</li>
+<li>update_node_name: update the name of the selected node</li>
+<li>update_parameters: update the parameters values</li>
+<li>update_plug_value: update the value of a node plug</li>
 <li><dl class="first docutils">
 <dt>update_plug_value_from_filter: update the plug value from a filter</dt>
-<dd><p class="first last">result</p>
-</dd>
+<dd>result</dd>
 </dl>
 </li>
 </ul>
@@ -662,51 +639,33 @@ filtering is done, the result (as a list of files) is set to the plug.</p>
 <p>View to edit a pipeline graphically</p>
 <dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">_del_link: deletes a link</p>
-</li>
-<li><p class="first">_export_plug: export a plug to a pipeline global input or output</p>
-</li>
-<li><p class="first">_release_grab_link: method called when a link is released</p>
-</li>
-<li><p class="first">_remove_plug: removes a plug</p>
-</li>
-<li><p class="first">add_link: add a link between two nodes</p>
-</li>
-<li><p class="first">add_process: adds a process to the pipeline</p>
-</li>
+<dd><ul class="first last simple">
+<li>_del_link: deletes a link</li>
+<li>_export_plug: export a plug to a pipeline global input or output</li>
+<li>_release_grab_link: method called when a link is released</li>
+<li>_remove_plug: removes a plug</li>
+<li>add_link: add a link between two nodes</li>
+<li>add_process: adds a process to the pipeline</li>
 <li><dl class="first docutils">
 <dt>check_modifications: checks if the nodes of the pipeline have been</dt>
-<dd><p class="first last">modified</p>
-</dd>
+<dd>modified</dd>
 </dl>
 </li>
-<li><p class="first">del_node: deletes a node</p>
-</li>
-<li><p class="first">dragEnterEvent: event handler when the mouse enters the widget</p>
-</li>
-<li><p class="first">dragMoveEvent: event handler when the mouse moves in the widget</p>
-</li>
-<li><p class="first">dropEvent: event handler when something is dropped in the widget</p>
-</li>
-<li><p class="first">export_node_plugs: exports all the plugs of a node</p>
-</li>
-<li><p class="first">find_process: finds the dropped process in the system’s paths</p>
-</li>
+<li>del_node: deletes a node</li>
+<li>dragEnterEvent: event handler when the mouse enters the widget</li>
+<li>dragMoveEvent: event handler when the mouse moves in the widget</li>
+<li>dropEvent: event handler when something is dropped in the widget</li>
+<li>export_node_plugs: exports all the plugs of a node</li>
+<li>find_process: finds the dropped process in the system’s paths</li>
 <li><dl class="first docutils">
 <dt>get_current_filename: returns the relative path the pipeline was</dt>
-<dd><p class="first last">last saved to. Empty if never saved.</p>
-</dd>
+<dd>last saved to. Empty if never saved.</dd>
 </dl>
 </li>
-<li><p class="first">save_pipeline: saves the pipeline</p>
-</li>
-<li><p class="first">update_history: updates the history for undos and redos</p>
-</li>
-<li><p class="first">update_node_name: updates a node name</p>
-</li>
-<li><p class="first">update_plug_value: updates a plug value</p>
-</li>
+<li>save_pipeline: saves the pipeline</li>
+<li>update_history: updates the history for undos and redos</li>
+<li>update_node_name: updates a node name</li>
+<li>update_plug_value: updates a plug value</li>
 </ul>
 </dd>
 </dl>
@@ -992,93 +951,66 @@ redo</p>
 <p>Tab widget that contains pipeline editors</p>
 <dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last">
+<dd><ul class="first last simple">
 <li><dl class="first docutils">
 <dt>check_modifications: check if the nodes of the current pipeline have</dt>
-<dd><p class="first last">been modified</p>
-</dd>
+<dd>been modified</dd>
 </dl>
 </li>
-<li><p class="first">close_tab: close the selected tab and editor</p>
-</li>
-<li><p class="first">emit_node_clicked: emit a signal when a node is clicked</p>
-</li>
-<li><p class="first">emit_pipeline_saved: emit a signal when a pipeline is saved</p>
-</li>
-<li><p class="first">emit_switch_clicked: emit a signal when a switch is clicked</p>
-</li>
-<li><p class="first">export_to_db_scans: export the input of a filter to ‘database_scans’</p>
-</li>
-<li><p class="first">get_current_editor: get the instance of the current editor</p>
-</li>
-<li><p class="first">get_current_filename: get the file name of the current pipeline</p>
-</li>
-<li><p class="first">get_current_pipeline: get the instance of the current pipeline</p>
-</li>
-<li><p class="first">get_current_tab_name: get the tab title of the current editor</p>
-</li>
+<li>close_tab: close the selected tab and editor</li>
+<li>emit_node_clicked: emit a signal when a node is clicked</li>
+<li>emit_pipeline_saved: emit a signal when a pipeline is saved</li>
+<li>emit_switch_clicked: emit a signal when a switch is clicked</li>
+<li>export_to_db_scans: export the input of a filter to ‘database_scans’</li>
+<li>get_current_editor: get the instance of the current editor</li>
+<li>get_current_filename: get the file name of the current pipeline</li>
+<li>get_current_pipeline: get the instance of the current pipeline</li>
+<li>get_current_tab_name: get the tab title of the current editor</li>
 <li><dl class="first docutils">
 <dt>get_filename_by_index: get the pipeline filename from its index in</dt>
-<dd><p class="first last">the editors</p>
-</dd>
+<dd>the editors</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>get_index_by_filename: get the index of the editor corresponding to</dt>
-<dd><p class="first last">the given pipeline filename</p>
-</dd>
+<dd>the given pipeline filename</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>get_index_by_tab_name: get the index of the editor corresponding to</dt>
-<dd><p class="first last">the given tab name</p>
-</dd>
+<dd>the given tab name</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>get_tab_name_by_index: get the tab title from its index in the</dt>
-<dd><p class="first last">editors</p>
-</dd>
+<dd>editors</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>has_pipeline_nodes: check if any of the pipelines in the editor tabs</dt>
-<dd><p class="first last">have pipeline nodes</p>
-</dd>
+<dd>have pipeline nodes</dd>
 </dl>
 </li>
-<li><p class="first">load_pipeline: load a new pipeline</p>
-</li>
+<li>load_pipeline: load a new pipeline</li>
 <li><dl class="first docutils">
 <dt>load_pipeline_parameters: load parameters to the pipeline of the</dt>
-<dd><p class="first last">current editor</p>
-</dd>
+<dd>current editor</dd>
 </dl>
 </li>
-<li><p class="first">new_tab: create a new tab and a new editor</p>
-</li>
-<li><p class="first">open_filter: open a filter widget</p>
-</li>
-<li><p class="first">open_sub_pipeline: open a sub-pipeline in a new tab</p>
-</li>
-<li><p class="first">reset_pipeline: reset the pipeline of the current editor</p>
-</li>
-<li><p class="first">save_pipeline: save the pipeline of the current editor</p>
-</li>
+<li>new_tab: create a new tab and a new editor</li>
+<li>open_filter: open a filter widget</li>
+<li>open_sub_pipeline: open a sub-pipeline in a new tab</li>
+<li>reset_pipeline: reset the pipeline of the current editor</li>
+<li>save_pipeline: save the pipeline of the current editor</li>
 <li><dl class="first docutils">
 <dt>save_pipeline_parameters: save the pipeline parameters of the</dt>
-<dd><p class="first last">current editor</p>
-</dd>
+<dd>current editor</dd>
 </dl>
 </li>
-<li><p class="first">set_current_editor_by_tab_name: set the current editor</p>
-</li>
-<li><p class="first">update_history: update undo/redo history of an editor</p>
-</li>
-<li><p class="first">update_pipeline_editors: update editors</p>
-</li>
-<li><p class="first">update_scans_list: update the list of database scans in every editor</p>
-</li>
+<li>set_current_editor_by_tab_name: set the current editor</li>
+<li>update_history: update undo/redo history of an editor</li>
+<li>update_pipeline_editors: update editors</li>
+<li>update_scans_list: update the list of database scans in every editor</li>
 </ul>
 </dd>
 </dl>
@@ -2712,57 +2644,46 @@ packages</li>
 <blockquote>
 <div><dl class="docutils">
 <dt>Methods:</dt>
-<dd><ul class="first last">
-<li><p class="first">_after_run_process: method called after the process being run</p>
-</li>
-<li><p class="first">_before_run_process: method called before running the process</p>
-</li>
+<dd><ul class="first last simple">
+<li>_after_run_process: method called after the process being run</li>
+<li>_before_run_process: method called before running the process</li>
 <li><dl class="first docutils">
 <dt>get_brick_to_update: give the brick to update given the scan list</dt>
-<dd><p class="first last">of bricks</p>
-</dd>
+<dd>of bricks</dd>
 </dl>
 </li>
-<li><p class="first">get_scan_bricks: give the list of bricks given an output value</p>
-</li>
+<li>get_scan_bricks: give the list of bricks given an output value</li>
 <li><dl class="first docutils">
 <dt>list_outputs: generates the outputs of the process (need to be</dt>
-<dd><p class="first last">overridden)</p>
-</dd>
+<dd>overridden)</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>manage_brick_after_run: update process history after the run</dt>
-<dd><p class="first last">(Done status)</p>
-</dd>
+<dd>(Done status)</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>manage_brick_before_run: update process history before running</dt>
-<dd><p class="first last">the process</p>
-</dd>
+<dd>the process</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>manage_brick_output_after_run: manage the bricks history before</dt>
-<dd><p class="first last">the run</p>
-</dd>
+<dd>the run</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>manage_brick_output_before_run: manage the bricks history before</dt>
-<dd><p class="first last">the run</p>
-</dd>
+<dd>the run</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>manage_matlab_launch_parameters: Set the Matlab’s config parameters</dt>
-<dd><p class="first last">when a Nipype process is used</p>
-</dd>
+<dd>when a Nipype process is used</dd>
 </dl>
 </li>
-<li><p class="first">remove_brick_output: remove the bricks from the outputs</p>
-</li>
+<li>remove_brick_output: remove the bricks from the outputs</li>
 </ul>
 </dd>
 </dl>
