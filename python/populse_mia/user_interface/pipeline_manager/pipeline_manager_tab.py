@@ -606,47 +606,39 @@ class PipelineManagerTab(QWidget):
             self.project.saveModifications()
 
             process = node.process
-            libProcName = str(process).split('.')[0].split('_')[0][1:]
+            process_name = str(process).split('.')[0].split('_')[0][1:]
 
-            if libProcName in ['IRMaGe', 'mia', 'User']:
-                # update launching parameters for IRMaGe_processes bricks
-                # IRMaGe_processes is deprecated
-                # update launching parameters for mia_processes bricks
-                # mia_processes is the official process library for mia
-                # update launching parameters for User_processes bricks
-                # this is the library for bricks development
+            print('\nUpdating the launching parameters for {0} '
+                  'process node: {1} ...\n'.format(process_name,
+                                                   node_name))
 
-                print('\nUpdating the launching parameters for {0} '
-                      'process node: {1} ...\n'.format(libProcName,
-                                                       node_name))
+            # TODO 'except' instead of 'if' to test matlab launch ?
+            # Test for matlab launch
+            if config.get_use_spm_standalone() == 'yes':
+                pipeline.nodes[node_name].process.use_mcr = True
+                pipeline.nodes[node_name].process.paths = \
+                    config.get_spm_standalone_path().split()
+                pipeline.nodes[node_name].process.matlab_cmd = \
+                    config.get_matlab_command()
 
-                # TODO 'except' instead of 'if' to test matlab launch ?
-                # Test for matlab launch
-                if config.get_use_spm_standalone() == 'yes':
-                    pipeline.nodes[node_name].process.use_mcr = True
-                    pipeline.nodes[node_name].process.paths = \
-                        config.get_spm_standalone_path().split()
-                    pipeline.nodes[node_name].process.matlab_cmd = \
-                        config.get_matlab_command()
+            elif config.get_use_spm() == 'yes':
+                pipeline.nodes[node_name].process.use_mcr = False
+                pipeline.nodes[node_name].process.paths = \
+                    config.get_spm_path().split()
+                pipeline.nodes[node_name].process.matlab_cmd = \
+                    config.get_matlab_command()
 
-                elif config.get_use_spm() == 'yes':
-                    pipeline.nodes[node_name].process.use_mcr = False
-                    pipeline.nodes[node_name].process.paths = \
-                        config.get_spm_path().split()
-                    pipeline.nodes[node_name].process.matlab_cmd = \
-                        config.get_matlab_command()
-
-                # Test for matlab launch
-                if not os.path.isdir(
-                        os.path.abspath(
-                            self.project.folder + os.sep + 'scripts')):
-                    os.mkdir(os.path.abspath(
-                        self.project.folder + os.sep + 'scripts'))
-
-                pipeline.nodes[node_name].process.output_directory = \
+            # Test for matlab launch
+            if not os.path.isdir(
                     os.path.abspath(
-                        self.project.folder + os.sep + 'scripts')
-                pipeline.nodes[node_name].process.mfile = True
+                        self.project.folder + os.sep + 'scripts')):
+                os.mkdir(os.path.abspath(
+                    self.project.folder + os.sep + 'scripts'))
+
+            pipeline.nodes[node_name].process.output_directory = \
+                os.path.abspath(
+                    self.project.folder + os.sep + 'scripts')
+            pipeline.nodes[node_name].process.mfile = True
 
             # Getting the list of the outputs of the node according
             # to its inputs
