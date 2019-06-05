@@ -2,7 +2,7 @@ import sys
 
 # Current version
 version_major = 1
-version_minor = 1
+version_minor = 2
 version_micro = 1
 version_extra = ""
 
@@ -54,7 +54,7 @@ if sys.version_info < (3 , 6) and sys.version_info >= (3 , 5):
         'capsul',
         'lark-parser<0.7.0',
         'matplotlib<3.1',
-        'mia-processes',
+        'mia-processes>1.1.1',
         'nibabel',
         'nipype',
         'pillow',
