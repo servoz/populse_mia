@@ -2,7 +2,7 @@ import sys
 
 # Current version
 version_major = 1
-version_minor = 1
+version_minor = 2
 version_micro = 1
 version_extra = ""
 
