@@ -19,6 +19,7 @@ Initialize the software appearance and defines interactions with the user.
 
 import subprocess
 import os
+from os.path import expanduser
 import webbrowser
 import shutil
 from datetime import datetime
@@ -444,8 +445,10 @@ class MainWindow(QMainWindow):
         """
         # Opens the conversion software to convert the MRI files in Nifti/Json
         config = Config()
+        home = expanduser("~")
         code_exit = subprocess.call(['java', '-Xmx4096M', '-jar',
                                       config.get_mri_conv_path(),
+                                     '[ProjectsDir] '+ home,
                                      '[ExportNifti] ' + os.path.join(
                                          self.project.folder, 'data',
                                          'raw_data'),
@@ -453,6 +456,7 @@ class MainWindow(QMainWindow):
                                      'CreationDate-SeqNumber-Protocol-'
                                      'SequenceName-AcquisitionTime',
                                      'CloseAfterExport'])
+        
         # 'NoLogExport'if we don't want log export
 
         if code_exit == 0:
