@@ -472,12 +472,10 @@ class MainWindow(QMainWindow):
             self.data_browser.frame_advanced_search.setHidden(True)
             self.data_browser.advanced_search.rows = []
 
+        elif code_exit == 100: # User only close mri_conv and do nothing
+            pass
+        
         else:
-            # Currently, if user close the mri_conv without importing data,
-            # the code exit is not 0. Could be interesting to catch a
-            # particular code exit in this case to avoid to display the
-            # following popup. Opening an issue in the mri_conv project
-
             print(
                 "\nmri_conv, did not work properly. Current absolute path to "
                 "MRIManager.jar defined in File > MIA Preferences:\n{0}\n"
