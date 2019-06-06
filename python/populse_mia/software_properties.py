@@ -160,8 +160,8 @@ class Config:
     def __init__(self):
         self.dev_mode = False
         self.config = self.loadConfig()
-        if "mia_path" not in self.config.keys():
-            self.config["mia_path"] = self.get_mia_path()
+        if "mia_user_path" not in self.config.keys():
+            self.config["mia_user_path"] = self.get_mia_path()
             self.saveConfig()
 
     def get_clinical_mode(self):
@@ -173,7 +173,7 @@ class Config:
         try:
             return self.config["clinical_mode"]
         except KeyError:
-            return "yes"
+            return True
 
     def get_matlab_command(self):
         """Get Matlab command.
@@ -182,12 +182,12 @@ class Config:
         path not specified
 
         """
-        if self.config["use_spm_standalone"] == "yes":
+        if self.config["use_spm_standalone"] == True:
             return ('{0}'.format(self.config["spm_standalone"]) + os.sep +
                     'run_spm12.sh {0}'.format(self.config[
                                                  "matlab_standalone"]) +
                     os.sep + ' script')
-        elif self.config["use_matlab"] == "yes":
+        elif self.config["use_matlab"] == True:
             return self.config["matlab"]
         else:
             return None
@@ -255,7 +255,7 @@ class Config:
                         mia_home_config = yaml.load(stream)
 
                     if ("dev_mode" in mia_home_config.keys() and
-                            mia_home_config["dev_mode"] == "yes"):
+                            mia_home_config["dev_mode"] == True):
                         # Only for developer mode
                         self.dev_mode = True
                         config_path = os.path.dirname(os.path.realpath(
@@ -264,7 +264,7 @@ class Config:
                             config_path = os.path.dirname(config_path)
                         return config_path
                     self.dev_mode = False
-                    return mia_home_config["mia_path"]  # Only for user mode
+                    return mia_home_config["mia_user_path"]  # Only for user mode
 
                 # except yaml.YAMLError:
                 #    return os.path.abspath(os.path.join(os.path.realpath(
@@ -282,7 +282,7 @@ class Config:
 
         else:  # Only for developer mode
             try:
-                return self.config["mia_path"]
+                return self.config["mia_user_path"]
             # except KeyError:
             #    return os.path.abspath(os.path.join(os.path.realpath(
             #    __file__), '..', '..', '..', '..'))
@@ -362,7 +362,7 @@ class Config:
         try:
             return self.config["use_matlab"]
         except KeyError:
-            return "no"
+            return False
 
     def get_use_spm(self):
         """Get the value of "use spm" checkbox in the preferences.
@@ -686,7 +686,7 @@ class Config:
     #     :return:
     #
     #     """
-    #     self.config["mia_path"] = path
+    #     self.config["mia_user_path"] = path
     #     # Then save the modification
     #     self.saveConfig()
 

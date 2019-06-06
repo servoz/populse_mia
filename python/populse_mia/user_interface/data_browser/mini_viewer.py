@@ -141,7 +141,7 @@ class MiniViewer(QWidget):
 
         # Checkboxes
         self.check_box_slices = QCheckBox('Show all slices (no cursors)')
-        if self.config.getShowAllSlices() == 'yes':
+        if self.config.getShowAllSlices() == True:
             self.check_box_slices.setCheckState(Qt.Checked)
         else:
             self.check_box_slices.setCheckState(Qt.Unchecked)
@@ -151,7 +151,7 @@ class MiniViewer(QWidget):
         self.check_box_cursors = QCheckBox('Chain cursors')
         self.check_box_cursors.setToolTip("Allows to connect all cursors "
                                           "when selecting multiple documents")
-        if self.config.getChainCursors() == 'yes':
+        if self.config.getChainCursors() == True:
             self.check_box_cursors.setCheckState(Qt.Checked)
         else:
             self.check_box_cursors.setCheckState(Qt.Unchecked)
@@ -186,9 +186,9 @@ class MiniViewer(QWidget):
         Called when the state of the checkbox to chain the cursors changes.
         """
         if self.check_box_cursors.checkState() == Qt.Checked:
-            self.config.setChainCursors('yes')
+            self.config.setChainCursors(True)
         elif self.check_box_cursors.checkState() == Qt.Unchecked:
-            self.config.setChainCursors('no')
+            self.config.setChainCursors(False)
 
     def clearLayouts(self):
         """Clear the final layout"""
@@ -739,9 +739,9 @@ class MiniViewer(QWidget):
         Called when the state of the checkbox to show all slices changes.
         """
         if self.check_box_slices.checkState() == Qt.Checked:
-            self.config.setShowAllSlices('yes')
+            self.config.setShowAllSlices(True)
         elif self.check_box_slices.checkState() == Qt.Unchecked:
-            self.config.setShowAllSlices('no')
+            self.config.setShowAllSlices(False)
         self.verify_slices(self.file_paths)
 
     def verify_slices(self, file_paths):
@@ -752,7 +752,7 @@ class MiniViewer(QWidget):
         # Updating the config
         self.config = Config()
         if len(file_paths) > 1:
-            self.config.setShowAllSlices('no')
+            self.config.setShowAllSlices(False)
             self.check_box_slices.setCheckState(Qt.Unchecked)
             self.check_box_slices.setCheckable(False)
         else:

@@ -1534,8 +1534,8 @@ class TableDataBrowser(QTableWidget):
         :param scan: scan filename
         :return: index of the row of the scan
         """
+        # for row in range(0, len(self.scans_to_visualize)):
         for row in range(0, self.rowCount()):
-        #for row in range(0, len(self.scans_to_visualize)):
             item = self.item(row, 0)
             scan_name = item.text()
             if scan_name == scan:
@@ -2120,7 +2120,7 @@ class TableDataBrowser(QTableWidget):
 
         # Auto-save
         config = Config()
-        if config.isAutoSave() == "yes":
+        if config.isAutoSave() == True:
             self.project.saveModifications()
 
     def update_selection(self):

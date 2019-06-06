@@ -37,7 +37,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # All the tests are run in regular mode
         config = Config()
-        config.set_clinical_mode("no")
+        config.set_clinical_mode(False)
 
         self.app = QApplication.instance()
         if self.app is None:
@@ -987,7 +987,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         config = Config()
         old_auto_save = config.isAutoSave()
-        self.assertEqual(old_auto_save, "no")
+        self.assertEqual(old_auto_save, False)
 
         # Auto save activated
         self.main_window.action_software_preferences.trigger()
@@ -998,7 +998,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         config = Config()
         new_auto_save = config.isAutoSave()
-        self.assertEqual(new_auto_save, "yes")
+        self.assertEqual(new_auto_save, True)
 
         # Auto save disabled again
         self.main_window.action_software_preferences.trigger()
@@ -1008,7 +1008,7 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(properties.push_button_ok, Qt.LeftButton)
         config = Config()
         reput_auto_save = config.isAutoSave()
-        self.assertEqual(reput_auto_save, "no")
+        self.assertEqual(reput_auto_save, False)
 
         # Checking that the changes are not effective if cancel is clicked
         self.main_window.action_software_preferences.trigger()
@@ -1018,7 +1018,7 @@ class TestMIADataBrowser(unittest.TestCase):
         QTest.mouseClick(properties.push_button_cancel, Qt.LeftButton)
         config = Config()
         auto_save = config.isAutoSave()
-        self.assertEqual(auto_save, "no")
+        self.assertEqual(auto_save, False)
 
         # Checking that the values for the "Projects preferences" are well set
         self.assertEqual(config.get_max_projects(), 5)
@@ -1309,7 +1309,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
         # All the tests are run in regular mode
         config = Config()
-        config.set_clinical_mode("no")
+        config.set_clinical_mode(False)
 
         self.app = QApplication.instance()
         if self.app is None:

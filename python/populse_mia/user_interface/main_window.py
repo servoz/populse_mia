@@ -260,7 +260,7 @@ class MainWindow(QMainWindow):
             self.saved_projects_actions.append(QAction(self, visible=False,
                                             triggered=self.open_recent_project)
                                                )
-        if Config().get_clinical_mode() == 'yes':
+        if Config().get_clinical_mode() == True:
             self.action_package_library.setDisabled(True)
         else:
             self.action_package_library.setEnabled(True)
@@ -271,7 +271,7 @@ class MainWindow(QMainWindow):
 
         self.action_redo.setShortcut('Ctrl+Y')
 
-        # if Config().get_clinical_mode() == 'yes':
+        # if Config().get_clinical_mode() == True:
         #     self.action_install_processes.setDisabled(True)
         # else:
         #     self.action_install_processes.setEnabled(True)
@@ -1029,7 +1029,7 @@ class MainWindow(QMainWindow):
 
     def update_package_library_action(self):
         """Update the package library action depending on the mode."""
-        if Config().get_clinical_mode() == 'yes':
+        if Config().get_clinical_mode() == True:
             self.action_package_library.setDisabled(True)
             # self.action_install_processes.setDisabled(True)
         else:

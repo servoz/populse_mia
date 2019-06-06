@@ -1474,7 +1474,7 @@ class PopUpPreferences(QDialog):
         self.save_checkbox = QCheckBox('', self)
         self.save_label = QLabel("Auto save")
 
-        if config.isAutoSave() == "yes":
+        if config.isAutoSave() == True:
             self.save_checkbox.setChecked(1)
 
         h_box_auto_save = QtWidgets.QHBoxLayout()
@@ -1486,7 +1486,7 @@ class PopUpPreferences(QDialog):
         self.clinical_mode_checkbox.clicked.connect(self.clinical_mode_switch)
         self.clinical_mode_label = QLabel("Clinical mode")
 
-        if config.get_clinical_mode() == "yes":
+        if config.get_clinical_mode() == True:
             self.clinical_mode_checkbox.setChecked(1)
 
         else:
@@ -1629,7 +1629,7 @@ class PopUpPreferences(QDialog):
         self.matlab_standalone_browse.clicked.connect(
             self.browse_matlab_standalone)
 
-        if config.get_use_matlab() == "yes":
+        if config.get_use_matlab() == True:
             self.use_matlab_checkbox.setChecked(1)
         else:
             self.use_matlab_checkbox.setChecked(0)
@@ -1673,7 +1673,7 @@ class PopUpPreferences(QDialog):
         self.spm_browse = QPushButton("Browse")
         self.spm_browse.clicked.connect(self.browse_spm)
 
-        if config.get_use_spm() == "yes":
+        if config.get_use_spm() == True:
             self.use_spm_checkbox.setChecked(1)
         else:
             self.use_spm_checkbox.setChecked(0)
@@ -1700,7 +1700,7 @@ class PopUpPreferences(QDialog):
         self.spm_standalone_browse = QPushButton("Browse")
         self.spm_standalone_browse.clicked.connect(self.browse_spm_standalone)
 
-        if config.get_use_spm_standalone() == "yes":
+        if config.get_use_spm_standalone() == True:
             self.use_spm_standalone_checkbox.setChecked(1)
         else:
             self.use_spm_standalone_checkbox.setChecked(0)
@@ -1938,9 +1938,9 @@ class PopUpPreferences(QDialog):
 
         # Auto-save
         if self.save_checkbox.isChecked():
-            config.setAutoSave("yes")
+            config.setAutoSave(True)
         else:
-            config.setAutoSave("no")
+            config.setAutoSave(False)
 
         # Projects folder
         projects_folder = self.projects_save_path_line_edit.text()
@@ -1996,28 +1996,28 @@ class PopUpPreferences(QDialog):
 
         # Use Matlab
         if self.use_matlab_checkbox.isChecked():
-            config.set_use_matlab("yes")
+            config.set_use_matlab(True)
         else:
-            config.set_use_matlab("no")
+            config.set_use_matlab(False)
 
         # Use SPM
         if self.use_spm_checkbox.isChecked():
-            config.set_use_spm("yes")
+            config.set_use_spm(True)
         else:
-            config.set_use_spm("no")
+            config.set_use_spm(False)
 
         # Use SPM standalone
         if self.use_spm_standalone_checkbox.isChecked():
-            config.set_use_spm_standalone("yes")
+            config.set_use_spm_standalone(True)
         else:
-            config.set_use_spm_standalone("no")
+            config.set_use_spm_standalone(False)
 
         # Clinical mode
         if self.clinical_mode_checkbox.isChecked():
-            config.set_clinical_mode("yes")
+            config.set_clinical_mode(True)
             self.use_clinical_mode_signal.emit()
         else:
-            config.set_clinical_mode("no")
+            config.set_clinical_mode(False)
 
         # Matlab
         if self.use_matlab_checkbox.isChecked():

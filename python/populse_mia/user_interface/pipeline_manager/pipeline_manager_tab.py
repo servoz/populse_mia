@@ -189,7 +189,7 @@ class PipelineManagerTab(QWidget):
         self.run_pipeline_action = QAction("Run pipeline", self)
         self.run_pipeline_action.triggered.connect(self.runPipeline)
 
-        if config.get_clinical_mode() == 'yes':
+        if config.get_clinical_mode() == True:
             self.save_pipeline_action.setDisabled(True)
             self.save_pipeline_as_action.setDisabled(True)
             self.processLibrary.setHidden(True)
@@ -614,14 +614,14 @@ class PipelineManagerTab(QWidget):
 
             # TODO 'except' instead of 'if' to test matlab launch ?
             # Test for matlab launch
-            if config.get_use_spm_standalone() == 'yes':
+            if config.get_use_spm_standalone() == True:
                 pipeline.nodes[node_name].process.use_mcr = True
                 pipeline.nodes[node_name].process.paths = \
                     config.get_spm_standalone_path().split()
                 pipeline.nodes[node_name].process.matlab_cmd = \
                     config.get_matlab_command()
 
-            elif config.get_use_spm() == 'yes':
+            elif config.get_use_spm() == True:
                 pipeline.nodes[node_name].process.use_mcr = False
                 pipeline.nodes[node_name].process.paths = \
                     config.get_spm_path().split()
@@ -698,28 +698,28 @@ class PipelineManagerTab(QWidget):
                                      'matlab_cmd', 'output_directory']
                     # use_mcr parameter
                     if (key == keys2consider[0]) and (
-                            config.get_use_spm_standalone() == 'yes'):
+                            config.get_use_spm_standalone() == True):
                         inputs[key] = True
                     elif (key == keys2consider[0]) and (
-                            config.get_use_spm_standalone() == 'no'):
+                            config.get_use_spm_standalone() == False):
                         inputs[key] = False
                     # paths  parameter
                     if (key == keys2consider[1]) and (
-                            config.get_use_spm_standalone() == 'yes'):
+                            config.get_use_spm_standalone() == True):
                         inputs[
                             key] = config.get_spm_standalone_path().split()
                     elif (key == keys2consider[1]) and (
-                            config.get_use_spm() == 'yes'):
+                            config.get_use_spm() == True):
                         inputs[key] = config.get_spm_path().split()
                     # matlab_cmd parameter
                     if (key == keys2consider[2]) and (
-                            config.get_use_spm_standalone() == 'yes'):
+                            config.get_use_spm_standalone() == True):
                         inputs[key] = (config.get_spm_standalone_path() +
                                        '/run_spm12.sh ' +
                                        config.get_matlab_standalone_path() +
                                        ' script')
                     elif key == keys2consider[2] and \
-                            config.get_use_spm_standalone() == 'no':
+                            config.get_use_spm_standalone() == False:
                         inputs[key] = config.get_matlab_path()
 
                     # output_directory parameter
@@ -1249,7 +1249,7 @@ class PipelineManagerTab(QWidget):
 
         # If the clinical mode is chosen, the process library is not available
         # and the user cannot save a pipeline
-        if config.get_clinical_mode() == 'yes':
+        if config.get_clinical_mode() == True:
             self.processLibrary.setHidden(True)
             self.previewBlock.setHidden(True)
             self.save_pipeline_action.setDisabled(True)
@@ -1434,7 +1434,7 @@ class RunWorker(QThread):
         use_spm_standalone = config.get_use_spm_standalone()
         use_matlab = config.get_use_matlab()
 
-        if use_spm_standalone == "yes" and os.path.exists(
+        if use_spm_standalone == True and os.path.exists(
                 spm_standalone_path) and os.path.exists(
             matlab_standalone_path):
 
@@ -1451,7 +1451,7 @@ class RunWorker(QThread):
                     output_directory=spm_standalone_path, spm_standalone=True)
 
         # Using without SPM standalone
-        elif use_spm == "yes" and use_matlab == "yes":
+        elif use_spm == True and use_matlab == True:
             study_config = StudyConfig(
                 use_spm=True, matlab_exec=matlab_path,
                 spm_directory=spm_path, spm_standalone=False,
