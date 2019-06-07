@@ -122,8 +122,10 @@ class ImportWorker(QThread):
         # Checking all the export logs from MRIManager and taking the most
         # recent
         list_logs = glob.glob(os.path.join(raw_data_folder, "logExport*.json"))
+
         if len(list_logs) == 0:
             list_dict_log = []
+            
         else:
             log_to_read = max(list_logs, key=os.path.getctime)
 
@@ -148,6 +150,7 @@ class ImportWorker(QThread):
             if dict_log['StatusExport'] == "Export ok":
                 file_name = dict_log['NameFile']
                 path_name = raw_data_folder
+                
                 with open(os.path.join(path_name, file_name) + ".nii",
                           'rb') as scan_file:
                     data = scan_file.read()
@@ -159,7 +162,9 @@ class ImportWorker(QThread):
 
                 document_not_existing = self.project.session.get_document(
                     COLLECTION_CURRENT, file_database_path) is None
+                
                 if document_not_existing:
+                    
                     with self.lock:
                         # Scan added to history
                         self.scans_added.append(file_database_path)
@@ -168,32 +173,42 @@ class ImportWorker(QThread):
                 documents[file_database_path][TAG_FILENAME] = \
                     file_database_path
 
-                # For each tag in each scan
+                #print('\ntags_from_file(file_name, path_name): ', tags_from_file(file_name, path_name))
+                
+                # For each tag in each scan 
                 for tag in tags_from_file(file_name, path_name):
 
                     # We do the tag only if it's not in the tags to remove
                     if tag[0] not in tags_to_remove:
+                        tag_name = tag[0]
+
+                        #print('\ntag_name: ', tag_name)
+                        
                         properties = tag[1]
-                        unit = None
+
+                        #print('properties: ', properties)
+                        
                         format = ''
-                        tag_type = FIELD_TYPE_STRING
                         description = None
+                        unit = None
+                        tag_type = FIELD_TYPE_STRING
+                        
                         if isinstance(properties, dict):
-                            value = properties['value']
-                            unit = properties['units']
-                            if unit == "":
-                                unit = None
                             format = properties['format']
-                            tag_type = properties['type']
-                            if tag_type == "":
-                                tag_type = FIELD_TYPE_STRING
-                            description = properties['description']
-                            if description == "":
-                                description = None
+
+                            if properties['description'] != "":
+                                description = properties['description']
+
+                            if properties['units'] != "":
+                                unit = properties['units']
+
+                            if properties['type'] != "":
+                                tag_type = properties['type']
+                                
+                            value = properties['value']
+                            
                         else:
                             value = properties[0]
-
-                        tag_name = tag[0]
 
                         # Creating date types
                         if format is not None and format != "":
@@ -204,48 +219,72 @@ class ImportWorker(QThread):
                             format = format.replace("mm", "%M")
                             format = format.replace("ss", "%S")
                             format = format.replace("SSS", "%f")
+                            
                             if ("%Y" in format and "%m" in format and "%d" in
                                     format and "%H" in format and
                                     "%M" in format and "%S" in format):
                                 tag_type = FIELD_TYPE_DATETIME
+                                
                             elif ("%Y" in format and "%m" in format and "%d"
                                     in format):
                                 tag_type = FIELD_TYPE_DATE
+                                
                             elif ("%H" in format and "%M" in format and "%S"
                                     in format):
                                 tag_type = FIELD_TYPE_TIME
 
                         if tag_name != "Json_Version":
                             # Preparing value and type
-                            if len(value) is 1:
-                                value = value[0]
-                            else:
+
+                            if ((len(value) is 1 and isinstance(value[0], list))
+                              or
+                               (len(value) is not 1)):
+
                                 if tag_type == FIELD_TYPE_STRING:
                                     tag_type = FIELD_TYPE_LIST_STRING
+                                    
                                 elif tag_type == FIELD_TYPE_INTEGER:
                                     tag_type = FIELD_TYPE_LIST_INTEGER
+                                    
                                 elif tag_type == FIELD_TYPE_FLOAT:
                                     tag_type = FIELD_TYPE_LIST_FLOAT
+                                    
                                 elif tag_type == FIELD_TYPE_BOOLEAN:
                                     tag_type = FIELD_TYPE_LIST_BOOLEAN
+                                
                                 elif tag_type == FIELD_TYPE_DATE:
                                     tag_type = FIELD_TYPE_LIST_DATE
+                                    
                                 elif tag_type == FIELD_TYPE_DATETIME:
                                     tag_type = FIELD_TYPE_LIST_DATETIME
+                                    
                                 elif tag_type == FIELD_TYPE_TIME:
-                                    tag_type = FIELD_TYPE_LIST_TIME
+                                    tag_type = FIELD_TYPE_LIST_TIME 
+                            
+                            if len(value) is 1:
+                                value = value[0]
+
+                            else:  
                                 value_prepared = []
+                                
                                 for value_single in value:
                                     value_prepared.append(value_single[0])
+                                    
                                 value = value_prepared
 
-                        if (tag_type == FIELD_TYPE_DATETIME or tag_type ==
-                                FIELD_TYPE_DATE or
-                                tag_type == FIELD_TYPE_TIME):
+                        #print('value: ', value)
+                        #print('tag_type: ', tag_type)
+
+                        if (tag_type == FIELD_TYPE_DATETIME or
+                            tag_type == FIELD_TYPE_DATE or
+                            tag_type == FIELD_TYPE_TIME):
+                            
                             if value is not None and value != "":
                                 value = datetime.strptime(value, format)
+                                
                                 if tag_type == FIELD_TYPE_TIME:
                                     value = value.time()
+                                    
                                 elif tag_type == FIELD_TYPE_DATE:
                                     value = value.date()
 
@@ -253,6 +292,7 @@ class ImportWorker(QThread):
 
                         tag_row = self.project.session.get_field(
                             COLLECTION_CURRENT, tag_name)
+                        
                         if (tag_row is None and tag_name not in
                                 tags_names_added):
                             # Adding the tag as it's not in the database yet
@@ -268,6 +308,7 @@ class ImportWorker(QThread):
 
                         # The value is accepted if it's not empty or null
                         if value is not None and value != "":
+                            
                             if document_not_existing:
                                 values_added.append(
                                     [file_database_path, tag_name, value,
@@ -316,12 +357,13 @@ class ImportWorker(QThread):
                                                      document)
                 self.project.session.remove_document(COLLECTION_INITIAL,
                                                      document)
+ 
             self.project.session.add_document(COLLECTION_CURRENT, documents[
                 document], flush=False)
             self.project.session.add_document(COLLECTION_INITIAL, documents[
                 document], flush=False)
+            
         self.project.session.session.flush()
-
         self.notifyProgress.emit(3)
         sleep(0.1)
 
@@ -338,7 +380,6 @@ class ImportWorker(QThread):
         # pr.disable()
         # pr.print_stats(sort='time')
         # prof.print_stats()
-
 
 def read_log(project, main_window):
     """Show the evolution of the progress bar and returns its feedback, a list
