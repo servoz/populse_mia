@@ -60,7 +60,7 @@ install:
   - git clone --depth=50 --branch=master https://github.com/populse/populse_db.git
   - cd populse_db
   - pip3 install -e .[postgres]
-  - pip3 install --force-reinstall lark-parser==0.6.7
+  #- pip3 install --force-reinstall lark-parser==0.6.7
   - cd ..
   #- git clone --depth=50 --branch=master https://github.com/populse/soma-base.git
   #- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip3 uninstall --yes soma-base; fi
