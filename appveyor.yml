@@ -26,7 +26,7 @@ install:
   - "git clone --depth=50 --branch=master https://github.com/populse/populse_db.git C:\\projects\\populse-db"
   - "cd C:\\projects\\populse-db"
   - "pip install -e .[postgres]"
-  - "pip install --force-reinstall lark-parser==0.6.7"
+  #- "pip install --force-reinstall lark-parser==0.6.7"
   - "cd .."
   - "git clone --depth=50 --branch=master https://github.com/populse/soma-base.git C:\\projects\\soma-base"
   - "cd populse-mia"
