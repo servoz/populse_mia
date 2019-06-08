@@ -52,7 +52,7 @@ PLATFORMS = 'OS Independent'
 if sys.version_info < (3 , 6) and sys.version_info >= (3 , 5):
     REQUIRES = [
         'capsul',
-        'lark-parser<0.7.0',
+        'lark-parser>=0.7.0',
         'matplotlib<3.1',
         'mia-processes',
         'nibabel',
@@ -74,7 +74,7 @@ if sys.version_info < (3 , 6) and sys.version_info >= (3 , 5):
 elif sys.version_info >= (3 , 6):
     REQUIRES = [
         'capsul',
-        'lark-parser<0.7.0',
+        'lark-parser>=0.7.0',
         'matplotlib',
         'mia-processes',
         'nibabel',
