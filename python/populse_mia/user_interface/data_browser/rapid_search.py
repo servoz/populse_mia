@@ -84,7 +84,7 @@ class RapidSearch(QLineEdit):
         :return: str filter corresponding to the rapid search
         """
 
-        query = ""
+        query = "("
 
         or_to_write = False
 
@@ -99,9 +99,7 @@ class RapidSearch(QLineEdit):
 
                 or_to_write = True
 
-        query += " AND ({" + TAG_FILENAME + "} IN " + str(
+        query += ") AND ({" + TAG_FILENAME + "} IN " + str(
             scans).replace("'", "\"") + ")"
-
-        query = "(" + query + ")"
 
         return query
