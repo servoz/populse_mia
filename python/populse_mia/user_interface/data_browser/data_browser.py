@@ -23,12 +23,10 @@ Contains:
 
 import ast
 import os
-from functools import partial
-# from PyQt5.QtCore import QTimer
 
 # PyQt5 imports
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QTableWidgetItem, QMenu, QFrame, QToolBar, QToolButton, QAction,
@@ -331,13 +329,12 @@ class DataBrowser(QWidget):
             self.viewer.verify_slices(full_names)
 
     def connect_toolbar(self):
-        # self.search_bar.textChanged.connect(self.search_str)
+        self.search_bar.textChanged.connect(self.search_str)
         self.button_cross.clicked.connect(self.reset_search_bar)
         self.advanced_search_button.clicked.connect(self.run_advanced_search)
         self.count_table_button.clicked.connect(self.count_table_pop_up)
         self.visualized_tags_button.clicked.connect(
             lambda: self.table_data.visualized_tags_pop_up())
-        self.search_bar.textChanged.connect(self.delay_event)
 
     def count_table_pop_up(self):
         """Open the count table pop-up"""
@@ -469,16 +466,6 @@ class DataBrowser(QWidget):
         vbox_splitter.addWidget(self.splitter_vertical)
 
         self.setLayout(vbox_splitter)
-
-    def delay_event(self, str_search):
-        """
-        Delays the use of the str_search function by 500ms
-        """
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        f = partial(self.search_str, str_search)
-        self.timer.timeout.connect(f)
-        self.timer.start(500)
 
     def move_splitter(self):
         """Check if the viewer's splitter is at its lowest position."""
