@@ -42,7 +42,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
   * Install the Python module distribution
 
         cd [mia_install_dir]  
-        sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
+        python3 setup.py install --user # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
   * To run populse_mia from the source code, don't remove it. Otherwise:
 
