@@ -61,6 +61,11 @@ The documentation is available on populse_mia's website here: [https://populse.g
   * For all platforms, after a [Populse_MIA’s user installation](https://populse.github.io/populse_mia/html/installation/user_installation.html)
  
         python3 -m populse_mia
+	
+  * Depending on the operating system used, it was observed some compatibility issues with PyQt5/SIP. In this case, we recommend, as a first attempt, to do:
+  
+        python3 -m pip install --force-reinstall pyqt5==5.11.3
+        python3 -m pip install --force-reinstall PyQt5-sip==4.19.13
 
 # Tests
 
