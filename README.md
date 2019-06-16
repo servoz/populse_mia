@@ -115,7 +115,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
 # Support and Communication
 
-If you have a problem or would like to ask a question about how to do something in populse_mia please [open an issue](https://github.com/populse/populse_mia/issues).
+If you have a problem or would like to ask a question about how to do something in populse_mia, please [open an issue](https://github.com/populse/populse_mia/issues).
 
 You can even contact the developer team by using populse-support@univ-grenoble-alpes.fr.
 
