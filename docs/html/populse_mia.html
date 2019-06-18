@@ -91,14 +91,14 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-populse_mia.info">
-<span id="populse-mia-info-module"></span><h2>populse_mia.info module<a class="headerlink" href="#module-populse_mia.info" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="populse-mia-install-mia-module">
-<h2>populse_mia.install_mia module<a class="headerlink" href="#populse-mia-install-mia-module" title="Permalink to this headline">¶</a></h2>
+<h2>populse_mia.#install_mia module<a class="headerlink" href="#populse-mia-install-mia-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="populse-mia-install-processes-module">
-<h2>populse_mia.install_processes module<a class="headerlink" href="#populse-mia-install-processes-module" title="Permalink to this headline">¶</a></h2>
+<h2>populse_mia.#install_processes module<a class="headerlink" href="#populse-mia-install-processes-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-populse_mia.info">
+<span id="populse-mia-info-module"></span><h2>populse_mia.info module<a class="headerlink" href="#module-populse_mia.info" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-populse_mia.main">
 <span id="populse-mia-main-module"></span><h2>populse_mia.main module<a class="headerlink" href="#module-populse_mia.main" title="Permalink to this headline">¶</a></h2>
@@ -325,13 +325,13 @@ parameter accordingly and the mia_path if necessary, in the
 the ~/.populse_mia directory). Launches the verify_processes()
 function, then the launch_mia() function (mia’s real launch !!). When
 mia is exited, if the ~/.populse_mia/configuration.yml exists, sets the
-dev_mode parameter to ‘no’.</p>
+dev_mode parameter to False.</p>
 <ul class="simple">
 <li><dl class="first docutils">
 <dt>If launched from a cloned git repository (‘developer mode’):</dt>
 <dd><ul class="first last">
 <li>if the ~/.populse_mia/configuration.yml exists, updates
-the dev_mode parameter to ‘yes’</li>
+the dev_mode parameter to True</li>
 <li>if the ~/.populse_mia/configuration.yml is not existing
 nothing is done (in developer mode, the mia_path is the
 cloned git repository.</li>
@@ -343,7 +343,7 @@ cloned git repository.</li>
 <dt>If launched from the site/dist packages (‘user mode’):</dt>
 <dd><ul class="first last">
 <li>if the ~/.populse_mia/configuration.yml exists, updates
-the dev_mode parameter to “no” and, if not found, update
+the dev_mode parameter to False and, if not found, update
 the mia_path parameter.</li>
 <li>if the file ~/.populse_mia/configuration.yml file does
 not exist or if the returned mia_path parameter is incorrect, a
@@ -389,7 +389,7 @@ is valid close the ‘MIA path selection’ window.</p>
 <p>This method goes with the _browse_mia_path function, the latter
 having allowed the definition of the mia_path parameter,
 the objective here is to check if the value of this parameter
-is valid. The dev_mode=’no’ and mia_path parameters are saved
+is valid. The dev_mode=False and mia_path parameters are saved
 in the, mandatory in user mode,
 ~/.populse_mia/configuration.yml file. Then the
 verify_processes function is used through a try/except blocks

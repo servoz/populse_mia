@@ -1508,7 +1508,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save_checkbox</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Auto save&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">save_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">h_box_auto_save</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
@@ -1520,7 +1520,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clinical_mode_checkbox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clinical_mode_switch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clinical_mode_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Clinical mode&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_clinical_mode</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_clinical_mode</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clinical_mode_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -1663,7 +1663,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">matlab_standalone_browse</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">browse_matlab_standalone</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_matlab</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_matlab</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_matlab_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_matlab_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1707,7 +1707,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">spm_browse</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spm_browse</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse_spm</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_spm</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_spm</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1734,7 +1734,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">spm_standalone_browse</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spm_standalone_browse</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse_spm_standalone</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_spm_standalone</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get_use_spm_standalone</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_standalone_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_standalone_checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1972,9 +1972,9 @@
 
         <span class="c1"># Auto-save</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">setAutoSave</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">setAutoSave</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">setAutoSave</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">setAutoSave</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Projects folder</span>
         <span class="n">projects_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projects_save_path_line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -2030,28 +2030,28 @@
 
         <span class="c1"># Use Matlab</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_matlab_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_matlab</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_matlab</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_matlab</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_matlab</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Use SPM</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Use SPM standalone</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_spm_standalone_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm_standalone</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm_standalone</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm_standalone</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_use_spm_standalone</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Clinical mode</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clinical_mode_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_clinical_mode_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Matlab</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_matlab_checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>

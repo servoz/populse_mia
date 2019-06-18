@@ -1568,8 +1568,8 @@
 <span class="sd">        :param scan: scan filename</span>
 <span class="sd">        :return: index of the row of the scan</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># for row in range(0, len(self.scans_to_visualize)):</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
-        <span class="c1">#for row in range(0, len(self.scans_to_visualize)):</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">scan_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">scan_name</span> <span class="o">==</span> <span class="n">scan</span><span class="p">:</span>
@@ -2154,7 +2154,7 @@
 
         <span class="c1"># Auto-save</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TableDataBrowser.update_selection"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_selection">[docs]</a>    <span class="k">def</span> <span class="nf">update_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
