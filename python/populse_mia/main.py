@@ -330,8 +330,9 @@ def main():
 
     def _browse_mia_path(dialog):
 
-        dname = QFileDialog.getExistingDirectory(dialog, "Please select MIA "
-                                                         "path")
+        dname = QFileDialog.getExistingDirectory(dialog,
+                                                 "Please select MIA path",
+                                                 os.path.expanduser('~'))
         dialog.file_line_edit.setText(dname)
 
     def _verify_miaConfig(dialog=None):
