@@ -294,30 +294,37 @@ def main():
             - *_browse_mia_path()*
                 The user define the mia_path parameter.
 
-                This method goes with the _ok_mia_path function, the latter
-                will use the value of the mia_path parameter, defined here.
-
+                This method, used only if the mia configuration parameters are
+                not accessible, goes with the _verify_miaConfig function, which 
+                will use the value of the mia_path parameter, defined here. 
+                
                 :Parameters dialog: QtWidgets.QDialog object ('msg' in the main
                    function)
 
-            - *_ok_mia_path(dialog)*
-               Check the mia_path parameter then if it
-               is valid close the 'MIA path selection' window.
+            - *_verify_miaConfig()*
 
-               This method goes with the _browse_mia_path function, the latter
-               having allowed the definition of the mia_path parameter,
-               the objective here is to check if the value of this parameter
-               is valid. The dev_mode=False and mia_path parameters are saved
-               in the, mandatory in user mode,
-               ~/.populse_mia/configuration.yml file. Then the
-               verify_processes function is used through a try/except blocks
-               to check if the mia_path parameter value is valid. If an
-               exception is raised during the verify_processes function,
-               the "MIA path selection" window is not closed and the user is
-               prompted again to set the mia_path parameter.
+                The purpose of this method is twofold. First, it allows to
+                update the obsolete values of some parameters of the
+                mia_user_path/properties/config.yml file. Secondly, it allows
+                to correct the value of the mia_user_path parameter in the
+                ~/.populse_mia/configuration.yml file, (in the case of a user
+                mode launch, because the developer mode launch does not need
+                this parameter).
 
-               :Parameters dialog: QtWidgets.QDialog object
-                  ('msg' in the main function)
+                In the case of a launch in user mode, this method goes with the
+                _browse_mia_path() function, the latter having allowed the
+                definition of the mia_user_path parameter, the objective here
+                is to check if the value of this parameter is valid. The
+                dev_mode=False and mia_path parameters are saved in the
+                ~/.populse_mia/configuration.yml file (the mia_user_path
+                parameter is mandatory in the user mode). Then the data in the
+                mia_path/properties/config.yml file are checked. If an exception
+                is raised during the  _verify_miaConfig function, the "MIA path
+                selection" window is not closed and the user is prompted again
+                to set the mia_user_path parameter.
+
+                :Parameters dialog: QtWidgets.QDialog object ('msg' in the main
+                   function)
 
     """
 
@@ -327,34 +334,96 @@ def main():
                                                          "path")
         dialog.file_line_edit.setText(dname)
 
-    def _ok_mia_path(dialog):
+    def _verify_miaConfig(dialog=None):
 
-        mia_home_config = dict()
-        mia_home_config["dev_mode"] = False
-        mia_home_config["mia_path"] = dialog.file_line_edit.text()
-        print('\nNew values in ~/.populse_mia/configuration.yml: ',
-              mia_home_config)
+        save_flag = False
+        
+        if DEV_MODE:                     # "developer" mode
 
-        with open(dot_mia_config, 'w', encoding='utf8') as configfile:
-            yaml.dump(mia_home_config, configfile, default_flow_style=False,
-                      allow_unicode=True)
+            try:
+                config = Config()
 
-        try:
-            verify_processes()
-            dialog.close()
+                for key, value in config.config.items():
+                
+                    if value == 'no':
+                        save_flag = True
+                        config.config[key] = False
+                    
+                    if value == 'yes':
+                        save_flag = True
+                        config.config[key] = True
+                    
+                if save_flag is True:
+                    config.saveConfig()
 
-        except Exception as e:
-            print('\nCould not fetch the '
-                  'configuration file: {0} ...'.format(e))
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setWindowTitle("populse_mia - Error: "
-                               "mia path directory incorrect")
-            msg.setText("Error : Please select the MIA path (directory with\n "
-                        "the processes, properties & resources directories): ")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+            except Exception as e:
+                print('\nMIA configuration settings could not be '
+                      'recovered: {0} ...'.format(e))
+                print('\nMIA is exiting ...\n')
+                sys.exit(1)
+                    
+        elif dialog is not None:         # "user" mode only if problem
+            mia_home_config = dict()
+            mia_home_config["dev_mode"] = False
+            mia_home_config["mia_user_path"] = dialog.file_line_edit.text()
+            print('\nNew values in ~/.populse_mia/configuration.yml: ')
+
+            for key, value in mia_home_config.items():
+                print('- {0}: {1}'.format(key, value))
+
+            print()
+                      
+            with open(dot_mia_config, 'w', encoding='utf8') as configfile:
+                yaml.dump(mia_home_config, configfile, default_flow_style=False,
+                          allow_unicode=True)
+
+            try:
+                config = Config()
+
+                for key, value in config.config.items():
+                
+                    if value is 'no':
+                        save_flag = True
+                        config.config[key] = False
+                    
+                    if value is 'yes':
+                        save_flag = True
+                        config.config[key] = True
+
+                if save_flag is True:
+                    config.saveConfig()
+    
+                dialog.close()
+
+            except Exception as e:
+                print('\nCould not fetch the '
+                      'configuration file: {0} ...'.format(e, ))
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setWindowTitle("populse_mia - Error: "
+                                   "mia path directory incorrect")
+                msg.setText("Error: Please select the MIA path (directory with"
+                            "\nthe processes, properties & resources "
+                            "directories): ")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+
+        else:                            # "user" mode (initial pass)
+            config = Config()
+
+            for key, value in config.config.items():
+                
+                if value == 'no':
+                    save_flag = True
+                    config.config[key] = False
+                    
+                if value == 'yes':
+                    save_flag = True
+                    config.config[key] = True
+
+            if save_flag is True:
+                config.saveConfig()
 
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia",
                                   "configuration.yml")
@@ -383,7 +452,7 @@ def main():
         else:
             print('\n{0} has not been detected.'.format(dot_mia_config))
 
-        verify_processes()
+        _verify_miaConfig()
 
     else:                                # "user" mode
 
@@ -410,7 +479,7 @@ def main():
                           default_flow_style=False,
                           allow_unicode=True)
                 
-            verify_processes()
+            _verify_miaConfig()
 
         except Exception as e:  # the configuration.yml file does not exist
             # or has not been correctly read ...
@@ -439,13 +508,14 @@ def main():
             vbox_layout.addLayout(hbox_layout)
             hbox_layout = QHBoxLayout()
             msg.ok_button = QPushButton("Ok")
-            msg.ok_button.clicked.connect(partial(_ok_mia_path, msg))
+            msg.ok_button.clicked.connect(partial(_verify_miaConfig, msg))
             hbox_layout.addWidget(msg.ok_button)
             vbox_layout.addLayout(hbox_layout)
             msg.setLayout(vbox_layout)
             msg.exec()
             del app
-
+            
+    verify_processes()
     check_python_version()
     launch_mia()
 
