@@ -71,7 +71,7 @@
 
         <span class="c1"># All the tests are run in regular mode</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1021,7 +1021,7 @@
 
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="n">old_auto_save</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">old_auto_save</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">old_auto_save</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Auto save activated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">action_software_preferences</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span>
@@ -1032,7 +1032,7 @@
 
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="n">new_auto_save</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_auto_save</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_auto_save</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Auto save disabled again</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">action_software_preferences</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span>
@@ -1042,7 +1042,7 @@
         <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">properties</span><span class="o">.</span><span class="n">push_button_ok</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="n">reput_auto_save</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">reput_auto_save</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">reput_auto_save</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Checking that the changes are not effective if cancel is clicked</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">action_software_preferences</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span>
@@ -1052,7 +1052,7 @@
         <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">properties</span><span class="o">.</span><span class="n">push_button_cancel</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="n">auto_save</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">isAutoSave</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_save</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_save</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Checking that the values for the &quot;Projects preferences&quot; are well set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_max_projects</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span>
@@ -1343,7 +1343,7 @@
 
         <span class="c1"># All the tests are run in regular mode</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set_clinical_mode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

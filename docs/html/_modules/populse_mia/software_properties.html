@@ -194,8 +194,8 @@
 <div class="viewcode-block" id="Config.__init__"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadConfig</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s2">&quot;mia_path&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;mia_user_path&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Config.get_clinical_mode"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_clinical_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_clinical_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -207,7 +207,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;clinical_mode&quot;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;yes&quot;</span></div>
+            <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="Config.get_matlab_command"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_matlab_command">[docs]</a>    <span class="k">def</span> <span class="nf">get_matlab_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get Matlab command.</span>
@@ -216,12 +216,12 @@
 <span class="sd">        path not specified</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm_standalone&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_spm_standalone&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spm_standalone&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span>
                     <span class="s1">&#39;run_spm12.sh </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
                                                  <span class="s2">&quot;matlab_standalone&quot;</span><span class="p">])</span> <span class="o">+</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39; script&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;matlab&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
@@ -289,7 +289,7 @@
                         <span class="n">mia_home_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;dev_mode&quot;</span> <span class="ow">in</span> <span class="n">mia_home_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span>
-                            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">):</span>
+                            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
                         <span class="c1"># Only for developer mode</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
@@ -298,7 +298,7 @@
                             <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
                         <span class="k">return</span> <span class="n">config_path</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">return</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>  <span class="c1"># Only for user mode</span>
+                    <span class="k">return</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span>  <span class="c1"># Only for user mode</span>
 
                 <span class="c1"># except yaml.YAMLError:</span>
                 <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
@@ -316,7 +316,7 @@
 
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Only for developer mode</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span>
             <span class="c1"># except KeyError:</span>
             <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
             <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
@@ -396,7 +396,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_matlab&quot;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;no&quot;</span></div>
+            <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="Config.get_use_spm"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_use_spm">[docs]</a>    <span class="k">def</span> <span class="nf">get_use_spm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the value of &quot;use spm&quot; checkbox in the preferences.</span>
@@ -720,7 +720,7 @@
     <span class="c1">#     :return:</span>
     <span class="c1">#</span>
     <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     self.config[&quot;mia_path&quot;] = path</span>
+    <span class="c1">#     self.config[&quot;mia_user_path&quot;] = path</span>
     <span class="c1">#     # Then save the modification</span>
     <span class="c1">#     self.saveConfig()</span>
 
