@@ -304,7 +304,7 @@ def main():
             - *_verify_miaConfig()*
 
                 The purpose of this method is twofold. First, it allows to
-                update the obsolete values of some parameters of the
+                update the obsolete values for some parameters of the
                 mia_user_path/properties/config.yml file. Secondly, it allows
                 to correct the value of the mia_user_path parameter in the
                 ~/.populse_mia/configuration.yml file, (in the case of a user
@@ -344,19 +344,6 @@ def main():
             try:
                 config = Config()
 
-                for key, value in config.config.items():
-                
-                    if value == 'no':
-                        save_flag = True
-                        config.config[key] = False
-                    
-                    if value == 'yes':
-                        save_flag = True
-                        config.config[key] = True
-                    
-                if save_flag is True:
-                    config.saveConfig()
-
             except Exception as e:
                 print('\nMIA configuration settings could not be '
                       'recovered: {0} ...'.format(e))
@@ -364,6 +351,7 @@ def main():
                 sys.exit(1)
                     
         elif dialog is not None:         # "user" mode only if problem
+            
             mia_home_config = dict()
             mia_home_config["dev_mode"] = False
             mia_home_config["mia_user_path"] = dialog.file_line_edit.text()
@@ -380,20 +368,6 @@ def main():
 
             try:
                 config = Config()
-
-                for key, value in config.config.items():
-                
-                    if value is 'no':
-                        save_flag = True
-                        config.config[key] = False
-                    
-                    if value is 'yes':
-                        save_flag = True
-                        config.config[key] = True
-
-                if save_flag is True:
-                    config.saveConfig()
-    
                 dialog.close()
 
             except Exception as e:
@@ -413,6 +387,8 @@ def main():
         else:                            # "user" mode (initial pass)
             config = Config()
 
+        if 'config' in locals():
+            
             for key, value in config.config.items():
                 
                 if value == 'no':
@@ -423,8 +399,8 @@ def main():
                     save_flag = True
                     config.config[key] = True
 
-            if save_flag is True:
-                config.saveConfig()
+                if save_flag is True:
+                    config.saveConfig()
 
     dot_mia_config = os.path.join(os.path.expanduser("~"), ".populse_mia",
                                   "configuration.yml")
@@ -456,7 +432,7 @@ def main():
         _verify_miaConfig()
 
     else:                                # "user" mode
-
+  
         try:
             
             if not os.path.exists(os.path.dirname(dot_mia_config)):
@@ -515,7 +491,7 @@ def main():
             msg.setLayout(vbox_layout)
             msg.exec()
             del app
-            
+      
     verify_processes()
     check_python_version()
     launch_mia()
@@ -589,8 +565,6 @@ def verify_processes():
                :returns: True if the current level is a pipeline that existed
                    in the old configuration, False if the
                    package/subpackage/pipeline did not exist
-
-
 
     """
 
