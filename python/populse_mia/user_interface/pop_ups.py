@@ -2562,9 +2562,8 @@ class PopUpSeeAllProjects(QDialog):
             entire_path = os.path.abspath(file_name)
             self.path, self.name = os.path.split(entire_path)
             self.relative_path = os.path.relpath(file_name)
-
             project_switched = self.mainWindow.switch_project(
-                self.relative_path, self.relative_path, self.name)
+                                                  self.relative_path, self.name)
 
             if project_switched:
                 self.accept()
