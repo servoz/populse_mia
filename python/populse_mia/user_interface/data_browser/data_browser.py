@@ -967,7 +967,6 @@ class TableDataBrowser(QTableWidget):
                                      Qt.CustomizeWindowHint)
         self.progress.setModal(True)
         self.progress.setAttribute(Qt.WA_DeleteOnClose, True)
-        #self.progress.setMinimumWidth(600)
         self.progress.show()
 
         idx = 0

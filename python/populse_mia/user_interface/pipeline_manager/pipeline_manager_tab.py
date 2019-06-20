@@ -1396,7 +1396,8 @@ class RunProgress(QProgressDialog):
 
         self.setMinimumDuration(0)
         self.setValue(0)
-
+        self.progress.setMinimumWidth(350) # For mac OS
+        
         self.worker = RunWorker(self.diagramView)
         self.worker.finished.connect(self.close)
         self.worker.start()
