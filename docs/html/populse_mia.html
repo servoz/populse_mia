@@ -367,7 +367,8 @@ to try to fix a corruption of this file.</li>
 <li><dl class="first docutils">
 <dt><em>_browse_mia_path()</em></dt>
 <dd><p class="first">The user define the mia_path parameter.</p>
-<p>This method goes with the _ok_mia_path function, the latter
+<p>This method, used only if the mia configuration parameters are
+not accessible, goes with the _verify_miaConfig function, which 
 will use the value of the mia_path parameter, defined here.</p>
 <table class="last docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -382,33 +383,37 @@ function)</td>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt><em>_ok_mia_path(dialog)</em></dt>
-<dd><p class="first">Check the mia_path parameter then if it
-is valid close the ‘MIA path selection’ window.</p>
-<p>This method goes with the _browse_mia_path function, the latter
-having allowed the definition of the mia_path parameter,
-the objective here is to check if the value of this parameter
-is valid. The dev_mode=False and mia_path parameters are saved
-in the, mandatory in user mode,
-~/.populse_mia/configuration.yml file. Then the
-verify_processes function is used through a try/except blocks
-to check if the mia_path parameter value is valid. If an
-exception is raised during the verify_processes function,
-the “MIA path selection” window is not closed and the user is
-prompted again to set the mia_path parameter.</p>
-<table class="last docutils field-list" frame="void" rules="none">
+<li><p class="first"><em>_verify_miaConfig()</em></p>
+<blockquote>
+<div><p>The purpose of this method is twofold. First, it allows to
+update the obsolete values for some parameters of the
+mia_user_path/properties/config.yml file. Secondly, it allows
+to correct the value of the mia_user_path parameter in the
+~/.populse_mia/configuration.yml file, (in the case of a user
+mode launch, because the developer mode launch does not need
+this parameter).</p>
+<p>In the case of a launch in user mode, this method goes with the
+_browse_mia_path() function, the latter having allowed the
+definition of the mia_user_path parameter, the objective here
+is to check if the value of this parameter is valid. The
+dev_mode=False and mia_path parameters are saved in the
+~/.populse_mia/configuration.yml file (the mia_user_path
+parameter is mandatory in the user mode). Then the data in the
+mia_path/properties/config.yml file are checked. If an exception
+is raised during the  _verify_miaConfig function, the “MIA path
+selection” window is not closed and the user is prompted again
+to set the mia_user_path parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Parameters dialog:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object
-(‘msg’ in the main function)</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">QtWidgets.QDialog object (‘msg’ in the main
+function)</td>
 </tr>
 </tbody>
 </table>
-</dd>
-</dl>
+</div></blockquote>
 </li>
 </ul>
 </td>

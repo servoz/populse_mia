@@ -328,67 +328,113 @@
 <span class="sd">            - *_browse_mia_path()*</span>
 <span class="sd">                The user define the mia_path parameter.</span>
 
-<span class="sd">                This method goes with the _ok_mia_path function, the latter</span>
-<span class="sd">                will use the value of the mia_path parameter, defined here.</span>
-
+<span class="sd">                This method, used only if the mia configuration parameters are</span>
+<span class="sd">                not accessible, goes with the _verify_miaConfig function, which </span>
+<span class="sd">                will use the value of the mia_path parameter, defined here. </span>
+<span class="sd">                </span>
 <span class="sd">                :Parameters dialog: QtWidgets.QDialog object (&#39;msg&#39; in the main</span>
 <span class="sd">                   function)</span>
 
-<span class="sd">            - *_ok_mia_path(dialog)*</span>
-<span class="sd">               Check the mia_path parameter then if it</span>
-<span class="sd">               is valid close the &#39;MIA path selection&#39; window.</span>
+<span class="sd">            - *_verify_miaConfig()*</span>
 
-<span class="sd">               This method goes with the _browse_mia_path function, the latter</span>
-<span class="sd">               having allowed the definition of the mia_path parameter,</span>
-<span class="sd">               the objective here is to check if the value of this parameter</span>
-<span class="sd">               is valid. The dev_mode=False and mia_path parameters are saved</span>
-<span class="sd">               in the, mandatory in user mode,</span>
-<span class="sd">               ~/.populse_mia/configuration.yml file. Then the</span>
-<span class="sd">               verify_processes function is used through a try/except blocks</span>
-<span class="sd">               to check if the mia_path parameter value is valid. If an</span>
-<span class="sd">               exception is raised during the verify_processes function,</span>
-<span class="sd">               the &quot;MIA path selection&quot; window is not closed and the user is</span>
-<span class="sd">               prompted again to set the mia_path parameter.</span>
+<span class="sd">                The purpose of this method is twofold. First, it allows to</span>
+<span class="sd">                update the obsolete values for some parameters of the</span>
+<span class="sd">                mia_user_path/properties/config.yml file. Secondly, it allows</span>
+<span class="sd">                to correct the value of the mia_user_path parameter in the</span>
+<span class="sd">                ~/.populse_mia/configuration.yml file, (in the case of a user</span>
+<span class="sd">                mode launch, because the developer mode launch does not need</span>
+<span class="sd">                this parameter).</span>
 
-<span class="sd">               :Parameters dialog: QtWidgets.QDialog object</span>
-<span class="sd">                  (&#39;msg&#39; in the main function)</span>
+<span class="sd">                In the case of a launch in user mode, this method goes with the</span>
+<span class="sd">                _browse_mia_path() function, the latter having allowed the</span>
+<span class="sd">                definition of the mia_user_path parameter, the objective here</span>
+<span class="sd">                is to check if the value of this parameter is valid. The</span>
+<span class="sd">                dev_mode=False and mia_path parameters are saved in the</span>
+<span class="sd">                ~/.populse_mia/configuration.yml file (the mia_user_path</span>
+<span class="sd">                parameter is mandatory in the user mode). Then the data in the</span>
+<span class="sd">                mia_path/properties/config.yml file are checked. If an exception</span>
+<span class="sd">                is raised during the  _verify_miaConfig function, the &quot;MIA path</span>
+<span class="sd">                selection&quot; window is not closed and the user is prompted again</span>
+<span class="sd">                to set the mia_user_path parameter.</span>
+
+<span class="sd">                :Parameters dialog: QtWidgets.QDialog object (&#39;msg&#39; in the main</span>
+<span class="sd">                   function)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_browse_mia_path</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
 
-        <span class="n">dname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="n">dialog</span><span class="p">,</span> <span class="s2">&quot;Please select MIA &quot;</span>
-                                                         <span class="s2">&quot;path&quot;</span><span class="p">)</span>
+        <span class="n">dname</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="n">dialog</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Please select MIA path&quot;</span><span class="p">,</span>
+                                                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">))</span>
         <span class="n">dialog</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_ok_mia_path</span><span class="p">(</span><span class="n">dialog</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_verify_miaConfig</span><span class="p">(</span><span class="n">dialog</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="n">mia_home_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">New values in ~/.populse_mia/configuration.yml: &#39;</span><span class="p">,</span>
-              <span class="n">mia_home_config</span><span class="p">)</span>
+        <span class="n">save_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">DEV_MODE</span><span class="p">:</span>                     <span class="c1"># &quot;developer&quot; mode</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">verify_processes</span><span class="p">()</span>
-            <span class="n">dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">MIA configuration settings could not be &#39;</span>
+                      <span class="s1">&#39;recovered: </span><span class="si">{0}</span><span class="s1"> ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">MIA is exiting ...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    
+        <span class="k">elif</span> <span class="n">dialog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>         <span class="c1"># &quot;user&quot; mode only if problem</span>
+            
+            <span class="n">mia_home_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;dev_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">file_line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">New values in ~/.populse_mia/configuration.yml: &#39;</span><span class="p">)</span>
 
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Could not fetch the &#39;</span>
-                  <span class="s1">&#39;configuration file: </span><span class="si">{0}</span><span class="s1"> ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - Error: &quot;</span>
-                               <span class="s2">&quot;mia path directory incorrect&quot;</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error : Please select the MIA path (directory with</span><span class="se">\n</span><span class="s2"> &quot;</span>
-                        <span class="s2">&quot;the processes, properties &amp; resources directories): &quot;</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mia_home_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;- </span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+            <span class="nb">print</span><span class="p">()</span>
+                      
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Could not fetch the &#39;</span>
+                      <span class="s1">&#39;configuration file: </span><span class="si">{0}</span><span class="s1"> ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="p">))</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;populse_mia - Error: &quot;</span>
+                                   <span class="s2">&quot;mia path directory incorrect&quot;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error: Please select the MIA path (directory with&quot;</span>
+                            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">the processes, properties &amp; resources &quot;</span>
+                            <span class="s2">&quot;directories): &quot;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">buttonClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>                            <span class="c1"># &quot;user&quot; mode (initial pass)</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s1">&#39;config&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+            
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                
+                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;no&#39;</span><span class="p">:</span>
+                    <span class="n">save_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    
+                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">:</span>
+                    <span class="n">save_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">save_flag</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">config</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span>
 
     <span class="n">dot_mia_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.populse_mia&quot;</span><span class="p">,</span>
                                   <span class="s2">&quot;configuration.yml&quot;</span><span class="p">)</span>
@@ -417,10 +463,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{0}</span><span class="s1"> has not been detected.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">))</span>
 
-        <span class="n">verify_processes</span><span class="p">()</span>
+        <span class="n">_verify_miaConfig</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>                                <span class="c1"># &quot;user&quot; mode</span>
-
+  
         <span class="k">try</span><span class="p">:</span>
             
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">)):</span>
@@ -444,7 +490,7 @@
                           <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 
-            <span class="n">verify_processes</span><span class="p">()</span>
+            <span class="n">_verify_miaConfig</span><span class="p">()</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># the configuration.yml file does not exist</span>
             <span class="c1"># or has not been correctly read ...</span>
@@ -473,13 +519,14 @@
             <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_layout</span><span class="p">)</span>
             <span class="n">hbox_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Ok&quot;</span><span class="p">)</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_ok_mia_path</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_verify_miaConfig</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
             <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">ok_button</span><span class="p">)</span>
             <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_layout</span><span class="p">)</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_layout</span><span class="p">)</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
             <span class="k">del</span> <span class="n">app</span>
-
+      
+    <span class="n">verify_processes</span><span class="p">()</span>
     <span class="n">check_python_version</span><span class="p">()</span>
     <span class="n">launch_mia</span><span class="p">()</span>
 
@@ -552,8 +599,6 @@
 <span class="sd">               :returns: True if the current level is a pipeline that existed</span>
 <span class="sd">                   in the old configuration, False if the</span>
 <span class="sd">                   package/subpackage/pipeline did not exist</span>
-
-
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
