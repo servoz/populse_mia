@@ -42,7 +42,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
   * Install the Python module distribution
 
         cd [mia_install_dir]  
-        sudo python3 setup.py install # Ensure that you use python >= 3.5 (use python3.x to be sure)  
+        python3 setup.py install --user # Ensure that you use python >= 3.5 (use python3.x to be sure)  
 
   * To run populse_mia from the source code, don't remove it. Otherwise:
 
@@ -61,6 +61,11 @@ The documentation is available on populse_mia's website here: [https://populse.g
   * For all platforms, after a [Populse_MIA’s user installation](https://populse.github.io/populse_mia/html/installation/user_installation.html)
  
         python3 -m populse_mia
+	
+  * Depending on the operating system used, it was observed some compatibility issues with PyQt5/SIP. In this case, we recommend, as a first attempt, to do:
+  
+        python3 -m pip install --force-reinstall pyqt5==5.11.3
+        python3 -m pip install --force-reinstall PyQt5-sip==4.19.13
 
 # Tests
 
@@ -110,7 +115,7 @@ The documentation is available on populse_mia's website here: [https://populse.g
 
 # Support and Communication
 
-If you have a problem or would like to ask a question about how to do something in populse_mia please [open an issue](https://github.com/populse/populse_mia/issues).
+If you have a problem or would like to ask a question about how to do something in populse_mia, please [open an issue](https://github.com/populse/populse_mia/issues).
 
 You can even contact the developer team by using populse-support@univ-grenoble-alpes.fr.
 

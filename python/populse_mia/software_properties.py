@@ -260,40 +260,46 @@ class Config:
                         self.dev_mode = True
                         config_path = os.path.dirname(os.path.realpath(
                             __file__))
+
                         while "properties" not in os.listdir(config_path):
                             config_path = os.path.dirname(config_path)
+                            
                         return config_path
+                    
+                    # Only for user mode
                     self.dev_mode = False
-                    return mia_home_config["mia_user_path"]  # Only for user mode
 
-                # except yaml.YAMLError:
-                #    return os.path.abspath(os.path.join(os.path.realpath(
-                #    __file__), '..', '..', '..', '..'))
-                # except KeyError:
-                #    return os.path.abspath(os.path.join(os.path.realpath(
-                #    __file__), '..', '..', '..', '..'))
+                    # mia_path is obsolete. Use mia_user_path instead
+                    if "mia_path" in  mia_home_config:
+                        mia_home_config["mia_user_path"] = \
+                                                     mia_home_config["mia_path"]
+                        del mia_home_config["mia_path"]
+
+                        with open(dot_mia_config,
+                                  'w', encoding='utf8') as configfile:
+                            yaml.dump(mia_home_config, configfile,
+                                      default_flow_style=False,
+                                      allow_unicode=True)
+                        
+                    return mia_home_config["mia_user_path"]
 
                 except (yaml.YAMLError, KeyError) as e:
                     print('\nMia path (where is located the processes, '
                           'the properties and resources folders) has not '
                           'been found ...')
-                    # return os.path.abspath(os.path.join(os.path.realpath(
-                    # __file__), '..', '..', '..', '..'))
 
         else:  # Only for developer mode
+            
             try:
                 return self.config["mia_user_path"]
-            # except KeyError:
-            #    return os.path.abspath(os.path.join(os.path.realpath(
-            #    __file__), '..', '..', '..', '..'))
-            # except AttributeError:
-            #    return os.path.abspath(os.path.join(os.path.realpath(
-            #    __file__), '..', '..', '..', '..'))
+            
             except (KeyError, AttributeError):
                 config_path = os.path.dirname(os.path.realpath(
                     __file__))
+                
                 while "properties" not in os.listdir(config_path):
                     config_path = os.path.dirname(config_path)
+                    
                 return config_path
 
     def get_mri_conv_path(self):
@@ -482,6 +488,7 @@ class Config:
         with open(os.path.join(self.get_mia_path(), 'properties',
                                'config.yml'), 'w', encoding='utf8') as \
                 configfile:
+
             yaml.dump(self.config, configfile, default_flow_style=False,
                       allow_unicode=True)
 

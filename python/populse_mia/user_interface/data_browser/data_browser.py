@@ -948,6 +948,7 @@ class TableDataBrowser(QTableWidget):
                                         cells_number)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
+        self.progress.setMinimumWidth(350) # For mac OS
         self.progress.setWindowTitle("Adding the paths")
         self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint |
                                      Qt.CustomizeWindowHint)
@@ -1320,6 +1321,7 @@ class TableDataBrowser(QTableWidget):
             cells_number)
         self.progress.setMinimumDuration(0)
         self.progress.setValue(0)
+        self.progress.setMinimumWidth(350) # For mac OS
         self.progress.setWindowTitle("Filling the cells")
         self.progress.setWindowFlags(Qt.Window | Qt.WindowTitleHint |
                                      Qt.CustomizeWindowHint)

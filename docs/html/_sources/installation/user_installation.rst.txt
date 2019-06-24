@@ -121,6 +121,12 @@ Installation
 
         python3 -m populse_mia
 
+|
+
+* Depending on the operating system used, it was observed some compatibility issues with PyQt5/SIP. In this case, we recommend, as a first attempt, to do: ::
+
+        python3 -m pip install --force-reinstall pyqt5==5.11.3
+	python3 -m pip install --force-reinstall PyQt5-sip==4.19.13
 
 
 

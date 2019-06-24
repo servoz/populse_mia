@@ -75,6 +75,7 @@ class ImportProgress(QProgressDialog):
 
         self.setMinimumDuration(0)
         self.setValue(0)
+        self.setMinimumWidth(350) # For mac OS
 
         self.worker = ImportWorker(project, self)
         self.worker.finished.connect(self.close)

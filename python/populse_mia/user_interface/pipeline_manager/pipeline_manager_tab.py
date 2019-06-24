@@ -1075,9 +1075,13 @@ class PipelineManagerTab(QWidget):
                 self.progress = RunProgress(self.pipelineEditorTabs)
                 self.progress.show()
                 self.progress.exec()
-            except:
+                
+            except Exception as e:
+                print('\n When the pipeline was launched, the following '
+                      'exception was raised: {0} ...'.format(e, ))
                 self.main_window.statusBar().showMessage(
                     'Pipeline "{0}" has not been correctly run.'.format(name))
+                
             else:
                 self.main_window.statusBar().showMessage(
                     'Pipeline "{0}" has been correctly run.'.format(name))
@@ -1396,7 +1400,8 @@ class RunProgress(QProgressDialog):
 
         self.setMinimumDuration(0)
         self.setValue(0)
-
+        self.setMinimumWidth(350) # For mac OS
+        
         self.worker = RunWorker(self.diagramView)
         self.worker.finished.connect(self.close)
         self.worker.start()
