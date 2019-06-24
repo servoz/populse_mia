@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*- #
+"""
+Module to define CountTable popup.
+
+Contains:
+    Class:
+        - CountTable
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -13,7 +22,8 @@ from functools import reduce  # Valid in Python 2.6+, required in Python 3
 
 # PyQt5 imports
 import PyQt5.QtCore as QtCore
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QPushButton, QLabel, QTableWidget, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtWidgets import (QHBoxLayout, QDialog, QPushButton, QLabel,
+                             QTableWidget, QVBoxLayout, QTableWidgetItem)
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt
 

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*- # Character encoding, recommended
+"""Define software version, description and requirements"""
+
 import sys
 
 # Current version

@@ -1,3 +1,25 @@
+# -*- coding: utf-8 -*- #
+"""
+Module that contains class and methods to process the different libraries of
+  the project
+
+:Contains:
+    :Class:
+        - ProcessLibraryWidget
+        - Node
+        - DictionaryTreeModel
+        - ProcessLibrary
+        - PackageLibraryDialog
+        - FileFilterProxyModel
+        - PackageLibrary
+        - ProcessHelp
+        - InstallProcesses
+    :Functions:
+        - node_structure_from_dict
+        - import_file
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by

@@ -6,7 +6,7 @@ definition, as well as pop ups.
 Contains:
     Module:
         - main_window
-        - pop_ups
+        - pipeline_manager
         - data_browser
         - pop_ups
 

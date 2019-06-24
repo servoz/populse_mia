@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*- #
+"""
+Module to define the rapid search.
+
+Contains:
+    Class:
+        - RapidSearch
+"""
 
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018

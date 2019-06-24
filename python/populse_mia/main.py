@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- # Character encoding, recommended
+# -*- coding: utf-8 -*- #
 """The first module used at the runtime of mia.
 
 Basically, this module is dedicated to the initialisation of the basic
