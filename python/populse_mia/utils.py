@@ -46,7 +46,6 @@ from populse_db.database import (
 from populse_mia.software_properties import Config
 
 # Populse_MIA imports
-from populse_mia.utils import check_value_type
 from populse_mia.data_manager.project import COLLECTION_CURRENT
 
 
