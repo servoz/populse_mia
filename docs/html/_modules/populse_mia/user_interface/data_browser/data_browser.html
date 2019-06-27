@@ -995,13 +995,11 @@
                                         <span class="n">cells_number</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span> <span class="c1"># For mac OS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Adding the paths&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span>
                                      <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_DeleteOnClose</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="c1">#self.progress.setMinimumWidth(600)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
         <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1369,7 +1367,6 @@
             <span class="n">cells_number</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span> <span class="c1"># For mac OS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Filling the cells&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span>
                                      <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span><span class="p">)</span>

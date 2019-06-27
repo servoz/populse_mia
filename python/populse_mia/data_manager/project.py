@@ -30,7 +30,7 @@ from PyQt5.QtCore import QCoreApplication
 from populse_mia.software_properties import verCmp
 from populse_mia.data_manager.filter import Filter
 from populse_mia.software_properties import Config
-from populse_mia.utils.utils import set_item_data
+from populse_mia.utils import set_item_data
 from populse_mia.data_manager.database_mia import (
     DatabaseMIA, TAG_ORIGIN_BUILTIN, TAG_ORIGIN_USER)
 

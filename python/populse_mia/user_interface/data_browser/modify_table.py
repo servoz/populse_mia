@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem, QPushButton, QMessageBox)
 
 # Populse_MIA imports
-from populse_mia.utils.utils import check_value_type
+from populse_mia.utils import check_value_type
 from populse_mia.data_manager.project import COLLECTION_CURRENT
 
 # Populse_db imports

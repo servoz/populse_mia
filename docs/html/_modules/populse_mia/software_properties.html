@@ -294,46 +294,40 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
                             <span class="vm">__file__</span><span class="p">))</span>
-
                         <span class="k">while</span> <span class="s2">&quot;properties&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
                             <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
-                            
                         <span class="k">return</span> <span class="n">config_path</span>
-                    
-                    <span class="c1"># Only for user mode</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">dev_mode</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span>  <span class="c1"># Only for user mode</span>
 
-                    <span class="c1"># mia_path is obsolete. Use mia_user_path instead</span>
-                    <span class="k">if</span> <span class="s2">&quot;mia_path&quot;</span> <span class="ow">in</span>  <span class="n">mia_home_config</span><span class="p">:</span>
-                        <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span> <span class="o">=</span> \
-                                                     <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>
-                        <span class="k">del</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_path&quot;</span><span class="p">]</span>
-
-                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dot_mia_config</span><span class="p">,</span>
-                                  <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
-                            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mia_home_config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span>
-                                      <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                      <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        
-                    <span class="k">return</span> <span class="n">mia_home_config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span>
+                <span class="c1"># except yaml.YAMLError:</span>
+                <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+                <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+                <span class="c1"># except KeyError:</span>
+                <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+                <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
 
                 <span class="k">except</span> <span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Mia path (where is located the processes, &#39;</span>
                           <span class="s1">&#39;the properties and resources folders) has not &#39;</span>
                           <span class="s1">&#39;been found ...&#39;</span><span class="p">)</span>
+                    <span class="c1"># return os.path.abspath(os.path.join(os.path.realpath(</span>
+                    <span class="c1"># __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
 
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Only for developer mode</span>
-            
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mia_user_path&quot;</span><span class="p">]</span>
-            
+            <span class="c1"># except KeyError:</span>
+            <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+            <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
+            <span class="c1"># except AttributeError:</span>
+            <span class="c1">#    return os.path.abspath(os.path.join(os.path.realpath(</span>
+            <span class="c1">#    __file__), &#39;..&#39;, &#39;..&#39;, &#39;..&#39;, &#39;..&#39;))</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
                 <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
                     <span class="vm">__file__</span><span class="p">))</span>
-                
                 <span class="k">while</span> <span class="s2">&quot;properties&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
                     <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
-                    
                 <span class="k">return</span> <span class="n">config_path</span></div>
 
 <div class="viewcode-block" id="Config.get_mri_conv_path"><a class="viewcode-back" href="../../populse_mia.software_properties.html#populse_mia.software_properties.Config.get_mri_conv_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_mri_conv_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -522,7 +516,6 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mia_path</span><span class="p">(),</span> <span class="s1">&#39;properties&#39;</span><span class="p">,</span>
                                <span class="s1">&#39;config.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> \
                 <span class="n">configfile</span><span class="p">:</span>
-
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                       <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 

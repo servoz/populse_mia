@@ -31,7 +31,7 @@ from PyQt5.QtWidgets import (
     QLabel, QScrollArea, QFrame, QSlider, QLineEdit, QSizePolicy, QCheckBox)
 
 # Populse_MIA imports
-from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils import ClickableLabel
 from populse_mia.software_properties import verCmp
 from populse_mia.user_interface.pop_ups import PopUpSelectTag
 from populse_mia.software_properties import Config

@@ -47,8 +47,8 @@ from populse_mia.user_interface.pop_ups import (
     PopUpAddTag, PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter)
 from populse_mia.user_interface.pop_ups import (
     PopUpDataBrowserCurrentSelection)
-from populse_mia.utils.tools import ClickableLabel
-from populse_mia.utils.utils import (
+from populse_mia.utils import ClickableLabel
+from populse_mia.utils import (
     check_value_type, set_item_data, table_to_database)
 from populse_mia.data_manager.project import (
     COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, TAG_CHECKSUM,
