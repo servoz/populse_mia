@@ -2076,7 +2076,13 @@ class TableDataBrowser(QTableWidget):
                                 color.setRgb(255, 255, 255)  # White
                             else:
                                 color.setRgb(230, 230, 230)  # Grey
-
+                        # Avoid issues after switching tab and not saving
+                        elif (self.project.session.get_field(
+                                COLLECTION_CURRENT, tag) is None):
+                            if row_number % 2 == 0:
+                                color.setRgb(245, 215, 215)  # Pink
+                            else:
+                                color.setRgb(245, 175, 175)  # Red
                         # Raw tag
                         elif (self.project.session.get_field(
                                 COLLECTION_CURRENT, tag).origin ==
