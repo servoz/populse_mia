@@ -30,8 +30,8 @@ from PyQt5.QtCore import Qt
 # Populse_MIA imports
 from populse_mia.software_properties import Config
 from populse_mia.user_interface.pop_ups import PopUpSelectTagCountTable
-from populse_mia.utils import ClickableLabel
-from populse_mia.utils import set_item_data, table_to_database
+from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils.utils import set_item_data, table_to_database
 from populse_mia.data_manager.project import COLLECTION_CURRENT, TAG_FILENAME
 
 

@@ -45,8 +45,8 @@ from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser import data_browser
 
 from populse_mia.utils import utils
-from populse_mia.utils import ClickableLabel
-from populse_mia.utils import check_value_type
+from populse_mia.utils.tools import ClickableLabel
+from populse_mia.utils.utils import check_value_type
 
 
 class PopUpAddPath(QDialog):

@@ -29,7 +29,7 @@ from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.user_interface.pop_ups import \
     PopUpSelectTagCountTable
 from populse_mia.data_manager.project import COLLECTION_CURRENT, TAG_FILENAME
-from populse_mia.utils import ClickableLabel
+from populse_mia.utils.tools import ClickableLabel
 from populse_mia.software_properties import Config
 
 
