@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- #
-"""Unitary tests.
+""" Module that handles pipeline iteration.
 
 :Contains:
     :Class:

@@ -1,4 +1,15 @@
+"""
+Module that contains multiple functions used across the software.
 
+:Contains:
+    :Functions:
+        - check_value_type
+        - message_already_exists
+        - set_filters_directory_as_default
+        - set_item_data
+        - set_projects_directory_as_default
+        - table_to_database
+"""
 
 
 ##########################################################################

@@ -5,18 +5,20 @@ Module that contains class and methods to process the different libraries of
 
 :Contains:
     :Class:
-        - ProcessLibraryWidget
-        - Node
         - DictionaryTreeModel
-        - ProcessLibrary
-        - PackageLibraryDialog
         - FileFilterProxyModel
-        - PackageLibrary
-        - ProcessHelp
         - InstallProcesses
+        - Node
+        - PackageLibrary
+        - PackageLibraryDialog
+        - ProcessLibrary
+        - ProcessHelp
+        - ProcessLibraryWidget
+
     :Functions:
-        - node_structure_from_dict
         - import_file
+        - node_structure_from_dict
+
 
 """
 
@@ -59,6 +61,616 @@ from populse_mia.software_properties import verCmp
 
 # capsul import
 from capsul.api import get_process_instance
+
+
+class DictionaryTreeModel(QAbstractItemModel):
+    """Data model providing a tree of an arbitrary dictionary"""
+
+    def __init__(self, root, parent=None):
+        super(DictionaryTreeModel, self).__init__(parent)
+        self._rootNode = root
+
+    def mimeTypes(self):
+        return ['component/name']
+
+    def mimeData(self, idxs):
+        mimedata = QMimeData()
+        for idx in idxs:
+            if idx.isValid():
+                node = idx.internalPointer()
+                txt = node.data(idx.column())
+                mimedata.setData('component/name', QByteArray(txt.encode()))
+        return mimedata
+
+    def rowCount(self, parent):
+        """the number of rows is the number of children"""
+        if not parent.isValid():
+            parentNode = self._rootNode
+        else:
+            parentNode = parent.internalPointer()
+
+        return parentNode.childCount()
+
+    def columnCount(self, parent):
+        """Number of columns is always 1 """
+        return 1
+
+    def data(self, index, role):
+        """returns the data requested by the view"""
+        if not index.isValid():
+            return None
+
+        node = index.internalPointer()
+
+        if role == Qt.DisplayRole or role == Qt.EditRole:
+            return node.name
+
+    def setData(self, index, value, role=Qt.EditRole):
+        """This method gets called when the user changes data"""
+        if index.isValid():
+            if role == Qt.EditRole:
+                node = index.internalPointer()
+                node.setData(index.column(), value)
+                return True
+        return False
+
+    def headerData(self, section, orientation, role):
+        """Return the name of the requested column"""
+        if role == Qt.DisplayRole:
+            if section == 0:
+                return "Packages"
+            if section == 1:
+                return "Value"
+
+    def flags(self, index):
+        """Everything is enable and selectable. Only the leaves can be
+           dragged. """
+        node = index.internalPointer()
+        if node.childCount() > 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
+
+    def parent(self, index):
+        """Return the parent from given index"""
+        node = self.getNode(index)
+        parentNode = node.parent()
+        if parentNode == self._rootNode:
+            return QModelIndex()
+
+        return self.createIndex(parentNode.row(), 0, parentNode)
+
+    def index(self, row, column, parent):
+        """Return an index from given row, column and parent"""
+        parentNode = self.getNode(parent)
+        childItem = parentNode.child(row)
+
+        if childItem:
+            return self.createIndex(row, column, childItem)
+        else:
+            return QModelIndex()
+
+    def getNode(self, index):
+        """Return a Node() from given index"""
+        if index.isValid():
+            node = index.internalPointer()
+            if node:
+                return node
+
+        return self._rootNode
+
+    def insertRows(self, position, rows, parent=QModelIndex()):
+        """Insert rows from starting position and number given by rows"""
+        parentNode = self.getNode(parent)
+        self.beginInsertRows(parent, position, position + rows - 1)
+
+        for row in range(rows):
+            childCount = parentNode.childCount()
+            childNode = Node("untitled" + str(childCount))
+            success = parentNode.insertChild(position, childNode)
+
+        self.endInsertRows()
+        return success
+
+    def removeRows(self, position, rows, parent=QModelIndex()):
+        """Remove the rows from position to position+rows"""
+        parentNode = self.getNode(parent)
+        self.beginRemoveRows(parent, position, position + rows - 1)
+
+        for row in range(rows):
+            success = parentNode.removeChild(position)
+
+        self.endRemoveRows()
+        return success
+
+    def to_dict(self):
+        return self._rootNode.to_dict()
+
+
+class FileFilterProxyModel(QSortFilterProxyModel):
+    """Just a test for the moment. Should be useful to use in
+       the file dialog. """
+
+    def __init__(self):
+        super(FileFilterProxyModel, self).__init__()
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        source_model = self.sourceModel()
+        index0 = source_model.index(source_row, 0, source_parent)
+        # Always show directories
+        if source_model.isDir(index0):
+            return True
+        # filter files
+        filename = source_model.fileName(index0)
+        #       filename=self.sourceModel().index(row,0,parent).data().lower()
+        # return True
+        if filename.count(".py") + filename.count(".xml") == 0:
+            return False
+        else:
+            return True
+
+    # def flags(self, index):
+    #     flags = super(FileFilterProxyModel, self).flags(index)
+    #     source_model = self.sourceModel()
+    #     if source_model.isDir(index):
+    #         flags |= Qt.ItemIsSelectable
+    #         return flags
+    #
+    #     # filter files
+    #     filename = source_model.fileName(index)
+    #
+    #     if filename.count(".py") + filename.count(".xml") == 0:
+    #         flags &= ~Qt.ItemIsSelectable
+    #         return flags
+    #     else:
+    #         flags |= Qt.ItemIsSelectable
+    #         return flags
+
+
+class InstallProcesses(QDialog):
+    """A widget that allows to browse a Python package or a zip file to install
+       the processes that it is containing.
+
+    Methods:
+        - get_filename: opens a file dialog to get the folder or zip file to
+          install
+        - install: installs the selected file/folder on Populse_MIA
+    """
+
+    process_installed = Signal()
+
+    def __init__(self, main_window, folder):
+        super(InstallProcesses, self).__init__(parent=main_window)
+
+        self.setWindowTitle('Install processes')
+
+        v_layout = QVBoxLayout()
+        self.setLayout(v_layout)
+
+        if folder is False:
+            label_text = 'Choose zip file containing Python packages'
+
+        elif folder is True:
+            label_text = 'Choose folder containing Python packages'
+
+        v_layout.addWidget(QLabel(label_text))
+
+        edit_layout = QHBoxLayout()
+        v_layout.addLayout(edit_layout)
+
+        self.path_edit = QLineEdit()
+        edit_layout.addWidget(self.path_edit)
+        self.browser_button = QPushButton('Browse')
+        edit_layout.addWidget(self.browser_button)
+
+        bottom_layout = QHBoxLayout()
+        v_layout.addLayout(bottom_layout)
+
+        install_button = QPushButton('Install package')
+        bottom_layout.addWidget(install_button)
+
+        quit_button = QPushButton('Quit')
+        bottom_layout.addWidget(quit_button)
+
+        install_button.clicked.connect(self.install)
+        quit_button.clicked.connect(self.close)
+        self.browser_button.clicked.connect(
+            lambda: self.get_filename(folder=folder))
+
+    def get_filename(self, folder):
+        """
+        Opens a file dialog to get the folder or zip file to install
+
+        :param folder: True if the dialog installs from folder,
+          False if from zip file
+        """
+        if folder is True:
+            filename = QFileDialog.getExistingDirectory(
+                self, caption='Select a directory',
+                directory=os.path.expanduser("~"),
+                options=QFileDialog.ShowDirsOnly)
+
+        elif folder is False:
+            filename = QFileDialog.getOpenFileName(
+                caption='Select a zip file',
+                directory=os.path.expanduser("~"),
+                filter='Compatible files (*.zip)')
+
+        if filename and isinstance(filename, str):
+            self.path_edit.setText(filename)
+
+        elif filename and isinstance(filename, tuple):
+            self.path_edit.setText(filename[0])
+
+    def install(self):
+        """
+        Installs the selected file/folder on Populse_MIA
+        """
+
+        def add_package(proc_dic, module_name):
+            """
+            Adds a package and its modules to the package tree
+
+            :param proc_dic: the process tree-dictionary
+            :param module_name: name of the module
+            :return: proc_dic: the modified process tree-dictionary
+            """
+            if module_name:
+
+                # Reloading the package
+                if module_name in sys.modules.keys():
+                    del sys.modules[module_name]
+
+                try:
+                    __import__(module_name)
+
+                except ImportError as er:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Critical)
+                    msg.setText(('During the installation of {0}, '
+                                 'the folllowing exception was raised:'
+                                 '\n{1}: {2}.\nThis exception maybe '
+                                 'prevented the installation ...').format(
+                        module_name, er.__class__, er))
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
+                    raise ImportError(
+                        'The {0} brick may not been installed'.format(
+                            module_name))
+
+                pkg = sys.modules[module_name]
+
+                # Checking if there are subpackages
+                for importer, modname, ispkg in pkgutil.iter_modules(
+                        pkg.__path__):
+                    if ispkg:
+                        add_package(proc_dic, str(module_name + '.' + modname))
+
+                for k, v in sorted(list(pkg.__dict__.items())):
+                    # Checking each class of in the package
+                    if inspect.isclass(v):
+
+                        try:
+                            print('\n Installing %s.%s ...' % (
+                            module_name, v.__name__))
+                            get_process_instance(
+                                '%s.%s' % (module_name, v.__name__))
+
+                        except Exception:
+                            print(traceback.format_exc())
+                            # TODO: WHICH TYPE OF EXCEPTION?
+                            # pass
+
+                        else:
+                            # Updating the tree's dictionnary
+                            path_list = module_name.split('.')
+                            path_list.append(k)
+                            pkg_iter = proc_dic
+
+                            for element in path_list:
+
+                                if element in pkg_iter.keys():
+                                    pkg_iter = pkg_iter[element]
+
+                                else:
+
+                                    if element is path_list[-1]:
+                                        pkg_iter[element] = 'process_enabled'
+
+                                    else:
+                                        pkg_iter[element] = {}
+                                        pkg_iter = pkg_iter[element]
+
+                return proc_dic
+
+        def change_pattern_in_folder(path, old_pattern, new_pattern):
+            """Changing all "old_pattern" pattern to "new_pattern" in the "path"
+              folder
+            :param path: path of the extracted or copied processes
+            :param old_pattern: old pattern
+            :param new_pattern: new pattern
+            :return:
+            """
+            for dname, dirs, files in os.walk(path):
+
+                for fname in files:
+                    # Modifying only .py files (pipelines are saved with
+                    # this extension)
+
+                    if fname[-2:] == 'py':
+                        fpath = os.path.join(dname, fname)
+
+                        with open(fpath) as f:
+                            s = f.read()
+
+                        s = s.replace(old_pattern + '.', new_pattern + '.')
+
+                        with open(fpath, "w") as f:
+                            f.write(s)
+
+        filename = self.path_edit.text()
+        config = Config()
+
+        if not os.path.isdir(filename):
+
+            if not os.path.isfile(filename):
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file cannot be found")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
+
+            if os.path.splitext(filename)[1] != ".zip":
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("The specified file has to be a .zip file")
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                return
+
+        try:
+
+            if os.path.abspath(os.path.join(config.get_mia_path(),
+                                            'processes')) not in sys.path:
+                sys.path.append(os.path.abspath(
+                    os.path.join(config.get_mia_path(),
+                                 'processes')))
+
+            # Process config update
+            if not os.path.isfile(os.path.join(config.get_mia_path(),
+                                               'properties',
+                                               'process_config.yml')):
+                open(os.path.join(config.get_mia_path(),
+                                  'properties',
+                                  'process_config.yml'), 'a').close()
+
+            with open(os.path.join(config.get_mia_path(),
+                                   'properties',
+                                   'process_config.yml'), 'r') as stream:
+
+                try:
+                    if verCmp(yaml.__version__, '5.1', 'sup'):
+                        process_dic = yaml.load(stream,
+                                                Loader=yaml.FullLoader)
+                    else:
+                        process_dic = yaml.load(stream)
+
+                except yaml.YAMLError as exc:
+                    process_dic = {}
+                    print(exc)
+
+            if process_dic is None:
+                process_dic = {}
+
+            # Copying the original process tree
+            from copy import copy
+            process_dic_orig = copy(process_dic)
+
+            try:
+                packages = process_dic["Packages"]
+            except KeyError:
+                packages = {}
+            except TypeError:
+                packages = {}
+
+            try:
+                paths = process_dic["Paths"]
+            except KeyError:
+                paths = []
+            except TypeError:
+                paths = []
+
+            # Saving all the install packages names and checking if
+            # the MIA_processes are updated
+            package_names = []
+            mia_processes_not_found = True
+
+            # packages_already: packages already installed in populse_
+            # mia (populse_mia/processes)
+            packages_already = [dire for dire in os.listdir(
+                os.path.join(config.get_mia_path(), 'processes'))
+                                if not os.path.isfile(
+                    os.path.join(config.get_mia_path(), 'processes', dire))]
+
+            if is_zipfile(filename):
+                # Extraction of the zipped content
+                with ZipFile(filename, 'r') as zip_ref:
+                    packages_name = [member.split(os.sep)[0] for member in
+                                     zip_ref.namelist()
+                                     if (len(member.split(os.sep)) is 2 and not
+                        member.split(os.sep)[-1])]
+
+            elif os.path.isdir(
+                    filename):  # !!! careful: if filename is not a zip file,
+                # filename must be a directory
+                # that contains only the package(s) to install!!!
+                packages_name = [os.path.basename(filename)]
+
+            for package_name in packages_name:
+                # package_name: package(s) in the zip file or in folder
+
+                if (package_name not in packages_already) or (
+                        package_name == 'mia_processes'):
+                    # Copy MIA_processes in a temporary folder
+                    if mia_processes_not_found:
+
+                        if (package_name == "mia_processes") and (
+                                os.path.exists(
+                                    os.path.join(config.get_mia_path(),
+                                                 'processes',
+                                                 'mia_processes'))):
+                            mia_processes_not_found = False
+                            tmp_folder4MIA = tempfile.mkdtemp()
+                            shutil.copytree(os.path.join(config.get_mia_path(),
+                                                         'processes',
+                                                         'mia_processes'),
+                                            os.path.join(tmp_folder4MIA,
+                                                         'MIA_processes'))
+
+                    if is_zipfile(filename):
+
+                        with ZipFile(filename, 'r') as zip_ref:
+                            members_to_extract = [member for member in
+                                                  zip_ref.namelist()
+                                                  if member.startswith(
+                                    package_name)]
+                            zip_ref.extractall(
+                                os.path.join(config.get_mia_path(),
+                                             'processes'), members_to_extract)
+
+                    elif os.path.isdir(filename):
+                        distutils.dir_util.copy_tree(os.path.join(filename),
+                                                     os.path.join(
+                                                         config.get_mia_path(),
+                                                         'processes',
+                                                         package_name))
+
+                else:
+                    date = datetime.now().strftime("%Y%m%d%H%M%S")
+
+                    if is_zipfile(filename):
+
+                        with ZipFile(filename, 'r') as zip_ref:
+                            temp_dir = tempfile.mkdtemp()
+                            members_to_extract = [member for member in
+                                                  zip_ref.namelist()
+                                                  if member.startswith(
+                                    package_name)]
+                            zip_ref.extractall(temp_dir, members_to_extract)
+                            shutil.move(os.path.join(temp_dir, package_name),
+                                        os.path.join(config.get_mia_path(),
+                                                     'processes',
+                                                     package_name + '_' + date))
+
+                    elif os.path.isdir(filename):
+                        shutil.copytree(os.path.join(filename),
+                                        os.path.join(config.get_mia_path(),
+                                                     'processes',
+                                                     package_name + '_' + date))
+
+                    original_package_name = package_name
+                    package_name = package_name + '_' + date
+
+                    # Replacing the original package name pattern in
+                    # all the extracted files by the package name
+                    # with the date
+                    change_pattern_in_folder(
+                        os.path.join(config.get_mia_path(), 'processes',
+                                     package_name),
+                        original_package_name, package_name)
+
+                package_names.append(package_name)
+                # package_names contains all the extracted packages
+                final_package_dic = add_package(packages, package_name)
+
+            if not os.path.abspath(
+                    os.path.join(config.get_mia_path(), 'processes')) in paths:
+                paths.append(os.path.abspath(
+                    os.path.join(config.get_mia_path(), 'processes')))
+
+            process_dic["Packages"] = final_package_dic
+            process_dic["Paths"] = paths
+
+            # Idea: Should we encrypt the path ?
+
+            with open(os.path.join(config.get_mia_path(), 'properties',
+                                   'process_config.yml'), 'w',
+                      encoding='utf8') as stream:
+                yaml.dump(process_dic, stream, default_flow_style=False,
+                          allow_unicode=True)
+
+            self.process_installed.emit()
+
+            # Cleaning the temporary folder
+            if 'tmp_folder4MIA' in locals():
+                shutil.rmtree(tmp_folder4MIA)
+
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
+
+        except Exception as e:
+            # Don't know which kind of exception can be raised yet
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText(
+                '{0}: {1}\nInstallation aborted ... !'.format(e.__class__, e))
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+
+            # Resetting process_config.yml
+            if process_dic_orig is None:
+                process_dic_orig = {}
+
+            with open(os.path.join(config.get_mia_path(),
+                                   'properties',
+                                   'process_config.yml'),
+                      'w', encoding='utf8') as stream:
+                yaml.dump(process_dic_orig, stream, default_flow_style=False,
+                          allow_unicode=True)
+
+            # Deleting the extracted files
+            if package_names is None:
+                package_names = []
+
+            for package_name in package_names:
+                if os.path.exists(
+                        os.path.join(config.get_mia_path(), 'processes',
+                                     package_name)):
+                    shutil.rmtree(
+                        os.path.join(config.get_mia_path(), 'processes',
+                                     package_name))
+
+            # If the error comes from a MIA_process update,
+            # the old version is restored
+            if not mia_processes_not_found:
+                distutils.dir_util.copy_tree(
+                    os.path.join(tmp_folder4MIA, 'mia_processes'),
+                    os.path.join(config.get_mia_path(), 'processes',
+                                 'mia_processes'))
+
+            if 'tmp_folder4MIA' in locals():
+                shutil.rmtree(tmp_folder4MIA)
+
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir)
+
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Installation completed")
+            msg.setText("The package {0} has been correctly installed.".format(
+                package_name))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
 
 
 class ProcessLibraryWidget(QWidget):
@@ -354,232 +966,196 @@ class Node(object):
         return None
 
 
-class DictionaryTreeModel(QAbstractItemModel):
-    """Data model providing a tree of an arbitrary dictionary"""
-
-    def __init__(self, root, parent=None):
-        super(DictionaryTreeModel, self).__init__(parent)
-        self._rootNode = root
-
-    def mimeTypes(self):
-        return ['component/name']
-
-    def mimeData(self, idxs):
-        mimedata = QMimeData()
-        for idx in idxs:
-            if idx.isValid():
-                node = idx.internalPointer()
-                txt = node.data(idx.column())
-                mimedata.setData('component/name', QByteArray(txt.encode()))
-        return mimedata
-
-    def rowCount(self, parent):
-        """the number of rows is the number of children"""
-        if not parent.isValid():
-            parentNode = self._rootNode
-        else:
-            parentNode = parent.internalPointer()
-
-        return parentNode.childCount()
-
-    def columnCount(self, parent):
-        """Number of columns is always 1 """
-        return 1
-
-    def data(self, index, role):
-        """returns the data requested by the view"""
-        if not index.isValid():
-            return None
-
-        node = index.internalPointer()
-
-        if role == Qt.DisplayRole or role == Qt.EditRole:
-            return node.name
-
-    def setData(self, index, value, role=Qt.EditRole):
-        """This method gets called when the user changes data"""
-        if index.isValid():
-            if role == Qt.EditRole:
-                node = index.internalPointer()
-                node.setData(index.column(), value)
-                return True
-        return False
-
-    def headerData(self, section, orientation, role):
-        """Return the name of the requested column"""
-        if role == Qt.DisplayRole:
-            if section == 0:
-                return "Packages"
-            if section == 1:
-                return "Value"
-
-    def flags(self, index):
-        """Everything is enable and selectable. Only the leaves can be
-           dragged. """
-        node = index.internalPointer()
-        if node.childCount() > 0:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
-
-    def parent(self, index):
-        """Return the parent from given index"""
-        node = self.getNode(index)
-        parentNode = node.parent()
-        if parentNode == self._rootNode:
-            return QModelIndex()
-
-        return self.createIndex(parentNode.row(), 0, parentNode)
-
-    def index(self, row, column, parent):
-        """Return an index from given row, column and parent"""
-        parentNode = self.getNode(parent)
-        childItem = parentNode.child(row)
-
-        if childItem:
-            return self.createIndex(row, column, childItem)
-        else:
-            return QModelIndex()
-
-    def getNode(self, index):
-        """Return a Node() from given index"""
-        if index.isValid():
-            node = index.internalPointer()
-            if node:
-                return node
-
-        return self._rootNode
-
-    def insertRows(self, position, rows, parent=QModelIndex()):
-        """Insert rows from starting position and number given by rows"""
-        parentNode = self.getNode(parent)
-        self.beginInsertRows(parent, position, position + rows - 1)
-
-        for row in range(rows):
-            childCount = parentNode.childCount()
-            childNode = Node("untitled" + str(childCount))
-            success = parentNode.insertChild(position, childNode)
-
-        self.endInsertRows()
-        return success
-
-    def removeRows(self, position, rows, parent=QModelIndex()):
-        """Remove the rows from position to position+rows"""
-        parentNode = self.getNode(parent)
-        self.beginRemoveRows(parent, position, position + rows - 1)
-
-        for row in range(rows):
-            success = parentNode.removeChild(position)
-
-        self.endRemoveRows()
-        return success
-
-    def to_dict(self):
-        return self._rootNode.to_dict()
-
-
-def node_structure_from_dict(datadict, parent=None, root_node=None):
-    """Return a hierarchical node stucture required by the TreeModel"""
-    if not parent:
-        root_node = Node('Root')
-        parent = root_node
-
-    for name, data in sorted(datadict.items()):
-
-        if isinstance(data, dict):
-
-            if True in [True for value in data.values() if
-                        value == 'process_enabled']:
-                list_name = [value for value in data.values() if
-                             value == 'process_enabled']
-
-            else:
-
-                list_name = []
-                list_values = [value for value in data.values() if
-                               isinstance(value, dict)]
-
-                while (list_values):
-                    value = list_values.pop()
-
-                    for i in value.values():
-
-                        if not isinstance(i, dict):
-                            list_name.append(i)
-
-                    list_values = list_values + [i for i in value.values() if
-                                                 isinstance(i, dict)]
-
-            # if not list_name: list_name = [i for i in data.values()]
-
-            if (all(item == 'process_disabled' for item in list_name)):
-                continue
-
-            node = Node(name, parent)
-            node = node_structure_from_dict(data, node, root_node)
-
-        elif data == 'process_enabled':
-            node = Node(name, parent)
-            node.value = data
-
-    return root_node
-
-
-class ProcessLibrary(QTreeView):
+class PackageLibrary(QTreeWidget):
     """
-    Tree to display the available Capsul's processes
-
-    Attributes:
-        - dictionary: dictionary corresponding to the tree
-        - _model: model used
+    Tree that displays the user-added packages and their modules
+    The user can check or not each module/package
 
     Methods:
-        - load_dictionary: loads a dictionary to the tree
-        - to_dict: returns a dictionary from the current tree
-
+        - update_checks: updates the checks of the tree from an item
+        - set_module_view: sets if a module has to be enabled or disabled in
+          the process library
+        - recursive_checks: checks/unchecks all child items
+        - recursive_checks_from_child: checks/unchecks all parent items
+        - generate_tree: generates the package tree
+        - fill_item: fills the items of the tree recursively
     """
-    item_library_clicked = QtCore.Signal(str)
 
-    def __init__(self, d):
-        super(ProcessLibrary, self).__init__()
-        self.load_dictionary(d)
-
-    def load_dictionary(self, d):
+    def __init__(self, package_tree, paths):
         """
-        Loads a dictionary to the tree
+        Initialization of the PackageLibrary widget
 
-        :param d: dictionary to load. See the packages attribut in the
-          ProcessLibraryWidget class.
+        :param package_tree: representation of the packages as a tree-dictionary
+        :param paths: list of paths to add to the system to import the packages
         """
-        self.dictionary = d
-        self._nodes = node_structure_from_dict(d)
-        self._model = DictionaryTreeModel(self._nodes)
-        self.setModel(self._model)
-        self.expandAll()
+        super(PackageLibrary, self).__init__()
 
-    def to_dict(self):
+        self.itemChanged.connect(self.update_checks)
+        self.package_tree = package_tree
+        self.paths = paths
+        self.generate_tree()
+        self.setAlternatingRowColors(True)
+        self.setHeaderLabel("Packages")
+
+    def update_checks(self, item, column):
         """
-        Returns a dictionary from the current tree
+        Updates the checks of the tree from an item
 
-        :return: the dictionary
+        :param item: item on which to begin
+        :param column: column from the check (should always be 0)
         """
-        return self._model.to_dict()
+        # Checked state is stored on column 0
+        if column == 0:
+            self.itemChanged.disconnect()
+            if item.childCount():
+                self.recursive_checks(item)
+            if item.parent():
+                self.recursive_checks_from_child(item)
 
-    def mousePressEvent(self, event):
-        idx = self.indexAt(event.pos())
-        # print('idx',dir(idx.model()))
-        if idx.isValid:
-            model = idx.model()
-            idx = idx.sibling(idx.row(), 0)
-            node = idx.internalPointer()
-            if node is not None:
-                txt = node.data(idx.column())
-                path = txt.encode()
-                # print('dictionary ',path.decode('utf8'))
-                self.item_library_clicked.emit(path.decode('utf8'))
-                # self.item_library_clicked.emit(model.itemData(idx)[0])
+            self.itemChanged.connect(self.update_checks)
 
-        return QTreeView.mousePressEvent(self, event)
+    def set_module_view(self, item, state):
+        """
+        Sets if a module has to be enabled or disabled in the process library
+
+        :param item: item selected in the current tree
+        :param state: checked or not checked (Qt.Checked == 2.
+          So if val == 2 -> checkbox is checked, and if val == 0 -> checkbox
+          is not checked)
+        :pkg_iter: dictionary where keys are the name of a module (brick)
+            and values are 'process_enabled' or 'process_disabled'.
+            Key can be a submodule. In this case the value is a dictionary
+            where keys are the name of a module (brick) and values are 'process
+            enabled'
+            or 'process_disabled'. etc. pkg_iter take only the modules
+            concerning the top
+            package where a change of status where done.
+        """
+        if state == Qt.Checked:
+            val = 'process_enabled'
+        else:
+            val = 'process_disabled'
+
+        list_path = []
+        list_path.append(item.text(0))
+        self.top_level_items = [self.topLevelItem(i) for i in
+                                range(self.topLevelItemCount())]
+
+        while item not in self.top_level_items:
+            item = item.parent()
+            list_path.append(item.text(0))
+
+        pkg_iter = self.package_tree
+        list_path = list(reversed(list_path))
+        for element in list_path:
+            if element in pkg_iter.keys():
+                if element is list_path[-1]:
+                    pkg_iter[element] = val
+                else:
+                    pkg_iter = pkg_iter[element]
+            else:
+                print('Package not found')
+                break
+
+    def recursive_checks(self, parent):
+        """
+        Checks/unchecks all child items
+
+        :param parent: parent item
+        """
+        check_state = parent.checkState(0)
+
+        if parent.childCount() == 0:
+            self.set_module_view(parent, check_state)
+
+        for i in range(parent.childCount()):
+            parent.child(i).setCheckState(0, check_state)
+            self.recursive_checks(parent.child(i))
+
+    def recursive_checks_from_child(self, child):
+        """
+        Checks/unchecks all parent items
+
+        :param child: child item
+        """
+        check_state = child.checkState(0)
+
+        if child.childCount() == 0:
+            self.set_module_view(child, check_state)
+
+        if child.parent():
+            parent = child.parent()
+            if child.checkState(0) == Qt.Checked:
+                if parent.checkState(0) == Qt.Unchecked:
+                    parent.setCheckState(0, Qt.Checked)
+                    self.recursive_checks_from_child(parent)
+            else:
+                # checked_children = []
+                # for child in range(parent.childCount()):
+                #
+                #     if child.checkState(0) == Qt.Checked:
+                #         checked_children.append()
+
+                checked_children = [child for child in
+                                    range(parent.childCount())
+                                    if parent.child(child).checkState(
+                        0) == Qt.Checked]
+                if not checked_children:
+                    parent.setCheckState(0, Qt.Unchecked)
+                    self.recursive_checks_from_child(parent)
+
+    def generate_tree(self):
+        """
+        Generates the package tree
+
+        """
+        self.itemChanged.disconnect()
+        self.clear()
+        self.fill_item(self.invisibleRootItem(), self.package_tree)
+        self.itemChanged.connect(self.update_checks)
+
+    def fill_item(self, item, value):
+        """
+        Fills the items of the tree recursively
+
+        :param item: current item to fill
+        :param value: value of the item in the tree
+        """
+        item.setExpanded(True)
+
+        if type(value) is dict:
+            for key, val in sorted(value.items()):
+                child = QTreeWidgetItem()
+                child.setText(0, str(key))
+                item.addChild(child)
+                if type(val) is dict:
+                    self.fill_item(child, val)
+                else:
+                    if val == 'process_enabled':
+                        child.setCheckState(0, Qt.Checked)
+                        self.recursive_checks_from_child(child)
+                    elif val == 'process_disabled':
+                        child.setCheckState(0, Qt.Unchecked)
+
+        elif type(value) is list:
+            for val in value:
+                child = QTreeWidgetItem()
+                item.addChild(child)
+                if type(val) is dict:
+                    child.setText(0, '[dict]')
+                    self.fill_item(child, val)
+                elif type(val) is list:
+                    child.setText(0, '[list]')
+                    self.fill_item(child, val)
+                else:
+                    child.setText(0, str(val))
+
+                child.setExpanded(True)
+
+        else:
+            child = QTreeWidgetItem()
+            child.setText(0, str(value))
+            item.addChild(child)
 
 
 class PackageLibraryDialog(QDialog):
@@ -1105,6 +1681,76 @@ class PackageLibraryDialog(QDialog):
         self.close()
 
 
+class ProcessHelp(QWidget):
+    ''' A widget that displays information about the selected process.
+    '''
+
+    def __init__(self, process):
+        """ Generate the help.
+        """
+        super(ProcessHelp, self).__init__()
+
+        label = QLabel()
+        label.setText(process.help())
+
+
+class ProcessLibrary(QTreeView):
+    """
+    Tree to display the available Capsul's processes
+
+    Attributes:
+        - dictionary: dictionary corresponding to the tree
+        - _model: model used
+
+    Methods:
+        - load_dictionary: loads a dictionary to the tree
+        - to_dict: returns a dictionary from the current tree
+
+    """
+    item_library_clicked = QtCore.Signal(str)
+
+    def __init__(self, d):
+        super(ProcessLibrary, self).__init__()
+        self.load_dictionary(d)
+
+    def load_dictionary(self, d):
+        """
+        Loads a dictionary to the tree
+
+        :param d: dictionary to load. See the packages attribut in the
+          ProcessLibraryWidget class.
+        """
+        self.dictionary = d
+        self._nodes = node_structure_from_dict(d)
+        self._model = DictionaryTreeModel(self._nodes)
+        self.setModel(self._model)
+        self.expandAll()
+
+    def to_dict(self):
+        """
+        Returns a dictionary from the current tree
+
+        :return: the dictionary
+        """
+        return self._model.to_dict()
+
+    def mousePressEvent(self, event):
+        idx = self.indexAt(event.pos())
+        # print('idx',dir(idx.model()))
+        if idx.isValid:
+            model = idx.model()
+            idx = idx.sibling(idx.row(), 0)
+            node = idx.internalPointer()
+            if node is not None:
+                txt = node.data(idx.column())
+                path = txt.encode()
+                # print('dictionary ',path.decode('utf8'))
+                self.item_library_clicked.emit(path.decode('utf8'))
+                # self.item_library_clicked.emit(model.itemData(idx)[0])
+
+        return QTreeView.mousePressEvent(self, event)
+
+
 def import_file(full_name, path):
     """
     Import a python module from a path. 3.4+ only.
@@ -1124,695 +1770,51 @@ def import_file(full_name, path):
     return mod
 
 
-class FileFilterProxyModel(QSortFilterProxyModel):
-    """Just a test for the moment. Should be useful to use in
-       the file dialog. """
+def node_structure_from_dict(datadict, parent=None, root_node=None):
+    """Return a hierarchical node stucture required by the TreeModel"""
+    if not parent:
+        root_node = Node('Root')
+        parent = root_node
 
-    def __init__(self):
-        super(FileFilterProxyModel, self).__init__()
+    for name, data in sorted(datadict.items()):
 
-    def filterAcceptsRow(self, source_row, source_parent):
-        source_model = self.sourceModel()
-        index0 = source_model.index(source_row, 0, source_parent)
-        # Always show directories
-        if source_model.isDir(index0):
-            return True
-        # filter files
-        filename = source_model.fileName(index0)
-        #       filename=self.sourceModel().index(row,0,parent).data().lower()
-        # return True
-        if filename.count(".py") + filename.count(".xml") == 0:
-            return False
-        else:
-            return True
+        if isinstance(data, dict):
 
-    # def flags(self, index):
-    #     flags = super(FileFilterProxyModel, self).flags(index)
-    #     source_model = self.sourceModel()
-    #     if source_model.isDir(index):
-    #         flags |= Qt.ItemIsSelectable
-    #         return flags
-    #
-    #     # filter files
-    #     filename = source_model.fileName(index)
-    #
-    #     if filename.count(".py") + filename.count(".xml") == 0:
-    #         flags &= ~Qt.ItemIsSelectable
-    #         return flags
-    #     else:
-    #         flags |= Qt.ItemIsSelectable
-    #         return flags
+            if True in [True for value in data.values() if
+                        value == 'process_enabled']:
+                list_name = [value for value in data.values() if
+                             value == 'process_enabled']
 
-
-class PackageLibrary(QTreeWidget):
-    """
-    Tree that displays the user-added packages and their modules
-    The user can check or not each module/package
-
-    Methods:
-        - update_checks: updates the checks of the tree from an item
-        - set_module_view: sets if a module has to be enabled or disabled in
-          the process library
-        - recursive_checks: checks/unchecks all child items
-        - recursive_checks_from_child: checks/unchecks all parent items
-        - generate_tree: generates the package tree
-        - fill_item: fills the items of the tree recursively
-    """
-
-    def __init__(self, package_tree, paths):
-        """
-        Initialization of the PackageLibrary widget
-
-        :param package_tree: representation of the packages as a tree-dictionary
-        :param paths: list of paths to add to the system to import the packages
-        """
-        super(PackageLibrary, self).__init__()
-
-        self.itemChanged.connect(self.update_checks)
-        self.package_tree = package_tree
-        self.paths = paths
-        self.generate_tree()
-        self.setAlternatingRowColors(True)
-        self.setHeaderLabel("Packages")
-
-    def update_checks(self, item, column):
-        """
-        Updates the checks of the tree from an item
-
-        :param item: item on which to begin
-        :param column: column from the check (should always be 0)
-        """
-        # Checked state is stored on column 0
-        if column == 0:
-            self.itemChanged.disconnect()
-            if item.childCount():
-                self.recursive_checks(item)
-            if item.parent():
-                self.recursive_checks_from_child(item)
-
-            self.itemChanged.connect(self.update_checks)
-
-    def set_module_view(self, item, state):
-        """
-        Sets if a module has to be enabled or disabled in the process library
-
-        :param item: item selected in the current tree
-        :param state: checked or not checked (Qt.Checked == 2.
-          So if val == 2 -> checkbox is checked, and if val == 0 -> checkbox
-          is not checked)
-        :pkg_iter: dictionary where keys are the name of a module (brick)
-            and values are 'process_enabled' or 'process_disabled'.
-            Key can be a submodule. In this case the value is a dictionary
-            where keys are the name of a module (brick) and values are 'process
-            enabled'
-            or 'process_disabled'. etc. pkg_iter take only the modules
-            concerning the top
-            package where a change of status where done.
-        """
-        if state == Qt.Checked:
-            val = 'process_enabled'
-        else:
-            val = 'process_disabled'
-
-        list_path = []
-        list_path.append(item.text(0))
-        self.top_level_items = [self.topLevelItem(i) for i in
-                                range(self.topLevelItemCount())]
-
-        while item not in self.top_level_items:
-            item = item.parent()
-            list_path.append(item.text(0))
-
-        pkg_iter = self.package_tree
-        list_path = list(reversed(list_path))
-        for element in list_path:
-            if element in pkg_iter.keys():
-                if element is list_path[-1]:
-                    pkg_iter[element] = val
-                else:
-                    pkg_iter = pkg_iter[element]
             else:
-                print('Package not found')
-                break
 
-    def recursive_checks(self, parent):
-        """
-        Checks/unchecks all child items
+                list_name = []
+                list_values = [value for value in data.values() if
+                               isinstance(value, dict)]
 
-        :param parent: parent item
-        """
-        check_state = parent.checkState(0)
+                while (list_values):
+                    value = list_values.pop()
 
-        if parent.childCount() == 0:
-            self.set_module_view(parent, check_state)
+                    for i in value.values():
 
-        for i in range(parent.childCount()):
-            parent.child(i).setCheckState(0, check_state)
-            self.recursive_checks(parent.child(i))
+                        if not isinstance(i, dict):
+                            list_name.append(i)
 
-    def recursive_checks_from_child(self, child):
-        """
-        Checks/unchecks all parent items
+                    list_values = list_values + [i for i in value.values() if
+                                                 isinstance(i, dict)]
 
-        :param child: child item
-        """
-        check_state = child.checkState(0)
+            # if not list_name: list_name = [i for i in data.values()]
 
-        if child.childCount() == 0:
-            self.set_module_view(child, check_state)
+            if (all(item == 'process_disabled' for item in list_name)):
+                continue
 
-        if child.parent():
-            parent = child.parent()
-            if child.checkState(0) == Qt.Checked:
-                if parent.checkState(0) == Qt.Unchecked:
-                    parent.setCheckState(0, Qt.Checked)
-                    self.recursive_checks_from_child(parent)
-            else:
-                # checked_children = []
-                # for child in range(parent.childCount()):
-                #
-                #     if child.checkState(0) == Qt.Checked:
-                #         checked_children.append()
+            node = Node(name, parent)
+            node = node_structure_from_dict(data, node, root_node)
 
-                checked_children = [child for child in
-                                    range(parent.childCount())
-                                    if parent.child(child).checkState(
-                        0) == Qt.Checked]
-                if not checked_children:
-                    parent.setCheckState(0, Qt.Unchecked)
-                    self.recursive_checks_from_child(parent)
+        elif data == 'process_enabled':
+            node = Node(name, parent)
+            node.value = data
 
-    def generate_tree(self):
-        """
-        Generates the package tree
-
-        """
-        self.itemChanged.disconnect()
-        self.clear()
-        self.fill_item(self.invisibleRootItem(), self.package_tree)
-        self.itemChanged.connect(self.update_checks)
-
-    def fill_item(self, item, value):
-        """
-        Fills the items of the tree recursively
-
-        :param item: current item to fill
-        :param value: value of the item in the tree
-        """
-        item.setExpanded(True)
-
-        if type(value) is dict:
-            for key, val in sorted(value.items()):
-                child = QTreeWidgetItem()
-                child.setText(0, str(key))
-                item.addChild(child)
-                if type(val) is dict:
-                    self.fill_item(child, val)
-                else:
-                    if val == 'process_enabled':
-                        child.setCheckState(0, Qt.Checked)
-                        self.recursive_checks_from_child(child)
-                    elif val == 'process_disabled':
-                        child.setCheckState(0, Qt.Unchecked)
-
-        elif type(value) is list:
-            for val in value:
-                child = QTreeWidgetItem()
-                item.addChild(child)
-                if type(val) is dict:
-                    child.setText(0, '[dict]')
-                    self.fill_item(child, val)
-                elif type(val) is list:
-                    child.setText(0, '[list]')
-                    self.fill_item(child, val)
-                else:
-                    child.setText(0, str(val))
-
-                child.setExpanded(True)
-
-        else:
-            child = QTreeWidgetItem()
-            child.setText(0, str(value))
-            item.addChild(child)
-
-
-class ProcessHelp(QWidget):
-    ''' A widget that displays information about the selected process.
-    '''
-
-    def __init__(self, process):
-        """ Generate the help.
-        """
-        super(ProcessHelp, self).__init__()
-
-        label = QLabel()
-        label.setText(process.help())
-
-
-class InstallProcesses(QDialog):
-    """A widget that allows to browse a Python package or a zip file to install
-       the processes that it is containing.
-
-    Methods:
-        - get_filename: opens a file dialog to get the folder or zip file to
-          install
-        - install: installs the selected file/folder on Populse_MIA
-    """
-
-    process_installed = Signal()
-
-    def __init__(self, main_window, folder):
-        super(InstallProcesses, self).__init__(parent=main_window)
-
-        self.setWindowTitle('Install processes')
-
-        v_layout = QVBoxLayout()
-        self.setLayout(v_layout)
-
-        if folder is False:
-            label_text = 'Choose zip file containing Python packages'
-
-        elif folder is True:
-            label_text = 'Choose folder containing Python packages'
-
-        v_layout.addWidget(QLabel(label_text))
-
-        edit_layout = QHBoxLayout()
-        v_layout.addLayout(edit_layout)
-
-        self.path_edit = QLineEdit()
-        edit_layout.addWidget(self.path_edit)
-        self.browser_button = QPushButton('Browse')
-        edit_layout.addWidget(self.browser_button)
-
-        bottom_layout = QHBoxLayout()
-        v_layout.addLayout(bottom_layout)
-
-        install_button = QPushButton('Install package')
-        bottom_layout.addWidget(install_button)
-
-        quit_button = QPushButton('Quit')
-        bottom_layout.addWidget(quit_button)
-
-        install_button.clicked.connect(self.install)
-        quit_button.clicked.connect(self.close)
-        self.browser_button.clicked.connect(
-            lambda: self.get_filename(folder=folder))
-
-    def get_filename(self, folder):
-        """
-        Opens a file dialog to get the folder or zip file to install
-
-        :param folder: True if the dialog installs from folder,
-          False if from zip file
-        """
-        if folder is True:
-            filename = QFileDialog.getExistingDirectory(
-                self, caption='Select a directory',
-                directory=os.path.expanduser("~"),
-                options=QFileDialog.ShowDirsOnly)
-
-        elif folder is False:
-            filename = QFileDialog.getOpenFileName(
-                caption='Select a zip file',
-                directory=os.path.expanduser("~"),
-                filter='Compatible files (*.zip)')
-
-        if filename and isinstance(filename, str):
-            self.path_edit.setText(filename)
-
-        elif filename and isinstance(filename, tuple):
-            self.path_edit.setText(filename[0])
-
-    def install(self):
-        """
-        Installs the selected file/folder on Populse_MIA
-        """
-
-        def add_package(proc_dic, module_name):
-            """
-            Adds a package and its modules to the package tree
-
-            :param proc_dic: the process tree-dictionary
-            :param module_name: name of the module
-            :return: proc_dic: the modified process tree-dictionary
-            """
-            if module_name:
-
-                # Reloading the package
-                if module_name in sys.modules.keys():
-                    del sys.modules[module_name]
-
-                try:
-                    __import__(module_name)
-
-                except ImportError as er:
-                    msg = QMessageBox()
-                    msg.setIcon(QMessageBox.Critical)
-                    msg.setText(('During the installation of {0}, '
-                                 'the folllowing exception was raised:'
-                                 '\n{1}: {2}.\nThis exception maybe '
-                                 'prevented the installation ...').format(
-                        module_name, er.__class__, er))
-                    msg.setWindowTitle("Warning")
-                    msg.setStandardButtons(QMessageBox.Ok)
-                    msg.buttonClicked.connect(msg.close)
-                    msg.exec()
-                    raise ImportError(
-                        'The {0} brick may not been installed'.format(
-                            module_name))
-
-                pkg = sys.modules[module_name]
-
-                # Checking if there are subpackages
-                for importer, modname, ispkg in pkgutil.iter_modules(
-                        pkg.__path__):
-                    if ispkg:
-                        add_package(proc_dic, str(module_name + '.' + modname))
-
-                for k, v in sorted(list(pkg.__dict__.items())):
-                    # Checking each class of in the package
-                    if inspect.isclass(v):
-
-                        try:
-                            print('\n Installing %s.%s ...' % (
-                            module_name, v.__name__))
-                            get_process_instance(
-                                '%s.%s' % (module_name, v.__name__))
-
-                        except Exception:
-                            print(traceback.format_exc())
-                            # TODO: WHICH TYPE OF EXCEPTION?
-                            # pass
-
-                        else:
-                            # Updating the tree's dictionnary
-                            path_list = module_name.split('.')
-                            path_list.append(k)
-                            pkg_iter = proc_dic
-
-                            for element in path_list:
-
-                                if element in pkg_iter.keys():
-                                    pkg_iter = pkg_iter[element]
-
-                                else:
-
-                                    if element is path_list[-1]:
-                                        pkg_iter[element] = 'process_enabled'
-
-                                    else:
-                                        pkg_iter[element] = {}
-                                        pkg_iter = pkg_iter[element]
-
-                return proc_dic
-
-        def change_pattern_in_folder(path, old_pattern, new_pattern):
-            """Changing all "old_pattern" pattern to "new_pattern" in the "path"
-              folder
-            :param path: path of the extracted or copied processes
-            :param old_pattern: old pattern
-            :param new_pattern: new pattern
-            :return:
-            """
-            for dname, dirs, files in os.walk(path):
-
-                for fname in files:
-                    # Modifying only .py files (pipelines are saved with
-                    # this extension)
-
-                    if fname[-2:] == 'py':
-                        fpath = os.path.join(dname, fname)
-
-                        with open(fpath) as f:
-                            s = f.read()
-
-                        s = s.replace(old_pattern + '.', new_pattern + '.')
-
-                        with open(fpath, "w") as f:
-                            f.write(s)
-
-        filename = self.path_edit.text()
-        config = Config()
-
-        if not os.path.isdir(filename):
-
-            if not os.path.isfile(filename):
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText("The specified file cannot be found")
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
-                return
-
-            if os.path.splitext(filename)[1] != ".zip":
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText("The specified file has to be a .zip file")
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
-                return
-
-        try:
-
-            if os.path.abspath(os.path.join(config.get_mia_path(),
-                                            'processes')) not in sys.path:
-                sys.path.append(os.path.abspath(
-                    os.path.join(config.get_mia_path(),
-                                 'processes')))
-
-            # Process config update
-            if not os.path.isfile(os.path.join(config.get_mia_path(),
-                                               'properties',
-                                               'process_config.yml')):
-                open(os.path.join(config.get_mia_path(),
-                                  'properties',
-                                  'process_config.yml'), 'a').close()
-
-            with open(os.path.join(config.get_mia_path(),
-                                   'properties',
-                                   'process_config.yml'), 'r') as stream:
-
-                try:
-                    if verCmp(yaml.__version__, '5.1', 'sup'):
-                        process_dic = yaml.load(stream,
-                                                Loader=yaml.FullLoader)
-                    else:
-                        process_dic = yaml.load(stream)
-
-                except yaml.YAMLError as exc:
-                    process_dic = {}
-                    print(exc)
-
-            if process_dic is None:
-                process_dic = {}
-
-            # Copying the original process tree
-            from copy import copy
-            process_dic_orig = copy(process_dic)
-
-            try:
-                packages = process_dic["Packages"]
-            except KeyError:
-                packages = {}
-            except TypeError:
-                packages = {}
-
-            try:
-                paths = process_dic["Paths"]
-            except KeyError:
-                paths = []
-            except TypeError:
-                paths = []
-
-            # Saving all the install packages names and checking if
-            # the MIA_processes are updated
-            package_names = []
-            mia_processes_not_found = True
-
-            # packages_already: packages already installed in populse_
-            # mia (populse_mia/processes)
-            packages_already = [dire for dire in os.listdir(
-                os.path.join(config.get_mia_path(), 'processes'))
-                                if not os.path.isfile(
-                    os.path.join(config.get_mia_path(), 'processes', dire))]
-
-            if is_zipfile(filename):
-                # Extraction of the zipped content
-                with ZipFile(filename, 'r') as zip_ref:
-                    packages_name = [member.split(os.sep)[0] for member in
-                                     zip_ref.namelist()
-                                     if (len(member.split(os.sep)) is 2 and not
-                        member.split(os.sep)[-1])]
-
-            elif os.path.isdir(
-                    filename):  # !!! careful: if filename is not a zip file,
-                # filename must be a directory
-                # that contains only the package(s) to install!!!
-                packages_name = [os.path.basename(filename)]
-
-            for package_name in packages_name:
-                # package_name: package(s) in the zip file or in folder
-
-                if (package_name not in packages_already) or (
-                        package_name == 'mia_processes'):
-                    # Copy MIA_processes in a temporary folder
-                    if mia_processes_not_found:
-
-                        if (package_name == "mia_processes") and (
-                                os.path.exists(
-                                    os.path.join(config.get_mia_path(),
-                                                 'processes',
-                                                 'mia_processes'))):
-                            mia_processes_not_found = False
-                            tmp_folder4MIA = tempfile.mkdtemp()
-                            shutil.copytree(os.path.join(config.get_mia_path(),
-                                                         'processes',
-                                                         'mia_processes'),
-                                            os.path.join(tmp_folder4MIA,
-                                                         'MIA_processes'))
-
-                    if is_zipfile(filename):
-
-                        with ZipFile(filename, 'r') as zip_ref:
-                            members_to_extract = [member for member in
-                                                  zip_ref.namelist()
-                                                  if member.startswith(
-                                    package_name)]
-                            zip_ref.extractall(
-                                os.path.join(config.get_mia_path(),
-                                             'processes'), members_to_extract)
-
-                    elif os.path.isdir(filename):
-                        distutils.dir_util.copy_tree(os.path.join(filename),
-                                                     os.path.join(
-                                                         config.get_mia_path(),
-                                                         'processes',
-                                                         package_name))
-
-                else:
-                    date = datetime.now().strftime("%Y%m%d%H%M%S")
-
-                    if is_zipfile(filename):
-
-                        with ZipFile(filename, 'r') as zip_ref:
-                            temp_dir = tempfile.mkdtemp()
-                            members_to_extract = [member for member in
-                                                  zip_ref.namelist()
-                                                  if member.startswith(
-                                    package_name)]
-                            zip_ref.extractall(temp_dir, members_to_extract)
-                            shutil.move(os.path.join(temp_dir, package_name),
-                                        os.path.join(config.get_mia_path(),
-                                                     'processes',
-                                                     package_name + '_' + date))
-
-                    elif os.path.isdir(filename):
-                        shutil.copytree(os.path.join(filename),
-                                        os.path.join(config.get_mia_path(),
-                                                     'processes',
-                                                     package_name + '_' + date))
-
-                    original_package_name = package_name
-                    package_name = package_name + '_' + date
-
-                    # Replacing the original package name pattern in
-                    # all the extracted files by the package name
-                    # with the date
-                    change_pattern_in_folder(
-                        os.path.join(config.get_mia_path(), 'processes',
-                                     package_name),
-                        original_package_name, package_name)
-
-                package_names.append(package_name)
-                # package_names contains all the extracted packages
-                final_package_dic = add_package(packages, package_name)
-
-            if not os.path.abspath(
-                    os.path.join(config.get_mia_path(), 'processes')) in paths:
-                paths.append(os.path.abspath(
-                    os.path.join(config.get_mia_path(), 'processes')))
-
-            process_dic["Packages"] = final_package_dic
-            process_dic["Paths"] = paths
-
-            # Idea: Should we encrypt the path ?
-
-            with open(os.path.join(config.get_mia_path(), 'properties',
-                                   'process_config.yml'), 'w',
-                      encoding='utf8') as stream:
-                yaml.dump(process_dic, stream, default_flow_style=False,
-                          allow_unicode=True)
-
-            self.process_installed.emit()
-
-            # Cleaning the temporary folder
-            if 'tmp_folder4MIA' in locals():
-                shutil.rmtree(tmp_folder4MIA)
-
-            if 'temp_dir' in locals():
-                shutil.rmtree(temp_dir)
-
-        except Exception as e:
-            # Don't know which kind of exception can be raised yet
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText(
-                '{0}: {1}\nInstallation aborted ... !'.format(e.__class__, e))
-            msg.setWindowTitle("Warning")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
-
-            # Resetting process_config.yml
-            if process_dic_orig is None:
-                process_dic_orig = {}
-
-            with open(os.path.join(config.get_mia_path(),
-                                   'properties',
-                                   'process_config.yml'),
-                      'w', encoding='utf8') as stream:
-                yaml.dump(process_dic_orig, stream, default_flow_style=False,
-                          allow_unicode=True)
-
-            # Deleting the extracted files
-            if package_names is None:
-                package_names = []
-
-            for package_name in package_names:
-                if os.path.exists(
-                        os.path.join(config.get_mia_path(), 'processes',
-                                     package_name)):
-                    shutil.rmtree(
-                        os.path.join(config.get_mia_path(), 'processes',
-                                     package_name))
-
-            # If the error comes from a MIA_process update,
-            # the old version is restored
-            if not mia_processes_not_found:
-                distutils.dir_util.copy_tree(
-                    os.path.join(tmp_folder4MIA, 'mia_processes'),
-                    os.path.join(config.get_mia_path(), 'processes',
-                                 'mia_processes'))
-
-            if 'tmp_folder4MIA' in locals():
-                shutil.rmtree(tmp_folder4MIA)
-
-            if 'temp_dir' in locals():
-                shutil.rmtree(temp_dir)
-
-        else:
-            msg = QMessageBox()
-            msg.setWindowTitle("Installation completed")
-            msg.setText("The package {0} has been correctly installed.".format(
-                package_name))
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.buttonClicked.connect(msg.close)
-            msg.exec()
+    return root_node
 
 
 if __name__ == "__main__":

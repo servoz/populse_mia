@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- #
 """
+Module that execute the pipeline manager tab menu actions
+and allow to edit graphically a pipeline.
 
 Contains:
     Class:
