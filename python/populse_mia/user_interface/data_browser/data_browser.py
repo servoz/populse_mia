@@ -44,7 +44,8 @@ from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.user_interface.data_browser.mini_viewer import MiniViewer
 from populse_mia.user_interface.pop_ups import (
     PopUpMultipleSort, PopUpProperties, PopUpShowBrick, PopUpAddPath,
-    PopUpAddTag, PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter)
+    PopUpAddTag, PopUpCloneTag, PopUpRemoveTag, PopUpSelectFilter,
+    PopUpRemoveScan)
 from populse_mia.user_interface.pop_ups import (
     PopUpDataBrowserCurrentSelection)
 from populse_mia.utils.tools import ClickableLabel
@@ -112,6 +113,7 @@ class DataBrowser(QWidget):
 
         self.project = project
         self.main_window = main_window
+        self.data_sent = False
 
         super(DataBrowser, self).__init__()
 
@@ -1738,7 +1740,9 @@ class TableDataBrowser(QTableWidget):
         history_maker.append("remove_scans")
         scans_removed = []
         values_removed = []
-
+        scan_list = self.data_browser.main_window.pipeline_manager.scan_list
+        repeat_pop_up = False
+        cancel = False
         for point in points:
             row = point.row()
             scan_path = self.item(row, 0).text()
@@ -1747,6 +1751,15 @@ class TableDataBrowser(QTableWidget):
                 COLLECTION_CURRENT, scan_path)
 
             if scan_object is not None:
+                if scan_path in scan_list and self.data_browser.data_sent is\
+                        True:
+                    if not repeat_pop_up:
+                        self.pop = PopUpRemoveScan(scan_path, len(points))
+                        self.pop.exec()
+                        cancel = self.pop.stop
+                        repeat_pop_up = self.pop.repeat
+                    if cancel:
+                        continue
                 scans_removed.append(scan_object)
 
                 # Adding removed values to history

@@ -533,7 +533,7 @@ class MainWindow(QMainWindow):
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.get_filename(file_name)
                 file_name = self.exPopup.relative_path
-
+                self.data_browser.data_sent = False
                 self.switch_project(file_name, self.exPopup.name)
                 # We switch the project
 
@@ -989,11 +989,20 @@ class MainWindow(QMainWindow):
                     self.data_browser.table_data.scans_to_visualize
                 self.data_browser.advanced_search.show_search()
                 self.data_browser.advanced_search.apply_filter(
-                    self.project.currentFilter)
+                     self.project.currentFilter)
 
         elif self.tabs.tabText(
                 self.tabs.currentIndex()).replace("&",
                                                   "", 1) == 'Pipeline Manager':
+            if self.data_browser.data_sent is False:
+                filter = self.data_browser.table_data.get_current_filter()
+                self.pipeline_manager.scan_list = filter
+                self.pipeline_manager.nodeController.scan_list = filter
+                self.pipeline_manager.pipelineEditorTabs.scan_list = filter
+            self.pipeline_manager.pipelineEditorTabs.update_scans_list()
+            if self.pipeline_manager.iterationTable.iterated_tag:
+                self.pipeline_manager.iterationTable.update_iterated_tag()
+
             # Pipeline Manager
             # The pending modifications must be saved before
             # working with pipelines (auto_commit)

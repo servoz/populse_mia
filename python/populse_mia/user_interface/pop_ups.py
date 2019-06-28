@@ -1,3 +1,38 @@
+# -*- coding: utf-8 -*- #
+""" Module that defines all the pop-ups used across the software
+
+:Contains:
+    :Class:
+        - PopUpAddPath
+        - DefaultValueListCreation
+        - DefaultValueQLineEdit
+        - PopUpAddTag
+        - PopUpCloneTag
+        - PopUpClosePipeline
+        - PopUpDeletedProject
+        - PopUpDataBrowserCurrentSelection
+        - PopUpFilterSelection
+        - PopUpInformation
+        - PopUpMultipleSort
+        - PopUpNewProject
+        - PopUpOpenProject
+        - PopUpPreferences
+        - PopUpProperties
+        - PopUpQuit
+        - PopUpRemoveScan
+        - PopUpRemoveTag
+        - PopUpSaveProjectAs
+        - PopUpSeeAllProjects
+        - PopUpSelectFilter
+        - PopUpSelectIteration
+        - PopUpTagSelection
+        - PopUpSelectTag
+        - PopUpSelectTagCountTable
+        - PopUpShowBrick
+        - PopUpVisualizedTags
+
+"""
+
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018
 # Distributed under the terms of the CeCILL license, as published by
@@ -49,13 +84,80 @@ from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import check_value_type
 
 
+class PopUpRemoveScan(QDialog):
+    """
+    Is called when the user wants to remove a scan that was previously sent
+    to the pipeline manager.
+
+    :param scan: The scan that may be removed
+    :param size: The number of scan the user wants to remove
+    """
+    def __init__(self, scan, size):
+        super().__init__()
+
+        self.setWindowTitle("The document exists in the pipeline manager")
+        self.stop = False
+        self.repeat = False
+        label = QLabel(self)
+        label.setText('The document ' + scan + '\nwas previously sent to the '
+                                               'pipeline manager, do you '
+                                               'really want to delete it ?')
+
+        push_button_yes = QPushButton("Ok", self)
+        push_button_cancel = QPushButton("No", self)
+        if size > 1:
+            push_button_yes_all = QPushButton("Ok to all", self)
+            push_button_no_all = QPushButton("No to all", self)
+
+
+        hbox = QHBoxLayout()
+        hbox.addStretch(1)
+        hbox.addWidget(push_button_yes)
+        hbox.addWidget(push_button_cancel)
+        if size > 1:
+            hbox.addWidget(push_button_yes_all)
+            hbox.addWidget(push_button_no_all)
+
+        hbox.addStretch(1)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(label)
+        vbox.addLayout(hbox)
+        self.setLayout(vbox)
+
+        push_button_yes.clicked.connect(self.yes_clicked)
+        push_button_cancel.clicked.connect(self.cancel_clicked)
+        if size > 1:
+            push_button_yes_all.clicked.connect(self.yes_all_clicked)
+            push_button_no_all.clicked.connect(self.no_all_clicked)
+
+    def cancel_clicked(self):
+        self.stop = True
+        self.repeat = False
+        self.close()
+
+    def no_all_clicked(self):
+        self.stop = True
+        self.repeat = True
+        self.close()
+
+    def yes_all_clicked(self):
+        self.stop = False
+        self.repeat = True
+        self.close()
+
+    def yes_clicked(self):
+        self.stop = False
+        self.repeat = False
+        self.close()
+
+
 class PopUpAddPath(QDialog):
     """Is called when the user wants to add a document to the project
        without importing from populse_mia.e MRI File Manager
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
 
     Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
@@ -194,9 +296,8 @@ class DefaultValueListCreation(QDialog):
     """
     Widget that is called when to create a list's default value
 
-    Attributes:
-        - type: type of the list (e.g. list of int, list of float, etc.)
-        - parent: the DefaultValueQLineEdit parent object
+    :param type: type of the list (e.g. list of int, list of float, etc.)
+    :param parent: the DefaultValueQLineEdit parent object
 
     Methods:
         - default_init_table: default init table when no previous value
@@ -427,10 +528,9 @@ class PopUpAddTag(QDialog):
     """
     Is called when the user wants to add a tag to the project
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
-        - type: type of the tag to add
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        :param type: type of the tag to add
 
     Methods:
         - on_activated: type updated
@@ -691,9 +791,8 @@ class PopUpCloneTag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
 
     Methods:
         - search_str: matches the searched pattern with the tags of the project
@@ -858,14 +957,13 @@ class PopUpClosePipeline(QDialog):
     """
     Is called when the user closes a pipeline editor that has been modified
 
-    Attributes:
-        - pipeline_name: name of the pipeline (basename)
-        - bool_save_as: boolean to True if the pipeline needs to be saved
-        - bool_exit: boolean to True if we can exit the editor
-        - save_as_signal: signal emitted to save the pipeline under another
-           name
-        - do_not_save_signal: signal emitted to close the editor
-        - cancel_signal: signal emitted to cancel the action
+    :param pipeline_name: name of the pipeline (basename)
+    :param bool_save_as: boolean to True if the pipeline needs to be saved
+    :param bool_exit: boolean to True if we can exit the editor
+    :param save_as_signal: signal emitted to save the pipeline under another
+       name
+    :param do_not_save_signal: signal emitted to close the editor
+    :param cancel_signal: signal emitted to cancel the action
 
     Methods:
         - save_as_clicked: makes the actions to save the pipeline
@@ -966,11 +1064,10 @@ class PopUpDataBrowserCurrentSelection(QDialog):
     """
     Is called to display the current data_browser selection
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
-        - filter: list of the current documents in the data browser
-        - main_window: main window of the software
+    :param project: current project in the software
+    :param databrowser: data browser instance of the software
+    :param filter: list of the current documents in the data browser
+    :param main_window: main window of the software
 
     Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
@@ -1018,6 +1115,9 @@ class PopUpDataBrowserCurrentSelection(QDialog):
             self.filter
         self.main_window.pipeline_manager.pipelineEditorTabs.scan_list = \
             self.filter
+        self.main_window.pipeline_manager.iterationTable.scan_list = \
+            self.filter
+        self.databrowser.data_sent = True
         self.close()
 
 

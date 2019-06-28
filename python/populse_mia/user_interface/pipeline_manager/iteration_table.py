@@ -285,7 +285,7 @@ class IterationTable(QWidget):
             self.fill_values(idx)
             self.update_table()
 
-    def update_iterated_tag(self, tag_name):
+    def update_iterated_tag(self, tag_name=None):
         """
         Update the widget when the iterated tag is modified
 
@@ -293,12 +293,16 @@ class IterationTable(QWidget):
         """
 
         if not self.scan_list:
-            self.scan_list = self.project.session.get_documents_names(
-                COLLECTION_CURRENT)
+            # self.scan_list = self.project.session.get_documents_names(
+            #     COLLECTION_CURRENT)
+            self.scan_list = self.main_window.pipeline_manager.scan_list
 
+        if not tag_name:
+            tag_name = self.iterated_tag
         self.iterated_tag_push_button.setText(tag_name)
         self.iterated_tag = tag_name
         self.iterated_tag_label.setText(tag_name + ":")
+
 
         # Update combo_box
         scans_names = self.project.session.get_documents_names(
