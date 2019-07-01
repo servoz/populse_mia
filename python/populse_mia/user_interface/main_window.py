@@ -995,10 +995,11 @@ class MainWindow(QMainWindow):
                 self.tabs.currentIndex()).replace("&",
                                                   "", 1) == 'Pipeline Manager':
             if self.data_browser.data_sent is False:
-                filter = self.data_browser.table_data.get_current_filter()
-                self.pipeline_manager.scan_list = filter
-                self.pipeline_manager.nodeController.scan_list = filter
-                self.pipeline_manager.pipelineEditorTabs.scan_list = filter
+                scans = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
+                self.pipeline_manager.scan_list = scans
+                self.pipeline_manager.nodeController.scan_list = scans
+                self.pipeline_manager.pipelineEditorTabs.scan_list = scans
             self.pipeline_manager.pipelineEditorTabs.update_scans_list()
             if self.pipeline_manager.iterationTable.iterated_tag:
                 self.pipeline_manager.iterationTable.update_iterated_tag()
