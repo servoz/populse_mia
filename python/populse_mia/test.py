@@ -2012,15 +2012,12 @@ class TestMIAPipelineManager(unittest.TestCase):
         iteration_table = self.main_window.pipeline_manager.iterationTable
         iteration_table.check_box_iterate.setChecked(True)
         iteration_table.update_iterated_tag("BandWidth")
-        print("combo_box text 1:")
         print(iteration_table.combo_box.currentText())
         self.assertEqual(iteration_table.iterated_tag_label.text(), "BandWidth:")
         iteration_table.add_tag()
-        print("combo_box text 2:")
         print(iteration_table.combo_box.currentText())
         self.assertEqual(len(iteration_table.push_buttons), 3)
         iteration_table.remove_tag()
-        print("combo_box text 3:")
         print(iteration_table.combo_box.currentText())
         self.assertEqual(len(iteration_table.push_buttons), 2)
         iteration_table.add_tag()
@@ -2028,7 +2025,6 @@ class TestMIAPipelineManager(unittest.TestCase):
         iteration_table.fill_values(2)
         iteration_table.update_table()
         # TODO : test orks on computer but not on Travis. Investiqate.
-        print("combo_box text 4:")
         print(iteration_table.combo_box.currentText())
         self.assertTrue(iteration_table.combo_box.currentText() in [
          "25000.0", "65789.48", "357142.84", "50000.0"])
