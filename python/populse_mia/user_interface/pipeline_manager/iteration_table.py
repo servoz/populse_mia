@@ -303,14 +303,11 @@ class IterationTable(QWidget):
         self.iterated_tag_push_button.setText(tag_name)
         self.iterated_tag = tag_name
         self.iterated_tag_label.setText(tag_name + ":")
-        print(tag_name)
 
         # Update combo_box
         scans_names = self.project.session.get_documents_names(
             COLLECTION_CURRENT)
-        print(scans_names)
         scans_names = list(set(scans_names).intersection(self.scan_list))
-        print(scans_names)
         # tag_values_list contains all the values that can take iterated tag
         self.tag_values_list = []
         for scan_name in scans_names:

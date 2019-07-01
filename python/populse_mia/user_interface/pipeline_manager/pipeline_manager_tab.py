@@ -117,7 +117,7 @@ class PipelineManagerTab(QWidget):
         # Necessary for using MIA bricks
         ProcessMIA.project = project
         self.project = project
-        if not scan_list:
+        if len(scan_list) < 1:
             self.scan_list = self.project.session.get_documents_names(
                 COLLECTION_CURRENT)
         else:

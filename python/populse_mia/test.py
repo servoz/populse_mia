@@ -2006,30 +2006,23 @@ class TestMIAPipelineManager(unittest.TestCase):
         """
         config = Config()
         mia_path = config.get_mia_path()
-        project_8_path = os.path.join(mia_path, 'resources', 'mia', 'project_8')
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
         self.main_window.switch_project(project_8_path, "project_8")
 
         iteration_table = self.main_window.pipeline_manager.iterationTable
         iteration_table.check_box_iterate.setChecked(True)
         iteration_table.update_iterated_tag("BandWidth")
-        print("combo_box text 1:")
-        print(iteration_table.combo_box.currentText())
-        self.assertEqual(iteration_table.iterated_tag_label.text(), "BandWidth:")
+        self.assertEqual(iteration_table.iterated_tag_label.text(),
+                         "BandWidth:")
         iteration_table.add_tag()
-        print("combo_box text 2:")
-        print(iteration_table.combo_box.currentText())
         self.assertEqual(len(iteration_table.push_buttons), 3)
         iteration_table.remove_tag()
-        print("combo_box text 3:")
-        print(iteration_table.combo_box.currentText())
         self.assertEqual(len(iteration_table.push_buttons), 2)
         iteration_table.add_tag()
         iteration_table.push_buttons[2].setText("AcquisitionTime")
         iteration_table.fill_values(2)
         iteration_table.update_table()
-        # TODO : test orks on computer but not on Travis. Investiqate.
-        print("combo_box text 4:")
-        print(iteration_table.combo_box.currentText())
         self.assertTrue(iteration_table.combo_box.currentText() in [
          "25000.0", "65789.48", "50000.0"])
 
@@ -2045,8 +2038,10 @@ class TestMIAPipelineManager(unittest.TestCase):
         # Adding a process
         from nipype.interfaces.spm import Smooth
         process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(
+            450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+        # Creates a node called "smooth1"
         pipeline = pipeline_editor_tabs.get_current_pipeline()
         self.assertTrue("smooth1" in pipeline.nodes.keys())
 
