@@ -292,18 +292,25 @@ class IterationTable(QWidget):
         :param tag_name: name of the iterated tag
         """
 
-        self.scan_list = self.main_window.pipeline_manager.scan_list
+        if len(self.main_window.pipeline_manager.scan_list) > 0:
+            self.scan_list = self.main_window.pipeline_manager.scan_list
+        else:
+            self.scan_list = self.project.session.get_documents_names(
+                COLLECTION_CURRENT)
 
         if tag_name is None:
             tag_name = self.iterated_tag
         self.iterated_tag_push_button.setText(tag_name)
         self.iterated_tag = tag_name
         self.iterated_tag_label.setText(tag_name + ":")
+        print(tag_name)
 
         # Update combo_box
         scans_names = self.project.session.get_documents_names(
             COLLECTION_CURRENT)
+        print(scans_names)
         scans_names = list(set(scans_names).intersection(self.scan_list))
+        print(scans_names)
         # tag_values_list contains all the values that can take iterated tag
         self.tag_values_list = []
         for scan_name in scans_names:
