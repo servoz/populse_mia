@@ -1072,10 +1072,10 @@ class PipelineManagerTab(QWidget):
                     name, iterated_tag, tag_values))
         else:
             try:
-                if self.init_pipeline():
-                    self.progress = RunProgress(self.pipelineEditorTabs)
-                    self.progress.show()
-                    self.progress.exec()
+                self.init_pipeline()
+                self.progress = RunProgress(self.pipelineEditorTabs)
+                self.progress.show()
+                self.progress.exec()
                 
             except Exception as e:
                 print('\n When the pipeline was launched, the following '
