@@ -156,9 +156,6 @@ class PopUpAddPath(QDialog):
     """Is called when the user wants to add a document to the project
        without importing from populse_mia.e MRI File Manager
 
-        :param project: current project in the software
-        :param databrowser: data browser instance of the software
-
     Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
         - find_type: tries to find the document type when the document is
@@ -168,7 +165,11 @@ class PopUpAddPath(QDialog):
     """
 
     def __init__(self, project, databrowser):
+        """Initialization of the PopUp AddPath
 
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        """
         super().__init__()
         self.project = project
         self.databrowser = databrowser
@@ -204,7 +205,6 @@ class PopUpAddPath(QDialog):
         hbox_layout.addWidget(self.ok_button)
         hbox_layout.addWidget(cancel_button)
         vbox_layout.addLayout(hbox_layout)
-
         self.setLayout(vbox_layout)
 
     def find_type(self):
@@ -296,9 +296,6 @@ class DefaultValueListCreation(QDialog):
     """
     Widget that is called when to create a list's default value
 
-    :param type: type of the list (e.g. list of int, list of float, etc.)
-    :param parent: the DefaultValueQLineEdit parent object
-
     Methods:
         - default_init_table: default init table when no previous value
         - update_default_value: checks if the values are correct and updates
@@ -309,6 +306,11 @@ class DefaultValueListCreation(QDialog):
     """
 
     def __init__(self, parent, type):
+        """Initialization
+
+        :param type: type of the list (e.g. list of int, list of float, etc.)
+        :param parent: the DefaultValueQLineEdit parent object
+        """
         super().__init__()
 
         self.setModal(True)
@@ -528,10 +530,6 @@ class PopUpAddTag(QDialog):
     """
     Is called when the user wants to add a tag to the project
 
-        :param project: current project in the software
-        :param databrowser: data browser instance of the software
-        :param type: type of the tag to add
-
     Methods:
         - on_activated: type updated
         - ok_action: verifies that each field is correct and send the new tag
@@ -543,6 +541,11 @@ class PopUpAddTag(QDialog):
     signal_add_tag = pyqtSignal()
 
     def __init__(self, databrowser, project):
+        """Initialization
+
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        :param type: type of the tag to add"""
         super().__init__()
         self.project = project
         self.databrowser = databrowser
@@ -791,9 +794,6 @@ class PopUpCloneTag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
 
-        :param project: current project in the software
-        :param databrowser: data browser instance of the software
-
     Methods:
         - search_str: matches the searched pattern with the tags of the project
         - ok_action: verifies the specified name is correct and send the
@@ -805,6 +805,11 @@ class PopUpCloneTag(QDialog):
     signal_clone_tag = pyqtSignal()
 
     def __init__(self, databrowser, project):
+        """Initialization
+
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        """
         super().__init__()
         self.setWindowTitle("Clone a tag")
 
@@ -957,13 +962,13 @@ class PopUpClosePipeline(QDialog):
     """
     Is called when the user closes a pipeline editor that has been modified
 
-    :param pipeline_name: name of the pipeline (basename)
-    :param bool_save_as: boolean to True if the pipeline needs to be saved
-    :param bool_exit: boolean to True if we can exit the editor
-    :param save_as_signal: signal emitted to save the pipeline under another
+
+    bool_save_as: boolean to True if the pipeline needs to be saved
+    bool_exit: boolean to True if we can exit the editor
+    save_as_signal: signal emitted to save the pipeline under another
        name
-    :param do_not_save_signal: signal emitted to close the editor
-    :param cancel_signal: signal emitted to cancel the action
+    do_not_save_signal: signal emitted to close the editor
+    cancel_signal: signal emitted to cancel the action
 
     Methods:
         - save_as_clicked: makes the actions to save the pipeline
@@ -977,6 +982,10 @@ class PopUpClosePipeline(QDialog):
     cancel_signal = pyqtSignal()
 
     def __init__(self, pipeline_name):
+        """Initialization
+
+        :param pipeline_name: name of the pipeline (basename)
+        """
         super().__init__()
 
         self.pipeline_name = pipeline_name
@@ -1064,16 +1073,18 @@ class PopUpDataBrowserCurrentSelection(QDialog):
     """
     Is called to display the current data_browser selection
 
-    :param project: current project in the software
-    :param databrowser: data browser instance of the software
-    :param filter: list of the current documents in the data browser
-    :param main_window: main window of the software
-
     Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
     """
 
     def __init__(self, project, databrowser, filter, main_window):
+        """Initialization
+
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        :param filter: list of the current documents in the data browser
+        :param main_window: main window of the software
+        """
 
         super().__init__()
         self.project = project
@@ -1125,9 +1136,6 @@ class PopUpFilterSelection(QDialog):
     """
     Is called when the user wants to open a filter that has already been saved
 
-    Attributes:
-        - project: current project in the software
-
     Methods:
         - search_str: matches the searched pattern with the saved filters
         - ok_clicked: actions when the "OK" button is clicked
@@ -1135,6 +1143,10 @@ class PopUpFilterSelection(QDialog):
     """
 
     def __init__(self, project):
+        """Initialization
+
+        :param project: current project in the software
+        """
         super().__init__()
         self.project = project
         self.setModal(True)
@@ -1235,6 +1247,10 @@ class PopUpInformation(QWidget):
     signal_preferences_change = pyqtSignal()
 
     def __init__(self, project):
+        """Initialization
+
+        :param project: current project in the software
+        """
         super().__init__()
         name_label = QLabel("Name: ")
         self.name_value = QLineEdit(project.getName())
@@ -1257,12 +1273,6 @@ class PopUpMultipleSort(QDialog):
     """
     Is called to sort the data browser's table depending on multiple tags
 
-    Attributes:
-        - project: current project in the software
-        - table_data_browser: data browser's table of the software
-        - values_list: list containing the values that can take each selected tag
-        - list_tags: list of the selected tags
-
     Methods:
         - refresh_layout: updates the layouts (especially when a tag push
           button is added or removed)
@@ -1275,6 +1285,11 @@ class PopUpMultipleSort(QDialog):
           browser
     """
     def __init__(self, project, table_data_browser):
+        """Initialization
+
+        :param project: current project in the software
+        :param table_data_browser: data browser's table of the software
+        """
         super().__init__()
         self.project = project
         self.table_data_browser = table_data_browser
@@ -1420,14 +1435,6 @@ class PopUpNewProject(QFileDialog):
     """
     Is called when the user wants to create a new project
 
-    Attributes:
-        - path: absolute path to the project's folder (without the project
-          folder)
-        - name: name of the project
-        - relative_path: relative path to the new project (with the project
-          folder)
-        - relative_subpath: relative path to the new project (without the
-          project folder)
     Method:
         - get_filename: sets the widget's attributes depending on the
           selected file name
@@ -1438,6 +1445,7 @@ class PopUpNewProject(QFileDialog):
     signal_create_project = pyqtSignal()
 
     def __init__(self):
+        """Initialization"""
         super().__init__()
         self.setLabelText(QFileDialog.Accept, "Create")
         self.setAcceptMode(QFileDialog.AcceptSave)
@@ -1473,12 +1481,6 @@ class PopUpOpenProject(QFileDialog):
     """
     Is called when the user wants to open project
 
-    Attributes:
-        - path: absolute path to the project's folder (without the project
-          folder)
-        - name: name of the project
-        - relative_path: relative path to the new project (with the project
-          folder)
     Method:
         - get_filename: sets the widget's attributes depending on the selected
            file name
@@ -1548,6 +1550,9 @@ class PopUpPreferences(QDialog):
     use_clinical_mode_signal = pyqtSignal()
 
     def __init__(self, main_window):
+        """Initialization
+        :param main_window: main window object of the software
+        """
         super().__init__()
         self.setModal(True)
 
@@ -2205,11 +2210,6 @@ class PopUpProperties(QDialog):
     """
     Is called when the user wants to change the current project's properties
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
-        - old_tags: visualized tags before opening this dialog
-
     Methods:
         - ok_clicked: saves the modifications and updates the data browser
     """
@@ -2218,6 +2218,12 @@ class PopUpProperties(QDialog):
     signal_settings_change = pyqtSignal()
 
     def __init__(self, project, databrowser, old_tags):
+        """Initialization
+
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        :param old_tags: visualized tags before opening this dialog
+        """
         super().__init__()
         self.setModal(True)
         self.project = project
@@ -2297,10 +2303,6 @@ class PopUpQuit(QDialog):
     Is called when the user closes the software and the current project has
       been modified
 
-    Attributes:
-        - database: current database in the project
-        - bool_exit: boolean equals to True if we can exit the software
-
     Methods:
         - save_as_clicked: makes the actions to save the project
         - do_not_save_clicked: makes the actions not to save the project
@@ -2313,6 +2315,10 @@ class PopUpQuit(QDialog):
     cancel_signal = pyqtSignal()
 
     def __init__(self, database):
+        """Initialization
+
+        :param database: current database in the project
+        """
         super().__init__()
 
         self.database = database
@@ -2379,10 +2385,6 @@ class PopUpRemoveTag(QDialog):
     """Is called when the user wants to remove a user tag from
        populse_mia.e project
 
-     Attributes:
-         - project: current project in the software
-         - databrowser: data browser instance of the software
-
      Methods:
          - search_str: matches the searched pattern with the tags of the project
          - ok_action: verifies the selected tags and send the information to the data browser
@@ -2393,6 +2395,11 @@ class PopUpRemoveTag(QDialog):
     signal_remove_tag = pyqtSignal()
 
     def __init__(self, databrowser, project):
+        """ Initialization
+
+        :param databrowser: current project in the software
+        :param project: data browser instance of the software
+        """
         super().__init__()
         self.databrowser = databrowser
         self.project = project
@@ -2558,7 +2565,8 @@ class PopUpSeeAllProjects(QDialog):
     """
 
     def __init__(self, saved_projects, main_window):
-        """
+        """Initializarion
+
         :param saved_projects: List of saved projects
         :param main_window: Main window
         """
@@ -2674,16 +2682,16 @@ class PopUpSelectFilter(PopUpFilterSelection):
     """
     Is called when the user wants to open a filter that has already been saved
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
-        - config: current config of the software
-
     Methods:
         - ok_clicked: saves the modifications and updates the data browser
     """
 
     def __init__(self, project, databrowser):
+        """Initializarion
+
+        :param project: current project in the software
+        :param databrowser: data browser instance of the software
+        """
         super(PopUpSelectFilter, self).__init__(project)
         self.project = project
         self.databrowser = databrowser
@@ -2718,16 +2726,16 @@ class PopUpSelectIteration(QDialog):
     """
     Is called when the user wants to run an iterated pipeline
 
-    Attributes:
-        - iterated_tag: name of the iterated tag
-        - tag_values: values that can take the iterated tag
-        - final_values: selected values on which to iterate the pipeline
-
     Methods:
         - ok_clicked: sends the selected values to the pipeline manager
     """
 
     def __init__(self, iterated_tag, tag_values):
+        """Initialization
+
+        :param iterated_tag: name of the iterated tag
+        :param tag_values: values that can take the iterated tag
+        """
         super().__init__()
 
         self.iterated_tag = iterated_tag
@@ -2788,9 +2796,6 @@ class PopUpTagSelection(QDialog):
     """Is called when the user wants to update the tags that are visualized in
        the data browser
 
-    Attributes:
-        - project: current project in the software
-
     Methods:
         - search_str: matches the searched pattern with the tags of the project
         - item_clicked: checks the checkbox of an item when the latter
@@ -2800,6 +2805,10 @@ class PopUpTagSelection(QDialog):
     """
 
     def __init__(self, project):
+        """Initialization
+
+        :param project: current project in the software
+        """
         super().__init__()
         self.project = project
 
@@ -2916,7 +2925,7 @@ class PopUpSelectTag(PopUpTagSelection):
     """
 
     def __init__(self, project):
-        """
+        """Initialization
 
         :param project: current project in the software
         """
@@ -2955,14 +2964,17 @@ class PopUpSelectTagCountTable(PopUpTagSelection):
     """
     Is called when the user wants to update a visualized tag of the count table
 
-    Attributes:
-        - selected_tag: the selected tag
-
     Methods:
         - ok_clicked: updates the selected tag and closes the pop-up
     """
 
     def __init__(self, project, tags_to_display, tag_name_checked=None):
+        """Initialization
+
+        :param project: current project in the software
+        :param tags_to_display: the tags to display
+        :param tag_name_checked: the checked tags
+        """
         super(PopUpSelectTagCountTable, self).__init__(project)
 
         self.selected_tag = None
@@ -2996,11 +3008,6 @@ class PopUpShowBrick(QDialog):
     """
     Class to display the brick history of a document
 
-    Attributes:
-        - project: current project in the software
-        - databrowser: data browser instance of the software
-        - main_window: main window of the software
-
     Methods:
         - io_value_is_scan: checks if the I/O value is a scan
         - file_clicked: called when a file is clicked
@@ -3009,9 +3016,8 @@ class PopUpShowBrick(QDialog):
     def __init__(self, project, brick_uuid, databrowser, main_window):
         """
         Prepares the brick history popup
-        :param project: project
-        :param brick_uuid: brick to display
-        :param databrowser; data browser that made the call
+        :param project: current project in the software
+        :param databrowser; data browser instance of the software
         :param main_window: main window of the software
         """
 
@@ -3201,10 +3207,6 @@ class PopUpVisualizedTags(QWidget):
     """
     Is called when the user wants to update the tags that are visualized
 
-    Attributes:
-        - project: current project in the software
-        - visualized_tags: project's visualized tags before opening this widget
-
     Methods:
         - search_str: matches the searched pattern with the tags of the project
         - click_select_tag: puts the selected tags in the "selected tag" table
@@ -3215,6 +3217,11 @@ class PopUpVisualizedTags(QWidget):
     signal_preferences_change = pyqtSignal()
 
     def __init__(self, project, visualized_tags):
+        """Initialization
+
+        :param project: current project in the software
+        :param visualized_tags: project's visualized tags before opening this widget
+        """
         super().__init__()
 
         self.project = project
