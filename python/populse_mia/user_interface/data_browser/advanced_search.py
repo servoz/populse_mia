@@ -577,7 +577,14 @@ class AdvancedSearch(QWidget):
         # We remove the row only if there is at least 2 rows, because we
         # always must keep at least one
         if len(self.rows) > 1:
-            self.rows.remove(row_layout)
+            index = self.rows.index(row_layout)
+            for i in range(0, len(self.rows[-1])):
+                if self.rows[index][i] is not None:
+                    self.rows[index][i].setParent(None)
+                    self.rows[index][i].deleteLater()
+                    self.rows[index][i] = None
+            del self.rows[index]
+
 
         # We refresh the view
         self.refresh_search()
