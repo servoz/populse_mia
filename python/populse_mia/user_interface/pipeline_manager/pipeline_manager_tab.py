@@ -183,8 +183,8 @@ class PipelineManagerTab(QWidget):
         self.save_pipeline_parameters_action.triggered.connect(
             self.saveParameters)
 
-        self.init_pipeline_action = QAction("Initialize pipeline", self)
-        self.init_pipeline_action.triggered.connect(self.init_pipeline)
+        # self.init_pipeline_action = QAction("Initialize pipeline", self)
+        # self.init_pipeline_action.triggered.connect(self.init_pipeline)
 
         self.run_pipeline_action = QAction("Run pipeline", self)
         self.run_pipeline_action.triggered.connect(self.runPipeline)
@@ -858,7 +858,7 @@ class PipelineManagerTab(QWidget):
         self.tags_menu.addAction(self.load_pipeline_parameters_action)
         self.tags_menu.addAction(self.save_pipeline_parameters_action)
         self.tags_menu.addSeparator()
-        self.tags_menu.addAction(self.init_pipeline_action)
+        # self.tags_menu.addAction(self.init_pipeline_action)
         self.tags_menu.addAction(self.run_pipeline_action)
 
         self.tags_tool_button.setText('Pipeline')
@@ -1072,6 +1072,7 @@ class PipelineManagerTab(QWidget):
                     name, iterated_tag, tag_values))
         else:
             try:
+                self.init_pipeline()
                 self.progress = RunProgress(self.pipelineEditorTabs)
                 self.progress.show()
                 self.progress.exec()
