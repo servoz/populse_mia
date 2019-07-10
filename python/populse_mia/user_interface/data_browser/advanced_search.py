@@ -181,8 +181,6 @@ class AdvancedSearch(QWidget):
 
         :param filter: Filter object opened to apply
         """
-        self.rows = []
-
         # Data
         nots = filter.nots
         values = filter.values
@@ -191,7 +189,7 @@ class AdvancedSearch(QWidget):
         fields = filter.fields
 
         for i in range(0, len(nots)):
-            self.add_search_bar()
+            # self.add_search_bar()
             row = self.rows[i]
             if i > 0:
                 row[0].setCurrentText(links[i - 1])
@@ -647,8 +645,9 @@ class AdvancedSearch(QWidget):
 
     def show_search(self):
         """Reset the rows when the Advanced Search button is clicked"""
-        self.rows = []
-        self.add_search_bar()
+        if len(self.rows) < 1:
+            self.rows = []
+            self.add_search_bar()
 
 
 
