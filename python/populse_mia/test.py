@@ -18,6 +18,7 @@
 
 import os
 import sys
+import yaml
 
 # Working from the scripts directory
 from PyQt5.QtCore import Qt
