@@ -270,7 +270,7 @@ class Config:
                     self.dev_mode = False
 
                     # mia_path is obsolete. Use mia_user_path instead
-                    if "mia_path" in  mia_home_config:
+                    if "mia_path" in mia_home_config:
                         mia_home_config["mia_user_path"] = \
                                                      mia_home_config["mia_path"]
                         del mia_home_config["mia_path"]

@@ -34,7 +34,7 @@ from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from populse_mia.user_interface.main_window import MainWindow
-from populse_mia.software_properties import Config
+from populse_mia.software_properties import Config, verCmp
 from capsul.api import get_process_instance
 
 
@@ -1037,6 +1037,10 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(config.get_max_projects(), 7)
         config.set_max_projects(5)
 
+        mia_path = os.path.join(config.get_mia_path(),
+                                "properties/config.yml")
+        self.assertEqual(os.path.exists(mia_path), True)
+
         self.assertEqual(config.get_clinical_mode(), False)
         config.set_clinical_mode(True)
         self.assertEqual(config.get_clinical_mode(), True)
@@ -1044,6 +1048,9 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.assertEqual(config.get_mri_conv_path(), "")
 
+        self.assertEqual(config.get_matlab_command(), None)
+        self.assertEqual(config.get_matlab_path(), "")
+        self.assertEqual(config.get_matlab_standalone_path(), "")
         self.assertEqual(config.get_spm_path(), "")
         self.assertEqual(config.get_spm_standalone_path(), "")
         self.assertEqual(config.get_use_matlab(), False)
@@ -1055,6 +1062,11 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(config.getShowAllSlices(), False)
         self.assertEqual(config.getTextColor(), "")
         self.assertEqual(config.getThumbnailTag(), "SequenceName")
+
+        self.assertEqual(verCmp(yaml.__version__, '5.1', 'sup'), True)
+        self.assertEqual(verCmp(yaml.__version__, '9.1', 'sup'), False)
+        self.assertEqual(verCmp(yaml.__version__, '5.1', 'inf'), False)
+        self.assertEqual(verCmp(yaml.__version__, '9.1', 'inf'), True)
 
         self.assertEqual(config.get_projects_save_path(),
                          os.path.join(config.get_mia_path(), 'projects'))
