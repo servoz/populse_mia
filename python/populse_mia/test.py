@@ -32,8 +32,10 @@ import unittest
 
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem
-from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, \
+from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, \
+    COLLECTION_INITIAL, COLLECTION_BRICK, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
+from populse_mia.data_manager.project_properties import SavedProjects
 from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.software_properties import Config, verCmp
 from capsul.api import get_process_instance
@@ -71,7 +73,6 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app.exit()
 
-
     def test_project_properties(self):
         """Tests saved projects addition and removal"""
         saved_projects = self.main_window.saved_projects
@@ -82,13 +83,21 @@ class TestMIADataBrowser(unittest.TestCase):
         project_8_path = os.path.join(mia_path, 'resources', 'mia',
                                       'project_8')
 
+        os.remove(os.path.join(config.get_mia_path(), 'properties',
+                               'saved_projects.yml'))
+
+        saved_projects = SavedProjects()
+        self.assertEqual(saved_projects.pathsList, [])
+
         saved_projects.addSavedProject(project_8_path)
         self.assertEqual(saved_projects.pathsList, [project_8_path])
 
         saved_projects.removeSavedProject(project_8_path)
         self.assertEqual(saved_projects.pathsList, [])
 
-
+        SavedProjects.loadSavedProjects = lambda a: True
+        saved_projects = SavedProjects()
+        self.assertEqual(saved_projects.pathsList, [])
 
     def test_unnamed_project_software_opening(self):
         """
