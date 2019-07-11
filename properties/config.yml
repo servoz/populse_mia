@@ -2,6 +2,7 @@ auto_save: False
 background_color: ''
 chain_cursors: False
 clinical_mode: True
+max_projects: 5
 name: MIA
 nb_slices_max: '10'
 opened_projects: []
