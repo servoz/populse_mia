@@ -1043,9 +1043,7 @@ class TestMIADataBrowser(unittest.TestCase):
         config.set_clinical_mode(False)
 
         self.assertEqual(config.get_mri_conv_path(), "")
-        
-        config.set_opened_projects([])
-        self.assertEqual(config.get_opened_projects(), [])
+
         self.assertEqual(config.get_spm_path(), "")
         self.assertEqual(config.get_spm_standalone_path(), "")
         self.assertEqual(config.get_use_matlab(), False)
