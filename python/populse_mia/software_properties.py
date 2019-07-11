@@ -415,7 +415,7 @@ class Config:
         :return: Integer
 
         """
-        return self.config["nb_slices_max"]
+        return int(self.config["nb_slices_max"])
 
     def getPathToProjectsFolder(self):
         """Get the project's path.
@@ -423,7 +423,7 @@ class Config:
         :return: string of the path
 
         """
-        return int(self.config["paths"]["projects"])
+        return self.config["paths"]["projects"]
 
     def getSourceImageDir(self):
         """Get the source directory for project images"""
