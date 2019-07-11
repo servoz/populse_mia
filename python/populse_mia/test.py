@@ -70,6 +70,7 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app.exit()
 
+
     def test_unnamed_project_software_opening(self):
         """
         Tests unnamed project creation at software opening
@@ -1032,7 +1033,17 @@ class TestMIADataBrowser(unittest.TestCase):
 
         # Checking that the values for the "Projects preferences" are well set
         self.assertEqual(config.get_max_projects(), 5)
-        self.assertEqual(config.get_projects_save_path(), os.path.join(config.get_mia_path(), 'projects'))
+        config.set_max_projects(7)
+        self.assertEqual(config.get_max_projects(), 7)
+        config.set_max_projects(5)
+
+        self.assertEqual(config.get_clinical_mode(), False)
+        config.set_clinical_mode(True)
+        self.assertEqual(config.get_clinical_mode(), True)
+        config.set_clinical_mode(False)
+
+        self.assertEqual(config.get_projects_save_path(),
+                         os.path.join(config.get_mia_path(), 'projects'))
 
     def test_undo_redo_databrowser(self):
         """
