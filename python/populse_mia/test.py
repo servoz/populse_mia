@@ -72,6 +72,24 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app.exit()
 
 
+    def test_project_properties(self):
+        """Tests saved projects addition and removal"""
+        saved_projects = self.main_window.saved_projects
+        self.assertEqual(saved_projects.pathsList, [])
+
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
+
+        saved_projects.addSavedProject(project_8_path)
+        self.assertEqual(saved_projects.pathsList, [project_8_path])
+
+        saved_projects.removeSavedProject(project_8_path)
+        self.assertEqual(saved_projects.pathsList, [])
+
+
+
     def test_unnamed_project_software_opening(self):
         """
         Tests unnamed project creation at software opening
