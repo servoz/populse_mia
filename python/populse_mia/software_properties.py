@@ -379,7 +379,7 @@ class Config:
         try:
             return self.config["use_spm"]
         except KeyError:
-            return "no"
+            return False
 
     def get_use_spm_standalone(self):
         """Get the value of "use spm standalone" checkbox in the preferences.
@@ -390,7 +390,7 @@ class Config:
         try:
             return self.config["use_spm_standalone"]
         except KeyError:
-            return "no"
+            return False
 
     def getBackgroundColor(self):
         """Get background color.
@@ -423,7 +423,7 @@ class Config:
         :return: string of the path
 
         """
-        return self.config["paths"]["projects"]
+        return int(self.config["paths"]["projects"])
 
     def getSourceImageDir(self):
         """Get the source directory for project images"""

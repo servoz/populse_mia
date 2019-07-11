@@ -1042,6 +1042,20 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(config.get_clinical_mode(), True)
         config.set_clinical_mode(False)
 
+        self.assertEqual(config.get_mri_conv_path(), "")
+        self.assertEqual(config.get_opened_projects(), [])
+        self.assertEqual(config.get_spm_path(), "")
+        self.assertEqual(config.get_spm_standalone_path(), "")
+        self.assertEqual(config.get_use_matlab(), False)
+        self.assertEqual(config.get_use_spm(), False)
+        self.assertEqual(config.get_use_spm_standalone(), False)
+        self.assertEqual(config.getBackgroundColor(), "")
+        self.assertEqual(config.getChainCursors(), False)
+        self.assertEqual(config.getNbAllSlicesMax(), 10)
+        self.assertEqual(config.getShowAllSlices(), False)
+        self.assertEqual(config.getTextColor(), "")
+        self.assertEqual(config.getThumbnailTag(), "SequenceName")
+
         self.assertEqual(config.get_projects_save_path(),
                          os.path.join(config.get_mia_path(), 'projects'))
 
