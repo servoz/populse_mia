@@ -37,6 +37,7 @@ from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
 from populse_mia.data_manager.project_properties import SavedProjects
 from populse_mia.user_interface.main_window import MainWindow
+from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.software_properties import Config, verCmp
 from capsul.api import get_process_instance
 
@@ -73,6 +74,11 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app.exit()
 
+    def test_modify_table(self):
+        mod = ModifyTable(self.project, [], [], [], [])
+        self.assertEqual(mod.types, [])
+
+
     def test_project_properties(self):
         """Tests saved projects addition and removal"""
         saved_projects = self.main_window.saved_projects
@@ -103,7 +109,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(saved_projects.pathsList, [])
 
         SavedProjects.loadSavedProjects = lambda a: True
-        SavedProjects.pathsList = None
         saved_projects = SavedProjects()
         self.assertEqual(saved_projects.pathsList, [])
 

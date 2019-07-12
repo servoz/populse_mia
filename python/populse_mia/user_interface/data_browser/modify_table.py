@@ -33,8 +33,7 @@ from populse_db.database import (
 
 class ModifyTable(QDialog):
     """
-    Verify precisely the scans of the project and update the table after a
-      modification.
+    Used to modify the contents of cells which contains lists.
 
     Methods:
         - fill_table: fill the table
