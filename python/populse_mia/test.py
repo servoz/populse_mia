@@ -75,8 +75,9 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app.exit()
 
     def test_modify_table(self):
-        mod = ModifyTable(self.project, [], [], [], [])
-        self.assertEqual(mod.types, [])
+        mod = ModifyTable(self.project, [0,1,2], [], [], [])
+        self.assertEqual(mod.table.columnCount(), 3)
+        mod.update_table_values()
 
 
     def test_project_properties(self):
