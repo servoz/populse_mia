@@ -92,10 +92,18 @@ class TestMIADataBrowser(unittest.TestCase):
         saved_projects.addSavedProject(project_8_path)
         self.assertEqual(saved_projects.pathsList, [project_8_path])
 
+        saved_projects.addSavedProject('/home')
+        self.assertEqual(saved_projects.pathsList, ['/home', project_8_path])
+
+        saved_projects.addSavedProject(project_8_path)
+        self.assertEqual(saved_projects.pathsList, [project_8_path, "/home"])
+
         saved_projects.removeSavedProject(project_8_path)
+        saved_projects.removeSavedProject("/home")
         self.assertEqual(saved_projects.pathsList, [])
 
         SavedProjects.loadSavedProjects = lambda a: True
+        SavedProjects.pathsList = None
         saved_projects = SavedProjects()
         self.assertEqual(saved_projects.pathsList, [])
 
