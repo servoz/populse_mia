@@ -35,11 +35,21 @@ from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 from populse_mia.data_manager.project import Project, COLLECTION_CURRENT, \
     COLLECTION_INITIAL, COLLECTION_BRICK, \
     TAG_ORIGIN_USER, TAG_FILENAME, TAG_CHECKSUM, TAG_TYPE, TAG_BRICKS, TAG_EXP_TYPE
+from populse_db.database import (
+            FIELD_TYPE_INTEGER, FIELD_TYPE_LIST_INTEGER, FIELD_TYPE_STRING,
+            FIELD_TYPE_BOOLEAN, FIELD_TYPE_FLOAT, FIELD_TYPE_TIME,
+            FIELD_TYPE_DATE,
+            FIELD_TYPE_DATETIME, FIELD_TYPE_LIST_TIME,
+            FIELD_TYPE_LIST_DATETIME,
+            FIELD_TYPE_LIST_DATE, LIST_TYPES, FIELD_TYPE_LIST_FLOAT,
+            FIELD_TYPE_LIST_BOOLEAN, FIELD_TYPE_LIST_STRING)
 from populse_mia.data_manager.project_properties import SavedProjects
 from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.software_properties import Config, verCmp
+from populse_mia.utils.utils import *
 from capsul.api import get_process_instance
+from datetime import datetime, date, time
 
 
 class TestMIADataBrowser(unittest.TestCase):
@@ -73,6 +83,33 @@ class TestMIADataBrowser(unittest.TestCase):
         config.saveConfig()
 
         self.app.exit()
+
+    def test_utils(self):
+
+        self.assertEqual(table_to_database(True, FIELD_TYPE_BOOLEAN), True)
+        self.assertEqual(table_to_database("False", FIELD_TYPE_BOOLEAN), False)
+
+        format = "%d/%m/%Y"
+        value = datetime.strptime("01/01/2019", format).date()
+        self.assertEqual(check_value_type("01/01/2019", FIELD_TYPE_DATE), True)
+        self.assertEqual(table_to_database("01/01/2019", FIELD_TYPE_DATE),
+                         value)
+
+        format = "%d/%m/%Y %H:%M:%S.%f"
+        value = datetime.strptime("15/7/2019 16:16:55.789643", format)
+        self.assertEqual(check_value_type("15/7/2019 16:16:55.789643",
+                                          FIELD_TYPE_DATETIME), True)
+        self.assertEqual(table_to_database("15/7/2019 16:16:55.789643",
+                                           FIELD_TYPE_DATETIME), value)
+
+        format = "%H:%M:%S.%f"
+        value = datetime.strptime("16:16:55.789643", format).time()
+        self.assertEqual(check_value_type("16:16:55.789643", FIELD_TYPE_TIME),
+                         True)
+        self.assertEqual(table_to_database("16:16:55.789643",
+                                           FIELD_TYPE_TIME), value)
+
+
 
     def test_modify_table(self):
         config = Config()
