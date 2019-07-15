@@ -87,11 +87,25 @@ class TestMIADataBrowser(unittest.TestCase):
         # Test values of a list of floats
         value = [5.0, 3.0]
         tag_name = ["FOV"]
-        tag_object = self.main_window.project.session.get_field(
-            COLLECTION_CURRENT, "FOV")
         if not self.main_window.data_browser.table_data.isRowHidden(0):
             scans_displayed.append(scan_name)
 
+        # Test that the value will not change if the tag's type is incorrect
+        old_value = self.main_window.project.session.get_value(
+            COLLECTION_CURRENT, scans_displayed[0], "FOV")
+        mod = ModifyTable(self.main_window.project,
+                          value,
+                          [type("string")],
+                          scans_displayed,
+                          tag_name)
+        mod.update_table_values(True)
+        new_value = self.main_window.project.session.get_value(
+            COLLECTION_CURRENT, scans_displayed[0], "FOV")
+        self.assertEqual(old_value, new_value)
+
+        # Test that the value will change when all parameters are correct
+        tag_object = self.main_window.project.session.get_field(
+            COLLECTION_CURRENT, "FOV")
         mod = ModifyTable(self.main_window.project,
                           value,
                           [tag_object.type],
