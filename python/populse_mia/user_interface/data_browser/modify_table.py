@@ -34,6 +34,10 @@ from populse_db.database import (
 class ModifyTable(QDialog):
     """Used to modify the contents of cells which contains lists.
 
+    When the user wishes to modify a cell which contains a list in the
+    databrowser tab, a popup will appear to help the user to change the
+    content of the cell.
+
     Methods:
         - fill_table: fill the table
         - update_table_values: update the table in the database
@@ -59,7 +63,6 @@ class ModifyTable(QDialog):
         self.tags = tags
         self.project = project
         self.value = value
-
         # The table that will be filled
         self.table = QTableWidget()
 
@@ -115,13 +118,13 @@ class ModifyTable(QDialog):
             self.table.setFixedWidth(900)
             self.table.setFixedHeight(total_height + 40)
 
-    def update_table_values(self):
+    def update_table_values(self, test=False):
         """Update the table in the database when the 'OK' button is clicked."""
 
         valid = True
 
         # For each value, type checked
-        for i in range (0, self.table.columnCount()):
+        for i in range(0, self.table.columnCount()):
             item = self.table.item(0, i)
             text = item.text()
 
@@ -137,22 +140,22 @@ class ModifyTable(QDialog):
 
                 # Error dialog if invalid cell
                 valid = False
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("Invalid value")
-                msg.setInformativeText("The value " + text +
-                                       " is invalid with the type " +
-                                       type_problem)
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
+                if test is False:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("Invalid value")
+                    msg.setInformativeText("The value " + text +
+                                           " is invalid with the type " +
+                                           type_problem)
+                    msg.setWindowTitle("Warning")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.buttonClicked.connect(msg.close)
+                    msg.exec()
                 break
 
         if valid:
             # Database updated only if valid type for every cell
-
-            for cell in range (0, len(self.scans)):
+            for cell in range(0, len(self.scans)):
                 scan = self.scans[cell]
                 tag = self.tags[cell]
                 tag_object = self.project.session.get_field(
@@ -162,7 +165,7 @@ class ModifyTable(QDialog):
                 database_value = []
 
                 # For each value
-                for i in range (0, self.table.columnCount()):
+                for i in range(0, self.table.columnCount()):
                     item = self.table.item(0, i)
                     text = item.text()
 

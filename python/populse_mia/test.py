@@ -75,10 +75,33 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app.exit()
 
     def test_modify_table(self):
-        mod = ModifyTable(self.project, [0,1,2], [], [], [])
-        self.assertEqual(mod.table.columnCount(), 3)
-        mod.update_table_values()
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
+        self.main_window.switch_project(project_8_path, "project_8")
+        scans_displayed = []
+        item = self.main_window.data_browser.table_data.item(0, 0)
+        scan_name = item.text()
 
+        # Test values of a list of floats
+        value = [5.0, 3.0]
+        tag_name = ["FOV"]
+        tag_object = self.main_window.project.session.get_field(
+            COLLECTION_CURRENT, "FOV")
+        if not self.main_window.data_browser.table_data.isRowHidden(0):
+            scans_displayed.append(scan_name)
+
+        mod = ModifyTable(self.main_window.project,
+                          value,
+                          [tag_object.type],
+                          scans_displayed,
+                          tag_name)
+        mod.update_table_values(True)
+        new_value = self.main_window.project.session.get_value(
+            COLLECTION_CURRENT, scans_displayed[0], "FOV")
+        self.assertEqual(mod.table.columnCount(), 2)
+        self.assertEqual(value, new_value)
 
     def test_project_properties(self):
         """Tests saved projects addition and removal"""
