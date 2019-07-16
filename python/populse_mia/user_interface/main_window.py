@@ -376,7 +376,7 @@ class MainWindow(QMainWindow):
             # updates the recent projects
             self.exPopup = PopUpNewProject()
 
-            if self.exPopup.exec_():
+            if self.exPopup.exec():
 
                 self.project.session.unsave_modifications()
                 self.remove_raw_files_useless()  # We remove the useless
@@ -529,7 +529,7 @@ class MainWindow(QMainWindow):
         # We can open a new project
         if can_switch:
             self.exPopup = PopUpOpenProject()
-            if self.exPopup.exec_():
+            if self.exPopup.exec():
                 file_name = self.exPopup.selectedFiles()
                 self.exPopup.get_filename(file_name)
                 file_name = self.exPopup.relative_path
@@ -581,7 +581,7 @@ class MainWindow(QMainWindow):
         self.pop_up_settings.setGeometry(300, 200, 800, 600)
         self.pop_up_settings.show()
 
-        if self.pop_up_settings.exec_():
+        if self.pop_up_settings.exec():
             self.data_browser.table_data.update_visualized_columns(
                 old_tags, self.project.session.get_shown_tags())
 
@@ -682,7 +682,7 @@ class MainWindow(QMainWindow):
         """Open a pop-up to save the current project as"""
 
         self.exPopup = PopUpSaveProjectAs()
-        if self.exPopup.exec_():
+        if self.exPopup.exec():
 
             old_folder = self.project.folder
             file_name = self.exPopup.relative_path
@@ -816,7 +816,7 @@ class MainWindow(QMainWindow):
         """Open a pop-up to show the recent projects."""
         # Ui_Dialog() is defined in pop_ups.py
         self.exPopup = PopUpSeeAllProjects(self.saved_projects, self)
-        if self.exPopup.exec_():
+        if self.exPopup.exec():
             file_path = self.exPopup.relative_path
             if not self.test:
                 self.saved_projects_list = self.saved_projects.addSavedProject(
