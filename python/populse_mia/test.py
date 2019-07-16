@@ -16,7 +16,7 @@
 # for details.
 ##########################################################################
 
-import os
+import os, shutil
 import sys
 import yaml
 
@@ -48,6 +48,7 @@ from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.software_properties import Config, verCmp
 from populse_mia.utils.utils import *
+from populse_mia.user_interface.pop_ups import PopUpSaveProjectAs
 from capsul.api import get_process_instance
 from datetime import datetime, date, time
 
@@ -84,6 +85,33 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app.exit()
 
+    def test_save_project(self):
+
+        PopUpSaveProjectAs.exec = lambda x: True
+        path = "/home/something"
+        PopUpSaveProjectAs.relative_path = path
+        self.main_window.save_project_as()
+        self.assertEqual(self.main_window.project.getName(), "something")
+        print(self.main_window.saved_projects.pathsList)
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
+        self.main_window.switch_project(project_8_path, "project_8")
+
+        shutil.rmtree(path)
+        # QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
+
+        # print(self.main_window.saved_projects_actions)
+        # self.main_window.sender = lambda : \
+        #         self.main_window.saved_projects_actions[0]
+        # self.main_window.open_recent_project()
+        # print(self.main_window.project.getName())
+
+        # self.main_window.check_unsaved_modifications = lambda: True
+        #
+        # self.main_window.open_recent_project()
+
     def test_utils(self):
 
         self.assertEqual(table_to_database(True, FIELD_TYPE_BOOLEAN), True)
@@ -108,7 +136,6 @@ class TestMIADataBrowser(unittest.TestCase):
                          True)
         self.assertEqual(table_to_database("16:16:55.789643",
                                            FIELD_TYPE_TIME), value)
-
 
 
     def test_modify_table(self):
@@ -2408,6 +2435,7 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.assertTrue("smooth2" in pipeline.nodes.keys())
 
         pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+
                                                            ("test_pipeline1", "in_files"),
                                                            active=True, weak=False)
 
