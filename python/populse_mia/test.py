@@ -88,7 +88,7 @@ class TestMIADataBrowser(unittest.TestCase):
     def test_save_project(self):
 
         PopUpSaveProjectAs.exec = lambda x: True
-        path = "/home/something"
+        path = "/home/travis/something"
         PopUpSaveProjectAs.relative_path = path
         self.main_window.save_project_as()
         self.assertEqual(self.main_window.project.getName(), "something")
