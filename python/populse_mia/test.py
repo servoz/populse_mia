@@ -88,13 +88,13 @@ class TestMIADataBrowser(unittest.TestCase):
     def test_save_project(self):
 
         PopUpSaveProjectAs.exec = lambda x: True
-        path = "/home/travis/something"
+        config = Config()
+        mia_path = config.get_mia_path()
+        path = os.path.join(mia_path, 'resources', 'mia',
+                                      'something')
         PopUpSaveProjectAs.relative_path = path
         self.main_window.save_project_as()
         self.assertEqual(self.main_window.project.getName(), "something")
-        print(self.main_window.saved_projects.pathsList)
-        config = Config()
-        mia_path = config.get_mia_path()
         project_8_path = os.path.join(mia_path, 'resources', 'mia',
                                       'project_8')
         self.main_window.switch_project(project_8_path, "project_8")
