@@ -86,6 +86,25 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.app.exit()
 
+    def test_tab_change(self):
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
+        self.main_window.switch_project(project_8_path, "project_8")
+
+        self.main_window.tabs.setCurrentIndex(2)
+        index = self.main_window.tabs.currentIndex()
+        scans = self.main_window.project.session.get_documents_names(
+            COLLECTION_CURRENT)
+        self.assertEqual(scans, self.main_window.pipeline_manager.scan_list)
+        self.assertEqual(self.main_window.tabs.tabText(index), "Pipeline "
+                                                               "Manager")
+
+        self.main_window.tabs.setCurrentIndex(0)
+        index = self.main_window.tabs.currentIndex()
+        self.assertEqual(self.main_window.tabs.tabText(index), "Data Browser")
+
     def test_save_project(self):
         """Test opening & saving of a project"""
         PopUpSaveProjectAs.exec = lambda x: True
@@ -124,8 +143,6 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.main_window.switch_project(project_8_path, "project_8")
         shutil.rmtree(path)
-
-        # print(self.main_window.tabs.tabText(1))
 
         # QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
 
