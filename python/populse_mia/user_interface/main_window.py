@@ -382,7 +382,6 @@ class MainWindow(QMainWindow):
                 self.remove_raw_files_useless()  # We remove the useless
                 # files from the old project
 
-                file_name = self.exPopup.selectedFiles()
                 self.exPopup.get_filename(self.exPopup.selectedFiles())
                 file_name = self.exPopup.relative_path
 

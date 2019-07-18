@@ -48,7 +48,8 @@ from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.software_properties import Config, verCmp
 from populse_mia.utils.utils import *
-from populse_mia.user_interface.pop_ups import PopUpSaveProjectAs
+from populse_mia.user_interface.pop_ups import PopUpSaveProjectAs, \
+    PopUpNewProject, PopUpOpenProject
 from capsul.api import get_process_instance
 from datetime import datetime, date, time
 
@@ -86,7 +87,7 @@ class TestMIADataBrowser(unittest.TestCase):
         self.app.exit()
 
     def test_save_project(self):
-
+        """Test opening & saving of a project"""
         PopUpSaveProjectAs.exec = lambda x: True
         config = Config()
         mia_path = config.get_mia_path()
@@ -95,10 +96,31 @@ class TestMIADataBrowser(unittest.TestCase):
         PopUpSaveProjectAs.relative_path = path
         self.main_window.save_project_as()
         self.assertEqual(self.main_window.project.getName(), "something")
+        self.assertEqual(os.path.exists(path), True)
         project_8_path = os.path.join(mia_path, 'resources', 'mia',
                                       'project_8')
         self.main_window.switch_project(project_8_path, "project_8")
+        shutil.rmtree(path)
 
+        PopUpNewProject.exec = lambda x: True
+        PopUpNewProject.selectedFiles = lambda x: True
+        PopUpNewProject.get_filename = lambda x, y: True
+        PopUpNewProject.relative_path = path
+        PopUpOpenProject.exec = lambda x: True
+        PopUpOpenProject.selectedFiles = lambda x: True
+        PopUpOpenProject.get_filename = lambda x, y: True
+        PopUpOpenProject.relative_path = path
+        PopUpOpenProject.path, PopUpOpenProject.name = os.path.split(path)
+
+        self.main_window.create_project_pop_up()
+        self.assertEqual(self.main_window.project.getName(), "something")
+        self.assertEqual(os.path.exists(path), True)
+        self.main_window.switch_project(project_8_path, "project_8")
+
+        self.main_window.open_project_pop_up()
+        self.assertEqual(self.main_window.project.getName(), "something")
+
+        self.main_window.switch_project(project_8_path, "project_8")
         shutil.rmtree(path)
         # QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
 
@@ -113,7 +135,7 @@ class TestMIADataBrowser(unittest.TestCase):
         # self.main_window.open_recent_project()
 
     def test_utils(self):
-
+        """Test the utils functions"""
         self.assertEqual(table_to_database(True, FIELD_TYPE_BOOLEAN), True)
         self.assertEqual(table_to_database("False", FIELD_TYPE_BOOLEAN), False)
 
@@ -137,8 +159,8 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(table_to_database("16:16:55.789643",
                                            FIELD_TYPE_TIME), value)
 
-
     def test_modify_table(self):
+        """Test the modify table module"""
         config = Config()
         mia_path = config.get_mia_path()
         project_8_path = os.path.join(mia_path, 'resources', 'mia',
