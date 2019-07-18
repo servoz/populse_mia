@@ -94,12 +94,14 @@ class TestMIADataBrowser(unittest.TestCase):
         path = os.path.join(mia_path, 'resources', 'mia',
                                       'something')
         PopUpSaveProjectAs.relative_path = path
-        self.main_window.save_project_as()
+        self.main_window.saveChoice()
         self.assertEqual(self.main_window.project.getName(), "something")
         self.assertEqual(os.path.exists(path), True)
         project_8_path = os.path.join(mia_path, 'resources', 'mia',
                                       'project_8')
         self.main_window.switch_project(project_8_path, "project_8")
+        self.assertEqual(self.main_window.project.getName(), "project_8")
+        self.main_window.saveChoice()
         shutil.rmtree(path)
 
         PopUpNewProject.exec = lambda x: True
@@ -122,6 +124,9 @@ class TestMIADataBrowser(unittest.TestCase):
 
         self.main_window.switch_project(project_8_path, "project_8")
         shutil.rmtree(path)
+
+        # print(self.main_window.tabs.tabText(1))
+
         # QTest.mouseClick(add_tag.push_button_ok, Qt.LeftButton)
 
         # print(self.main_window.saved_projects_actions)
