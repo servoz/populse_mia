@@ -1056,7 +1056,7 @@ class PopUpDeletedProject(QMessageBox):
     def __init__(self, deleted_projects):
         super().__init__()
 
-        message = "These projects have been deleted:\n"
+        message = "These projects have been renamed, moved or deleted:\n"
         for deleted_project in deleted_projects:
             message += "- {0}\n".format(deleted_project)
 

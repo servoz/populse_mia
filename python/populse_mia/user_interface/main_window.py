@@ -24,6 +24,7 @@ import webbrowser
 import shutil
 from datetime import datetime
 import glob
+import yaml
 
 # PyQt5 imports
 from PyQt5.QtGui import QIcon
@@ -868,8 +869,18 @@ class MainWindow(QMainWindow):
                     and os.path.exists(os.path.join(
                         file_path, "filters")):
 
+                    # We check if the name of the project directory is the
+                    # same in its properties
+                    with open(os.path.join(file_path, "properties",
+                                           "properties.yml"), 'r+') as stream:
+                        properties = yaml.load(stream, Loader=yaml.FullLoader)
+                        path, name = os.path.split(file_path)
+                        if properties["name"] != name:
+                            properties["name"] = name
+                            yaml.dump(properties, stream,
+                                      default_flow_style=False,
+                                      allow_unicode=True)
                     # We check for invalid scans in the project
-
                     try:
                         temp_database = Project(file_path, False)
                     except IOError:

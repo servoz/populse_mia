@@ -224,7 +224,7 @@ def launch_mia():
         deleted_projects = []
         for saved_project in saved_projects_list:
             if not os.path.isdir(saved_project):
-                deleted_projects.append(saved_project)
+                deleted_projects.append(os.path.abspath(saved_project))
                 saved_projects_object.removeSavedProject(saved_project)
 
         return deleted_projects
