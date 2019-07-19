@@ -160,10 +160,12 @@ class MainWindow(QMainWindow):
         self.action_save_project = self.menu_file.addAction("Save project")
         self.action_save_project_as = self.menu_file.addAction("Save "
                                                                "project as")
+        self.action_delete_project = self.menu_file.addAction("Delete project")
         self.action_create = QAction('New project', self)
         self.action_open = QAction('Open project', self)
         self.action_save = QAction('Save', self)
         self.action_save_as = QAction('Save as', self)
+        self.action_delete = QAction('Delete project', self)
         self.action_import = QAction(QIcon(os.path.join(sources_images_dir,
                                                         'Blue.png')),
                                      'Import', self)
@@ -255,6 +257,7 @@ class MainWindow(QMainWindow):
 
         self.action_save_as.setShortcut('Ctrl+Shift+S')
         self.addAction(self.action_save_as)
+        self.addAction(self.action_delete)
 
         self.action_import.setShortcut('Ctrl+I')
 
@@ -285,6 +288,7 @@ class MainWindow(QMainWindow):
         self.action_exit.triggered.connect(self.close)
         self.action_save.triggered.connect(self.save)
         self.action_save_as.triggered.connect(self.save_as)
+        self.action_delete.triggered.connect(self.delete_project)
         self.action_import.triggered.connect(self.import_data)
         self.action_see_all_projects.triggered.connect(self.see_all_projects)
         self.action_project_properties.triggered.connect(
@@ -312,7 +316,7 @@ class MainWindow(QMainWindow):
 
         self.action_save_project.triggered.connect(self.saveChoice)
         self.action_save_project_as.triggered.connect(self.save_project_as)
-
+        self.action_delete_project.triggered.connect(self.delete_project)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_import)
         self.menu_file.addSeparator()
@@ -419,6 +423,18 @@ class MainWindow(QMainWindow):
 
         self.centralWindow.setLayout(vertical_layout)
 
+    def delete_project(self):
+        """Open a pop-up to open a project and updates the recent projects."""
+        # Ui_Dialog() is defined in pop_ups.py
+        # We check for unsaved modifications
+        self.exPopup = PopUpOpenProject()
+        if self.exPopup.exec():
+            file_name = self.exPopup.selectedFiles()
+            self.exPopup.get_filename(file_name)
+            file_name = self.exPopup.relative_path
+            shutil.rmtree(file_name)
+            # self.switch_project(file_name, self.exPopup.name)
+            # We switch the project
 
     @staticmethod
     def documentation():
