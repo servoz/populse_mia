@@ -89,12 +89,24 @@ class TestMIAPipelineManager(unittest.TestCase):
         self.app.exit()
 
     def test_process_library(self):
+        config = Config()
+        QMessageBox.exec = lambda x: True
+        pkg = InstallProcesses(self.main_window, folder=False)
+        brick = os.path.join(config.get_mia_path(), 'resources',
+                       'mia', 'brick_test.zip')
+        pkg.path_edit.text = lambda: brick
+        pkg.install()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+
+                               'process_config.yml'), 'r') as stream:
+            pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
+            self.assertIn("brick_test", pro_dic["Packages"])
 
         pkg = PackageLibraryDialog(self.main_window)
         pkg.line_edit.text = lambda: "mia_processes"
         pkg.add_package_with_text()
         pkg.save()
-        config = Config()
+
         with open(os.path.join(config.get_mia_path(), 'properties',
 
                                'process_config.yml'), 'r') as stream:
@@ -102,7 +114,11 @@ class TestMIAPipelineManager(unittest.TestCase):
             self.assertIn("mia_processes", pro_dic["Packages"])
 
         pkg.remove_package("mia_processes")
+        pkg.remove_package("brick_test")
         pkg.save_config()
+        process = os.path.join(config.get_mia_path(), 'processes',
+                               'brick_test')
+        shutil.rmtree(process)
         with open(os.path.join(config.get_mia_path(), 'properties',
 
                                'process_config.yml'), 'r') as stream:
