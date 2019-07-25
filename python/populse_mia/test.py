@@ -55,6 +55,1002 @@ from capsul.api import get_process_instance
 from datetime import datetime
 
 
+
+class TestMIAPipelineManager(unittest.TestCase):
+
+    def setUp(self):
+        """
+        Called before each test
+        """
+
+        # All the tests are run in regular mode
+        config = Config()
+        config.set_clinical_mode(False)
+
+        self.app = QApplication.instance()
+        if self.app is None:
+            self.app = QApplication(sys.argv)
+        self.project = Project(None, True)
+        self.main_window = MainWindow(self.project, test=True)
+
+    def tearDown(self):
+        """
+        Called after each test
+        """
+
+        self.main_window.project.unsaveModifications()
+        self.main_window.close()
+
+        # Removing the opened projects (in CI, the tests are run twice)
+        config = Config()
+        config.set_opened_projects([])
+        config.saveConfig()
+
+        self.app.exit()
+
+    def test_process_library(self):
+
+        pkg = PackageLibraryDialog(self.main_window)
+        pkg.line_edit.text = lambda: "mia_processes"
+        pkg.add_package_with_text()
+        pkg.save()
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+
+                               'process_config.yml'), 'r') as stream:
+            pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
+            self.assertIn("mia_processes", pro_dic["Packages"])
+
+        pkg.remove_package("mia_processes")
+        pkg.save_config()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+
+                               'process_config.yml'), 'r') as stream:
+            pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
+            self.assertNotIn("mia_processes", pro_dic["Packages"])
+
+
+    def test_add_tab(self):
+        """
+        Adds tabs to the PipelineEditorTabs
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding two new tabs
+        pipeline_editor_tabs.new_tab()
+        self.assertEqual(pipeline_editor_tabs.count(), 3)
+        self.assertEqual(pipeline_editor_tabs.tabText(1), "New Pipeline 1")
+        pipeline_editor_tabs.new_tab()
+        self.assertEqual(pipeline_editor_tabs.count(), 4)
+        self.assertEqual(pipeline_editor_tabs.tabText(2), "New Pipeline 2")
+
+    def test_close_tab(self):
+        """
+        Closes a tab to the PipelineEditorTabs
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding a new tab and closing the first one
+        pipeline_editor_tabs.new_tab()
+        pipeline_editor_tabs.close_tab(0)
+        self.assertEqual(pipeline_editor_tabs.count(), 2)
+        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline 1")
+
+        # When the last editor is closed, one is automatically opened
+        pipeline_editor_tabs.close_tab(0)
+        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline")
+
+        # Modifying the pipeline editor
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+        self.assertEqual(pipeline_editor_tabs.tabText(0)[-2:], " *")
+
+        # # Still some bug with the pop-up execution
+        #
+        #
+        # # Closing the modified pipeline editor and clicking on "Cancel"
+        # pipeline_editor_tabs.close_tab(0)
+        # pop_up_close = pipeline_editor_tabs.pop_up_close
+        # # QTest.mouseClick(pop_up_close.push_button_cancel, Qt.LeftButton)
+        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
+        # pop_up_close.cancel_clicked()
+        # self.assertEqual(pipeline_editor_tabs.count(), 2)
+        #
+        # # Closing the modified pipeline editor and clicking on "Do not save"
+        # pipeline_editor_tabs.close_tab(0)
+        # pop_up_close = pipeline_editor_tabs.pop_up_close
+        # # QTest.mouseClick(pop_up_close.push_button_do_not_save, Qt.LeftButton)
+        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
+        # pop_up_close.do_not_save_clicked()
+        # self.assertEqual(pipeline_editor_tabs.count(), 1)
+
+        # TODO: HOW TO TEST "SAVE AS" ACTION ?
+
+    def test_find_process(self):
+        """
+        Adds a Nipype SPM's Smooth process using the find_process method
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().find_process('nipype.interfaces.spm.Smooth')
+
+        self.assertTrue('smooth1' in pipeline_editor_tabs.get_current_pipeline().nodes.keys())
+
+    def test_update_node_name(self):
+        """
+        Displays parameters of a node and updates its name
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        # node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
+        node_controller.update_node_name(pipeline, "smooth_test")
+        self.assertTrue("smooth_test" in pipeline.nodes.keys())
+
+        # Adding another Smooth process
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
+
+        # Adding link between nodes
+        source = ('smooth_test', '_smoothed_files')
+        dest = ('smooth1', 'in_files')
+        pipeline_editor_tabs.get_current_editor().add_link(source, dest, True, False)
+
+        source = ('smooth1', '_smoothed_files')
+        dest = ('smooth2', 'in_files')
+        pipeline_editor_tabs.get_current_editor().add_link(source, dest, True, False)
+
+        # Displaying the node parameters (smooth1)
+        #  node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
+
+        # This should not change the node name because there is already a "smooth_test" process in the pipeline
+        node_controller.update_node_name(pipeline, "smooth_test")
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        # Changing to another value
+        node_controller.update_node_name(pipeline, "smooth_test2")
+        self.assertTrue("smooth_test2" in pipeline.nodes.keys())
+
+        # Verifying that the updated node has the same links
+        self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["in_files"].links_from), 1)
+        self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["_smoothed_files"].links_to), 1)
+
+    def test_update_plug_value(self):
+        """
+        Displays parameters of a node and updates a plug value
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Threshold
+        process_class = Threshold
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        node_controller.display_parameters("threshold1", get_process_instance(process_class), pipeline)
+
+        # Updating the value of the "synchronize" plug
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("1")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(1, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+        # Updating the value of the "_activation_forced" plug
+        index = node_controller.get_index_from_plug_name("_activation_forced", "out")
+        node_controller.line_edit_output[index].setText("True")
+        node_controller.line_edit_output[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(True, pipeline.nodes["threshold1"].get_plug_value("_activation_forced"))
+
+        # Exporting the input plugs and modifying the "synchronize" input plug
+        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
+
+        input_process = pipeline.nodes[""].process
+        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
+
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("2")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+    def test_display_filter(self):
+        """
+        Displays parameters of a node and displays a plug filter
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Threshold
+        process_class = Threshold
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        # Exporting the input plugs and modifying the "synchronize" input plug
+        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
+
+        input_process = pipeline.nodes[""].process
+        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
+        index = node_controller.get_index_from_plug_name("synchronize", "in")
+        node_controller.line_edit_input[index].setText("2")
+        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
+
+        # Calling the display_filter method
+        node_controller.display_filter("inputs", "synchronize", (), input_process)
+        node_controller.pop_up.close()
+        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
+
+        # TODO: open a project and modify the filter pop-up
+
+    '''def test_open_filter(self):
+        """
+        Opens an input filter
+        """
+
+        # Adding the processes path to the system path
+        import sys
+        sys.path.append(os.path.join('..', '..', 'processes'))
+
+        # Importing the package
+        package_name = 'MIA_processes.IRMaGe.Tools'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        process_class = None
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Input_Filter':
+                process_class = cls
+
+        if not process_class:
+            print('No Input_Filer class found')
+            return
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "input_filter1"
+        pipeline_editor_tabs.open_filter("input_filter1")
+        pipeline_editor_tabs.filter_widget.close()
+        self.assertFalse(pipeline.nodes["input_filter1"].get_plug_value("output"))
+
+        # TODO: open a project and modify the filter pop-up'''
+
+    def test_save_pipeline(self):
+        """
+        Saves a simple pipeline
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+        config = Config()
+
+        # Adding a process
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+
+        # Displaying the node parameters
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
+
+        # Exporting the input plugs
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
+        pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
+        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
+
+        from populse_mia.user_interface.pipeline_manager.pipeline_editor import save_pipeline
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        save_pipeline(pipeline, filename)
+        self.main_window.pipeline_manager.updateProcessLibrary(filename)
+        self.assertTrue(os.path.isfile(os.path.join(config.get_mia_path(), 'processes', 'User_processes',
+                                                    'test_pipeline.py')))
+
+    def test_z_load_pipeline(self):
+        """
+        Loads a pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+    def test_z_get_editor(self):
+        """
+        Gets the instance of an editor (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_editor_by_index
+         - PipelineEditorTabs.get_current_editor
+         - PipelineEditorTabs.get_editor_by_tab_name
+         - PipelineEditorTabs.get_editor_by_filename
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(0), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(1), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_current_editor(), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("test_pipeline.py"), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("New Pipeline 1"), editor1)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("dummy"), None)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name(filename), editor0)
+        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name("dummy"), None)
+
+    def test_z_get_filename(self):
+        """
+        Gets the relative path to the file the pipeline in an editor
+        has been last saved to. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_filename_by_index
+         - PipelineEditorTabs.get_current_filename
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_filename_by_index(0)), filename)
+        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), None)
+        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_current_filename()), filename)
+
+    def test_z_get_tab_name(self):
+        """
+        Gets the tab name of the editor. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_tab_name_by_index
+         - PipelineEditorTabs.get_current_tab_name
+        """
+
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(0), "New Pipeline")
+        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(1), None)
+        self.assertEqual(pipeline_editor_tabs.get_current_tab_name(), "New Pipeline")
+
+    def test_z_get_index(self):
+        """
+        Gets the index of an editor. (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.get_index_by_tab_name
+         - PipelineEditorTabs.get_index_by_filename
+         - PipelineEditorTabs.get_index_by_editor
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("test_pipeline.py"), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("New Pipeline 1"), 1)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("dummy"), None)
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_filename(filename), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_filename("dummy"), None)
+
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor0), 0)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor1), 1)
+        self.assertEqual(pipeline_editor_tabs.get_index_by_editor("dummy"), None)
+
+    def test_z_set_current_editor(self):
+        """
+        Sets the current editor (z to run at the end)
+
+        This tests:
+         - PipelineEditorTabs.set_current_editor_by_tab_name
+         - PipelineEditorTabs.set_current_editor_by_file_name
+         - PipelineEditorTabs.set_current_editor_by_editor
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        editor0 = pipeline_editor_tabs.get_current_editor()
+        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
+        editor1 = pipeline_editor_tabs.get_current_editor()
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
+
+        pipeline_editor_tabs.set_current_editor_by_file_name(filename)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
+
+        pipeline_editor_tabs.set_current_editor_by_editor(editor1)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
+        pipeline_editor_tabs.set_current_editor_by_editor(editor0)
+        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
+
+    def test_z_open_sub_pipeline(self):
+        """
+        Opens a sub_pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        # Adding the processes path to the system path
+        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
+
+        # Importing the package
+        package_name = 'User_processes'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Test_pipeline':
+                process_class = cls
+
+        # Adding the "test_pipeline" as a process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+
+        # Opening the sub-pipeline in a new editor
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        process_instance = pipeline.nodes["test_pipeline1"].process
+        pipeline_editor_tabs.open_sub_pipeline(process_instance)
+
+        self.assertTrue(pipeline_editor_tabs.count(), 3)
+        self.assertEqual(os.path.basename(pipeline_editor_tabs.get_filename_by_index(1)), "test_pipeline.py")
+
+    def test_z_init_pipeline(self):
+        """
+        Initializes the pipeline (z to run at the end)
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        config = Config()
+
+        # Forcing the exit and disabling the init progressbar
+        self.main_window.pipeline_manager.disable_progress_bar = True
+
+        # Adding the processes path to the system path
+        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
+
+        # Importing the package
+        package_name = 'User_processes'
+        __import__(package_name)
+        pkg = sys.modules[package_name]
+        for name, cls in sorted(list(pkg.__dict__.items())):
+            if name == 'Test_pipeline':
+                process_class = cls
+
+        # Adding the "test_pipeline" as a process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+
+        # Added another Smooth process
+        from nipype.interfaces.spm import Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
+        pipeline_editor_tabs.get_current_editor().add_process(Smooth)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        # Verifying that all the processes are here
+        self.assertTrue('test_pipeline1' in pipeline.nodes.keys())
+        self.assertTrue('smooth1' in pipeline.nodes.keys())
+
+        # Adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("test_pipeline1", "in_files"),
+                                                           active=True, weak=False)
+
+        # Choosing a nii file from the project_8's raw_data folder
+        folder = os.path.abspath(os.path.join(config.get_mia_path(), 'resources', 'mia', 'project_8',
+                                              'data', 'raw_data'))
+        nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
+        nii_path = os.path.abspath(os.path.join(folder, nii_file))
+
+        # Setting values to verify that the initialization works well
+        pipeline.nodes['smooth1'].set_plug_value('in_files', nii_path)
+        pipeline.nodes['smooth1'].set_plug_value('out_prefix', 'TEST')
+
+        # Initialization of the pipeline
+        self.main_window.pipeline_manager.init_pipeline()
+
+        # Verifying the results
+        self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('_smoothed_files'),
+                         os.path.abspath(os.path.join(folder, 'TEST' + nii_file)))
+        self.assertEqual(pipeline.nodes['test_pipeline1'].get_plug_value('_smoothed_files'),
+                         os.path.abspath(os.path.join(folder, 'sTEST' + nii_file)))
+
+    # def test_init_MIA_processes(self):
+    #     """
+    #     Adds all the tools processes, initializes and runs the pipeline
+    #     """
+    #
+    #     # Forcing the exit
+    #     self.main_window.force_exit = True
+    #
+    #     # Adding the processes path to the system path
+    #     import sys
+    #     sys.path.append(os.path.join('..', '..', 'processes'))
+    #
+    #     pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+    #
+    #     pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+    #
+    #     # Importing the package
+    #     package_name = 'MIA_processes.IRMaGe.Tools'
+    #     __import__(package_name)
+    #     pkg = sys.modules[package_name]
+    #     process_class = None
+    #     for name, cls in sorted(list(pkg.__dict__.items())):
+    #         if name != "Input_Filter":
+    #             try:
+    #                 proc_instance = get_process_instance(cls)
+    #             except:
+    #                 pass
+    #             else:
+    #                 print("class", cls)
+    #                 process_class = cls
+    #                 pipeline_editor_tabs.get_current_editor().add_process(process_class)
+    #
+    #     pipeline = pipeline_editor_tabs.get_current_pipeline()
+    #
+    #     # Verifying that all the processes are here
+    #     self.assertTrue('duplicate_file1' in pipeline.nodes.keys())
+    #     self.assertTrue('find_in_list1' in pipeline.nodes.keys())
+    #     self.assertTrue('files_to_list1' in pipeline.nodes.keys())
+    #     self.assertTrue('list_to_file1' in pipeline.nodes.keys())
+    #     self.assertTrue('list_duplicate1' in pipeline.nodes.keys())
+    #     self.assertTrue('roi_list_generator1' in pipeline.nodes.keys())
+    #
+    #     # Setting values to verify that the initialization works well
+    #     pipeline.nodes['duplicate_file1'].set_plug_value('file1', 'test_file.txt')
+    #     pipeline.nodes['find_in_list1'].set_plug_value('in_list', ['test1.txt', 'test2.txt'])
+    #     pipeline.nodes['find_in_list1'].set_plug_value('pattern', '1')
+    #     pipeline.nodes['files_to_list1'].set_plug_value('file1', 'test1.txt')
+    #     pipeline.nodes['files_to_list1'].set_plug_value('file2', 'test2.txt')
+    #     pipeline.nodes['list_to_file1'].set_plug_value('file_list', ['test1.txt', 'test2.txt'])
+    #     pipeline.nodes['list_duplicate1'].set_plug_value('file_name', 'test_file.txt')
+    #     pipeline.nodes['roi_list_generator1'].set_plug_value('pos', ['TEST1', 'TEST2'])
+    #
+    #     # Initialization/run of the pipeline
+    #     self.main_window.pipeline_manager.init_pipeline()
+    #     self.main_window.pipeline_manager.runPipeline()
+    #
+    #     # Verifying the results
+    #     self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file1'), 'test_file.txt')
+    #     self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file2'), 'test_file.txt')
+    #     self.assertEqual(pipeline.nodes['find_in_list1'].get_plug_value('out_file'), 'test1.txt')
+    #     self.assertEqual(pipeline.nodes['files_to_list1'].get_plug_value('file_list'), ['test1.txt', 'test2.txt'])
+    #     self.assertEqual(pipeline.nodes['list_to_file1'].get_plug_value('file'), 'test1.txt')
+    #     self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_list'), ['test_file.txt'])
+    #     self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_file'), 'test_file.txt')
+    #     self.assertEqual(pipeline.nodes['roi_list_generator1'].get_plug_value('roi_list'), [['TEST1', '_L'],
+    #                                                                                         ['TEST1', '_R'],
+    #                                                                                         ['TEST2', '_L'],
+    #                                                                                         ['TEST2', '_R']])
+    #
+    # def test_init_SPM_pre_processes(self):
+    #     """
+    #     Adds all SPM pre-processes and initializes the pipeline
+    #     """
+    #
+    #     # Forcing the exit
+    #     self.main_window.force_exit = True
+    #
+    #     # Adding the processes path to the system path
+    #     import sys
+    #     sys.path.append(os.path.join('..', '..', 'processes'))
+    #
+    #     pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+    #
+    #     pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+    #
+    #     # Importing the package
+    #     package_name = 'MIA_processes.SPM'
+    #     __import__(package_name)
+    #     pkg = sys.modules[package_name]
+    #     process_class = None
+    #     preproc_list = ['Smooth', 'NewSegment', 'Normalize', 'Realign', 'Coregister']
+    #     for name, cls in sorted(list(pkg.__dict__.items())):
+    #         if name in preproc_list:
+    #             try:
+    #                 proc_instance = get_process_instance(cls)
+    #             except:
+    #                 pass
+    #             else:
+    #                 process_class = cls
+    #                 pipeline_editor_tabs.get_current_editor().add_process(process_class)
+    #
+    #     pipeline = pipeline_editor_tabs.get_current_pipeline()
+    #
+    #     # Verifying that all the processes are here
+    #     self.assertTrue('smooth1' in pipeline.nodes.keys())
+    #     self.assertTrue('newsegment1' in pipeline.nodes.keys())
+    #     self.assertTrue('normalize1' in pipeline.nodes.keys())
+    #     self.assertTrue('realign1' in pipeline.nodes.keys())
+    #     self.assertTrue('coregister1' in pipeline.nodes.keys())
+    #
+    #     # Choosing a nii file from the project_8's raw_data folder
+    #     folder = os.path.join('project_8', 'data', 'raw_data')
+    #     nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
+    #     nii_no_ext = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000'
+    #     nii_path = os.path.abspath(os.path.join(folder, nii_file))
+    #
+    #     # Setting values to verify that the initialization works well
+    #     pipeline.nodes['smooth1'].set_plug_value('in_files', nii_path)
+    #     pipeline.nodes['newsegment1'].set_plug_value('channel_files', nii_path)
+    #     pipeline.nodes['normalize1'].set_plug_value('apply_to_files', nii_path)
+    #     if os.path.isfile(os.path.join(folder, 'y_' + nii_file)):
+    #         pipeline.nodes['normalize1'].set_plug_value('deformation_file',
+    #                                                     os.path.abspath(os.path.join(folder, 'y_' + nii_file)))
+    #     else:
+    #         # This makes no sense but for the moment, we only check the initialization
+    #         # and we just need to put a file in this plug
+    #         pipeline.nodes['normalize1'].set_plug_value('deformation_file',
+    #                                                     os.path.abspath(os.path.join(folder, nii_file)))
+    #
+    #     pipeline.nodes['realign1'].set_plug_value('in_files', nii_path)
+    #
+    #     # This makes no sense but for the moment, we only check the initialization
+    #     # and we just need to put a file in this plug
+    #     pipeline.nodes['coregister1'].set_plug_value('apply_to_files', nii_path)
+    #     pipeline.nodes['coregister1'].set_plug_value('target', nii_path)
+    #     pipeline.nodes['coregister1'].set_plug_value('source', nii_path)
+    #
+    #     # Initialization/run of the pipeline
+    #     self.main_window.pipeline_manager.init_pipeline()
+    #
+    #     # Verifying the results
+    #     self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('smoothed_files'),
+    #                      os.path.abspath(os.path.join(folder, 's' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c1' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c2' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c3' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c4' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c5' + nii_file)))
+    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
+    #                     os.path.abspath(os.path.join(folder, 'c6' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['newsegment1'].get_plug_value('bias_field_images'),
+    #                      os.path.abspath(os.path.join(folder, 'BiasField_' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['newsegment1'].get_plug_value('forward_deformation_field'),
+    #                      os.path.abspath(os.path.join(folder, 'y_' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['normalize1'].get_plug_value('normalized_files'),
+    #                      os.path.abspath(os.path.join(folder, 'w' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('realigned_files'),
+    #                      os.path.abspath(os.path.join(folder, 'r' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('mean_image'),
+    #                      os.path.abspath(os.path.join(folder, 'mean' + nii_file)))
+    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('realignment_parameters'),
+    #                      os.path.abspath(os.path.join(folder, 'rp_' + nii_no_ext + '.txt')))
+    #     self.assertEqual(pipeline.nodes['coregister1'].get_plug_value('coregistered_files'),
+    #                      os.path.abspath(os.path.join(folder, nii_file)))
+
+    def test_iteration_table(self):
+        """
+        Plays with the iteration table
+        """
+        config = Config()
+        mia_path = config.get_mia_path()
+        project_8_path = os.path.join(mia_path, 'resources', 'mia',
+                                      'project_8')
+        self.main_window.switch_project(project_8_path, "project_8")
+
+        iteration_table = self.main_window.pipeline_manager.iterationTable
+        iteration_table.check_box_iterate.setChecked(True)
+        iteration_table.update_iterated_tag("BandWidth")
+        self.assertEqual(iteration_table.iterated_tag_label.text(),
+                         "BandWidth:")
+        iteration_table.add_tag()
+        self.assertEqual(len(iteration_table.push_buttons), 3)
+        iteration_table.remove_tag()
+        self.assertEqual(len(iteration_table.push_buttons), 2)
+        iteration_table.add_tag()
+        iteration_table.push_buttons[2].setText("AcquisitionTime")
+        iteration_table.fill_values(2)
+        iteration_table.update_table()
+        self.assertTrue(iteration_table.combo_box.currentText() in [
+         "25000.0", "65789.48", "50000.0"])
+
+    def test_undo_redo(self):
+        """
+        Tests the undo/redo actions
+        """
+
+        pipeline_manager = self.main_window.pipeline_manager
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        node_controller = self.main_window.pipeline_manager.nodeController
+
+        # Adding a process
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(
+            450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)
+        # Creates a node called "smooth1"
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.undo()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.redo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        # Deleting the process
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
+        pipeline_editor_tabs.get_current_editor().del_node()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.undo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_manager.redo()
+        self.assertFalse("smooth1" in pipeline.nodes.keys())
+
+        # Adding a new process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+
+        # Exporting the "out_prefix" plug
+        pipeline_editor_tabs.get_current_editor()._export_plug(temp_plug_name=("smooth1", "out_prefix"),
+                                                               pipeline_parameter="prefix_smooth",
+                                                               optional=False,
+                                                               weak_link=False)
+
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.undo()
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.redo()
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        # Deleting the "out_prefix" plug
+        pipeline_editor_tabs.get_current_editor()._remove_plug(_temp_plug_name=("inputs", "prefix_smooth"))
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.undo()
+        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        pipeline_manager.redo()
+        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
+
+        # TODO: export_plugs (currently there is a bug when a plug is of type list)
+
+        # Adding a new process
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
+
+        # Adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Removing a link
+        link = "smooth1._smoothed_files->smooth2.in_files"
+        pipeline_editor_tabs.get_current_editor()._del_link(link)
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Re-adding a link
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        # Updating the node name
+        node_controller.display_parameters("smooth2", get_process_instance(process_class), pipeline)
+        node_controller.line_edit_node_name.setText("my_smooth")
+        node_controller.update_node_name(pipeline)
+        self.assertTrue("my_smooth" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.undo()
+        self.assertFalse("my_smooth" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertTrue("my_smooth" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        # Updating a plug value
+        index = node_controller.get_index_from_plug_name("out_prefix", "in")
+        node_controller.line_edit_input[index].setText("PREFIX")
+        node_controller.update_plug_value("in", "out_prefix", pipeline, str)
+
+        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+        pipeline_manager.undo()
+        self.assertEqual("s", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+        pipeline_manager.redo()
+        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
+
+    def test_delete_processes(self):
+        """
+        Deletes a process and makes the undo/redo action
+        """
+
+        pipeline_manager = self.main_window.pipeline_manager
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+
+        # Adding processes
+        from nipype.interfaces.spm import Smooth
+        process_class = Smooth
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
+        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth3"
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth2", "_smoothed_files"),
+                                                           ("smooth3", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth2"
+        pipeline_editor_tabs.get_current_editor().del_node()
+
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+
+        pipeline_manager.undo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
+
+        pipeline_manager.redo()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertFalse("smooth2" in pipeline.nodes.keys())
+        self.assertTrue("smooth3" in pipeline.nodes.keys())
+        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
+
+    def test_zz_check_modifications(self):
+        """
+        Opens a pipeline, opens it as a process in another tab, modifies it and check the modifications
+        """
+        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+        config = Config()
+
+        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
+        pipeline_editor_tabs.load_pipeline(filename)
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.new_tab()
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        pipeline_editor_tabs.get_current_editor().find_process("User_processes.Test_pipeline")
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+
+        self.assertTrue("test_pipeline1" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
+        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
+        self.assertTrue("smooth1" in pipeline.nodes.keys())
+        self.assertTrue("smooth2" in pipeline.nodes.keys())
+
+        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
+
+                                                           ("test_pipeline1", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.get_current_editor().add_link(("test_pipeline1", "_smoothed_files"),
+                                                           ("smooth2", "in_files"),
+                                                           active=True, weak=False)
+
+        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
+        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["_smoothed_files"].links_to))
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
+        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
+
+        pipeline_editor_tabs.get_current_editor().export_node_plugs("smooth1", optional=True)
+        self.main_window.pipeline_manager.savePipeline()
+
+        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
+        pipeline_editor_tabs.get_current_editor().scene.pos["test_pipeline1"] = QtCore.QPoint(450, 500)
+        pipeline_editor_tabs.get_current_editor().check_modifications()
+
+        pipeline = pipeline_editor_tabs.get_current_pipeline()
+        self.assertTrue("fwhm" in pipeline.nodes["test_pipeline1"].plugs.keys())
+
+
 class TestMIADataBrowser(unittest.TestCase):
 
     def setUp(self):
@@ -1533,1002 +2529,6 @@ class TestMIADataBrowser(unittest.TestCase):
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-08-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
         scan = self.main_window.data_browser.table_data.item(8, 0).text()
         self.assertEqual(scan, "data/raw_data/Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-09-G4_Guerbet_T1SE_800-RARE__pvm_-00-01-42.400.nii")
-
-
-class TestMIAPipelineManager(unittest.TestCase):
-
-    def setUp(self):
-        """
-        Called before each test
-        """
-
-        # All the tests are run in regular mode
-        config = Config()
-        config.set_clinical_mode(False)
-
-        self.app = QApplication.instance()
-        if self.app is None:
-            self.app = QApplication(sys.argv)
-        self.project = Project(None, True)
-        self.main_window = MainWindow(self.project, test=True)
-
-    def tearDown(self):
-        """
-        Called after each test
-        """
-
-        self.main_window.project.unsaveModifications()
-        self.main_window.close()
-
-        # Removing the opened projects (in CI, the tests are run twice)
-        config = Config()
-        config.set_opened_projects([])
-        config.saveConfig()
-
-        self.app.exit()
-
-    def test_process_library(self):
-
-        pkg = PackageLibraryDialog(self.main_window)
-        pkg.line_edit.text = lambda: "mia_processes"
-        pkg.add_package_with_text()
-        pkg.save_config()
-        config = Config()
-        with open(os.path.join(config.get_mia_path(), 'properties',
-
-                               'process_config.yml'), 'r') as stream:
-            pro = yaml.load(stream, Loader=yaml.FullLoader)
-            self.assertIn("mia_processes", pro["Packages"])
-
-        pkg.remove_package("mia_processes")
-        pkg.save()
-        with open(os.path.join(config.get_mia_path(), 'properties',
-
-                               'process_config.yml'), 'r') as stream:
-            pro = yaml.load(stream, Loader=yaml.FullLoader)
-            self.assertNotIn("mia_processes", pro["Packages"])
-
-
-    def test_add_tab(self):
-        """
-        Adds tabs to the PipelineEditorTabs
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-
-        # Adding two new tabs
-        pipeline_editor_tabs.new_tab()
-        self.assertEqual(pipeline_editor_tabs.count(), 3)
-        self.assertEqual(pipeline_editor_tabs.tabText(1), "New Pipeline 1")
-        pipeline_editor_tabs.new_tab()
-        self.assertEqual(pipeline_editor_tabs.count(), 4)
-        self.assertEqual(pipeline_editor_tabs.tabText(2), "New Pipeline 2")
-
-    def test_close_tab(self):
-        """
-        Closes a tab to the PipelineEditorTabs
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-
-        # Adding a new tab and closing the first one
-        pipeline_editor_tabs.new_tab()
-        pipeline_editor_tabs.close_tab(0)
-        self.assertEqual(pipeline_editor_tabs.count(), 2)
-        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline 1")
-
-        # When the last editor is closed, one is automatically opened
-        pipeline_editor_tabs.close_tab(0)
-        self.assertEqual(pipeline_editor_tabs.tabText(0), "New Pipeline")
-
-        # Modifying the pipeline editor
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)
-        self.assertEqual(pipeline_editor_tabs.tabText(0)[-2:], " *")
-
-        # # Still some bug with the pop-up execution
-        #
-        #
-        # # Closing the modified pipeline editor and clicking on "Cancel"
-        # pipeline_editor_tabs.close_tab(0)
-        # pop_up_close = pipeline_editor_tabs.pop_up_close
-        # # QTest.mouseClick(pop_up_close.push_button_cancel, Qt.LeftButton)
-        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
-        # pop_up_close.cancel_clicked()
-        # self.assertEqual(pipeline_editor_tabs.count(), 2)
-        #
-        # # Closing the modified pipeline editor and clicking on "Do not save"
-        # pipeline_editor_tabs.close_tab(0)
-        # pop_up_close = pipeline_editor_tabs.pop_up_close
-        # # QTest.mouseClick(pop_up_close.push_button_do_not_save, Qt.LeftButton)
-        # # QtCore.QTimer.singleShot(0, pop_up_close.push_button_cancel.clicked)
-        # pop_up_close.do_not_save_clicked()
-        # self.assertEqual(pipeline_editor_tabs.count(), 1)
-
-        # TODO: HOW TO TEST "SAVE AS" ACTION ?
-
-    def test_find_process(self):
-        """
-        Adds a Nipype SPM's Smooth process using the find_process method
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().find_process('nipype.interfaces.spm.Smooth')
-
-        self.assertTrue('smooth1' in pipeline_editor_tabs.get_current_pipeline().nodes.keys())
-
-    def test_update_node_name(self):
-        """
-        Displays parameters of a node and updates its name
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        node_controller = self.main_window.pipeline_manager.nodeController
-
-        # Adding a process
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
-
-        # Displaying the node parameters
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        # node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
-        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
-        node_controller.update_node_name(pipeline, "smooth_test")
-        self.assertTrue("smooth_test" in pipeline.nodes.keys())
-
-        # Adding another Smooth process
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
-
-        # Adding link between nodes
-        source = ('smooth_test', '_smoothed_files')
-        dest = ('smooth1', 'in_files')
-        pipeline_editor_tabs.get_current_editor().add_link(source, dest, True, False)
-
-        source = ('smooth1', '_smoothed_files')
-        dest = ('smooth2', 'in_files')
-        pipeline_editor_tabs.get_current_editor().add_link(source, dest, True, False)
-
-        # Displaying the node parameters (smooth1)
-        #  node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
-        self.main_window.pipeline_manager.displayNodeParameters("smooth1", get_process_instance(process_class))
-
-        # This should not change the node name because there is already a "smooth_test" process in the pipeline
-        node_controller.update_node_name(pipeline, "smooth_test")
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-        # Changing to another value
-        node_controller.update_node_name(pipeline, "smooth_test2")
-        self.assertTrue("smooth_test2" in pipeline.nodes.keys())
-
-        # Verifying that the updated node has the same links
-        self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["in_files"].links_from), 1)
-        self.assertEqual(len(pipeline.nodes["smooth_test2"].plugs["_smoothed_files"].links_to), 1)
-
-    def test_update_plug_value(self):
-        """
-        Displays parameters of a node and updates a plug value
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        node_controller = self.main_window.pipeline_manager.nodeController
-
-        # Adding a process
-        from nipype.interfaces.spm import Threshold
-        process_class = Threshold
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
-
-        # Displaying the node parameters
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        node_controller.display_parameters("threshold1", get_process_instance(process_class), pipeline)
-
-        # Updating the value of the "synchronize" plug
-        index = node_controller.get_index_from_plug_name("synchronize", "in")
-        node_controller.line_edit_input[index].setText("1")
-        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
-        self.assertEqual(1, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
-
-        # Updating the value of the "_activation_forced" plug
-        index = node_controller.get_index_from_plug_name("_activation_forced", "out")
-        node_controller.line_edit_output[index].setText("True")
-        node_controller.line_edit_output[index].returnPressed.emit()  # This calls "update_plug_value" method
-        self.assertEqual(True, pipeline.nodes["threshold1"].get_plug_value("_activation_forced"))
-
-        # Exporting the input plugs and modifying the "synchronize" input plug
-        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
-        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
-
-        input_process = pipeline.nodes[""].process
-        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
-
-        index = node_controller.get_index_from_plug_name("synchronize", "in")
-        node_controller.line_edit_input[index].setText("2")
-        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
-        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
-
-    def test_display_filter(self):
-        """
-        Displays parameters of a node and displays a plug filter
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        node_controller = self.main_window.pipeline_manager.nodeController
-
-        # Adding a process
-        from nipype.interfaces.spm import Threshold
-        process_class = Threshold
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "threshold1"
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-
-        # Exporting the input plugs and modifying the "synchronize" input plug
-        pipeline_editor_tabs.get_current_editor().current_node_name = "threshold1"
-        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_inputs()
-
-        input_process = pipeline.nodes[""].process
-        node_controller.display_parameters("inputs", get_process_instance(input_process), pipeline)
-        index = node_controller.get_index_from_plug_name("synchronize", "in")
-        node_controller.line_edit_input[index].setText("2")
-        node_controller.line_edit_input[index].returnPressed.emit()  # This calls "update_plug_value" method
-
-        # Calling the display_filter method
-        node_controller.display_filter("inputs", "synchronize", (), input_process)
-        node_controller.pop_up.close()
-        self.assertEqual(2, pipeline.nodes["threshold1"].get_plug_value("synchronize"))
-
-        # TODO: open a project and modify the filter pop-up
-
-    '''def test_open_filter(self):
-        """
-        Opens an input filter
-        """
-
-        # Adding the processes path to the system path
-        import sys
-        sys.path.append(os.path.join('..', '..', 'processes'))
-
-        # Importing the package
-        package_name = 'MIA_processes.IRMaGe.Tools'
-        __import__(package_name)
-        pkg = sys.modules[package_name]
-        process_class = None
-        for name, cls in sorted(list(pkg.__dict__.items())):
-            if name == 'Input_Filter':
-                process_class = cls
-
-        if not process_class:
-            print('No Input_Filer class found')
-            return
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "input_filter1"
-        pipeline_editor_tabs.open_filter("input_filter1")
-        pipeline_editor_tabs.filter_widget.close()
-        self.assertFalse(pipeline.nodes["input_filter1"].get_plug_value("output"))
-
-        # TODO: open a project and modify the filter pop-up'''
-
-    def test_save_pipeline(self):
-        """
-        Saves a simple pipeline
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        node_controller = self.main_window.pipeline_manager.nodeController
-        config = Config()
-
-        # Adding a process
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
-
-        # Displaying the node parameters
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        node_controller.display_parameters("smooth1", get_process_instance(process_class), pipeline)
-
-        # Exporting the input plugs
-        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
-        pipeline_editor_tabs.get_current_editor().export_node_unconnected_mandatory_plugs()
-        pipeline_editor_tabs.get_current_editor().export_node_all_unconnected_outputs()
-
-        from populse_mia.user_interface.pipeline_manager.pipeline_editor import save_pipeline
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        save_pipeline(pipeline, filename)
-        self.main_window.pipeline_manager.updateProcessLibrary(filename)
-        self.assertTrue(os.path.isfile(os.path.join(config.get_mia_path(), 'processes', 'User_processes',
-                                                    'test_pipeline.py')))
-
-    def test_z_load_pipeline(self):
-        """
-        Loads a pipeline (z to run at the end)
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-    def test_z_get_editor(self):
-        """
-        Gets the instance of an editor (z to run at the end)
-
-        This tests:
-         - PipelineEditorTabs.get_editor_by_index
-         - PipelineEditorTabs.get_current_editor
-         - PipelineEditorTabs.get_editor_by_tab_name
-         - PipelineEditorTabs.get_editor_by_filename
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        editor0 = pipeline_editor_tabs.get_current_editor()
-        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
-        editor1 = pipeline_editor_tabs.get_current_editor()
-
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(0), editor0)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_index(1), editor1)
-        self.assertEqual(pipeline_editor_tabs.get_current_editor(), editor1)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("test_pipeline.py"), editor0)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("New Pipeline 1"), editor1)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_tab_name("dummy"), None)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name(filename), editor0)
-        self.assertEqual(pipeline_editor_tabs.get_editor_by_file_name("dummy"), None)
-
-    def test_z_get_filename(self):
-        """
-        Gets the relative path to the file the pipeline in an editor
-        has been last saved to. (z to run at the end)
-
-        This tests:
-         - PipelineEditorTabs.get_filename_by_index
-         - PipelineEditorTabs.get_current_filename
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_filename_by_index(0)), filename)
-        self.assertEqual(pipeline_editor_tabs.get_filename_by_index(1), None)
-        self.assertEqual(os.path.abspath(pipeline_editor_tabs.get_current_filename()), filename)
-
-    def test_z_get_tab_name(self):
-        """
-        Gets the tab name of the editor. (z to run at the end)
-
-        This tests:
-         - PipelineEditorTabs.get_tab_name_by_index
-         - PipelineEditorTabs.get_current_tab_name
-        """
-
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-
-        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(0), "New Pipeline")
-        self.assertEqual(pipeline_editor_tabs.get_tab_name_by_index(1), None)
-        self.assertEqual(pipeline_editor_tabs.get_current_tab_name(), "New Pipeline")
-
-    def test_z_get_index(self):
-        """
-        Gets the index of an editor. (z to run at the end)
-
-        This tests:
-         - PipelineEditorTabs.get_index_by_tab_name
-         - PipelineEditorTabs.get_index_by_filename
-         - PipelineEditorTabs.get_index_by_editor
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        editor0 = pipeline_editor_tabs.get_current_editor()
-        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
-        editor1 = pipeline_editor_tabs.get_current_editor()
-
-        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("test_pipeline.py"), 0)
-        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("New Pipeline 1"), 1)
-        self.assertEqual(pipeline_editor_tabs.get_index_by_tab_name("dummy"), None)
-
-        self.assertEqual(pipeline_editor_tabs.get_index_by_filename(filename), 0)
-        self.assertEqual(pipeline_editor_tabs.get_index_by_filename("dummy"), None)
-
-        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor0), 0)
-        self.assertEqual(pipeline_editor_tabs.get_index_by_editor(editor1), 1)
-        self.assertEqual(pipeline_editor_tabs.get_index_by_editor("dummy"), None)
-
-    def test_z_set_current_editor(self):
-        """
-        Sets the current editor (z to run at the end)
-
-        This tests:
-         - PipelineEditorTabs.set_current_editor_by_tab_name
-         - PipelineEditorTabs.set_current_editor_by_file_name
-         - PipelineEditorTabs.set_current_editor_by_editor
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        editor0 = pipeline_editor_tabs.get_current_editor()
-        pipeline_editor_tabs.new_tab()  # create new tab with new editor and make it current
-        editor1 = pipeline_editor_tabs.get_current_editor()
-
-        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
-        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
-        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
-        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
-
-        pipeline_editor_tabs.set_current_editor_by_file_name(filename)
-        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
-
-        pipeline_editor_tabs.set_current_editor_by_editor(editor1)
-        self.assertEqual(pipeline_editor_tabs.currentIndex(), 1)
-        pipeline_editor_tabs.set_current_editor_by_editor(editor0)
-        self.assertEqual(pipeline_editor_tabs.currentIndex(), 0)
-
-    def test_z_open_sub_pipeline(self):
-        """
-        Opens a sub_pipeline (z to run at the end)
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        # Adding the processes path to the system path
-        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
-
-        # Importing the package
-        package_name = 'User_processes'
-        __import__(package_name)
-        pkg = sys.modules[package_name]
-        for name, cls in sorted(list(pkg.__dict__.items())):
-            if name == 'Test_pipeline':
-                process_class = cls
-
-        # Adding the "test_pipeline" as a process
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)
-
-        # Opening the sub-pipeline in a new editor
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        process_instance = pipeline.nodes["test_pipeline1"].process
-        pipeline_editor_tabs.open_sub_pipeline(process_instance)
-
-        self.assertTrue(pipeline_editor_tabs.count(), 3)
-        self.assertEqual(os.path.basename(pipeline_editor_tabs.get_filename_by_index(1)), "test_pipeline.py")
-
-    def test_z_init_pipeline(self):
-        """
-        Initializes the pipeline (z to run at the end)
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        config = Config()
-
-        # Forcing the exit and disabling the init progressbar
-        self.main_window.pipeline_manager.disable_progress_bar = True
-
-        # Adding the processes path to the system path
-        sys.path.append(os.path.join(config.get_mia_path(), 'processes'))
-
-        # Importing the package
-        package_name = 'User_processes'
-        __import__(package_name)
-        pkg = sys.modules[package_name]
-        for name, cls in sorted(list(pkg.__dict__.items())):
-            if name == 'Test_pipeline':
-                process_class = cls
-
-        # Adding the "test_pipeline" as a process
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)
-
-        # Added another Smooth process
-        from nipype.interfaces.spm import Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
-        pipeline_editor_tabs.get_current_editor().add_process(Smooth)
-
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-
-        # Verifying that all the processes are here
-        self.assertTrue('test_pipeline1' in pipeline.nodes.keys())
-        self.assertTrue('smooth1' in pipeline.nodes.keys())
-
-        # Adding a link
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
-                                                           ("test_pipeline1", "in_files"),
-                                                           active=True, weak=False)
-
-        # Choosing a nii file from the project_8's raw_data folder
-        folder = os.path.abspath(os.path.join(config.get_mia_path(), 'resources', 'mia', 'project_8',
-                                              'data', 'raw_data'))
-        nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
-        nii_path = os.path.abspath(os.path.join(folder, nii_file))
-
-        # Setting values to verify that the initialization works well
-        pipeline.nodes['smooth1'].set_plug_value('in_files', nii_path)
-        pipeline.nodes['smooth1'].set_plug_value('out_prefix', 'TEST')
-
-        # Initialization of the pipeline
-        self.main_window.pipeline_manager.init_pipeline()
-
-        # Verifying the results
-        self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('_smoothed_files'),
-                         os.path.abspath(os.path.join(folder, 'TEST' + nii_file)))
-        self.assertEqual(pipeline.nodes['test_pipeline1'].get_plug_value('_smoothed_files'),
-                         os.path.abspath(os.path.join(folder, 'sTEST' + nii_file)))
-
-    # def test_init_MIA_processes(self):
-    #     """
-    #     Adds all the tools processes, initializes and runs the pipeline
-    #     """
-    #
-    #     # Forcing the exit
-    #     self.main_window.force_exit = True
-    #
-    #     # Adding the processes path to the system path
-    #     import sys
-    #     sys.path.append(os.path.join('..', '..', 'processes'))
-    #
-    #     pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-    #
-    #     pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-    #
-    #     # Importing the package
-    #     package_name = 'MIA_processes.IRMaGe.Tools'
-    #     __import__(package_name)
-    #     pkg = sys.modules[package_name]
-    #     process_class = None
-    #     for name, cls in sorted(list(pkg.__dict__.items())):
-    #         if name != "Input_Filter":
-    #             try:
-    #                 proc_instance = get_process_instance(cls)
-    #             except:
-    #                 pass
-    #             else:
-    #                 print("class", cls)
-    #                 process_class = cls
-    #                 pipeline_editor_tabs.get_current_editor().add_process(process_class)
-    #
-    #     pipeline = pipeline_editor_tabs.get_current_pipeline()
-    #
-    #     # Verifying that all the processes are here
-    #     self.assertTrue('duplicate_file1' in pipeline.nodes.keys())
-    #     self.assertTrue('find_in_list1' in pipeline.nodes.keys())
-    #     self.assertTrue('files_to_list1' in pipeline.nodes.keys())
-    #     self.assertTrue('list_to_file1' in pipeline.nodes.keys())
-    #     self.assertTrue('list_duplicate1' in pipeline.nodes.keys())
-    #     self.assertTrue('roi_list_generator1' in pipeline.nodes.keys())
-    #
-    #     # Setting values to verify that the initialization works well
-    #     pipeline.nodes['duplicate_file1'].set_plug_value('file1', 'test_file.txt')
-    #     pipeline.nodes['find_in_list1'].set_plug_value('in_list', ['test1.txt', 'test2.txt'])
-    #     pipeline.nodes['find_in_list1'].set_plug_value('pattern', '1')
-    #     pipeline.nodes['files_to_list1'].set_plug_value('file1', 'test1.txt')
-    #     pipeline.nodes['files_to_list1'].set_plug_value('file2', 'test2.txt')
-    #     pipeline.nodes['list_to_file1'].set_plug_value('file_list', ['test1.txt', 'test2.txt'])
-    #     pipeline.nodes['list_duplicate1'].set_plug_value('file_name', 'test_file.txt')
-    #     pipeline.nodes['roi_list_generator1'].set_plug_value('pos', ['TEST1', 'TEST2'])
-    #
-    #     # Initialization/run of the pipeline
-    #     self.main_window.pipeline_manager.init_pipeline()
-    #     self.main_window.pipeline_manager.runPipeline()
-    #
-    #     # Verifying the results
-    #     self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file1'), 'test_file.txt')
-    #     self.assertEqual(pipeline.nodes['duplicate_file1'].get_plug_value('out_file2'), 'test_file.txt')
-    #     self.assertEqual(pipeline.nodes['find_in_list1'].get_plug_value('out_file'), 'test1.txt')
-    #     self.assertEqual(pipeline.nodes['files_to_list1'].get_plug_value('file_list'), ['test1.txt', 'test2.txt'])
-    #     self.assertEqual(pipeline.nodes['list_to_file1'].get_plug_value('file'), 'test1.txt')
-    #     self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_list'), ['test_file.txt'])
-    #     self.assertEqual(pipeline.nodes['list_duplicate1'].get_plug_value('out_file'), 'test_file.txt')
-    #     self.assertEqual(pipeline.nodes['roi_list_generator1'].get_plug_value('roi_list'), [['TEST1', '_L'],
-    #                                                                                         ['TEST1', '_R'],
-    #                                                                                         ['TEST2', '_L'],
-    #                                                                                         ['TEST2', '_R']])
-    #
-    # def test_init_SPM_pre_processes(self):
-    #     """
-    #     Adds all SPM pre-processes and initializes the pipeline
-    #     """
-    #
-    #     # Forcing the exit
-    #     self.main_window.force_exit = True
-    #
-    #     # Adding the processes path to the system path
-    #     import sys
-    #     sys.path.append(os.path.join('..', '..', 'processes'))
-    #
-    #     pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-    #
-    #     pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-    #
-    #     # Importing the package
-    #     package_name = 'MIA_processes.SPM'
-    #     __import__(package_name)
-    #     pkg = sys.modules[package_name]
-    #     process_class = None
-    #     preproc_list = ['Smooth', 'NewSegment', 'Normalize', 'Realign', 'Coregister']
-    #     for name, cls in sorted(list(pkg.__dict__.items())):
-    #         if name in preproc_list:
-    #             try:
-    #                 proc_instance = get_process_instance(cls)
-    #             except:
-    #                 pass
-    #             else:
-    #                 process_class = cls
-    #                 pipeline_editor_tabs.get_current_editor().add_process(process_class)
-    #
-    #     pipeline = pipeline_editor_tabs.get_current_pipeline()
-    #
-    #     # Verifying that all the processes are here
-    #     self.assertTrue('smooth1' in pipeline.nodes.keys())
-    #     self.assertTrue('newsegment1' in pipeline.nodes.keys())
-    #     self.assertTrue('normalize1' in pipeline.nodes.keys())
-    #     self.assertTrue('realign1' in pipeline.nodes.keys())
-    #     self.assertTrue('coregister1' in pipeline.nodes.keys())
-    #
-    #     # Choosing a nii file from the project_8's raw_data folder
-    #     folder = os.path.join('project_8', 'data', 'raw_data')
-    #     nii_file = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000.nii'
-    #     nii_no_ext = 'Guerbet-C6-2014-Rat-K52-Tube27-2014-02-14_10-23-17-02-G1_Guerbet_Anat-RARE__pvm_-00-02-20.000'
-    #     nii_path = os.path.abspath(os.path.join(folder, nii_file))
-    #
-    #     # Setting values to verify that the initialization works well
-    #     pipeline.nodes['smooth1'].set_plug_value('in_files', nii_path)
-    #     pipeline.nodes['newsegment1'].set_plug_value('channel_files', nii_path)
-    #     pipeline.nodes['normalize1'].set_plug_value('apply_to_files', nii_path)
-    #     if os.path.isfile(os.path.join(folder, 'y_' + nii_file)):
-    #         pipeline.nodes['normalize1'].set_plug_value('deformation_file',
-    #                                                     os.path.abspath(os.path.join(folder, 'y_' + nii_file)))
-    #     else:
-    #         # This makes no sense but for the moment, we only check the initialization
-    #         # and we just need to put a file in this plug
-    #         pipeline.nodes['normalize1'].set_plug_value('deformation_file',
-    #                                                     os.path.abspath(os.path.join(folder, nii_file)))
-    #
-    #     pipeline.nodes['realign1'].set_plug_value('in_files', nii_path)
-    #
-    #     # This makes no sense but for the moment, we only check the initialization
-    #     # and we just need to put a file in this plug
-    #     pipeline.nodes['coregister1'].set_plug_value('apply_to_files', nii_path)
-    #     pipeline.nodes['coregister1'].set_plug_value('target', nii_path)
-    #     pipeline.nodes['coregister1'].set_plug_value('source', nii_path)
-    #
-    #     # Initialization/run of the pipeline
-    #     self.main_window.pipeline_manager.init_pipeline()
-    #
-    #     # Verifying the results
-    #     self.assertEqual(pipeline.nodes['smooth1'].get_plug_value('smoothed_files'),
-    #                      os.path.abspath(os.path.join(folder, 's' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c1' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c2' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c3' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c4' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c5' + nii_file)))
-    #     self.assertTrue(pipeline.nodes['newsegment1'].get_plug_value('native_class_images'),
-    #                     os.path.abspath(os.path.join(folder, 'c6' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['newsegment1'].get_plug_value('bias_field_images'),
-    #                      os.path.abspath(os.path.join(folder, 'BiasField_' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['newsegment1'].get_plug_value('forward_deformation_field'),
-    #                      os.path.abspath(os.path.join(folder, 'y_' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['normalize1'].get_plug_value('normalized_files'),
-    #                      os.path.abspath(os.path.join(folder, 'w' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('realigned_files'),
-    #                      os.path.abspath(os.path.join(folder, 'r' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('mean_image'),
-    #                      os.path.abspath(os.path.join(folder, 'mean' + nii_file)))
-    #     self.assertEqual(pipeline.nodes['realign1'].get_plug_value('realignment_parameters'),
-    #                      os.path.abspath(os.path.join(folder, 'rp_' + nii_no_ext + '.txt')))
-    #     self.assertEqual(pipeline.nodes['coregister1'].get_plug_value('coregistered_files'),
-    #                      os.path.abspath(os.path.join(folder, nii_file)))
-
-    def test_iteration_table(self):
-        """
-        Plays with the iteration table
-        """
-        config = Config()
-        mia_path = config.get_mia_path()
-        project_8_path = os.path.join(mia_path, 'resources', 'mia',
-                                      'project_8')
-        self.main_window.switch_project(project_8_path, "project_8")
-
-        iteration_table = self.main_window.pipeline_manager.iterationTable
-        iteration_table.check_box_iterate.setChecked(True)
-        iteration_table.update_iterated_tag("BandWidth")
-        self.assertEqual(iteration_table.iterated_tag_label.text(),
-                         "BandWidth:")
-        iteration_table.add_tag()
-        self.assertEqual(len(iteration_table.push_buttons), 3)
-        iteration_table.remove_tag()
-        self.assertEqual(len(iteration_table.push_buttons), 2)
-        iteration_table.add_tag()
-        iteration_table.push_buttons[2].setText("AcquisitionTime")
-        iteration_table.fill_values(2)
-        iteration_table.update_table()
-        self.assertTrue(iteration_table.combo_box.currentText() in [
-         "25000.0", "65789.48", "50000.0"])
-
-    def test_undo_redo(self):
-        """
-        Tests the undo/redo actions
-        """
-
-        pipeline_manager = self.main_window.pipeline_manager
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        node_controller = self.main_window.pipeline_manager.nodeController
-
-        # Adding a process
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(
-            450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)
-        # Creates a node called "smooth1"
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-        pipeline_manager.undo()
-        self.assertFalse("smooth1" in pipeline.nodes.keys())
-
-        pipeline_manager.redo()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-        # Deleting the process
-        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth1"
-        pipeline_editor_tabs.get_current_editor().del_node()
-        self.assertFalse("smooth1" in pipeline.nodes.keys())
-
-        pipeline_manager.undo()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-        pipeline_manager.redo()
-        self.assertFalse("smooth1" in pipeline.nodes.keys())
-
-        # Adding a new process
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
-
-        # Exporting the "out_prefix" plug
-        pipeline_editor_tabs.get_current_editor()._export_plug(temp_plug_name=("smooth1", "out_prefix"),
-                                                               pipeline_parameter="prefix_smooth",
-                                                               optional=False,
-                                                               weak_link=False)
-
-        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        pipeline_manager.undo()
-        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        pipeline_manager.redo()
-        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        # Deleting the "out_prefix" plug
-        pipeline_editor_tabs.get_current_editor()._remove_plug(_temp_plug_name=("inputs", "prefix_smooth"))
-        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        pipeline_manager.undo()
-        self.assertTrue("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        pipeline_manager.redo()
-        self.assertFalse("prefix_smooth" in pipeline.nodes[''].plugs.keys())
-
-        # TODO: export_plugs (currently there is a bug when a plug is of type list)
-
-        # Adding a new process
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 550)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
-
-        # Adding a link
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
-                                                           ("smooth2", "in_files"),
-                                                           active=True, weak=False)
-
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.undo()
-        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.redo()
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        # Removing a link
-        link = "smooth1._smoothed_files->smooth2.in_files"
-        pipeline_editor_tabs.get_current_editor()._del_link(link)
-        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.undo()
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.redo()
-        self.assertEqual(0, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        # Re-adding a link
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
-                                                           ("smooth2", "in_files"),
-                                                           active=True, weak=False)
-
-        # Updating the node name
-        node_controller.display_parameters("smooth2", get_process_instance(process_class), pipeline)
-        node_controller.line_edit_node_name.setText("my_smooth")
-        node_controller.update_node_name(pipeline)
-        self.assertTrue("my_smooth" in pipeline.nodes.keys())
-        self.assertFalse("smooth2" in pipeline.nodes.keys())
-        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.undo()
-        self.assertFalse("my_smooth" in pipeline.nodes.keys())
-        self.assertTrue("smooth2" in pipeline.nodes.keys())
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.redo()
-        self.assertTrue("my_smooth" in pipeline.nodes.keys())
-        self.assertFalse("smooth2" in pipeline.nodes.keys())
-        self.assertEqual(1, len(pipeline.nodes["my_smooth"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        # Updating a plug value
-        index = node_controller.get_index_from_plug_name("out_prefix", "in")
-        node_controller.line_edit_input[index].setText("PREFIX")
-        node_controller.update_plug_value("in", "out_prefix", pipeline, str)
-
-        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
-
-        pipeline_manager.undo()
-        self.assertEqual("s", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
-
-        pipeline_manager.redo()
-        self.assertEqual("PREFIX", pipeline.nodes["my_smooth"].get_plug_value("out_prefix"))
-
-    def test_delete_processes(self):
-        """
-        Deletes a process and makes the undo/redo action
-        """
-
-        pipeline_manager = self.main_window.pipeline_manager
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-
-        # Adding processes
-        from nipype.interfaces.spm import Smooth
-        process_class = Smooth
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth1"
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth2"
-        pipeline_editor_tabs.get_current_editor().add_process(process_class)  # Creates a node called "smooth3"
-
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-        self.assertTrue("smooth2" in pipeline.nodes.keys())
-        self.assertTrue("smooth3" in pipeline.nodes.keys())
-
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
-                                                           ("smooth2", "in_files"),
-                                                           active=True, weak=False)
-
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth2", "_smoothed_files"),
-                                                           ("smooth3", "in_files"),
-                                                           active=True, weak=False)
-
-        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
-
-        pipeline_editor_tabs.get_current_editor().current_node_name = "smooth2"
-        pipeline_editor_tabs.get_current_editor().del_node()
-
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-        self.assertFalse("smooth2" in pipeline.nodes.keys())
-        self.assertTrue("smooth3" in pipeline.nodes.keys())
-        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
-
-        pipeline_manager.undo()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-        self.assertTrue("smooth2" in pipeline.nodes.keys())
-        self.assertTrue("smooth3" in pipeline.nodes.keys())
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-        self.assertEqual(1, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["_smoothed_files"].links_to))
-
-        pipeline_manager.redo()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-        self.assertFalse("smooth2" in pipeline.nodes.keys())
-        self.assertTrue("smooth3" in pipeline.nodes.keys())
-        self.assertEqual(0, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-        self.assertEqual(0, len(pipeline.nodes["smooth3"].plugs["in_files"].links_from))
-
-    def test_zz_check_modifications(self):
-        """
-        Opens a pipeline, opens it as a process in another tab, modifies it and check the modifications
-        """
-        pipeline_editor_tabs = self.main_window.pipeline_manager.pipelineEditorTabs
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-        config = Config()
-
-        filename = os.path.join(config.get_mia_path(), 'processes', 'User_processes', 'test_pipeline.py')
-        pipeline_editor_tabs.load_pipeline(filename)
-
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-
-        pipeline_editor_tabs.new_tab()
-        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-
-        pipeline_editor_tabs.get_current_editor().find_process("User_processes.Test_pipeline")
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-
-        self.assertTrue("test_pipeline1" in pipeline.nodes.keys())
-
-        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
-        pipeline_editor_tabs.get_current_editor().find_process("nipype.interfaces.spm.Smooth")
-        self.assertTrue("smooth1" in pipeline.nodes.keys())
-        self.assertTrue("smooth2" in pipeline.nodes.keys())
-
-        pipeline_editor_tabs.get_current_editor().add_link(("smooth1", "_smoothed_files"),
-
-                                                           ("test_pipeline1", "in_files"),
-                                                           active=True, weak=False)
-
-        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["smooth1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_editor_tabs.get_current_editor().add_link(("test_pipeline1", "_smoothed_files"),
-                                                           ("smooth2", "in_files"),
-                                                           active=True, weak=False)
-
-        self.assertEqual(1, len(pipeline.nodes["smooth2"].plugs["in_files"].links_from))
-        self.assertEqual(1, len(pipeline.nodes["test_pipeline1"].plugs["_smoothed_files"].links_to))
-
-        pipeline_editor_tabs.set_current_editor_by_tab_name("test_pipeline.py")
-        pipeline_editor_tabs.get_current_editor().click_pos = QtCore.QPoint(450, 500)
-
-        pipeline_editor_tabs.get_current_editor().export_node_plugs("smooth1", optional=True)
-        self.main_window.pipeline_manager.savePipeline()
-
-        pipeline_editor_tabs.set_current_editor_by_tab_name("New Pipeline 1")
-        pipeline_editor_tabs.get_current_editor().scene.pos["test_pipeline1"] = QtCore.QPoint(450, 500)
-        pipeline_editor_tabs.get_current_editor().check_modifications()
-
-        pipeline = pipeline_editor_tabs.get_current_pipeline()
-        self.assertTrue("fwhm" in pipeline.nodes["test_pipeline1"].plugs.keys())
-
 
 if __name__ == '__main__':
     unittest.main()
