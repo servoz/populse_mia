@@ -124,6 +124,7 @@ class TestMIAPipelineManager(unittest.TestCase):
                                'process_config.yml'), 'r') as stream:
             pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
             self.assertNotIn("mia_processes", pro_dic["Packages"])
+            self.assertNotIn("brick_test", pro_dic["Packages"])
 
 
     def test_add_tab(self):
