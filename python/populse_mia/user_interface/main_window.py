@@ -179,6 +179,7 @@ class MainWindow(QMainWindow):
         self.action_undo = QAction('Undo', self)
         self.action_redo = QAction('Redo', self)
         self.action_documentation = QAction('Documentation', self)
+        self.action_credits = QAction('Credits', self)
         self.action_install_processes_folder = QAction('From folder', self)
         self.action_install_processes_zip = QAction('From zip file', self)
 
@@ -300,6 +301,7 @@ class MainWindow(QMainWindow):
         self.action_undo.triggered.connect(self.undo)
         self.action_redo.triggered.connect(self.redo)
         self.action_documentation.triggered.connect(self.documentation)
+        self.action_credits.triggered.connect(self.credits)
         self.action_install_processes_folder.triggered.connect(lambda:
                                 self.install_processes_pop_up(folder=True))
         self.action_install_processes_zip.triggered.connect(lambda:
@@ -339,7 +341,7 @@ class MainWindow(QMainWindow):
 
         # Actions in the "Help" menu
         self.menu_help.addAction(self.action_documentation)
-        self.menu_help.addAction('Credits')
+        self.menu_help.addAction(self.action_credits)
 
         # Actions in the "More > Install processes" menu
         self.menu_install_process.addAction(
@@ -422,6 +424,11 @@ class MainWindow(QMainWindow):
         vertical_layout.addWidget(self.tabs)
 
         self.centralWindow.setLayout(vertical_layout)
+
+    def credits(self):
+        """"Open the credits in a web browser."""
+        webbrowser.open(
+            'https://github.com/populse/populse_mia/graphs/contributors')
 
     def delete_project(self):
         """Open a pop-up to open a project and updates the recent projects."""
