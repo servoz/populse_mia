@@ -96,12 +96,6 @@ class TestMIAPipelineManager(unittest.TestCase):
                        'mia', 'brick_test.zip')
         pkg.path_edit.text = lambda: brick
         pkg.install()
-        pkg.save()
-        with open(os.path.join(config.get_mia_path(), 'properties',
-
-                               'process_config.yml'), 'r') as stream:
-            pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
-            self.assertIn("brick_test", pro_dic["Packages"])
 
         pkg = PackageLibraryDialog(self.main_window)
         pkg.line_edit.text = lambda: "mia_processes"
@@ -113,6 +107,7 @@ class TestMIAPipelineManager(unittest.TestCase):
                                'process_config.yml'), 'r') as stream:
             pro_dic = yaml.load(stream, Loader=yaml.FullLoader)
             self.assertIn("mia_processes", pro_dic["Packages"])
+            self.assertIn("brick_test", pro_dic["Packages"])
 
         pkg.remove_package("mia_processes")
         pkg.remove_package("brick_test")
