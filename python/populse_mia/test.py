@@ -96,6 +96,7 @@ class TestMIAPipelineManager(unittest.TestCase):
                        'mia', 'brick_test.zip')
         pkg.path_edit.text = lambda: brick
         pkg.install()
+        pkg.save()
         with open(os.path.join(config.get_mia_path(), 'properties',
 
                                'process_config.yml'), 'r') as stream:
