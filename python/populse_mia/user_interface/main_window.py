@@ -425,16 +425,36 @@ class MainWindow(QMainWindow):
 
     def delete_project(self):
         """Open a pop-up to open a project and updates the recent projects."""
-        # Ui_Dialog() is defined in pop_ups.py
-        # We check for unsaved modifications
         self.exPopup = PopUpOpenProject()
         if self.exPopup.exec():
             file_name = self.exPopup.selectedFiles()
             self.exPopup.get_filename(file_name)
             file_name = self.exPopup.relative_path
-            shutil.rmtree(file_name)
-            # self.switch_project(file_name, self.exPopup.name)
-            # We switch the project
+            if self.project.folder != file_name:
+                msgtext = "Do you really want to delete the " + file_name \
+                           + "project ?"
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                title = "populse_mia - Warning: Delete project"
+                reply = msg.question(self, title, msgtext, QMessageBox.Yes,
+                                     QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    if file_name in self.saved_projects.pathsList:
+                        self.saved_projects.removeSavedProject(file_name)
+                        self.update_recent_projects_actions()
+                    shutil.rmtree(file_name)
+            else:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setWindowTitle("populse_mia - Warning: "
+                                   "Can't delete active project")
+                msgtext = "You can't delete the active project.\n Please " \
+                           "open another project if you want to delete this " \
+                           "one"
+                msg.setText(msgtext)
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
 
     @staticmethod
     def documentation():
