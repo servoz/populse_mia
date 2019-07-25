@@ -47,11 +47,12 @@ from populse_mia.data_manager.project_properties import SavedProjects
 from populse_mia.user_interface.main_window import MainWindow
 from populse_mia.user_interface.data_browser.modify_table import ModifyTable
 from populse_mia.software_properties import Config, verCmp
+from populse_mia.user_interface.pipeline_manager.process_library import *
 from populse_mia.utils.utils import *
 from populse_mia.user_interface.pop_ups import PopUpSaveProjectAs, \
     PopUpNewProject, PopUpOpenProject
 from capsul.api import get_process_instance
-from datetime import datetime, date, time
+from datetime import datetime
 
 
 class TestMIADataBrowser(unittest.TestCase):
@@ -1565,6 +1566,28 @@ class TestMIAPipelineManager(unittest.TestCase):
         config.saveConfig()
 
         self.app.exit()
+
+    def test_process_library(self):
+
+        pkg = PackageLibraryDialog(self.main_window)
+        pkg.line_edit.text = lambda: "mia_processes"
+        pkg.add_package_with_text()
+        pkg.save_config()
+        config = Config()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+
+                               'process_config.yml'), 'r') as stream:
+            pro = yaml.load(stream, Loader=yaml.FullLoader)
+            self.assertIn("mia_processes", pro["Packages"])
+
+        pkg.remove_package("mia_processes")
+        pkg.save()
+        with open(os.path.join(config.get_mia_path(), 'properties',
+
+                               'process_config.yml'), 'r') as stream:
+            pro = yaml.load(stream, Loader=yaml.FullLoader)
+            self.assertNotIn("mia_processes", pro["Packages"])
+
 
     def test_add_tab(self):
         """

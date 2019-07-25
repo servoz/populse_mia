@@ -1162,14 +1162,6 @@ class PackageLibraryDialog(QDialog):
     """
     Dialog that controls which processes to show in the process library
 
-    Attributes:
-        - process_library: library of the selected processes
-        - package_library: widget to control which processes to show in the
-          process library
-        - packages: tree-dictionary that is the representation of the
-          process library
-        - paths: list of path to add to the system path
-
     Methods:
         - load_config: updates the config and loads the corresponding packages
         - update_config: updates the process_config and package_library
@@ -1189,9 +1181,7 @@ class PackageLibraryDialog(QDialog):
     signal_save = Signal()
 
     def __init__(self, parent=None):
-        """
-        Initialization of the PackageLibraryDialog widget
-        """
+        """ Initialization of the PackageLibraryDialog widget """
         super(PackageLibraryDialog, self).__init__(parent)
 
         self.setWindowTitle("Package library manager")
@@ -1270,178 +1260,6 @@ class PackageLibraryDialog(QDialog):
         h_box.addLayout(v_box)
 
         self.setLayout(h_box)
-
-    @staticmethod
-    def load_config():
-        """
-        Updates the config and loads the corresponding packages
-
-        :return: the config as a dictionary
-        """
-        config = Config()
-
-        with open(os.path.join(config.get_mia_path(), 'properties',
-                               'process_config.yml'), 'r') as stream:
-
-            try:
-                if verCmp(yaml.__version__, '5.1', 'sup'):
-                    return yaml.load(stream, Loader=yaml.FullLoader)
-
-                else:
-                    return yaml.load(stream)
-
-            except yaml.YAMLError as exc:
-                print(exc)
-
-    def update_config(self):
-        """
-        Updates the process_config and package_library attributes
-
-        """
-        self.process_config = self.load_config()
-        self.load_packages()
-        self.package_library.package_tree = self.packages
-        self.package_library.paths = self.paths
-        self.package_library.generate_tree()
-
-    def load_packages(self):
-        """
-        Updates the tree of the process library
-
-        """
-        try:
-            self.packages = self.process_config["Packages"]
-        except KeyError:
-            self.packages = {}
-        except TypeError:
-            self.packages = {}
-
-        try:
-            self.paths = self.process_config["Paths"]
-        except KeyError:
-            self.paths = []
-        except TypeError:
-            self.paths = []
-
-    def save_config(self):
-        """
-        Saves the current config to process_config.yml
-
-        """
-        config = Config()
-        self.process_config["Packages"] = self.packages
-        self.process_config["Paths"] = self.paths
-        with open(os.path.join(config.get_mia_path(), 'properties',
-                               'process_config.yml'), 'w', encoding='utf8') \
-                as stream:
-            yaml.dump(self.process_config, stream, default_flow_style=False,
-                      allow_unicode=True)
-
-    def browse_package(self):
-        """
-        Opens a browser to select a package
-
-        """
-        file_dialog = QFileDialog()
-        file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
-
-        # To select files or directories, we should use a proxy model
-        # but mine is not working yet...
-
-        # file_dialog.setProxyModel(FileFilterProxyModel())
-        file_dialog.setFileMode(QFileDialog.Directory)
-        # file_dialog.setFileMode(QFileDialog.Directory |
-        # QFileDialog.ExistingFile)
-        # file_dialog.setFilter("Processes (*.py *.xml)")
-
-        if file_dialog.exec_():
-            file_name = file_dialog.selectedFiles()[0]
-            file_name = os.path.abspath(file_name)
-            self.is_path = True
-            self.line_edit.setText(file_name)
-
-    def add_package_with_text(self):
-        """Adds a package from the line edit's text
-
-        """
-        if self.is_path:  # Currently the self.is_path = False
-            # (Need to pass by the method browse_package to initialise to
-            # True and the Browse button is commented.
-            # Could be interesting to permit a backdoor to pass
-            # the absolute path in the field for add package,
-            # to be continued... )
-            path, package = os.path.split(self.line_edit.text())
-            # Adding the module path to the system path
-            sys.path.append(path)
-            self.add_package(package)
-            self.paths.append(os.path.relpath(path))
-
-        else:
-            # self.package_library.package_tree = self.load_config()['Packages']
-            old_status = self.status_label.text()
-            self.status_label.setText(
-                "Adding {0}. Please wait.".format(self.line_edit.text()))
-            QApplication.processEvents()
-            _2add = self.line_edit.text()
-
-            if os.path.splitext(_2add)[1]:
-                part = ''
-                old_part = ''
-                flag = False
-
-                for content in _2add.split('.'):
-                    part += content
-
-                    try:
-                        __import__(part)
-
-                    except ImportError:
-
-                        try:
-                            flag = True
-
-                            if content in dir(sys.modules[old_part]):
-                                errors = self.add_package(
-                                    os.path.splitext(_2add)[0],
-                                    os.path.splitext(_2add)[1][1:])
-                                break
-
-                            else:
-                                errors = self.add_package(_2add)
-                                break
-
-                        except KeyError:
-                            errors = 'No package, module or class named ' + _2add + ' !'
-                            break
-
-                    old_part = part
-                    part += '.'
-
-                if flag is False:
-                    errors = self.add_package(os.path.splitext(_2add)[0],
-                                              os.path.splitext(_2add)[1][1:])
-
-            else:
-                errors = self.add_package(os.path.splitext(_2add)[0],
-                                          os.path.splitext(_2add)[0])
-
-            if len(errors) == 0:
-                self.status_label.setText(
-                    "{0} added to the Package Library.".format(
-                        self.line_edit.text()))
-
-            else:
-                self.status_label.setText(old_status)
-                msg = QMessageBox()
-
-                if isinstance(errors, str):
-                    msg.setText(errors)
-
-                elif isinstance(errors, list):
-                    msg.setText('\n'.join(errors))
-
-                msg.setIcon(QMessageBox.Warning)
-                msg.exec_()
 
     def add_package(self, module_name, class_name=None, show_error=False,
                     init_package_tree=False):
@@ -1529,7 +1347,7 @@ class PackageLibraryDialog(QDialog):
                                         if (element == class_name or recurs
                                                 is True):
                                             print('\nEnabling %s.%s ...' % (
-                                            module_name, v.__name__))
+                                                module_name, v.__name__))
                                             pkg_iter[
                                                 element] = 'process_enabled'
 
@@ -1542,7 +1360,7 @@ class PackageLibraryDialog(QDialog):
                                                 'was detected in the %s '
                                                 'library:' % (path_list[0]))
                                             print('- %s.%s ...' % (
-                                            module_name, v.__name__))
+                                                module_name, v.__name__))
                                             print(
                                                 'This pipeline is now '
                                                 'installed but disabled '
@@ -1574,6 +1392,153 @@ class PackageLibraryDialog(QDialog):
 
         else:
             return 'No package selected!'
+
+    def add_package_with_text(self):
+        """Adds a package from the line edit's text
+
+        """
+        if self.is_path:  # Currently the self.is_path = False
+            # (Need to pass by the method browse_package to initialise to
+            # True and the Browse button is commented.
+            # Could be interesting to permit a backdoor to pass
+            # the absolute path in the field for add package,
+            # to be continued... )
+            path, package = os.path.split(self.line_edit.text())
+            # Adding the module path to the system path
+            sys.path.append(path)
+            self.add_package(package)
+            self.paths.append(os.path.relpath(path))
+
+        else:
+            # self.package_library.package_tree = self.load_config()['Packages']
+            old_status = self.status_label.text()
+            self.status_label.setText(
+                "Adding {0}. Please wait.".format(self.line_edit.text()))
+            QApplication.processEvents()
+            _2add = self.line_edit.text()
+
+            if os.path.splitext(_2add)[1]:
+                part = ''
+                old_part = ''
+                flag = False
+
+                for content in _2add.split('.'):
+                    part += content
+
+                    try:
+                        __import__(part)
+
+                    except ImportError:
+
+                        try:
+                            flag = True
+
+                            if content in dir(sys.modules[old_part]):
+                                errors = self.add_package(
+                                    os.path.splitext(_2add)[0],
+                                    os.path.splitext(_2add)[1][1:])
+                                break
+
+                            else:
+                                errors = self.add_package(_2add)
+                                break
+
+                        except KeyError:
+                            errors = 'No package, module or class named ' + _2add + ' !'
+                            break
+
+                    old_part = part
+                    part += '.'
+
+                if flag is False:
+                    errors = self.add_package(os.path.splitext(_2add)[0],
+                                              os.path.splitext(_2add)[1][1:])
+
+            else:
+                errors = self.add_package(os.path.splitext(_2add)[0],
+                                          os.path.splitext(_2add)[0])
+
+            if len(errors) == 0:
+                self.status_label.setText(
+                    "{0} added to the Package Library.".format(
+                        self.line_edit.text()))
+
+            else:
+                self.status_label.setText(old_status)
+                msg = QMessageBox()
+
+                if isinstance(errors, str):
+                    msg.setText(errors)
+
+                elif isinstance(errors, list):
+                    msg.setText('\n'.join(errors))
+
+                msg.setIcon(QMessageBox.Warning)
+                msg.exec_()
+
+    def browse_package(self):
+        """
+        Opens a browser to select a package
+
+        """
+        file_dialog = QFileDialog()
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+
+        # To select files or directories, we should use a proxy model
+        # but mine is not working yet...
+
+        # file_dialog.setProxyModel(FileFilterProxyModel())
+        file_dialog.setFileMode(QFileDialog.Directory)
+        # file_dialog.setFileMode(QFileDialog.Directory |
+        # QFileDialog.ExistingFile)
+        # file_dialog.setFilter("Processes (*.py *.xml)")
+
+        if file_dialog.exec_():
+            file_name = file_dialog.selectedFiles()[0]
+            file_name = os.path.abspath(file_name)
+            self.is_path = True
+            self.line_edit.setText(file_name)
+
+    @staticmethod
+    def load_config():
+        """
+        Updates the config and loads the corresponding packages
+
+        :return: the config as a dictionary
+        """
+        config = Config()
+
+        with open(os.path.join(config.get_mia_path(), 'properties',
+                               'process_config.yml'), 'r') as stream:
+
+            try:
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    return yaml.load(stream, Loader=yaml.FullLoader)
+
+                else:
+                    return yaml.load(stream)
+
+            except yaml.YAMLError as exc:
+                print(exc)
+
+    def load_packages(self):
+        """
+        Updates the tree of the process library
+
+        """
+        try:
+            self.packages = self.process_config["Packages"]
+        except KeyError:
+            self.packages = {}
+        except TypeError:
+            self.packages = {}
+
+        try:
+            self.paths = self.process_config["Paths"]
+        except KeyError:
+            self.paths = []
+        except TypeError:
+            self.paths = []
 
     def remove_package_with_text(self):
         """
@@ -1680,10 +1645,34 @@ class PackageLibraryDialog(QDialog):
             self.signal_save.emit()
         self.close()
 
+    def save_config(self):
+        """
+        Saves the current config to process_config.yml
+
+        """
+        config = Config()
+        self.process_config["Packages"] = self.packages
+        self.process_config["Paths"] = self.paths
+        with open(os.path.join(config.get_mia_path(), 'properties',
+                               'process_config.yml'), 'w', encoding='utf8') \
+                as stream:
+            yaml.dump(self.process_config, stream, default_flow_style=False,
+                      allow_unicode=True)
+
+    def update_config(self):
+        """
+        Updates the process_config and package_library attributes
+
+        """
+        self.process_config = self.load_config()
+        self.load_packages()
+        self.package_library.package_tree = self.packages
+        self.package_library.paths = self.paths
+        self.package_library.generate_tree()
+
 
 class ProcessHelp(QWidget):
-    ''' A widget that displays information about the selected process.
-    '''
+    """A widget that displays information about the selected process."""
 
     def __init__(self, process):
         """ Generate the help.
