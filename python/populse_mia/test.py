@@ -117,7 +117,8 @@ class TestMIAPipelineManager(unittest.TestCase):
         pkg.save_config()
         process = os.path.join(config.get_mia_path(), 'processes',
                                'brick_test')
-        shutil.rmtree(process)
+        if os.name != 'nt':
+            shutil.rmtree(process)
         with open(os.path.join(config.get_mia_path(), 'properties',
 
                                'process_config.yml'), 'r') as stream:
