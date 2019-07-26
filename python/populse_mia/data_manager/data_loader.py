@@ -208,8 +208,11 @@ class ImportWorker(QThread):
                                 
                             value = properties['value']
                             
-                        else:
+                        if isinstance(properties, list):
                             value = properties[0]
+
+                        else:
+                            value = properties
 
                         # Creating date types
                         if format is not None and format != "":
@@ -236,42 +239,42 @@ class ImportWorker(QThread):
 
                         if tag_name != "Json_Version":
                             # Preparing value and type
+                            if isinstance(value, list):
+                                if ((len(value) is 1 and isinstance(value[0], list))
+                                  or
+                                   (len(value) is not 1)):
 
-                            if ((len(value) is 1 and isinstance(value[0], list))
-                              or
-                               (len(value) is not 1)):
+                                    if tag_type == FIELD_TYPE_STRING:
+                                        tag_type = FIELD_TYPE_LIST_STRING
 
-                                if tag_type == FIELD_TYPE_STRING:
-                                    tag_type = FIELD_TYPE_LIST_STRING
-                                    
-                                elif tag_type == FIELD_TYPE_INTEGER:
-                                    tag_type = FIELD_TYPE_LIST_INTEGER
-                                    
-                                elif tag_type == FIELD_TYPE_FLOAT:
-                                    tag_type = FIELD_TYPE_LIST_FLOAT
-                                    
-                                elif tag_type == FIELD_TYPE_BOOLEAN:
-                                    tag_type = FIELD_TYPE_LIST_BOOLEAN
-                                
-                                elif tag_type == FIELD_TYPE_DATE:
-                                    tag_type = FIELD_TYPE_LIST_DATE
-                                    
-                                elif tag_type == FIELD_TYPE_DATETIME:
-                                    tag_type = FIELD_TYPE_LIST_DATETIME
-                                    
-                                elif tag_type == FIELD_TYPE_TIME:
-                                    tag_type = FIELD_TYPE_LIST_TIME 
-                            
-                            if len(value) is 1:
-                                value = value[0]
+                                    elif tag_type == FIELD_TYPE_INTEGER:
+                                        tag_type = FIELD_TYPE_LIST_INTEGER
 
-                            else:  
-                                value_prepared = []
-                                
-                                for value_single in value:
-                                    value_prepared.append(value_single[0])
-                                    
-                                value = value_prepared
+                                    elif tag_type == FIELD_TYPE_FLOAT:
+                                        tag_type = FIELD_TYPE_LIST_FLOAT
+
+                                    elif tag_type == FIELD_TYPE_BOOLEAN:
+                                        tag_type = FIELD_TYPE_LIST_BOOLEAN
+
+                                    elif tag_type == FIELD_TYPE_DATE:
+                                        tag_type = FIELD_TYPE_LIST_DATE
+
+                                    elif tag_type == FIELD_TYPE_DATETIME:
+                                        tag_type = FIELD_TYPE_LIST_DATETIME
+
+                                    elif tag_type == FIELD_TYPE_TIME:
+                                        tag_type = FIELD_TYPE_LIST_TIME
+
+                                if len(value) is 1:
+                                    value = value[0]
+
+                                else:
+                                    value_prepared = []
+
+                                    for value_single in value:
+                                        value_prepared.append(value_single[0])
+
+                                    value = value_prepared
 
                         #print('value: ', value)
                         #print('tag_type: ', tag_type)
