@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>populse_mia.data_manager package &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head><body>
@@ -28,7 +26,7 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <div class="section" id="module-populse_mia.data_manager">
@@ -40,53 +38,47 @@
 <div class="section" id="module-populse_mia.data_manager.data_loader">
 <span id="populse-mia-data-manager-data-loader-module"></span><h2>populse_mia.data_manager.data_loader module<a class="headerlink" href="#module-populse_mia.data_manager.data_loader" title="Permalink to this headline">¶</a></h2>
 <p>Module to handle the importation from MRIFileManager and its progress</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd><dl class="first last docutils">
-<dt>Class:</dt>
-<dd>-ImportProgress : Inherit from QProgressDialog and handle the
+<dl class="simple">
+<dt>Contains:</dt><dd><dl class="simple">
+<dt>Class:</dt><dd><p>-ImportProgress : Inherit from QProgressDialog and handle the
 progress bar
--ImportWorker : Inherit from QThread and manage the threads</dd>
-<dt>Methods:</dt>
-<dd>-read_log : Show the evolution of the progress bar and returns its
+-ImportWorker : Inherit from QThread and manage the threads</p>
+</dd>
+<dt>Methods:</dt><dd><p>-read_log : Show the evolution of the progress bar and returns its
 feedback
 -tags_from_file : Returns a list of [tag, value] contained in a Json
 file
--verify_scans : Check if the project’s scans have been modified</dd>
+-verify_scans : Check if the project’s scans have been modified</p>
+</dd>
 </dl>
 </dd>
 </dl>
 <dl class="class">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.data_loader.</code><code class="descname">ImportProgress</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">ImportProgress</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
 <p>Handle the progress bar.</p>
-<dl class="docutils">
-<dt>Attributes;</dt>
-<dd><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param project:</th><td class="field-body">A Project object</td>
-</tr>
-</tbody>
-</table>
+<dl class="simple">
+<dt>Attributes;</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param project</dt>
+<dd class="field-odd"><p>A Project object</p>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>onProgress : Set the import progressbar value.</li>
+</dl>
+</dd>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>onProgress : Set the import progressbar value.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress.onProgress">
-<code class="descname">onProgress</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">onProgress</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal to set the import progressbar value</p>
 </dd></dl>
 
@@ -94,41 +86,36 @@ file
 
 <dl class="class">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.data_loader.</code><code class="descname">ImportWorker</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">ImportWorker</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
 <p>Manage threads.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><table class="first docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param project:</th><td class="field-body">A Project object</td>
-</tr>
-</tbody>
-</table>
-<p class="last">;param progress: An ImportProgress object</p>
+<dl>
+<dt>Attributes:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param project</dt>
+<dd class="field-odd"><p>A Project object</p>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>run : Override the QThread run method.</li>
+</dl>
+<p>;param progress: An ImportProgress object</p>
+</dd>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>run : Override the QThread run method.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project</em>, <em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker.notifyProgress">
-<code class="descname">notifyProgress</code><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">notifyProgress</code><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.notifyProgress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the QThread run method. Executed when the worker is
 started, fills the database and updates the progress.</p>
 </dd></dl>
@@ -137,61 +124,51 @@ started, fills the database and updates the progress.</p>
 
 <dl class="function">
 <dt id="populse_mia.data_manager.data_loader.read_log">
-<code class="descclassname">populse_mia.data_manager.data_loader.</code><code class="descname">read_log</code><span class="sig-paren">(</span><em>project</em>, <em>main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#read_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.read_log" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">read_log</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#read_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.read_log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the evolution of the progress bar and returns its feedback, a list
 of the paths to each data file that was loaded.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>project</strong> – current project in the software</li>
-<li><strong>main_window</strong> – software’s main window</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> – current project in the software</p></li>
+<li><p><strong>main_window</strong> – software’s main window</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scans that have been added</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the scans that have been added</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.data_manager.data_loader.tags_from_file">
-<code class="descclassname">populse_mia.data_manager.data_loader.</code><code class="descname">tags_from_file</code><span class="sig-paren">(</span><em>file_path</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#tags_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.tags_from_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">tags_from_file</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#tags_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.tags_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of [tag, value] contained in a Json file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_path</strong> – file path of the Json file (without the extension)</li>
-<li><strong>path</strong> – project path</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – file path of the Json file (without the extension)</p></li>
+<li><p><strong>path</strong> – project path</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of the Json tags of the file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of the Json tags of the file</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="populse_mia.data_manager.data_loader.verify_scans">
-<code class="descclassname">populse_mia.data_manager.data_loader.</code><code class="descname">verify_scans</code><span class="sig-paren">(</span><em>project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#verify_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.verify_scans" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">verify_scans</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#verify_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.verify_scans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the project’s scans have been modified.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project</strong> – current project in the software</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the list of scans that have been modified</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> – current project in the software</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the list of scans that have been modified</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -199,142 +176,122 @@ of the paths to each data file that was loaded.</p>
 <span id="populse-mia-data-manager-database-mia-module"></span><h2>populse_mia.data_manager.database_mia module<a class="headerlink" href="#module-populse_mia.data_manager.database_mia" title="Permalink to this headline">¶</a></h2>
 <p>Module that contains class to override the default behaviour of
 populse_db and some of its methods</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd>Class:
+<dl class="simple">
+<dt>Contains:</dt><dd><p>Class:
 -DatabaseMIA
--DatabaseSessionMIA</dd>
+-DatabaseSessionMIA</p>
+</dd>
 </dl>
 <dl class="class">
 <dt id="populse_mia.data_manager.database_mia.DatabaseMIA">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.database_mia.</code><code class="descname">DatabaseMIA</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.database_mia.</code><code class="sig-name descname">DatabaseMIA</code><span class="sig-paren">(</span><em class="sig-param">string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.Database</span></code></p>
 <p>Class overriding the default behavior of populse_db</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">param string_engine:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">Path of the new database file</td>
-</tr>
-</tbody>
-</table>
+<dl>
+<dt>Attributes:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param string_engine</dt>
+<dd class="field-odd"><p>Path of the new database file</p>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first simple">
-<li>__enter__: returns a DatabaseSession instance for using the database</li>
-<li>__exit__: releases a DatabaseSession previously created by __enter__</li>
-<li>_Database__create_empty_schema: overrides the method creating the</li>
+</dl>
+</dd>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>__enter__: returns a DatabaseSession instance for using the database</p></li>
+<li><p>__exit__: releases a DatabaseSession previously created by __enter__</p></li>
+<li><p>_Database__create_empty_schema: overrides the method creating the</p></li>
 </ul>
-<p class="last">empty schema</p>
+<p>empty schema</p>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseMIA.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization of the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>string_engine</strong> – <p>Database engine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string_engine</strong> – <p>Database engine</p>
 <p>The engine is constructed this way: dialect[+driver]://user:password&#64;host/dbname[?key=value..]</p>
 <p>The dialect can be mysql, oracle, postgresql, mssql, or sqlite</p>
 <p>The driver is the name of a DBAPI, such as psycopg2, pyodbc, or cx_oracle</p>
 <p>For sqlite databases, the file can be not existing yet, it will be created in this case</p>
-<dl class="docutils">
-<dt>Examples:</dt>
-<dd><ul class="first last">
-<li>”mysql://scott:tiger&#64;hostname/dbname”</li>
-<li>”postgresql://scott:tiger&#64;localhost/test”</li>
-<li>”sqlite:///foo.db”</li>
-<li>”oracle+cx_oracle://scott:tiger&#64;tnsname”</li>
-<li>”mssql+pyodbc://scott:tiger&#64;mydsn”</li>
+<dl class="simple">
+<dt>Examples:</dt><dd><ul>
+<li><p>”mysql://scott:tiger&#64;hostname/dbname”</p></li>
+<li><p>”postgresql://scott:tiger&#64;localhost/test”</p></li>
+<li><p>”sqlite:///foo.db”</p></li>
+<li><p>”oracle+cx_oracle://scott:tiger&#64;tnsname”</p></li>
+<li><p>”mssql+pyodbc://scott:tiger&#64;mydsn”</p></li>
 </ul>
 </dd>
 </dl>
 <p>See sqlalchemy documentation for more precisions about the engine: <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/engines.html">http://docs.sqlalchemy.org/en/latest/core/engines.html</a></p>
-</li>
-<li><strong>caches</strong> – Bool to know if the caches (the rows of the database are stored in dictionaries) must be used (Put True if you count on having a lot of data) =&gt; False by default</li>
-<li><strong>list_tables</strong> – Bool to know if tables must be created to store list values (Put True to have a pure SQL version of IN operator in filters) =&gt; True by default</li>
-<li><strong>query_type</strong> – Type of query to use for the filters (‘sql’, ‘python’, ‘mixed’, or ‘guess’) =&gt; ‘mixed’ by default</li>
+</p></li>
+<li><p><strong>caches</strong> – Bool to know if the caches (the rows of the database are stored in dictionaries) must be used (Put True if you count on having a lot of data) =&gt; False by default</p></li>
+<li><p><strong>list_tables</strong> – Bool to know if tables must be created to store list values (Put True to have a pure SQL version of IN operator in filters) =&gt; True by default</p></li>
+<li><p><strong>query_type</strong> – Type of query to use for the filters (‘sql’, ‘python’, ‘mixed’, or ‘guess’) =&gt; ‘mixed’ by default</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – <ul class="simple">
-<li>If string_engine is invalid</li>
-<li>If caches is invalid</li>
-<li>If list_tables is invalid</li>
-<li>If query_type is invalid</li>
-<li>If the schema is not coherent with the API (the database is not a populse_db database)</li>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – <ul class="simple">
+<li><p>If string_engine is invalid</p></li>
+<li><p>If caches is invalid</p></li>
+<li><p>If list_tables is invalid</p></li>
+<li><p>If query_type is invalid</p></li>
+<li><p>If the schema is not coherent with the API (the database is not a populse_db database)</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.database_mia.</code><code class="descname">DatabaseSessionMIA</code><span class="sig-paren">(</span><em>database</em>, <em>session</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.database_mia.</code><code class="sig-name descname">DatabaseSessionMIA</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">session</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.DatabaseSession</span></code></p>
 <p>Class overriding the database session of populse_db</p>
-<dl class="docutils">
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>add_collection: overrides the method adding a collection</li>
-<li>add_field: adds a field to the database, if it does not already exist</li>
-<li>add_fields: adds the list of fields</li>
-<li>get_shown_tags: gives the list of visible tags</li>
-<li>set_shown_tags: sets the list of visible tags</li>
+<dl class="simple">
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>add_collection: overrides the method adding a collection</p></li>
+<li><p>add_field: adds a field to the database, if it does not already exist</p></li>
+<li><p>add_fields: adds the list of fields</p></li>
+<li><p>get_shown_tags: gives the list of visible tags</p></li>
+<li><p>set_shown_tags: sets the list of visible tags</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_collection">
-<code class="descname">add_collection</code><span class="sig-paren">(</span><em>name</em>, <em>primary_key</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_collection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_collection</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">primary_key</em>, <em class="sig-param">visibility</em>, <em class="sig-param">origin</em>, <em class="sig-param">unit</em>, <em class="sig-param">default_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the method adding a collection of populse_db</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – New collection name</li>
-<li><strong>primary_key</strong> – New collection primary_key column</li>
-<li><strong>visibility</strong> – Primary key visibility</li>
-<li><strong>origin</strong> – Primary key origin</li>
-<li><strong>unit</strong> – Primary key unit</li>
-<li><strong>default_value</strong> – Primary key default value</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – New collection name</p></li>
+<li><p><strong>primary_key</strong> – New collection primary_key column</p></li>
+<li><p><strong>visibility</strong> – Primary key visibility</p></li>
+<li><p><strong>origin</strong> – Primary key origin</p></li>
+<li><p><strong>unit</strong> – Primary key unit</p></li>
+<li><p><strong>default_value</strong> – Primary key default value</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_field">
-<code class="descname">add_field</code><span class="sig-paren">(</span><em>collection</em>, <em>name</em>, <em>field_type</em>, <em>description</em>, <em>visibility</em>, <em>origin</em>, <em>unit</em>, <em>default_value</em>, <em>index=False</em>, <em>flush=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_field" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_field</code><span class="sig-paren">(</span><em class="sig-param">collection</em>, <em class="sig-param">name</em>, <em class="sig-param">field_type</em>, <em class="sig-param">description</em>, <em class="sig-param">visibility</em>, <em class="sig-param">origin</em>, <em class="sig-param">unit</em>, <em class="sig-param">default_value</em>, <em class="sig-param">index=False</em>, <em class="sig-param">flush=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a field to the database, if it does not already exist</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>collection</strong> – field collection (str)</li>
-<li><strong>name</strong> – field name (str)</li>
-<li><strong>field_type</strong> – field type (string, int, float, boolean, date,</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> – field collection (str)</p></li>
+<li><p><strong>name</strong> – field name (str)</p></li>
+<li><p><strong>field_type</strong> – field type (string, int, float, boolean, date,</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>datetime, time, list_string, list_int, list_float, list_boolean,
 list_date, list_datetime, or list_time)
 :param description: field description (str or None)
@@ -351,45 +308,36 @@ False if in the middle of filling fields) =&gt; True by default</p>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_fields">
-<code class="descname">add_fields</code><span class="sig-paren">(</span><em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_fields</code><span class="sig-paren">(</span><em class="sig-param">fields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.add_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.add_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the list of fields</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fields</strong> – list of fields (collection, name, type, description,</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fields</strong> – list of fields (collection, name, type, description,</p>
+</dd>
+</dl>
 <p>visibility, origin, unit, default_value)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA.get_shown_tags">
-<code class="descname">get_shown_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.get_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.get_shown_tags" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_shown_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.get_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.get_shown_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Give the list of visible tags</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the list of visible tags</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the list of visible tags</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseSessionMIA.set_shown_tags">
-<code class="descname">set_shown_tags</code><span class="sig-paren">(</span><em>field_showed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.set_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.set_shown_tags" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_shown_tags</code><span class="sig-paren">(</span><em class="sig-param">field_showed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseSessionMIA.set_shown_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseSessionMIA.set_shown_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the list of visible tags</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>field_showed</strong> – list of visible tags</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>field_showed</strong> – list of visible tags</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -399,45 +347,44 @@ False if in the middle of filling fields) =&gt; True by default</p>
 <span id="populse-mia-data-manager-filter-module"></span><h2>populse_mia.data_manager.filter module<a class="headerlink" href="#module-populse_mia.data_manager.filter" title="Permalink to this headline">¶</a></h2>
 <p>Module that handle the filter class which contains the results of both
 rapid and advanced search</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd>Class:
--Filter</dd>
+<dl class="simple">
+<dt>Contains:</dt><dd><p>Class:
+-Filter</p>
+</dd>
 </dl>
 <dl class="class">
 <dt id="populse_mia.data_manager.filter.Filter">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.filter.</code><code class="descname">Filter</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.filter.</code><code class="sig-name descname">Filter</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">nots</em>, <em class="sig-param">values</em>, <em class="sig-param">fields</em>, <em class="sig-param">links</em>, <em class="sig-param">conditions</em>, <em class="sig-param">search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="docutils">
-<dt>Class that represent a Filter, containing the results of both rapid and</dt>
-<dd>advanced search</dd>
-<dt>Attributes:</dt>
-<dd><table class="first docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param name:</th><td class="field-body">filter’s name</td>
-</tr>
-<tr class="field-even field"><th class="field-name">param nots:</th><td class="field-body">list of negations (“” or NOT)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">param values:</th><td class="field-body">list of values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">param fields:</th><td class="field-body">list of list of fields</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">param links:</th><td class="field-body">list of links (AND/OR)</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">param conditions:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</td>
-</tr>
-</tbody>
-</table>
-<p class="last">BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+<dl>
+<dt>Class that represent a Filter, containing the results of both rapid and</dt><dd><p>advanced search</p>
+</dd>
+<dt>Attributes:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param name</dt>
+<dd class="field-odd"><p>filter’s name</p>
+</dd>
+<dt class="field-even">param nots</dt>
+<dd class="field-even"><p>list of negations (“” or NOT)</p>
+</dd>
+<dt class="field-odd">param values</dt>
+<dd class="field-odd"><p>list of values</p>
+</dd>
+<dt class="field-even">param fields</dt>
+<dd class="field-even"><p>list of list of fields</p>
+</dd>
+<dt class="field-odd">param links</dt>
+<dd class="field-odd"><p>list of links (AND/OR)</p>
+</dd>
+<dt class="field-even">param conditions</dt>
+<dd class="field-even"><p>list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</p>
+</dd>
+</dl>
+<p>BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
 :param search_bar: value in the rapid search bar</p>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>generate_filter: apply the filter to the given list of scans</li>
-<li>json_format: returns the filter as a dictionary</li>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>generate_filter: apply the filter to the given list of scans</p></li>
+<li><p>json_format: returns the filter as a dictionary</p></li>
 </ul>
 </dd>
 </dl>
@@ -450,44 +397,37 @@ are linked with AND or OR and all composed of:
 - A value</p>
 <dl class="method">
 <dt id="populse_mia.data_manager.filter.Filter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>nots</em>, <em>values</em>, <em>fields</em>, <em>links</em>, <em>conditions</em>, <em>search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">nots</em>, <em class="sig-param">values</em>, <em class="sig-param">fields</em>, <em class="sig-param">links</em>, <em class="sig-param">conditions</em>, <em class="sig-param">search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.filter.Filter.generate_filter">
-<code class="descname">generate_filter</code><span class="sig-paren">(</span><em>current_project</em>, <em>scans</em>, <em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.generate_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate_filter</code><span class="sig-paren">(</span><em class="sig-param">current_project</em>, <em class="sig-param">scans</em>, <em class="sig-param">tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.generate_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.generate_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the filter to the given list of scans</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>current_project</strong> – Current project</li>
-<li><strong>scans</strong> – List of scans to apply the filter into</li>
-<li><strong>tags</strong> – List of tags to search in</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_project</strong> – Current project</p></li>
+<li><p><strong>scans</strong> – List of scans to apply the filter into</p></li>
+<li><p><strong>tags</strong> – List of tags to search in</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The list of scans matching the filter</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The list of scans matching the filter</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.filter.Filter.json_format">
-<code class="descname">json_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.json_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.json_format" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">json_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.json_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.json_format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the filter as a dictionary</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the filter as a dictionary</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the filter as a dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -496,349 +436,293 @@ are linked with AND or OR and all composed of:
 <div class="section" id="module-populse_mia.data_manager.project">
 <span id="populse-mia-data-manager-project-module"></span><h2>populse_mia.data_manager.project module<a class="headerlink" href="#module-populse_mia.data_manager.project" title="Permalink to this headline">¶</a></h2>
 <p>Module that handle the projects and their database.</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd>Class:
-- Project</dd>
+<dl class="simple">
+<dt>Contains:</dt><dd><p>Class:
+- Project</p>
+</dd>
 </dl>
 <dl class="class">
 <dt id="populse_mia.data_manager.project.Project">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.project.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.project.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param">project_root_folder</em>, <em class="sig-param">new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that handles projects and their associated database.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><table class="first last docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">param project_root_folder:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">project’s path</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">param new_project:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">project’s object</td>
-</tr>
-</tbody>
-</table>
+<dl class="simple">
+<dt>Attributes:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param project_root_folder</dt>
+<dd class="field-odd"><p>project’s path</p>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first last simple">
-<li>add_clinical_tags: add the clinical tags to the project</li>
-<li>getDate: return the date of creation of the project</li>
-<li>getFilter: return a Filter object</li>
-<li>getFilterName: input box to get the name of the filter to save</li>
-<li>getName: return the name of the project</li>
-<li>getSortOrder: return the sort order of the project</li>
-<li>getSortedTag: return the sorted tag of the project</li>
-<li>hasUnsavedModifications: return if the project has unsaved
-modifications or not</li>
-<li>init_filters: initialize the filters at project opening</li>
-<li>loadProperties: load the properties file</li>
-<li>redo: redo the last action made by the user on the project</li>
-<li>reput_values: re-put the value objects in the database</li>
-<li>save_current_filter: save the current filter</li>
-<li>saveConfig: save the changes in the properties file</li>
-<li>setCurrentFilter: set the current filter of the project</li>
-<li>setDate: set the date of the project</li>
-<li>saveModifications: save the pending operations of the project
-(actions still not saved)</li>
-<li>setName: set the name of the project</li>
-<li>setSortOrder: set the sort order of the project</li>
-<li>setSortedTag: set the sorted tag of the project</li>
-<li>undo: undo the last action made by the user on the project</li>
-<li>unsavedModifications(self, value): Modify the window title
-depending of whether the project has unsaved modifications or not.</li>
-<li>unsaveModifications: unsaves the pending operations of the project</li>
+<dt class="field-even">param new_project</dt>
+<dd class="field-even"><p>project’s object</p>
+</dd>
+</dl>
+</dd>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>add_clinical_tags: add the clinical tags to the project</p></li>
+<li><p>getDate: return the date of creation of the project</p></li>
+<li><p>getFilter: return a Filter object</p></li>
+<li><p>getFilterName: input box to get the name of the filter to save</p></li>
+<li><p>getName: return the name of the project</p></li>
+<li><p>getSortOrder: return the sort order of the project</p></li>
+<li><p>getSortedTag: return the sorted tag of the project</p></li>
+<li><p>hasUnsavedModifications: return if the project has unsaved
+modifications or not</p></li>
+<li><p>init_filters: initialize the filters at project opening</p></li>
+<li><p>loadProperties: load the properties file</p></li>
+<li><p>redo: redo the last action made by the user on the project</p></li>
+<li><p>reput_values: re-put the value objects in the database</p></li>
+<li><p>save_current_filter: save the current filter</p></li>
+<li><p>saveConfig: save the changes in the properties file</p></li>
+<li><p>setCurrentFilter: set the current filter of the project</p></li>
+<li><p>setDate: set the date of the project</p></li>
+<li><p>saveModifications: save the pending operations of the project
+(actions still not saved)</p></li>
+<li><p>setName: set the name of the project</p></li>
+<li><p>setSortOrder: set the sort order of the project</p></li>
+<li><p>setSortedTag: set the sorted tag of the project</p></li>
+<li><p>undo: undo the last action made by the user on the project</p></li>
+<li><p>unsavedModifications(self, value): Modify the window title
+depending of whether the project has unsaved modifications or not.</p></li>
+<li><p>unsaveModifications: unsaves the pending operations of the project</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>project_root_folder</em>, <em>new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project_root_folder</em>, <em class="sig-param">new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.add_clinical_tags">
-<code class="descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.add_clinical_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_clinical_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.add_clinical_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.add_clinical_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add new clinical tags to the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of clinical tags that were added</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of clinical tags that were added</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getDate">
-<code class="descname">getDate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getDate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getDate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getDate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the date of creation of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the date of creation of the project if it’s not</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string of the date of creation of the project if it’s not</p>
+</dd>
+</dl>
 <p>Unnamed project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getFilter">
-<code class="descname">getFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getFilter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getFilter</code><span class="sig-paren">(</span><em class="sig-param">filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a Filter object from its name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filter</strong> – Filter name</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Filter object</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> – Filter name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filter object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getFilterName">
-<code class="descname">getFilterName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getFilterName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getFilterName" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getFilterName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getFilterName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getFilterName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input box to type the name of the filter to save.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Return the name typed</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Return the name typed</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getName">
-<code class="descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getName" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the name of the project if it’s not Unnamed</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string of the name of the project if it’s not Unnamed</p>
+</dd>
+</dl>
 <p>project,
 otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getSortOrder">
-<code class="descname">getSortOrder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getSortOrder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSortOrder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getSortOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the sort order of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the sort order of the project if it’s not Unnamed</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string of the sort order of the project if it’s not Unnamed</p>
+</dd>
+</dl>
 <p>project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.getSortedTag">
-<code class="descname">getSortedTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getSortedTag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getSortedTag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.getSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.getSortedTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sorted tag of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string of the sorted tag of the project if it’s not Unnamed</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string of the sorted tag of the project if it’s not Unnamed</p>
+</dd>
+</dl>
 <p>project, otherwise empty string</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.hasUnsavedModifications">
-<code class="descname">hasUnsavedModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.hasUnsavedModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.hasUnsavedModifications" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hasUnsavedModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.hasUnsavedModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.hasUnsavedModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return if the project has unsaved modifications or not.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean, True if the project has pending modifications,</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>boolean, True if the project has pending modifications,</p>
+</dd>
+</dl>
 <p>False otherwise</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.init_filters">
-<code class="descname">init_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.init_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.init_filters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.init_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.init_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the filters at project opening.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.loadProperties">
-<code class="descname">loadProperties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.loadProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.loadProperties" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loadProperties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.loadProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.loadProperties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the properties file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.redo">
-<code class="descname">redo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.redo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">redo</code><span class="sig-paren">(</span><em class="sig-param">table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.redo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redo the last action made by the user on the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> – table on which to apply the modifications</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> – table on which to apply the modifications</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.reput_values">
-<code class="descname">reput_values</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.reput_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.reput_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reput_values</code><span class="sig-paren">(</span><em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.reput_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.reput_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-put the value objects in the database.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> – List of Value objects</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>values</strong> – List of Value objects</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.saveConfig">
-<code class="descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.saveConfig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">saveConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.saveConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.saveConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the changes in the properties file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.saveModifications">
-<code class="descname">saveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.saveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.saveModifications" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">saveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.saveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.saveModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the pending operations of the project (actions
 still not saved).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.save_current_filter">
-<code class="descname">save_current_filter</code><span class="sig-paren">(</span><em>custom_filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.save_current_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_current_filter</code><span class="sig-paren">(</span><em class="sig-param">custom_filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.save_current_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.save_current_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the current filter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>custom_filters</strong> – The customized filter</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>custom_filters</strong> – The customized filter</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.setCurrentFilter">
-<code class="descname">setCurrentFilter</code><span class="sig-paren">(</span><em>filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setCurrentFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setCurrentFilter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setCurrentFilter</code><span class="sig-paren">(</span><em class="sig-param">filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setCurrentFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setCurrentFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the current filter of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filter</strong> – new Filter object</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> – new Filter object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.setDate">
-<code class="descname">setDate</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setDate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setDate</code><span class="sig-paren">(</span><em class="sig-param">date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setDate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the date of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> – new date of the project</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>date</strong> – new date of the project</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.setName">
-<code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setName" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setName</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the name of the project if it’s not Unnamed project,
 otherwise does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – new name of the project</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – new name of the project</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.setSortOrder">
-<code class="descname">setSortOrder</code><span class="sig-paren">(</span><em>order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setSortOrder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setSortOrder</code><span class="sig-paren">(</span><em class="sig-param">order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setSortOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setSortOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the sort order of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>order</strong> – new sort order of the project (ascending or descending)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order</strong> – new sort order of the project (ascending or descending)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.setSortedTag">
-<code class="descname">setSortedTag</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setSortedTag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setSortedTag</code><span class="sig-paren">(</span><em class="sig-param">tag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.setSortedTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.setSortedTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the sorted tag of the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> – new sorted tag of the project</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> – new sorted tag of the project</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.undo">
-<code class="descname">undo</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.undo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">undo</code><span class="sig-paren">(</span><em class="sig-param">table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.undo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Undo the last action made by the user on the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> – table on which to apply the modifications</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> – table on which to apply the modifications</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.unsaveModifications">
-<code class="descname">unsaveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.unsaveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.unsaveModifications" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">unsaveModifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.unsaveModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.unsaveModifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unsave the pending operations of the project.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="populse_mia.data_manager.project.Project.unsavedModifications">
-<code class="descname">unsavedModifications</code><a class="headerlink" href="#populse_mia.data_manager.project.Project.unsavedModifications" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">unsavedModifications</code><a class="headerlink" href="#populse_mia.data_manager.project.Project.unsavedModifications" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -847,29 +731,27 @@ otherwise does nothing.</p>
 <div class="section" id="module-populse_mia.data_manager.project_properties">
 <span id="populse-mia-data-manager-project-properties-module"></span><h2>populse_mia.data_manager.project_properties module<a class="headerlink" href="#module-populse_mia.data_manager.project_properties" title="Permalink to this headline">¶</a></h2>
 <p>Module that contains the class to handle the projects saved in the software.</p>
-<dl class="docutils">
-<dt>Contains:</dt>
-<dd>Class:
-- SavedProjects</dd>
+<dl class="simple">
+<dt>Contains:</dt><dd><p>Class:
+- SavedProjects</p>
+</dd>
 </dl>
 <dl class="class">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects">
-<em class="property">class </em><code class="descclassname">populse_mia.data_manager.project_properties.</code><code class="descname">SavedProjects</code><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.project_properties.</code><code class="sig-name descname">SavedProjects</code><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that handles all the projects that have been saved in the software.</p>
-<dl class="docutils">
-<dt>Attributes:</dt>
-<dd><ul class="first last simple">
-<li>savedProjects: dictionary of all the saved projects</li>
-<li>pathsList: list of all the saved projects</li>
+<dl>
+<dt>Attributes:</dt><dd><ul class="simple">
+<li><p>savedProjects: dictionary of all the saved projects</p></li>
+<li><p>pathsList: list of all the saved projects</p></li>
 </ul>
 </dd>
-<dt>Methods:</dt>
-<dd><ul class="first simple">
-<li>addSavedProject: adds a new saved project</li>
-<li>loadSavedProjects: loads the dictionary from the saved_projects.yml</li>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>addSavedProject: adds a new saved project</p></li>
+<li><p>loadSavedProjects: loads the dictionary from the saved_projects.yml</p></li>
 </ul>
-<p class="last">file
+<p>file
 - saveSavedProjects: saves the dictionary to the saved_projects.yml
 file
 - removeSavedProject: removes a saved project from the config file</p>
@@ -877,10 +759,10 @@ file
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Initialise the savedProjects attribute from the saved_projects.yml</dt>
-<dd>file.</dd>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Initialise the savedProjects attribute from the saved_projects.yml</dt><dd><p>file.</p>
+</dd>
 </dl>
 <p>The pathsList attribute is initialised as the value correponding to 
 the “paths” key in the savedProjects dictionary.</p>
@@ -888,58 +770,50 @@ the “paths” key in the savedProjects dictionary.</p>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.addSavedProject">
-<code class="descname">addSavedProject</code><span class="sig-paren">(</span><em>newPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.addSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.addSavedProject" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Add a new project to save in the savedProjects and pathsList</dt>
-<dd>attributes.</dd>
+<code class="sig-name descname">addSavedProject</code><span class="sig-paren">(</span><em class="sig-param">newPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.addSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.addSavedProject" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Add a new project to save in the savedProjects and pathsList</dt><dd><p>attributes.</p>
+</dd>
 </dl>
 <p>Finally, save the savedProjects attribute in the saved_projects.yml
 file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newPath</strong> – new project’s path to add</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the new path’s list (pathsList attribute)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>newPath</strong> – new project’s path to add</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the new path’s list (pathsList attribute)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.loadSavedProjects">
-<code class="descname">loadSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.loadSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.loadSavedProjects" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loadSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.loadSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.loadSavedProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the savedProjects dictionary from the saved_projects.yml file.</p>
 <p>If the saved_projects.yml file is not existing, it is created with the
 “{paths: []}” value and the returned dictionnary is {paths: []}.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the dictionary</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.removeSavedProject">
-<code class="descname">removeSavedProject</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.removeSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.removeSavedProject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">removeSavedProject</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.removeSavedProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.removeSavedProject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes a saved project from the saved_projects.yml file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path of the saved project to remove</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – path of the saved project to remove</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.saveSavedProjects">
-<code class="descname">saveSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.saveSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.saveSavedProjects" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">saveSavedProjects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.saveSavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.saveSavedProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the savedProjects dictionary to the saved_projects.yml file.</p>
 </dd></dl>
 
@@ -960,7 +834,7 @@ file.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

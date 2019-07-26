@@ -28,7 +28,7 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
     This method is called during a pipeline initialization to generate the process outputs and their inheritances (from which input they depends). The return value of this method must at least be a dictionary of this type {‘name_of_the_output_plug’: ‘value’, …}. To improve the file tracking, antoher dictionary can be added to the return value. This dictionary called inheritance dictionary specifies for each output which input generated it: {‘output_value’: ‘input_value’, …}.
 
 
-    * **run_process_mia()**
+    * **_run_process()**
 
     This method is called during a pipeline run. It has to contain the desired processing and need no return value.
 
@@ -45,114 +45,118 @@ MIA processes are Capsul processes made specific for Populse_MIA. They need at l
 
 **Example:** creating a smooth process using SPM Smooth (from Nipype’s interfaces) or Scipy's gaussian filtering function. ::
 
-    # Trait import
-    from traits.api import Float
-    from nipype.interfaces.base import OutputMultiPath, InputMultiPath, File, traits
-    from nipype.interfaces.spm.base import ImageFileSPM
-
-    from mia_processes.process_mia import Process_Mia
-
-    # Other import
     import os
-    from nipype.interfaces import spm
+    import traits.api as traits  # used to declare the inputs/outputs of the process
+    import nibabel as nib  # used to read and save Nifti images
+    from nipype.interfaces import spm  # used to use SPM's Smooth
+    from scipy.ndimage.filters import gaussian_filter  # used to apply the smoothing on an array
+    from populse_mia.pipeline_manager.process_mia import ProcessMIA  # base class that the created process has to inherit from
     
     
-    class Smooth(Process_Mia):
+    class SmoothSpmScipy(ProcessMIA):
     
         def __init__(self):
-            super(Smooth, self).__init__()
-
-            # Inputs description
-            in_files_desc = 'List of files to smooth. A list of items which are an existing, uncompressed file (valid extensions: [.img, .nii, .hdr]).'
-            fwhm_desc = 'Full-width at half maximum (FWHM) of the Gaussian smoothing kernel in mm. A list of 3 items which are a float of fwhm for each dimension.'
-            data_type_desc = 'Data type of the output images (an integer [int or long]).'
-            implicit_masking_desc = 'A mask implied by a particular voxel value (a boolean).'
-            out_prefix_desc = 'Specify  the string to be prepended to the filenames of the smoothed image file(s) (a string).'
-
-            # Outputs description
-            smoothed_files_desc = 'The smoothed files (a list of items which are an existing file name).'
-
-            # Input traits 
-            self.add_trait("in_files",
-                           InputMultiPath(ImageFileSPM(),
-                                          copyfile=False,
-                                          output=False,
-                                          desc=in_files_desc))
-            '''self.add_trait("fwhm", traits.Either(traits.Float(),
-                           traits.List(traits.Float()), default_value=[6, 6, 6], output=False, optional=True))'''
-            self.add_trait("fwhm",
-                           traits.List([6, 6, 6],
-                                       output=False,
-                                       optional=True,
-                                       desc= fwhm_desc))
-
-            self.add_trait("data_type",
-                           traits.Int(output=False,
-                                      optional=True,
-                           desc=data_type_desc))
-            
-            self.add_trait("implicit_masking",
-                           traits.Bool(output=False,
-                                       optional=True,
-                                       desc=implicit_masking_desc))
-            
-            self.add_trait("out_prefix",
-                           traits.String('s',
-                                         usedefault=True,
-                                         output=False,
-                                         optional=True,
-                                         desc=out_prefix_desc))
-
-            # Output traits 
-            self.add_trait("smoothed_files",
-                           OutputMultiPath(File(),
-                                           output=True,
-                                           desc=smoothed_files_desc))
+            super(SmoothSpmScipy, self).__init__()
+    
+            # Inputs
+            self.add_trait("in_file", traits.File(output=False, desc='3D input file'))  # Mandatory plug
+    
+            # For inputs/outputs that are lists, it is possible to specify which the type of the list element (here
+            # traits.Float(). The second value ([1.0, 1.0, 1.0]) corresponds to the default value
+            self.add_trait("fwhm", traits.List(traits.Float(), [1.0, 1.0, 1.0], output=False, optional=True,
+                                               desc='List of fwhm for each dimension (in mm)'))
+    
+            self.add_trait("out_prefix", traits.String('s', output=False, optional=True, desc='Output file prefix'))
+            self.add_trait("method", traits.Enum('SPM', 'Scipy', output=False, optional=True,
+                                                 desc='Method used (either "SPM" or "Scipy")'))
+    
+            # Output
+            self.add_trait("smoothed_file", traits.File(output=True, desc='Output file'))  # Mandatory plug
 
             self.process = spm.Smooth()
-            self.change_dir = True
-
+    
         def list_outputs(self):
-            super(Smooth, self).list_outputs()
-
-            if not self.in_files:
-                return {}
+            # Depending on the chosen method, the output dictionary will be generated differently
+            if self.method in ['SPM', 'Scipy']:
+                if self.method == 'SPM':
+                    # Nipype interfaces have already a _list_outputs method that generates the output dictionary
+                    if not self.in_file:
+                        print('"in_file" plug is mandatory for a Smooth process')
+                        return {}
+                    else:
+                        self.process.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
+                    self.process.inputs.out_prefix = self.out_prefix
+                    nipype_dict = self.process._list_outputs()  # Generates: {'smoothed_files' : [out_filename]}
+                    output_dict = {'smoothed_file': nipype_dict['smoothed_files'][0]}
+                else:
+                    # Generating the filename by hand
+                    if not self.in_file:
+                        print('"in_file" plug is mandatory for a Smooth process')
+                        return {}
+                    else:
+                        path, filename = os.path.split(self.in_file)
+                        out_filename = self.out_prefix + filename
+                        output_dict = {'smoothed_file': os.path.join(path, out_filename)}
+    
+                # Generating the inheritance dictionary
+                inheritance_dict = {output_dict['smoothed_file']: self.in_file}
+    
+                return output_dict, inheritance_dict
+    
             else:
-                self.process.inputs.in_files = self.in_files
-
-            if self.out_prefix:
-                self.process.inputs.out_prefix = self.out_prefix
-
-            outputs = self.process._list_outputs()
-
-            inheritance_dict = {}
-            for key, values in outputs.items():
-                if key == "smoothed_files":
-                    for fullname in values:
-                        path, filename = os.path.split(fullname)
-                        if self.out_prefix:
-                            filename_without_prefix = filename[len(self.out_prefix):]
-                        else:
-                            filename_without_prefix = filename[len('s'):]
-
-                        if os.path.join(path, filename_without_prefix) in self.in_files:
-                            inheritance_dict[fullname] = os.path.join(path, filename_without_prefix)
-
-            return outputs, inheritance_dict
-
-        def run_process_mia(self):
-            super(Smooth, self).run_process_mia()
-
-            for idx, element in enumerate(self.in_files):
-                full_path = os.path.relpath(element)
-                self.in_files[idx] = full_path
-            self.process.inputs.in_files = self.in_files
-            self.process.inputs.fwhm = self.fwhm
-            self.process.inputs.data_type = self.data_type
-            self.process.inputs.implicit_masking = self.implicit_masking
-            self.process.inputs.out_prefix = self.out_prefix
-
-            self.process.run()
+                print('"method" input has to be "SPM" or "Scipy" for a Smooth process')
+                return {}
+    
+        def _run_process(self):
+            # Depending on the chosen method, the output file will be generated differently
+            if self.method in ['SPM', 'Scipy']:
+                if self.method == 'SPM':
+                    # Make sure to call the manage_matlab_launch_parameters method to set the config parameters
+                    self.manage_matlab_launch_parameters()
+                    if not self.in_file:
+                        print('"in_file" plug is mandatory for a Smooth process')
+                        return
+                    else:
+                        self.process.inputs.in_files = self.in_file  # The input for a SPM Smooth is "in_files"
+                    self.process.inputs.fwhm = self.fwhm
+                    self.process.inputs.out_prefix = self.out_prefix
+    
+                    self.process.run()  # Running the interface
+    
+                else:
+                    if not self.in_file:
+                        print('"in_file" plug is mandatory for a Smooth process')
+                        return
+                    else:
+                        input_image = nib.load(self.in_file)  # Loading the nibabel image
+                        input_image_header = input_image.header
+                        input_array = input_image.get_data()  # Getting the 3D volume as a numpy array
+    
+                        # Getting the image resolution in x, y and z
+                        x_resolution = abs(input_image_header['pixdim'][1])
+                        y_resolution = abs(input_image_header['pixdim'][2])
+                        z_resolution = abs(input_image_header['pixdim'][3])
+    
+                        # Convert the fwhm for each dimension from mm to pixel
+                        x_fwhm = self.fwhm[0] / x_resolution
+                        y_fwhm = self.fwhm[1] / y_resolution
+                        z_fwhm = self.fwhm[2] / z_resolution
+                        pixel_fwhm = [x_fwhm, y_fwhm, z_fwhm]
+    
+                        sigma = [pixel_fwhm_dim / 2.355 for pixel_fwhm_dim in pixel_fwhm]  # Converting fwmh to sigma
+                        output_array = gaussian_filter(input_array, sigma)  # Filtering the array
+    
+                        # Creating a new Nifti image with the affine/header of the input_image
+                        output_image = nib.Nifti1Image(output_array, input_image.affine, input_image.header)
+    
+                        # Saving the image
+                        path, filename = os.path.split(self.in_file)
+                        out_filename = self.out_prefix + filename
+                        nib.save(output_image, os.path.join(path, out_filename))
+    
+            else:
+                print('"method" input has to be "SPM" or "Scipy" for a Smooth process')
+                return {}
 
 
 

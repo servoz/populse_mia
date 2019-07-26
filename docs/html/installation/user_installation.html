@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Populse_MIA’s user installation &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -28,23 +26,23 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <div class="toctree-wrapper compound">
 </div>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="14%" />
-<col width="33%" />
-<col width="23%" />
-<col width="30%" />
+<col style="width: 14%" />
+<col style="width: 33%" />
+<col style="width: 23%" />
+<col style="width: 30%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference external" href="../index.html">Home</a></td>
-<td><a class="reference external" href="../documentation/documentation.html">Documentation</a></td>
-<td><a class="reference external" href="./installation.html">Installation</a></td>
-<td><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference external" href="../index.html">Home</a></p></td>
+<td><p><a class="reference external" href="../documentation/documentation.html">Documentation</a></p></td>
+<td><p><a class="reference external" href="./installation.html">Installation</a></p></td>
+<td><p><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -54,59 +52,55 @@
 <div class="section" id="pre-requirements">
 <h2>Pre-requirements<a class="headerlink" href="#pre-requirements" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">Make sure to have Python3 installed. You can verify it by typing the following in a command line:</p>
+<li><p>Make sure to have Python3 installed. You can verify it by typing the following in a command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Note: depending on your Python setup and OS, the “python3” command can be use as the default Python command. Try “python -V”, if it returns “Python 3.x.x” replace all the “python3” commands below by “python”.</p>
-</li>
+<li><p>Note: depending on your Python setup and OS, the “python3” command can be use as the default Python command. Try “python -V”, if it returns “Python 3.x.x” replace all the “python3” commands below by “python”.</p></li>
 </ul>
 <p>Populse_MIA is ensured to work under Python’s 3.5, 3.6 and 3.7 versions.</p>
 <ul>
-<li><p class="first">Make sure to have a java package installed. You can verify it by typing the following in a command line:</p>
+<li><p>Make sure to have a java package installed. You can verify it by typing the following in a command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">java</span> <span class="o">-</span><span class="n">version</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Make sure to have pip3 installed. You can verify it by typing the following in a command line:</p>
+<li><p>Make sure to have pip3 installed. You can verify it by typing the following in a command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="o">--</span><span class="n">version</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Make sure to have git installed. You can verify it by typing the following in a command line:</p>
+<li><p>Make sure to have git installed. You can verify it by typing the following in a command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="o">--</span><span class="n">version</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Make sure to have git-lfs installed. You can verify it by typing the following in a command line:</p>
+<li><p>Make sure to have git-lfs installed. You can verify it by typing the following in a command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="o">-</span><span class="n">lfs</span> <span class="o">-</span><span class="n">v</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">If you are installing Populse_MIA on Windows, make sure to have Microsoft Visual C++ installed.</p>
-</li>
+<li><p>If you are installing Populse_MIA on Windows, make sure to have Microsoft Visual C++ installed.</p></li>
 </ul>
 </div>
 <div class="section" id="id1">
 <h2>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">First download the archive <a class="reference external" href="https://github.com/servoz/populse_mia_install/archive/master.zip">here</a>.</p>
-</li>
-<li><p class="first">Unzip it and launch the following command in the extracted folder (“populse_mia_install-master”):</p>
+<li><p>First download the archive <a class="reference external" href="https://github.com/servoz/populse_mia_install/archive/master.zip">here</a>.</p></li>
+<li><p>Unzip it and launch the following command in the extracted folder (“populse_mia_install-master”):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">install_mia</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">If PyQt5 and pyyaml are not installed in your Python environment they will be first installed before launching the Populse_MIA’s installation.</p>
-</li>
+<li><p>If PyQt5 and pyyaml are not installed in your Python environment they will be first installed before launching the Populse_MIA’s installation.</p></li>
 </ul>
 <img alt="../_images/mia_install_1.png" class="align-center" id="pyqt5-and-pyyaml" src="../_images/mia_install_1.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul>
-<li><p class="first">An error can sometimes occur, depending on your OS, after the installation of both packages, the Python environment not being correctly updated. If this error occurs launch the same command again to install Populse_MIA:</p>
+<li><p>An error can sometimes occur, depending on your OS, after the installation of both packages, the Python environment not being correctly updated. If this error occurs launch the same command again to install Populse_MIA:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">install_mia</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
@@ -116,54 +110,49 @@
 <div class="line"><br /></div>
 </div>
 <ul>
-<li><p class="first">The Populse_MIA installation is now launched and you have to select three mandatory parameters:</p>
+<li><p>The Populse_MIA installation is now launched and you have to select three mandatory parameters:</p>
 <blockquote>
 <div><ul class="simple">
-<li><dl class="first docutils">
-<dt>Populse_MIA installation path: the folder where to install Populse_MIA, set by default to “.populse_mia” in the current user’s diretory. Two folders will be created in the selected folder:</dt>
-<dd><ul class="first last">
-<li>populse_mia: containing populse_mia’s configuration and resources files.</li>
-<li>MRIFileManager: containing the file converter used in Populse_MIA.</li>
+<li><dl class="simple">
+<dt>Populse_MIA installation path: the folder where to install Populse_MIA, set by default to “.populse_mia” in the current user’s diretory. Two folders will be created in the selected folder:</dt><dd><ul>
+<li><p>populse_mia: containing populse_mia’s configuration and resources files.</p></li>
+<li><p>MRIFileManager: containing the file converter used in Populse_MIA.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li>Populse_MIA projects path: the folder containing the analysis projects saved in Populse_MIA. A “projects” folder will be created in the selected folder.</li>
-<li>Operating mode: Choose between clinical and research mode (more information about <a class="reference external" href="../documentation/documentation.html#operating-mode">operating mode</a>).</li>
+<li><p>Populse_MIA projects path: the folder containing the analysis projects saved in Populse_MIA. A “projects” folder will be created in the selected folder.</p></li>
+<li><p>Operating mode: Choose between clinical and research mode (more information about <a class="reference external" href="../documentation/documentation.html#operating-mode">operating mode</a>).</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p class="first">If you already want to configure the use of Matlab and SPM (in license or standalone mode), you can also specify these several paths:</p>
+<li><p>If you already want to configure the use of Matlab and SPM (in license or standalone mode), you can also specify these several paths:</p>
 <blockquote>
 <div><ul class="simple">
-<li><dl class="first docutils">
-<dt>Matlab path:</dt>
-<dd><ul class="first last">
-<li>Path of the Matlab executable file (is detected automatically).</li>
+<li><dl class="simple">
+<dt>Matlab path:</dt><dd><ul>
+<li><p>Path of the Matlab executable file (is detected automatically).</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Matlab standalone path:</dt>
-<dd><ul class="first last">
-<li>Path of the folder containing Matlab Compiler Runtine (e.g. /usr/local/MATLAB/MATLAB_Runtime/v93/).</li>
+<li><dl class="simple">
+<dt>Matlab standalone path:</dt><dd><ul>
+<li><p>Path of the folder containing Matlab Compiler Runtine (e.g. /usr/local/MATLAB/MATLAB_Runtime/v93/).</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>SPM path:</dt>
-<dd><ul class="first last">
-<li>Path of the folder containing SPM12 code.</li>
+<li><dl class="simple">
+<dt>SPM path:</dt><dd><ul>
+<li><p>Path of the folder containing SPM12 code.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>SPM standalone path:</dt>
-<dd><ul class="first last">
-<li>Path of the folder containing run_spm12.sh.</li>
+<li><dl class="simple">
+<dt>SPM standalone path:</dt><dd><ul>
+<li><p>Path of the folder containing run_spm12.sh.</p></li>
 </ul>
 </dd>
 </dl>
@@ -177,34 +166,23 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>Click on “Install” to install Populse_MIA with the selected parameters.</li>
-<li>The installation status is displayed. The last step (Python packages installation) may take a few minutes.</li>
+<li><p>Click on “Install” to install Populse_MIA with the selected parameters.</p></li>
+<li><p>The installation status is displayed. The last step (Python packages installation) may take a few minutes.</p></li>
 </ul>
 <img alt="../_images/mia_install_3.png" class="align-center" id="populse-mia-install-widget-status" src="../_images/mia_install_3.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>When the packages have been installed, a summary of the installation is displayed.</li>
+<li><p>When the packages have been installed, a summary of the installation is displayed.</p></li>
 </ul>
 <img alt="../_images/mia_install_4.png" class="align-center" id="populse-mia-install-widget-summary" src="../_images/mia_install_4.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul>
-<li><p class="first">Populse_MIA is now installed. To launch it, type the following command:</p>
+<li><p>Populse_MIA is now installed. To launch it, type the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">populse_mia</span>
-</pre></div>
-</div>
-</li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<ul>
-<li><p class="first">Depending on the operating system used, it was observed some compatibility issues with PyQt5/SIP. In this case, we recommend, as a first attempt, to do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">force</span><span class="o">-</span><span class="n">reinstall</span> <span class="n">pyqt5</span><span class="o">==</span><span class="mf">5.11</span><span class="o">.</span><span class="mi">3</span>
-<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">force</span><span class="o">-</span><span class="n">reinstall</span> <span class="n">PyQt5</span><span class="o">-</span><span class="n">sip</span><span class="o">==</span><span class="mf">4.19</span><span class="o">.</span><span class="mi">13</span>
 </pre></div>
 </div>
 </li>
@@ -224,7 +202,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

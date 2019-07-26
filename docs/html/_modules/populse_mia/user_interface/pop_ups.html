@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>populse_mia.user_interface.pop_ups &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head><body>
@@ -28,11 +26,46 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <h1>Source code for populse_mia.user_interface.pop_ups</h1><div class="highlight"><pre>
-<span></span><span class="c1">##########################################################################</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="sd">&quot;&quot;&quot; Module that defines all the pop-ups used across the software</span>
+
+<span class="sd">:Contains:</span>
+<span class="sd">    :Class:</span>
+<span class="sd">        - PopUpAddPath</span>
+<span class="sd">        - DefaultValueListCreation</span>
+<span class="sd">        - DefaultValueQLineEdit</span>
+<span class="sd">        - PopUpAddTag</span>
+<span class="sd">        - PopUpCloneTag</span>
+<span class="sd">        - PopUpClosePipeline</span>
+<span class="sd">        - PopUpDeletedProject</span>
+<span class="sd">        - PopUpDataBrowserCurrentSelection</span>
+<span class="sd">        - PopUpFilterSelection</span>
+<span class="sd">        - PopUpInformation</span>
+<span class="sd">        - PopUpMultipleSort</span>
+<span class="sd">        - PopUpNewProject</span>
+<span class="sd">        - PopUpOpenProject</span>
+<span class="sd">        - PopUpPreferences</span>
+<span class="sd">        - PopUpProperties</span>
+<span class="sd">        - PopUpQuit</span>
+<span class="sd">        - PopUpRemoveScan</span>
+<span class="sd">        - PopUpRemoveTag</span>
+<span class="sd">        - PopUpSaveProjectAs</span>
+<span class="sd">        - PopUpSeeAllProjects</span>
+<span class="sd">        - PopUpSelectFilter</span>
+<span class="sd">        - PopUpSelectIteration</span>
+<span class="sd">        - PopUpTagSelection</span>
+<span class="sd">        - PopUpSelectTag</span>
+<span class="sd">        - PopUpSelectTagCountTable</span>
+<span class="sd">        - PopUpShowBrick</span>
+<span class="sd">        - PopUpVisualizedTags</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
 <span class="c1"># Distributed under the terms of the CeCILL license, as published by</span>
 <span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
@@ -83,13 +116,77 @@
 <span class="kn">from</span> <span class="nn">populse_mia.utils.utils</span> <span class="k">import</span> <span class="n">check_value_type</span>
 
 
+<div class="viewcode-block" id="PopUpRemoveScan"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan">[docs]</a><span class="k">class</span> <span class="nc">PopUpRemoveScan</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Is called when the user wants to remove a scan that was previously sent</span>
+<span class="sd">    to the pipeline manager.</span>
+
+<span class="sd">    :param scan: The scan that may be removed</span>
+<span class="sd">    :param size: The number of scan the user wants to remove</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PopUpRemoveScan.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;The document exists in the pipeline manager&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;The document &#39;</span> <span class="o">+</span> <span class="n">scan</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">was previously sent to the &#39;</span>
+                                               <span class="s1">&#39;pipeline manager, do you &#39;</span>
+                                               <span class="s1">&#39;really want to delete it ?&#39;</span><span class="p">)</span>
+
+        <span class="n">push_button_yes</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Ok&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">push_button_cancel</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">push_button_yes_all</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Ok to all&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">push_button_no_all</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;No to all&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+        <span class="n">hbox</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">push_button_yes</span><span class="p">)</span>
+        <span class="n">hbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">push_button_cancel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">hbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">push_button_yes_all</span><span class="p">)</span>
+            <span class="n">hbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">push_button_no_all</span><span class="p">)</span>
+
+        <span class="n">hbox</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">vbox</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox</span><span class="p">)</span>
+
+        <span class="n">push_button_yes</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yes_clicked</span><span class="p">)</span>
+        <span class="n">push_button_cancel</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cancel_clicked</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">push_button_yes_all</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yes_all_clicked</span><span class="p">)</span>
+            <span class="n">push_button_no_all</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_all_clicked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PopUpRemoveScan.cancel_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan.cancel_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PopUpRemoveScan.no_all_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan.no_all_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">no_all_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PopUpRemoveScan.yes_all_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan.yes_all_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">yes_all_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PopUpRemoveScan.yes_clicked"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveScan.yes_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">yes_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
 <div class="viewcode-block" id="PopUpAddPath"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddPath">[docs]</a><span class="k">class</span> <span class="nc">PopUpAddPath</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to add a document to the project</span>
 <span class="sd">       without importing from populse_mia.e MRI File Manager</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: updates the &quot;scan_list&quot; attribute of several widgets</span>
@@ -100,7 +197,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpAddPath.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddPath.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the PopUp AddPath</span>
 
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span> <span class="o">=</span> <span class="n">databrowser</span>
@@ -136,7 +237,6 @@
         <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span><span class="p">)</span>
         <span class="n">hbox_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">cancel_button</span><span class="p">)</span>
         <span class="n">vbox_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox_layout</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_layout</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PopUpAddPath.find_type"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddPath.find_type">[docs]</a>    <span class="k">def</span> <span class="nf">find_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -228,10 +328,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widget that is called when to create a list&#39;s default value</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - type: type of the list (e.g. list of int, list of float, etc.)</span>
-<span class="sd">        - parent: the DefaultValueQLineEdit parent object</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - default_init_table: default init table when no previous value</span>
 <span class="sd">        - update_default_value: checks if the values are correct and updates</span>
@@ -242,6 +338,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DefaultValueListCreation.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.DefaultValueListCreation.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param type: type of the list (e.g. list of int, list of float, etc.)</span>
+<span class="sd">        :param parent: the DefaultValueQLineEdit parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -461,11 +562,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to add a tag to the project</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-<span class="sd">        - type: type of the tag to add</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - on_activated: type updated</span>
 <span class="sd">        - ok_action: verifies that each field is correct and send the new tag</span>
@@ -477,6 +573,11 @@
     <span class="n">signal_add_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpAddTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        :param type: type of the tag to add&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span> <span class="o">=</span> <span class="n">databrowser</span>
@@ -725,10 +826,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to clone a tag to the project</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - ok_action: verifies the specified name is correct and send the</span>
@@ -740,6 +837,11 @@
     <span class="n">signal_clone_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpCloneTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpCloneTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Clone a tag&quot;</span><span class="p">)</span>
 
@@ -892,14 +994,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user closes a pipeline editor that has been modified</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - pipeline_name: name of the pipeline (basename)</span>
-<span class="sd">        - bool_save_as: boolean to True if the pipeline needs to be saved</span>
-<span class="sd">        - bool_exit: boolean to True if we can exit the editor</span>
-<span class="sd">        - save_as_signal: signal emitted to save the pipeline under another</span>
-<span class="sd">           name</span>
-<span class="sd">        - do_not_save_signal: signal emitted to close the editor</span>
-<span class="sd">        - cancel_signal: signal emitted to cancel the action</span>
+
+<span class="sd">    bool_save_as: boolean to True if the pipeline needs to be saved</span>
+<span class="sd">    bool_exit: boolean to True if we can exit the editor</span>
+<span class="sd">    save_as_signal: signal emitted to save the pipeline under another</span>
+<span class="sd">       name</span>
+<span class="sd">    do_not_save_signal: signal emitted to close the editor</span>
+<span class="sd">    cancel_signal: signal emitted to cancel the action</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - save_as_clicked: makes the actions to save the pipeline</span>
@@ -913,6 +1014,10 @@
     <span class="n">cancel_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpClosePipeline.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpClosePipeline.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param pipeline_name: name of the pipeline (basename)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span> <span class="o">=</span> <span class="n">pipeline_name</span>
@@ -983,7 +1088,7 @@
 <div class="viewcode-block" id="PopUpDeletedProject.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpDeletedProject.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deleted_projects</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;These projects have been deleted:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;These projects have been renamed, moved or deleted:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">deleted_project</span> <span class="ow">in</span> <span class="n">deleted_projects</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;- </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">deleted_project</span><span class="p">)</span>
 
@@ -1000,17 +1105,18 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called to display the current data_browser selection</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-<span class="sd">        - filter: list of the current documents in the data browser</span>
-<span class="sd">        - main_window: main window of the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: updates the &quot;scan_list&quot; attribute of several widgets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpDataBrowserCurrentSelection.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpDataBrowserCurrentSelection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        :param filter: list of the current documents in the data browser</span>
+<span class="sd">        :param main_window: main window of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -1052,15 +1158,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">pipelineEditorTabs</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">iterationTable</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span><span class="o">.</span><span class="n">data_sent</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="PopUpFilterSelection"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpFilterSelection">[docs]</a><span class="k">class</span> <span class="nc">PopUpFilterSelection</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open a filter that has already been saved</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
 
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the saved filters</span>
@@ -1069,6 +1175,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpFilterSelection.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpFilterSelection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -1169,6 +1279,10 @@
     <span class="n">signal_preferences_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpInformation.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpInformation.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">name_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Name: &quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name_value</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span>
@@ -1191,12 +1305,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called to sort the data browser&#39;s table depending on multiple tags</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - table_data_browser: data browser&#39;s table of the software</span>
-<span class="sd">        - values_list: list containing the values that can take each selected tag</span>
-<span class="sd">        - list_tags: list of the selected tags</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - refresh_layout: updates the layouts (especially when a tag push</span>
 <span class="sd">          button is added or removed)</span>
@@ -1209,6 +1317,11 @@
 <span class="sd">          browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="PopUpMultipleSort.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpMultipleSort.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">table_data_browser</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param table_data_browser: data browser&#39;s table of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_data_browser</span> <span class="o">=</span> <span class="n">table_data_browser</span>
@@ -1354,14 +1467,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to create a new project</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - path: absolute path to the project&#39;s folder (without the project</span>
-<span class="sd">          folder)</span>
-<span class="sd">        - name: name of the project</span>
-<span class="sd">        - relative_path: relative path to the new project (with the project</span>
-<span class="sd">          folder)</span>
-<span class="sd">        - relative_subpath: relative path to the new project (without the</span>
-<span class="sd">          project folder)</span>
 <span class="sd">    Method:</span>
 <span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the</span>
 <span class="sd">          selected file name</span>
@@ -1372,6 +1477,7 @@
     <span class="n">signal_create_project</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpNewProject.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpNewProject.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setLabelText</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">Accept</span><span class="p">,</span> <span class="s2">&quot;Create&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">AcceptSave</span><span class="p">)</span>
@@ -1407,12 +1513,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open project</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - path: absolute path to the project&#39;s folder (without the project</span>
-<span class="sd">          folder)</span>
-<span class="sd">        - name: name of the project</span>
-<span class="sd">        - relative_path: relative path to the new project (with the project</span>
-<span class="sd">          folder)</span>
 <span class="sd">    Method:</span>
 <span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the selected</span>
 <span class="sd">           file name</span>
@@ -1482,6 +1582,9 @@
     <span class="n">use_clinical_mode_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpPreferences.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpPreferences.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+<span class="sd">        :param main_window: main window object of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
@@ -2139,11 +2242,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to change the current project&#39;s properties</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-<span class="sd">        - old_tags: visualized tags before opening this dialog</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2152,6 +2250,12 @@
     <span class="n">signal_settings_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpProperties.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpProperties.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">old_tags</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        :param old_tags: visualized tags before opening this dialog</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -2231,10 +2335,6 @@
 <span class="sd">    Is called when the user closes the software and the current project has</span>
 <span class="sd">      been modified</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - database: current database in the project</span>
-<span class="sd">        - bool_exit: boolean equals to True if we can exit the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - save_as_clicked: makes the actions to save the project</span>
 <span class="sd">        - do_not_save_clicked: makes the actions not to save the project</span>
@@ -2247,6 +2347,10 @@
     <span class="n">cancel_signal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpQuit.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpQuit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param database: current database in the project</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
@@ -2313,10 +2417,6 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to remove a user tag from</span>
 <span class="sd">       populse_mia.e project</span>
 
-<span class="sd">     Attributes:</span>
-<span class="sd">         - project: current project in the software</span>
-<span class="sd">         - databrowser: data browser instance of the software</span>
-
 <span class="sd">     Methods:</span>
 <span class="sd">         - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">         - ok_action: verifies the selected tags and send the information to the data browser</span>
@@ -2327,6 +2427,11 @@
     <span class="n">signal_remove_tag</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpRemoveTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpRemoveTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialization</span>
+
+<span class="sd">        :param databrowser: current project in the software</span>
+<span class="sd">        :param project: data browser instance of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span> <span class="o">=</span> <span class="n">databrowser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -2492,7 +2597,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSeeAllProjects.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saved_projects</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initializarion</span>
+
 <span class="sd">        :param saved_projects: List of saved projects</span>
 <span class="sd">        :param main_window: Main window</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2596,9 +2702,8 @@
             <span class="n">entire_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">entire_path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-
             <span class="n">project_switched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mainWindow</span><span class="o">.</span><span class="n">switch_project</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">project_switched</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
@@ -2609,16 +2714,16 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open a filter that has already been saved</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-<span class="sd">        - config: current config of the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSelectFilter.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializarion</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser: data browser instance of the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PopUpSelectFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">databrowser</span> <span class="o">=</span> <span class="n">databrowser</span>
@@ -2653,16 +2758,16 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to run an iterated pipeline</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - iterated_tag: name of the iterated tag</span>
-<span class="sd">        - tag_values: values that can take the iterated tag</span>
-<span class="sd">        - final_values: selected values on which to iterate the pipeline</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: sends the selected values to the pipeline manager</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSelectIteration.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectIteration.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterated_tag</span><span class="p">,</span> <span class="n">tag_values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param iterated_tag: name of the iterated tag</span>
+<span class="sd">        :param tag_values: values that can take the iterated tag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">iterated_tag</span> <span class="o">=</span> <span class="n">iterated_tag</span>
@@ -2723,9 +2828,6 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to update the tags that are visualized in</span>
 <span class="sd">       the data browser</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - item_clicked: checks the checkbox of an item when the latter</span>
@@ -2735,6 +2837,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpTagSelection.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpTagSelection.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
 
@@ -2851,7 +2957,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSelectTag.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectTag.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
 
 <span class="sd">        :param project: current project in the software</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2890,14 +2996,17 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to update a visualized tag of the count table</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - selected_tag: the selected tag</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - ok_clicked: updates the selected tag and closes the pop-up</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PopUpSelectTagCountTable.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpSelectTagCountTable.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">tags_to_display</span><span class="p">,</span> <span class="n">tag_name_checked</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param tags_to_display: the tags to display</span>
+<span class="sd">        :param tag_name_checked: the checked tags</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PopUpSelectTagCountTable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">selected_tag</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2931,11 +3040,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to display the brick history of a document</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - databrowser: data browser instance of the software</span>
-<span class="sd">        - main_window: main window of the software</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - io_value_is_scan: checks if the I/O value is a scan</span>
 <span class="sd">        - file_clicked: called when a file is clicked</span>
@@ -2944,9 +3048,8 @@
 <div class="viewcode-block" id="PopUpShowBrick.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpShowBrick.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">brick_uuid</span><span class="p">,</span> <span class="n">databrowser</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prepares the brick history popup</span>
-<span class="sd">        :param project: project</span>
-<span class="sd">        :param brick_uuid: brick to display</span>
-<span class="sd">        :param databrowser; data browser that made the call</span>
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param databrowser; data browser instance of the software</span>
 <span class="sd">        :param main_window: main window of the software</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -3136,10 +3239,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to update the tags that are visualized</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - visualized_tags: project&#39;s visualized tags before opening this widget</span>
-
 <span class="sd">    Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - click_select_tag: puts the selected tags in the &quot;selected tag&quot; table</span>
@@ -3150,6 +3249,11 @@
     <span class="n">signal_preferences_change</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PopUpVisualizedTags.__init__"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpVisualizedTags.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">visualized_tags</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param visualized_tags: project&#39;s visualized tags before opening this widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -3294,7 +3398,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

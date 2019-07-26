@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>populse_mia.user_interface.data_browser.rapid_search &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -28,11 +26,18 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <h1>Source code for populse_mia.user_interface.data_browser.rapid_search</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module to define the rapid search.</span>
+
+<span class="sd">Contains:</span>
+<span class="sd">    Class:</span>
+<span class="sd">        - RapidSearch</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1">##########################################################################</span>
 <span class="c1"># Populse_mia - Copyright (C) IRMaGe/CEA, 2018</span>
@@ -118,7 +123,7 @@
 <span class="sd">        :return: str filter corresponding to the rapid search</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span>
 
         <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -133,10 +138,8 @@
 
                 <span class="n">or_to_write</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot; AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s2">&quot;) AND ({&quot;</span> <span class="o">+</span> <span class="n">TAG_FILENAME</span> <span class="o">+</span> <span class="s2">&quot;} IN &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
             <span class="n">scans</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
-
-        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
         <span class="k">return</span> <span class="n">query</span></div></div>
 </pre></div>
@@ -152,7 +155,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

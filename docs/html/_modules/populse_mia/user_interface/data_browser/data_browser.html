@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>populse_mia.user_interface.data_browser.data_browser &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -28,7 +26,7 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <h1>Source code for populse_mia.user_interface.data_browser.data_browser</h1><div class="highlight"><pre>
@@ -57,8 +55,6 @@
 
 <span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="c1"># from functools import partial</span>
-<span class="c1"># from PyQt5.QtCore import QTimer</span>
 
 <span class="c1"># PyQt5 imports</span>
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
@@ -80,7 +76,8 @@
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.data_browser.mini_viewer</span> <span class="k">import</span> <span class="n">MiniViewer</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">PopUpMultipleSort</span><span class="p">,</span> <span class="n">PopUpProperties</span><span class="p">,</span> <span class="n">PopUpShowBrick</span><span class="p">,</span> <span class="n">PopUpAddPath</span><span class="p">,</span>
-    <span class="n">PopUpAddTag</span><span class="p">,</span> <span class="n">PopUpCloneTag</span><span class="p">,</span> <span class="n">PopUpRemoveTag</span><span class="p">,</span> <span class="n">PopUpSelectFilter</span><span class="p">)</span>
+    <span class="n">PopUpAddTag</span><span class="p">,</span> <span class="n">PopUpCloneTag</span><span class="p">,</span> <span class="n">PopUpRemoveTag</span><span class="p">,</span> <span class="n">PopUpSelectFilter</span><span class="p">,</span>
+    <span class="n">PopUpRemoveScan</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">PopUpDataBrowserCurrentSelection</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.utils.tools</span> <span class="k">import</span> <span class="n">ClickableLabel</span>
@@ -148,6 +145,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span> <span class="o">=</span> <span class="n">main_window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_sent</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">DataBrowser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -371,7 +369,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">count_table_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_table_pop_up</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">visualized_tags_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">visualized_tags_pop_up</span><span class="p">())</span></div>
-        <span class="c1"># self.search_bar.textChanged.connect(self.delay_event)</span>
 
 <div class="viewcode-block" id="DataBrowser.count_table_pop_up"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.count_table_pop_up">[docs]</a>    <span class="k">def</span> <span class="nf">count_table_pop_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open the count table pop-up&quot;&quot;&quot;</span>
@@ -503,16 +500,6 @@
         <span class="n">vbox_splitter</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">splitter_vertical</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_splitter</span><span class="p">)</span></div>
-
-    <span class="c1"># def delay_event(self, str_search):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     Delays the use of the str_search function by 500ms</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     self.timer = QTimer()</span>
-    <span class="c1">#     self.timer.setSingleShot(True)</span>
-    <span class="c1">#     f = partial(self.search_str, str_search)</span>
-    <span class="c1">#     self.timer.timeout.connect(f)</span>
-    <span class="c1">#     self.timer.start(500)</span>
 
 <div class="viewcode-block" id="DataBrowser.move_splitter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.move_splitter">[docs]</a>    <span class="k">def</span> <span class="nf">move_splitter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check if the viewer&#39;s splitter is at its lowest position.&quot;&quot;&quot;</span>
@@ -995,6 +982,7 @@
                                         <span class="n">cells_number</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span> <span class="c1"># For mac OS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Adding the paths&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span>
                                      <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span><span class="p">)</span>
@@ -1367,6 +1355,7 @@
             <span class="n">cells_number</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span> <span class="c1"># For mac OS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Filling the cells&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span>
                                      <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span><span class="p">)</span>
@@ -1783,7 +1772,9 @@
         <span class="n">history_maker</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;remove_scans&quot;</span><span class="p">)</span>
         <span class="n">scans_removed</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">values_removed</span> <span class="o">=</span> <span class="p">[]</span>
-
+        <span class="n">scan_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">scan_list</span>
+        <span class="n">repeat_pop_up</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">cancel</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
             <span class="n">scan_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -1792,6 +1783,15 @@
                 <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">scan_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">scan_path</span> <span class="ow">in</span> <span class="n">scan_list</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">data_sent</span> <span class="ow">is</span>\
+                        <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">repeat_pop_up</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">pop</span> <span class="o">=</span> <span class="n">PopUpRemoveScan</span><span class="p">(</span><span class="n">scan_path</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                        <span class="n">cancel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="o">.</span><span class="n">stop</span>
+                        <span class="n">repeat_pop_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="o">.</span><span class="n">repeat</span>
+                    <span class="k">if</span> <span class="n">cancel</span><span class="p">:</span>
+                        <span class="k">continue</span>
                 <span class="n">scans_removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scan_object</span><span class="p">)</span>
 
                 <span class="c1"># Adding removed values to history</span>
@@ -2121,7 +2121,13 @@
                                 <span class="n">color</span><span class="o">.</span><span class="n">setRgb</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># White</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">color</span><span class="o">.</span><span class="n">setRgb</span><span class="p">(</span><span class="mi">230</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">230</span><span class="p">)</span>  <span class="c1"># Grey</span>
-
+                        <span class="c1"># Avoid issues after switching tab and not saving</span>
+                        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+                                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">row_number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">color</span><span class="o">.</span><span class="n">setRgb</span><span class="p">(</span><span class="mi">245</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">)</span>  <span class="c1"># Pink</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">color</span><span class="o">.</span><span class="n">setRgb</span><span class="p">(</span><span class="mi">245</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">)</span>  <span class="c1"># Red</span>
                         <span class="c1"># Raw tag</span>
                         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
                                 <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">origin</span> <span class="o">==</span>
@@ -2333,7 +2339,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

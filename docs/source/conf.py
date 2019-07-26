@@ -14,8 +14,8 @@
 #
 import os
 import sys
-import populse_mia as mamamia
 sys.path.insert(0, os.path.abspath('../../python'))
+import populse_mia
 
 
 # -- project information -----------------------------------------------------
@@ -27,7 +27,7 @@ author = 'populse'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = mamamia.__version__
+release = populse_mia.__version__
 
 
 # -- General configuration ---------------------------------------------------

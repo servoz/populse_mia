@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>A pipeline example with Populse_MIA’s &#8212; populse_mia 1.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -13,7 +11,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -28,23 +26,23 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <div class="toctree-wrapper compound">
 </div>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="14%" />
-<col width="24%" />
-<col width="31%" />
-<col width="31%" />
+<col style="width: 14%" />
+<col style="width: 24%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference external" href="../index.html">Home</a></td>
-<td><a class="reference external" href="./documentation.html">Documentation</a></td>
-<td><a class="reference external" href="../installation/installation.html">Installation</a></td>
-<td><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference external" href="../index.html">Home</a></p></td>
+<td><p><a class="reference external" href="./documentation.html">Documentation</a></p></td>
+<td><p><a class="reference external" href="../installation/installation.html">Installation</a></p></td>
+<td><p><a class="reference external" href="https://github.com/populse/populse_mia">GitHub</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -62,32 +60,32 @@
 <p>The pipeline that will be created will :</p>
 <blockquote>
 <div><ul class="simple">
-<li>Use SPM’s processes</li>
-<li>Iterate over each patient of the project</li>
-<li>Realign the FLASH scan</li>
-<li>Coregister the realigned FLASH scan with the Anat scan</li>
-<li>Smooth the MDEFT scan</li>
+<li><p>Use SPM’s processes</p></li>
+<li><p>Iterate over each patient of the project</p></li>
+<li><p>Realign the FLASH scan</p></li>
+<li><p>Coregister the realigned FLASH scan with the Anat scan</p></li>
+<li><p>Smooth the MDEFT scan</p></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="pipeline-creation">
 <h2>Pipeline creation<a class="headerlink" href="#pipeline-creation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>First add the three SPM’s processes by dragging them from the process library (under nipype &gt; interfaces &gt; spm) and dropping them to the pipeline editor.</li>
+<li><p>First add the three SPM’s processes by dragging them from the process library (under nipype &gt; interfaces &gt; spm) and dropping them to the pipeline editor.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_1.png" class="align-center" id="pipeline-example-1" src="../_images/pipeline_example_1.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul>
-<li><p class="first">Export the plugs that you want to be able to modify from outside the pipeline and add links between the realign and coregister nodes (<a class="reference external" href="./pipeline_manager.html#how-to-use-the-pipeline-editor">more information</a>)</p>
+<li><p>Export the plugs that you want to be able to modify from outside the pipeline and add links between the realign and coregister nodes (<a class="reference external" href="./pipeline_manager.html#how-to-use-the-pipeline-editor">more information</a>)</p>
 <blockquote>
 <div><ul class="simple">
-<li>The Realign process jobtype will be “write” so the output of the node will be a new file that will be contained in the “_realigned_files” plug.</li>
-<li>We will also choose to create the mean image of the FLASH scan. It will be contained in the ‘_mean_image’ file.</li>
-<li>The “target” of the Coregister process is the reference file to register to. In this case, this is the 3D Anat file.</li>
-<li>The “source” of the Coregister process is the file to register to the target. In this case, this will be the FLASH scan’s mean image.</li>
-<li>The transformation from “source” to “target” will be applied to “apply_to_files” which is, in this case, the realigned FLASH scan.</li>
+<li><p>The Realign process jobtype will be “write” so the output of the node will be a new file that will be contained in the “_realigned_files” plug.</p></li>
+<li><p>We will also choose to create the mean image of the FLASH scan. It will be contained in the ‘_mean_image’ file.</p></li>
+<li><p>The “target” of the Coregister process is the reference file to register to. In this case, this is the 3D Anat file.</p></li>
+<li><p>The “source” of the Coregister process is the file to register to the target. In this case, this will be the FLASH scan’s mean image.</p></li>
+<li><p>The transformation from “source” to “target” will be applied to “apply_to_files” which is, in this case, the realigned FLASH scan.</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -97,7 +95,7 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu. It is now stored in the process library under “User_processes”.</li>
+<li><p>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu. It is now stored in the process library under “User_processes”.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_3.png" class="align-center" id="pipeline-example-3" src="../_images/pipeline_example_3.png" />
 </div>
@@ -105,17 +103,16 @@
 <h2>Pipeline iteration<a class="headerlink" href="#pipeline-iteration" title="Permalink to this headline">¶</a></h2>
 <p>To be able to iterate the pipeline correctly, you will need a filter process that is ready to use in the mia_processes package, since the 1.1.1 release (Input_filter brick). The mia_processes package is available from the <a class="reference external" href="https://pypi.org/search/?q=mia_processes">Cheese Shop</a>.</p>
 <ul class="simple">
-<li>Add the previously saved pipeline in a new editor by dragging it from the process library (under User_processes) and dropping it to the pipeline editor.</li>
+<li><p>Add the previously saved pipeline in a new editor by dragging it from the process library (under User_processes) and dropping it to the pipeline editor.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_4.png" class="align-center" id="pipeline-example-4" src="../_images/pipeline_example_4.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>Add Input_filter processes in front of each input that comes from the database (Anat_file, FLASH_file and MDEFT_file)</dt>
-<dd><ul class="first last">
-<li>Note: a file_to_list process is added before the Anat_file plug because Input_filter’s output is of type List, and Anat_file plug is of type File.</li>
+<li><dl class="simple">
+<dt>Add Input_filter processes in front of each input that comes from the database (Anat_file, FLASH_file and MDEFT_file)</dt><dd><ul>
+<li><p>Note: a file_to_list process is added before the Anat_file plug because Input_filter’s output is of type List, and Anat_file plug is of type File.</p></li>
 </ul>
 </dd>
 </dl>
@@ -126,10 +123,9 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>For each Input_filter process, right-click on it and select “Open filter”. In the filter pop-up, modify the filter to apply.</dt>
-<dd><ul class="first last">
-<li>For exemple, for the Anat_file plug. Set : “Exp Type == Anat” in the Advanced Search.</li>
+<li><dl class="simple">
+<dt>For each Input_filter process, right-click on it and select “Open filter”. In the filter pop-up, modify the filter to apply.</dt><dd><ul>
+<li><p>For exemple, for the Anat_file plug. Set : “Exp Type == Anat” in the Advanced Search.</p></li>
 </ul>
 </dd>
 </dl>
@@ -140,18 +136,17 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>Right-click on one of the Input_filter processes and select “Export to database_scans”.</li>
-<li>Add links between “database_scans” and the input of the other Input_filter processes.</li>
+<li><p>Right-click on one of the Input_filter processes and select “Export to database_scans”.</p></li>
+<li><p>Add links between “database_scans” and the input of the other Input_filter processes.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_7.png" class="align-center" id="pipeline-example-7" src="../_images/pipeline_example_7.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>Export the other node plugs by right-clicking on “realign_coreg_smooth1” node and selecting “Export all unconnected plugs”.</dt>
-<dd><ul class="first last">
-<li>The pipeline becomes enabled.</li>
+<li><dl class="simple">
+<dt>Export the other node plugs by right-clicking on “realign_coreg_smooth1” node and selecting “Export all unconnected plugs”.</dt><dd><ul>
+<li><p>The pipeline becomes enabled.</p></li>
 </ul>
 </dd>
 </dl>
@@ -162,27 +157,25 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu.</li>
-<li>Click on the “inputs” or “outputs” node and modify the parameters in the node controller</li>
+<li><p>Save the pipeline in the proposed folder by clicking on the bottom left “Pipeline” menu.</p></li>
+<li><p>Click on the “inputs” or “outputs” node and modify the parameters in the node controller</p></li>
 </ul>
 <img alt="../_images/pipeline_example_9.png" class="align-center" id="pipeline-example-9" src="../_images/pipeline_example_9.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>Save the set of parameters that you have just modified by clicking on “Save pipeline parameters” in the bottom left “Pipeline” menu.</dt>
-<dd><ul class="first last">
-<li>This step is not mandatory. But by saving these parameters, the next time you open the pipeline, you will be able load them directly by clicking on “Load pipeline parameters” in the bottom left “Pipeline” menu.</li>
+<li><dl class="simple">
+<dt>Save the set of parameters that you have just modified by clicking on “Save pipeline parameters” in the bottom left “Pipeline” menu.</dt><dd><ul>
+<li><p>This step is not mandatory. But by saving these parameters, the next time you open the pipeline, you will be able load them directly by clicking on “Load pipeline parameters” in the bottom left “Pipeline” menu.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Set up the iteration table.</dt>
-<dd><ul class="first last">
-<li>Check the “Iterate pipeline” check box and select to iterate over the “Patient” tag.</li>
-<li>By changing the value of the selected Patient, you change the list of documents in “database_scans”</li>
+<li><dl class="simple">
+<dt>Set up the iteration table.</dt><dd><ul>
+<li><p>Check the “Iterate pipeline” check box and select to iterate over the “Patient” tag.</p></li>
+<li><p>By changing the value of the selected Patient, you change the list of documents in “database_scans”</p></li>
 </ul>
 </dd>
 </dl>
@@ -193,11 +186,10 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>Run the pipeline by clicking on “Run pipeline” in the bottom left “Pipeline” menu.</dt>
-<dd><ul class="first last">
-<li>Choose on which Patient to iterate the pipeline (reminder: patients K49 and K51 got missing files)</li>
-<li>In iteration mode, there is no need to initialize the pipeline. It is automatically done before each iterated run.</li>
+<li><dl class="simple">
+<dt>Run the pipeline by clicking on “Run pipeline” in the bottom left “Pipeline” menu.</dt><dd><ul>
+<li><p>Choose on which Patient to iterate the pipeline (reminder: patients K49 and K51 got missing files)</p></li>
+<li><p>In iteration mode, there is no need to initialize the pipeline. It is automatically done before each iterated run.</p></li>
 </ul>
 </dd>
 </dl>
@@ -208,14 +200,14 @@
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>During the run, some information is displayed thanks to the status bar at the bottom of the software.</li>
+<li><p>During the run, some information is displayed thanks to the status bar at the bottom of the software.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_12.png" class="align-center" id="pipeline-example-12" src="../_images/pipeline_example_12.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <ul class="simple">
-<li>At the end of the run, another message to sum-up the run is displayed thanks to the status bar at the bottom of the software.</li>
+<li><p>At the end of the run, another message to sum-up the run is displayed thanks to the status bar at the bottom of the software.</p></li>
 </ul>
 <img alt="../_images/pipeline_example_13.png" class="align-center" id="pipeline-example-13" src="../_images/pipeline_example_13.png" />
 </div>
@@ -233,7 +225,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, populse.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>
