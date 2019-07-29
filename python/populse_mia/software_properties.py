@@ -4,11 +4,11 @@
 Load and save the parameters from the miniviewer and the MIA preferences
 pop-up in the config.yml file.
 
-Contains:
-    Function:
-    -verCmp
-    Class:
-    -Config
+:Contains:
+    :Function:
+        - verCmp
+    :Class:
+        - Config
 
 """
 
@@ -44,9 +44,9 @@ def verCmp(first_ver, sec_ver, comp):
 
     :returns: False or True
 
-    Contains:
-        Private function:
-        - normalise
+    :Contains:
+        :Private function:
+            - normalise
 
      """
 
@@ -90,39 +90,39 @@ class Config:
     """
     Object that handles the configuration of the software
 
-    Methods:
+    .. Methods:
         - get_clinical_mode: returns the value of "clinical mode" checkbox
-        in the preferences
+          in the preferences
         - get_matlab_command: returns Matlab command
         - get_matlab_path: returns the path of Matlab's executable
         - get_matlab_standalone_path: returns the path of Matlab Compiler
-        Runtime
+          Runtime
         - get_max_projects: returns the maximum number of projects displayed in
-         the "Saved projects" menu
+          the "Saved projects" menu
         - get_mia_path: returns the software's install path
         - get_projects_save_path: returns the folder where the projects are
-        saved
+          saved
         - get_spm_path: returns the path of SPM12 (license version)
         - get_spm_standalone_path: returns the path of SPM12 (standalone
-        version)
+          version)
         - get_use_matlab: returns the value of "use matlab" checkbox in the
-        preferences
+          preferences
         - get_mri_conv_path: sets the MRIManager.jar path
         - get_use_spm: returns the value of "use spm" checkbox in the
-        preferences
+          preferences
         - get_use_spm_standalone: returns the value of "use spm standalone"
-        checkbox in the preferences
+          checkbox in the preferences
         - getBackgroundColor: returns the background color
         - getChainCursors: returns if the "chain cursors" checkbox of the
-        mini viewer is activated
+          mini viewer is activated
         - getNbAllSlicesMax: returns the maximum number of slices to display in
-        the mini viewer
+          the mini viewer
         - get_opened_projects: returns the opened projects
         - getPathData: returns the data's path
         - getPathToProjectsDBFile: returns the already-saved projects's path
         - getPathToProjectsFolder: returns the project's path
         - getShowAllSlices: returns if the "show all slices" checkbox of the
-        mini viewer is activated
+          mini viewer is activated
         - getTextColor: return the text color
         - getThumbnailTag: returns the tag that is displayed in the mini viewer
         - isAutoSave: checks if auto-save mode is activated
@@ -131,28 +131,28 @@ class Config:
         - setAutoSave: sets the auto-save mode
         - setBackgroundColor: sets the background color
         - set_clinical_mode: sets the value of "clinical mode" checkbox in
-        the preferences
+          the preferences
         - set_matlab_path: sets the path of Matlab's executable
         - set_matlab_standalone_path: sets the path of Matlab Compiler Runtime
         - set_max_projects: sets the maximum number of projects displayed in
-        the "Saved projects" menu
+          the "Saved projects" menu
         - set_mia_path: sets the software's install path
         - set_mri_conv_path: sets the MRIManager.jar path
         - set_projects_save_path: sets the folder where the projects are saved
         - set_spm_path: sets the path of SPM12 (license version)
         - set_spm_standalone_path: sets the path of SPM12 (standalone version)
         - set_use_matlab: sets the value of "use matlab" checkbox in the
-        preferences
+          preferences
         - set_use_spm: sets the value of "use spm" checkbox in the preferences
         - set_use_spm_standalone: sets the value of "use spm standalone"
-        checkbox in the preferences
+          checkbox in the preferences
         - setChainCursors: sets the "chain cursors" checkbox of the mini viewer
         - setNbAllSlicesMax: sets the maximum number of slices to display in
-        the mini viewer
+          the mini viewer
         - set_opened_projects: sets the opened projects
         - setPathToData: sets the data's path
         - setShowAllSlices: sets the "show all slices" checkbox of the mini
-        viewer
+          viewer
         - setTextColor: sets the text color
         - setThumbnailTag: sets the tag that is displayed in the mini viewer
 

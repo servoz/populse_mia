@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- #
-"""Module to define main window appearance and settings.
+"""Module to define main window appearance, functions and settings.
 
 Initialize the software appearance and defines interactions with the user.
 
@@ -56,9 +56,8 @@ from populse_mia.user_interface.pop_ups import (PopUpDeletedProject,
 class MainWindow(QMainWindow):
 
     """Initialize software appearance and define interactions with the user.
-..
 
-    Methods:
+    .. Methods:
         - __init__ : initialise the object MainWindow
         - add_clinical_tags: add the clinical tags to the database and the
           data browser
@@ -473,6 +472,7 @@ class MainWindow(QMainWindow):
         """Open the install processes pop-up.
 
         :param folder: boolean, True if installing from a folder
+
         """
         self.pop_up_install_processes = InstallProcesses(self, folder=folder)
         self.pop_up_install_processes.show()

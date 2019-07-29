@@ -56,7 +56,7 @@ class DatabaseMIA(Database):
     Attributes:
         :param string_engine: Path of the new database file
 
-    Methods:
+    .. Methods:
         - __enter__: returns a DatabaseSession instance for using the database
         - __exit__: releases a DatabaseSession previously created by __enter__
         - _Database__create_empty_schema: overrides the method creating the
@@ -192,7 +192,7 @@ class DatabaseMIA(Database):
 class DatabaseSessionMIA(DatabaseSession):
     """Class overriding the database session of populse_db
 
-    Methods:
+    .. Methods:
         - add_collection: overrides the method adding a collection
         - add_field: adds a field to the database, if it does not already exist
         - add_fields: adds the list of fields

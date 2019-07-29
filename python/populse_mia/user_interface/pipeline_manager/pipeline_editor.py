@@ -5,12 +5,13 @@ and allow to edit graphically a pipeline.
 
 Contains:
     Class:
-        - PipelineEditorTabs
         - PipelineEditor
+        - PipelineEditorTabs
     Function :
         - save_pipeline
         - get_path
         - find_filename
+        - values
 
 """
 
@@ -47,604 +48,12 @@ from populse_mia.user_interface.pop_ups import PopUpClosePipeline
 from populse_mia.software_properties import Config
 from populse_mia.software_properties import verCmp
 
-if sys.version_info[0] >= 3:
-    unicode = str
-
-
-    def values(d):
-        return list(d.values())
-else:
-    def values(d):
-        return d.values()
-
-
-class PipelineEditorTabs(QtWidgets.QTabWidget):
-    """
-    Tab widget that contains pipeline editors
-
-    Methods:
-        - check_modifications: check if the nodes of the current pipeline have
-           been modified
-        - close_tab: close the selected tab and editor
-        - emit_node_clicked: emit a signal when a node is clicked
-        - emit_pipeline_saved: emit a signal when a pipeline is saved
-        - emit_switch_clicked: emit a signal when a switch is clicked
-        - export_to_db_scans: export the input of a filter to 'database_scans'
-        - get_current_editor: get the instance of the current editor
-        - get_current_filename: get the file name of the current pipeline
-        - get_current_pipeline: get the instance of the current pipeline
-        - get_current_tab_name: get the tab title of the current editor
-        - get_filename_by_index: get the pipeline filename from its index in
-           the editors
-        - get_index_by_filename: get the index of the editor corresponding to
-           the given pipeline filename
-        - get_index_by_tab_name: get the index of the editor corresponding to
-           the given tab name
-        - get_tab_name_by_index: get the tab title from its index in the
-           editors
-        - has_pipeline_nodes: check if any of the pipelines in the editor tabs
-           have pipeline nodes
-        - load_pipeline: load a new pipeline
-        - load_pipeline_parameters: load parameters to the pipeline of the
-           current editor
-        - new_tab: create a new tab and a new editor
-        - open_filter: open a filter widget
-        - open_sub_pipeline: open a sub-pipeline in a new tab
-        - reset_pipeline: reset the pipeline of the current editor
-        - save_pipeline: save the pipeline of the current editor
-        - save_pipeline_parameters: save the pipeline parameters of the
-           current editor
-        - set_current_editor_by_tab_name: set the current editor
-        - update_history: update undo/redo history of an editor
-        - update_pipeline_editors: update editors
-        - update_scans_list: update the list of database scans in every editor
-    """
-
-    pipeline_saved = QtCore.pyqtSignal(str)
-    node_clicked = QtCore.pyqtSignal(str, Process)
-    switch_clicked = QtCore.pyqtSignal(str, Switch)
-
-    def __init__(self, project, scan_list, main_window):
-        """Initialization of the Pipeline Editor tabs.
-
-        :param project: current project in the software
-        :param scan_list: list of the selected database files
-        :param main_window: main window of the software
-        """
-        super(PipelineEditorTabs, self).__init__()
-
-        self.project = project
-        self.main_window = main_window
-        self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;'
-                           'text-align: center;color:black;}')
-        self.setTabsClosable(True)
-        self.tabCloseRequested.connect(self.close_tab)
-        self.scan_list = scan_list
-
-        self.undos = {}
-        self.redos = {}
-
-        p_e = PipelineEditor(self.project, self.main_window)
-        p_e.node_clicked.connect(self.emit_node_clicked)
-        p_e.switch_clicked.connect(self.emit_switch_clicked)
-        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-        p_e.pipeline_modified.connect(self.update_pipeline_editors)
-        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
-        p_e.open_filter.connect(self.open_filter)
-        p_e.export_to_db_scans.connect(self.export_to_db_scans)
-
-        # Setting a default editor called "New Pipeline"
-        self.addTab(p_e, "New Pipeline")
-        self.undos[p_e] = []
-        self.redos[p_e] = []
-
-        # Tool button to add a tab
-        tb = QtWidgets.QToolButton()
-        tb.setText('+')
-        tb.clicked.connect(self.new_tab)
-
-        self.addTab(QtWidgets.QLabel('Add tabs by pressing "+"'), str())
-        self.setTabEnabled(1, False)
-        self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
-
-        # Checking if the pipeline nodes have been modified
-        self.tabBarClicked.connect(self.check_modifications)
-
-    def check_modifications(self, current_index):
-        """Check if the nodes of the current pipeline have been modified"""
-
-        # If the user click on the last tab (with the '+'),
-        # it will throw an AttributeError
-        try:
-            self.widget(current_index).check_modifications()
-        except AttributeError:
-            pass
-
-    def close_tab(self, idx):
-        """Close the selected tab and editor.
-
-        :param idx: index of the tab to close
-        """
-
-        filename = os.path.basename(self.get_filename_by_index(idx))
-        editor = self.get_editor_by_index(idx)
-
-        # If the pipeline has been modified and not saved
-        if self.tabText(idx)[-2:] == " *":
-            self.pop_up_close = PopUpClosePipeline(filename)
-            self.pop_up_close.save_as_signal.connect(self.save_pipeline)
-            self.pop_up_close.exec()
-
-            can_exit = self.pop_up_close.can_exit()
-
-            if self.pop_up_close.bool_save_as:
-                if idx == self.currentIndex():
-                    self.setCurrentIndex(max(0, self.currentIndex() - 1))
-                self.removeTab(idx)
-                return
-
-        else:
-            can_exit = True
-
-        if not can_exit:
-            return
-
-        del self.undos[editor]
-        del self.redos[editor]
-
-        if idx == self.currentIndex():
-            self.setCurrentIndex(max(0, self.currentIndex() - 1))
-        self.removeTab(idx)
-
-        # If there is no more editor, adding one
-        if self.count() == 1:
-            p_e = PipelineEditor(self.project, self.main_window)
-            p_e.node_clicked.connect(self.emit_node_clicked)
-            p_e.switch_clicked.connect(self.emit_switch_clicked)
-            p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-            p_e.pipeline_modified.connect(self.update_pipeline_editors)
-            p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
-            p_e.open_filter.connect(self.open_filter)
-            p_e.export_to_db_scans.connect(self.export_to_db_scans)
-
-            # Setting a default editor called "New Pipeline"
-            self.insertTab(0, p_e, "New Pipeline")
-            self.setCurrentIndex(0)
-            self.undos[p_e] = []
-            self.redos[p_e] = []
-
-    def emit_node_clicked(self, node_name, process):
-        """Emit a signal when a node is clicked.
-
-        :param node_name: node name
-        :param process: process of the corresponding node
-        """
-
-        self.node_clicked.emit(node_name, process)
-
-    def emit_pipeline_saved(self, filename):
-        """Emit a signal when a pipeline is saved.
-
-        :param filename: file name of the pipeline
-        """
-
-        self.setTabText(self.currentIndex(), os.path.basename(filename))
-        self.pipeline_saved.emit(filename)
-
-    def emit_switch_clicked(self, node_name, switch):
-        """Emit a signal when a switch is clicked.
-
-        :param node_name: node name
-        :param switch: process of the corresponding node
-        """
-
-        self.switch_clicked.emit(node_name, switch)
-
-    def export_to_db_scans(self, node_name):
-        """Export the input of a filter to "database_scans" plug.
-
-        :param node_name:
-        """
-
-        # If database_scans is already a pipeline global input, the plug
-        # cannot be exported. A link as to be added between database_scans
-        # and the input of the filter.
-        if 'database_scans' in \
-                self.get_current_pipeline().user_traits().keys():
-            self.get_current_pipeline().add_link('database_scans->{0}'
-                                                 '.input'.format(node_name))
-        else:
-            self.get_current_pipeline().export_parameter(
-                node_name, 'input',
-                pipeline_parameter='database_scans')
-        self.get_current_editor().scene.update_pipeline()
-
-    def get_current_editor(self):
-        """Get the instance of the current editor.
-
-        :return: the current editor
-        """
-
-        return self.get_editor_by_index(self.currentIndex())
-
-    def get_current_filename(self):
-        """Get the relative path to the file the pipeline in the current editor
-           has been last saved to.
-        If the pipeline has never been saved, returns the title of the tab.
-
-        :return: the filename of the current editor
-        """
-
-        return self.get_filename_by_index(self.currentIndex())
-
-    def get_current_pipeline(self):
-        """Get the instance of the current pipeline.
-
-        :return: the pipeline of the current editor
-        """
-
-        return self.get_current_editor().scene.pipeline
-
-    def get_current_tab_name(self):
-        """Get the tab name of the editor in the current tab.
-        Trailing " \*" and ampersand ("&") characters are removed.
-
-        :return: the current tab name
-        """
-
-        return self.get_tab_name_by_index(self.currentIndex())
-
-    def get_editor_by_file_name(self, file_name):
-        """Get the instance of an editor from its file name.
-
-        :param file_name: name of the file the pipeline was last saved to
-        :return: the editor corresponding to the file name
-        """
-
-        return self.get_editor_by_index(self.get_index_by_filename(file_name))
-
-    def get_editor_by_index(self, idx):
-        """Get the instance of an editor from its index in the editors.
-
-        :param idx: index of the editor
-        :return: the editor corresponding to the index
-        """
-
-        # last tab has "add tab" button, no editor
-        if idx in range(self.count() - 1):
-            return self.widget(idx)
-
-    def get_editor_by_tab_name(self, tab_name):
-        """Get the instance of an editor from its tab name.
-
-        :param tab_name: name of the tab
-        :return: the editor corresponding to the tab name
-        """
-
-        return self.get_editor_by_index(self.get_index_by_tab_name(tab_name))
-
-    def get_filename_by_index(self, idx):
-        """Get the relative path to the file the pipeline in the editor at the
-           given index has been last saved to.
-        If the pipeline has never been saved, returns the title of the tab.
-
-        :param idx: index of the editor
-        :return: the file name corresponding to the index
-        """
-
-        editor = self.get_editor_by_index(idx)
-        if editor is not None:
-            return editor.get_current_filename()
-
-    def get_index_by_editor(self, editor):
-        """Get the index of the editor corresponding to the given editor.
-
-        :param editor: searched pipeline editor
-        :return: the index corresponding to the editor
-        """
-        for idx in range(self.count() - 1):
-            if self.get_editor_by_index(idx) == editor:
-                return idx
-
-    def get_index_by_filename(self, filename):
-        """Get the index of the first editor corresponding to the given
-           pipeline filename
-
-        :param filename: filename of the searched pipeline
-        :return: the index corresponding to the file name
-        """
-
-        if filename:
-            # we always store file names as relative paths
-            filename = os.path.relpath(filename)
-
-            for idx in range(self.count() - 1):
-                if self.get_filename_by_index(idx) == filename:
-                    return idx
-
-    def get_index_by_tab_name(self, tab_name):
-        """Get the index of the editor corresponding to the given tab name.
-
-        :param tab_name: name of the tab with the searched pipeline
-        :return: the index corresponding to the tab name
-        """
-
-        for idx in range(self.count() - 1):
-            if self.get_tab_name_by_index(idx) == tab_name:
-                return idx
-
-    def get_tab_name_by_index(self, idx):
-        """Get the tab name of the editor at the given index.
-        Trailing " \*" and ampersand ("&") characters are removed.
-
-        :param idx: index of the editor
-        :return: the tab name corresponding to the index
-        """
-
-        # last tab has "add tab" button, no tab name
-        if idx in range(self.count() - 1):
-            # remove Qt keyboard shortcut indicator
-            tab_name = self.tabText(idx).replace("&", "", 1)
-            if tab_name[-2:] == " *":
-                tab_name = tab_name[:-2]
-
-            return tab_name
-
-    def has_pipeline_nodes(self):
-        """Check if any of the pipelines in the editor tabs have pipeline nodes
-
-        :return: True or False depending on if there are nodes in the editors
-        """
-        for idx in range(self.count()):
-            p_e = self.widget(idx)
-            if hasattr(p_e, 'scene'):
-                # if the widget is a tab editor
-                if p_e.scene.pipeline.nodes[''].plugs:
-                    return True
-
-        return False
-
-    def load_pipeline(self, filename=None):
-        """Load a new pipeline.
-
-        :param filename: not None only when this method is called from
-          "open_sub_pipeline"
-        """
-
-        current_tab_not_empty = len(
-            self.get_current_editor().scene.pipeline.nodes.keys()) > 1
-        new_tab_opened = False
-
-        if filename is None:
-            # Open new tab if the current PipelineEditor is not empty
-            if current_tab_not_empty:
-                # create new tab with new editor and make it current
-                self.new_tab()
-                working_index = self.currentIndex()
-                new_tab_opened = True
-            # get only the file name to load
-            filename = self.get_current_editor().load_pipeline('', False)
-
-        if filename:
-            # Check if this pipeline is already open
-            existing_pipeline_tab = self.get_index_by_filename(filename)
-
-            if existing_pipeline_tab is not None:
-                self.setCurrentIndex(existing_pipeline_tab)
-            else:  # we need to actually load the pipeline
-                if current_tab_not_empty and not new_tab_opened:
-                    self.new_tab()
-                    new_tab_opened = True
-
-                working_index = self.currentIndex()
-                editor = self.get_editor_by_index(working_index)
-                # actually load the pipeline
-                filename = editor.load_pipeline(filename)
-                if filename:
-                    self.setTabText(working_index, os.path.basename(filename))
-                    self.update_scans_list()
-                    return  # success
-
-        # if we're still here, something went wrong. clean up.
-        if new_tab_opened:
-            self.close_tab(working_index)
-
-    def load_pipeline_parameters(self):
-        """Load parameters to the pipeline of the current editor"""
-
-        self.get_current_editor().load_pipeline_parameters()
-
-    def new_tab(self):
-        """Create a new tab and a new editor and makes the new tab current."""
-
-        # Creating a new editor
-        p_e = PipelineEditor(self.project, self.main_window)
-        p_e.node_clicked.connect(self.emit_node_clicked)
-        p_e.switch_clicked.connect(self.emit_switch_clicked)
-        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
-        p_e.pipeline_modified.connect(self.update_pipeline_editors)
-        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
-        p_e.open_filter.connect(self.open_filter)
-        p_e.export_to_db_scans.connect(self.export_to_db_scans)
-
-        # A unique editor name has to be automatically generated
-        idx = 1
-        while True and idx < 50:
-            name = "New Pipeline {0}".format(idx)
-            if self.get_index_by_tab_name(name):
-                idx += 1
-                continue
-            else:
-                break
-        if name is not None:
-            self.undos[p_e] = []
-            self.redos[p_e] = []
-        else:
-            print('Too many tabs in the Pipeline Editor')
-            return
-
-        self.insertTab(self.count() - 1, p_e, name)
-        self.setCurrentIndex(self.count() - 2)
-
-    def open_filter(self, node_name):
-        """Open a filter widget.
-
-        :param node_name: name of the corresponding node
-        """
-        node = self.get_current_pipeline().nodes[node_name]
-        self.filter_widget = FilterWidget(self.project, node_name, node, self)
-        self.filter_widget.show()
-
-    def open_sub_pipeline(self, sub_pipeline):
-        """Open a sub-pipeline in a new tab.
-
-        :param sub_pipeline: the pipeline to open
-        """
-
-        # Reading the process configuration file
-        config = Config()
-        with open(os.path.join(config.get_mia_path(),
-                               'properties',
-                               'process_config.yml'), 'r') as stream:
-
-            try:
-                if verCmp(yaml.__version__, '5.1', 'sup'):
-                    dic = yaml.load(stream, Loader=yaml.FullLoader)
-
-                else:
-                    dic = yaml.load(stream)
-
-            except yaml.YAMLError as exc:
-                print(exc)
-                dic = {}
-
-        sub_pipeline_name = sub_pipeline.name
-
-        # get_path returns a list that is the package path to
-        # the sub_pipeline file
-        sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
-        sub_pipeline_name = sub_pipeline_list.pop()
-
-        # Finding the real sub-pipeline filename
-        sub_pipeline_filename = find_filename(
-            dic['Paths'], sub_pipeline_list, sub_pipeline_name)
-        self.load_pipeline(sub_pipeline_filename)
-
-    def reset_pipeline(self):
-        """Reset the pipeline of the current editor"""
-
-        self.get_current_editor()._reset_pipeline()
-
-    def save_pipeline(self, new_file_name=None):
-        """Save the pipeline of the current editor."""
-        if new_file_name is None:
-            # Doing a "Save as" action
-            new_file_name = os.path.basename(
-                self.get_current_editor().save_pipeline())
-
-            if (new_file_name and
-                    os.path.basename(
-                        self.get_current_filename()) != new_file_name):
-                self.setTabText(self.currentIndex(), new_file_name)
-        else:
-            # Saving the current pipeline
-            pipeline = self.get_current_pipeline()
-
-            try:
-                posdict = dict(
-                    [(key, (value.x(), value.y())) for key, value in
-                     six.iteritems(self.get_current_editor().scene.pos)])
-
-            except:  # add by Irmage OM
-                posdict = dict(
-                    [(key, (value[0], value[1])) for key, value in
-                     six.iteritems(self.get_current_editor().scene.pos)])
-
-            # add by Irmage OM
-            dimdict = dict(
-                [(key, (value[0], value[1])) for key, value in
-                 six.iteritems(self.get_current_editor().scene.dim)])
-
-            # add by Irmage OM
-            pipeline.node_dimension = dimdict
-
-            old_pos = pipeline.node_position
-            pipeline.node_position = posdict
-            save_pipeline(pipeline, new_file_name)
-            self.get_current_editor()._pipeline_filename = unicode(
-                new_file_name)
-            pipeline.node_position = old_pos
-            self.pipeline_saved.emit(new_file_name)
-            self.setTabText(self.currentIndex(),
-                            os.path.basename(new_file_name))
-
-    def save_pipeline_parameters(self):
-        """Save the pipeline parameters of the current editor"""
-
-        self.get_current_editor().save_pipeline_parameters()
-
-    def set_current_editor_by_editor(self, editor):
-        """Set the current editor.
-
-        :param editor: editor in the tab that should be made current
-        """
-
-        self.setCurrentIndex(self.get_index_by_editor(editor))
-
-    def set_current_editor_by_file_name(self, file_name):
-        """Set the current editor.
-
-        :param file_name: name of the file the pipeline was last saved to
-        """
-
-        self.setCurrentIndex(self.get_index_by_filename(file_name))
-
-    def set_current_editor_by_tab_name(self, tab_name):
-        """Set the current editor.
-
-        :param tab_name: name of the tab
-        """
-
-        self.setCurrentIndex(self.get_index_by_tab_name(tab_name))
-
-    def update_history(self, editor):
-        """Update undo/redo history of an editor
-
-        :param editor: editor
-        """
-
-        self.undos[editor] = editor.undos
-        self.redos[editor] = editor.redos
-        self.setTabText(self.currentIndex(),
-                        self.get_current_tab_name() + " *")
-        # make sure the " *" is there
-
-    def update_pipeline_editors(self, editor):
-        """Update editor.
-
-        :param editor: editor
-        """
-
-        self.update_history(editor)
-        self.update_scans_list()
-
-    def update_scans_list(self):
-        """Update the list of database scans in every editor"""
-
-        for i in range(self.count() - 1):
-            pipeline = self.widget(i).scene.pipeline
-            if hasattr(pipeline, "nodes"):
-                for node_name, node in pipeline.nodes.items():
-                    if node_name == "":
-                        for plug_name, plug in node.plugs.items():
-                            if plug_name == "database_scans":
-                                node.set_plug_value(plug_name, self.scan_list)
-
+unicode = str
 
 class PipelineEditor(PipelineDevelopperView):
-    """View to edit a pipeline graphically
+    """View to edit a pipeline graphically.
 
-    Methods:
+    .. Methods:
         - _del_link: deletes a link
         - _export_plug: export a plug to a pipeline global input or output
         - _release_grab_link: method called when a link is released
@@ -668,12 +77,15 @@ class PipelineEditor(PipelineDevelopperView):
     """
 
     pipeline_saved = QtCore.pyqtSignal(str)
+    """The signal that will be emitted when the pipeline is saved."""
     pipeline_modified = QtCore.pyqtSignal(PipelineDevelopperView)
+    """The signal that will be emitted when the pipeline is modified."""
 
     def __init__(self, project, main_window):
         """Initialization of the PipelineEditor.
 
         :param project: current project in the software
+        :param main_window: current main window
         """
 
         PipelineDevelopperView.__init__(self, pipeline=None,
@@ -808,6 +220,54 @@ class PipelineEditor(PipelineDevelopperView):
         self.main_window.statusBar().showMessage(
             'Link {0} has been added.'.format(link))
 
+    def _remove_plug(self, _temp_plug_name=None, from_undo=False,
+                     from_redo=False, from_export_plugs=False):
+        """Remove a plug
+
+        :param _temp_plug_name: tuple containing (the name of the node,
+           the name of the plug) to remove
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        :param from_export_plugs: True if this method is called from a
+           "from_export_plugs" undo or redo action
+        """
+        if not _temp_plug_name:
+            _temp_plug_name = self._temp_plug_name
+
+        if _temp_plug_name[0] in ('inputs', 'outputs'):
+            plug_name = _temp_plug_name[1]
+            plug = self.scene.pipeline.pipeline_node.plugs[plug_name]
+            optional = plug.optional
+            # contains the plugs that are connected to the input or output plug
+            new_temp_plugs = []
+            for link in plug.links_to:
+                temp_plug = (link[0], link[1])
+                new_temp_plugs.append(temp_plug)
+            for link in plug.links_from:
+                temp_plug = (link[0], link[1])
+                new_temp_plugs.append(temp_plug)
+
+            # To avoid the "_items" bug: setting the has_items attribute
+            # of the trait's handler to False
+            node = self.scene.pipeline.nodes['']
+            source_trait = node.get_trait(plug_name)
+            if source_trait.handler.has_items:
+                source_trait.handler.has_items = False
+
+            self.scene.pipeline.remove_trait(_temp_plug_name[1])
+            self.scene.update_pipeline()
+
+            # if not from_undo and not from_redo:
+            if not from_export_plugs:
+                # For history
+                history_maker = ["remove_plug", _temp_plug_name,
+                                 new_temp_plugs, optional]
+
+                self.update_history(history_maker, from_undo, from_redo)
+
+                self.main_window.statusBar().showMessage(
+                    "Plug {0} has been removed.".format(_temp_plug_name[1]))
+
     def add_link(self, source, dest, active, weak,
                  from_undo=False, from_redo=False):
         """Add a link between two nodes.
@@ -845,9 +305,12 @@ class PipelineEditor(PipelineDevelopperView):
         """Add a process to the pipeline.
 
         :param class_process: process class's name (str)
-        :param node_name: name of the corresponding node (using when undo/redo) (str)
-        :param from_undo: boolean that is True if the action has been made using an undo
-        :param from_redo: boolean that is True if the action has been made using a redo
+        :param node_name: name of the corresponding node (using when
+          undo/redo) (str)
+        :param from_undo: boolean that is True if the action has been made
+          using an undo
+        :param from_redo: boolean that is True if the action has been made
+          using a redo
         :param links: list of links (using when undo/redo)
         """
 
@@ -1061,17 +524,6 @@ class PipelineEditor(PipelineDevelopperView):
                 QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
             pop_up.exec_()
 
-    def get_current_filename(self):
-        """Return the relative path the pipeline was last saved to.
-        Empty if never saved.
-
-        :return: the current pipeline file name
-        """
-        if hasattr(self, '_pipeline_filename') and self._pipeline_filename:
-            return os.path.relpath(self._pipeline_filename)
-        else:
-            return ''
-
     def del_node(self, node_name=None, from_undo=False, from_redo=False):
         """Delete a node.
 
@@ -1170,6 +622,44 @@ class PipelineEditor(PipelineDevelopperView):
             path = bytes(event.mimeData().data('component/name'))
             self.find_process(path.decode('utf8'))
 
+    def export_node_plugs(self, node_name, inputs=True, outputs=True,
+                          optional=False, from_undo=False, from_redo=False):
+        """Export all the plugs of a node
+
+        :param node_name: node name
+        :param inputs: True if the inputs have to be exported
+        :param outputs: True if the outputs have to be exported
+        :param optional: True if the optional plugs have to be exported
+        :param from_undo: True if this method is called from an undo action
+        :param from_redo: True if this method is called from a redo action
+        """
+
+        pipeline = self.scene.pipeline
+        node = pipeline.nodes[node_name]
+
+        parameter_list = []
+        for parameter_name, plug in six.iteritems(node.plugs):
+            if parameter_name in ("nodes_activation", "selection_changed"):
+                continue
+            if (((node_name, parameter_name) not in pipeline.do_not_export and
+                 ((outputs and plug.output and not plug.links_to) or
+                  (inputs and not plug.output and not plug.links_from)) and
+                 (optional or not node.get_trait(parameter_name).optional))):
+                try:
+                    pipeline.export_parameter(node_name, parameter_name)
+                    parameter_list.append(parameter_name)
+                except TraitError:
+                    print("Cannot export {0}.{1} plug".format(node_name,
+                                                              parameter_name))
+
+        # For history
+        history_maker = ["export_plugs", parameter_list, node_name]
+
+        self.update_history(history_maker, from_undo, from_redo)
+
+        self.main_window.statusBar().showMessage(
+            "Plugs {0} have been exported.".format(str(parameter_list)))
+
     def find_process(self, path):
         """Find the dropped process in the system's paths.
 
@@ -1190,6 +680,78 @@ class PipelineEditor(PipelineDevelopperView):
                     QtGui.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
                     self.add_process(instance)
                     QtGui.QApplication.restoreOverrideCursor()
+
+    def get_current_filename(self):
+        """Return the relative path the pipeline was last saved to.
+        Empty if never saved.
+
+        :return: the current pipeline file name
+        """
+        if hasattr(self, '_pipeline_filename') and self._pipeline_filename:
+            return os.path.relpath(self._pipeline_filename)
+        else:
+            return ''
+
+    def save_pipeline(self, filename=None):
+        """Save the pipeline.
+
+        :return: the name of the file where the pipeline was saved
+        """
+        config = Config()
+        if not filename:
+            pipeline = self.scene.pipeline
+            folder = os.path.abspath(os.path.join(config.get_mia_path(),
+                                                  'processes',
+                                                  'User_processes'))
+
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+
+            if not os.path.isfile(os.path.abspath(
+                    os.path.join(folder, '__init__.py'))):
+                with open(os.path.abspath(os.path.join(
+                        folder, '__init__.py')), 'w'):
+                    pass
+
+            filename = QtWidgets.QFileDialog.getSaveFileName(
+                None, 'Save the pipeline', folder,
+                'Compatible files (*.py);; All (*)')[0]
+
+            if not filename:  # save widget was cancelled by the user
+                return ''
+
+            if os.path.splitext(filename)[1] == '':  # which means no extension
+                filename += '.py'
+
+            elif os.path.splitext(filename)[1] != '.py':
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setText('The pipeline will be saved with a' +
+                            ' ".py" extension instead of {0}'.format(
+                                os.path.splitext(filename)[1]))
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                filename = os.path.splitext(filename)[0] + '.py'
+
+        if filename:
+            posdict = dict([(key, (value.x(), value.y())) for key, value in
+                            six.iteritems(self.scene.pos)])
+            dimdict = dict([(key, (value[0], value[1])) for key, value in
+                            six.iteritems(self.scene.dim)])  # add by Irmage OM
+
+            pipeline.node_dimension = dimdict  # add by Irmage OM
+
+            old_pos = pipeline.node_position
+            pipeline.node_position = posdict
+            # pipeline_tools.save_pipeline(pipeline, filename)
+            save_pipeline(pipeline, filename)
+            self._pipeline_filename = unicode(filename)
+            pipeline.node_position = old_pos
+
+            self.pipeline_saved.emit(filename)
+            return filename
 
     def update_history(self, history_maker, from_undo, from_redo):
         """Update the history for undos and redos.
@@ -1305,152 +867,593 @@ class PipelineEditor(PipelineDevelopperView):
             'Plug "{0}" of node "{1}" has been changed to "{2}".'.format(
                 plug_name, node_name, new_value))
 
-    def export_node_plugs(self, node_name, inputs=True, outputs=True,
-                          optional=False, from_undo=False, from_redo=False):
-        """Export all the plugs of a node
+
+class PipelineEditorTabs(QtWidgets.QTabWidget):
+    """
+    Tab widget that contains pipeline editors.
+
+    .. Methods:
+        - check_modifications: check if the nodes of the current pipeline have
+          been modified
+        - close_tab: close the selected tab and editor
+        - emit_node_clicked: emit a signal when a node is clicked
+        - emit_pipeline_saved: emit a signal when a pipeline is saved
+        - emit_switch_clicked: emit a signal when a switch is clicked
+        - export_to_db_scans: export the input of a filter to 'database_scans'
+        - get_current_editor: get the instance of the current editor
+        - get_current_filename: get the file name of the current pipeline
+        - get_current_pipeline: get the instance of the current pipeline
+        - get_current_tab_name: get the tab title of the current editor
+        - get_filename_by_index: get the pipeline filename from its index in
+          the editors
+        - get_index_by_filename: get the index of the editor corresponding to
+          the given pipeline filename
+        - get_index_by_tab_name: get the index of the editor corresponding to
+          the given tab name
+        - get_tab_name_by_index: get the tab title from its index in the
+          editors
+        - has_pipeline_nodes: check if any of the pipelines in the editor tabs
+          have pipeline nodes
+        - load_pipeline: load a new pipeline
+        - load_pipeline_parameters: load parameters to the pipeline of the
+          current editor
+        - new_tab: create a new tab and a new editor
+        - open_filter: open a filter widget
+        - open_sub_pipeline: open a sub-pipeline in a new tab
+        - reset_pipeline: reset the pipeline of the current editor
+        - save_pipeline: save the pipeline of the current editor
+        - save_pipeline_parameters: save the pipeline parameters of the
+          current editor
+        - set_current_editor_by_tab_name: set the current editor
+        - update_history: update undo/redo history of an editor
+        - update_pipeline_editors: update editors
+        - update_scans_list: update the list of database scans in every editor
+    """
+
+    pipeline_saved = QtCore.pyqtSignal(str)
+    node_clicked = QtCore.pyqtSignal(str, Process)
+    switch_clicked = QtCore.pyqtSignal(str, Switch)
+
+    def __init__(self, project, scan_list, main_window):
+        """Initialization of the Pipeline Editor tabs.
+
+        :param project: current project in the software
+        :param scan_list: list of the selected database files
+        :param main_window: main window of the software
+        """
+        super(PipelineEditorTabs, self).__init__()
+
+        self.project = project
+        self.main_window = main_window
+        self.setStyleSheet('QTabBar{font-size:12pt;font-family:Arial;'
+                           'text-align: center;color:black;}')
+        self.setTabsClosable(True)
+        self.tabCloseRequested.connect(self.close_tab)
+        self.scan_list = scan_list
+
+        self.undos = {}
+        self.redos = {}
+
+        p_e = PipelineEditor(self.project, self.main_window)
+        p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.switch_clicked.connect(self.emit_switch_clicked)
+        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
+        p_e.pipeline_modified.connect(self.update_pipeline_editors)
+        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+        p_e.open_filter.connect(self.open_filter)
+        p_e.export_to_db_scans.connect(self.export_to_db_scans)
+
+        # Setting a default editor called "New Pipeline"
+        self.addTab(p_e, "New Pipeline")
+        self.undos[p_e] = []
+        self.redos[p_e] = []
+
+        # Tool button to add a tab
+        tb = QtWidgets.QToolButton()
+        tb.setText('+')
+        tb.clicked.connect(self.new_tab)
+
+        self.addTab(QtWidgets.QLabel('Add tabs by pressing "+"'), str())
+        self.setTabEnabled(1, False)
+        self.tabBar().setTabButton(1, QtWidgets.QTabBar.RightSide, tb)
+
+        # Checking if the pipeline nodes have been modified
+        self.tabBarClicked.connect(self.check_modifications)
+
+    def check_modifications(self, current_index):
+        """Check if the nodes of the current pipeline have been modified.
+
+        :param current_index: index to check
+        """
+        # If the user click on the last tab (with the '+'),
+        # it will throw an AttributeError
+        try:
+            self.widget(current_index).check_modifications()
+        except AttributeError:
+            pass
+
+    def close_tab(self, idx):
+        """Close the selected tab and editor.
+
+        :param idx: index of the tab to close
+        """
+
+        filename = os.path.basename(self.get_filename_by_index(idx))
+        editor = self.get_editor_by_index(idx)
+
+        # If the pipeline has been modified and not saved
+        if self.tabText(idx)[-2:] == " *":
+            self.pop_up_close = PopUpClosePipeline(filename)
+            self.pop_up_close.save_as_signal.connect(self.save_pipeline)
+            self.pop_up_close.exec()
+
+            can_exit = self.pop_up_close.can_exit()
+
+            if self.pop_up_close.bool_save_as:
+                if idx == self.currentIndex():
+                    self.setCurrentIndex(max(0, self.currentIndex() - 1))
+                self.removeTab(idx)
+                return
+
+        else:
+            can_exit = True
+
+        if not can_exit:
+            return
+
+        del self.undos[editor]
+        del self.redos[editor]
+
+        if idx == self.currentIndex():
+            self.setCurrentIndex(max(0, self.currentIndex() - 1))
+        self.removeTab(idx)
+
+        # If there is no more editor, adding one
+        if self.count() == 1:
+            p_e = PipelineEditor(self.project, self.main_window)
+            p_e.node_clicked.connect(self.emit_node_clicked)
+            p_e.switch_clicked.connect(self.emit_switch_clicked)
+            p_e.pipeline_saved.connect(self.emit_pipeline_saved)
+            p_e.pipeline_modified.connect(self.update_pipeline_editors)
+            p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+            p_e.open_filter.connect(self.open_filter)
+            p_e.export_to_db_scans.connect(self.export_to_db_scans)
+
+            # Setting a default editor called "New Pipeline"
+            self.insertTab(0, p_e, "New Pipeline")
+            self.setCurrentIndex(0)
+            self.undos[p_e] = []
+            self.redos[p_e] = []
+
+    def emit_node_clicked(self, node_name, process):
+        """Emit a signal when a node is clicked.
 
         :param node_name: node name
-        :param inputs: True if the inputs have to be exported
-        :param outputs: True if the outputs have to be exported
-        :param optional: True if the optional plugs have to be exported
-        :param from_undo: True if this method is called from an undo action
-        :param from_redo: True if this method is called from a redo action
+        :param process: process of the corresponding node
         """
 
-        pipeline = self.scene.pipeline
-        node = pipeline.nodes[node_name]
+        self.node_clicked.emit(node_name, process)
 
-        parameter_list = []
-        for parameter_name, plug in six.iteritems(node.plugs):
-            if parameter_name in ("nodes_activation", "selection_changed"):
-                continue
-            if (((node_name, parameter_name) not in pipeline.do_not_export and
-                 ((outputs and plug.output and not plug.links_to) or
-                  (inputs and not plug.output and not plug.links_from)) and
-                 (optional or not node.get_trait(parameter_name).optional))):
-                try:
-                    pipeline.export_parameter(node_name, parameter_name)
-                    parameter_list.append(parameter_name)
-                except TraitError:
-                    print("Cannot export {0}.{1} plug".format(node_name,
-                                                              parameter_name))
+    def emit_pipeline_saved(self, filename):
+        """Emit a signal when a pipeline is saved.
 
-        # For history
-        history_maker = ["export_plugs", parameter_list, node_name]
-
-        self.update_history(history_maker, from_undo, from_redo)
-
-        self.main_window.statusBar().showMessage(
-            "Plugs {0} have been exported.".format(str(parameter_list)))
-
-    def _remove_plug(self, _temp_plug_name=None, from_undo=False,
-                     from_redo=False, from_export_plugs=False):
-        """Remove a plug
-
-        :param _temp_plug_name: tuple containing (the name of the node,
-           the name of the plug) to remove
-        :param from_undo: True if this method is called from an undo action
-        :param from_redo: True if this method is called from a redo action
-        :param from_export_plugs: True if this method is called from a
-           "from_export_plugs" undo or redo action
+        :param filename: file name of the pipeline
         """
-        if not _temp_plug_name:
-            _temp_plug_name = self._temp_plug_name
 
-        if _temp_plug_name[0] in ('inputs', 'outputs'):
-            plug_name = _temp_plug_name[1]
-            plug = self.scene.pipeline.pipeline_node.plugs[plug_name]
-            optional = plug.optional
-            # contains the plugs that are connected to the input or output plug
-            new_temp_plugs = []
-            for link in plug.links_to:
-                temp_plug = (link[0], link[1])
-                new_temp_plugs.append(temp_plug)
-            for link in plug.links_from:
-                temp_plug = (link[0], link[1])
-                new_temp_plugs.append(temp_plug)
+        self.setTabText(self.currentIndex(), os.path.basename(filename))
+        self.pipeline_saved.emit(filename)
 
-            # To avoid the "_items" bug: setting the has_items attribute
-            # of the trait's handler to False
-            node = self.scene.pipeline.nodes['']
-            source_trait = node.get_trait(plug_name)
-            if source_trait.handler.has_items:
-                source_trait.handler.has_items = False
+    def emit_switch_clicked(self, node_name, switch):
+        """Emit a signal when a switch is clicked.
 
-            self.scene.pipeline.remove_trait(_temp_plug_name[1])
-            self.scene.update_pipeline()
-
-            # if not from_undo and not from_redo:
-            if not from_export_plugs:
-                # For history
-                history_maker = ["remove_plug", _temp_plug_name,
-                                 new_temp_plugs, optional]
-
-                self.update_history(history_maker, from_undo, from_redo)
-
-                self.main_window.statusBar().showMessage(
-                    "Plug {0} has been removed.".format(_temp_plug_name[1]))
-
-    def save_pipeline(self, filename=None):
-        """Save the pipeline.
-
-        :return: the pipeline file name
+        :param node_name: node name
+        :param switch: process of the corresponding node
         """
-        config = Config()
-        if not filename:
-            pipeline = self.scene.pipeline
-            folder = os.path.abspath(os.path.join(config.get_mia_path(),
-                                                  'processes',
-                                                  'User_processes'))
 
-            if not os.path.isdir(folder):
-                os.mkdir(folder)
+        self.switch_clicked.emit(node_name, switch)
 
-            if not os.path.isfile(os.path.abspath(
-                    os.path.join(folder, '__init__.py'))):
-                with open(os.path.abspath(os.path.join(
-                        folder, '__init__.py')), 'w'):
-                    pass
+    def export_to_db_scans(self, node_name):
+        """Export the input of a filter to "database_scans" plug.
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(
-                None, 'Save the pipeline', folder,
-                'Compatible files (*.py);; All (*)')[0]
+        :param node_name: the name of the node from which to export
+        """
 
-            if not filename:  # save widget was cancelled by the user
-                return ''
+        # If database_scans is already a pipeline global input, the plug
+        # cannot be exported. A link as to be added between database_scans
+        # and the input of the filter.
+        if 'database_scans' in \
+                self.get_current_pipeline().user_traits().keys():
+            self.get_current_pipeline().add_link('database_scans->{0}'
+                                                 '.input'.format(node_name))
+        else:
+            self.get_current_pipeline().export_parameter(
+                node_name, 'input',
+                pipeline_parameter='database_scans')
+        self.get_current_editor().scene.update_pipeline()
 
-            if os.path.splitext(filename)[1] == '':  # which means no extension
-                filename += '.py'
+    def get_current_editor(self):
+        """Get the instance of the current editor.
 
-            elif os.path.splitext(filename)[1] != '.py':
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setText('The pipeline will be saved with a' +
-                            ' ".py" extension instead of {0}'.format(
-                                os.path.splitext(filename)[1]))
-                msg.setWindowTitle("Warning")
-                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msg.buttonClicked.connect(msg.close)
-                msg.exec()
-                filename = os.path.splitext(filename)[0] + '.py'
+        :return: the current editor
+        """
+
+        return self.get_editor_by_index(self.currentIndex())
+
+    def get_current_filename(self):
+        """Get the relative path to the file the pipeline in the current editor
+        has been last saved to.
+        If the pipeline has never been saved, returns the title of the tab.
+
+        :return: the filename of the current editor
+        """
+
+        return self.get_filename_by_index(self.currentIndex())
+
+    def get_current_pipeline(self):
+        """Get the instance of the current pipeline.
+
+        :return: the pipeline of the current editor
+        """
+
+        return self.get_current_editor().scene.pipeline
+
+    def get_current_tab_name(self):
+        """Get the tab name of the editor in the current tab.
+
+        Trailing "*" and ampersand ("&") characters are removed.
+
+        :return: the current tab name
+        """
+
+        return self.get_tab_name_by_index(self.currentIndex())
+
+    def get_editor_by_file_name(self, file_name):
+        """Get the instance of an editor from its file name.
+
+        :param file_name: name of the file the pipeline was last saved to
+        :return: the editor corresponding to the file name
+        """
+
+        return self.get_editor_by_index(self.get_index_by_filename(file_name))
+
+    def get_editor_by_index(self, idx):
+        """Get the instance of an editor from its index in the editors.
+
+        :param idx: index of the editor
+        :return: the editor corresponding to the index
+        """
+
+        # last tab has "add tab" button, no editor
+        if idx in range(self.count() - 1):
+            return self.widget(idx)
+
+    def get_editor_by_tab_name(self, tab_name):
+        """Get the instance of an editor from its tab name.
+
+        :param tab_name: name of the tab
+        :return: the editor corresponding to the tab name
+        """
+
+        return self.get_editor_by_index(self.get_index_by_tab_name(tab_name))
+
+    def get_filename_by_index(self, idx):
+        """Get the relative path to the file the pipeline in the editor at the
+        given index has been last saved to.
+        If the pipeline has never been saved, returns the title of the tab.
+
+        :param idx: index of the editor
+        :return: the file name corresponding to the index
+        """
+
+        editor = self.get_editor_by_index(idx)
+        if editor is not None:
+            return editor.get_current_filename()
+
+    def get_index_by_editor(self, editor):
+        """Get the index of the editor corresponding to the given editor.
+
+        :param editor: searched pipeline editor
+        :return: the index corresponding to the editor
+        """
+        for idx in range(self.count() - 1):
+            if self.get_editor_by_index(idx) == editor:
+                return idx
+
+    def get_index_by_filename(self, filename):
+        """Get the index of the first editor corresponding to the given
+        pipeline filename.
+
+        :param filename: filename of the searched pipeline
+        :return: the index corresponding to the file name
+        """
 
         if filename:
-            posdict = dict([(key, (value.x(), value.y())) for key, value in
-                            six.iteritems(self.scene.pos)])
-            dimdict = dict([(key, (value[0], value[1])) for key, value in
-                            six.iteritems(self.scene.dim)])  # add by Irmage OM
+            # we always store file names as relative paths
+            filename = os.path.relpath(filename)
 
-            pipeline.node_dimension = dimdict  # add by Irmage OM
+            for idx in range(self.count() - 1):
+                if self.get_filename_by_index(idx) == filename:
+                    return idx
+
+    def get_index_by_tab_name(self, tab_name):
+        """Get the index of the editor corresponding to the given tab name.
+
+        :param tab_name: name of the tab with the searched pipeline
+        :return: the index corresponding to the tab name
+        """
+
+        for idx in range(self.count() - 1):
+            if self.get_tab_name_by_index(idx) == tab_name:
+                return idx
+
+    def get_tab_name_by_index(self, idx):
+        """Get the tab name of the editor at the given index.
+
+        Trailing "*" and ampersand ("&") characters are removed.
+
+        :param idx: index of the editor
+        :return: the tab name corresponding to the index
+        """
+
+        # last tab has "add tab" button, no tab name
+        if idx in range(self.count() - 1):
+            # remove Qt keyboard shortcut indicator
+            tab_name = self.tabText(idx).replace("&", "", 1)
+            if tab_name[-2:] == " *":
+                tab_name = tab_name[:-2]
+
+            return tab_name
+
+    def has_pipeline_nodes(self):
+        """Check if any of the pipelines in the editor tabs have pipeline
+        nodes.
+
+        :return: True or False depending on if there are nodes in the editors
+        """
+        for idx in range(self.count()):
+            p_e = self.widget(idx)
+            if hasattr(p_e, 'scene'):
+                # if the widget is a tab editor
+                if p_e.scene.pipeline.nodes[''].plugs:
+                    return True
+
+        return False
+
+    def load_pipeline(self, filename=None):
+        """Load a new pipeline.
+
+        :param filename: not None only when this method is called from
+          "open_sub_pipeline"
+        """
+
+        current_tab_not_empty = len(
+            self.get_current_editor().scene.pipeline.nodes.keys()) > 1
+        new_tab_opened = False
+
+        if filename is None:
+            # Open new tab if the current PipelineEditor is not empty
+            if current_tab_not_empty:
+                # create new tab with new editor and make it current
+                self.new_tab()
+                working_index = self.currentIndex()
+                new_tab_opened = True
+            # get only the file name to load
+            filename = self.get_current_editor().load_pipeline('', False)
+
+        if filename:
+            # Check if this pipeline is already open
+            existing_pipeline_tab = self.get_index_by_filename(filename)
+
+            if existing_pipeline_tab is not None:
+                self.setCurrentIndex(existing_pipeline_tab)
+            else:  # we need to actually load the pipeline
+                if current_tab_not_empty and not new_tab_opened:
+                    self.new_tab()
+                    new_tab_opened = True
+
+                working_index = self.currentIndex()
+                editor = self.get_editor_by_index(working_index)
+                # actually load the pipeline
+                filename = editor.load_pipeline(filename)
+                if filename:
+                    self.setTabText(working_index, os.path.basename(filename))
+                    self.update_scans_list()
+                    return  # success
+
+        # if we're still here, something went wrong. clean up.
+        if new_tab_opened:
+            self.close_tab(working_index)
+
+    def load_pipeline_parameters(self):
+        """Load parameters to the pipeline of the current editor"""
+
+        self.get_current_editor().load_pipeline_parameters()
+
+    def new_tab(self):
+        """Create a new tab and a new editor and makes the new tab current."""
+
+        # Creating a new editor
+        p_e = PipelineEditor(self.project, self.main_window)
+        p_e.node_clicked.connect(self.emit_node_clicked)
+        p_e.switch_clicked.connect(self.emit_switch_clicked)
+        p_e.pipeline_saved.connect(self.emit_pipeline_saved)
+        p_e.pipeline_modified.connect(self.update_pipeline_editors)
+        p_e.edit_sub_pipeline.connect(self.open_sub_pipeline)
+        p_e.open_filter.connect(self.open_filter)
+        p_e.export_to_db_scans.connect(self.export_to_db_scans)
+
+        # A unique editor name has to be automatically generated
+        idx = 1
+        while True and idx < 50:
+            name = "New Pipeline {0}".format(idx)
+            if self.get_index_by_tab_name(name):
+                idx += 1
+                continue
+            else:
+                break
+        if name is not None:
+            self.undos[p_e] = []
+            self.redos[p_e] = []
+        else:
+            print('Too many tabs in the Pipeline Editor')
+            return
+
+        self.insertTab(self.count() - 1, p_e, name)
+        self.setCurrentIndex(self.count() - 2)
+
+    def open_filter(self, node_name):
+        """Open a filter widget.
+
+        :param node_name: name of the corresponding node
+        """
+        node = self.get_current_pipeline().nodes[node_name]
+        self.filter_widget = FilterWidget(self.project, node_name, node, self)
+        self.filter_widget.show()
+
+    def open_sub_pipeline(self, sub_pipeline):
+        """Open a sub-pipeline in a new tab.
+
+        :param sub_pipeline: the pipeline to open
+        """
+
+        # Reading the process configuration file
+        config = Config()
+        with open(os.path.join(config.get_mia_path(),
+                               'properties',
+                               'process_config.yml'), 'r') as stream:
+
+            try:
+                if verCmp(yaml.__version__, '5.1', 'sup'):
+                    dic = yaml.load(stream, Loader=yaml.FullLoader)
+
+                else:
+                    dic = yaml.load(stream)
+
+            except yaml.YAMLError as exc:
+                print(exc)
+                dic = {}
+
+        sub_pipeline_name = sub_pipeline.name
+
+        # get_path returns a list that is the package path to
+        # the sub_pipeline file
+        sub_pipeline_list = get_path(sub_pipeline_name, dic['Packages'])
+        sub_pipeline_name = sub_pipeline_list.pop()
+
+        # Finding the real sub-pipeline filename
+        sub_pipeline_filename = find_filename(
+            dic['Paths'], sub_pipeline_list, sub_pipeline_name)
+        self.load_pipeline(sub_pipeline_filename)
+
+    def reset_pipeline(self):
+        """Reset the pipeline of the current editor."""
+
+        self.get_current_editor()._reset_pipeline()
+
+    def save_pipeline(self, new_file_name=None):
+        """Save the pipeline of the current editor."""
+        if new_file_name is None:
+            # Doing a "Save as" action
+            new_file_name = os.path.basename(
+                self.get_current_editor().save_pipeline())
+
+            if (new_file_name and
+                    os.path.basename(
+                        self.get_current_filename()) != new_file_name):
+                self.setTabText(self.currentIndex(), new_file_name)
+        else:
+            # Saving the current pipeline
+            pipeline = self.get_current_pipeline()
+
+            try:
+                posdict = dict(
+                    [(key, (value.x(), value.y())) for key, value in
+                     six.iteritems(self.get_current_editor().scene.pos)])
+
+            except:  # add by Irmage OM
+                posdict = dict(
+                    [(key, (value[0], value[1])) for key, value in
+                     six.iteritems(self.get_current_editor().scene.pos)])
+
+            # add by Irmage OM
+            dimdict = dict(
+                [(key, (value[0], value[1])) for key, value in
+                 six.iteritems(self.get_current_editor().scene.dim)])
+
+            # add by Irmage OM
+            pipeline.node_dimension = dimdict
 
             old_pos = pipeline.node_position
             pipeline.node_position = posdict
-            # pipeline_tools.save_pipeline(pipeline, filename)
-            save_pipeline(pipeline, filename)
-            self._pipeline_filename = unicode(filename)
+            save_pipeline(pipeline, new_file_name)
+            self.get_current_editor()._pipeline_filename = unicode(
+                new_file_name)
             pipeline.node_position = old_pos
+            self.pipeline_saved.emit(new_file_name)
+            self.setTabText(self.currentIndex(),
+                            os.path.basename(new_file_name))
 
-            self.pipeline_saved.emit(filename)
-            return filename
+    def save_pipeline_parameters(self):
+        """Save the pipeline parameters of the current editor."""
+
+        self.get_current_editor().save_pipeline_parameters()
+
+    def set_current_editor_by_editor(self, editor):
+        """Set the current editor.
+
+        :param editor: editor in the tab that should be made current
+        """
+
+        self.setCurrentIndex(self.get_index_by_editor(editor))
+
+    def set_current_editor_by_file_name(self, file_name):
+        """Set the current editor from file name.
+
+        :param file_name: name of the file the pipeline was last saved to
+        """
+
+        self.setCurrentIndex(self.get_index_by_filename(file_name))
+
+    def set_current_editor_by_tab_name(self, tab_name):
+        """Set the current editor from tab name.
+
+        :param tab_name: name of the tab
+        """
+
+        self.setCurrentIndex(self.get_index_by_tab_name(tab_name))
+
+    def update_history(self, editor):
+        """Update undo/redo history of an editor.
+
+        :param editor: editor
+        """
+
+        self.undos[editor] = editor.undos
+        self.redos[editor] = editor.redos
+        self.setTabText(self.currentIndex(),
+                        self.get_current_tab_name() + " *")
+        # make sure the " *" is there
+
+    def update_pipeline_editors(self, editor):
+        """Update editor.
+
+        :param editor: editor
+        """
+
+        self.update_history(editor)
+        self.update_scans_list()
+
+    def update_scans_list(self):
+        """Update the list of database scans in every editor."""
+
+        for i in range(self.count() - 1):
+            pipeline = self.widget(i).scene.pipeline
+            if hasattr(pipeline, "nodes"):
+                for node_name, node in pipeline.nodes.items():
+                    if node_name == "":
+                        for plug_name, plug in node.plugs.items():
+                            if plug_name == "database_scans":
+                                node.set_plug_value(plug_name, self.scan_list)
 
 
 def find_filename(paths_list, packages_list, file_name):
@@ -1516,7 +1519,11 @@ def get_path(name, dictionary, prev_paths=None):
 
 
 def save_pipeline(pipeline, filename):
-    """Save the pipeline either in XML or .py source file."""
+    """Save the pipeline either in XML or .py source file.
+
+    :param pipeline: the pipeline to save
+    :param filename: name of the file where to save the pipeline
+    """
     formats = {'.py': save_py_pipeline,
                '.xml': save_xml_pipeline}
     saved = False
@@ -1533,6 +1540,12 @@ def save_pipeline(pipeline, filename):
         save_py_pipeline(pipeline, filename)
 
 
+def values(d):
+    """Return a variable as a list.
+
+    :returns: list
+    """
+    return list(d.values())
 
 
 

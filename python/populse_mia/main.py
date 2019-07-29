@@ -10,7 +10,6 @@ mia's GUI.
         - PackagesInstall
 
     :Function:
-
         - launch_mia
         - main
         - verify_processes

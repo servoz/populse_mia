@@ -74,7 +74,7 @@ class PipelineManagerTab(QWidget):
     """
     Widget that handles the Pipeline Manager tab.
 
-    Methods:
+    .. Methods:
         - controller_value_changed: update history when a pipeline node is
           changed
         - displayNodeParameters: display the node controller when a node is

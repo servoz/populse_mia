@@ -109,7 +109,7 @@
 <span class="sd">        - main_window: main window of the software</span>
 <span class="sd">        - project: current project in the software</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - add_tag_infos: add the tag after add tag pop-up</span>
 <span class="sd">        - add_tag_pop_up: display the add tag pop-up</span>
 <span class="sd">        - clone_tag_infos: clone the tag after the clone tag pop-up</span>
@@ -329,6 +329,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_up_clone_tag</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataBrowser.connect_actions"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_actions">[docs]</a>    <span class="k">def</span> <span class="nf">connect_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect methods to actions.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_tag_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_tag_pop_up</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clone_tag_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone_tag_pop_up</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_pop_up</span><span class="p">)</span>
@@ -363,6 +364,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">verify_slices</span><span class="p">(</span><span class="n">full_names</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataBrowser.connect_toolbar"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_toolbar">[docs]</a>    <span class="k">def</span> <span class="nf">connect_toolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect methods to toolbar.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search_bar</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_str</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">button_cross</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_search_bar</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_advanced_search</span><span class="p">)</span>
@@ -371,7 +373,7 @@
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">visualized_tags_pop_up</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="DataBrowser.count_table_pop_up"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.count_table_pop_up">[docs]</a>    <span class="k">def</span> <span class="nf">count_table_pop_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Open the count table pop-up&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Open the count table pop-up.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_table_pop_up</span> <span class="o">=</span> <span class="n">CountTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_table_pop_up</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
@@ -425,6 +427,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">menu_toolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_table_button</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataBrowser.create_layout"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.create_layout">[docs]</a>    <span class="k">def</span> <span class="nf">create_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the layouts of the tab.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_table_data</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="o">.</span><span class="n">StyledPanel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_table_data</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Raised</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_table_data</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;frame_table_data&quot;</span><span class="p">)</span>
@@ -508,13 +511,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">connect_mini_viewer</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataBrowser.open_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter">[docs]</a>    <span class="k">def</span> <span class="nf">open_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Open a project filter that has already been saved&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Open a project filter that has already been saved.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">popUp</span> <span class="o">=</span> <span class="n">PopUpSelectFilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">popUp</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataBrowser.open_filter_infos"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter_infos">[docs]</a>    <span class="k">def</span> <span class="nf">open_filter_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Apply the current filter&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Apply the current filter.&quot;&quot;&quot;</span>
 
         <span class="n">filter_to_apply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">currentFilter</span>
 
@@ -705,17 +708,7 @@
     <span class="sd">&quot;&quot;&quot;Table widget that displays the documents contained in the database and</span>
 <span class="sd">    their associated tags.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        :param project: current project in the software</span>
-<span class="sd">        :param data_browser: parent data browser widget</span>
-<span class="sd">        :param tags_to_display: list of tags to display</span>
-<span class="sd">        :param update_values: boolean to specify if edition is enabled</span>
-<span class="sd">        :param activate_selection: dictionary containing information about</span>
-<span class="sd">           the processes that has been run to generate documents</span>
-<span class="sd">        :param link_viewer: boolean to specify if the table is linked to a</span>
-<span class="sd">           viewer</span>
-
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - add_column: add a column to the table</span>
 <span class="sd">        - add_columns: add columns</span>
 <span class="sd">        - add_path: call a pop-up to add any document to the project</span>
@@ -760,6 +753,17 @@
 
 <div class="viewcode-block" id="TableDataBrowser.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">data_browser</span><span class="p">,</span> <span class="n">tags_to_display</span><span class="p">,</span>
                  <span class="n">update_values</span><span class="p">,</span> <span class="n">activate_selection</span><span class="p">,</span> <span class="n">link_viewer</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the class</span>
+
+<span class="sd">        :param project: current project in the software</span>
+<span class="sd">        :param data_browser: parent data browser widget</span>
+<span class="sd">        :param tags_to_display: list of tags to display</span>
+<span class="sd">        :param update_values: boolean to specify if edition is enabled</span>
+<span class="sd">        :param activate_selection: dictionary containing information about</span>
+<span class="sd">           the processes that has been run to generate documents</span>
+<span class="sd">        :param link_viewer: boolean to specify if the table is linked to a</span>
+<span class="sd">           viewer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -1347,7 +1351,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TableDataBrowser.fill_cells_update_table"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.fill_cells_update_table">[docs]</a>    <span class="k">def</span> <span class="nf">fill_cells_update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize and fill the cells of the table&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize and fill the cells of the table.&quot;&quot;&quot;</span>
         <span class="n">cells_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scans_to_visualize</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">QProgressDialog</span><span class="p">(</span>
@@ -1522,8 +1526,10 @@
 
 <div class="viewcode-block" id="TableDataBrowser.get_current_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.get_current_filter">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the current data browser selection (list of paths).</span>
+
 <span class="sd">        If there is a current selection, the list of selected scans is returned</span>
-<span class="sd">        otherwise the list of the visible paths in the data browser is returned</span>
+<span class="sd">        otherwise the list of the visible paths in the data browser is</span>
+<span class="sd">        returned.</span>
 
 <span class="sd">        :return: the list of scans corresponding to the current selection in</span>
 <span class="sd">           the data browser</span>
@@ -2031,7 +2037,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">ExtendedSelection</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableDataBrowser.selection_changed"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.selection_changed">[docs]</a>    <span class="k">def</span> <span class="nf">selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the tab view when the selection changes&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the tab view when the selection changes.&quot;&quot;&quot;</span>
 
         <span class="c1"># List of selected scans updated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scans</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -2164,7 +2170,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TableDataBrowser.update_selection"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_selection">[docs]</a>    <span class="k">def</span> <span class="nf">update_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the selection after a search&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the selection after a search.&quot;&quot;&quot;</span>
 
         <span class="c1"># Selection updated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
@@ -2181,7 +2187,8 @@
 
 <div class="viewcode-block" id="TableDataBrowser.update_table"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">take_tags_to_update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fill the table with the project&#39;s data.</span>
-<span class="sd">        Only called when switching project to completely reset the table</span>
+
+<span class="sd">        Only called when switching project to completely reset the table.</span>
 
 <span class="sd">        :param take_tags_to_update: boolean</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2314,13 +2321,21 @@
 <div class="viewcode-block" id="TimeFormatDelegate"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate">[docs]</a><span class="k">class</span> <span class="nc">TimeFormatDelegate</span><span class="p">(</span><span class="n">QItemDelegate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Delegate that is used to handle times in the TableDataBrowser.</span>
 
-<span class="sd">    # TODO : Update params</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="TimeFormatDelegate.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the class</span>
+
+<span class="sd">        :param parent: QWidget parent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeFormatDelegate.createEditor"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.createEditor">[docs]</a>    <span class="k">def</span> <span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override of the createEditor method, called to generate the widget.</span>
+
+<span class="sd">        :param parent: QWidget parent</span>
+<span class="sd">        :param option: Only used to overload the QItemDelegate class</span>
+<span class="sd">        :param index: Only used to overload the QItemDelegate class</span>
+<span class="sd">        :return: The QWidget with a specified format</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">editor</span> <span class="o">=</span> <span class="n">QTimeEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">editor</span><span class="o">.</span><span class="n">setDisplayFormat</span><span class="p">(</span><span class="s2">&quot;hh:mm:ss.zzz&quot;</span><span class="p">)</span>

@@ -59,7 +59,7 @@ class MiniViewer(QWidget):
         - most of the class's attributes are lists of 0 to self.max_scans
            elements
 
-    Methods:
+    .. Methods:
         - __init__: initialise the MiniViewer object
         - boxSlider: create sliders, their connections and thumbnail labels
           for a selected index
@@ -483,7 +483,6 @@ class MiniViewer(QWidget):
 
         :param file_path_base_name: basename of the selected path
         :param idx: index of the image
-        :return:
         """
         # Looking for the tag value to display as a legend of the thumbnail
         for scan in self.project.session.get_documents_names(

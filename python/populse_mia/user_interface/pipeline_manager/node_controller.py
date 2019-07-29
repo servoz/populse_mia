@@ -65,7 +65,7 @@ class NodeController(QWidget):
     """
     Allow to change the input and output values of a pipeline node
 
-    Methods:
+    .. Methods:
         - clearLayout: clear the layouts of the widget
         - display_filter: display a filter widget
         - display_parameters: display the parameters of the selected node
@@ -102,11 +102,9 @@ class NodeController(QWidget):
         self.h_box_node_name = QHBoxLayout()
 
     def clearLayout(self, layout):
-        """
-        Clear the layouts of the widget
+        """Clear the layouts of the widget.
 
         :param layout: widget with a layout
-        :return:
         """
         for i in reversed(range(len(layout.children()))):
             if type(layout.layout().itemAt(i)) == QtWidgets.QWidgetItem:
@@ -122,8 +120,7 @@ class NodeController(QWidget):
             sip.delete(layout.layout())
 
     def display_filter(self, node_name, plug_name, parameters, process):
-        """
-        Display a filter widget
+        """Display a filter widget.
 
         :param node_name: name of the node
         :param plug_name: name of the plug
@@ -138,8 +135,7 @@ class NodeController(QWidget):
             partial(self.update_plug_value_from_filter, plug_name, parameters))
 
     def display_parameters(self, node_name, process, pipeline):
-        """
-        Display the parameters of the selected node
+        """Display the parameters of the selected node.
 
         The node parameters are read and line labels/line edits/push buttons
         are created for each of them. This methods consists mainly in widget
@@ -263,8 +259,7 @@ class NodeController(QWidget):
         self.setLayout(self.v_box_final)
 
     def get_index_from_plug_name(self, plug_name, in_or_out):
-        """
-        Return the index of the plug label.
+        """Return the index of the plug label.
 
         :param plug_name: name of the plug
         :param in_or_out: "in" if the plug is an input plug, "out" else
@@ -281,8 +276,7 @@ class NodeController(QWidget):
                     return idx
 
     def update_node_name(self, pipeline, new_node_name=None):
-        """
-        Change the name of the selected node and updates the pipeline.
+        """Change the name of the selected node and updates the pipeline.
 
         Because the nodes are stored in a dictionary, we have to create
         a new node that has the same traits as the selected one and create
@@ -355,8 +349,7 @@ class NodeController(QWidget):
                     old_node_name, new_node_name))
 
     def update_parameters(self, process=None):
-        """
-        Update the parameters values
+        """Update the parameters values.
 
         :param process: process of the node
         """
@@ -389,8 +382,7 @@ class NodeController(QWidget):
 
     def update_plug_value(self, in_or_out, plug_name, pipeline, value_type,
                           new_value=None):
-        """
-        Update the value of a node plug
+        """Update the value of a node plug.
 
         :param in_or_out: "in" if the plug is an input plug, "out" else
         :param plug_name: name of the plug
@@ -467,8 +459,7 @@ class NodeController(QWidget):
 
     def update_plug_value_from_filter(self, plug_name, parameters,
                                       filter_res_list):
-        """
-        Update the plug value from a filter result
+        """Update the plug value from a filter result.
 
         :param plug_name: name of the plug
         :param parameters: tuple containing the index of the plug,
@@ -494,13 +485,13 @@ class NodeController(QWidget):
 
 
 class PlugFilter(QWidget):
-    """Filter widget used on a node plug
+    """Filter widget used on a node plug.
 
     The widget displays a browser with the selected files of the database,
     a rapid search and an advanced search to filter these files. Once the
     filtering is done, the result (as a list of files) is set to the plug.
 
-    Methods:
+    .. Methods:
         - ok_clicked: set the new value to the node plug and closes the widget
         - update_tag_to_filter: update the tag to Filter
         - update_tags: update the list of visualized tags
@@ -630,10 +621,7 @@ class PlugFilter(QWidget):
         self.setMinimumHeight(0.8 * height)
 
     def ok_clicked(self):
-        """
-        Set the new value to the node plug and closes the widget
-
-        """
+        """Set the new value to the node plug and closes the widget."""
 
         # To use if the filters are set on plugs, which is not the case
         # if isinstance(self.process, ProcessMIA):
@@ -649,10 +637,7 @@ class PlugFilter(QWidget):
         self.close()
 
     def reset_search_bar(self):
-        """
-        Reset the search bar of the rapid search
-
-        """
+        """Reset the search bar of the rapid search."""
         self.rapid_search.setText("")
         self.advanced_search.rows = []
         self.advanced_search.show_search()
@@ -664,8 +649,7 @@ class PlugFilter(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
-        """
-        Update the files to display in the browser
+        """Update the files to display in the browser.
         :param str_search: string typed in the rapid search
         """
 
@@ -702,10 +686,7 @@ class PlugFilter(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def set_plug_value(self):
-        """
-        Emit a signal to set the file names to the node plug
-
-        """
+        """Emit a signal to set the file names to the node plug."""
 
         result_names = []
         points = self.table_data.selectedIndexes()
@@ -738,10 +719,7 @@ class PlugFilter(QWidget):
         self.plug_value_changed.emit(result_names)
 
     def update_tag_to_filter(self):
-        """
-        Update the tag to Filter
-
-        """
+        """Update the tag to Filter."""
 
         popUp = PopUpSelectTagCountTable(self.project,
                                          self.node_controller.visibles_tags,
@@ -750,10 +728,7 @@ class PlugFilter(QWidget):
             self.push_button_tag_filter.setText(popUp.selected_tag)
 
     def update_tags(self):
-        """
-        Update the list of visualized tags
-
-        """
+        """Update the list of visualized tags."""
 
         dialog = QDialog()
         visualized_tags = PopUpVisualizedTags(
@@ -792,26 +767,13 @@ class PlugFilter(QWidget):
 
 
 class FilterWidget(QWidget):
-    """
-    Filter widget used on a Input_Filter process
+    """Filter widget used on a Input_Filter process.
 
     The widget displays a browser with the selected files of the database,
     a rapid search and an advanced search to filter these files. Once the
     filtering is done, the filter is saved in the process.
 
-    Attributes:
-        - advanced_search: advanced search widget to build a complex filter
-        - main_window: parent main window
-        - process: process instance of the selected node
-        - project: current project in the software
-        - node: instance of the corresponding Input_Filter node
-        - node_controller: parent node controller
-        - rapid_search: rapid search widget to build a simple filter
-        - scan_list: list of database files to filter
-        - table_data: browser that displays the database files to filter
-        - visible_tags: tags that are visible in the current project
-
-    Methods:
+    .. Methods:
         - update_tag_to_filter: update the tag to Filter
         - update_tags: update the list of visualized tags
         - reset_search_bar: reset the search bar of the rapid search
@@ -822,8 +784,7 @@ class FilterWidget(QWidget):
     """
 
     def __init__(self, project, node_name, node, main_window):
-        """
-        Initialization of the Filter Widget
+        """Initialization of the Filter Widget.
 
         :param project: current project in the software
         :param node_name: name of the current node
@@ -887,6 +848,7 @@ class FilterWidget(QWidget):
         self.layout_view()
 
     def layout_view(self):
+        """Create the layout."""
 
         sources_images_dir = Config().getSourceImageDir()
 
@@ -932,10 +894,7 @@ class FilterWidget(QWidget):
         self.setMinimumHeight(0.8 * height)
 
     def ok_clicked(self):
-        """
-        Set the filter to the process and closes the widget
-
-        """
+        """Set the filter to the process and closes the widget."""
         if isinstance(self.process, ProcessMIA):
             (fields, conditions,
              values, links, nots) = self.advanced_search.get_filters(False)
@@ -947,10 +906,7 @@ class FilterWidget(QWidget):
         self.close()
 
     def reset_search_bar(self):
-        """
-        Reset the search bar of the rapid search
-
-        """
+        """Reset the search bar of the rapid search."""
         self.rapid_search.setText("")
         self.advanced_search.rows = []
         self.advanced_search.show_search()
@@ -962,8 +918,7 @@ class FilterWidget(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def search_str(self, str_search):
-        """
-        Update the files to display in the browser
+        """Update the files to display in the browser.
 
         :param str_search: string typed in the rapid search
         """
@@ -997,10 +952,7 @@ class FilterWidget(QWidget):
         self.table_data.update_visualized_rows(old_scan_list)
 
     def set_output_value(self):
-        """
-        Set the output of the filter to the output of the node
-
-        """
+        """Set the output of the filter to the output of the node."""
 
         result_names = []
         filter = self.table_data.get_current_filter()
@@ -1023,10 +975,7 @@ class FilterWidget(QWidget):
         self.node.set_plug_value("output", result_files)
 
     def update_tag_to_filter(self):
-        """
-        Update the tag to Filter
-
-        """
+        """Update the tag to Filter."""
 
         pop_up = PopUpSelectTagCountTable(self.project, self.visible_tags,
                                           self.push_button_tag_filter.text())
@@ -1034,10 +983,7 @@ class FilterWidget(QWidget):
             self.push_button_tag_filter.setText(pop_up.selected_tag)
 
     def update_tags(self):
-        """
-        Update the list of visualized tags
-
-        """
+        """Update the list of visualized tags."""
 
         dialog = QDialog()
         visualized_tags = PopUpVisualizedTags(self.project, self.visible_tags)

@@ -80,12 +80,7 @@
 <span class="sd">    plus or a red cross depending on if there is at least a scan that has</span>
 <span class="sd">    all the tags values or not.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - values_list: list that contains lists of all the values that the</span>
-<span class="sd">          visualized tags can take</span>
-
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - refresh_layout: updates the layout of the widget</span>
 <span class="sd">        - add_tag: adds a tag to visualize in the count table</span>
 <span class="sd">        - remove_tag: removes a tag to visualize in the count table</span>
@@ -310,9 +305,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CountTable.count_scans"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.count_scans">[docs]</a>    <span class="k">def</span> <span class="nf">count_scans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Counts the number of scans depending on the selected tags and</span>
-<span class="sd">          displays the result in the table</span>
+        <span class="sd">&quot;&quot;&quot;Counts the number of scans depending on the selected tags and</span>
+<span class="sd">        displays the result in the table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">tag_values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">:</span>

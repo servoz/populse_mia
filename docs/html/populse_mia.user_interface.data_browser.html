@@ -73,41 +73,6 @@ all composed of:
 - A tag name or all visible tags
 - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
 - A value</p>
-<dl>
-<dt>Methods:</dt><dd><blockquote>
-<div><ul class="simple">
-<li><p>add_search_bar: create and define the advanced research bar</p></li>
-<li><p>apply_filter: apply an opened filter to update the table.</p></li>
-<li><dl class="simple">
-<dt>displayConditionRules: set the list of condition choices,</dt><dd><p>depending on the tag type</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>displayValueRules: update the placeholder text when the</dt><dd><p>condition choice is changed,</p>
-</dd>
-</dl>
-</li>
-<li><p>get_filters: get the filters in list form</p></li>
-<li><p>launch_search: start the search and update the table</p></li>
-<li><p>prepare_filters: prepare the str representation of the filter</p></li>
-<li><p>refresh_search: refresh the widget</p></li>
-<li><p>remove_row: remove a row</p></li>
-<li><p>rows_borders_added: add the links and the added row to the good rows</p></li>
-<li><p>rows_borders_removed: link and adds row removed from every row</p></li>
-<li><dl class="simple">
-<dt>show_search: reset the rows when the Advanced Search button is</dt><dd><p>clicked,</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>clearLayout: called to clear a layout (not using it resolve issue #72)</p></li>
-<li><p>rowsContainsWidget: check if the widget is still used</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">data_browser</em>, <em class="sig-param">scans_list=None</em>, <em class="sig-param">tags_list=None</em>, <em class="sig-param">from_pipeline=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/advanced_search.html#AdvancedSearch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.__init__" title="Permalink to this definition">¶</a></dt>
@@ -160,10 +125,8 @@ manager</p></li>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.displayValueRules">
 <code class="sig-name descname">displayValueRules</code><span class="sig-paren">(</span><em class="sig-param">choice</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/advanced_search.html#AdvancedSearch.displayValueRules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.advanced_search.AdvancedSearch.displayValueRules" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Update the placeholder text. when the condition choice is</dt><dd><p>changed.</p>
-</dd>
-</dl>
+<dd><p>Update the placeholder text. when the condition choice is
+changed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -285,31 +248,6 @@ the m values that can take the  last tag are displayed in the header of
 the m last columns of the table. The cells are then filled with a green
 plus or a red cross depending on if there is at least a scan that has
 all the tags values or not.</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><ul class="simple">
-<li><p>project: current project in the software</p></li>
-<li><p>values_list: list that contains lists of all the values that the
-visualized tags can take</p></li>
-</ul>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>refresh_layout: updates the layout of the widget</p></li>
-<li><p>add_tag: adds a tag to visualize in the count table</p></li>
-<li><p>remove_tag: removes a tag to visualize in the count table</p></li>
-<li><p>select_tag: opens a pop-up to select which tag to visualize in
-the count table</p></li>
-<li><p>fill_values: fill values_list depending on the visualized tags</p></li>
-<li><p>count_scans: counts the number of scans depending on the selected
-tags and displays the result in the table</p></li>
-<li><p>fill_headers: fills the headers of the table depending on the
-selected tags</p></li>
-<li><p>fill_first_tags: fills the cells of the table corresponding to the
-(n-1) first selected tags</p></li>
-<li><p>fill_last_tag: fills the cells corresponding to the last selected tag</p></li>
-<li><p>prepare_filter: prepares the filter in order to fill the count table</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
 <dd class="field-odd"><p></p></dd>
@@ -456,10 +394,8 @@ scans are missing.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.count_table.CountTable.count_scans">
 <code class="sig-name descname">count_scans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/count_table.html#CountTable.count_scans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.count_table.CountTable.count_scans" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Counts the number of scans depending on the selected tags and</dt><dd><p>displays the result in the table</p>
-</dd>
-</dl>
+<dd><p>Counts the number of scans depending on the selected tags and
+displays the result in the table</p>
 </dd></dl>
 
 <dl class="method">
@@ -560,41 +496,6 @@ first selected tags</p>
 <li><p>project: current project in the software</p></li>
 </ul>
 </dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>add_tag_infos: add the tag after add tag pop-up</p></li>
-<li><p>add_tag_pop_up: display the add tag pop-up</p></li>
-<li><p>clone_tag_infos: clone the tag after the clone tag pop-up</p></li>
-<li><p>clone_tag_pop_up: display the clone tag pop-up</p></li>
-<li><p>connect_actions: connect actions method to views</p></li>
-<li><p>connect_mini_viewer: display the selected documents in the viewer</p></li>
-<li><p>connect_toolbar: connect toolbar views to methods</p></li>
-<li><p>create_view_actions: create the actions of the tab</p></li>
-<li><p>create_toolbar_view: create the toolbar views</p></li>
-<li><p>count_table_pop_up: open the count table</p></li>
-<li><dl class="simple">
-<dt>move_splitter: check if the viewer’s splitter is at its lowest</dt><dd><p>position</p>
-</dd>
-</dl>
-</li>
-<li><p>open_filter: open a project filter that has already been saved</p></li>
-<li><p>open_filter_infos: apply the current filter</p></li>
-<li><p>remove_tag_infos: remove user tags after the pop-up</p></li>
-<li><p>remove_tag_pop_up: display the pop-up to remove user tags</p></li>
-<li><p>reset_search_bar: reset the rapid search bar</p></li>
-<li><p>run_advanced_search: launch the advanced search</p></li>
-<li><dl class="simple">
-<dt>search_str: search a string in the table and updates the</dt><dd><p>visualized documents</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>send_documents_to_pipeline: send the current list of scans to the</dt><dd><p>Pipeline Manager</p>
-</dd>
-</dl>
-</li>
-<li><p>update_database: update the database in the software</p></li>
-</ul>
-</dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.__init__">
@@ -656,7 +557,8 @@ first selected tags</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_actions">
 <code class="sig-name descname">connect_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.connect_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_actions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Connect methods to actions.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_mini_viewer">
@@ -667,18 +569,20 @@ first selected tags</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_toolbar">
 <code class="sig-name descname">connect_toolbar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.connect_toolbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.connect_toolbar" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Connect methods to toolbar.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.count_table_pop_up">
 <code class="sig-name descname">count_table_pop_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.count_table_pop_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.count_table_pop_up" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open the count table pop-up</p>
+<dd><p>Open the count table pop-up.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.create_layout">
 <code class="sig-name descname">create_layout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.create_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.create_layout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create the layouts of the tab.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.create_toolbar_view">
@@ -695,13 +599,13 @@ first selected tags</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter">
 <code class="sig-name descname">open_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.open_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open a project filter that has already been saved</p>
+<dd><p>Open a project filter that has already been saved.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter_infos">
 <code class="sig-name descname">open_filter_infos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#DataBrowser.open_filter_infos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.DataBrowser.open_filter_infos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply the current filter</p>
+<dd><p>Apply the current filter.</p>
 </dd></dl>
 
 <dl class="method">
@@ -827,92 +731,24 @@ first selected tags</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QTableWidget</span></code></p>
 <p>Table widget that displays the documents contained in the database and
 their associated tags.</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param project</dt>
-<dd class="field-odd"><p>current project in the software</p>
-</dd>
-<dt class="field-even">param data_browser</dt>
-<dd class="field-even"><p>parent data browser widget</p>
-</dd>
-<dt class="field-odd">param tags_to_display</dt>
-<dd class="field-odd"><p>list of tags to display</p>
-</dd>
-<dt class="field-even">param update_values</dt>
-<dd class="field-even"><p>boolean to specify if edition is enabled</p>
-</dd>
-<dt class="field-odd">param activate_selection</dt>
-<dd class="field-odd"><p>dictionary containing information about
-the processes that has been run to generate documents</p>
-</dd>
-<dt class="field-even">param link_viewer</dt>
-<dd class="field-even"><p>boolean to specify if the table is linked to a
-viewer</p>
-</dd>
-</dl>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>add_column: add a column to the table</p></li>
-<li><p>add_columns: add columns</p></li>
-<li><p>add_path: call a pop-up to add any document to the project</p></li>
-<li><p>add_rows: insert rows if they are not already in the table</p></li>
-<li><dl class="simple">
-<dt>change_cell_color: changes the background color and the value of</dt><dd><p>cells when edited by the user</p>
-</dd>
-</dl>
-</li>
-<li><p>clear_cell: clear the selected cells</p></li>
-<li><p>context_menu_table: create the context menu of the table</p></li>
-<li><dl class="simple">
-<dt>display_unreset_values: display an error message when trying to</dt><dd><p>reset user tags</p>
-</dd>
-</dl>
-</li>
-<li><p>fill_cells_update_table: initialize and fills the cells of the table</p></li>
-<li><p>fill_headers: initialize and fill the headers of the table</p></li>
-<li><p>get_current_filter: get the current data browser selection</p></li>
-<li><p>get_index_insertion: get index insertion of a new column</p></li>
-<li><p>get_scan_row: return the row index of the scan</p></li>
-<li><p>get_tag_column: return the column index of the tag</p></li>
-<li><p>mouseReleaseEvent: called when clicking released on cells</p></li>
-<li><dl class="simple">
-<dt>multiple_sort_infos: sort the table according to the tags specify</dt><dd><p>in list_tags</p>
-</dd>
-</dl>
-</li>
-<li><p>multiple_sort_pop_up: display the multiple sort pop-up</p></li>
-<li><p>remove_scan: remove documents from table and project</p></li>
-<li><p>reset_cell: reset the selected cells to their original values</p></li>
-<li><p>reset_column: reset the selected columns to their original values</p></li>
-<li><p>reset_row: reset the selected rows to their original values</p></li>
-<li><p>section_moved: called when the columns of the data_browser are moved</p></li>
-<li><dl class="simple">
-<dt>select_all_column: called when single clicking on the column header</dt><dd><p>to select the whole column</p>
-</dd>
-</dl>
-</li>
-<li><p>select_all_columns: called from context menu to select the columns</p></li>
-<li><p>selection_changed: called when the selection is changed</p></li>
-<li><p>show_brick_history: show brick history pop-up</p></li>
-<li><p>sort_column: sort the current column</p></li>
-<li><p>sort_updated: called when the button advanced search is called</p></li>
-<li><p>update_colors: update the background of all the cells</p></li>
-<li><p>update_selection: called after searches to update the selection</p></li>
-<li><p>update_table: fill the table with the project’s data</p></li>
-<li><p>update_visualized_columns: update the visualized tags</p></li>
-<li><dl class="simple">
-<dt>update_visualized_rows: update the list of documents (scans) in</dt><dd><p>the table</p>
-</dd>
-</dl>
-</li>
-<li><p>visualized_tags_pop_up: display the visualized tags pop-up</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">data_browser</em>, <em class="sig-param">tags_to_display</em>, <em class="sig-param">update_values</em>, <em class="sig-param">activate_selection</em>, <em class="sig-param">link_viewer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> – current project in the software</p></li>
+<li><p><strong>data_browser</strong> – parent data browser widget</p></li>
+<li><p><strong>tags_to_display</strong> – list of tags to display</p></li>
+<li><p><strong>update_values</strong> – boolean to specify if edition is enabled</p></li>
+<li><p><strong>activate_selection</strong> – dictionary containing information about
+the processes that has been run to generate documents</p></li>
+<li><p><strong>link_viewer</strong> – boolean to specify if the table is linked to a
+viewer</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -991,7 +827,7 @@ Handle the multi-selection case.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.fill_cells_update_table">
 <code class="sig-name descname">fill_cells_update_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.fill_cells_update_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.fill_cells_update_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize and fill the cells of the table</p>
+<dd><p>Initialize and fill the cells of the table.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1008,9 +844,10 @@ Handle the multi-selection case.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.get_current_filter">
 <code class="sig-name descname">get_current_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.get_current_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.get_current_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the current data browser selection (list of paths).
-If there is a current selection, the list of selected scans is returned
-otherwise the list of the visible paths in the data browser is returned</p>
+<dd><p>Get the current data browser selection (list of paths).</p>
+<p>If there is a current selection, the list of selected scans is returned
+otherwise the list of the visible paths in the data browser is
+returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the list of scans corresponding to the current selection in
@@ -1150,7 +987,7 @@ the user try to move columns.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.selection_changed">
 <code class="sig-name descname">selection_changed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.selection_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.selection_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the tab view when the selection changes</p>
+<dd><p>Update the tab view when the selection changes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1193,14 +1030,14 @@ the user try to move columns.</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_selection">
 <code class="sig-name descname">update_selection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.update_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_selection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the selection after a search</p>
+<dd><p>Update the selection after a search.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_table">
 <code class="sig-name descname">update_table</code><span class="sig-paren">(</span><em class="sig-param">take_tags_to_update=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TableDataBrowser.update_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.update_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill the table with the project’s data.
-Only called when switching project to completely reset the table</p>
+<dd><p>Fill the table with the project’s data.</p>
+<p>Only called when switching project to completely reset the table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>take_tags_to_update</strong> – boolean</p>
@@ -1246,17 +1083,33 @@ Only called when switching project to completely reset the table</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.data_browser.data_browser.</code><code class="sig-name descname">TimeFormatDelegate</code><span class="sig-paren">(</span><em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TimeFormatDelegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QItemDelegate</span></code></p>
 <p>Delegate that is used to handle times in the TableDataBrowser.</p>
-<p># TODO : Update params</p>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TimeFormatDelegate.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent</strong> – QWidget parent</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.createEditor">
 <code class="sig-name descname">createEditor</code><span class="sig-paren">(</span><em class="sig-param">parent</em>, <em class="sig-param">option</em>, <em class="sig-param">index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/data_browser.html#TimeFormatDelegate.createEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.data_browser.TimeFormatDelegate.createEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of the createEditor method, called to generate the widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> – QWidget parent</p></li>
+<li><p><strong>option</strong> – Only used to overload the QItemDelegate class</p></li>
+<li><p><strong>index</strong> – Only used to overload the QItemDelegate class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The QWidget with a specified format</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1307,37 +1160,6 @@ dimension:</p>
 </dd>
 </dl>
 </li>
-</ul>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>__init__: initialise the MiniViewer object</p></li>
-<li><p>boxSlider: create sliders, their connections and thumbnail labels
-for a selected index</p></li>
-<li><p>changePosValue: change the value of a cursor for the selected index</p></li>
-<li><p>check_box_cursors_state_changed: updates the config file</p></li>
-<li><p>clearLayouts: clear the final layout</p></li>
-<li><p>create_slider: create a slider</p></li>
-<li><p>createDimensionLabels: create the dimension labels for the
-selected index</p></li>
-<li><p>createFieldValue: create a field where will be displayed the
-position of a cursor</p></li>
-<li><p>createLayouts: create the layouts</p></li>
-<li><p>displayPosValue: display the position of each cursor for the
-selected index</p></li>
-<li><p>enableSliders: enable each slider of the selected index</p></li>
-<li><p>image_to_pixmap: create a 2D pixmap from a N-D Nifti image</p></li>
-<li><p>image2DModifications: apply modifications to the image to
-display it correctly</p></li>
-<li><p>indexImage: update the sliders values depending on the size of
-the selected image</p></li>
-<li><p>navigImage: display the 2D image for the selected index</p></li>
-<li><p>openTagsPopUp: opens a pop-up to select the legend of the thumbnails</p></li>
-<li><p>setThumbnail: set the thumbnail tag value under the image frame</p></li>
-<li><p>show_slices: create the thumbnails from the selected file paths</p></li>
-<li><p>update_nb_slices: update the config file and the thumbnails</p></li>
-<li><p>update_visualization_method: update the config file and the
-thumbnails</p></li>
-<li><p>verify_slices: verify the number of selected documents</p></li>
 </ul>
 </dd>
 </dl>
@@ -1528,9 +1350,6 @@ thumbnails</p></li>
 <li><p><strong>idx</strong> – index of the image</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -1579,7 +1398,7 @@ thumbnails</p></li>
 <dl class="simple">
 <dt>Contains:</dt><dd><dl class="simple">
 <dt>Class:</dt><dd><ul class="simple">
-<li><p>CountTable</p></li>
+<li><p>ModifyTable</p></li>
 </ul>
 </dd>
 </dl>
@@ -1593,13 +1412,6 @@ thumbnails</p></li>
 <p>When the user wishes to modify a cell which contains a list in the
 databrowser tab, a popup will appear to help the user to change the
 content of the cell.</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>fill_table: fill the table</p></li>
-<li><p>update_table_values: update the table in the database</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.data_browser.modify_table.ModifyTable.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">value</em>, <em class="sig-param">types</em>, <em class="sig-param">scans</em>, <em class="sig-param">tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/data_browser/modify_table.html#ModifyTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.data_browser.modify_table.ModifyTable.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1658,12 +1470,6 @@ Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”</p>
 <dl class="simple">
 <dt>Attributes:</dt><dd><ul class="simple">
 <li><p>databrowser: parent data browser widget</p></li>
-</ul>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>prepare_filter: prepares the rapid search filter</p></li>
-<li><p>prepare_not_defined_filter: prepares the rapid search filter for not
-defined values</p></li>
 </ul>
 </dd>
 </dl>

@@ -36,7 +36,7 @@ from populse_mia.software_properties import Config
 class IterationTable(QWidget):
     """Widget that handles pipeline iteration.
 
-    Methods:
+    .. Methods:
         - add_tag: adds a tag to visualize in the iteration table
         - emit_iteration_table_updated: emits a signal when the iteration
            scans have been updated
@@ -56,7 +56,7 @@ class IterationTable(QWidget):
 
     def __init__(self, project, scan_list, main_window):
         """
-        Initialization of the IterationTable widget
+        Initialization of the IterationTable widget.
 
         :param project: current project in the software
         :param scan_list: list of the selected database files
@@ -65,7 +65,7 @@ class IterationTable(QWidget):
 
         QWidget.__init__(self)
 
-        #Necessary for using MIA bricks
+        # Necessary for using MIA bricks
         ProcessMIA.project = project
 
         self.project = project
@@ -162,10 +162,7 @@ class IterationTable(QWidget):
         self.refresh_layout()
 
     def emit_iteration_table_updated(self):
-        """
-        Emit a signal when the iteration scans have been updated
-
-        """
+        """Emit a signal when the iteration scans have been updated."""
 
         if self.check_box_iterate.checkState():
             if hasattr(self, 'scans'):
@@ -179,11 +176,8 @@ class IterationTable(QWidget):
         """
         Fill values_list depending on the visualized tags
 
-        :param idx:
+        :param idx: Index of the tag
         """
-
-        """ Method that fills the values list when a tag is added
-        or removed. """
         tag_name = self.push_buttons[idx].text()
         values = []
         for scan in self.project.session.get_documents_names(
@@ -257,10 +251,7 @@ class IterationTable(QWidget):
         self.refresh_layout()
 
     def select_iteration_tag(self):
-        """
-        Open a pop-up to let the user select on which tag to iterate
-
-        """
+        """Open a pop-up to let the user select on which tag to iterate."""
 
         ui_select = PopUpSelectTagCountTable(
             self.project,
@@ -271,7 +262,7 @@ class IterationTable(QWidget):
 
     def select_visualized_tag(self, idx):
         """Open a pop-up to let the user select which tag to visualize in the
-           iteration table
+        iteration table.
 
         :param idx: index of the clicked push button
         """
@@ -287,7 +278,7 @@ class IterationTable(QWidget):
 
     def update_iterated_tag(self, tag_name=None):
         """
-        Update the widget when the iterated tag is modified
+        Update the widget when the iterated tag is modified.
 
         :param tag_name: name of the iterated tag
         """
@@ -323,7 +314,7 @@ class IterationTable(QWidget):
 
     def update_table(self):
         """
-        Update the iteration table
+        Update the iteration table.
 
         """
 

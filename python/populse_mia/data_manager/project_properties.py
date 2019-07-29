@@ -31,7 +31,7 @@ class SavedProjects:
         - savedProjects: dictionary of all the saved projects
         - pathsList: list of all the saved projects
 
-    Methods:
+    .. Methods:
         - addSavedProject: adds a new saved project
         - loadSavedProjects: loads the dictionary from the saved_projects.yml
         file

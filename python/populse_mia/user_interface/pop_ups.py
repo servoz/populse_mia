@@ -156,7 +156,7 @@ class PopUpAddPath(QDialog):
     """Is called when the user wants to add a document to the project
        without importing from populse_mia.e MRI File Manager
 
-    Methods:
+    .. Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
         - find_type: tries to find the document type when the document is
            changed
@@ -296,7 +296,7 @@ class DefaultValueListCreation(QDialog):
     """
     Widget that is called when to create a list's default value
 
-    Methods:
+    .. Methods:
         - default_init_table: default init table when no previous value
         - update_default_value: checks if the values are correct and updates
            the parent value
@@ -530,7 +530,7 @@ class PopUpAddTag(QDialog):
     """
     Is called when the user wants to add a tag to the project
 
-    Methods:
+    .. Methods:
         - on_activated: type updated
         - ok_action: verifies that each field is correct and send the new tag
            to the data browser
@@ -676,8 +676,7 @@ class PopUpAddTag(QDialog):
         self.setModal(True)
 
     def on_activated(self, text):
-        """
-        Type updated
+        """Type updated
 
         :param text: New type
         """
@@ -794,7 +793,7 @@ class PopUpCloneTag(QDialog):
     """
     Is called when the user wants to clone a tag to the project
 
-    Methods:
+    .. Methods:
         - search_str: matches the searched pattern with the tags of the project
         - ok_action: verifies the specified name is correct and send the
            information to the data browser
@@ -970,7 +969,7 @@ class PopUpClosePipeline(QDialog):
     do_not_save_signal: signal emitted to close the editor
     cancel_signal: signal emitted to cancel the action
 
-    Methods:
+    .. Methods:
         - save_as_clicked: makes the actions to save the pipeline
         - do_not_save_clicked: makes the actions not to save the pipeline
         - cancel_clicked: makes the actions to cancel the action
@@ -1073,7 +1072,7 @@ class PopUpDataBrowserCurrentSelection(QDialog):
     """
     Is called to display the current data_browser selection
 
-    Methods:
+    .. Methods:
         - ok_clicked: updates the "scan_list" attribute of several widgets
     """
 
@@ -1136,7 +1135,7 @@ class PopUpFilterSelection(QDialog):
     """
     Is called when the user wants to open a filter that has already been saved
 
-    Methods:
+    .. Methods:
         - search_str: matches the searched pattern with the saved filters
         - ok_clicked: actions when the "OK" button is clicked
         - cancel_clicked: closes the pop-up
@@ -1273,7 +1272,7 @@ class PopUpMultipleSort(QDialog):
     """
     Is called to sort the data browser's table depending on multiple tags
 
-    Methods:
+    .. Methods:
         - refresh_layout: updates the layouts (especially when a tag push
           button is added or removed)
         - add_tag: adds a push button
@@ -1435,7 +1434,7 @@ class PopUpNewProject(QFileDialog):
     """
     Is called when the user wants to create a new project
 
-    Method:
+    .. Method:
         - get_filename: sets the widget's attributes depending on the
           selected file name
     """
@@ -1481,7 +1480,7 @@ class PopUpOpenProject(QFileDialog):
     """
     Is called when the user wants to open project
 
-    Method:
+    .. Method:
         - get_filename: sets the widget's attributes depending on the selected
            file name
     """
@@ -1525,7 +1524,7 @@ class PopUpPreferences(QDialog):
     """
     Is called when the user wants to change the software preferences
 
-    Methods:
+    .. Methods:
         - browse_matlab: called when matlab browse button is clicked
         - browse_matlab_standalone: called when matlab browse button is clicked
         - browse_projects_save_path: called when "Projects folder" browse
@@ -2210,7 +2209,7 @@ class PopUpProperties(QDialog):
     """
     Is called when the user wants to change the current project's properties
 
-    Methods:
+    .. Methods:
         - ok_clicked: saves the modifications and updates the data browser
     """
 
@@ -2303,7 +2302,7 @@ class PopUpQuit(QDialog):
     Is called when the user closes the software and the current project has
       been modified
 
-    Methods:
+    .. Methods:
         - save_as_clicked: makes the actions to save the project
         - do_not_save_clicked: makes the actions not to save the project
         - cancel_clicked: makes the actions to cancel the action
@@ -2385,7 +2384,7 @@ class PopUpRemoveTag(QDialog):
     """Is called when the user wants to remove a user tag from
        populse_mia.e project
 
-     Methods:
+     .. Methods:
          - search_str: matches the searched pattern with the tags of the project
          - ok_action: verifies the selected tags and send the information to the data browser
      """
@@ -2502,7 +2501,7 @@ class PopUpSaveProjectAs(QFileDialog):
     """
     Is called when the user wants to save a project under another name
 
-    Method:
+    .. Method:
         - return_value: sets the widget's attributes depending on the
           selected file name
     """
@@ -2558,7 +2557,7 @@ class PopUpSeeAllProjects(QDialog):
     """
     Is called when the user wants to create a see all the projects
 
-    Methods:
+    .. Methods:
         - checkState: checks if the project still exists and returns the corresponding icon
         - item_to_path: returns the path of the first selected item
         - open_project: switches to the selected project
@@ -2682,7 +2681,7 @@ class PopUpSelectFilter(PopUpFilterSelection):
     """
     Is called when the user wants to open a filter that has already been saved
 
-    Methods:
+    .. Methods:
         - ok_clicked: saves the modifications and updates the data browser
     """
 
@@ -2726,7 +2725,7 @@ class PopUpSelectIteration(QDialog):
     """
     Is called when the user wants to run an iterated pipeline
 
-    Methods:
+    .. Methods:
         - ok_clicked: sends the selected values to the pipeline manager
     """
 
@@ -2796,7 +2795,7 @@ class PopUpTagSelection(QDialog):
     """Is called when the user wants to update the tags that are visualized in
        the data browser
 
-    Methods:
+    .. Methods:
         - search_str: matches the searched pattern with the tags of the project
         - item_clicked: checks the checkbox of an item when the latter
           is clicked
@@ -2920,7 +2919,7 @@ class PopUpSelectTag(PopUpTagSelection):
     """Is called when the user wants to update the tag to display in the mini
       viewer
 
-    Methods:
+    .. Methods:
         - ok_clicked: saves the modifications and updates the mini viewer
     """
 
@@ -2964,7 +2963,7 @@ class PopUpSelectTagCountTable(PopUpTagSelection):
     """
     Is called when the user wants to update a visualized tag of the count table
 
-    Methods:
+    .. Methods:
         - ok_clicked: updates the selected tag and closes the pop-up
     """
 
@@ -3008,7 +3007,7 @@ class PopUpShowBrick(QDialog):
     """
     Class to display the brick history of a document
 
-    Methods:
+    .. Methods:
         - io_value_is_scan: checks if the I/O value is a scan
         - file_clicked: called when a file is clicked
     """
@@ -3207,7 +3206,7 @@ class PopUpVisualizedTags(QWidget):
     """
     Is called when the user wants to update the tags that are visualized
 
-    Methods:
+    .. Methods:
         - search_str: matches the searched pattern with the tags of the project
         - click_select_tag: puts the selected tags in the "selected tag" table
         - click_unselect_tag: removes the unselected tags from populse_mia.e "selected tag" table

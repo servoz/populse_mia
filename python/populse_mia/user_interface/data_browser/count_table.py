@@ -48,12 +48,7 @@ class CountTable(QDialog):
     plus or a red cross depending on if there is at least a scan that has
     all the tags values or not.
 
-    Attributes:
-        - project: current project in the software
-        - values_list: list that contains lists of all the values that the
-          visualized tags can take
-
-    Methods:
+    .. Methods:
         - refresh_layout: updates the layout of the widget
         - add_tag: adds a tag to visualize in the count table
         - remove_tag: removes a tag to visualize in the count table
@@ -278,9 +273,8 @@ class CountTable(QDialog):
                 self.values_list[idx].append(value)
 
     def count_scans(self):
-        """
-        Counts the number of scans depending on the selected tags and
-          displays the result in the table
+        """Counts the number of scans depending on the selected tags and
+        displays the result in the table
         """
 
         for tag_values in self.values_list:

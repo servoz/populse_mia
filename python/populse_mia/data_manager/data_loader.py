@@ -6,7 +6,7 @@ Contains:
         -ImportProgress : Inherit from QProgressDialog and handle the
         progress bar
         -ImportWorker : Inherit from QThread and manage the threads
-    Methods:
+    .. Methods:
         -read_log : Show the evolution of the progress bar and returns its
         feedback
         -tags_from_file : Returns a list of [tag, value] contained in a Json
@@ -59,7 +59,7 @@ class ImportProgress(QProgressDialog):
     Attributes;
         :param project: A Project object
 
-    Methods:
+    .. Methods:
         - onProgress : Set the import progressbar value.
 
     """
@@ -95,7 +95,7 @@ class ImportWorker(QThread):
         :param project: A Project object
         ;param progress: An ImportProgress object
 
-    Methods:
+    .. Methods:
         - run : Override the QThread run method.
     """
     # Used to fill the progress bar
@@ -240,9 +240,9 @@ class ImportWorker(QThread):
                         if tag_name != "Json_Version":
                             # Preparing value and type
                             if isinstance(value, list):
-                                if ((len(value) is 1 and isinstance(value[0], list))
-                                  or
-                                   (len(value) is not 1)):
+                                if ((len(value) is 1 and isinstance(
+                                        value[0], list)) or (len(value) is
+                                                             not 1)):
 
                                     if tag_type == FIELD_TYPE_STRING:
                                         tag_type = FIELD_TYPE_LIST_STRING

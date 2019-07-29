@@ -77,7 +77,7 @@ definition, as well as pop ups.</p>
 </div>
 <div class="section" id="module-populse_mia.user_interface.main_window">
 <span id="populse-mia-user-interface-main-window-module"></span><h2>populse_mia.user_interface.main_window module<a class="headerlink" href="#module-populse_mia.user_interface.main_window" title="Permalink to this headline">¶</a></h2>
-<p>Module to define main window appearance and settings.</p>
+<p>Module to define main window appearance, functions and settings.</p>
 <p>Initialize the software appearance and defines interactions with the user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Contains</dt>
@@ -406,20 +406,6 @@ projects menus.</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">DefaultValueListCreation</code><span class="sig-paren">(</span><em class="sig-param">parent</em>, <em class="sig-param">type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#DefaultValueListCreation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.DefaultValueListCreation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Widget that is called when to create a list’s default value</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>default_init_table: default init table when no previous value</p></li>
-<li><dl class="simple">
-<dt>update_default_value: checks if the values are correct and updates</dt><dd><p>the parent value</p>
-</dd>
-</dl>
-</li>
-<li><p>add_element: one more element added to the list</p></li>
-<li><p>remove_element: removes the last element of the list</p></li>
-<li><p>resize_table: to resize the pop up depending on the table</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.DefaultValueListCreation.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">parent</em>, <em class="sig-param">type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#DefaultValueListCreation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.DefaultValueListCreation.__init__" title="Permalink to this definition">¶</a></dt>
@@ -494,17 +480,6 @@ We need to override the MousePressEvent</p>
 <dl class="simple">
 <dt>Is called when the user wants to add a document to the project</dt><dd><p>without importing from populse_mia.e MRI File Manager</p>
 </dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: updates the “scan_list” attribute of several widgets</p></li>
-<li><dl class="simple">
-<dt>find_type: tries to find the document type when the document is</dt><dd><p>changed</p>
-</dd>
-</dl>
-</li>
-<li><p>file_to_choose: lets the user choose a file to import</p></li>
-<li><p>save_path: adds the path to the database and the data browser</p></li>
-</ul>
-</dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpAddPath.__init__">
@@ -545,17 +520,6 @@ We need to override the MousePressEvent</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpAddTag</code><span class="sig-paren">(</span><em class="sig-param">databrowser</em>, <em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpAddTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpAddTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to add a tag to the project</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>on_activated: type updated</p></li>
-<li><dl class="simple">
-<dt>ok_action: verifies that each field is correct and send the new tag</dt><dd><p>to the data browser</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpAddTag.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">databrowser</em>, <em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpAddTag.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpAddTag.__init__" title="Permalink to this definition">¶</a></dt>
@@ -601,17 +565,6 @@ to the data browser</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpCloneTag</code><span class="sig-paren">(</span><em class="sig-param">databrowser</em>, <em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpCloneTag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpCloneTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to clone a tag to the project</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>search_str: matches the searched pattern with the tags of the project</p></li>
-<li><dl class="simple">
-<dt>ok_action: verifies the specified name is correct and send the</dt><dd><p>information to the data browser</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpCloneTag.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">databrowser</em>, <em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpCloneTag.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpCloneTag.__init__" title="Permalink to this definition">¶</a></dt>
@@ -674,15 +627,6 @@ save_as_signal: signal emitted to save the pipeline under another</p>
 </div></blockquote>
 <p>do_not_save_signal: signal emitted to close the editor
 cancel_signal: signal emitted to cancel the action</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>save_as_clicked: makes the actions to save the pipeline</p></li>
-<li><p>do_not_save_clicked: makes the actions not to save the pipeline</p></li>
-<li><p>cancel_clicked: makes the actions to cancel the action</p></li>
-<li><p>can_exit: returns the value of bool_exit</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpClosePipeline.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">pipeline_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpClosePipeline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpClosePipeline.__init__" title="Permalink to this definition">¶</a></dt>
@@ -745,12 +689,6 @@ cancel_signal: signal emitted to cancel the action</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpDataBrowserCurrentSelection</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">filter</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpDataBrowserCurrentSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpDataBrowserCurrentSelection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called to display the current data_browser selection</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: updates the “scan_list” attribute of several widgets</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpDataBrowserCurrentSelection.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">filter</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpDataBrowserCurrentSelection.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpDataBrowserCurrentSelection.__init__" title="Permalink to this definition">¶</a></dt>
@@ -793,14 +731,6 @@ cancel_signal: signal emitted to cancel the action</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpFilterSelection</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpFilterSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpFilterSelection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to open a filter that has already been saved</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>search_str: matches the searched pattern with the saved filters</p></li>
-<li><p>ok_clicked: actions when the “OK” button is clicked</p></li>
-<li><p>cancel_clicked: closes the pop-up</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpFilterSelection.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpFilterSelection.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpFilterSelection.__init__" title="Permalink to this definition">¶</a></dt>
@@ -865,20 +795,6 @@ cancel_signal: signal emitted to cancel the action</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpMultipleSort</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">table_data_browser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpMultipleSort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpMultipleSort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called to sort the data browser’s table depending on multiple tags</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>refresh_layout: updates the layouts (especially when a tag push
-button is added or removed)</p></li>
-<li><p>add_tag: adds a push button</p></li>
-<li><p>remove_tag: removes a push buttons and makes the changes in the
-list of values</p></li>
-<li><p>select_tag: calls a pop-up to choose a tag</p></li>
-<li><p>fill_values: fills the values list when a tag is added or removed</p></li>
-<li><p>sort_scans: collects the information and send them to the data
-browser</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpMultipleSort.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">table_data_browser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpMultipleSort.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpMultipleSort.__init__" title="Permalink to this definition">¶</a></dt>
@@ -946,13 +862,6 @@ browser</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpNewProject</code><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpNewProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpNewProject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
 <p>Is called when the user wants to create a new project</p>
-<dl class="simple">
-<dt>Method:</dt><dd><ul class="simple">
-<li><p>get_filename: sets the widget’s attributes depending on the
-selected file name</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpNewProject.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpNewProject.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpNewProject.__init__" title="Permalink to this definition">¶</a></dt>
@@ -985,16 +894,6 @@ selected file name</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpOpenProject</code><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpOpenProject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpOpenProject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
 <p>Is called when the user wants to open project</p>
-<dl class="simple">
-<dt>Method:</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>get_filename: sets the widget’s attributes depending on the selected</dt><dd><p>file name</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpOpenProject.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpOpenProject.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpOpenProject.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1024,27 +923,6 @@ selected file name</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpPreferences</code><span class="sig-paren">(</span><em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpPreferences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpPreferences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to change the software preferences</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>browse_matlab: called when matlab browse button is clicked</p></li>
-<li><p>browse_matlab_standalone: called when matlab browse button is clicked</p></li>
-<li><p>browse_projects_save_path: called when “Projects folder” browse
-button is clicked</p></li>
-<li><p>browse_mri_conv_path: called when “MRIManager.jar” browse
-button is clicked</p></li>
-<li><p>browse_spm: called when spm browse button is clicked</p></li>
-<li><p>browse_spm_standalone: called when spm standalone browse button
-is clicked</p></li>
-<li><p>clinical_mode_switch: called when the clinical mode checkbox
-is clicked</p></li>
-<li><p>ok_clicked: saves the modifications to the config file and apply them</p></li>
-<li><p>use_matlab_changed: called when the use_matlab checkbox is changed</p></li>
-<li><p>use_spm_changed: called when the use_spm checkbox is changed</p></li>
-<li><p>use_spm_standalone_changed: called when the use_spm_standalone
-checkbox is changed</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpPreferences.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpPreferences.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpPreferences.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1140,12 +1018,6 @@ checkbox is changed</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpProperties</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">old_tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpProperties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpProperties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to change the current project’s properties</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: saves the modifications and updates the data browser</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpProperties.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">old_tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpProperties.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpProperties.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1180,13 +1052,6 @@ checkbox is changed</p></li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <dl class="simple">
 <dt>Is called when the user closes the software and the current project has</dt><dd><p>been modified</p>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>save_as_clicked: makes the actions to save the project</p></li>
-<li><p>do_not_save_clicked: makes the actions not to save the project</p></li>
-<li><p>cancel_clicked: makes the actions to cancel the action</p></li>
-<li><p>can_exit: returns the value of bool_exit</p></li>
-</ul>
 </dd>
 </dl>
 <dl class="method">
@@ -1295,11 +1160,6 @@ to the pipeline manager.</p>
 <dl class="simple">
 <dt>Is called when the user wants to remove a user tag from</dt><dd><p>populse_mia.e project</p>
 </dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>search_str: matches the searched pattern with the tags of the project</p></li>
-<li><p>ok_action: verifies the selected tags and send the information to the data browser</p></li>
-</ul>
-</dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpRemoveTag.__init__">
@@ -1344,13 +1204,6 @@ to the pipeline manager.</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpSaveProjectAs</code><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSaveProjectAs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSaveProjectAs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></code></p>
 <p>Is called when the user wants to save a project under another name</p>
-<dl class="simple">
-<dt>Method:</dt><dd><ul class="simple">
-<li><p>return_value: sets the widget’s attributes depending on the
-selected file name</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSaveProjectAs.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSaveProjectAs.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSaveProjectAs.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1380,14 +1233,6 @@ selected file name</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpSeeAllProjects</code><span class="sig-paren">(</span><em class="sig-param">saved_projects</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSeeAllProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSeeAllProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to create a see all the projects</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>checkState: checks if the project still exists and returns the corresponding icon</p></li>
-<li><p>item_to_path: returns the path of the first selected item</p></li>
-<li><p>open_project: switches to the selected project</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">saved_projects</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSeeAllProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSeeAllProjects.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1441,12 +1286,6 @@ the existence of the project</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpSelectFilter</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#populse_mia.user_interface.pop_ups.PopUpFilterSelection" title="populse_mia.user_interface.pop_ups.PopUpFilterSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.user_interface.pop_ups.PopUpFilterSelection</span></code></a></p>
 <p>Is called when the user wants to open a filter that has already been saved</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: saves the modifications and updates the data browser</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectFilter.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">databrowser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectFilter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectFilter.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1474,12 +1313,6 @@ the existence of the project</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpSelectIteration</code><span class="sig-paren">(</span><em class="sig-param">iterated_tag</em>, <em class="sig-param">tag_values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectIteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectIteration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Is called when the user wants to run an iterated pipeline</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: sends the selected values to the pipeline manager</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectIteration.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">iterated_tag</em>, <em class="sig-param">tag_values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectIteration.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectIteration.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1509,10 +1342,6 @@ the existence of the project</p>
 <dl class="simple">
 <dt>Is called when the user wants to update the tag to display in the mini</dt><dd><p>viewer</p>
 </dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: saves the modifications and updates the mini viewer</p></li>
-</ul>
-</dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectTag.__init__">
@@ -1538,12 +1367,6 @@ the existence of the project</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpSelectTagCountTable</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">tags_to_display</em>, <em class="sig-param">tag_name_checked=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectTagCountTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectTagCountTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#populse_mia.user_interface.pop_ups.PopUpTagSelection" title="populse_mia.user_interface.pop_ups.PopUpTagSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">populse_mia.user_interface.pop_ups.PopUpTagSelection</span></code></a></p>
 <p>Is called when the user wants to update a visualized tag of the count table</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>ok_clicked: updates the selected tag and closes the pop-up</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpSelectTagCountTable.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">tags_to_display</em>, <em class="sig-param">tag_name_checked=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpSelectTagCountTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpSelectTagCountTable.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1572,13 +1395,6 @@ the existence of the project</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpShowBrick</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">brick_uuid</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpShowBrick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpShowBrick" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <p>Class to display the brick history of a document</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>io_value_is_scan: checks if the I/O value is a scan</p></li>
-<li><p>file_clicked: called when a file is clicked</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpShowBrick.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">brick_uuid</em>, <em class="sig-param">databrowser</em>, <em class="sig-param">main_window</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpShowBrick.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpShowBrick.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1616,14 +1432,6 @@ the existence of the project</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
 <dl class="simple">
 <dt>Is called when the user wants to update the tags that are visualized in</dt><dd><p>the data browser</p>
-</dd>
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>search_str: matches the searched pattern with the tags of the project</p></li>
-<li><p>item_clicked: checks the checkbox of an item when the latter
-is clicked</p></li>
-<li><p>ok_clicked: actions when the “OK” button is clicked</p></li>
-<li><p>cancel_clicked: closes the pop-up</p></li>
-</ul>
 </dd>
 </dl>
 <dl class="method">
@@ -1678,14 +1486,6 @@ is clicked</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pop_ups.</code><code class="sig-name descname">PopUpVisualizedTags</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">visualized_tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpVisualizedTags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpVisualizedTags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>Is called when the user wants to update the tags that are visualized</p>
-<dl class="simple">
-<dt>Methods:</dt><dd><ul class="simple">
-<li><p>search_str: matches the searched pattern with the tags of the project</p></li>
-<li><p>click_select_tag: puts the selected tags in the “selected tag” table</p></li>
-<li><p>click_unselect_tag: removes the unselected tags from populse_mia.e “selected tag” table</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pop_ups.PopUpVisualizedTags.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">visualized_tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pop_ups.html#PopUpVisualizedTags.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pop_ups.PopUpVisualizedTags.__init__" title="Permalink to this definition">¶</a></dt>

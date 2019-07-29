@@ -35,7 +35,7 @@ class Filter:
         BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
         :param search_bar: value in the rapid search bar
 
-    Methods:
+    .. Methods:
         - generate_filter: apply the filter to the given list of scans
         - json_format: returns the filter as a dictionary
 

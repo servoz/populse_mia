@@ -46,7 +46,7 @@ class AdvancedSearch(QWidget):
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
 
-    Methods:
+    .. Methods:
         - add_search_bar: create and define the advanced research bar
         - apply_filter: apply an opened filter to update the table.
         - displayConditionRules: set the list of condition choices,
@@ -314,7 +314,7 @@ class AdvancedSearch(QWidget):
 
     def displayValueRules(self, choice, value):
         """Update the placeholder text. when the condition choice is
-           changed.
+        changed.
 
         :param choice: choice
         :param value: value

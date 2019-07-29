@@ -33,7 +33,7 @@ class RapidSearch(QLineEdit):
     Attributes:
         - databrowser: parent data browser widget
 
-    Methods:
+    .. Methods:
         - prepare_filter: prepares the rapid search filter
         - prepare_not_defined_filter: prepares the rapid search filter for not
           defined values

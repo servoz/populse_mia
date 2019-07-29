@@ -188,7 +188,7 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to add a document to the project</span>
 <span class="sd">       without importing from populse_mia.e MRI File Manager</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: updates the &quot;scan_list&quot; attribute of several widgets</span>
 <span class="sd">        - find_type: tries to find the document type when the document is</span>
 <span class="sd">           changed</span>
@@ -328,7 +328,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widget that is called when to create a list&#39;s default value</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - default_init_table: default init table when no previous value</span>
 <span class="sd">        - update_default_value: checks if the values are correct and updates</span>
 <span class="sd">           the parent value</span>
@@ -562,7 +562,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to add a tag to the project</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - on_activated: type updated</span>
 <span class="sd">        - ok_action: verifies that each field is correct and send the new tag</span>
 <span class="sd">           to the data browser</span>
@@ -708,8 +708,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PopUpAddTag.on_activated"><a class="viewcode-back" href="../../../populse_mia.user_interface.html#populse_mia.user_interface.pop_ups.PopUpAddTag.on_activated">[docs]</a>    <span class="k">def</span> <span class="nf">on_activated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Type updated</span>
+        <span class="sd">&quot;&quot;&quot;Type updated</span>
 
 <span class="sd">        :param text: New type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -826,7 +825,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to clone a tag to the project</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - ok_action: verifies the specified name is correct and send the</span>
 <span class="sd">           information to the data browser</span>
@@ -1002,7 +1001,7 @@
 <span class="sd">    do_not_save_signal: signal emitted to close the editor</span>
 <span class="sd">    cancel_signal: signal emitted to cancel the action</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - save_as_clicked: makes the actions to save the pipeline</span>
 <span class="sd">        - do_not_save_clicked: makes the actions not to save the pipeline</span>
 <span class="sd">        - cancel_clicked: makes the actions to cancel the action</span>
@@ -1105,7 +1104,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called to display the current data_browser selection</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: updates the &quot;scan_list&quot; attribute of several widgets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1168,7 +1167,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open a filter that has already been saved</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the saved filters</span>
 <span class="sd">        - ok_clicked: actions when the &quot;OK&quot; button is clicked</span>
 <span class="sd">        - cancel_clicked: closes the pop-up</span>
@@ -1305,7 +1304,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called to sort the data browser&#39;s table depending on multiple tags</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - refresh_layout: updates the layouts (especially when a tag push</span>
 <span class="sd">          button is added or removed)</span>
 <span class="sd">        - add_tag: adds a push button</span>
@@ -1467,7 +1466,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to create a new project</span>
 
-<span class="sd">    Method:</span>
+<span class="sd">    .. Method:</span>
 <span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the</span>
 <span class="sd">          selected file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1513,7 +1512,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open project</span>
 
-<span class="sd">    Method:</span>
+<span class="sd">    .. Method:</span>
 <span class="sd">        - get_filename: sets the widget&#39;s attributes depending on the selected</span>
 <span class="sd">           file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1557,7 +1556,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to change the software preferences</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - browse_matlab: called when matlab browse button is clicked</span>
 <span class="sd">        - browse_matlab_standalone: called when matlab browse button is clicked</span>
 <span class="sd">        - browse_projects_save_path: called when &quot;Projects folder&quot; browse</span>
@@ -2242,7 +2241,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to change the current project&#39;s properties</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2335,7 +2334,7 @@
 <span class="sd">    Is called when the user closes the software and the current project has</span>
 <span class="sd">      been modified</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - save_as_clicked: makes the actions to save the project</span>
 <span class="sd">        - do_not_save_clicked: makes the actions not to save the project</span>
 <span class="sd">        - cancel_clicked: makes the actions to cancel the action</span>
@@ -2417,7 +2416,7 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to remove a user tag from</span>
 <span class="sd">       populse_mia.e project</span>
 
-<span class="sd">     Methods:</span>
+<span class="sd">     .. Methods:</span>
 <span class="sd">         - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">         - ok_action: verifies the selected tags and send the information to the data browser</span>
 <span class="sd">     &quot;&quot;&quot;</span>
@@ -2534,7 +2533,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to save a project under another name</span>
 
-<span class="sd">    Method:</span>
+<span class="sd">    .. Method:</span>
 <span class="sd">        - return_value: sets the widget&#39;s attributes depending on the</span>
 <span class="sd">          selected file name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2590,7 +2589,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to create a see all the projects</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - checkState: checks if the project still exists and returns the corresponding icon</span>
 <span class="sd">        - item_to_path: returns the path of the first selected item</span>
 <span class="sd">        - open_project: switches to the selected project</span>
@@ -2714,7 +2713,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to open a filter that has already been saved</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the data browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2758,7 +2757,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to run an iterated pipeline</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: sends the selected values to the pipeline manager</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2828,7 +2827,7 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to update the tags that are visualized in</span>
 <span class="sd">       the data browser</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - item_clicked: checks the checkbox of an item when the latter</span>
 <span class="sd">          is clicked</span>
@@ -2952,7 +2951,7 @@
     <span class="sd">&quot;&quot;&quot;Is called when the user wants to update the tag to display in the mini</span>
 <span class="sd">      viewer</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: saves the modifications and updates the mini viewer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2996,7 +2995,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to update a visualized tag of the count table</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: updates the selected tag and closes the pop-up</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -3040,7 +3039,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to display the brick history of a document</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - io_value_is_scan: checks if the I/O value is a scan</span>
 <span class="sd">        - file_clicked: called when a file is clicked</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -3239,7 +3238,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is called when the user wants to update the tags that are visualized</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - search_str: matches the searched pattern with the tags of the project</span>
 <span class="sd">        - click_select_tag: puts the selected tags in the &quot;selected tag&quot; table</span>
 <span class="sd">        - click_unselect_tag: removes the unselected tags from populse_mia.e &quot;selected tag&quot; table</span>

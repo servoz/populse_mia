@@ -72,7 +72,7 @@ class Project():
         :param project_root_folder: project's path
         :param new_project: project's object
 
-    Methods:
+    .. Methods:
         - add_clinical_tags: add the clinical tags to the project
         - getDate: return the date of creation of the project
         - getFilter: return a Filter object

@@ -77,7 +77,7 @@ class DataBrowser(QWidget):
         - main_window: main window of the software
         - project: current project in the software
 
-    Methods:
+    .. Methods:
         - add_tag_infos: add the tag after add tag pop-up
         - add_tag_pop_up: display the add tag pop-up
         - clone_tag_infos: clone the tag after the clone tag pop-up
@@ -297,6 +297,7 @@ class DataBrowser(QWidget):
         self.pop_up_clone_tag.show()
 
     def connect_actions(self):
+        """Connect methods to actions."""
         self.add_tag_action.triggered.connect(self.add_tag_pop_up)
         self.clone_tag_action.triggered.connect(self.clone_tag_pop_up)
         self.remove_tag_action.triggered.connect(self.remove_tag_pop_up)
@@ -331,6 +332,7 @@ class DataBrowser(QWidget):
             self.viewer.verify_slices(full_names)
 
     def connect_toolbar(self):
+        """Connect methods to toolbar."""
         self.search_bar.textChanged.connect(self.search_str)
         self.button_cross.clicked.connect(self.reset_search_bar)
         self.advanced_search_button.clicked.connect(self.run_advanced_search)
@@ -339,7 +341,7 @@ class DataBrowser(QWidget):
             lambda: self.table_data.visualized_tags_pop_up())
 
     def count_table_pop_up(self):
-        """Open the count table pop-up"""
+        """Open the count table pop-up."""
         self.count_table_pop_up = CountTable(self.project)
         self.count_table_pop_up.show()
 
@@ -393,6 +395,7 @@ class DataBrowser(QWidget):
         self.menu_toolbar.addWidget(self.count_table_button)
 
     def create_layout(self):
+        """Create the layouts of the tab."""
         self.frame_table_data.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_table_data.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_table_data.setObjectName("frame_table_data")
@@ -476,13 +479,13 @@ class DataBrowser(QWidget):
             self.connect_mini_viewer()
 
     def open_filter(self):
-        """Open a project filter that has already been saved"""
+        """Open a project filter that has already been saved."""
 
         self.popUp = PopUpSelectFilter(self.project, self)
         self.popUp.show()
 
     def open_filter_infos(self):
-        """Apply the current filter"""
+        """Apply the current filter."""
 
         filter_to_apply = self.project.currentFilter
 
@@ -673,17 +676,7 @@ class TableDataBrowser(QTableWidget):
     """Table widget that displays the documents contained in the database and
     their associated tags.
 
-    Attributes:
-        :param project: current project in the software
-        :param data_browser: parent data browser widget
-        :param tags_to_display: list of tags to display
-        :param update_values: boolean to specify if edition is enabled
-        :param activate_selection: dictionary containing information about
-           the processes that has been run to generate documents
-        :param link_viewer: boolean to specify if the table is linked to a
-           viewer
-
-    Methods:
+    .. Methods:
         - add_column: add a column to the table
         - add_columns: add columns
         - add_path: call a pop-up to add any document to the project
@@ -728,6 +721,17 @@ class TableDataBrowser(QTableWidget):
 
     def __init__(self, project, data_browser, tags_to_display,
                  update_values, activate_selection, link_viewer=True):
+        """Initialization of the class
+
+        :param project: current project in the software
+        :param data_browser: parent data browser widget
+        :param tags_to_display: list of tags to display
+        :param update_values: boolean to specify if edition is enabled
+        :param activate_selection: dictionary containing information about
+           the processes that has been run to generate documents
+        :param link_viewer: boolean to specify if the table is linked to a
+           viewer
+        """
 
         super().__init__()
 
@@ -1315,7 +1319,7 @@ class TableDataBrowser(QTableWidget):
         self.msg.show()
 
     def fill_cells_update_table(self):
-        """Initialize and fill the cells of the table"""
+        """Initialize and fill the cells of the table."""
         cells_number = len(self.scans_to_visualize) * len(
             self.horizontalHeader())
         self.progress = QProgressDialog(
@@ -1490,8 +1494,10 @@ class TableDataBrowser(QTableWidget):
 
     def get_current_filter(self):
         """Get the current data browser selection (list of paths).
+
         If there is a current selection, the list of selected scans is returned
-        otherwise the list of the visible paths in the data browser is returned
+        otherwise the list of the visible paths in the data browser is
+        returned.
 
         :return: the list of scans corresponding to the current selection in
            the data browser
@@ -1999,7 +2005,7 @@ class TableDataBrowser(QTableWidget):
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def selection_changed(self):
-        """Update the tab view when the selection changes"""
+        """Update the tab view when the selection changes."""
 
         # List of selected scans updated
         self.scans.clear()
@@ -2132,7 +2138,7 @@ class TableDataBrowser(QTableWidget):
             self.project.saveModifications()
 
     def update_selection(self):
-        """Update the selection after a search"""
+        """Update the selection after a search."""
 
         # Selection updated
         self.clearSelection()
@@ -2149,7 +2155,8 @@ class TableDataBrowser(QTableWidget):
 
     def update_table(self, take_tags_to_update=False):
         """Fill the table with the project's data.
-        Only called when switching project to completely reset the table
+
+        Only called when switching project to completely reset the table.
 
         :param take_tags_to_update: boolean
         """
@@ -2282,13 +2289,21 @@ class TableDataBrowser(QTableWidget):
 class TimeFormatDelegate(QItemDelegate):
     """Delegate that is used to handle times in the TableDataBrowser.
 
-    # TODO : Update params
     """
     def __init__(self, parent=None):
+        """Initialization of the class
+
+        :param parent: QWidget parent
+        """
         QItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, option, index):
         """Override of the createEditor method, called to generate the widget.
+
+        :param parent: QWidget parent
+        :param option: Only used to overload the QItemDelegate class
+        :param index: Only used to overload the QItemDelegate class
+        :return: The QWidget with a specified format
         """
         editor = QTimeEdit(parent)
         editor.setDisplayFormat("hh:mm:ss.zzz")

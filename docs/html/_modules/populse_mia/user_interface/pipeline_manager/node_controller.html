@@ -97,7 +97,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Allow to change the input and output values of a pipeline node</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - clearLayout: clear the layouts of the widget</span>
 <span class="sd">        - display_filter: display a filter widget</span>
 <span class="sd">        - display_parameters: display the parameters of the selected node</span>
@@ -134,11 +134,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">h_box_node_name</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="NodeController.clearLayout"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.clearLayout">[docs]</a>    <span class="k">def</span> <span class="nf">clearLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear the layouts of the widget</span>
+        <span class="sd">&quot;&quot;&quot;Clear the layouts of the widget.</span>
 
 <span class="sd">        :param layout: widget with a layout</span>
-<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layout</span><span class="o">.</span><span class="n">children</span><span class="p">()))):</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">layout</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">itemAt</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidgetItem</span><span class="p">:</span>
@@ -154,8 +152,7 @@
             <span class="n">sip</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">layout</span><span class="o">.</span><span class="n">layout</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="NodeController.display_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.display_filter">[docs]</a>    <span class="k">def</span> <span class="nf">display_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Display a filter widget</span>
+        <span class="sd">&quot;&quot;&quot;Display a filter widget.</span>
 
 <span class="sd">        :param node_name: name of the node</span>
 <span class="sd">        :param plug_name: name of the plug</span>
@@ -170,8 +167,7 @@
             <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_plug_value_from_filter</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="NodeController.display_parameters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.display_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">display_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">process</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Display the parameters of the selected node</span>
+        <span class="sd">&quot;&quot;&quot;Display the parameters of the selected node.</span>
 
 <span class="sd">        The node parameters are read and line labels/line edits/push buttons</span>
 <span class="sd">        are created for each of them. This methods consists mainly in widget</span>
@@ -295,8 +291,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="NodeController.get_index_from_plug_name"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.get_index_from_plug_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_index_from_plug_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">,</span> <span class="n">in_or_out</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the index of the plug label.</span>
+        <span class="sd">&quot;&quot;&quot;Return the index of the plug label.</span>
 
 <span class="sd">        :param plug_name: name of the plug</span>
 <span class="sd">        :param in_or_out: &quot;in&quot; if the plug is an input plug, &quot;out&quot; else</span>
@@ -313,8 +308,7 @@
                     <span class="k">return</span> <span class="n">idx</span></div>
 
 <div class="viewcode-block" id="NodeController.update_node_name"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.update_node_name">[docs]</a>    <span class="k">def</span> <span class="nf">update_node_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">new_node_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Change the name of the selected node and updates the pipeline.</span>
+        <span class="sd">&quot;&quot;&quot;Change the name of the selected node and updates the pipeline.</span>
 
 <span class="sd">        Because the nodes are stored in a dictionary, we have to create</span>
 <span class="sd">        a new node that has the same traits as the selected one and create</span>
@@ -387,8 +381,7 @@
                     <span class="n">old_node_name</span><span class="p">,</span> <span class="n">new_node_name</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="NodeController.update_parameters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the parameters values</span>
+        <span class="sd">&quot;&quot;&quot;Update the parameters values.</span>
 
 <span class="sd">        :param process: process of the node</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -421,8 +414,7 @@
 
 <div class="viewcode-block" id="NodeController.update_plug_value"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.update_plug_value">[docs]</a>    <span class="k">def</span> <span class="nf">update_plug_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_or_out</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span>
                           <span class="n">new_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the value of a node plug</span>
+        <span class="sd">&quot;&quot;&quot;Update the value of a node plug.</span>
 
 <span class="sd">        :param in_or_out: &quot;in&quot; if the plug is an input plug, &quot;out&quot; else</span>
 <span class="sd">        :param plug_name: name of the plug</span>
@@ -499,8 +491,7 @@
 
 <div class="viewcode-block" id="NodeController.update_plug_value_from_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.NodeController.update_plug_value_from_filter">[docs]</a>    <span class="k">def</span> <span class="nf">update_plug_value_from_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
                                       <span class="n">filter_res_list</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the plug value from a filter result</span>
+        <span class="sd">&quot;&quot;&quot;Update the plug value from a filter result.</span>
 
 <span class="sd">        :param plug_name: name of the plug</span>
 <span class="sd">        :param parameters: tuple containing the index of the plug,</span>
@@ -526,13 +517,13 @@
 
 
 <div class="viewcode-block" id="PlugFilter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter">[docs]</a><span class="k">class</span> <span class="nc">PlugFilter</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Filter widget used on a node plug</span>
+    <span class="sd">&quot;&quot;&quot;Filter widget used on a node plug.</span>
 
 <span class="sd">    The widget displays a browser with the selected files of the database,</span>
 <span class="sd">    a rapid search and an advanced search to filter these files. Once the</span>
 <span class="sd">    filtering is done, the result (as a list of files) is set to the plug.</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - ok_clicked: set the new value to the node plug and closes the widget</span>
 <span class="sd">        - update_tag_to_filter: update the tag to Filter</span>
 <span class="sd">        - update_tags: update the list of visualized tags</span>
@@ -662,10 +653,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumHeight</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlugFilter.ok_clicked"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.ok_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">ok_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the new value to the node plug and closes the widget</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the new value to the node plug and closes the widget.&quot;&quot;&quot;</span>
 
         <span class="c1"># To use if the filters are set on plugs, which is not the case</span>
         <span class="c1"># if isinstance(self.process, ProcessMIA):</span>
@@ -681,10 +669,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PlugFilter.reset_search_bar"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.reset_search_bar">[docs]</a>    <span class="k">def</span> <span class="nf">reset_search_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset the search bar of the rapid search</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset the search bar of the rapid search.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rapid_search</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">show_search</span><span class="p">()</span>
@@ -696,8 +681,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scan_list</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlugFilter.search_str"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.search_str">[docs]</a>    <span class="k">def</span> <span class="nf">search_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_search</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the files to display in the browser</span>
+        <span class="sd">&quot;&quot;&quot;Update the files to display in the browser.</span>
 <span class="sd">        :param str_search: string typed in the rapid search</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -734,10 +718,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scan_list</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlugFilter.set_plug_value"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.set_plug_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_plug_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Emit a signal to set the file names to the node plug</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Emit a signal to set the file names to the node plug.&quot;&quot;&quot;</span>
 
         <span class="n">result_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">()</span>
@@ -770,10 +751,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plug_value_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">result_names</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlugFilter.update_tag_to_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.update_tag_to_filter">[docs]</a>    <span class="k">def</span> <span class="nf">update_tag_to_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the tag to Filter</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the tag to Filter.&quot;&quot;&quot;</span>
 
         <span class="n">popUp</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
                                          <span class="bp">self</span><span class="o">.</span><span class="n">node_controller</span><span class="o">.</span><span class="n">visibles_tags</span><span class="p">,</span>
@@ -782,10 +760,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">push_button_tag_filter</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">popUp</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlugFilter.update_tags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.PlugFilter.update_tags">[docs]</a>    <span class="k">def</span> <span class="nf">update_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the list of visualized tags</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the list of visualized tags.&quot;&quot;&quot;</span>
 
         <span class="n">dialog</span> <span class="o">=</span> <span class="n">QDialog</span><span class="p">()</span>
         <span class="n">visualized_tags</span> <span class="o">=</span> <span class="n">PopUpVisualizedTags</span><span class="p">(</span>
@@ -824,26 +799,13 @@
 
 
 <div class="viewcode-block" id="FilterWidget"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget">[docs]</a><span class="k">class</span> <span class="nc">FilterWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Filter widget used on a Input_Filter process</span>
+    <span class="sd">&quot;&quot;&quot;Filter widget used on a Input_Filter process.</span>
 
 <span class="sd">    The widget displays a browser with the selected files of the database,</span>
 <span class="sd">    a rapid search and an advanced search to filter these files. Once the</span>
 <span class="sd">    filtering is done, the filter is saved in the process.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - advanced_search: advanced search widget to build a complex filter</span>
-<span class="sd">        - main_window: parent main window</span>
-<span class="sd">        - process: process instance of the selected node</span>
-<span class="sd">        - project: current project in the software</span>
-<span class="sd">        - node: instance of the corresponding Input_Filter node</span>
-<span class="sd">        - node_controller: parent node controller</span>
-<span class="sd">        - rapid_search: rapid search widget to build a simple filter</span>
-<span class="sd">        - scan_list: list of database files to filter</span>
-<span class="sd">        - table_data: browser that displays the database files to filter</span>
-<span class="sd">        - visible_tags: tags that are visible in the current project</span>
-
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - update_tag_to_filter: update the tag to Filter</span>
 <span class="sd">        - update_tags: update the list of visualized tags</span>
 <span class="sd">        - reset_search_bar: reset the search bar of the rapid search</span>
@@ -854,8 +816,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FilterWidget.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialization of the Filter Widget</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the Filter Widget.</span>
 
 <span class="sd">        :param project: current project in the software</span>
 <span class="sd">        :param node_name: name of the current node</span>
@@ -919,6 +880,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layout_view</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FilterWidget.layout_view"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.layout_view">[docs]</a>    <span class="k">def</span> <span class="nf">layout_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the layout.&quot;&quot;&quot;</span>
 
         <span class="n">sources_images_dir</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">getSourceImageDir</span><span class="p">()</span>
 
@@ -964,10 +926,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumHeight</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterWidget.ok_clicked"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.ok_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">ok_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the filter to the process and closes the widget</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the filter to the process and closes the widget.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">ProcessMIA</span><span class="p">):</span>
             <span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span>
              <span class="n">values</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">nots</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">get_filters</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -979,10 +938,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FilterWidget.reset_search_bar"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.reset_search_bar">[docs]</a>    <span class="k">def</span> <span class="nf">reset_search_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset the search bar of the rapid search</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset the search bar of the rapid search.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rapid_search</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advanced_search</span><span class="o">.</span><span class="n">show_search</span><span class="p">()</span>
@@ -994,8 +950,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scan_list</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterWidget.search_str"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.search_str">[docs]</a>    <span class="k">def</span> <span class="nf">search_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_search</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the files to display in the browser</span>
+        <span class="sd">&quot;&quot;&quot;Update the files to display in the browser.</span>
 
 <span class="sd">        :param str_search: string typed in the rapid search</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1029,10 +984,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">update_visualized_rows</span><span class="p">(</span><span class="n">old_scan_list</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterWidget.set_output_value"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.set_output_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_output_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the output of the filter to the output of the node</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the output of the filter to the output of the node.&quot;&quot;&quot;</span>
 
         <span class="n">result_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="nb">filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">get_current_filter</span><span class="p">()</span>
@@ -1055,10 +1007,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">set_plug_value</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">result_files</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterWidget.update_tag_to_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.update_tag_to_filter">[docs]</a>    <span class="k">def</span> <span class="nf">update_tag_to_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the tag to Filter</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the tag to Filter.&quot;&quot;&quot;</span>
 
         <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible_tags</span><span class="p">,</span>
                                           <span class="bp">self</span><span class="o">.</span><span class="n">push_button_tag_filter</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
@@ -1066,10 +1015,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">push_button_tag_filter</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterWidget.update_tags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.node_controller.FilterWidget.update_tags">[docs]</a>    <span class="k">def</span> <span class="nf">update_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the list of visualized tags</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the list of visualized tags.&quot;&quot;&quot;</span>
 
         <span class="n">dialog</span> <span class="o">=</span> <span class="n">QDialog</span><span class="p">()</span>
         <span class="n">visualized_tags</span> <span class="o">=</span> <span class="n">PopUpVisualizedTags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible_tags</span><span class="p">)</span>

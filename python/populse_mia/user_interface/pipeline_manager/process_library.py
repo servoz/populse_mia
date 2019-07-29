@@ -231,7 +231,7 @@ class InstallProcesses(QDialog):
     """A widget that allows to browse a Python package or a zip file to install
        the processes that it is containing.
 
-    Methods:
+    .. Methods:
         - get_filename: opens a file dialog to get the folder or zip file to
           install
         - install: installs the selected file/folder on Populse_MIA
@@ -303,9 +303,7 @@ class InstallProcesses(QDialog):
             self.path_edit.setText(filename[0])
 
     def install(self):
-        """
-        Installs the selected file/folder on Populse_MIA
-        """
+        """Install a package from a zip file or a folder"""
 
         def add_package(proc_dic, module_name):
             """
@@ -508,7 +506,8 @@ class InstallProcesses(QDialog):
                         member.split(os.sep)[-1])]
 
             elif os.path.isdir(
-                    filename):  # !!! careful: if filename is not a zip file,
+                    filename):
+                # !!! careful: if filename is not a zip file,
                 # filename must be a directory
                 # that contains only the package(s) to install!!!
                 packages_name = [os.path.basename(filename)]
@@ -677,7 +676,7 @@ class ProcessLibraryWidget(QWidget):
     """
     Widget that handles the available Capsul's processes in the software
 
-    Methods:
+    .. Methods:
         - load_config: read the config in process_config.yml and return it as
           a dictionary
         - load_packages: sets packages and paths to the widget and to the
@@ -971,7 +970,7 @@ class PackageLibrary(QTreeWidget):
     Tree that displays the user-added packages and their modules
     The user can check or not each module/package
 
-    Methods:
+    .. Methods:
         - update_checks: updates the checks of the tree from an item
         - set_module_view: sets if a module has to be enabled or disabled in
           the process library
@@ -1162,7 +1161,7 @@ class PackageLibraryDialog(QDialog):
     """
     Dialog that controls which processes to show in the process library
 
-    Methods:
+    .. Methods:
         - load_config: updates the config and loads the corresponding packages
         - update_config: updates the process_config and package_library
           attributes
@@ -1691,7 +1690,7 @@ class ProcessLibrary(QTreeView):
         - dictionary: dictionary corresponding to the tree
         - _model: model used
 
-    Methods:
+    .. Methods:
         - load_dictionary: loads a dictionary to the tree
         - to_dict: returns a dictionary from the current tree
 

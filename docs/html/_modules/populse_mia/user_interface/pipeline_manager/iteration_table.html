@@ -68,7 +68,7 @@
 <div class="viewcode-block" id="IterationTable"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable">[docs]</a><span class="k">class</span> <span class="nc">IterationTable</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Widget that handles pipeline iteration.</span>
 
-<span class="sd">    Methods:</span>
+<span class="sd">    .. Methods:</span>
 <span class="sd">        - add_tag: adds a tag to visualize in the iteration table</span>
 <span class="sd">        - emit_iteration_table_updated: emits a signal when the iteration</span>
 <span class="sd">           scans have been updated</span>
@@ -88,7 +88,7 @@
 
 <div class="viewcode-block" id="IterationTable.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">scan_list</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialization of the IterationTable widget</span>
+<span class="sd">        Initialization of the IterationTable widget.</span>
 
 <span class="sd">        :param project: current project in the software</span>
 <span class="sd">        :param scan_list: list of the selected database files</span>
@@ -97,7 +97,7 @@
 
         <span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="c1">#Necessary for using MIA bricks</span>
+        <span class="c1"># Necessary for using MIA bricks</span>
         <span class="n">ProcessMIA</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -194,10 +194,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="IterationTable.emit_iteration_table_updated"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.emit_iteration_table_updated">[docs]</a>    <span class="k">def</span> <span class="nf">emit_iteration_table_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Emit a signal when the iteration scans have been updated</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Emit a signal when the iteration scans have been updated.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_box_iterate</span><span class="o">.</span><span class="n">checkState</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;scans&#39;</span><span class="p">):</span>
@@ -211,11 +208,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fill values_list depending on the visualized tags</span>
 
-<span class="sd">        :param idx:</span>
+<span class="sd">        :param idx: Index of the tag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="sd">&quot;&quot;&quot; Method that fills the values list when a tag is added</span>
-<span class="sd">        or removed. &quot;&quot;&quot;</span>
         <span class="n">tag_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
@@ -289,10 +283,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="IterationTable.select_iteration_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.select_iteration_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_iteration_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Open a pop-up to let the user select on which tag to iterate</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Open a pop-up to let the user select on which tag to iterate.&quot;&quot;&quot;</span>
 
         <span class="n">ui_select</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
@@ -303,7 +294,7 @@
 
 <div class="viewcode-block" id="IterationTable.select_visualized_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.select_visualized_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_visualized_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open a pop-up to let the user select which tag to visualize in the</span>
-<span class="sd">           iteration table</span>
+<span class="sd">        iteration table.</span>
 
 <span class="sd">        :param idx: index of the clicked push button</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -319,7 +310,7 @@
 
 <div class="viewcode-block" id="IterationTable.update_iterated_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.update_iterated_tag">[docs]</a>    <span class="k">def</span> <span class="nf">update_iterated_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the widget when the iterated tag is modified</span>
+<span class="sd">        Update the widget when the iterated tag is modified.</span>
 
 <span class="sd">        :param tag_name: name of the iterated tag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -355,7 +346,7 @@
 
 <div class="viewcode-block" id="IterationTable.update_table"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.iteration_table.IterationTable.update_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the iteration table</span>
+<span class="sd">        Update the iteration table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 

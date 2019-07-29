@@ -36,7 +36,7 @@ class ProcessMIA(Process):
 
    This class is mainly used by MIA bricks.
 
-    Methods:
+    .. Methods:
         - _after_run_process: method called after the process being run
         - _before_run_process: method called before running the process
         - get_brick_to_update: give the brick to update given the scan list

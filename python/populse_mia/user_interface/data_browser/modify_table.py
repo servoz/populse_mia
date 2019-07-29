@@ -4,7 +4,7 @@ Module to handle updates of the databrowser table after modifications.
 
 Contains:
     Class:
-        - CountTable
+        - ModifyTable
 """
 
 ##########################################################################
@@ -38,7 +38,7 @@ class ModifyTable(QDialog):
     databrowser tab, a popup will appear to help the user to change the
     content of the cell.
 
-    Methods:
+    .. Methods:
         - fill_table: fill the table
         - update_table_values: update the table in the database
     """

@@ -23,7 +23,7 @@ class ClickableLabel(QLabel):
     """
     QLabel with a clicked signal
 
-    Methods:
+    .. Methods:
         - mousePressEvent: overrides the mousePressEvent method by emitting
           the clicked signal
     """
