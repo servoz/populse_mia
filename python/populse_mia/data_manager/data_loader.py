@@ -6,7 +6,7 @@ Contains:
         -ImportProgress : Inherit from QProgressDialog and handle the
         progress bar
         -ImportWorker : Inherit from QThread and manage the threads
-    .. Methods:
+     Functions:
         -read_log : Show the evolution of the progress bar and returns its
         feedback
         -tags_from_file : Returns a list of [tag, value] contained in a Json
@@ -181,7 +181,8 @@ class ImportWorker(QThread):
                 documents[file_database_path][TAG_FILENAME] = \
                     file_database_path
 
-                #print('\ntags_from_file(file_name, path_name): ', tags_from_file(file_name, path_name))
+                #print('\ntags_from_file(file_name, path_name): ', tags_
+                # from_file(file_name, path_name))
                 
                 # For each tag in each scan 
                 for tag in tags_from_file(file_name, path_name):
@@ -392,6 +393,7 @@ class ImportWorker(QThread):
         # pr.print_stats(sort='time')
         # prof.print_stats()
 
+
 def read_log(project, main_window):
     """Show the evolution of the progress bar and returns its feedback, a list
     of the paths to each data file that was loaded.
@@ -409,15 +411,6 @@ def read_log(project, main_window):
         scans_added = list(main_window.progress.worker.scans_added)
     return scans_added
 
-
-# def save_project(project):
-#     """
-#     Saves the modifications of the project
-#
-#     :param project: current project in the software
-#     """
-#
-#     project.saveModifications()
 
 def tags_from_file(file_path, path):
     """Return a list of [tag, value] contained in a Json file.

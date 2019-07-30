@@ -50,6 +50,7 @@ from populse_mia.software_properties import verCmp
 
 unicode = str
 
+
 class PipelineEditor(PipelineDevelopperView):
     """View to edit a pipeline graphically.
 

@@ -37,10 +37,10 @@
 <span class="sd">pop-up in the config.yml file.</span>
 
 <span class="sd">:Contains:</span>
-<span class="sd">    :Function:</span>
-<span class="sd">        - verCmp</span>
 <span class="sd">    :Class:</span>
 <span class="sd">        - Config</span>
+<span class="sd">    :Function:</span>
+<span class="sd">        - verCmp</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -458,7 +458,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;paths&quot;</span><span class="p">][</span><span class="s2">&quot;projects&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Config.getSourceImageDir"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.software_properties.Config.getSourceImageDir">[docs]</a>    <span class="k">def</span> <span class="nf">getSourceImageDir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the source directory for project images&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the source directory for project images.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_image_dir&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Config.getShowAllSlices"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.software_properties.Config.getShowAllSlices">[docs]</a>    <span class="k">def</span> <span class="nf">getShowAllSlices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -691,7 +691,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Config.setSourceImageDir"><a class="viewcode-back" href="../../populse_mia.html#populse_mia.software_properties.Config.setSourceImageDir">[docs]</a>    <span class="k">def</span> <span class="nf">setSourceImageDir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_image_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the source directory for project images&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the source directory for project images.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_image_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_image_dir</span>
         <span class="c1"># Then save the modification</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saveConfig</span><span class="p">()</span></div>

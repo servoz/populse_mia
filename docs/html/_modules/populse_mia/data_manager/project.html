@@ -334,7 +334,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Project.getFilter"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project.getFilter">[docs]</a>    <span class="k">def</span> <span class="nf">getFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a Filter object from its name</span>
+        <span class="sd">&quot;&quot;&quot;Return a Filter object from its name.</span>
 
 <span class="sd">        :param filter: Filter name</span>
 <span class="sd">        :returns: Filter object</span>
@@ -374,7 +374,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;sorted_tag&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Project.getSortOrder"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project.getSortOrder">[docs]</a>    <span class="k">def</span> <span class="nf">getSortOrder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the sort order of the project.</span>
+        <span class="sd">&quot;&quot;&quot;Return the sort order of the project.</span>
 
 <span class="sd">        :returns: string of the sort order of the project if it&#39;s not Unnamed</span>
 <span class="sd">        project, otherwise empty string</span>
@@ -878,6 +878,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">unsavedModifications</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setter for _unsavedModifications.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unsavedModifications</span>
 
     <span class="nd">@unsavedModifications</span><span class="o">.</span><span class="n">setter</span>
@@ -898,6 +899,7 @@
 
 <div class="viewcode-block" id="Project.unsaveModifications"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project.unsaveModifications">[docs]</a>    <span class="k">def</span> <span class="nf">unsaveModifications</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Unsave the pending operations of the project.&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">unsave_modifications</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unsavedModifications</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>

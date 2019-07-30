@@ -191,6 +191,7 @@ class DatabaseMIA(Database):
             metadata.create_all(engine)
             return engine
 
+
 class DatabaseSessionMIA(DatabaseSession):
     """Class overriding the database session of populse_db
 
@@ -204,7 +205,7 @@ class DatabaseSessionMIA(DatabaseSession):
 
     def add_collection(self, name, primary_key, visibility, origin, unit,
                        default_value):
-        """Override the method adding a collection of populse_db
+        """Override the method adding a collection of populse_db.
 
         :param name: New collection name
         :param primary_key: New collection primary_key column
@@ -271,7 +272,7 @@ class DatabaseSessionMIA(DatabaseSession):
     def add_field(self, collection, name, field_type, description,
                   visibility, origin, unit, default_value,
                   index=False, flush=True):
-        """Add a field to the database, if it does not already exist
+        """Add a field to the database, if it does not already exist.
 
         :param collection: field collection (str)
         :param name: field name (str)
@@ -379,7 +380,7 @@ class DatabaseSessionMIA(DatabaseSession):
         self.unsaved_modifications = True
 
     def add_fields(self, fields):
-        """Add the list of fields
+        """Add the list of fields.
 
         :param fields: list of fields (collection, name, type, description,
         visibility, origin, unit, default_value)
@@ -404,7 +405,7 @@ class DatabaseSessionMIA(DatabaseSession):
             self._DatabaseSession__refresh_cache_documents(collection)
 
     def get_shown_tags(self):
-        """Give the list of visible tags
+        """Give the list of visible tags.
 
         :returns: the list of visible tags
         """
@@ -419,7 +420,7 @@ class DatabaseSessionMIA(DatabaseSession):
         return visible_names
 
     def set_shown_tags(self, field_showed):
-        """Set the list of visible tags
+        """Set the list of visible tags.
 
         :param field_showed: list of visible tags
         """

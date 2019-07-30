@@ -55,8 +55,8 @@ from capsul.api import get_process_instance
 from datetime import datetime
 
 
-
 class TestMIAPipelineManager(unittest.TestCase):
+    """Tests for the pipeline manager tab."""
 
     def setUp(self):
         """
@@ -1067,7 +1067,7 @@ class TestMIAPipelineManager(unittest.TestCase):
 
 
 class TestMIADataBrowser(unittest.TestCase):
-
+    """Tests for the data browser tab"""
     def setUp(self):
         """
         Called before each test

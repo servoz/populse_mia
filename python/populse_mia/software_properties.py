@@ -5,10 +5,10 @@ Load and save the parameters from the miniviewer and the MIA preferences
 pop-up in the config.yml file.
 
 :Contains:
-    :Function:
-        - verCmp
     :Class:
         - Config
+    :Function:
+        - verCmp
 
 """
 
@@ -426,7 +426,7 @@ class Config:
         return self.config["paths"]["projects"]
 
     def getSourceImageDir(self):
-        """Get the source directory for project images"""
+        """Get the source directory for project images."""
         return self.config["source_image_dir"]
 
     def getShowAllSlices(self):
@@ -659,7 +659,7 @@ class Config:
         self.saveConfig()
 
     def setSourceImageDir(self, source_image_dir):
-        """Set the source directory for project images"""
+        """Set the source directory for project images."""
         self.config["source_image_dir"] = source_image_dir
         # Then save the modification
         self.saveConfig()

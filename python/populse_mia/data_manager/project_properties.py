@@ -31,9 +31,10 @@ class SavedProjects:
         - addSavedProject: adds a new saved project
         - loadSavedProjects: loads the dictionary from the saved_projects.yml
         file
+        - removeSavedProject: removes a saved project from the config file
         - saveSavedProjects: saves the dictionary to the saved_projects.yml
         file
-        - removeSavedProject: removes a saved project from the config file
+
 
     """
 
@@ -60,7 +61,7 @@ class SavedProjects:
 
     def addSavedProject(self, newPath):
         """Add a new project to save in the savedProjects and pathsList
-           attributes.
+        attributes.
 
         Finally, save the savedProjects attribute in the saved_projects.yml
         file.
@@ -69,7 +70,7 @@ class SavedProjects:
 
         :returns: the new path's list (pathsList attribute)
 
-        """""
+        """
         if self.pathsList:
             
             if newPath not in self.pathsList:
@@ -119,18 +120,6 @@ class SavedProjects:
 
                 return {'paths' : []}
 
-    def saveSavedProjects(self):
-        """Saves the savedProjects dictionary to the saved_projects.yml file.
-
-        """
-        config = Config()
-        
-        with (open(os.path.join(config.get_mia_path(), 'properties',
-                                'saved_projects.yml'), 'w', encoding='utf8')
-              ) as configfile:
-            yaml.dump(self.savedProjects, configfile,
-                      default_flow_style=False, allow_unicode=True)
-
     def removeSavedProject(self, path):
         """Removes a saved project from the saved_projects.yml file.
 
@@ -143,3 +132,14 @@ class SavedProjects:
 
         self.saveSavedProjects()
 
+    def saveSavedProjects(self):
+        """Saves the savedProjects dictionary to the saved_projects.yml
+        file."""
+
+        config = Config()
+        
+        with (open(os.path.join(config.get_mia_path(), 'properties',
+                                'saved_projects.yml'), 'w', encoding='utf8')
+              ) as configfile:
+            yaml.dump(self.savedProjects, configfile,
+                      default_flow_style=False, allow_unicode=True)

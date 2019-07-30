@@ -23,7 +23,7 @@ from populse_mia.data_manager import project
 
 class Filter:
     """Class that represent a Filter, containing the results of both rapid and
-      advanced search
+      advanced search.
 
     .. Methods:
         - generate_filter: apply the filter to the given list of scans
@@ -70,7 +70,7 @@ class Filter:
         self.name = name
 
     def generate_filter(self, current_project, scans, tags):
-        """Apply the filter to the given list of scans
+        """Apply the filter to the given list of scans.
 
         :param current_project: Current project
         :param scans: List of scans to apply the filter into
@@ -95,7 +95,7 @@ class Filter:
         return final_result
 
     def json_format(self):
-        """Return the filter as a dictionary
+        """Return the filter as a dictionary.
 
         :returns: the filter as a dictionary
         """

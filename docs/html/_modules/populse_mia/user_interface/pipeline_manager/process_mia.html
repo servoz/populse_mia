@@ -32,6 +32,7 @@
   <h1>Source code for populse_mia.user_interface.pipeline_manager.process_mia</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module used by MIA bricks to run processes.</span>
 
 <span class="sd">:Contains:</span>
 <span class="sd">    :Class:</span>
@@ -162,13 +163,11 @@
         <span class="k">return</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.list_outputs"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.list_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the outputs of the process&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Override the outputs of the process.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.manage_brick_after_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_after_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Manages the brick history after the run (Done status)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Manages the brick history after the run (Done status).&quot;&quot;&quot;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
             <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
@@ -180,9 +179,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_after_run</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.manage_brick_before_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_before_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates process history, before running the process</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Updates process history, before running the process.&quot;&quot;&quot;</span>
 
         <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
@@ -195,8 +192,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">manage_brick_output_before_run</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.manage_brick_output_after_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_output_after_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_output_after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Manages the bricks history before the run</span>
+        <span class="sd">&quot;&quot;&quot;Manages the bricks history before the run.</span>
 
 <span class="sd">        :param output_value: output value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -209,8 +205,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.manage_brick_output_before_run"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_brick_output_before_run">[docs]</a>    <span class="k">def</span> <span class="nf">manage_brick_output_before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Manages the bricks history before the run</span>
+        <span class="sd">&quot;&quot;&quot;Manages the bricks history before the run.</span>
 
 <span class="sd">        :param output_value: output value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -226,7 +221,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.manage_matlab_launch_parameters"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.manage_matlab_launch_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">manage_matlab_launch_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the Matlab&#39;s config parameters when a Nipype process is used</span>
+        <span class="sd">&quot;&quot;&quot;Set the Matlab&#39;s config parameters when a Nipype process is used.</span>
 
 <span class="sd">        Called in bricks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -238,8 +233,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">mfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mfile</span></div>
 
 <div class="viewcode-block" id="ProcessMIA.remove_brick_output"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_mia.ProcessMIA.remove_brick_output">[docs]</a>    <span class="k">def</span> <span class="nf">remove_brick_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Removes the bricks from the outputs</span>
+        <span class="sd">&quot;&quot;&quot;Removes the bricks from the outputs.</span>
 
 <span class="sd">        :param output: output</span>
 <span class="sd">        :param brick: brick</span>

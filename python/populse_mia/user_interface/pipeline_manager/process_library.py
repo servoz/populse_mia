@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*- #
-"""
-Module that contains class and methods to process the different libraries of
-  the project
+"""Module that contains class and methods to process the different libraries of
+the project
 
 :Contains:
     :Class:
@@ -42,7 +41,7 @@ from datetime import datetime
 import distutils.dir_util
 import traceback
 
-# PyQt5 import # TO REMOVE
+# PyQt5 import
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSortFilterProxyModel
 
@@ -64,9 +63,10 @@ from capsul.api import get_process_instance
 
 
 class DictionaryTreeModel(QAbstractItemModel):
-    """Data model providing a tree of an arbitrary dictionary"""
+    """Data model providing a tree of an arbitrary dictionary."""
 
     def __init__(self, root, parent=None):
+        """Initialization of the DictionaryTreeModel class."""
         super(DictionaryTreeModel, self).__init__(parent)
         self._rootNode = root
 
@@ -83,7 +83,7 @@ class DictionaryTreeModel(QAbstractItemModel):
         return mimedata
 
     def rowCount(self, parent):
-        """the number of rows is the number of children"""
+        """The number of rows is the number of children."""
         if not parent.isValid():
             parentNode = self._rootNode
         else:
@@ -92,11 +92,11 @@ class DictionaryTreeModel(QAbstractItemModel):
         return parentNode.childCount()
 
     def columnCount(self, parent):
-        """Number of columns is always 1 """
+        """Number of columns is always 1."""
         return 1
 
     def data(self, index, role):
-        """returns the data requested by the view"""
+        """Returns the data requested by the view."""
         if not index.isValid():
             return None
 
@@ -106,7 +106,7 @@ class DictionaryTreeModel(QAbstractItemModel):
             return node.name
 
     def setData(self, index, value, role=Qt.EditRole):
-        """This method gets called when the user changes data"""
+        """This method gets called when the user changes data."""
         if index.isValid():
             if role == Qt.EditRole:
                 node = index.internalPointer()
@@ -115,7 +115,7 @@ class DictionaryTreeModel(QAbstractItemModel):
         return False
 
     def headerData(self, section, orientation, role):
-        """Return the name of the requested column"""
+        """Return the name of the requested column."""
         if role == Qt.DisplayRole:
             if section == 0:
                 return "Packages"
@@ -124,7 +124,7 @@ class DictionaryTreeModel(QAbstractItemModel):
 
     def flags(self, index):
         """Everything is enable and selectable. Only the leaves can be
-           dragged. """
+        dragged. """
         node = index.internalPointer()
         if node.childCount() > 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
@@ -132,7 +132,7 @@ class DictionaryTreeModel(QAbstractItemModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
 
     def parent(self, index):
-        """Return the parent from given index"""
+        """Return the parent from given index."""
         node = self.getNode(index)
         parentNode = node.parent()
         if parentNode == self._rootNode:
@@ -141,7 +141,7 @@ class DictionaryTreeModel(QAbstractItemModel):
         return self.createIndex(parentNode.row(), 0, parentNode)
 
     def index(self, row, column, parent):
-        """Return an index from given row, column and parent"""
+        """Return an index from given row, column and parent."""
         parentNode = self.getNode(parent)
         childItem = parentNode.child(row)
 
@@ -151,7 +151,7 @@ class DictionaryTreeModel(QAbstractItemModel):
             return QModelIndex()
 
     def getNode(self, index):
-        """Return a Node() from given index"""
+        """Return a Node() from given index."""
         if index.isValid():
             node = index.internalPointer()
             if node:
@@ -160,7 +160,7 @@ class DictionaryTreeModel(QAbstractItemModel):
         return self._rootNode
 
     def insertRows(self, position, rows, parent=QModelIndex()):
-        """Insert rows from starting position and number given by rows"""
+        """Insert rows from starting position and number given by rows."""
         parentNode = self.getNode(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
 
@@ -173,7 +173,7 @@ class DictionaryTreeModel(QAbstractItemModel):
         return success
 
     def removeRows(self, position, rows, parent=QModelIndex()):
-        """Remove the rows from position to position+rows"""
+        """Remove the rows from position to position+rows."""
         parentNode = self.getNode(parent)
         self.beginRemoveRows(parent, position, position + rows - 1)
 
@@ -189,7 +189,7 @@ class DictionaryTreeModel(QAbstractItemModel):
 
 class FileFilterProxyModel(QSortFilterProxyModel):
     """Just a test for the moment. Should be useful to use in
-       the file dialog. """
+       the file dialog."""
 
     def __init__(self):
         super(FileFilterProxyModel, self).__init__()
@@ -229,7 +229,10 @@ class FileFilterProxyModel(QSortFilterProxyModel):
 
 class InstallProcesses(QDialog):
     """A widget that allows to browse a Python package or a zip file to install
-       the processes that it is containing.
+    the processes that it is containing.
+
+    :param main_window: current main window
+    :param folder: boolean, True if folder, False if zip
 
     .. Methods:
         - get_filename: opens a file dialog to get the folder or zip file to
@@ -240,6 +243,11 @@ class InstallProcesses(QDialog):
     process_installed = Signal()
 
     def __init__(self, main_window, folder):
+        """Initialize the InstallProcesses class.
+
+        :param main_window: current main window
+        :param folder: boolean, True if folder, False if zip
+        """
         super(InstallProcesses, self).__init__(parent=main_window)
 
         self.setWindowTitle('Install processes')
@@ -278,11 +286,10 @@ class InstallProcesses(QDialog):
             lambda: self.get_filename(folder=folder))
 
     def get_filename(self, folder):
-        """
-        Opens a file dialog to get the folder or zip file to install
+        """Open a file dialog to get the folder or zip file to install.
 
-        :param folder: True if the dialog installs from folder,
-          False if from zip file
+        :param folder: True if the dialog installs from folder, False if
+        from zip file
         """
         if folder is True:
             filename = QFileDialog.getExistingDirectory(
@@ -303,11 +310,10 @@ class InstallProcesses(QDialog):
             self.path_edit.setText(filename[0])
 
     def install(self):
-        """Install a package from a zip file or a folder"""
+        """Install a package from a zip file or a folder."""
 
         def add_package(proc_dic, module_name):
-            """
-            Adds a package and its modules to the package tree
+            """Add a package and its modules to the package tree.
 
             :param proc_dic: the process tree-dictionary
             :param module_name: name of the module
@@ -384,12 +390,12 @@ class InstallProcesses(QDialog):
                 return proc_dic
 
         def change_pattern_in_folder(path, old_pattern, new_pattern):
-            """Changing all "old_pattern" pattern to "new_pattern" in the "path"
-              folder
+            """Changing all "old_pattern" pattern to "new_pattern" in the
+            "path" folder.
+
             :param path: path of the extracted or copied processes
             :param old_pattern: old pattern
             :param new_pattern: new pattern
-            :return:
             """
             for dname, dirs, files in os.walk(path):
 
@@ -674,24 +680,27 @@ class InstallProcesses(QDialog):
 
 class ProcessLibraryWidget(QWidget):
     """
-    Widget that handles the available Capsul's processes in the software
+    Widget that handles the available Capsul's processes in the software.
+
+    :param main_window: current main window
 
     .. Methods:
         - load_config: read the config in process_config.yml and return it as
-          a dictionary
+        a dictionary
         - load_packages: sets packages and paths to the widget and to the
-          system paths
+        system paths
         - open_pkg_lib: opens the package library
         - save_config: saves the current config to process_config.yml
         - update_config: updates the config and loads the corresponding
-          packages
+        packages
         - update_process_library: updates the tree of the process library
 
     """
 
     def __init__(self, main_window=None):
-        """
-        Initializes the ProcessLibraryWidget
+        """Initialize the ProcessLibraryWidget.
+
+        :param main_window: current main window
         """
 
         super(ProcessLibraryWidget, self).__init__(parent=main_window)
@@ -732,37 +741,9 @@ class ProcessLibraryWidget(QWidget):
         self.pkg_library = PackageLibraryDialog(parent=self.main_window)
         self.pkg_library.signal_save.connect(self.update_process_library)
 
-    def update_config(self):
-        """
-        Updates the config and loads the corresponding packages
-
-        """
-
-        self.process_config = self.load_config()
-        self.load_packages()
-
-    def update_process_library(self):
-        """
-        Updates the tree of the process library
-
-        """
-
-        self.update_config()
-        self.process_library.package_tree = self.packages
-        self.process_library.load_dictionary(self.packages)
-
-    def open_pkg_lib(self):
-        """
-        Opens the package library
-
-        """
-
-        self.pkg_library.show()
-
     @staticmethod
     def load_config():
-        """
-        Read the config in process_config.yml and return it as a dictionary
+        """Read the config in process_config.yml and return it as a dictionary.
 
         :return: the config as a dictionary
         """
@@ -787,10 +768,7 @@ class ProcessLibraryWidget(QWidget):
                 print(exc)
 
     def load_packages(self):
-        """
-        Sets packages and paths to the widget and to the system paths
-
-        """
+        """Set packages and paths to the widget and to the system paths."""
 
         try:
             self.packages = self.process_config["Packages"]
@@ -812,11 +790,13 @@ class ProcessLibraryWidget(QWidget):
             if os.path.abspath(path) not in sys.path:
                 sys.path.append(os.path.abspath(path))
 
-    def save_config(self):
-        """
-        Saves the current config to process_config.yml
+    def open_pkg_lib(self):
+        """Open the package library."""
 
-        """
+        self.pkg_library.show()
+
+    def save_config(self):
+        """Save the current config to process_config.yml."""
 
         config = Config()
 
@@ -827,6 +807,19 @@ class ProcessLibraryWidget(QWidget):
                 as stream:
             yaml.dump(self.process_config, stream, default_flow_style=False,
                       allow_unicode=True)
+
+    def update_config(self):
+        """Update the config and loads the corresponding packages."""
+
+        self.process_config = self.load_config()
+        self.load_packages()
+
+    def update_process_library(self):
+        """Update the tree of the process library."""
+
+        self.update_config()
+        self.process_library.package_tree = self.packages
+        self.process_library.load_dictionary(self.packages)
 
 
 class Node(object):
@@ -1158,23 +1151,22 @@ class PackageLibrary(QTreeWidget):
 
 
 class PackageLibraryDialog(QDialog):
-    """
-    Dialog that controls which processes to show in the process library
+    """Dialog that controls which processes to show in the process library.
 
     .. Methods:
-        - load_config: updates the config and loads the corresponding packages
-        - update_config: updates the process_config and package_library
-          attributes
-        - load_packages: updates the tree of the process library
-        - save_config: saves the current config to process_config.yml
-        - browse_package: opens a browser to select a package
         - add_package_with_text: adds a package from the line edit's text
         - add_package: adds a package and its modules to the package tree
+        - browse_package: opens a browser to select a package
+        - import_file: import a python module from a path
+        - load_config: updates the config and loads the corresponding packages
+        - load_packages: updates the tree of the process library
+        - remove_package: removes a package from the package tree
         - remove_package_with_text: removes the package in the line edit from
           the package tree
-        - remove_package: removes a package from the package tree
         - save: saves the tree to the process_config.yml file
-        - import_file: import a python module from a path
+        - save_config: saves the current config to process_config.yml
+        - update_config: updates the process_config and package_library
+          attributes
     """
 
     signal_save = Signal()
@@ -1262,8 +1254,7 @@ class PackageLibraryDialog(QDialog):
 
     def add_package(self, module_name, class_name=None, show_error=False,
                     init_package_tree=False):
-        """
-        Adds a package and its modules to the package tree
+        """Add a package and its modules to the package tree.
 
         :param module_name: name of the module
         :param class_name: name of the class
@@ -1393,9 +1384,8 @@ class PackageLibraryDialog(QDialog):
             return 'No package selected!'
 
     def add_package_with_text(self):
-        """Adds a package from the line edit's text
+        """Add a package from the line edit's text."""
 
-        """
         if self.is_path:  # Currently the self.is_path = False
             # (Need to pass by the method browse_package to initialise to
             # True and the Browse button is commented.
@@ -1476,10 +1466,8 @@ class PackageLibraryDialog(QDialog):
                 msg.exec_()
 
     def browse_package(self):
-        """
-        Opens a browser to select a package
+        """Open a browser to select a package."""
 
-        """
         file_dialog = QFileDialog()
         file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
 
@@ -1500,8 +1488,7 @@ class PackageLibraryDialog(QDialog):
 
     @staticmethod
     def load_config():
-        """
-        Updates the config and loads the corresponding packages
+        """Update the config and loads the corresponding packages.
 
         :return: the config as a dictionary
         """
@@ -1521,10 +1508,8 @@ class PackageLibraryDialog(QDialog):
                 print(exc)
 
     def load_packages(self):
-        """
-        Updates the tree of the process library
+        """Update the tree of the process library."""
 
-        """
         try:
             self.packages = self.process_config["Packages"]
         except KeyError:
@@ -1540,10 +1525,8 @@ class PackageLibraryDialog(QDialog):
             self.paths = []
 
     def remove_package_with_text(self):
-        """
-        Removes the package in the line edit from the package tree
+        """Remove the package in the line edit from the package tree."""
 
-        """
         old_status = self.status_label.text()
         self.status_label.setText(
             "Removing {0}. Please wait.".format(self.line_edit.text()))
@@ -1558,8 +1541,7 @@ class PackageLibraryDialog(QDialog):
             self.status_label.setText(old_status)
 
     def remove_package(self, package):
-        """
-        Removes a package from the package tree
+        """Remove a package from the package tree.
 
         :param package: module's representation as a string
            (e.g.: nipype.interfaces.spm)
@@ -1613,10 +1595,7 @@ class PackageLibraryDialog(QDialog):
         return True
 
     def save(self):
-        """
-        Saves the tree to the process_config.yml file
-
-        """
+        """Save the tree to the process_config.yml file."""
         # Updating the packages and the paths according to the
         # package library tree
         self.packages = self.package_library.package_tree
@@ -1645,10 +1624,8 @@ class PackageLibraryDialog(QDialog):
         self.close()
 
     def save_config(self):
-        """
-        Saves the current config to process_config.yml
+        """Save the current config to process_config.yml."""
 
-        """
         config = Config()
         self.process_config["Packages"] = self.packages
         self.process_config["Paths"] = self.paths
@@ -1659,7 +1636,7 @@ class PackageLibraryDialog(QDialog):
                       allow_unicode=True)
 
     def update_config(self):
-        """Updates the process_config and package_library attributes."""
+        """Update the process_config and package_library attributes."""
         self.process_config = self.load_config()
         self.load_packages()
         self.package_library.package_tree = self.packages
@@ -1674,7 +1651,7 @@ class ProcessHelp(QWidget):
     """
 
     def __init__(self, process):
-        """ Generate the help.
+        """Generate the help.
 
          :param process: selected process
          """
@@ -1709,8 +1686,8 @@ class ProcessLibrary(QTreeView):
         """
         Loads a dictionary to the tree
 
-        :param d: dictionary to load. See the packages attribut in the
-          ProcessLibraryWidget class.
+        :param d: dictionary to load. See the packages attribute in the
+        ProcessLibraryWidget class.
         """
         self.dictionary = d
         self._nodes = node_structure_from_dict(d)
@@ -1719,10 +1696,9 @@ class ProcessLibrary(QTreeView):
         self.expandAll()
 
     def to_dict(self):
-        """
-        Returns a dictionary from the current tree
+        """Returns a dictionary from the current tree.
 
-        :return: the dictionary
+        :return: the dictionary of the tree
         """
         return self._model.to_dict()
 
@@ -1744,8 +1720,7 @@ class ProcessLibrary(QTreeView):
 
 
 def import_file(full_name, path):
-    """
-    Import a python module from a path. 3.4+ only.
+    """Import a python module from a path (3.4+ only).
 
     Does not call sys.modules[full_name] = path
 
@@ -1763,7 +1738,13 @@ def import_file(full_name, path):
 
 
 def node_structure_from_dict(datadict, parent=None, root_node=None):
-    """Return a hierarchical node stucture required by the TreeModel"""
+    """Return a hierarchical node stucture required by the TreeModel.
+
+    :param datadict: dictionary
+    :param parent: Parent of the node
+    :param root_node: Root of the node
+    """
+
     if not parent:
         root_node = Node('Root')
         parent = root_node
@@ -1796,7 +1777,7 @@ def node_structure_from_dict(datadict, parent=None, root_node=None):
 
             # if not list_name: list_name = [i for i in data.values()]
 
-            if (all(item == 'process_disabled' for item in list_name)):
+            if all(item == 'process_disabled' for item in list_name):
                 continue
 
             node = Node(name, parent)

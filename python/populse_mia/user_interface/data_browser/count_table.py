@@ -49,20 +49,20 @@ class CountTable(QDialog):
     all the tags values or not.
 
     .. Methods:
-        - refresh_layout: updates the layout of the widget
         - add_tag: adds a tag to visualize in the count table
+        - count_scans: counts the number of scans depending on the selected
+          tags and displays the result in the table
+        - fill_first_tags: fills the cells of the table corresponding to the
+          (n-1) first selected tags
+        - fill_headers: fills the headers of the table depending on the
+          selected tags
+        - fill_last_tag: fills the cells corresponding to the last selected tag
+        - fill_values: fill values_list depending on the visualized tags
+        - prepare_filter: prepares the filter in order to fill the count table
+        - refresh_layout: updates the layout of the widget
         - remove_tag: removes a tag to visualize in the count table
         - select_tag: opens a pop-up to select which tag to visualize in
           the count table
-        - fill_values: fill values_list depending on the visualized tags
-        - count_scans: counts the number of scans depending on the selected
-          tags and displays the result in the table
-        - fill_headers: fills the headers of the table depending on the
-          selected tags
-        - fill_first_tags: fills the cells of the table corresponding to the
-          (n-1) first selected tags
-        - fill_last_tag: fills the cells corresponding to the last selected tag
-        - prepare_filter: prepares the filter in order to fill the count table
 
     :Example:
 
@@ -184,26 +184,6 @@ class CountTable(QDialog):
         self.setLayout(self.v_box_final)
         self.refresh_layout()
 
-    def refresh_layout(self):
-        """
-        Updates the layout of the widget
-        """
-
-        self.h_box_top = QHBoxLayout()
-        self.h_box_top.setSpacing(10)
-        self.h_box_top.addWidget(self.label_tags)
-
-        for tag_label in self.push_buttons:
-            self.h_box_top.addWidget(tag_label)
-
-        self.h_box_top.addWidget(self.add_tag_label)
-        self.h_box_top.addWidget(self.remove_tag_label)
-        self.h_box_top.addWidget(self.push_button_count)
-        self.h_box_top.addStretch(1)
-
-        self.v_box_final.addLayout(self.h_box_top)
-        self.v_box_final.addWidget(self.table)
-
     def add_tag(self):
         """
         Adds a tag to visualize in the count table
@@ -215,62 +195,6 @@ class CountTable(QDialog):
         push_button.clicked.connect(lambda: self.select_tag(idx))
         self.push_buttons.insert(len(self.push_buttons), push_button)
         self.refresh_layout()
-
-    def remove_tag(self):
-        """
-        Removes a tag to visualize in the count table
-        """
-
-        push_button = self.push_buttons[-1]
-        push_button.deleteLater()
-        push_button = None
-        del self.push_buttons[-1]
-        del self.values_list[-1]
-        self.refresh_layout()
-
-    def select_tag(self, idx):
-        """
-        Opens a pop-up to select which tag to visualize in the count table
-
-        :param idx: the index of the selected push button
-        """
-
-        pop_up = PopUpSelectTagCountTable(
-            self.project,
-            self.project.session.get_fields_names(COLLECTION_CURRENT),
-            self.push_buttons[idx].text())
-        if pop_up.exec_():
-            if pop_up.selected_tag is not None:
-                self.push_buttons[idx].setText(pop_up.selected_tag)
-                self.fill_values(idx)
-
-    def fill_values(self, idx):
-        """
-        Fill values_list depending on the visualized tags
-
-        :param idx: index of the select tag
-        """
-
-        tag_name = self.push_buttons[idx].text()
-        values = []
-        for scan in self.project.session.get_documents_names(
-                COLLECTION_CURRENT):
-            current_value = self.project.session.get_value(
-                COLLECTION_CURRENT, scan, tag_name)
-            if current_value is not None:
-                values.append(current_value)
-
-        idx_to_fill = len(self.values_list)
-        while len(self.values_list) <= idx:
-            self.values_list.insert(idx_to_fill, [])
-            idx_to_fill += 1
-
-        if self.values_list[idx] is not None:
-            self.values_list[idx] = []
-
-        for value in values:
-            if value not in self.values_list[idx]:
-                self.values_list[idx].append(value)
 
     def count_scans(self):
         """Counts the number of scans depending on the selected tags and
@@ -310,40 +234,6 @@ class CountTable(QDialog):
         self.fill_last_tag()
 
         self.table.resizeColumnsToContents()
-
-    def fill_headers(self):
-        """
-        Fills the headers of the table depending on the selected tags
-        """
-
-        idx_end = 0
-        # Headers
-        for idx in range(len(self.values_list) - 1):
-            header_name = self.push_buttons[idx].text()
-            item = QTableWidgetItem()
-            item.setText(header_name)
-            self.table.setHorizontalHeaderItem(idx, item)
-            idx_end = idx
-
-        # idx_last_tag corresponds to the index of the (n-1)th tag
-        self.idx_last_tag = idx_end
-        last_tag = self.push_buttons[len(self.values_list) - 1].text()
-        last_tag_type = self.project.session.get_field(
-            COLLECTION_CURRENT, last_tag).type
-        for header_name in self.values_list[-1]:
-            idx_end += 1
-            item = QTableWidgetItem()
-            set_item_data(item, header_name, last_tag_type)
-            self.table.setHorizontalHeaderItem(idx_end, item)
-
-        # Adding a "Total" row and to count the scans
-        self.table.insertRow(self.nb_row)
-        item = QTableWidgetItem()
-        item.setText('Total')
-
-        item.setFont(self.font)
-
-        self.table.setVerticalHeaderItem(self.nb_row, item)
 
     def fill_first_tags(self):
         """Fills the cells of the table corresponding to the (n-1)
@@ -420,6 +310,40 @@ class CountTable(QDialog):
 
                 col_checked -= 1
 
+    def fill_headers(self):
+        """
+        Fills the headers of the table depending on the selected tags
+        """
+
+        idx_end = 0
+        # Headers
+        for idx in range(len(self.values_list) - 1):
+            header_name = self.push_buttons[idx].text()
+            item = QTableWidgetItem()
+            item.setText(header_name)
+            self.table.setHorizontalHeaderItem(idx, item)
+            idx_end = idx
+
+        # idx_last_tag corresponds to the index of the (n-1)th tag
+        self.idx_last_tag = idx_end
+        last_tag = self.push_buttons[len(self.values_list) - 1].text()
+        last_tag_type = self.project.session.get_field(
+            COLLECTION_CURRENT, last_tag).type
+        for header_name in self.values_list[-1]:
+            idx_end += 1
+            item = QTableWidgetItem()
+            set_item_data(item, header_name, last_tag_type)
+            self.table.setHorizontalHeaderItem(idx_end, item)
+
+        # Adding a "Total" row and to count the scans
+        self.table.insertRow(self.nb_row)
+        item = QTableWidgetItem()
+        item.setText('Total')
+
+        item.setFont(self.font)
+
+        self.table.setVerticalHeaderItem(self.nb_row, item)
+
     def fill_last_tag(self):
         """
         Fills the cells corresponding to the last selected tag
@@ -489,6 +413,34 @@ class CountTable(QDialog):
             item.setFont(self.font)
             self.table.setItem(self.nb_row, col, item)
 
+    def fill_values(self, idx):
+        """
+        Fill values_list depending on the visualized tags
+
+        :param idx: index of the select tag
+        """
+
+        tag_name = self.push_buttons[idx].text()
+        values = []
+        for scan in self.project.session.get_documents_names(
+                COLLECTION_CURRENT):
+            current_value = self.project.session.get_value(
+                COLLECTION_CURRENT, scan, tag_name)
+            if current_value is not None:
+                values.append(current_value)
+
+        idx_to_fill = len(self.values_list)
+        while len(self.values_list) <= idx:
+            self.values_list.insert(idx_to_fill, [])
+            idx_to_fill += 1
+
+        if self.values_list[idx] is not None:
+            self.values_list[idx] = []
+
+        for value in values:
+            if value not in self.values_list[idx]:
+                self.values_list[idx].append(value)
+
     @staticmethod
     def prepare_filter(couples):
         """
@@ -517,3 +469,51 @@ class CountTable(QDialog):
         query = "(" + query + ")"
 
         return query
+
+    def refresh_layout(self):
+        """
+        Updates the layout of the widget
+        """
+
+        self.h_box_top = QHBoxLayout()
+        self.h_box_top.setSpacing(10)
+        self.h_box_top.addWidget(self.label_tags)
+
+        for tag_label in self.push_buttons:
+            self.h_box_top.addWidget(tag_label)
+
+        self.h_box_top.addWidget(self.add_tag_label)
+        self.h_box_top.addWidget(self.remove_tag_label)
+        self.h_box_top.addWidget(self.push_button_count)
+        self.h_box_top.addStretch(1)
+
+        self.v_box_final.addLayout(self.h_box_top)
+        self.v_box_final.addWidget(self.table)
+
+    def remove_tag(self):
+        """
+        Removes a tag to visualize in the count table
+        """
+
+        push_button = self.push_buttons[-1]
+        push_button.deleteLater()
+        push_button = None
+        del self.push_buttons[-1]
+        del self.values_list[-1]
+        self.refresh_layout()
+
+    def select_tag(self, idx):
+        """
+        Opens a pop-up to select which tag to visualize in the count table
+
+        :param idx: the index of the selected push button
+        """
+
+        pop_up = PopUpSelectTagCountTable(
+            self.project,
+            self.project.session.get_fields_names(COLLECTION_CURRENT),
+            self.push_buttons[idx].text())
+        if pop_up.exec_():
+            if pop_up.selected_tag is not None:
+                self.push_buttons[idx].setText(pop_up.selected_tag)
+                self.fill_values(idx)

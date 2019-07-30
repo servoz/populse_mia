@@ -81,20 +81,20 @@
 <span class="sd">    all the tags values or not.</span>
 
 <span class="sd">    .. Methods:</span>
-<span class="sd">        - refresh_layout: updates the layout of the widget</span>
 <span class="sd">        - add_tag: adds a tag to visualize in the count table</span>
+<span class="sd">        - count_scans: counts the number of scans depending on the selected</span>
+<span class="sd">          tags and displays the result in the table</span>
+<span class="sd">        - fill_first_tags: fills the cells of the table corresponding to the</span>
+<span class="sd">          (n-1) first selected tags</span>
+<span class="sd">        - fill_headers: fills the headers of the table depending on the</span>
+<span class="sd">          selected tags</span>
+<span class="sd">        - fill_last_tag: fills the cells corresponding to the last selected tag</span>
+<span class="sd">        - fill_values: fill values_list depending on the visualized tags</span>
+<span class="sd">        - prepare_filter: prepares the filter in order to fill the count table</span>
+<span class="sd">        - refresh_layout: updates the layout of the widget</span>
 <span class="sd">        - remove_tag: removes a tag to visualize in the count table</span>
 <span class="sd">        - select_tag: opens a pop-up to select which tag to visualize in</span>
 <span class="sd">          the count table</span>
-<span class="sd">        - fill_values: fill values_list depending on the visualized tags</span>
-<span class="sd">        - count_scans: counts the number of scans depending on the selected</span>
-<span class="sd">          tags and displays the result in the table</span>
-<span class="sd">        - fill_headers: fills the headers of the table depending on the</span>
-<span class="sd">          selected tags</span>
-<span class="sd">        - fill_first_tags: fills the cells of the table corresponding to the</span>
-<span class="sd">          (n-1) first selected tags</span>
-<span class="sd">        - fill_last_tag: fills the cells corresponding to the last selected tag</span>
-<span class="sd">        - prepare_filter: prepares the filter in order to fill the count table</span>
 
 <span class="sd">    :Example:</span>
 
@@ -216,26 +216,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountTable.refresh_layout"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.refresh_layout">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the layout of the widget</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_tags</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">tag_label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">tag_label</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_label</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_button_count</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="CountTable.add_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.add_tag">[docs]</a>    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a tag to visualize in the count table</span>
@@ -247,62 +227,6 @@
         <span class="n">push_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_tag</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">),</span> <span class="n">push_button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="CountTable.remove_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.remove_tag">[docs]</a>    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Removes a tag to visualize in the count table</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">push_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">push_button</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
-        <span class="n">push_button</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="CountTable.select_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Opens a pop-up to select which tag to visualize in the count table</span>
-
-<span class="sd">        :param idx: the index of the selected push button</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fill_values</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="CountTable.fill_values"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_values">[docs]</a>    <span class="k">def</span> <span class="nf">fill_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fill values_list depending on the visualized tags</span>
-
-<span class="sd">        :param idx: index of the select tag</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">tag_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
-                <span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
-            <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
-                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">current_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span>
-
-        <span class="n">idx_to_fill</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span>
-        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">idx</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">idx_to_fill</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">idx_to_fill</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CountTable.count_scans"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.count_scans">[docs]</a>    <span class="k">def</span> <span class="nf">count_scans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Counts the number of scans depending on the selected tags and</span>
@@ -342,40 +266,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fill_last_tag</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="CountTable.fill_headers"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_headers">[docs]</a>    <span class="k">def</span> <span class="nf">fill_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fills the headers of the table depending on the selected tags</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">idx_end</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Headers</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">header_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">header_name</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-            <span class="n">idx_end</span> <span class="o">=</span> <span class="n">idx</span>
-
-        <span class="c1"># idx_last_tag corresponds to the index of the (n-1)th tag</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">idx_last_tag</span> <span class="o">=</span> <span class="n">idx_end</span>
-        <span class="n">last_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">last_tag_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
-            <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">last_tag</span><span class="p">)</span><span class="o">.</span><span class="n">type</span>
-        <span class="k">for</span> <span class="n">header_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="n">idx_end</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
-            <span class="n">set_item_data</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">header_name</span><span class="p">,</span> <span class="n">last_tag_type</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">idx_end</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-
-        <span class="c1"># Adding a &quot;Total&quot; row and to count the scans</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">)</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
-        <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">)</span>
-
-        <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setVerticalHeaderItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CountTable.fill_first_tags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_first_tags">[docs]</a>    <span class="k">def</span> <span class="nf">fill_first_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fills the cells of the table corresponding to the (n-1)</span>
@@ -452,6 +342,40 @@
 
                 <span class="n">col_checked</span> <span class="o">-=</span> <span class="mi">1</span></div>
 
+<div class="viewcode-block" id="CountTable.fill_headers"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_headers">[docs]</a>    <span class="k">def</span> <span class="nf">fill_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fills the headers of the table depending on the selected tags</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">idx_end</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Headers</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">header_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">header_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">idx_end</span> <span class="o">=</span> <span class="n">idx</span>
+
+        <span class="c1"># idx_last_tag corresponds to the index of the (n-1)th tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_last_tag</span> <span class="o">=</span> <span class="n">idx_end</span>
+        <span class="n">last_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">last_tag_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+            <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">last_tag</span><span class="p">)</span><span class="o">.</span><span class="n">type</span>
+        <span class="k">for</span> <span class="n">header_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">idx_end</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
+            <span class="n">set_item_data</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">header_name</span><span class="p">,</span> <span class="n">last_tag_type</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">idx_end</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># Adding a &quot;Total&quot; row and to count the scans</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QTableWidgetItem</span><span class="p">()</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">)</span>
+
+        <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setVerticalHeaderItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="CountTable.fill_last_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_last_tag">[docs]</a>    <span class="k">def</span> <span class="nf">fill_last_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills the cells corresponding to the last selected tag</span>
@@ -521,6 +445,34 @@
             <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="CountTable.fill_values"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.fill_values">[docs]</a>    <span class="k">def</span> <span class="nf">fill_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill values_list depending on the visualized tags</span>
+
+<span class="sd">        :param idx: index of the select tag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tag_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
+                <span class="n">COLLECTION_CURRENT</span><span class="p">):</span>
+            <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
+                <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">current_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span>
+
+        <span class="n">idx_to_fill</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">idx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">idx_to_fill</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">idx_to_fill</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="CountTable.prepare_filter"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.prepare_filter">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">prepare_filter</span><span class="p">(</span><span class="n">couples</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -548,7 +500,55 @@
 
         <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
-        <span class="k">return</span> <span class="n">query</span></div></div>
+        <span class="k">return</span> <span class="n">query</span></div>
+
+<div class="viewcode-block" id="CountTable.refresh_layout"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.refresh_layout">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the layout of the widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_tags</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tag_label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">tag_label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_tag_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_tag_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_button_count</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_box_top</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_box_final</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CountTable.remove_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.remove_tag">[docs]</a>    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes a tag to visualize in the count table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">push_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">push_button</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+        <span class="n">push_button</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_layout</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CountTable.select_tag"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.count_table.CountTable.select_tag">[docs]</a>    <span class="k">def</span> <span class="nf">select_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a pop-up to select which tag to visualize in the count table</span>
+
+<span class="sd">        :param idx: the index of the selected push button</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpSelectTagCountTable</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_fields_names</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">push_buttons</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pop_up</span><span class="o">.</span><span class="n">selected_tag</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fill_values</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div></div>
 </pre></div>
 
       </div>

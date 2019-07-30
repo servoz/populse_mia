@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*- #
 """
+Module used by MIA bricks to run processes.
 
 :Contains:
     :Class:
@@ -130,13 +131,11 @@ class ProcessMIA(Process):
         return []
 
     def list_outputs(self):
-        """Override the outputs of the process"""
+        """Override the outputs of the process."""
         pass
 
     def manage_brick_after_run(self):
-        """
-        Manages the brick history after the run (Done status)
-        """
+        """Manages the brick history after the run (Done status)."""
         outputs = self.get_outputs()
         for output_name in outputs:
             output_value = outputs[output_name]
@@ -148,9 +147,7 @@ class ProcessMIA(Process):
                     self.manage_brick_output_after_run(output_value)
 
     def manage_brick_before_run(self):
-        """
-        Updates process history, before running the process
-        """
+        """Updates process history, before running the process."""
 
         outputs = self.get_outputs()
         for output_name in outputs:
@@ -163,8 +160,7 @@ class ProcessMIA(Process):
                     self.manage_brick_output_before_run(output_value)
 
     def manage_brick_output_after_run(self, output_value):
-        """
-        Manages the bricks history before the run
+        """Manages the bricks history before the run.
 
         :param output_value: output value
         """
@@ -177,8 +173,7 @@ class ProcessMIA(Process):
             self.project.saveModifications()
 
     def manage_brick_output_before_run(self, output_value):
-        """
-        Manages the bricks history before the run
+        """Manages the bricks history before the run.
 
         :param output_value: output value
         """
@@ -194,7 +189,7 @@ class ProcessMIA(Process):
             self.project.saveModifications()
 
     def manage_matlab_launch_parameters(self):
-        """Set the Matlab's config parameters when a Nipype process is used
+        """Set the Matlab's config parameters when a Nipype process is used.
 
         Called in bricks.
         """
@@ -206,8 +201,7 @@ class ProcessMIA(Process):
             self.process.inputs.mfile = self.mfile
 
     def remove_brick_output(self, brick, output):
-        """
-        Removes the bricks from the outputs
+        """Removes the bricks from the outputs.
 
         :param output: output
         :param brick: brick

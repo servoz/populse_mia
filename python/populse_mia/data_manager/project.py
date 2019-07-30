@@ -302,7 +302,7 @@ class Project():
         return self.properties["date"]
 
     def getFilter(self, filter):
-        """Return a Filter object from its name
+        """Return a Filter object from its name.
 
         :param filter: Filter name
         :returns: Filter object
@@ -342,7 +342,7 @@ class Project():
         return self.properties["sorted_tag"]
 
     def getSortOrder(self):
-        """Returns the sort order of the project.
+        """Return the sort order of the project.
 
         :returns: string of the sort order of the project if it's not Unnamed
         project, otherwise empty string
@@ -846,6 +846,7 @@ class Project():
 
     @property
     def unsavedModifications(self):
+        """Setter for _unsavedModifications."""
         return self._unsavedModifications
 
     @unsavedModifications.setter
@@ -866,5 +867,6 @@ class Project():
 
     def unsaveModifications(self):
         """Unsave the pending operations of the project."""
+
         self.session.unsave_modifications()
         self.unsavedModifications = False

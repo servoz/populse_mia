@@ -202,7 +202,7 @@ class DataBrowser(QWidget):
         self.table_data.add_column(column, new_tag_name)
 
     def add_tag_pop_up(self):
-        """Display the add tag pop-up"""
+        """Display the add tag pop-up."""
 
         # We first show the add_tag pop up
         self.pop_up_add_tag = PopUpAddTag(self, self.project)

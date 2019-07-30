@@ -13,7 +13,8 @@ Contains:
 # the CEA-CNRS-INRIA. Refer to the LICENSE file or to
 # http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 # for details.
-#######
+##########################################################################
+
 from datetime import datetime
 
 # PyQt5 imports
