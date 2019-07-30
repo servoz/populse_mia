@@ -5,7 +5,6 @@ the project
 :Contains:
     :Class:
         - DictionaryTreeModel
-        - FileFilterProxyModel
         - InstallProcesses
         - Node
         - PackageLibrary
@@ -187,44 +186,56 @@ class DictionaryTreeModel(QAbstractItemModel):
         return self._rootNode.to_dict()
 
 
-class FileFilterProxyModel(QSortFilterProxyModel):
-    """Just a test for the moment. Should be useful to use in
-       the file dialog."""
-
-    def __init__(self):
-        super(FileFilterProxyModel, self).__init__()
-
-    def filterAcceptsRow(self, source_row, source_parent):
-        source_model = self.sourceModel()
-        index0 = source_model.index(source_row, 0, source_parent)
-        # Always show directories
-        if source_model.isDir(index0):
-            return True
-        # filter files
-        filename = source_model.fileName(index0)
-        #       filename=self.sourceModel().index(row,0,parent).data().lower()
-        # return True
-        if filename.count(".py") + filename.count(".xml") == 0:
-            return False
-        else:
-            return True
-
-    # def flags(self, index):
-    #     flags = super(FileFilterProxyModel, self).flags(index)
-    #     source_model = self.sourceModel()
-    #     if source_model.isDir(index):
-    #         flags |= Qt.ItemIsSelectable
-    #         return flags
-    #
-    #     # filter files
-    #     filename = source_model.fileName(index)
-    #
-    #     if filename.count(".py") + filename.count(".xml") == 0:
-    #         flags &= ~Qt.ItemIsSelectable
-    #         return flags
-    #     else:
-    #         flags |= Qt.ItemIsSelectable
-    #         return flags
+# class FileFilterProxyModel(QSortFilterProxyModel):
+#     """Just a test for the moment. Should be useful to use in
+#        the file dialog.
+#
+#     .. Methods:
+#         - filterAcceptsRow:
+#
+#     """
+#
+#     def __init__(self):
+#         """Initialization of the FileFilterProxyModel class."""
+#         super(FileFilterProxyModel, self).__init__()
+#
+#     def filterAcceptsRow(self, source_row, source_parent):
+#         """
+#
+#         :param source_row:
+#         :param source_parent:
+#         :return: boolean
+#         """
+#         source_model = self.sourceModel()
+#         index0 = source_model.index(source_row, 0, source_parent)
+#         # Always show directories
+#         if source_model.isDir(index0):
+#             return True
+#         # filter files
+#         filename = source_model.fileName(index0)
+#         #       filename=self.sourceModel().index(row,0,parent).data().lower()
+#         # return True
+#         if filename.count(".py") + filename.count(".xml") == 0:
+#             return False
+#         else:
+#             return True
+#
+#     def flags(self, index):
+#         flags = super(FileFilterProxyModel, self).flags(index)
+#         source_model = self.sourceModel()
+#         if source_model.isDir(index):
+#             flags |= Qt.ItemIsSelectable
+#             return flags
+#
+#         # filter files
+#         filename = source_model.fileName(index)
+#
+#         if filename.count(".py") + filename.count(".xml") == 0:
+#             flags &= ~Qt.ItemIsSelectable
+#             return flags
+#         else:
+#             flags |= Qt.ItemIsSelectable
+#             return flags
 
 
 class InstallProcesses(QDialog):
@@ -959,23 +970,21 @@ class Node(object):
 
 
 class PackageLibrary(QTreeWidget):
-    """
-    Tree that displays the user-added packages and their modules
-    The user can check or not each module/package
+    """Tree that displays the user-added packages and their modules.
+    The user can check or not each module/package.
 
     .. Methods:
-        - update_checks: updates the checks of the tree from an item
-        - set_module_view: sets if a module has to be enabled or disabled in
-          the process library
+        - fill_item: fills the items of the tree recursively
+        - generate_tree: generates the package tree
         - recursive_checks: checks/unchecks all child items
         - recursive_checks_from_child: checks/unchecks all parent items
-        - generate_tree: generates the package tree
-        - fill_item: fills the items of the tree recursively
+        - set_module_view: sets if a module has to be enabled or disabled in
+        the process library
+        - update_checks: updates the checks of the tree from an item
     """
 
     def __init__(self, package_tree, paths):
-        """
-        Initialization of the PackageLibrary widget
+        """Initialization of the PackageLibrary widget.
 
         :param package_tree: representation of the packages as a tree-dictionary
         :param paths: list of paths to add to the system to import the packages
@@ -989,126 +998,8 @@ class PackageLibrary(QTreeWidget):
         self.setAlternatingRowColors(True)
         self.setHeaderLabel("Packages")
 
-    def update_checks(self, item, column):
-        """
-        Updates the checks of the tree from an item
-
-        :param item: item on which to begin
-        :param column: column from the check (should always be 0)
-        """
-        # Checked state is stored on column 0
-        if column == 0:
-            self.itemChanged.disconnect()
-            if item.childCount():
-                self.recursive_checks(item)
-            if item.parent():
-                self.recursive_checks_from_child(item)
-
-            self.itemChanged.connect(self.update_checks)
-
-    def set_module_view(self, item, state):
-        """
-        Sets if a module has to be enabled or disabled in the process library
-
-        :param item: item selected in the current tree
-        :param state: checked or not checked (Qt.Checked == 2.
-          So if val == 2 -> checkbox is checked, and if val == 0 -> checkbox
-          is not checked)
-        :pkg_iter: dictionary where keys are the name of a module (brick)
-            and values are 'process_enabled' or 'process_disabled'.
-            Key can be a submodule. In this case the value is a dictionary
-            where keys are the name of a module (brick) and values are 'process
-            enabled'
-            or 'process_disabled'. etc. pkg_iter take only the modules
-            concerning the top
-            package where a change of status where done.
-        """
-        if state == Qt.Checked:
-            val = 'process_enabled'
-        else:
-            val = 'process_disabled'
-
-        list_path = []
-        list_path.append(item.text(0))
-        self.top_level_items = [self.topLevelItem(i) for i in
-                                range(self.topLevelItemCount())]
-
-        while item not in self.top_level_items:
-            item = item.parent()
-            list_path.append(item.text(0))
-
-        pkg_iter = self.package_tree
-        list_path = list(reversed(list_path))
-        for element in list_path:
-            if element in pkg_iter.keys():
-                if element is list_path[-1]:
-                    pkg_iter[element] = val
-                else:
-                    pkg_iter = pkg_iter[element]
-            else:
-                print('Package not found')
-                break
-
-    def recursive_checks(self, parent):
-        """
-        Checks/unchecks all child items
-
-        :param parent: parent item
-        """
-        check_state = parent.checkState(0)
-
-        if parent.childCount() == 0:
-            self.set_module_view(parent, check_state)
-
-        for i in range(parent.childCount()):
-            parent.child(i).setCheckState(0, check_state)
-            self.recursive_checks(parent.child(i))
-
-    def recursive_checks_from_child(self, child):
-        """
-        Checks/unchecks all parent items
-
-        :param child: child item
-        """
-        check_state = child.checkState(0)
-
-        if child.childCount() == 0:
-            self.set_module_view(child, check_state)
-
-        if child.parent():
-            parent = child.parent()
-            if child.checkState(0) == Qt.Checked:
-                if parent.checkState(0) == Qt.Unchecked:
-                    parent.setCheckState(0, Qt.Checked)
-                    self.recursive_checks_from_child(parent)
-            else:
-                # checked_children = []
-                # for child in range(parent.childCount()):
-                #
-                #     if child.checkState(0) == Qt.Checked:
-                #         checked_children.append()
-
-                checked_children = [child for child in
-                                    range(parent.childCount())
-                                    if parent.child(child).checkState(
-                        0) == Qt.Checked]
-                if not checked_children:
-                    parent.setCheckState(0, Qt.Unchecked)
-                    self.recursive_checks_from_child(parent)
-
-    def generate_tree(self):
-        """
-        Generates the package tree
-
-        """
-        self.itemChanged.disconnect()
-        self.clear()
-        self.fill_item(self.invisibleRootItem(), self.package_tree)
-        self.itemChanged.connect(self.update_checks)
-
     def fill_item(self, item, value):
-        """
-        Fills the items of the tree recursively
+        """Fill the items of the tree recursively.
 
         :param item: current item to fill
         :param value: value of the item in the tree
@@ -1149,23 +1040,127 @@ class PackageLibrary(QTreeWidget):
             child.setText(0, str(value))
             item.addChild(child)
 
+    def generate_tree(self):
+        """Generate the package tree"""
+
+        self.itemChanged.disconnect()
+        self.clear()
+        self.fill_item(self.invisibleRootItem(), self.package_tree)
+        self.itemChanged.connect(self.update_checks)
+
+    def recursive_checks(self, parent):
+        """Check/uncheck all child items.
+
+        :param parent: parent item
+        """
+        check_state = parent.checkState(0)
+
+        if parent.childCount() == 0:
+            self.set_module_view(parent, check_state)
+
+        for i in range(parent.childCount()):
+            parent.child(i).setCheckState(0, check_state)
+            self.recursive_checks(parent.child(i))
+
+    def recursive_checks_from_child(self, child):
+        """Check/uncheck all parent items.
+
+        :param child: child item
+        """
+        check_state = child.checkState(0)
+
+        if child.childCount() == 0:
+            self.set_module_view(child, check_state)
+
+        if child.parent():
+            parent = child.parent()
+            if child.checkState(0) == Qt.Checked:
+                if parent.checkState(0) == Qt.Unchecked:
+                    parent.setCheckState(0, Qt.Checked)
+                    self.recursive_checks_from_child(parent)
+            else:
+                # checked_children = []
+                # for child in range(parent.childCount()):
+                #
+                #     if child.checkState(0) == Qt.Checked:
+                #         checked_children.append()
+
+                checked_children = [child for child in
+                                    range(parent.childCount())
+                                    if parent.child(child).checkState(
+                        0) == Qt.Checked]
+                if not checked_children:
+                    parent.setCheckState(0, Qt.Unchecked)
+                    self.recursive_checks_from_child(parent)
+
+    def set_module_view(self, item, state):
+        """Set if a module has to be enabled or disabled in the process
+        library.
+
+        :param item: item selected in the current tree
+        :param state: checked or not checked (Qt.Checked == 2. So if val ==
+        2 -> checkbox is checked, and if val == 0 -> checkbox is not checked)
+        """
+        if state == Qt.Checked:
+            val = 'process_enabled'
+        else:
+            val = 'process_disabled'
+
+        list_path = []
+        list_path.append(item.text(0))
+        self.top_level_items = [self.topLevelItem(i) for i in
+                                range(self.topLevelItemCount())]
+
+        while item not in self.top_level_items:
+            item = item.parent()
+            list_path.append(item.text(0))
+        # pkg_iter take only the modules concerning the top package where a
+        # change of status where done.
+        pkg_iter = self.package_tree
+        list_path = list(reversed(list_path))
+        for element in list_path:
+            if element in pkg_iter.keys():
+                if element is list_path[-1]:
+                    pkg_iter[element] = val
+                else:
+                    pkg_iter = pkg_iter[element]
+            else:
+                print('Package not found')
+                break
+
+    def update_checks(self, item, column):
+        """Update the checks of the tree from an item.
+
+        :param item: item on which to begin
+        :param column: column from the check (should always be 0)
+        """
+        # Checked state is stored on column 0
+        if column == 0:
+            self.itemChanged.disconnect()
+            if item.childCount():
+                self.recursive_checks(item)
+            if item.parent():
+                self.recursive_checks_from_child(item)
+
+            self.itemChanged.connect(self.update_checks)
+
 
 class PackageLibraryDialog(QDialog):
     """Dialog that controls which processes to show in the process library.
 
     .. Methods:
-        - add_package_with_text: adds a package from the line edit's text
-        - add_package: adds a package and its modules to the package tree
-        - browse_package: opens a browser to select a package
+        - add_package_with_text: add a package from the line edit's text
+        - add_package: add a package and its modules to the package tree
+        - browse_package: open a browser to select a package
         - import_file: import a python module from a path
-        - load_config: updates the config and loads the corresponding packages
-        - load_packages: updates the tree of the process library
-        - remove_package: removes a package from the package tree
-        - remove_package_with_text: removes the package in the line edit from
+        - load_config: update the config and loads the corresponding packages
+        - load_packages: update the tree of the process library
+        - remove_package: remove a package from the package tree
+        - remove_package_with_text: remove the package in the line edit from
           the package tree
-        - save: saves the tree to the process_config.yml file
-        - save_config: saves the current config to process_config.yml
-        - update_config: updates the process_config and package_library
+        - save: save the tree to the process_config.yml file
+        - save_config: save the current config to process_config.yml
+        - update_config: update the process_config and package_library
           attributes
     """
 
@@ -1683,8 +1678,7 @@ class ProcessLibrary(QTreeView):
         self.load_dictionary(d)
 
     def load_dictionary(self, d):
-        """
-        Loads a dictionary to the tree
+        """Load a dictionary to the tree.
 
         :param d: dictionary to load. See the packages attribute in the
         ProcessLibraryWidget class.
@@ -1696,13 +1690,14 @@ class ProcessLibrary(QTreeView):
         self.expandAll()
 
     def to_dict(self):
-        """Returns a dictionary from the current tree.
+        """Return a dictionary from the current tree.
 
         :return: the dictionary of the tree
         """
         return self._model.to_dict()
 
     def mousePressEvent(self, event):
+        """Event when the mouse is pressed."""
         idx = self.indexAt(event.pos())
         # print('idx',dir(idx.model()))
         if idx.isValid:
