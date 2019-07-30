@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 """Module that contains class and methods to process the different libraries of
-the project
+the project.
 
 :Contains:
     :Class:
@@ -62,40 +62,38 @@ from capsul.api import get_process_instance
 
 
 class DictionaryTreeModel(QAbstractItemModel):
-    """Data model providing a tree of an arbitrary dictionary."""
+    """Data model providing a tree of an arbitrary dictionary.
+
+    .. Methods:
+        - columnCount: return always 1
+        - data: return the data requested by the view
+        - flags: everything is enabled and selectable, only the leaves can be
+        dragged.
+        - getNode: return a Node() from given index
+        - headerData: return the name of the requested column
+        - index: return an index from given row, column and parent
+        - insertRows: insert rows from starting position and number given by
+        rows
+        - mimeData: used when the widget is dragged by the user
+        - mimeTypes: return a constant
+        - parent: return the parent from given index
+        - removeRows: remove the rows from position to position+rows
+        - rowCount: the number of rows is the number of children
+        - setData: method called when the user changes data
+        - to_dict: return the root node as a dictionary
+    """
 
     def __init__(self, root, parent=None):
         """Initialization of the DictionaryTreeModel class."""
         super(DictionaryTreeModel, self).__init__(parent)
         self._rootNode = root
 
-    def mimeTypes(self):
-        return ['component/name']
-
-    def mimeData(self, idxs):
-        mimedata = QMimeData()
-        for idx in idxs:
-            if idx.isValid():
-                node = idx.internalPointer()
-                txt = node.data(idx.column())
-                mimedata.setData('component/name', QByteArray(txt.encode()))
-        return mimedata
-
-    def rowCount(self, parent):
-        """The number of rows is the number of children."""
-        if not parent.isValid():
-            parentNode = self._rootNode
-        else:
-            parentNode = parent.internalPointer()
-
-        return parentNode.childCount()
-
     def columnCount(self, parent):
         """Number of columns is always 1."""
         return 1
 
     def data(self, index, role):
-        """Returns the data requested by the view."""
+        """Return the data requested by the view."""
         if not index.isValid():
             return None
 
@@ -104,14 +102,23 @@ class DictionaryTreeModel(QAbstractItemModel):
         if role == Qt.DisplayRole or role == Qt.EditRole:
             return node.name
 
-    def setData(self, index, value, role=Qt.EditRole):
-        """This method gets called when the user changes data."""
+    def flags(self, index):
+        """Everything is enabled and selectable. Only the leaves can be
+        dragged."""
+        node = index.internalPointer()
+        if node.childCount() > 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
+
+    def getNode(self, index):
+        """Return a Node() from given index."""
         if index.isValid():
-            if role == Qt.EditRole:
-                node = index.internalPointer()
-                node.setData(index.column(), value)
-                return True
-        return False
+            node = index.internalPointer()
+            if node:
+                return node
+
+        return self._rootNode
 
     def headerData(self, section, orientation, role):
         """Return the name of the requested column."""
@@ -120,24 +127,6 @@ class DictionaryTreeModel(QAbstractItemModel):
                 return "Packages"
             if section == 1:
                 return "Value"
-
-    def flags(self, index):
-        """Everything is enable and selectable. Only the leaves can be
-        dragged. """
-        node = index.internalPointer()
-        if node.childCount() > 0:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
-
-    def parent(self, index):
-        """Return the parent from given index."""
-        node = self.getNode(index)
-        parentNode = node.parent()
-        if parentNode == self._rootNode:
-            return QModelIndex()
-
-        return self.createIndex(parentNode.row(), 0, parentNode)
 
     def index(self, row, column, parent):
         """Return an index from given row, column and parent."""
@@ -148,15 +137,6 @@ class DictionaryTreeModel(QAbstractItemModel):
             return self.createIndex(row, column, childItem)
         else:
             return QModelIndex()
-
-    def getNode(self, index):
-        """Return a Node() from given index."""
-        if index.isValid():
-            node = index.internalPointer()
-            if node:
-                return node
-
-        return self._rootNode
 
     def insertRows(self, position, rows, parent=QModelIndex()):
         """Insert rows from starting position and number given by rows."""
@@ -171,8 +151,44 @@ class DictionaryTreeModel(QAbstractItemModel):
         self.endInsertRows()
         return success
 
+    def mimeData(self, idxs):
+        """Used when the widget is dragged by the user.
+
+        :param idxs: mouse event
+        :return: QMimeData object
+        """
+        mimedata = QMimeData()
+        for idx in idxs:
+            if idx.isValid():
+                node = idx.internalPointer()
+                txt = node.data(idx.column())
+                mimedata.setData('component/name', QByteArray(txt.encode()))
+        return mimedata
+
+    def mimeTypes(self):
+        """Return a constant."""
+        return ['component/name']
+
+    def parent(self, index):
+        """Return the parent from given index.
+
+        :param index: index
+        """
+        node = self.getNode(index)
+        parentNode = node.parent()
+        if parentNode == self._rootNode:
+            return QModelIndex()
+
+        return self.createIndex(parentNode.row(), 0, parentNode)
+
     def removeRows(self, position, rows, parent=QModelIndex()):
-        """Remove the rows from position to position+rows."""
+        """Remove the rows from position to position+rows.
+
+        :param position: the position of the node
+        :param rows: the row of the tnode
+        :param parent: the parent node
+
+        """
         parentNode = self.getNode(parent)
         self.beginRemoveRows(parent, position, position + rows - 1)
 
@@ -182,60 +198,39 @@ class DictionaryTreeModel(QAbstractItemModel):
         self.endRemoveRows()
         return success
 
+    def rowCount(self, parent):
+        """The number of rows is the number of children.
+
+        :param parent: the parent of the node
+        """
+        if not parent.isValid():
+            parentNode = self._rootNode
+        else:
+            parentNode = parent.internalPointer()
+
+        return parentNode.childCount()
+
+    def setData(self, index, value, role=Qt.EditRole):
+        """This method gets called when the user changes data.
+
+        :param index: index
+        :param value: value
+        :param role: Qt role
+        :return: boolean
+        """
+        if index.isValid():
+            if role == Qt.EditRole:
+                node = index.internalPointer()
+                node.setData(index.column(), value)
+                return True
+        return False
+
     def to_dict(self):
+        """Return the root node as a dictionary.
+
+        :return: dictionary
+        """
         return self._rootNode.to_dict()
-
-
-# class FileFilterProxyModel(QSortFilterProxyModel):
-#     """Just a test for the moment. Should be useful to use in
-#        the file dialog.
-#
-#     .. Methods:
-#         - filterAcceptsRow:
-#
-#     """
-#
-#     def __init__(self):
-#         """Initialization of the FileFilterProxyModel class."""
-#         super(FileFilterProxyModel, self).__init__()
-#
-#     def filterAcceptsRow(self, source_row, source_parent):
-#         """
-#
-#         :param source_row:
-#         :param source_parent:
-#         :return: boolean
-#         """
-#         source_model = self.sourceModel()
-#         index0 = source_model.index(source_row, 0, source_parent)
-#         # Always show directories
-#         if source_model.isDir(index0):
-#             return True
-#         # filter files
-#         filename = source_model.fileName(index0)
-#         #       filename=self.sourceModel().index(row,0,parent).data().lower()
-#         # return True
-#         if filename.count(".py") + filename.count(".xml") == 0:
-#             return False
-#         else:
-#             return True
-#
-#     def flags(self, index):
-#         flags = super(FileFilterProxyModel, self).flags(index)
-#         source_model = self.sourceModel()
-#         if source_model.isDir(index):
-#             flags |= Qt.ItemIsSelectable
-#             return flags
-#
-#         # filter files
-#         filename = source_model.fileName(index)
-#
-#         if filename.count(".py") + filename.count(".xml") == 0:
-#             flags &= ~Qt.ItemIsSelectable
-#             return flags
-#         else:
-#             flags |= Qt.ItemIsSelectable
-#             return flags
 
 
 class InstallProcesses(QDialog):
@@ -247,7 +242,7 @@ class InstallProcesses(QDialog):
 
     .. Methods:
         - get_filename: opens a file dialog to get the folder or zip file to
-          install
+        install
         - install: installs the selected file/folder on Populse_MIA
     """
 
@@ -834,8 +829,32 @@ class ProcessLibraryWidget(QWidget):
 
 
 class Node(object):
+    """Class to handle a package children.
+
+    .. Methods:
+        - _recurse_dict: add the name and value of the farthest child in the
+        dictionary
+        - addChild: add a child to the children list
+        - attrs:
+        - child: return a child from its index in the list
+        - childCount: return the number of children
+        - data: return the name or the value of the object
+        - insertChild: insert a child to a specific position
+        - log: return the logs
+        - name: return the name of the object
+        - parent: return the parent of the object
+        - removeChild: remove a specific child
+        - row: return the index of the object in its parent list of children
+        - to_dict: return a dictionary of the children
+        - to_list: return the list of children with their names and values
+        - value: return the value of the object
+        - setData: update the name or the value of the object
+        - resource: return a None
+
+    """
 
     def __init__(self, name, parent=None):
+        """Initialization of the Node class."""
         self._name = name
         self._parent = parent
         self._children = []
@@ -843,26 +862,37 @@ class Node(object):
         if parent is not None:
             parent.addChild(self)
 
+    def __repr__(self):
+        """Define what should be printed by the class.
+
+        :return: the logs
+        """
+        return self.log()
+
+    def _recurse_dict(self, d):
+        """Add the name and value of the farthest child in the dictionary.
+
+        :param d: dictionary
+        """
+        if self._children:
+            d[self.name] = {}
+            for child in self._children:
+                child._recurse_dict(d[self.name])
+        else:
+            d[self.name] = self.value
+
     def addChild(self, child):
+        """Add a child to the children list.
+
+        :param child: child to add.
+        """
         self._children.append(child)
 
-    def insertChild(self, position, child):
-        if position < 0 or position > len(self._children):
-            return False
-
-        self._children.insert(position, child)
-        child._parent = self
-        return True
-
-    def removeChild(self, position, child):
-        if position < 0 or position > len(self._children):
-            return False
-
-        self._children.pop(position)
-        child._parent = None
-        return True
-
     def attrs(self):
+        """
+
+        :return:
+        """
         classes = self.__class__.__mro__
         keyvalued = {}
         for cls in classes:
@@ -871,64 +901,58 @@ class Node(object):
                     keyvalued[key] = value.fget(self)
         return keyvalued
 
-    def to_list(self):
-        output = []
-        if self._children:
-            for child in self._children:
-                output += [self.name, child.to_list()]
-        else:
-            output += [self.name, self.value]
-        return output
-
-    def to_dict(self, d={}):
-        for child in self._children:
-            child._recurse_dict(d)
-        return d
-
-    def _recurse_dict(self, d):
-        if self._children:
-            d[self.name] = {}
-            for child in self._children:
-                child._recurse_dict(d[self.name])
-        else:
-            d[self.name] = self.value
-
-    def name():
-        def fget(self):
-            return self._name
-
-        def fset(self, value):
-            self._name = value
-
-        return locals()
-
-    name = property(**name())
-
-    def value():
-        def fget(self):
-            return self._value
-
-        def fset(self, value):
-            self._value = value
-
-        return locals()
-
-    value = property(**value())
-
     def child(self, row):
+        """Return a child from its index in the list.
+
+        :param row: index in the list of children
+        :return: child
+        """
         return self._children[row]
 
     def childCount(self):
+        """Return the number of children.
+
+        :return: the length of the children list
+        """
         return len(self._children)
 
-    def parent(self):
-        return self._parent
+    def data(self, column):
+        """Return the name or the value of the object.
 
-    def row(self):
-        if self._parent is not None:
-            return self._parent._children.index(self)
+        :param column: 0 for name, 1 for value
+        :return: string
+        """
+        if column is 0:
+            parent = self._parent
+            text = self.name
+            while parent.name != 'Root':
+                text = parent.name + '.' + text
+                parent = parent._parent
+            return text  # self.name
+
+        elif column is 1:
+            return self.value
+
+    def insertChild(self, position, child):
+        """Insert a child to a specific position.
+
+        :param position: position
+        :param child: child
+        :return: boolean, True if the insertion was successful
+        """
+        if position < 0 or position > len(self._children):
+            return False
+
+        self._children.insert(position, child)
+        child._parent = self
+        return True
 
     def log(self, tabLevel=-1):
+        """Return the logs.
+
+        :param tabLevel: Number of tabulation
+        :return: string
+        """
         output = ''
         tabLevel += 1
 
@@ -944,28 +968,104 @@ class Node(object):
         output += '\n'
         return output
 
-    def __repr__(self):
-        return self.log()
+    def name():
+        """Return the name of the object.
 
-    def data(self, column):
-        if column is 0:
-            parent = self._parent
-            text = self.name
-            while parent.name != 'Root':
-                text = parent.name + '.' + text
-                parent = parent._parent
-            return text  # self.name
+        :return: name
+        """
+        def fget(self):
+            return self._name
 
-        elif column is 1:
-            return self.value
+        def fset(self, value):
+            self._name = value
+
+        return locals()
+
+    name = property(**name())
+
+    def parent(self):
+        """Return the parent of the object.
+
+        :return: parent
+        """
+        return self._parent
+
+    def removeChild(self, position, child):
+        """Remove a specific child.
+
+        :param position: position of the child
+        :param child: child to remove
+        :return: boolean, True if the child was removed
+        """
+        if position < 0 or position > len(self._children):
+            return False
+
+        self._children.pop(position)
+        child._parent = None
+        return True
+
+    def row(self):
+        """Return the index of the object in its parent list of children.
+
+        :return: index
+        """
+        if self._parent is not None:
+            return self._parent._children.index(self)
+
+    def to_dict(self, d={}):
+        """Return a dictionary of the children.
+
+        :param d: dictionary
+        :return: dictionary of children
+        """
+        for child in self._children:
+            child._recurse_dict(d)
+        return d
+
+    def to_list(self):
+        """Return the list of children with their names and values.
+
+        :return: list
+        """
+        output = []
+        if self._children:
+            for child in self._children:
+                output += [self.name, child.to_list()]
+        else:
+            output += [self.name, self.value]
+        return output
+
+    def value():
+        """Return the value of the object.
+
+        :return: value
+        """
+        def fget(self):
+            return self._value
+
+        def fset(self, value):
+            self._value = value
+
+        return locals()
+
+    value = property(**value())
 
     def setData(self, column, value):
+        """Update the name or the value of the object.
+
+        :param column: 0 for name, 1 for value
+        :param value: new value
+        """
         if column is 0:
             self.name = value
         if column is 1:
             self.value = value
 
     def resource(self):
+        """Return None
+
+        :return: None
+        """
         return None
 
 
@@ -1784,6 +1884,57 @@ def node_structure_from_dict(datadict, parent=None, root_node=None):
 
     return root_node
 
+
+# class FileFilterProxyModel(QSortFilterProxyModel):
+#     """Just a test for the moment. Should be useful to use in
+#        the file dialog.
+#
+#     .. Methods:
+#         - filterAcceptsRow:
+#
+#     """
+#
+#     def __init__(self):
+#         """Initialization of the FileFilterProxyModel class."""
+#         super(FileFilterProxyModel, self).__init__()
+#
+#     def filterAcceptsRow(self, source_row, source_parent):
+#         """
+#
+#         :param source_row:
+#         :param source_parent:
+#         :return: boolean
+#         """
+#         source_model = self.sourceModel()
+#         index0 = source_model.index(source_row, 0, source_parent)
+#         # Always show directories
+#         if source_model.isDir(index0):
+#             return True
+#         # filter files
+#         filename = source_model.fileName(index0)
+#         #       filename=self.sourceModel().index(row,0,parent).data().lower()
+#         # return True
+#         if filename.count(".py") + filename.count(".xml") == 0:
+#             return False
+#         else:
+#             return True
+#
+#     def flags(self, index):
+#         flags = super(FileFilterProxyModel, self).flags(index)
+#         source_model = self.sourceModel()
+#         if source_model.isDir(index):
+#             flags |= Qt.ItemIsSelectable
+#             return flags
+#
+#         # filter files
+#         filename = source_model.fileName(index)
+#
+#         if filename.count(".py") + filename.count(".xml") == 0:
+#             flags &= ~Qt.ItemIsSelectable
+#             return flags
+#         else:
+#             flags |= Qt.ItemIsSelectable
+#             return flags
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -32,12 +32,11 @@
   <h1>Source code for populse_mia.user_interface.pipeline_manager.process_library</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*- #</span>
 <span class="sd">&quot;&quot;&quot;Module that contains class and methods to process the different libraries of</span>
-<span class="sd">the project</span>
+<span class="sd">the project.</span>
 
 <span class="sd">:Contains:</span>
 <span class="sd">    :Class:</span>
 <span class="sd">        - DictionaryTreeModel</span>
-<span class="sd">        - FileFilterProxyModel</span>
 <span class="sd">        - InstallProcesses</span>
 <span class="sd">        - Node</span>
 <span class="sd">        - PackageLibrary</span>
@@ -95,40 +94,38 @@
 
 
 <div class="viewcode-block" id="DictionaryTreeModel"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel">[docs]</a><span class="k">class</span> <span class="nc">DictionaryTreeModel</span><span class="p">(</span><span class="n">QAbstractItemModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Data model providing a tree of an arbitrary dictionary.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Data model providing a tree of an arbitrary dictionary.</span>
+
+<span class="sd">    .. Methods:</span>
+<span class="sd">        - columnCount: return always 1</span>
+<span class="sd">        - data: return the data requested by the view</span>
+<span class="sd">        - flags: everything is enabled and selectable, only the leaves can be</span>
+<span class="sd">        dragged.</span>
+<span class="sd">        - getNode: return a Node() from given index</span>
+<span class="sd">        - headerData: return the name of the requested column</span>
+<span class="sd">        - index: return an index from given row, column and parent</span>
+<span class="sd">        - insertRows: insert rows from starting position and number given by</span>
+<span class="sd">        rows</span>
+<span class="sd">        - mimeData: used when the widget is dragged by the user</span>
+<span class="sd">        - mimeTypes: return a constant</span>
+<span class="sd">        - parent: return the parent from given index</span>
+<span class="sd">        - removeRows: remove the rows from position to position+rows</span>
+<span class="sd">        - rowCount: the number of rows is the number of children</span>
+<span class="sd">        - setData: method called when the user changes data</span>
+<span class="sd">        - to_dict: return the root node as a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DictionaryTreeModel.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialization of the DictionaryTreeModel class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DictionaryTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span> <span class="o">=</span> <span class="n">root</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.mimeTypes"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeTypes">[docs]</a>    <span class="k">def</span> <span class="nf">mimeTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;component/name&#39;</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="DictionaryTreeModel.mimeData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeData">[docs]</a>    <span class="k">def</span> <span class="nf">mimeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
-        <span class="n">mimedata</span> <span class="o">=</span> <span class="n">QMimeData</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-                <span class="n">node</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
-                <span class="n">mimedata</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s1">&#39;component/name&#39;</span><span class="p">,</span> <span class="n">QByteArray</span><span class="p">(</span><span class="n">txt</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
-        <span class="k">return</span> <span class="n">mimedata</span></div>
-
-<div class="viewcode-block" id="DictionaryTreeModel.rowCount"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.rowCount">[docs]</a>    <span class="k">def</span> <span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of rows is the number of children.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">parentNode</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">parentNode</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span></div>
-
 <div class="viewcode-block" id="DictionaryTreeModel.columnCount"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.columnCount">[docs]</a>    <span class="k">def</span> <span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Number of columns is always 1.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.data"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the data requested by the view.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the data requested by the view.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -137,14 +134,23 @@
         <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span> <span class="ow">or</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.setData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method gets called when the user changes data.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DictionaryTreeModel.flags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Everything is enabled and selectable. Only the leaves can be</span>
+<span class="sd">        dragged.&quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span></div>
+
+<div class="viewcode-block" id="DictionaryTreeModel.getNode"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode">[docs]</a>    <span class="k">def</span> <span class="nf">getNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a Node() from given index.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
-                <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
-                <span class="n">node</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">(),</span> <span class="n">value</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">node</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.headerData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the name of the requested column.&quot;&quot;&quot;</span>
@@ -153,24 +159,6 @@
                 <span class="k">return</span> <span class="s2">&quot;Packages&quot;</span>
             <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;Value&quot;</span></div>
-
-<div class="viewcode-block" id="DictionaryTreeModel.flags"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Everything is enable and selectable. Only the leaves can be</span>
-<span class="sd">        dragged. &quot;&quot;&quot;</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span></div>
-
-<div class="viewcode-block" id="DictionaryTreeModel.parent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the parent from given index.&quot;&quot;&quot;</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">parentNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">parentNode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">QModelIndex</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">parentNode</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parentNode</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.index"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an index from given row, column and parent.&quot;&quot;&quot;</span>
@@ -181,15 +169,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">childItem</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">QModelIndex</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="DictionaryTreeModel.getNode"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.getNode">[docs]</a>    <span class="k">def</span> <span class="nf">getNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a Node() from given index.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">node</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span></div>
 
 <div class="viewcode-block" id="DictionaryTreeModel.insertRows"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.insertRows">[docs]</a>    <span class="k">def</span> <span class="nf">insertRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Insert rows from starting position and number given by rows.&quot;&quot;&quot;</span>
@@ -204,8 +183,44 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">endInsertRows</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">success</span></div>
 
+<div class="viewcode-block" id="DictionaryTreeModel.mimeData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeData">[docs]</a>    <span class="k">def</span> <span class="nf">mimeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used when the widget is dragged by the user.</span>
+
+<span class="sd">        :param idxs: mouse event</span>
+<span class="sd">        :return: QMimeData object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mimedata</span> <span class="o">=</span> <span class="n">QMimeData</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
+                <span class="n">mimedata</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s1">&#39;component/name&#39;</span><span class="p">,</span> <span class="n">QByteArray</span><span class="p">(</span><span class="n">txt</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">mimedata</span></div>
+
+<div class="viewcode-block" id="DictionaryTreeModel.mimeTypes"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.mimeTypes">[docs]</a>    <span class="k">def</span> <span class="nf">mimeTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a constant.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;component/name&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DictionaryTreeModel.parent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the parent from given index.</span>
+
+<span class="sd">        :param index: index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">parentNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">parentNode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QModelIndex</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">parentNode</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parentNode</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="DictionaryTreeModel.removeRows"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.removeRows">[docs]</a>    <span class="k">def</span> <span class="nf">removeRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QModelIndex</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;Remove the rows from position to position+rows.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Remove the rows from position to position+rows.</span>
+
+<span class="sd">        :param position: the position of the node</span>
+<span class="sd">        :param rows: the row of the tnode</span>
+<span class="sd">        :param parent: the parent node</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beginRemoveRows</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">position</span> <span class="o">+</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -215,48 +230,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">endRemoveRows</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">success</span></div>
 
-<div class="viewcode-block" id="DictionaryTreeModel.to_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div></div>
+<div class="viewcode-block" id="DictionaryTreeModel.rowCount"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.rowCount">[docs]</a>    <span class="k">def</span> <span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The number of rows is the number of children.</span>
 
-
-<div class="viewcode-block" id="FileFilterProxyModel"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FileFilterProxyModel</span><span class="p">(</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Just a test for the moment. Should be useful to use in</span>
-<span class="sd">       the file dialog.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="FileFilterProxyModel.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FileFilterProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="FileFilterProxyModel.filterAcceptsRow"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.FileFilterProxyModel.filterAcceptsRow">[docs]</a>    <span class="k">def</span> <span class="nf">filterAcceptsRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_row</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">):</span>
-        <span class="n">source_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
-        <span class="n">index0</span> <span class="o">=</span> <span class="n">source_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">source_row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">)</span>
-        <span class="c1"># Always show directories</span>
-        <span class="k">if</span> <span class="n">source_model</span><span class="o">.</span><span class="n">isDir</span><span class="p">(</span><span class="n">index0</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="c1"># filter files</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">source_model</span><span class="o">.</span><span class="n">fileName</span><span class="p">(</span><span class="n">index0</span><span class="p">)</span>
-        <span class="c1">#       filename=self.sourceModel().index(row,0,parent).data().lower()</span>
-        <span class="c1"># return True</span>
-        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;.xml&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+<span class="sd">        :param parent: the parent of the node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">parentNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div></div>
+            <span class="n">parentNode</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
 
-    <span class="c1"># def flags(self, index):</span>
-    <span class="c1">#     flags = super(FileFilterProxyModel, self).flags(index)</span>
-    <span class="c1">#     source_model = self.sourceModel()</span>
-    <span class="c1">#     if source_model.isDir(index):</span>
-    <span class="c1">#         flags |= Qt.ItemIsSelectable</span>
-    <span class="c1">#         return flags</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # filter files</span>
-    <span class="c1">#     filename = source_model.fileName(index)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if filename.count(&quot;.py&quot;) + filename.count(&quot;.xml&quot;) == 0:</span>
-    <span class="c1">#         flags &amp;= ~Qt.ItemIsSelectable</span>
-    <span class="c1">#         return flags</span>
-    <span class="c1">#     else:</span>
-    <span class="c1">#         flags |= Qt.ItemIsSelectable</span>
-    <span class="c1">#         return flags</span>
+        <span class="k">return</span> <span class="n">parentNode</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DictionaryTreeModel.setData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method gets called when the user changes data.</span>
+
+<span class="sd">        :param index: index</span>
+<span class="sd">        :param value: value</span>
+<span class="sd">        :param role: Qt role</span>
+<span class="sd">        :return: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">(),</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DictionaryTreeModel.to_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.DictionaryTreeModel.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the root node as a dictionary.</span>
+
+<span class="sd">        :return: dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rootNode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="InstallProcesses"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.InstallProcesses">[docs]</a><span class="k">class</span> <span class="nc">InstallProcesses</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
@@ -268,7 +274,7 @@
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - get_filename: opens a file dialog to get the folder or zip file to</span>
-<span class="sd">          install</span>
+<span class="sd">        install</span>
 <span class="sd">        - install: installs the selected file/folder on Populse_MIA</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -855,8 +861,32 @@
 
 
 <div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to handle a package children.</span>
+
+<span class="sd">    .. Methods:</span>
+<span class="sd">        - _recurse_dict: add the name and value of the farthest child in the</span>
+<span class="sd">        dictionary</span>
+<span class="sd">        - addChild: add a child to the children list</span>
+<span class="sd">        - attrs:</span>
+<span class="sd">        - child: return a child from its index in the list</span>
+<span class="sd">        - childCount: return the number of children</span>
+<span class="sd">        - data: return the name or the value of the object</span>
+<span class="sd">        - insertChild: insert a child to a specific position</span>
+<span class="sd">        - log: return the logs</span>
+<span class="sd">        - name: return the name of the object</span>
+<span class="sd">        - parent: return the parent of the object</span>
+<span class="sd">        - removeChild: remove a specific child</span>
+<span class="sd">        - row: return the index of the object in its parent list of children</span>
+<span class="sd">        - to_dict: return a dictionary of the children</span>
+<span class="sd">        - to_list: return the list of children with their names and values</span>
+<span class="sd">        - value: return the value of the object</span>
+<span class="sd">        - setData: update the name or the value of the object</span>
+<span class="sd">        - resource: return a None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the Node class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
@@ -864,26 +894,37 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Define what should be printed by the class.</span>
+
+<span class="sd">        :return: the logs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_recurse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add the name and value of the farthest child in the dictionary.</span>
+
+<span class="sd">        :param d: dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">_recurse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
 <div class="viewcode-block" id="Node.addChild"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.addChild">[docs]</a>    <span class="k">def</span> <span class="nf">addChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a child to the children list.</span>
+
+<span class="sd">        :param child: child to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.insertChild"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.insertChild">[docs]</a>    <span class="k">def</span> <span class="nf">insertChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
-<div class="viewcode-block" id="Node.removeChild"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.removeChild">[docs]</a>    <span class="k">def</span> <span class="nf">removeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
 <div class="viewcode-block" id="Node.attrs"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.attrs">[docs]</a>    <span class="k">def</span> <span class="nf">attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
         <span class="n">keyvalued</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
@@ -892,64 +933,58 @@
                     <span class="n">keyvalued</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">keyvalued</span></div>
 
-<div class="viewcode-block" id="Node.to_list"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_list">[docs]</a>    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
-                <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">to_list</span><span class="p">()]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">output</span></div>
-
-<div class="viewcode-block" id="Node.to_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
-            <span class="n">child</span><span class="o">.</span><span class="n">_recurse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span></div>
-
-    <span class="k">def</span> <span class="nf">_recurse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
-                <span class="n">child</span><span class="o">.</span><span class="n">_recurse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
-
-    <span class="k">def</span> <span class="nf">name</span><span class="p">():</span>
-        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
-
-        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
-
-        <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">name</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">value</span><span class="p">():</span>
-        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
-
-        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
-
-        <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span>
-
-    <span class="n">value</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">())</span>
-
 <div class="viewcode-block" id="Node.child"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.child">[docs]</a>    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a child from its index in the list.</span>
+
+<span class="sd">        :param row: index in the list of children</span>
+<span class="sd">        :return: child</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">row</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Node.childCount"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.childCount">[docs]</a>    <span class="k">def</span> <span class="nf">childCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of children.</span>
+
+<span class="sd">        :return: the length of the children list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Node.parent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span></div>
+<div class="viewcode-block" id="Node.data"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the name or the value of the object.</span>
 
-<div class="viewcode-block" id="Node.row"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.row">[docs]</a>    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+<span class="sd">        :param column: 0 for name, 1 for value</span>
+<span class="sd">        :return: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">while</span> <span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Root&#39;</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">text</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_parent</span>
+            <span class="k">return</span> <span class="n">text</span>  <span class="c1"># self.name</span>
+
+        <span class="k">elif</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
+
+<div class="viewcode-block" id="Node.insertChild"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.insertChild">[docs]</a>    <span class="k">def</span> <span class="nf">insertChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert a child to a specific position.</span>
+
+<span class="sd">        :param position: position</span>
+<span class="sd">        :param child: child</span>
+<span class="sd">        :return: boolean, True if the insertion was successful</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="Node.log"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabLevel</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the logs.</span>
+
+<span class="sd">        :param tabLevel: Number of tabulation</span>
+<span class="sd">        :return: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="n">tabLevel</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -965,49 +1000,123 @@
         <span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Return the name of the object.</span>
 
-<div class="viewcode-block" id="Node.data"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-            <span class="k">while</span> <span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Root&#39;</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">text</span>
-                <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_parent</span>
-            <span class="k">return</span> <span class="n">text</span>  <span class="c1"># self.name</span>
+<span class="sd">        :return: name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
-        <span class="k">elif</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
+        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">name</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Node.parent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the parent of the object.</span>
+
+<span class="sd">        :return: parent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span></div>
+
+<div class="viewcode-block" id="Node.removeChild"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.removeChild">[docs]</a>    <span class="k">def</span> <span class="nf">removeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove a specific child.</span>
+
+<span class="sd">        :param position: position of the child</span>
+<span class="sd">        :param child: child to remove</span>
+<span class="sd">        :return: boolean, True if the child was removed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Node.row"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.row">[docs]</a>    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the index of the object in its parent list of children.</span>
+
+<span class="sd">        :return: index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Node.to_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary of the children.</span>
+
+<span class="sd">        :param d: dictionary</span>
+<span class="sd">        :return: dictionary of children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">_recurse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Node.to_list"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.to_list">[docs]</a>    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the list of children with their names and values.</span>
+
+<span class="sd">        :return: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">to_list</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">value</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Return the value of the object.</span>
+
+<span class="sd">        :return: value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">())</span>
 
 <div class="viewcode-block" id="Node.setData"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the name or the value of the object.</span>
+
+<span class="sd">        :param column: 0 for name, 1 for value</span>
+<span class="sd">        :param value: new value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
 
 <div class="viewcode-block" id="Node.resource"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.Node.resource">[docs]</a>    <span class="k">def</span> <span class="nf">resource</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return None</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div></div>
 
 
 <div class="viewcode-block" id="PackageLibrary"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary">[docs]</a><span class="k">class</span> <span class="nc">PackageLibrary</span><span class="p">(</span><span class="n">QTreeWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Tree that displays the user-added packages and their modules</span>
-<span class="sd">    The user can check or not each module/package</span>
+    <span class="sd">&quot;&quot;&quot;Tree that displays the user-added packages and their modules.</span>
+<span class="sd">    The user can check or not each module/package.</span>
 
 <span class="sd">    .. Methods:</span>
-<span class="sd">        - update_checks: updates the checks of the tree from an item</span>
-<span class="sd">        - set_module_view: sets if a module has to be enabled or disabled in</span>
-<span class="sd">          the process library</span>
+<span class="sd">        - fill_item: fills the items of the tree recursively</span>
+<span class="sd">        - generate_tree: generates the package tree</span>
 <span class="sd">        - recursive_checks: checks/unchecks all child items</span>
 <span class="sd">        - recursive_checks_from_child: checks/unchecks all parent items</span>
-<span class="sd">        - generate_tree: generates the package tree</span>
-<span class="sd">        - fill_item: fills the items of the tree recursively</span>
+<span class="sd">        - set_module_view: sets if a module has to be enabled or disabled in</span>
+<span class="sd">        the process library</span>
+<span class="sd">        - update_checks: updates the checks of the tree from an item</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PackageLibrary.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_tree</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialization of the PackageLibrary widget</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the PackageLibrary widget.</span>
 
 <span class="sd">        :param package_tree: representation of the packages as a tree-dictionary</span>
 <span class="sd">        :param paths: list of paths to add to the system to import the packages</span>
@@ -1021,126 +1130,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setHeaderLabel</span><span class="p">(</span><span class="s2">&quot;Packages&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PackageLibrary.update_checks"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.update_checks">[docs]</a>    <span class="k">def</span> <span class="nf">update_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the checks of the tree from an item</span>
-
-<span class="sd">        :param item: item on which to begin</span>
-<span class="sd">        :param column: column from the check (should always be 0)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Checked state is stored on column 0</span>
-        <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">childCount</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="PackageLibrary.set_module_view"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.set_module_view">[docs]</a>    <span class="k">def</span> <span class="nf">set_module_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets if a module has to be enabled or disabled in the process library</span>
-
-<span class="sd">        :param item: item selected in the current tree</span>
-<span class="sd">        :param state: checked or not checked (Qt.Checked == 2.</span>
-<span class="sd">          So if val == 2 -&gt; checkbox is checked, and if val == 0 -&gt; checkbox</span>
-<span class="sd">          is not checked)</span>
-<span class="sd">        :pkg_iter: dictionary where keys are the name of a module (brick)</span>
-<span class="sd">            and values are &#39;process_enabled&#39; or &#39;process_disabled&#39;.</span>
-<span class="sd">            Key can be a submodule. In this case the value is a dictionary</span>
-<span class="sd">            where keys are the name of a module (brick) and values are &#39;process</span>
-<span class="sd">            enabled&#39;</span>
-<span class="sd">            or &#39;process_disabled&#39;. etc. pkg_iter take only the modules</span>
-<span class="sd">            concerning the top</span>
-<span class="sd">            package where a change of status where done.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;process_enabled&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;process_disabled&#39;</span>
-
-        <span class="n">list_path</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">list_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">top_level_items</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">topLevelItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
-                                <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topLevelItemCount</span><span class="p">())]</span>
-
-        <span class="k">while</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_level_items</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
-            <span class="n">list_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-
-        <span class="n">pkg_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_tree</span>
-        <span class="n">list_path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">list_path</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">list_path</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="n">list_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                    <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Package not found&#39;</span><span class="p">)</span>
-                <span class="k">break</span></div>
-
-<div class="viewcode-block" id="PackageLibrary.recursive_checks"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks/unchecks all child items</span>
-
-<span class="sd">        :param parent: parent item</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check_state</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_module_view</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">()):</span>
-            <span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
-
-<div class="viewcode-block" id="PackageLibrary.recursive_checks_from_child"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks_from_child">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks_from_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks/unchecks all parent items</span>
-
-<span class="sd">        :param child: child item</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check_state</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_module_view</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
-            <span class="n">parent</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">:</span>
-                    <span class="n">parent</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># checked_children = []</span>
-                <span class="c1"># for child in range(parent.childCount()):</span>
-                <span class="c1">#</span>
-                <span class="c1">#     if child.checkState(0) == Qt.Checked:</span>
-                <span class="c1">#         checked_children.append()</span>
-
-                <span class="n">checked_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span>
-                                    <span class="nb">range</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">())</span>
-                                    <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">child</span><span class="p">)</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span>
-                        <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">checked_children</span><span class="p">:</span>
-                    <span class="n">parent</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="PackageLibrary.generate_tree"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.generate_tree">[docs]</a>    <span class="k">def</span> <span class="nf">generate_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates the package tree</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_tree</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="PackageLibrary.fill_item"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.fill_item">[docs]</a>    <span class="k">def</span> <span class="nf">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fills the items of the tree recursively</span>
+        <span class="sd">&quot;&quot;&quot;Fill the items of the tree recursively.</span>
 
 <span class="sd">        :param item: current item to fill</span>
 <span class="sd">        :param value: value of the item in the tree</span>
@@ -1179,25 +1170,129 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">child</span> <span class="o">=</span> <span class="n">QTreeWidgetItem</span><span class="p">()</span>
             <span class="n">child</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div></div>
+            <span class="n">item</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PackageLibrary.generate_tree"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.generate_tree">[docs]</a>    <span class="k">def</span> <span class="nf">generate_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate the package tree&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PackageLibrary.recursive_checks"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check/uncheck all child items.</span>
+
+<span class="sd">        :param parent: parent item</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_state</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_module_view</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">()):</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PackageLibrary.recursive_checks_from_child"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.recursive_checks_from_child">[docs]</a>    <span class="k">def</span> <span class="nf">recursive_checks_from_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check/uncheck all parent items.</span>
+
+<span class="sd">        :param child: child item</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_state</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_module_view</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">check_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># checked_children = []</span>
+                <span class="c1"># for child in range(parent.childCount()):</span>
+                <span class="c1">#</span>
+                <span class="c1">#     if child.checkState(0) == Qt.Checked:</span>
+                <span class="c1">#         checked_children.append()</span>
+
+                <span class="n">checked_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span>
+                                    <span class="nb">range</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">childCount</span><span class="p">())</span>
+                                    <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">child</span><span class="p">)</span><span class="o">.</span><span class="n">checkState</span><span class="p">(</span>
+                        <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">checked_children</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PackageLibrary.set_module_view"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.set_module_view">[docs]</a>    <span class="k">def</span> <span class="nf">set_module_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set if a module has to be enabled or disabled in the process</span>
+<span class="sd">        library.</span>
+
+<span class="sd">        :param item: item selected in the current tree</span>
+<span class="sd">        :param state: checked or not checked (Qt.Checked == 2. So if val ==</span>
+<span class="sd">        2 -&gt; checkbox is checked, and if val == 0 -&gt; checkbox is not checked)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;process_enabled&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;process_disabled&#39;</span>
+
+        <span class="n">list_path</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_level_items</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">topLevelItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                                <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topLevelItemCount</span><span class="p">())]</span>
+
+        <span class="k">while</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_level_items</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+            <span class="n">list_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># pkg_iter take only the modules concerning the top package where a</span>
+        <span class="c1"># change of status where done.</span>
+        <span class="n">pkg_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_tree</span>
+        <span class="n">list_path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">list_path</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">list_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">pkg_iter</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="n">list_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pkg_iter</span> <span class="o">=</span> <span class="n">pkg_iter</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Package not found&#39;</span><span class="p">)</span>
+                <span class="k">break</span></div>
+
+<div class="viewcode-block" id="PackageLibrary.update_checks"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibrary.update_checks">[docs]</a>    <span class="k">def</span> <span class="nf">update_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the checks of the tree from an item.</span>
+
+<span class="sd">        :param item: item on which to begin</span>
+<span class="sd">        :param column: column from the check (should always be 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Checked state is stored on column 0</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">childCount</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">recursive_checks_from_child</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_checks</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PackageLibraryDialog"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog">[docs]</a><span class="k">class</span> <span class="nc">PackageLibraryDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Dialog that controls which processes to show in the process library.</span>
 
 <span class="sd">    .. Methods:</span>
-<span class="sd">        - add_package_with_text: adds a package from the line edit&#39;s text</span>
-<span class="sd">        - add_package: adds a package and its modules to the package tree</span>
-<span class="sd">        - browse_package: opens a browser to select a package</span>
+<span class="sd">        - add_package_with_text: add a package from the line edit&#39;s text</span>
+<span class="sd">        - add_package: add a package and its modules to the package tree</span>
+<span class="sd">        - browse_package: open a browser to select a package</span>
 <span class="sd">        - import_file: import a python module from a path</span>
-<span class="sd">        - load_config: updates the config and loads the corresponding packages</span>
-<span class="sd">        - load_packages: updates the tree of the process library</span>
-<span class="sd">        - remove_package: removes a package from the package tree</span>
-<span class="sd">        - remove_package_with_text: removes the package in the line edit from</span>
+<span class="sd">        - load_config: update the config and loads the corresponding packages</span>
+<span class="sd">        - load_packages: update the tree of the process library</span>
+<span class="sd">        - remove_package: remove a package from the package tree</span>
+<span class="sd">        - remove_package_with_text: remove the package in the line edit from</span>
 <span class="sd">          the package tree</span>
-<span class="sd">        - save: saves the tree to the process_config.yml file</span>
-<span class="sd">        - save_config: saves the current config to process_config.yml</span>
-<span class="sd">        - update_config: updates the process_config and package_library</span>
+<span class="sd">        - save: save the tree to the process_config.yml file</span>
+<span class="sd">        - save_config: save the current config to process_config.yml</span>
+<span class="sd">        - update_config: update the process_config and package_library</span>
 <span class="sd">          attributes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1715,8 +1810,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">load_dictionary</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ProcessLibrary.load_dictionary"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.load_dictionary">[docs]</a>    <span class="k">def</span> <span class="nf">load_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads a dictionary to the tree</span>
+        <span class="sd">&quot;&quot;&quot;Load a dictionary to the tree.</span>
 
 <span class="sd">        :param d: dictionary to load. See the packages attribute in the</span>
 <span class="sd">        ProcessLibraryWidget class.</span>
@@ -1728,13 +1822,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">expandAll</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProcessLibrary.to_dict"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a dictionary from the current tree.</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary from the current tree.</span>
 
 <span class="sd">        :return: the dictionary of the tree</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProcessLibrary.mousePressEvent"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event when the mouse is pressed.&quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="c1"># print(&#39;idx&#39;,dir(idx.model()))</span>
         <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isValid</span><span class="p">:</span>
@@ -1821,6 +1916,57 @@
 
     <span class="k">return</span> <span class="n">root_node</span></div>
 
+
+<span class="c1"># class FileFilterProxyModel(QSortFilterProxyModel):</span>
+<span class="c1">#     &quot;&quot;&quot;Just a test for the moment. Should be useful to use in</span>
+<span class="c1">#        the file dialog.</span>
+<span class="c1">#</span>
+<span class="c1">#     .. Methods:</span>
+<span class="c1">#         - filterAcceptsRow:</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         &quot;&quot;&quot;Initialization of the FileFilterProxyModel class.&quot;&quot;&quot;</span>
+<span class="c1">#         super(FileFilterProxyModel, self).__init__()</span>
+<span class="c1">#</span>
+<span class="c1">#     def filterAcceptsRow(self, source_row, source_parent):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#         :param source_row:</span>
+<span class="c1">#         :param source_parent:</span>
+<span class="c1">#         :return: boolean</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         source_model = self.sourceModel()</span>
+<span class="c1">#         index0 = source_model.index(source_row, 0, source_parent)</span>
+<span class="c1">#         # Always show directories</span>
+<span class="c1">#         if source_model.isDir(index0):</span>
+<span class="c1">#             return True</span>
+<span class="c1">#         # filter files</span>
+<span class="c1">#         filename = source_model.fileName(index0)</span>
+<span class="c1">#         #       filename=self.sourceModel().index(row,0,parent).data().lower()</span>
+<span class="c1">#         # return True</span>
+<span class="c1">#         if filename.count(&quot;.py&quot;) + filename.count(&quot;.xml&quot;) == 0:</span>
+<span class="c1">#             return False</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             return True</span>
+<span class="c1">#</span>
+<span class="c1">#     def flags(self, index):</span>
+<span class="c1">#         flags = super(FileFilterProxyModel, self).flags(index)</span>
+<span class="c1">#         source_model = self.sourceModel()</span>
+<span class="c1">#         if source_model.isDir(index):</span>
+<span class="c1">#             flags |= Qt.ItemIsSelectable</span>
+<span class="c1">#             return flags</span>
+<span class="c1">#</span>
+<span class="c1">#         # filter files</span>
+<span class="c1">#         filename = source_model.fileName(index)</span>
+<span class="c1">#</span>
+<span class="c1">#         if filename.count(&quot;.py&quot;) + filename.count(&quot;.xml&quot;) == 0:</span>
+<span class="c1">#             flags &amp;= ~Qt.ItemIsSelectable</span>
+<span class="c1">#             return flags</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             flags |= Qt.ItemIsSelectable</span>
+<span class="c1">#             return flags</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
