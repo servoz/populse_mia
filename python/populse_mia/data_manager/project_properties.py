@@ -24,12 +24,8 @@ from populse_mia.software_properties import Config
 
 
 class SavedProjects:
-    
-    """Class that handles all the projects that have been saved in the software.
-
-    Attributes:
-        - savedProjects: dictionary of all the saved projects
-        - pathsList: list of all the saved projects
+    """Class that handles all the projects that have been saved in the
+    software.
 
     .. Methods:
         - addSavedProject: adds a new saved project
@@ -45,7 +41,7 @@ class SavedProjects:
         """Initialise the savedProjects attribute from the saved_projects.yml
            file.
 
-        The pathsList attribute is initialised as the value correponding to 
+        The pathsList attribute is initialised as the value corresponding to
         the "paths" key in the savedProjects dictionary.
 
         """
@@ -59,7 +55,7 @@ class SavedProjects:
                 self.pathsList = []
 
         else:
-            self.savedProjects = {"paths" : []}
+            self.savedProjects = {"paths": []}
             self.pathsList = []
 
     def addSavedProject(self, newPath):

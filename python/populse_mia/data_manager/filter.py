@@ -25,16 +25,6 @@ class Filter:
     """Class that represent a Filter, containing the results of both rapid and
       advanced search
 
-    Attributes:
-        :param name: filter's name
-        :param nots: list of negations ("" or NOT)
-        :param values: list of values
-        :param fields: list of list of fields
-        :param links: list of links (AND/OR)
-        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
-        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
-        :param search_bar: value in the rapid search bar
-
     .. Methods:
         - generate_filter: apply the filter to the given list of scans
         - json_format: returns the filter as a dictionary
@@ -47,11 +37,30 @@ class Filter:
     - A condition (==, !=, >, <, >=, <=, CONTAINS, IN, BETWEEN)
     - A value
 
+    :param name: filter's name
+    :param nots: list of negations ("" or NOT)
+    :param values: list of values
+    :param fields: list of list of fields
+    :param links: list of links (AND/OR)
+    :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
+    BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+    :param search_bar: value in the rapid search bar
+
     """
 
     def __init__(self, name, nots, values, fields, links, conditions,
                  search_bar):
+        """Initialization of the Filter class.
 
+        :param name: filter's name
+        :param nots: list of negations ("" or NOT)
+        :param values: list of values
+        :param fields: list of list of fields
+        :param links: list of links (AND/OR)
+        :param conditions: list of conditions (==, !=, <, >, <=, >=, IN,
+        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+        :param search_bar: value in the rapid search bar
+        """
         self.nots = nots
         self.values = values
         self.fields = fields

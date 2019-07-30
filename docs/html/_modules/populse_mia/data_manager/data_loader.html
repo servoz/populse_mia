@@ -88,8 +88,7 @@
 <div class="viewcode-block" id="ImportProgress"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportProgress">[docs]</a><span class="k">class</span> <span class="nc">ImportProgress</span><span class="p">(</span><span class="n">QProgressDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Handle the progress bar.</span>
 
-<span class="sd">    Attributes;</span>
-<span class="sd">        :param project: A Project object</span>
+<span class="sd">    :param project: A Project object</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - onProgress : Set the import progressbar value.</span>
@@ -97,6 +96,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ImportProgress.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportProgress.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the ImportProgress class.</span>
+
+<span class="sd">         :param project: A Project object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImportProgress</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="s2">&quot;Please wait while the paths are being imported...&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
@@ -123,9 +126,8 @@
 <div class="viewcode-block" id="ImportWorker"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportWorker">[docs]</a><span class="k">class</span> <span class="nc">ImportWorker</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Manage threads.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        :param project: A Project object</span>
-<span class="sd">        ;param progress: An ImportProgress object</span>
+<span class="sd">    :param project: A Project object</span>
+<span class="sd">    ;param progress: An ImportProgress object</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - run : Override the QThread run method.</span>
@@ -134,6 +136,11 @@
     <span class="n">notifyProgress</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImportWorker.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportWorker.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the ImportWorker class.</span>
+
+<span class="sd">        :param project: A Project object</span>
+<span class="sd">        ;param progress: An ImportProgress object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span>

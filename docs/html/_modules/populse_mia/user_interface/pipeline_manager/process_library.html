@@ -1691,10 +1691,7 @@
                       <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PackageLibraryDialog.update_config"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the process_config and package_library attributes</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Updates the process_config and package_library attributes.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">process_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_packages</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">package_library</span><span class="o">.</span><span class="n">package_tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span>
@@ -1703,11 +1700,16 @@
 
 
 <div class="viewcode-block" id="ProcessHelp"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp">[docs]</a><span class="k">class</span> <span class="nc">ProcessHelp</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A widget that displays information about the selected process.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A widget that displays information about the selected process.</span>
+
+<span class="sd">    :param process: selected process</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ProcessHelp.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Generate the help.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="sd">         :param process: selected process</span>
+<span class="sd">         &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ProcessHelp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">()</span>
@@ -1718,9 +1720,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tree to display the available Capsul&#39;s processes</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        - dictionary: dictionary corresponding to the tree</span>
-<span class="sd">        - _model: model used</span>
+<span class="sd">    :param d: dictionary: dictionary corresponding to the tree</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - load_dictionary: loads a dictionary to the tree</span>
@@ -1730,6 +1730,10 @@
     <span class="n">item_library_clicked</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ProcessLibrary.__init__"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the ProcessLibrary class.</span>
+
+<span class="sd">        :param d: dictionary: dictionary corresponding to the tree</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ProcessLibrary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_dictionary</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 

@@ -57,16 +57,6 @@
     <span class="sd">&quot;&quot;&quot;Class that represent a Filter, containing the results of both rapid and</span>
 <span class="sd">      advanced search</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        :param name: filter&#39;s name</span>
-<span class="sd">        :param nots: list of negations (&quot;&quot; or NOT)</span>
-<span class="sd">        :param values: list of values</span>
-<span class="sd">        :param fields: list of list of fields</span>
-<span class="sd">        :param links: list of links (AND/OR)</span>
-<span class="sd">        :param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</span>
-<span class="sd">        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</span>
-<span class="sd">        :param search_bar: value in the rapid search bar</span>
-
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - generate_filter: apply the filter to the given list of scans</span>
 <span class="sd">        - json_format: returns the filter as a dictionary</span>
@@ -79,11 +69,30 @@
 <span class="sd">    - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)</span>
 <span class="sd">    - A value</span>
 
+<span class="sd">    :param name: filter&#39;s name</span>
+<span class="sd">    :param nots: list of negations (&quot;&quot; or NOT)</span>
+<span class="sd">    :param values: list of values</span>
+<span class="sd">    :param fields: list of list of fields</span>
+<span class="sd">    :param links: list of links (AND/OR)</span>
+<span class="sd">    :param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</span>
+<span class="sd">    BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</span>
+<span class="sd">    :param search_bar: value in the rapid search bar</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Filter.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.filter.Filter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nots</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span>
                  <span class="n">search_bar</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the Filter class.</span>
 
+<span class="sd">        :param name: filter&#39;s name</span>
+<span class="sd">        :param nots: list of negations (&quot;&quot; or NOT)</span>
+<span class="sd">        :param values: list of values</span>
+<span class="sd">        :param fields: list of list of fields</span>
+<span class="sd">        :param links: list of links (AND/OR)</span>
+<span class="sd">        :param conditions: list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</span>
+<span class="sd">        BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)</span>
+<span class="sd">        :param search_bar: value in the rapid search bar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nots</span> <span class="o">=</span> <span class="n">nots</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>

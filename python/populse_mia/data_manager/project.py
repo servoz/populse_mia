@@ -68,9 +68,8 @@ TYPE_MAT = "Matrix"
 class Project():
     """Class that handles projects and their associated database.
 
-    Attributes:
-        :param project_root_folder: project's path
-        :param new_project: project's object
+    :param project_root_folder: project's path
+    :param new_project: project's object
 
     .. Methods:
         - add_clinical_tags: add the clinical tags to the project
@@ -102,6 +101,11 @@ class Project():
     """
 
     def __init__(self, project_root_folder, new_project):
+        """Initialization of the project class.
+
+        :param project_root_folder: project's path
+        :param new_project: project's object
+        """
 
         if project_root_folder is None:
             self.isTempProject = True

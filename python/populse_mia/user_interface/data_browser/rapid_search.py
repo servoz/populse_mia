@@ -30,8 +30,7 @@ class RapidSearch(QLineEdit):
     for the scans with missing value(s).
     Dates are in the following format: yyyy-mm-dd hh:mm:ss.fff”
 
-    Attributes:
-        - databrowser: parent data browser widget
+    :param databrowser: parent data browser widget
 
     .. Methods:
         - prepare_filter: prepares the rapid search filter
@@ -40,7 +39,10 @@ class RapidSearch(QLineEdit):
     """
 
     def __init__(self, databrowser):
+        """Initialization of RapidSearch class.
 
+        :param databrowser: parent data browser widget
+        """
         super().__init__()
 
         self.databrowser = databrowser

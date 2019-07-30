@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*- #
 
-"""Module to handle the projects and their database."""
+"""Module to handle the projects and their database.
+
+Contains:
+    Module:
+      - data_loader
+      - database_mia
+      - filter
+      - project
+      - project_properties
+
+"""
 
 ##########################################################################
 # Populse_mia - Copyright (C) IRMaGe/CEA, 2018

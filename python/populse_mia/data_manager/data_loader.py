@@ -56,8 +56,7 @@ from populse_db.database import (
 class ImportProgress(QProgressDialog):
     """Handle the progress bar.
 
-    Attributes;
-        :param project: A Project object
+    :param project: A Project object
 
     .. Methods:
         - onProgress : Set the import progressbar value.
@@ -65,6 +64,10 @@ class ImportProgress(QProgressDialog):
     """
 
     def __init__(self, project):
+        """Initialization of the ImportProgress class.
+
+         :param project: A Project object
+        """
         super(ImportProgress, self).__init__(
             "Please wait while the paths are being imported...", None, 0, 3)
 
@@ -91,9 +94,8 @@ class ImportProgress(QProgressDialog):
 class ImportWorker(QThread):
     """Manage threads.
 
-    Attributes:
-        :param project: A Project object
-        ;param progress: An ImportProgress object
+    :param project: A Project object
+    ;param progress: An ImportProgress object
 
     .. Methods:
         - run : Override the QThread run method.
@@ -102,6 +104,11 @@ class ImportWorker(QThread):
     notifyProgress = pyqtSignal(int)
 
     def __init__(self, project, progress):
+        """Initialization of the ImportWorker class.
+
+        :param project: A Project object
+        ;param progress: An ImportProgress object
+        """
         super().__init__()
         self.project = project
         self.progress = progress

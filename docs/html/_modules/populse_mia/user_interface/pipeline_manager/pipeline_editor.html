@@ -43,6 +43,7 @@
 <span class="sd">        - save_pipeline</span>
 <span class="sd">        - get_path</span>
 <span class="sd">        - find_filename</span>
+<span class="sd">        - values</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -80,14 +81,6 @@
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">verCmp</span>
 
 <span class="n">unicode</span> <span class="o">=</span> <span class="nb">str</span>
-
-<div class="viewcode-block" id="values"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.pipeline_editor.values">[docs]</a><span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a variable as a list.</span>
-
-<span class="sd">    :returns: a list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
-
 
 <div class="viewcode-block" id="PipelineEditor"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.pipeline_editor.PipelineEditor">[docs]</a><span class="k">class</span> <span class="nc">PipelineEditor</span><span class="p">(</span><span class="n">PipelineDevelopperView</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;View to edit a pipeline graphically.</span>
@@ -1579,6 +1572,12 @@
         <span class="n">save_py_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="values"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.pipeline_editor.values">[docs]</a><span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a variable as a list.</span>
+
+<span class="sd">    :returns: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 

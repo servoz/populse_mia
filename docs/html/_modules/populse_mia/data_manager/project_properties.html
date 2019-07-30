@@ -56,12 +56,8 @@
 
 
 <div class="viewcode-block" id="SavedProjects"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project_properties.SavedProjects">[docs]</a><span class="k">class</span> <span class="nc">SavedProjects</span><span class="p">:</span>
-    
-    <span class="sd">&quot;&quot;&quot;Class that handles all the projects that have been saved in the software.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        - savedProjects: dictionary of all the saved projects</span>
-<span class="sd">        - pathsList: list of all the saved projects</span>
+    <span class="sd">&quot;&quot;&quot;Class that handles all the projects that have been saved in the</span>
+<span class="sd">    software.</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - addSavedProject: adds a new saved project</span>
@@ -77,7 +73,7 @@
         <span class="sd">&quot;&quot;&quot;Initialise the savedProjects attribute from the saved_projects.yml</span>
 <span class="sd">           file.</span>
 
-<span class="sd">        The pathsList attribute is initialised as the value correponding to </span>
+<span class="sd">        The pathsList attribute is initialised as the value corresponding to</span>
 <span class="sd">        the &quot;paths&quot; key in the savedProjects dictionary.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -91,7 +87,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pathsList</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">savedProjects</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;paths&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">savedProjects</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;paths&quot;</span><span class="p">:</span> <span class="p">[]}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pathsList</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="SavedProjects.addSavedProject"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project_properties.SavedProjects.addSavedProject">[docs]</a>    <span class="k">def</span> <span class="nf">addSavedProject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newPath</span><span class="p">):</span>

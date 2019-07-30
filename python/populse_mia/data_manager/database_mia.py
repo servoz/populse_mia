@@ -53,8 +53,7 @@ ALL_UNITS = [TAG_UNIT_MS, TAG_UNIT_MM,
 class DatabaseMIA(Database):
     """Class overriding the default behavior of populse_db
 
-    Attributes:
-        :param string_engine: Path of the new database file
+    :param string_engine: Path of the new database file
 
     .. Methods:
         - __enter__: returns a DatabaseSession instance for using the database
@@ -64,7 +63,10 @@ class DatabaseMIA(Database):
     """
 
     def __init__(self, string_engine):
+        """Initialization of the DatabaseMIA class.
 
+        :param string_engine: Path of the new database file
+        """
         super().__init__(string_engine, caches=True, list_tables=True,
                          query_type=QUERY_MIXED)
 

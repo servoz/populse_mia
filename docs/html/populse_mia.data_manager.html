@@ -32,6 +32,19 @@
   <div class="section" id="module-populse_mia.data_manager">
 <span id="populse-mia-data-manager-package"></span><h1>populse_mia.data_manager package<a class="headerlink" href="#module-populse_mia.data_manager" title="Permalink to this headline">¶</a></h1>
 <p>Module to handle the projects and their database.</p>
+<dl class="simple">
+<dt>Contains:</dt><dd><dl class="simple">
+<dt>Module:</dt><dd><ul class="simple">
+<li><p>data_loader</p></li>
+<li><p>database_mia</p></li>
+<li><p>filter</p></li>
+<li><p>project</p></li>
+<li><p>project_properties</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -52,18 +65,20 @@ progress bar
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">ImportProgress</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QProgressDialog</span></code></p>
 <p>Handle the progress bar.</p>
-<dl class="simple">
-<dt>Attributes;</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param project</dt>
-<dd class="field-odd"><p>A Project object</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the ImportProgress class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -79,19 +94,22 @@ progress bar
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.data_loader.</code><code class="sig-name descname">ImportWorker</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QThread</span></code></p>
 <p>Manage threads.</p>
-<dl>
-<dt>Attributes:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param project</dt>
-<dd class="field-odd"><p>A Project object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
 </dd>
 </dl>
 <p>;param progress: An ImportProgress object</p>
-</dd>
-</dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the ImportWorker class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
+</dd>
+</dl>
+<p>;param progress: An ImportProgress object</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -173,52 +191,18 @@ populse_db and some of its methods</p>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.database_mia.</code><code class="sig-name descname">DatabaseMIA</code><span class="sig-paren">(</span><em class="sig-param">string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">populse_db.database.Database</span></code></p>
 <p>Class overriding the default behavior of populse_db</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param string_engine</dt>
-<dd class="field-odd"><p>Path of the new database file</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string_engine</strong> – Path of the new database file</p>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.database_mia.DatabaseMIA.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">string_engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/database_mia.html#DatabaseMIA.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.database_mia.DatabaseMIA.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialization of the database</p>
+<dd><p>Initialization of the DatabaseMIA class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>string_engine</strong> – <p>Database engine</p>
-<p>The engine is constructed this way: dialect[+driver]://user:password&#64;host/dbname[?key=value..]</p>
-<p>The dialect can be mysql, oracle, postgresql, mssql, or sqlite</p>
-<p>The driver is the name of a DBAPI, such as psycopg2, pyodbc, or cx_oracle</p>
-<p>For sqlite databases, the file can be not existing yet, it will be created in this case</p>
-<dl class="simple">
-<dt>Examples:</dt><dd><ul>
-<li><p>”mysql://scott:tiger&#64;hostname/dbname”</p></li>
-<li><p>”postgresql://scott:tiger&#64;localhost/test”</p></li>
-<li><p>”sqlite:///foo.db”</p></li>
-<li><p>”oracle+cx_oracle://scott:tiger&#64;tnsname”</p></li>
-<li><p>”mssql+pyodbc://scott:tiger&#64;mydsn”</p></li>
-</ul>
-</dd>
-</dl>
-<p>See sqlalchemy documentation for more precisions about the engine: <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/engines.html">http://docs.sqlalchemy.org/en/latest/core/engines.html</a></p>
-</p></li>
-<li><p><strong>caches</strong> – Bool to know if the caches (the rows of the database are stored in dictionaries) must be used (Put True if you count on having a lot of data) =&gt; False by default</p></li>
-<li><p><strong>list_tables</strong> – Bool to know if tables must be created to store list values (Put True to have a pure SQL version of IN operator in filters) =&gt; True by default</p></li>
-<li><p><strong>query_type</strong> – Type of query to use for the filters (‘sql’, ‘python’, ‘mixed’, or ‘guess’) =&gt; ‘mixed’ by default</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – <ul class="simple">
-<li><p>If string_engine is invalid</p></li>
-<li><p>If caches is invalid</p></li>
-<li><p>If list_tables is invalid</p></li>
-<li><p>If query_type is invalid</p></li>
-<li><p>If the schema is not coherent with the API (the database is not a populse_db database)</p></li>
-</ul>
-</p>
+<dd class="field-odd"><p><strong>string_engine</strong> – Path of the new database file</p>
 </dd>
 </dl>
 </dd></dl>
@@ -325,31 +309,8 @@ rapid and advanced search</p>
 <dt id="populse_mia.data_manager.filter.Filter">
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.filter.</code><code class="sig-name descname">Filter</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">nots</em>, <em class="sig-param">values</em>, <em class="sig-param">fields</em>, <em class="sig-param">links</em>, <em class="sig-param">conditions</em>, <em class="sig-param">search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl>
+<dl class="simple">
 <dt>Class that represent a Filter, containing the results of both rapid and</dt><dd><p>advanced search</p>
-</dd>
-<dt>Attributes:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param name</dt>
-<dd class="field-odd"><p>filter’s name</p>
-</dd>
-<dt class="field-even">param nots</dt>
-<dd class="field-even"><p>list of negations (“” or NOT)</p>
-</dd>
-<dt class="field-odd">param values</dt>
-<dd class="field-odd"><p>list of values</p>
-</dd>
-<dt class="field-even">param fields</dt>
-<dd class="field-even"><p>list of list of fields</p>
-</dd>
-<dt class="field-odd">param links</dt>
-<dd class="field-odd"><p>list of links (AND/OR)</p>
-</dd>
-<dt class="field-even">param conditions</dt>
-<dd class="field-even"><p>list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</p>
-</dd>
-</dl>
-<p>BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
-:param search_bar: value in the rapid search bar</p>
 </dd>
 </dl>
 <p>The advanced search creates a complex query to the database and is a
@@ -359,10 +320,38 @@ are linked with AND or OR and all composed of:
 - A tag name or all visible tags
 - A condition (==, !=, &gt;, &lt;, &gt;=, &lt;=, CONTAINS, IN, BETWEEN)
 - A value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – filter’s name</p></li>
+<li><p><strong>nots</strong> – list of negations (“” or NOT)</p></li>
+<li><p><strong>values</strong> – list of values</p></li>
+<li><p><strong>fields</strong> – list of list of fields</p></li>
+<li><p><strong>links</strong> – list of links (AND/OR)</p></li>
+<li><p><strong>conditions</strong> – list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</p></li>
+</ul>
+</dd>
+</dl>
+<p>BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+:param search_bar: value in the rapid search bar</p>
 <dl class="method">
 <dt id="populse_mia.data_manager.filter.Filter.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">nots</em>, <em class="sig-param">values</em>, <em class="sig-param">fields</em>, <em class="sig-param">links</em>, <em class="sig-param">conditions</em>, <em class="sig-param">search_bar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/filter.html#Filter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.filter.Filter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the Filter class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – filter’s name</p></li>
+<li><p><strong>nots</strong> – list of negations (“” or NOT)</p></li>
+<li><p><strong>values</strong> – list of values</p></li>
+<li><p><strong>fields</strong> – list of list of fields</p></li>
+<li><p><strong>links</strong> – list of links (AND/OR)</p></li>
+<li><p><strong>conditions</strong> – list of conditions (==, !=, &lt;, &gt;, &lt;=, &gt;=, IN,</p></li>
+</ul>
+</dd>
+</dl>
+<p>BETWEEN, CONTAINS, HAS VALUE, HAS NO VALUE)
+:param search_bar: value in the rapid search bar</p>
 </dd></dl>
 
 <dl class="method">
@@ -410,21 +399,26 @@ are linked with AND or OR and all composed of:
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.project.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param">project_root_folder</em>, <em class="sig-param">new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that handles projects and their associated database.</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param project_root_folder</dt>
-<dd class="field-odd"><p>project’s path</p>
-</dd>
-<dt class="field-even">param new_project</dt>
-<dd class="field-even"><p>project’s object</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_root_folder</strong> – project’s path</p></li>
+<li><p><strong>new_project</strong> – project’s object</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.data_manager.project.Project.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project_root_folder</em>, <em class="sig-param">new_project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project.html#Project.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project.Project.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the project class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_root_folder</strong> – project’s path</p></li>
+<li><p><strong>new_project</strong> – project’s object</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -675,14 +669,8 @@ otherwise does nothing.</p>
 <dt id="populse_mia.data_manager.project_properties.SavedProjects">
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.data_manager.project_properties.</code><code class="sig-name descname">SavedProjects</code><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that handles all the projects that have been saved in the software.</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><ul class="simple">
-<li><p>savedProjects: dictionary of all the saved projects</p></li>
-<li><p>pathsList: list of all the saved projects</p></li>
-</ul>
-</dd>
-</dl>
+<p>Class that handles all the projects that have been saved in the
+software.</p>
 <dl class="method">
 <dt id="populse_mia.data_manager.project_properties.SavedProjects.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/project_properties.html#SavedProjects.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.project_properties.SavedProjects.__init__" title="Permalink to this definition">¶</a></dt>
@@ -690,7 +678,7 @@ otherwise does nothing.</p>
 <dt>Initialise the savedProjects attribute from the saved_projects.yml</dt><dd><p>file.</p>
 </dd>
 </dl>
-<p>The pathsList attribute is initialised as the value correponding to 
+<p>The pathsList attribute is initialised as the value corresponding to
 the “paths” key in the savedProjects dictionary.</p>
 </dd></dl>
 

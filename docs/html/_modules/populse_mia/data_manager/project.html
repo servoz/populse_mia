@@ -100,9 +100,8 @@
 <div class="viewcode-block" id="Project"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project">[docs]</a><span class="k">class</span> <span class="nc">Project</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Class that handles projects and their associated database.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        :param project_root_folder: project&#39;s path</span>
-<span class="sd">        :param new_project: project&#39;s object</span>
+<span class="sd">    :param project_root_folder: project&#39;s path</span>
+<span class="sd">    :param new_project: project&#39;s object</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - add_clinical_tags: add the clinical tags to the project</span>
@@ -134,6 +133,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Project.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.project.Project.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_root_folder</span><span class="p">,</span> <span class="n">new_project</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the project class.</span>
+
+<span class="sd">        :param project_root_folder: project&#39;s path</span>
+<span class="sd">        :param new_project: project&#39;s object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">project_root_folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">isTempProject</span> <span class="o">=</span> <span class="kc">True</span>

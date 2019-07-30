@@ -84,74 +84,6 @@ from populse_mia.utils.tools import ClickableLabel
 from populse_mia.utils.utils import check_value_type
 
 
-class PopUpRemoveScan(QDialog):
-    """
-    Is called when the user wants to remove a scan that was previously sent
-    to the pipeline manager.
-
-    :param scan: The scan that may be removed
-    :param size: The number of scan the user wants to remove
-    """
-    def __init__(self, scan, size):
-        super().__init__()
-
-        self.setWindowTitle("The document exists in the pipeline manager")
-        self.stop = False
-        self.repeat = False
-        label = QLabel(self)
-        label.setText('The document ' + scan + '\nwas previously sent to the '
-                                               'pipeline manager, do you '
-                                               'really want to delete it ?')
-
-        push_button_yes = QPushButton("Ok", self)
-        push_button_cancel = QPushButton("No", self)
-        if size > 1:
-            push_button_yes_all = QPushButton("Ok to all", self)
-            push_button_no_all = QPushButton("No to all", self)
-
-
-        hbox = QHBoxLayout()
-        hbox.addStretch(1)
-        hbox.addWidget(push_button_yes)
-        hbox.addWidget(push_button_cancel)
-        if size > 1:
-            hbox.addWidget(push_button_yes_all)
-            hbox.addWidget(push_button_no_all)
-
-        hbox.addStretch(1)
-
-        vbox = QVBoxLayout()
-        vbox.addWidget(label)
-        vbox.addLayout(hbox)
-        self.setLayout(vbox)
-
-        push_button_yes.clicked.connect(self.yes_clicked)
-        push_button_cancel.clicked.connect(self.cancel_clicked)
-        if size > 1:
-            push_button_yes_all.clicked.connect(self.yes_all_clicked)
-            push_button_no_all.clicked.connect(self.no_all_clicked)
-
-    def cancel_clicked(self):
-        self.stop = True
-        self.repeat = False
-        self.close()
-
-    def no_all_clicked(self):
-        self.stop = True
-        self.repeat = True
-        self.close()
-
-    def yes_all_clicked(self):
-        self.stop = False
-        self.repeat = True
-        self.close()
-
-    def yes_clicked(self):
-        self.stop = False
-        self.repeat = False
-        self.close()
-
-
 class PopUpAddPath(QDialog):
     """Is called when the user wants to add a document to the project
        without importing from populse_mia.e MRI File Manager
@@ -2378,6 +2310,74 @@ class PopUpQuit(QDialog):
         :return: bool_exit value
         """
         return self.bool_exit
+
+
+class PopUpRemoveScan(QDialog):
+    """
+    Is called when the user wants to remove a scan that was previously sent
+    to the pipeline manager.
+
+    :param scan: The scan that may be removed
+    :param size: The number of scan the user wants to remove
+    """
+    def __init__(self, scan, size):
+        super().__init__()
+
+        self.setWindowTitle("The document exists in the pipeline manager")
+        self.stop = False
+        self.repeat = False
+        label = QLabel(self)
+        label.setText('The document ' + scan + '\nwas previously sent to the '
+                                               'pipeline manager, do you '
+                                               'really want to delete it ?')
+
+        push_button_yes = QPushButton("Ok", self)
+        push_button_cancel = QPushButton("No", self)
+        if size > 1:
+            push_button_yes_all = QPushButton("Ok to all", self)
+            push_button_no_all = QPushButton("No to all", self)
+
+
+        hbox = QHBoxLayout()
+        hbox.addStretch(1)
+        hbox.addWidget(push_button_yes)
+        hbox.addWidget(push_button_cancel)
+        if size > 1:
+            hbox.addWidget(push_button_yes_all)
+            hbox.addWidget(push_button_no_all)
+
+        hbox.addStretch(1)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(label)
+        vbox.addLayout(hbox)
+        self.setLayout(vbox)
+
+        push_button_yes.clicked.connect(self.yes_clicked)
+        push_button_cancel.clicked.connect(self.cancel_clicked)
+        if size > 1:
+            push_button_yes_all.clicked.connect(self.yes_all_clicked)
+            push_button_no_all.clicked.connect(self.no_all_clicked)
+
+    def cancel_clicked(self):
+        self.stop = True
+        self.repeat = False
+        self.close()
+
+    def no_all_clicked(self):
+        self.stop = True
+        self.repeat = True
+        self.close()
+
+    def yes_all_clicked(self):
+        self.stop = False
+        self.repeat = True
+        self.close()
+
+    def yes_clicked(self):
+        self.stop = False
+        self.repeat = False
+        self.close()
 
 
 class PopUpRemoveTag(QDialog):

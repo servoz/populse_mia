@@ -85,8 +85,7 @@
 <div class="viewcode-block" id="DatabaseMIA"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.database_mia.DatabaseMIA">[docs]</a><span class="k">class</span> <span class="nc">DatabaseMIA</span><span class="p">(</span><span class="n">Database</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class overriding the default behavior of populse_db</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        :param string_engine: Path of the new database file</span>
+<span class="sd">    :param string_engine: Path of the new database file</span>
 
 <span class="sd">    .. Methods:</span>
 <span class="sd">        - __enter__: returns a DatabaseSession instance for using the database</span>
@@ -96,7 +95,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DatabaseMIA.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.database_mia.DatabaseMIA.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string_engine</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization of the DatabaseMIA class.</span>
 
+<span class="sd">        :param string_engine: Path of the new database file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">string_engine</span><span class="p">,</span> <span class="n">caches</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">list_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                          <span class="n">query_type</span><span class="o">=</span><span class="n">QUERY_MIXED</span><span class="p">)</span></div>
 

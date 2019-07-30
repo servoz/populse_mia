@@ -500,6 +500,7 @@ and allow to edit graphically a pipeline.</p>
 <li><p>save_pipeline</p></li>
 <li><p>get_path</p></li>
 <li><p>find_filename</p></li>
+<li><p>values</p></li>
 </ul>
 </dd>
 </dl>
@@ -1209,7 +1210,7 @@ nodes.</p>
 <dd><p>Return a variable as a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a list</p>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1982,7 +1983,7 @@ execution</p></li>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.update_config">
 <code class="sig-name descname">update_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#PackageLibraryDialog.update_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.PackageLibraryDialog.update_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the process_config and package_library attributes</p>
+<dd><p>Updates the process_config and package_library attributes.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1992,10 +1993,20 @@ execution</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pipeline_manager.process_library.</code><code class="sig-name descname">ProcessHelp</code><span class="sig-paren">(</span><em class="sig-param">process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#ProcessHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
 <p>A widget that displays information about the selected process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>process</strong> – selected process</p>
+</dd>
+</dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">process</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#ProcessHelp.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.ProcessHelp.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate the help.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>process</strong> – selected process</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2005,17 +2016,20 @@ execution</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">populse_mia.user_interface.pipeline_manager.process_library.</code><code class="sig-name descname">ProcessLibrary</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#ProcessLibrary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QTreeView</span></code></p>
 <p>Tree to display the available Capsul’s processes</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><ul class="simple">
-<li><p>dictionary: dictionary corresponding to the tree</p></li>
-<li><p>_model: model used</p></li>
-</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d</strong> – dictionary: dictionary corresponding to the tree</p>
 </dd>
 </dl>
 <dl class="method">
 <dt id="populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/user_interface/pipeline_manager/process_library.html#ProcessLibrary.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.user_interface.pipeline_manager.process_library.ProcessLibrary.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Initialization of the ProcessLibrary class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d</strong> – dictionary: dictionary corresponding to the tree</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">

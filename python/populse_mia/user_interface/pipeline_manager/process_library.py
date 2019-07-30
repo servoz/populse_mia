@@ -1659,10 +1659,7 @@ class PackageLibraryDialog(QDialog):
                       allow_unicode=True)
 
     def update_config(self):
-        """
-        Updates the process_config and package_library attributes
-
-        """
+        """Updates the process_config and package_library attributes."""
         self.process_config = self.load_config()
         self.load_packages()
         self.package_library.package_tree = self.packages
@@ -1671,11 +1668,16 @@ class PackageLibraryDialog(QDialog):
 
 
 class ProcessHelp(QWidget):
-    """A widget that displays information about the selected process."""
+    """A widget that displays information about the selected process.
+
+    :param process: selected process
+    """
 
     def __init__(self, process):
         """ Generate the help.
-        """
+
+         :param process: selected process
+         """
         super(ProcessHelp, self).__init__()
 
         label = QLabel()
@@ -1686,9 +1688,7 @@ class ProcessLibrary(QTreeView):
     """
     Tree to display the available Capsul's processes
 
-    Attributes:
-        - dictionary: dictionary corresponding to the tree
-        - _model: model used
+    :param d: dictionary: dictionary corresponding to the tree
 
     .. Methods:
         - load_dictionary: loads a dictionary to the tree
@@ -1698,6 +1698,10 @@ class ProcessLibrary(QTreeView):
     item_library_clicked = QtCore.Signal(str)
 
     def __init__(self, d):
+        """Initialization of the ProcessLibrary class.
+
+        :param d: dictionary: dictionary corresponding to the tree
+        """
         super(ProcessLibrary, self).__init__()
         self.load_dictionary(d)
 

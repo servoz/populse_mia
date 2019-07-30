@@ -73,9 +73,8 @@ not_defined_value = "*Not Defined*"
 class DataBrowser(QWidget):
     """Widget that contains everything in the Data Browser tab.
 
-    Attributes:
-        - main_window: main window of the software
-        - project: current project in the software
+    :param project: current project in the software
+    :param main_window: main window of the software
 
     .. Methods:
         - add_tag_infos: add the tag after add tag pop-up
