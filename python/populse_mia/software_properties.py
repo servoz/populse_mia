@@ -158,6 +158,7 @@ class Config:
 
     """
     def __init__(self):
+        """Initialization of the Config class"""
         self.dev_mode = False
         self.config = self.loadConfig()
         if "mia_user_path" not in self.config.keys():
