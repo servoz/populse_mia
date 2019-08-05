@@ -797,7 +797,7 @@ class PlugFilter(QWidget):
         for brick in self.main_window.pipeline_manager.brick_list:
             doc = self.project.session.get_document(COLLECTION_BRICK,
                                                     brick)
-            if doc["Output(s)"] is not None:
+            if doc is not None:
                 for key in doc["Output(s)"]:
                     if isinstance(doc["Output(s)"][key], str):
                         doc_delete = os.path.relpath(doc["Output(s)"][key],
