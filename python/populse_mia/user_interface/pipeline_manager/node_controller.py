@@ -797,13 +797,14 @@ class PlugFilter(QWidget):
         for brick in self.main_window.pipeline_manager.brick_list:
             doc = self.project.session.get_document(COLLECTION_BRICK,
                                                     brick)
-            for key in doc["Output(s)"]:
-                if isinstance(doc["Output(s)"][key], str):
-                    doc_delete = os.path.relpath(doc["Output(s)"][key],
-                                                 self.project.folder)
-                    # doc_list = self.project.session.get_documents_names(
-                    #     COLLECTION_CURRENT)
-                    doc_list.append(doc_delete)
+            if doc["Output(s)"] is not None:
+                for key in doc["Output(s)"]:
+                    if isinstance(doc["Output(s)"][key], str):
+                        doc_delete = os.path.relpath(doc["Output(s)"][key],
+                                                     self.project.folder)
+                        # doc_list = self.project.session.get_documents_names(
+                        #     COLLECTION_CURRENT)
+                        doc_list.append(doc_delete)
 
         if scans_list:
             scans_list_copy = []

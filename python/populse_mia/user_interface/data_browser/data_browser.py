@@ -1314,29 +1314,30 @@ class TableDataBrowser(QTableWidget):
         """
 
         doc = self.project.session.get_document(COLLECTION_BRICK, name)
-        for key in doc["Output(s)"]:
-            if isinstance(doc["Output(s)"][key], str):
-                doc_delete = os.path.relpath(doc["Output(s)"][key],
-                                             self.project.folder)
-                doc_list = self.project.session.get_documents_names(
-                    COLLECTION_CURRENT)
-                scan_object = self.project.session.get_document(
-                    COLLECTION_CURRENT, doc_delete)
-                if scan_object is not None:
-                    scan_name = getattr(scan_object, TAG_FILENAME)
-                    row = self.get_scan_row(scan_name)
-                else:
-                    row = None
-                if row is not None :
-                    self.removeRow(row)
-                if doc_delete in doc_list:
-                    self.project.session.remove_document(COLLECTION_CURRENT,
-                                                         doc_delete)
-                doc_list = self.project.session.get_documents_names(
-                    COLLECTION_INITIAL)
-                if doc_delete in doc_list:
-                    self.project.session.remove_document(COLLECTION_INITIAL,
-                                                         doc_delete)
+        if doc["Output(s)"] is not None:
+            for key in doc["Output(s)"]:
+                if isinstance(doc["Output(s)"][key], str):
+                    doc_delete = os.path.relpath(doc["Output(s)"][key],
+                                                 self.project.folder)
+                    doc_list = self.project.session.get_documents_names(
+                        COLLECTION_CURRENT)
+                    scan_object = self.project.session.get_document(
+                        COLLECTION_CURRENT, doc_delete)
+                    if scan_object is not None:
+                        scan_name = getattr(scan_object, TAG_FILENAME)
+                        row = self.get_scan_row(scan_name)
+                    else:
+                        row = None
+                    if row is not None :
+                        self.removeRow(row)
+                    if doc_delete in doc_list:
+                        self.project.session.remove_document(
+                            COLLECTION_CURRENT,doc_delete)
+                    doc_list = self.project.session.get_documents_names(
+                        COLLECTION_INITIAL)
+                    if doc_delete in doc_list:
+                        self.project.session.remove_document(
+                            COLLECTION_INITIAL,doc_delete)
         if name in self.project.session.get_documents_names(COLLECTION_BRICK):
             self.project.session.remove_document(COLLECTION_BRICK, name)
 
