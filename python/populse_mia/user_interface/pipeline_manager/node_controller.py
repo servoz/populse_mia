@@ -45,7 +45,8 @@ from populse_mia.user_interface.data_browser.data_browser import (
     TableDataBrowser, not_defined_value)
 from populse_mia.user_interface.pop_ups import (
     PopUpSelectTagCountTable, PopUpVisualizedTags)
-from populse_mia.data_manager.project import TAG_FILENAME, COLLECTION_CURRENT
+from populse_mia.data_manager.project import TAG_FILENAME, \
+    COLLECTION_CURRENT, COLLECTION_BRICK
 from populse_mia.data_manager.filter import Filter
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.software_properties import Config
@@ -792,13 +793,26 @@ class PlugFilter(QWidget):
         #          filter:orphan:
 
         # Verifying that the scan names begin not with a "/" or a "\"
+        doc_list = []
+        for brick in self.main_window.pipeline_manager.brick_list:
+            doc = self.project.session.get_document(COLLECTION_BRICK,
+                                                    brick)
+            for key in doc["Output(s)"]:
+                if isinstance(doc["Output(s)"][key], str):
+                    doc_delete = os.path.relpath(doc["Output(s)"][key],
+                                                 self.project.folder)
+                    # doc_list = self.project.session.get_documents_names(
+                    #     COLLECTION_CURRENT)
+                    doc_list.append(doc_delete)
+
         if scans_list:
             scans_list_copy = []
             for scan in scans_list:
                 scan_no_pfolder = scan.replace(self.project.folder, "")
                 if scan_no_pfolder[0] in ["\\", "/"]:
                     scan_no_pfolder = scan_no_pfolder[1:]
-                scans_list_copy.append(scan_no_pfolder)
+                if scan_no_pfolder not in doc_list:
+                    scans_list_copy.append(scan_no_pfolder)
 
             self.scans_list = scans_list_copy
 

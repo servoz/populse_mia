@@ -129,6 +129,7 @@ class PipelineManagerTab(QWidget):
         # If it is empty, the scan list in the Pipeline Manager is the scan
         # list from the data_browser
         self.iteration_table_scans_list = []
+        self.brick_list = []
 
         QWidget.__init__(self)
 
@@ -476,6 +477,31 @@ class PipelineManagerTab(QWidget):
         pipeline.on_trait_change(
             self.pipelineEditorTabs.get_current_editor()._reset_pipeline,
             'user_traits_changed', remove=True)
+        for brick in self.brick_list:
+            self.main_window.data_browser.table_data.delete_from_brick(
+                brick)
+
+        # if self.brick_id:
+        #     doc = self.project.session.get_document(COLLECTION_BRICK,
+        #                                           self.brick_id)
+        #     for key in doc["Output(s)"]:
+        #         if isinstance(doc["Output(s)"][key], str):
+        #             doc_delete = os.path.relpath(doc["Output(s)"][key],
+        #                                          self.project.folder)
+        #             doc_list = self.project.session.get_documents_names(
+        #                 COLLECTION_CURRENT)
+        #             if doc_delete in doc_list:
+        #                 self.project.session.remove_document(
+        #                     COLLECTION_CURRENT, doc_delete)
+        #             doc_list = self.project.session.get_documents_names(
+        #                 COLLECTION_INITIAL)
+        #             if doc_delete in doc_list:
+        #                 self.project.session.remove_document(
+        #                     COLLECTION_INITIAL, doc_delete)
+        #     if self.brick_id in self.project.session.get_documents_names(
+        #             COLLECTION_BRICK):
+        #         self.project.session.remove_document(COLLECTION_BRICK,
+        #                                              self.brick_id)
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
@@ -594,6 +620,7 @@ class PipelineManagerTab(QWidget):
 
             # Adding the brick to the bricks history
             self.brick_id = str(uuid.uuid4())
+            self.brick_list.append(self.brick_id)
             self.project.session.add_document(COLLECTION_BRICK,
                                               self.brick_id)
             self.project.session.set_value(
@@ -1027,6 +1054,7 @@ class PipelineManagerTab(QWidget):
 
         """
         name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
+        self.brick_list = []
         self.main_window.statusBar().showMessage(
             'Pipeline "{0}" is getting run. Please wait.'.format(name))
         QApplication.processEvents()

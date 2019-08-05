@@ -684,6 +684,7 @@ class TableDataBrowser(QTableWidget):
            cells when edited by the user
         - clear_cell: clear the selected cells
         - context_menu_table: create the context menu of the table
+        - delete_from_brick: delete a document from its brick id
         - display_unreset_values: display an error message when trying to
            reset user tags
         - fill_cells_update_table: initialize and fills the cells of the table
@@ -1302,6 +1303,45 @@ class TableDataBrowser(QTableWidget):
         # Signals reconnected
         self.itemChanged.connect(self.change_cell_color)
 
+    def delete_from_brick(self, name):
+        """Delete a document from its brick id.
+
+        This method is used to clean the database when the user initializes
+        a pipeline (multiple bricks) but doesn't run it before initializing
+        another one or closing the software.
+
+        :param name: string of the brick id
+        """
+
+        doc = self.project.session.get_document(COLLECTION_BRICK, name)
+        for key in doc["Output(s)"]:
+            if isinstance(doc["Output(s)"][key], str):
+                doc_delete = os.path.relpath(doc["Output(s)"][key],
+                                             self.project.folder)
+                doc_list = self.project.session.get_documents_names(
+                    COLLECTION_CURRENT)
+                scan_object = self.project.session.get_document(
+                    COLLECTION_CURRENT, doc_delete)
+                if scan_object is not None:
+                    scan_name = getattr(scan_object, TAG_FILENAME)
+                    row = self.get_scan_row(scan_name)
+                else:
+                    row = None
+                if row is not None :
+                    self.removeRow(row)
+                if doc_delete in doc_list:
+                    self.project.session.remove_document(COLLECTION_CURRENT,
+                                                         doc_delete)
+                doc_list = self.project.session.get_documents_names(
+                    COLLECTION_INITIAL)
+                if doc_delete in doc_list:
+                    self.project.session.remove_document(COLLECTION_INITIAL,
+                                                         doc_delete)
+        if name in self.project.session.get_documents_names(COLLECTION_BRICK):
+            self.project.session.remove_document(COLLECTION_BRICK, name)
+
+        self.resizeColumnsToContents()
+
     def display_unreset_values(self):
         """Display an error message when trying to reset user tags."""
 
@@ -1376,14 +1416,14 @@ class TableDataBrowser(QTableWidget):
 
                                 brick_name = self.project.session.get_value(
                                     COLLECTION_BRICK, brick_uuid, BRICK_NAME)
-
-                                brick_name_button = QPushButton(brick_name)
-                                brick_name_button.moveToThread(
-                                    QApplication.instance().thread())
-                                self.bricks[brick_name_button] = brick_uuid
-                                brick_name_button.clicked.connect(
-                                    self.show_brick_history)
-                                layout.addWidget(brick_name_button)
+                                if brick_name:
+                                    brick_name_button = QPushButton(brick_name)
+                                    brick_name_button.moveToThread(
+                                        QApplication.instance().thread())
+                                    self.bricks[brick_name_button] = brick_uuid
+                                    brick_name_button.clicked.connect(
+                                        self.show_brick_history)
+                                    layout.addWidget(brick_name_button)
                             widget.setLayout(layout)
                             self.setCellWidget(row, column, widget)
 
@@ -2251,11 +2291,15 @@ class TableDataBrowser(QTableWidget):
         # Scans that are not visible anymore are hidden
         for scan in old_scans:
             if scan not in self.scans_to_visualize:
-                self.setRowHidden(self.get_scan_row(scan), True)
+                row = self.get_scan_row(scan)
+                if row is not None:
+                    self.setRowHidden(row, True)
 
         # Scans that became visible must be visible
         for scan in self.scans_to_visualize:
-            self.setRowHidden(self.get_scan_row(scan), False)
+            row = self.get_scan_row(scan)
+            if row is not None:
+                self.setRowHidden(row, False)
 
         self.resizeColumnsToContents()  # Columns resized
 

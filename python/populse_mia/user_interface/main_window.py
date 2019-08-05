@@ -235,6 +235,8 @@ class MainWindow(QMainWindow):
 
         if can_exit:
             self.project.unsaveModifications()
+            for brick in self.pipeline_manager.brick_list:
+                self.data_browser.table_data.delete_from_brick(brick)
 
             # Clean up
             config = Config()
