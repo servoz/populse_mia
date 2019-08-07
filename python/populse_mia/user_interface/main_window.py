@@ -35,7 +35,7 @@ from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QAction,
 
 # Populse_MIA imports
 from populse_mia.data_manager.project_properties import SavedProjects
-from populse_mia.software_properties import Config
+from populse_mia.software_properties import Config, verCmp
 from populse_mia.user_interface.data_browser.data_browser import DataBrowser
 from populse_mia.user_interface.pipeline_manager.pipeline_manager_tab import (
     PipelineManagerTab)
@@ -917,10 +917,19 @@ class MainWindow(QMainWindow):
 
                     # We check if the name of the project directory is the
                     # same in its properties
+                    
                     with open(os.path.join(file_path, "properties",
                                            "properties.yml"), 'r+') as stream:
-                        properties = yaml.load(stream, Loader=yaml.FullLoader)
+
+                        if verCmp(yaml.__version__, '5.1', 'sup'):
+                            properties = yaml.load(stream,
+                                                   Loader=yaml.FullLoader)
+
+                        else:
+                            properties = yaml.load(stream)
+                            
                         path, name = os.path.split(file_path)
+                        
                         if properties["name"] != name:
                             properties["name"] = name
                             yaml.dump(properties, stream,
