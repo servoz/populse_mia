@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
         :param event: closing event
         """
 
-        if self.check_unsaved_modifications() == False or self.test:
+        if self.check_unsaved_modifications() is False or self.test:
             can_exit = True
 
         else:

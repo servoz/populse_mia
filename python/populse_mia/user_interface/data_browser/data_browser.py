@@ -1312,7 +1312,6 @@ class TableDataBrowser(QTableWidget):
 
         :param name: string of the brick id
         """
-
         doc = self.project.session.get_document(COLLECTION_BRICK, name)
         if doc is not None:
             for key in doc["Output(s)"]:
@@ -1328,7 +1327,7 @@ class TableDataBrowser(QTableWidget):
                         row = self.get_scan_row(scan_name)
                     else:
                         row = None
-                    if row is not None :
+                    if row is not None:
                         self.removeRow(row)
                     if doc_delete in doc_list:
                         self.project.session.remove_document(

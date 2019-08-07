@@ -44,14 +44,16 @@ from capsul.qt_gui.widgets.pipeline_developper_view import (
 
 # Populse_MIA imports
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
-from populse_mia.user_interface.pop_ups import PopUpSelectIteration
+from populse_mia.user_interface.pop_ups import (PopUpSelectIteration,
+                                                PopUpinheritanceDict)
 from populse_mia.user_interface.pipeline_manager.iteration_table import (
     IterationTable)
 
 from populse_mia.data_manager.project import (
     COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME,
     BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME,
-    TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT)
+    TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT,
+    TYPE_TXT)
 from populse_mia.user_interface.pipeline_manager.node_controller import (
     NodeController)
 from populse_mia.user_interface.pipeline_manager.pipeline_editor import (
@@ -117,6 +119,7 @@ class PipelineManagerTab(QWidget):
         # Necessary for using MIA bricks
         ProcessMIA.project = project
         self.project = project
+        self.inheritance_dict = None
         if len(scan_list) < 1:
             self.scan_list = self.project.session.get_documents_names(
                 COLLECTION_CURRENT)
@@ -130,6 +133,10 @@ class PipelineManagerTab(QWidget):
         # list from the data_browser
         self.iteration_table_scans_list = []
         self.brick_list = []
+
+        # Used for the inheritance dictionary
+        self.key = None
+        self.ignore = False
 
         QWidget.__init__(self)
 
@@ -280,6 +287,53 @@ class PipelineManagerTab(QWidget):
                     COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_MAT)
                 self.project.session.set_value(
                     COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_MAT)
+            elif file_extension == ".txt":
+                self.project.session.set_value(
+                    COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_TXT)
+                self.project.session.set_value(
+                    COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_TXT)
+
+            inputs = self.inputs
+            iterate = self.iterationTable.check_box_iterate.isChecked()
+            # Automatically fill inheritance dictionary if empty
+            if (self.inheritance_dict is None or old_value not in
+                    self.inheritance_dict) and self.ignore is False:
+                values = {}
+                for key in inputs:
+                    paths = []
+                    if isinstance(inputs[key], list):
+                        for val in inputs[key]:
+                            if isinstance(val, str):
+                                paths.append(val)
+                    elif isinstance(inputs[key], str):
+                        paths.append(inputs[key])
+                    for path in paths:
+                        if os.path.exists(path):
+                            name, extension = os.path.splitext(path)
+                            if extension == ".nii":
+                                values[key] = name + extension
+
+                if len(values) >= 1:
+                    self.inheritance_dict = {}
+                    if len(values) == 1:
+                        value = values[list(values.keys(
+                        ))[0]]
+                        self.inheritance_dict[old_value] = value
+                    else:
+                        if iterate is True and self.key is not None:
+                            value = values[self.key]
+                        else:
+                            pop_up = PopUpinheritanceDict(values, iterate)
+                            pop_up.exec()
+                            if pop_up.ignore:
+                                self.inheritance_dict = None
+                                if pop_up.all is True:
+                                    self.ignore = True
+                            else:
+                                value = pop_up.value
+                                if pop_up.all is True:
+                                    self.key = pop_up.key
+                        self.inheritance_dict[old_value] = value
 
             # Adding inherited tags
             if self.inheritance_dict:
@@ -481,28 +535,6 @@ class PipelineManagerTab(QWidget):
             self.main_window.data_browser.table_data.delete_from_brick(
                 brick)
 
-        # if self.brick_id:
-        #     doc = self.project.session.get_document(COLLECTION_BRICK,
-        #                                           self.brick_id)
-        #     for key in doc["Output(s)"]:
-        #         if isinstance(doc["Output(s)"][key], str):
-        #             doc_delete = os.path.relpath(doc["Output(s)"][key],
-        #                                          self.project.folder)
-        #             doc_list = self.project.session.get_documents_names(
-        #                 COLLECTION_CURRENT)
-        #             if doc_delete in doc_list:
-        #                 self.project.session.remove_document(
-        #                     COLLECTION_CURRENT, doc_delete)
-        #             doc_list = self.project.session.get_documents_names(
-        #                 COLLECTION_INITIAL)
-        #             if doc_delete in doc_list:
-        #                 self.project.session.remove_document(
-        #                     COLLECTION_INITIAL, doc_delete)
-        #     if self.brick_id in self.project.session.get_documents_names(
-        #             COLLECTION_BRICK):
-        #         self.project.session.remove_document(COLLECTION_BRICK,
-        #                                              self.brick_id)
-
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
 
@@ -702,6 +734,7 @@ class PipelineManagerTab(QWidget):
 
             # Adding I/O to database history
             inputs = process.get_inputs()
+            self.inputs = inputs
 
             for key in inputs:
 
@@ -1060,6 +1093,8 @@ class PipelineManagerTab(QWidget):
         QApplication.processEvents()
 
         if self.iterationTable.check_box_iterate.isChecked():
+            self.key = None
+            self.ignore = False
             iterated_tag = self.iterationTable.iterated_tag
             tag_values = self.iterationTable.tag_values_list
             ui_iteration = PopUpSelectIteration(iterated_tag, tag_values)
@@ -1070,6 +1105,7 @@ class PipelineManagerTab(QWidget):
                 pipeline_progress['counter'] = 1
                 pipeline_progress['tag'] = iterated_tag
                 for tag_value in tag_values:
+                    self.brick_list = []
                     # Status bar update
                     pipeline_progress['tag_value'] = tag_value
 
