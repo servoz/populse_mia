@@ -63,6 +63,8 @@ BRICK_EXEC_TIME = "Exec Time"
 
 TYPE_NII = "Scan"
 TYPE_MAT = "Matrix"
+TYPE_TXT = "Text"
+
 
 
 class Project():

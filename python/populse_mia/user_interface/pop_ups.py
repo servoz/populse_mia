@@ -56,7 +56,7 @@ from PyQt5.QtWidgets import (
     QCheckBox, QComboBox, QLineEdit, QFileDialog, QTableWidget,
     QTableWidgetItem, QLabel, QPushButton, QTreeWidget, QTreeWidgetItem,
     QMessageBox, QHeaderView, QWidget, QHBoxLayout, QVBoxLayout,
-    QDialogButtonBox, QDialog, QApplication)
+    QDialogButtonBox, QDialog, QApplication, QRadioButton)
 
 # Populse_db imports
 from populse_db.database import (
@@ -1198,9 +1198,7 @@ class PopUpFilterSelection(QDialog):
 
 class PopUpInformation(QWidget):
     """Is called when the user wants to display the current project's
-       information.
-
-    """
+    information."""
 
     # Signal that will be emitted at the end to tell that the project
     # has been created
@@ -1229,6 +1227,93 @@ class PopUpInformation(QWidget):
         box.addStretch(1)
 
         self.setLayout(box)
+
+
+class PopUpinheritanceDict(QDialog):
+    """Is called to select from which input the output will inherit the tags.
+    """
+    def __init__(self, values, iterate):
+        """Initialization
+
+        :param values: A dictionary with input name as key and their paths
+        as values
+        :param iterate: boolean, True if pipeline is iterated
+        """
+        super().__init__()
+
+        self.setModal(True)
+        self.setObjectName("Dialog")
+        self.setWindowTitle('Inherited plug')
+        self.ignore = False
+        self.all = False
+
+        v_box_values = QtWidgets.QVBoxLayout()
+        checked = True
+        for key in values:
+            radiobutton = QRadioButton(key, self)
+            radiobutton.value = values[key]
+            radiobutton.key = key
+            radiobutton.setChecked(checked)
+            if checked:
+                self.value = radiobutton.value
+                self.key = radiobutton.key
+
+            checked = False
+            radiobutton.toggled.connect(self.on_clicked)
+            v_box_values.addWidget(radiobutton)
+            v_box_values.addStretch(1)
+
+        h_box_buttons = QtWidgets.QHBoxLayout()
+        self.push_button_ok = QtWidgets.QPushButton(self)
+        self.push_button_ok.setText("OK")
+        self.push_button_ok.clicked.connect(self.ok_clicked)
+        h_box_buttons.addWidget(self.push_button_ok)
+
+        self.push_button_ignore = QtWidgets.QPushButton(self)
+        self.push_button_ignore.setText("Ignore")
+        self.push_button_ignore.clicked.connect(self.ignore_clicked)
+        h_box_buttons.addWidget(self.push_button_ignore)
+
+        if iterate:
+            self.push_button_okall = QtWidgets.QPushButton(self)
+            self.push_button_okall.setText("OK for all")
+            self.push_button_okall.clicked.connect(self.okall_clicked)
+            h_box_buttons.addWidget(self.push_button_okall)
+
+            self.push_button_ignoreall = QtWidgets.QPushButton(self)
+            self.push_button_ignoreall.setText("Ignore for all")
+            self.push_button_ignoreall.clicked.connect(self.ignoreall_clicked)
+            h_box_buttons.addWidget(self.push_button_ignoreall)
+
+        v_box_values.addLayout(h_box_buttons)
+
+        self.setLayout(v_box_values)
+
+    def on_clicked(self):
+        radiobutton = self.sender()
+        self.value = radiobutton.value
+        self.key = radiobutton.key
+
+    def ok_clicked(self):
+        self.accept()
+        self.close()
+
+    def okall_clicked(self):
+        self.all = True
+        self.accept()
+        self.close()
+
+    def ignore_clicked(self):
+        self.ignore = True
+        self.accept()
+        self.close()
+
+    def ignoreall_clicked(self):
+        self.ignore = True
+        self.all = True
+        self.accept()
+        self.close()
+
 
 
 class PopUpMultipleSort(QDialog):

@@ -109,9 +109,10 @@ class ProcessMIA(Process):
                     outputs = self.project.session.get_value(COLLECTION_BRICK,
                                                              brick,
                                                              BRICK_OUTPUTS)
-                    for output_name in outputs:
-                        output_value = outputs[output_name]
-                        self.remove_brick_output(brick, output_value)
+                    if outputs is not None:
+                        for output_name in outputs:
+                            output_value = outputs[output_name]
+                            self.remove_brick_output(brick, output_value)
                     self.project.session.remove_document(COLLECTION_BRICK,
                                                          brick)
                     self.project.saveModifications()
