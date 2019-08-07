@@ -1169,9 +1169,8 @@ class PopUpFilterSelection(QDialog):
 
 
 class PopUpInformation(QWidget):
-    """
-    Is called when the user wants to display the current project's information
-    """
+    """Is called when the user wants to display the current project's
+    information."""
 
     # Signal that will be emitted at the end to tell that the project
     # has been created
@@ -1201,7 +1200,15 @@ class PopUpInformation(QWidget):
 
 
 class PopUpinheritanceDict(QDialog):
+    """Is called to select from which input the output will inherit the tags.
+    """
     def __init__(self, values, iterate):
+        """Initialization
+
+        :param values: A dictionary with input name as key and their paths
+        as values
+        :param iterate: boolean, True if pipeline is iterated
+        """
         super().__init__()
 
         self.setModal(True)
@@ -1240,7 +1247,7 @@ class PopUpinheritanceDict(QDialog):
         if iterate:
             self.push_button_okall = QtWidgets.QPushButton(self)
             self.push_button_okall.setText("OK for all")
-            self.push_button_okall.clicked.connect(self.ok_clicked)
+            self.push_button_okall.clicked.connect(self.okall_clicked)
             h_box_buttons.addWidget(self.push_button_okall)
 
             self.push_button_ignoreall = QtWidgets.QPushButton(self)

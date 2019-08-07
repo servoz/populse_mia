@@ -295,7 +295,7 @@ class PipelineManagerTab(QWidget):
 
             inputs = self.inputs
             iterate = self.iterationTable.check_box_iterate.isChecked()
-            # Automatically fill inheritance dictionary if empty
+            # # Automatically fill inheritance dictionary if empty
             if (self.inheritance_dict is None or old_value not in
                     self.inheritance_dict) and self.ignore is False:
                 values = {}
@@ -312,7 +312,6 @@ class PipelineManagerTab(QWidget):
                             name, extension = os.path.splitext(path)
                             if extension == ".nii":
                                 values[key] = name + extension
-
                 if len(values) >= 1:
                     self.inheritance_dict = {}
                     if len(values) == 1:
@@ -322,6 +321,7 @@ class PipelineManagerTab(QWidget):
                     else:
                         if iterate is True and self.key is not None:
                             value = values[self.key]
+                            self.inheritance_dict[old_value] = value
                         else:
                             pop_up = PopUpinheritanceDict(values, iterate)
                             pop_up.exec()
@@ -333,7 +333,7 @@ class PipelineManagerTab(QWidget):
                                 value = pop_up.value
                                 if pop_up.all is True:
                                     self.key = pop_up.key
-                        self.inheritance_dict[old_value] = value
+                                self.inheritance_dict[old_value] = value
 
             # Adding inherited tags
             if self.inheritance_dict:
@@ -1091,10 +1091,10 @@ class PipelineManagerTab(QWidget):
         self.main_window.statusBar().showMessage(
             'Pipeline "{0}" is getting run. Please wait.'.format(name))
         QApplication.processEvents()
+        self.key = None
+        self.ignore = False
 
         if self.iterationTable.check_box_iterate.isChecked():
-            self.key = None
-            self.ignore = False
             iterated_tag = self.iterationTable.iterated_tag
             tag_values = self.iterationTable.tag_values_list
             ui_iteration = PopUpSelectIteration(iterated_tag, tag_values)
