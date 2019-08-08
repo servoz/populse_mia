@@ -657,7 +657,8 @@ class PopUpAddPath(QDialog):
 
         """
 
-        fname = QFileDialog.getOpenFileName(self, 'Choose a document to import', '/home')
+        fname = QFileDialog.getOpenFileName(self, 'Choose a document to import',
+                                            os.path.expanduser('~'))        
         
         if fname[0]:
             self.file_line_edit.setText(fname[0])
@@ -687,7 +688,8 @@ class PopUpAddPath(QDialog):
 
             path = os.path.relpath(path)
             filename = os.path.basename(path)
-            copy_path = os.path.join(self.project.folder, "data", "downloaded_data", filename)
+            copy_path = os.path.join(self.project.folder, "data",
+                                     "downloaded_data", filename)
             shutil.copy(path, copy_path)
             with open(path, 'rb') as scan_file:
                 data = scan_file.read()
@@ -696,11 +698,15 @@ class PopUpAddPath(QDialog):
             self.project.session.add_document(COLLECTION_CURRENT, path)
             self.project.session.add_document(COLLECTION_INITIAL, path)
             values_added = []
-            self.project.session.add_value(COLLECTION_INITIAL, path, TAG_TYPE, path_type)
-            self.project.session.add_value(COLLECTION_CURRENT, path, TAG_TYPE, path_type)
+            self.project.session.add_value(COLLECTION_INITIAL, path, TAG_TYPE,
+                                           path_type)
+            self.project.session.add_value(COLLECTION_CURRENT, path, TAG_TYPE,
+                                           path_type)
             values_added.append([path, TAG_TYPE, path_type, path_type])
-            self.project.session.add_value(COLLECTION_INITIAL, path, TAG_CHECKSUM, checksum)
-            self.project.session.add_value(COLLECTION_CURRENT, path, TAG_CHECKSUM, checksum)
+            self.project.session.add_value(COLLECTION_INITIAL, path,
+                                           TAG_CHECKSUM, checksum)
+            self.project.session.add_value(COLLECTION_CURRENT, path,
+                                           TAG_CHECKSUM, checksum)
             values_added.append([path, TAG_CHECKSUM, checksum, checksum])
 
             # For history
@@ -710,10 +716,14 @@ class PopUpAddPath(QDialog):
             self.project.redos.clear()
 
             # Databrowser updated
-            self.databrowser.table_data.scans_to_visualize = self.project.session.get_documents_names(
-                COLLECTION_CURRENT)
-            self.databrowser.table_data.scans_to_search = self.project.session.get_documents_names(
-                COLLECTION_CURRENT)
+
+            (self.databrowser.table_data.
+             scans_to_visualize) = (self.project.session.
+                                    get_documents_names(COLLECTION_CURRENT))
+
+            (self.databrowser.table_data.
+             scans_to_search) = (self.project.session.
+                                 get_documents_names(COLLECTION_CURRENT))
             self.databrowser.table_data.add_columns()
             self.databrowser.table_data.fill_headers()
             self.databrowser.table_data.add_rows([path])
@@ -1968,14 +1978,16 @@ class PopUpPreferences(QDialog):
     def browse_matlab(self):
         """Called when matlab browse button is clicked."""
 
-        fname = QFileDialog.getOpenFileName(self, 'Choose Matlab file')[0]
+        fname = QFileDialog.getOpenFileName(self, 'Choose Matlab file',
+                                            os.path.expanduser('~'))[0]
         if fname:
             self.matlab_choice.setText(fname)
 
     def browse_matlab_standalone(self):
         """Called when matlab browse button is clicked."""
 
-        fname = QFileDialog.getExistingDirectory(self, 'Choose MCR directory')
+        fname = QFileDialog.getExistingDirectory(self, 'Choose MCR directory',
+                                                 os.path.expanduser('~'))
         if fname:
             self.matlab_standalone_choice.setText(fname)
 
@@ -1984,7 +1996,8 @@ class PopUpPreferences(QDialog):
         
         fname = QFileDialog.getOpenFileName(self,
                                             'Select the location of the '
-                                            'MRIManager.jar file')[0]
+                                            'MRIManager.jar file',
+                                            os.path.expanduser('~'))[0]
         if fname:
             self.mri_conv_path_line_edit.setText(fname)
 
@@ -1993,7 +2006,8 @@ class PopUpPreferences(QDialog):
 
         fname = QFileDialog.getExistingDirectory(self,
                                                  'Select a folder where '
-                                                 'to save the projects')
+                                                 'to save the projects',
+                                                 os.path.expanduser('~'))
 
         if fname:
             self.projects_save_path_line_edit.setText(fname)
@@ -2004,7 +2018,9 @@ class PopUpPreferences(QDialog):
     def browse_spm(self):
         """Called when spm browse button is clicked."""
 
-        fname = QFileDialog.getExistingDirectory(self, 'Choose SPM directory')
+        fname = QFileDialog.getExistingDirectory(self,
+                                                 'Choose SPM directory',
+                                                 os.path.expanduser('~'))
         if fname:
             self.spm_choice.setText(fname)
 
@@ -2013,7 +2029,8 @@ class PopUpPreferences(QDialog):
 
         fname = QFileDialog.getExistingDirectory(self,
                                                  'Choose SPM standalone '
-                                                 'directory')
+                                                 'directory',
+                                                 os.path.expanduser('~'))
         if fname:
             self.spm_standalone_choice.setText(fname)
 
@@ -2271,7 +2288,8 @@ class PopUpProperties(QDialog):
 
     """
 
-    # Signal that will be emitted at the end to tell that the project has been created
+    # Signal that will be emitted at the end to tell that the project has
+    # been created
     signal_settings_change = pyqtSignal()
 
     def __init__(self, project, databrowser, old_tags):
@@ -2512,7 +2530,8 @@ class PopUpRemoveTag(QDialog):
        populse_mia project.
 
      .. Methods:
-         - ok_action: verifies the selected tags and send the information to the data browser
+         - ok_action: verifies the selected tags and send the information to
+            the data browser
          - search_str: matches the searched pattern with the tags of the project
 
      """
@@ -3175,7 +3194,8 @@ class PopUpShowBrick(QDialog):
         self.main_window = main_window
         self.project = project
         brick_row = project.session.get_document(COLLECTION_BRICK, brick_uuid)
-        self.setWindowTitle("Brick " + getattr(brick_row, BRICK_NAME) + " history")
+        self.setWindowTitle("Brick " + getattr(brick_row, BRICK_NAME) +
+                                                                     " history")
 
         layout = QVBoxLayout()
 
@@ -3325,14 +3345,19 @@ class PopUpShowBrick(QDialog):
         """Checks if the I/O value is a scan.
 
         :param value: I/O value
-        :return: The scan corresponding to the value if it exists, None otherwise
+        :return: The scan corresponding to the value if it exists,
+          None otherwise
 
         """
 
         value_scan = None
-        for scan in self.project.session.get_documents_names(COLLECTION_CURRENT):
+        
+        for scan in (self.project.session.
+                     get_documents_names(COLLECTION_CURRENT)):
+            
             if scan in str(value):
                 value_scan = scan
+                
         return value_scan
 
     def file_clicked(self):
@@ -3359,14 +3384,16 @@ class PopUpVisualizedTags(QWidget):
 
     """
 
-    # Signal that will be emitted at the end to tell that the preferences have been changed
+    # Signal that will be emitted at the end to tell that the preferences
+    # have been changed
     signal_preferences_change = pyqtSignal()
 
     def __init__(self, project, visualized_tags):
         """Initialization.
 
         :param project: current project in the software
-        :param visualized_tags: project's visualized tags before opening this widget
+        :param visualized_tags: project's visualized tags before opening
+          this widget
 
         """
 
@@ -3397,7 +3424,8 @@ class PopUpVisualizedTags(QWidget):
         self.label_tag_list = QtWidgets.QLabel(self)
         self.label_tag_list.setTextFormat(QtCore.Qt.AutoText)
         self.label_tag_list.setObjectName("label_tag_list")
-        self.label_tag_list.setText(_translate("main_window", "Available tags:"))
+        self.label_tag_list.setText(_translate("main_window",
+                                               "Available tags:"))
 
         # The search bar to search in the list of tags
         self.search_bar = QtWidgets.QLineEdit(self)
@@ -3408,7 +3436,8 @@ class PopUpVisualizedTags(QWidget):
         # The list of tags
         self.list_widget_tags = QtWidgets.QListWidget(self)
         self.list_widget_tags.setObjectName("listWidget_tags")
-        self.list_widget_tags.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        (self.list_widget_tags.
+                   setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection))
 
         hbox_top_left = QHBoxLayout()
         hbox_top_left.addWidget(self.label_tag_list)
@@ -3425,8 +3454,10 @@ class PopUpVisualizedTags(QWidget):
         self.label_visualized_tags.setText("Visualized tags:")
 
         self.list_widget_selected_tags = QtWidgets.QListWidget(self)
-        self.list_widget_selected_tags.setObjectName("listWidget_visualized_tags")
-        self.list_widget_selected_tags.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        (self.list_widget_selected_tags.
+                                    setObjectName("listWidget_visualized_tags"))
+        (self.list_widget_selected_tags.
+                   setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection))
 
         v_box_top_right = QVBoxLayout()
         v_box_top_right.addWidget(self.label_visualized_tags)
@@ -3439,7 +3470,8 @@ class PopUpVisualizedTags(QWidget):
 
         self.setLayout(hbox_tags)
 
-        self.left_tags = []  # List that will keep track on the tags on the left (invisible tags)
+        self.left_tags = []  # List that will keep track on
+                             # the tags on the left (invisible tags)
 
         for tag in project.session.get_fields_names(COLLECTION_CURRENT):
             if tag != TAG_CHECKSUM and tag != TAG_FILENAME:
@@ -3483,22 +3515,29 @@ class PopUpVisualizedTags(QWidget):
 
         """
 
-        rows = sorted([index.row() for index in self.list_widget_tags.selectedIndexes()],
+        rows = sorted([index.row() for index in
+                       self.list_widget_tags.selectedIndexes()],
                       reverse=True)
+        
         for row in rows:
             # assuming the other listWidget is called listWidget_2
             self.left_tags.remove(self.list_widget_tags.item(row).text())
-            self.list_widget_selected_tags.addItem(self.list_widget_tags.takeItem(row))
+            (self.list_widget_selected_tags.
+                                   addItem(self.list_widget_tags.takeItem(row)))
 
     def click_unselect_tag(self):
         """Removes the unselected tags from populse_mia.e "selected tag" table.
 
         """
 
-        rows = sorted([index.row() for index in self.list_widget_selected_tags.selectedIndexes()],
+        rows = sorted([index.row() for index in
+                       self.list_widget_selected_tags.selectedIndexes()],
                       reverse=True)
+        
         for row in rows:
-            self.left_tags.append(self.list_widget_selected_tags.item(row).text())
-            self.list_widget_tags.addItem(self.list_widget_selected_tags.takeItem(row))
+            (self.left_tags.
+                        append(self.list_widget_selected_tags.item(row).text()))
+            (self.list_widget_tags.
+                          addItem(self.list_widget_selected_tags.takeItem(row)))
 
         self.list_widget_tags.sortItems()
