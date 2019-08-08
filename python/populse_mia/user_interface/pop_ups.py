@@ -12,6 +12,7 @@
         - PopUpDeletedProject
         - PopUpDataBrowserCurrentSelection
         - PopUpFilterSelection
+        - PopUpInheritanceDict
         - PopUpInformation
         - PopUpMultipleSort
         - PopUpNewProject
@@ -1219,10 +1220,10 @@ class PopUpInformation(QWidget):
         self.setLayout(box)
 
 
-class PopUpinheritanceDict(QDialog):
+class PopUpInheritanceDict(QDialog):
     """Is called to select from which input the output will inherit the tags.
     """
-    def __init__(self, values, iterate):
+    def __init__(self, values, node_name, plug_name):
         """Initialization
 
         :param values: A dictionary with input name as key and their paths
@@ -1233,11 +1234,17 @@ class PopUpinheritanceDict(QDialog):
 
         self.setModal(True)
         self.setObjectName("Dialog")
-        self.setWindowTitle('Inherited plug')
+        self.setWindowTitle("Plug inherited by " + node_name)
         self.ignore = False
         self.all = False
+        self.everything = False
+
+        label = "In the node '" + node_name + "', from which input " \
+                "the plug '" + plug_name + "' should inherit the tags:"
 
         v_box_values = QtWidgets.QVBoxLayout()
+
+        v_box_values.addWidget(QLabel(label))
         checked = True
         for key in values:
             radiobutton = QRadioButton(key, self)
@@ -1264,43 +1271,60 @@ class PopUpinheritanceDict(QDialog):
         self.push_button_ignore.clicked.connect(self.ignore_clicked)
         h_box_buttons.addWidget(self.push_button_ignore)
 
-        if iterate:
-            self.push_button_okall = QtWidgets.QPushButton(self)
-            self.push_button_okall.setText("OK for all")
-            self.push_button_okall.clicked.connect(self.okall_clicked)
-            h_box_buttons.addWidget(self.push_button_okall)
+        self.push_button_okall = QtWidgets.QPushButton(self)
+        self.push_button_okall.setText("OK for all plugs")
+        self.push_button_okall.clicked.connect(self.okall_clicked)
+        h_box_buttons.addWidget(self.push_button_okall)
 
-            self.push_button_ignoreall = QtWidgets.QPushButton(self)
-            self.push_button_ignoreall.setText("Ignore for all")
-            self.push_button_ignoreall.clicked.connect(self.ignoreall_clicked)
-            h_box_buttons.addWidget(self.push_button_ignoreall)
+        self.push_button_ignoreall = QtWidgets.QPushButton(self)
+        self.push_button_ignoreall.setText("Ignore for all plugs")
+        self.push_button_ignoreall.clicked.connect(self.ignoreall_clicked)
+        h_box_buttons.addWidget(self.push_button_ignoreall)
 
+        self.push_button_ignore_node = QtWidgets.QPushButton(self)
+        self.push_button_ignore_node.setText("Ignore for all nodes")
+        self.push_button_ignore_node.clicked.connect(self.ignore_node_clicked)
         v_box_values.addLayout(h_box_buttons)
+
+        v_box_values.addWidget(self.push_button_ignore_node)
 
         self.setLayout(v_box_values)
 
     def on_clicked(self):
+        """Event when radiobutton is clicked"""
         radiobutton = self.sender()
         self.value = radiobutton.value
         self.key = radiobutton.key
 
     def ok_clicked(self):
+        """Event when ok button is clicked"""
         self.accept()
         self.close()
 
     def okall_clicked(self):
+        """Event when Ok all button is clicked"""
         self.all = True
         self.accept()
         self.close()
 
     def ignore_clicked(self):
+        """Event when ignore button is clicked"""
         self.ignore = True
         self.accept()
         self.close()
 
     def ignoreall_clicked(self):
+        """Event when ignore all plugs button is clicked"""
         self.ignore = True
         self.all = True
+        self.accept()
+        self.close()
+
+    def ignore_node_clicked(self):
+        """Event when ignore all nodes button is clicked"""
+        self.ignore = True
+        self.all = True
+        self.everything = True
         self.accept()
         self.close()
 

@@ -45,7 +45,7 @@ from capsul.qt_gui.widgets.pipeline_developper_view import (
 # Populse_MIA imports
 from populse_mia.user_interface.pipeline_manager.process_mia import ProcessMIA
 from populse_mia.user_interface.pop_ups import (PopUpSelectIteration,
-                                                PopUpinheritanceDict)
+                                                PopUpInheritanceDict)
 from populse_mia.user_interface.pipeline_manager.iteration_table import (
     IterationTable)
 
@@ -135,8 +135,9 @@ class PipelineManagerTab(QWidget):
         self.brick_list = []
 
         # Used for the inheritance dictionary
-        self.key = None
-        self.ignore = False
+        self.key = {}
+        self.ignore = {}
+        self.ignore_node = False
 
         QWidget.__init__(self)
 
@@ -225,17 +226,21 @@ class PipelineManagerTab(QWidget):
         self.previewBlock.centerOn(0, 0)
         self.find_process(name_item)
 
-    def add_plug_value_to_database(self, p_value, brick):
+    def add_plug_value_to_database(self, p_value, brick, node_name,
+                                   plug_name):
         """
         Add the plug value to the database.
 
         :param p_value: plug value, a file name or a list of file names
-        :param brick: brick of the value
+        :param brick: brick id
+        :param node_name: name of the node
+        :param plug_name: name of the plug
         """
 
         if type(p_value) in [list, TraitListObject]:
             for elt in p_value:
-                self.add_plug_value_to_database(elt, brick)
+                self.add_plug_value_to_database(elt, brick, node_name, 
+                                                plug_name)
             return
 
         # This means that the value is not a filename
@@ -274,7 +279,6 @@ class PipelineManagerTab(QWidget):
                 COLLECTION_CURRENT, p_value, TAG_BRICKS, bricks)
             self.project.session.set_value(
                 COLLECTION_INITIAL, p_value, TAG_BRICKS, bricks)
-
             # Type tag
             filename, file_extension = os.path.splitext(p_value)
             if file_extension == ".nii":
@@ -294,10 +298,12 @@ class PipelineManagerTab(QWidget):
                     COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_TXT)
 
             inputs = self.inputs
-            iterate = self.iterationTable.check_box_iterate.isChecked()
-            # # Automatically fill inheritance dictionary if empty
-            if (self.inheritance_dict is None or old_value not in
-                    self.inheritance_dict) and self.ignore is False:
+            # iterate = self.iterationTable.check_box_iterate.isChecked()
+            # Automatically fill inheritance dictionary if empty
+            if self.ignore_node:
+                pass
+            elif (self.inheritance_dict is None or old_value not in
+                    self.inheritance_dict) and node_name not in self.ignore:
                 values = {}
                 for key in inputs:
                     paths = []
@@ -319,20 +325,22 @@ class PipelineManagerTab(QWidget):
                         ))[0]]
                         self.inheritance_dict[old_value] = value
                     else:
-                        if iterate is True and self.key is not None:
-                            value = values[self.key]
+                        if node_name in self.key:
+                            value = values[self.key[node_name]]
                             self.inheritance_dict[old_value] = value
                         else:
-                            pop_up = PopUpinheritanceDict(values, iterate)
+                            pop_up = PopUpInheritanceDict(values, node_name,
+                                                          plug_name)
                             pop_up.exec()
+                            self.ignore_node = pop_up.everything
                             if pop_up.ignore:
                                 self.inheritance_dict = None
                                 if pop_up.all is True:
-                                    self.ignore = True
+                                    self.ignore[node_name] = True
                             else:
                                 value = pop_up.value
                                 if pop_up.all is True:
-                                    self.key = pop_up.key
+                                    self.key[node_name] = pop_up.key
                                 self.inheritance_dict[old_value] = value
 
             # Adding inherited tags
@@ -534,6 +542,8 @@ class PipelineManagerTab(QWidget):
         for brick in self.brick_list:
             self.main_window.data_browser.table_data.delete_from_brick(
                 brick)
+            self.key = {}
+            self.ignore = {}
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
@@ -828,7 +838,8 @@ class PipelineManagerTab(QWidget):
                         continue
                     if plug_value not in ["<undefined>", Undefined]:
                         self.add_plug_value_to_database(plug_value,
-                                                        self.brick_id)
+                                                        self.brick_id,
+                                                        node_name, plug_name)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 
@@ -1091,8 +1102,9 @@ class PipelineManagerTab(QWidget):
         self.main_window.statusBar().showMessage(
             'Pipeline "{0}" is getting run. Please wait.'.format(name))
         QApplication.processEvents()
-        self.key = None
-        self.ignore = False
+        self.key = {}
+        self.ignore = {}
+        self.ignore_node = False
 
         if self.iterationTable.check_box_iterate.isChecked():
             iterated_tag = self.iterationTable.iterated_tag
