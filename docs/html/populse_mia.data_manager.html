@@ -51,21 +51,17 @@
 <div class="section" id="module-populse_mia.data_manager.data_loader">
 <span id="populse-mia-data-manager-data-loader-module"></span><h2>populse_mia.data_manager.data_loader module<a class="headerlink" href="#module-populse_mia.data_manager.data_loader" title="Permalink to this headline">¶</a></h2>
 <p>Module to handle the importation from MRIFileManager and its progress</p>
-<dl>
-<dt>Contains:</dt><dd><dl>
-<dt>Class:</dt><dd><blockquote>
-<div><p>-ImportProgress : Inherit from QProgressDialog and handle the
+<dl class="simple">
+<dt>Contains:</dt><dd><dl class="simple">
+<dt>Class:</dt><dd><p>-ImportProgress : Inherit from QProgressDialog and handle the
 progress bar
 -ImportWorker : Inherit from QThread and manage the threads</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Functions:</dt><dd><p>-read_log : Show the evolution of the progress bar and returns its
+</dd>
+<dt>Methods:</dt><dd><p>-read_log : Show the evolution of the progress bar and returns its
 feedback
 -tags_from_file : Returns a list of [tag, value] contained in a Json
 file
 -verify_scans : Check if the project’s scans have been modified</p>
-</dd>
-</dl>
 </dd>
 </dl>
 </dd>
@@ -83,18 +79,18 @@ file
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialization of the ImportProgress class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
-</dd>
-</dl>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportProgress.onProgress">
 <code class="sig-name descname">onProgress</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportProgress.onProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportProgress.onProgress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal to set the import progressbar value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>i</strong> – int, value of the progressbar</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -113,13 +109,7 @@ file
 <dl class="method">
 <dt id="populse_mia.data_manager.data_loader.ImportWorker.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">project</em>, <em class="sig-param">progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/populse_mia/data_manager/data_loader.html#ImportWorker.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#populse_mia.data_manager.data_loader.ImportWorker.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialization of the ImportWorker class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> – A Project object</p>
-</dd>
-</dl>
-<p>;param progress: An ImportProgress object</p>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="attribute">

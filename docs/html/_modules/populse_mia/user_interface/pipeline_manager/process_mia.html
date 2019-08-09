@@ -141,9 +141,10 @@
                     <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span>
                                                              <span class="n">brick</span><span class="p">,</span>
                                                              <span class="n">BRICK_OUTPUTS</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
-                        <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">remove_brick_output</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">output_value</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+                            <span class="n">output_value</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output_name</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">remove_brick_output</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">output_value</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span>
                                                          <span class="n">brick</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">saveModifications</span><span class="p">()</span>

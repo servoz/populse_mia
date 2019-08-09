@@ -76,14 +76,16 @@
 
 <span class="c1"># Populse_MIA imports</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>
-<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="n">PopUpSelectIteration</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span><span class="n">PopUpSelectIteration</span><span class="p">,</span>
+                                                <span class="n">PopUpInheritanceDict</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.iteration_table</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">IterationTable</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">,</span>
     <span class="n">BRICK_OUTPUTS</span><span class="p">,</span> <span class="n">BRICK_INPUTS</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">BRICK_INIT</span><span class="p">,</span> <span class="n">BRICK_INIT_TIME</span><span class="p">,</span>
-    <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TAG_EXP_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">)</span>
+    <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TAG_EXP_TYPE</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">TAG_CHECKSUM</span><span class="p">,</span> <span class="n">TYPE_NII</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">,</span>
+    <span class="n">TYPE_TXT</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.node_controller</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">NodeController</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.pipeline_editor</span> <span class="k">import</span> <span class="p">(</span>
@@ -149,6 +151,7 @@
         <span class="c1"># Necessary for using MIA bricks</span>
         <span class="n">ProcessMIA</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scan_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scan_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
                 <span class="n">COLLECTION_CURRENT</span><span class="p">)</span>
@@ -161,6 +164,12 @@
         <span class="c1"># If it is empty, the scan list in the Pipeline Manager is the scan</span>
         <span class="c1"># list from the data_browser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iteration_table_scans_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brick_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Used for the inheritance dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_node</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -249,17 +258,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">previewBlock</span><span class="o">.</span><span class="n">centerOn</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_process</span><span class="p">(</span><span class="n">name_item</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PipelineManagerTab.add_plug_value_to_database"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database">[docs]</a>    <span class="k">def</span> <span class="nf">add_plug_value_to_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">brick</span><span class="p">):</span>
+<div class="viewcode-block" id="PipelineManagerTab.add_plug_value_to_database"><a class="viewcode-back" href="../../../../populse_mia.user_interface.pipeline_manager.html#populse_mia.user_interface.pipeline_manager.pipeline_manager_tab.PipelineManagerTab.add_plug_value_to_database">[docs]</a>    <span class="k">def</span> <span class="nf">add_plug_value_to_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span>
+                                   <span class="n">plug_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add the plug value to the database.</span>
 
 <span class="sd">        :param p_value: plug value, a file name or a list of file names</span>
-<span class="sd">        :param brick: brick of the value</span>
+<span class="sd">        :param brick: brick id</span>
+<span class="sd">        :param node_name: name of the node</span>
+<span class="sd">        :param plug_name: name of the plug</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">TraitListObject</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">p_value</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_plug_value_to_database</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">brick</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_plug_value_to_database</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> 
+                                                <span class="n">plug_name</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c1"># This means that the value is not a filename</span>
@@ -298,7 +311,6 @@
                 <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">bricks</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
                 <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_BRICKS</span><span class="p">,</span> <span class="n">bricks</span><span class="p">)</span>
-
             <span class="c1"># Type tag</span>
             <span class="n">filename</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s2">&quot;.nii&quot;</span><span class="p">:</span>
@@ -311,6 +323,57 @@
                     <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
                     <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_MAT</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s2">&quot;.txt&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
+                    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_TXT</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
+                    <span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">TAG_TYPE</span><span class="p">,</span> <span class="n">TYPE_TXT</span><span class="p">)</span>
+
+            <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
+            <span class="c1"># iterate = self.iterationTable.check_box_iterate.isChecked()</span>
+            <span class="c1"># Automatically fill inheritance dictionary if empty</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_node</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">old_value</span> <span class="ow">not</span> <span class="ow">in</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+                    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                            <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;.nii&quot;</span><span class="p">:</span>
+                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="n">extension</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span>
+                        <span class="p">))[</span><span class="mi">0</span><span class="p">]]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span><span class="p">[</span><span class="n">old_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">node_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">[</span><span class="n">node_name</span><span class="p">]]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span><span class="p">[</span><span class="n">old_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">pop_up</span> <span class="o">=</span> <span class="n">PopUpInheritanceDict</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span>
+                                                          <span class="n">plug_name</span><span class="p">)</span>
+                            <span class="n">pop_up</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_node</span> <span class="o">=</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">everything</span>
+                            <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">ignore</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span> <span class="o">=</span> <span class="kc">None</span>
+                                <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">all</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">value</span>
+                                <span class="k">if</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">all</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pop_up</span><span class="o">.</span><span class="n">key</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span><span class="p">[</span><span class="n">old_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
             <span class="c1"># Adding inherited tags</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inheritance_dict</span><span class="p">:</span>
@@ -508,6 +571,11 @@
         <span class="n">pipeline</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pipelineEditorTabs</span><span class="o">.</span><span class="n">get_current_editor</span><span class="p">()</span><span class="o">.</span><span class="n">_reset_pipeline</span><span class="p">,</span>
             <span class="s1">&#39;user_traits_changed&#39;</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">brick</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">brick_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">data_browser</span><span class="o">.</span><span class="n">table_data</span><span class="o">.</span><span class="n">delete_from_brick</span><span class="p">(</span>
+                <span class="n">brick</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># nodes_to_check contains the node names that need to be update</span>
         <span class="n">nodes_to_check</span> <span class="o">=</span> <span class="p">[]</span>
@@ -626,6 +694,7 @@
 
             <span class="c1"># Adding the brick to the bricks history</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">brick_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">brick_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brick_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span>
                                               <span class="bp">self</span><span class="o">.</span><span class="n">brick_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
@@ -707,6 +776,7 @@
 
             <span class="c1"># Adding I/O to database history</span>
             <span class="n">inputs</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span>
 
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
 
@@ -800,7 +870,8 @@
                         <span class="k">continue</span>
                     <span class="k">if</span> <span class="n">plug_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;undefined&gt;&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">]:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">add_plug_value_to_database</span><span class="p">(</span><span class="n">plug_value</span><span class="p">,</span>
-                                                        <span class="bp">self</span><span class="o">.</span><span class="n">brick_id</span><span class="p">)</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">brick_id</span><span class="p">,</span>
+                                                        <span class="n">node_name</span><span class="p">,</span> <span class="n">plug_name</span><span class="p">)</span>
 
                     <span class="n">list_info_link</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">plugs</span><span class="p">[</span><span class="n">plug_name</span><span class="p">]</span><span class="o">.</span><span class="n">links_to</span><span class="p">)</span>
 
@@ -1059,9 +1130,13 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipelineEditorTabs</span><span class="o">.</span><span class="n">get_current_filename</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brick_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span>
             <span class="s1">&#39;Pipeline &quot;</span><span class="si">{0}</span><span class="s1">&quot; is getting run. Please wait.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="n">QApplication</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_node</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterationTable</span><span class="o">.</span><span class="n">check_box_iterate</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
             <span class="n">iterated_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterationTable</span><span class="o">.</span><span class="n">iterated_tag</span>
@@ -1074,6 +1149,7 @@
                 <span class="n">pipeline_progress</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
                 <span class="n">pipeline_progress</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">iterated_tag</span>
                 <span class="k">for</span> <span class="n">tag_value</span> <span class="ow">in</span> <span class="n">tag_values</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">brick_list</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="c1"># Status bar update</span>
                     <span class="n">pipeline_progress</span><span class="p">[</span><span class="s1">&#39;tag_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag_value</span>
 

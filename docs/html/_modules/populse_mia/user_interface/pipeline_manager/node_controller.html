@@ -77,7 +77,8 @@
     <span class="n">TableDataBrowser</span><span class="p">,</span> <span class="n">not_defined_value</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pop_ups</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">PopUpSelectTagCountTable</span><span class="p">,</span> <span class="n">PopUpVisualizedTags</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> <span class="n">COLLECTION_CURRENT</span>
+<span class="kn">from</span> <span class="nn">populse_mia.data_manager.project</span> <span class="k">import</span> <span class="n">TAG_FILENAME</span><span class="p">,</span> \
+    <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">COLLECTION_BRICK</span>
 <span class="kn">from</span> <span class="nn">populse_mia.data_manager.filter</span> <span class="k">import</span> <span class="n">Filter</span>
 <span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>
 <span class="kn">from</span> <span class="nn">populse_mia.software_properties</span> <span class="k">import</span> <span class="n">Config</span>
@@ -824,13 +825,27 @@
         <span class="c1">#          filter:orphan:</span>
 
         <span class="c1"># Verifying that the scan names begin not with a &quot;/&quot; or a &quot;\&quot;</span>
+        <span class="n">doc_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">brick</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">pipeline_manager</span><span class="o">.</span><span class="n">brick_list</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span>
+                                                    <span class="n">brick</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">doc_delete</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span>
+                        <span class="c1"># doc_list = self.project.session.get_documents_names(</span>
+                        <span class="c1">#     COLLECTION_CURRENT)</span>
+                        <span class="n">doc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc_delete</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">scans_list</span><span class="p">:</span>
             <span class="n">scans_list_copy</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans_list</span><span class="p">:</span>
                 <span class="n">scan_no_pfolder</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">scan_no_pfolder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">]:</span>
                     <span class="n">scan_no_pfolder</span> <span class="o">=</span> <span class="n">scan_no_pfolder</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-                <span class="n">scans_list_copy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scan_no_pfolder</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">scan_no_pfolder</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc_list</span><span class="p">:</span>
+                    <span class="n">scans_list_copy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scan_no_pfolder</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">scans_list</span> <span class="o">=</span> <span class="n">scans_list_copy</span>
 

@@ -38,7 +38,7 @@
 <span class="sd">        -ImportProgress : Inherit from QProgressDialog and handle the</span>
 <span class="sd">        progress bar</span>
 <span class="sd">        -ImportWorker : Inherit from QThread and manage the threads</span>
-<span class="sd">     Functions:</span>
+<span class="sd">    Methods:</span>
 <span class="sd">        -read_log : Show the evolution of the progress bar and returns its</span>
 <span class="sd">        feedback</span>
 <span class="sd">        -tags_from_file : Returns a list of [tag, value] contained in a Json</span>
@@ -96,10 +96,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ImportProgress.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportProgress.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialization of the ImportProgress class.</span>
-
-<span class="sd">         :param project: A Project object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImportProgress</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="s2">&quot;Please wait while the paths are being imported...&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
@@ -110,7 +106,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span> <span class="c1"># For mac OS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">350</span><span class="p">)</span>  <span class="c1"># For mac OS</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span> <span class="o">=</span> <span class="n">ImportWorker</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
@@ -118,7 +114,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ImportProgress.onProgress"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportProgress.onProgress">[docs]</a>    <span class="k">def</span> <span class="nf">onProgress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Signal to set the import progressbar value&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Signal to set the import progressbar value</span>
+
+<span class="sd">        :param i: int, value of the progressbar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div></div>
 
@@ -136,11 +135,6 @@
     <span class="n">notifyProgress</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImportWorker.__init__"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.ImportWorker.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialization of the ImportWorker class.</span>
-
-<span class="sd">        :param project: A Project object</span>
-<span class="sd">        ;param progress: An ImportProgress object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span>
@@ -165,7 +159,7 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_logs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">list_dict_log</span> <span class="o">=</span> <span class="p">[]</span>
-            
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log_to_read</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">list_logs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">)</span>
 
@@ -190,7 +184,7 @@
             <span class="k">if</span> <span class="n">dict_log</span><span class="p">[</span><span class="s1">&#39;StatusExport&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Export ok&quot;</span><span class="p">:</span>
                 <span class="n">file_name</span> <span class="o">=</span> <span class="n">dict_log</span><span class="p">[</span><span class="s1">&#39;NameFile&#39;</span><span class="p">]</span>
                 <span class="n">path_name</span> <span class="o">=</span> <span class="n">raw_data_folder</span>
-                
+
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_name</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.nii&quot;</span><span class="p">,</span>
                           <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">scan_file</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">scan_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -202,9 +196,8 @@
 
                 <span class="n">document_not_existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
                     <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">file_database_path</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-                
+
                 <span class="k">if</span> <span class="n">document_not_existing</span><span class="p">:</span>
-                    
                     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
                         <span class="c1"># Scan added to history</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">scans_added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_database_path</span><span class="p">)</span>
@@ -213,27 +206,27 @@
                 <span class="n">documents</span><span class="p">[</span><span class="n">file_database_path</span><span class="p">][</span><span class="n">TAG_FILENAME</span><span class="p">]</span> <span class="o">=</span> \
                     <span class="n">file_database_path</span>
 
-                <span class="c1">#print(&#39;\ntags_from_file(file_name, path_name): &#39;, tags_</span>
-                <span class="c1"># from_file(file_name, path_name))</span>
-                
-                <span class="c1"># For each tag in each scan </span>
+                <span class="c1"># print(&#39;\ntags_from_file(file_name, path_name): &#39;,</span>
+                <span class="c1"># tags_from_file(file_name, path_name))</span>
+
+                <span class="c1"># For each tag in each scan</span>
                 <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags_from_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">path_name</span><span class="p">):</span>
 
                     <span class="c1"># We do the tag only if it&#39;s not in the tags to remove</span>
                     <span class="k">if</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tags_to_remove</span><span class="p">:</span>
                         <span class="n">tag_name</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-                        <span class="c1">#print(&#39;\ntag_name: &#39;, tag_name)</span>
-                        
+                        <span class="c1"># print(&#39;\ntag_name: &#39;, tag_name)</span>
+
                         <span class="n">properties</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-                        <span class="c1">#print(&#39;properties: &#39;, properties)</span>
-                        
+                        <span class="c1"># print(&#39;properties: &#39;, properties)</span>
+
                         <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
                         <span class="n">description</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="n">unit</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_STRING</span>
-                        
+
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                             <span class="nb">format</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span>
 
@@ -245,14 +238,15 @@
 
                             <span class="k">if</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
-                                
+
                             <span class="n">value</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
-                            
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                            <span class="n">value</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
 
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">value</span> <span class="o">=</span> <span class="n">properties</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="n">properties</span>
 
                         <span class="c1"># Creating date types</span>
                         <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">format</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -263,26 +257,28 @@
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;%M&quot;</span><span class="p">)</span>
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ss&quot;</span><span class="p">,</span> <span class="s2">&quot;%S&quot;</span><span class="p">)</span>
                             <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
-                            
+
                             <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="ow">in</span>
                                     <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span>
                                     <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span> <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATETIME</span>
-                                
+
                             <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%m&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span>
-                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
+                                  <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_DATE</span>
-                                
+
                             <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;%H&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%M&quot;</span> <span class="ow">in</span> <span class="nb">format</span> <span class="ow">and</span> <span class="s2">&quot;%S&quot;</span>
-                                    <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
+                                  <span class="ow">in</span> <span class="nb">format</span><span class="p">):</span>
                                 <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_TIME</span>
 
                         <span class="k">if</span> <span class="n">tag_name</span> <span class="o">!=</span> <span class="s2">&quot;Json_Version&quot;</span><span class="p">:</span>
                             <span class="c1"># Preparing value and type</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                                <span class="k">if</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
-                                        <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span>
-                                                             <span class="ow">not</span> <span class="mi">1</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> \
+                                    <span class="nb">str</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                    <span class="nb">list</span><span class="p">))</span>
+                                        <span class="ow">or</span>
+                                        <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">1</span><span class="p">)):</span>
 
                                     <span class="k">if</span> <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_STRING</span><span class="p">:</span>
                                         <span class="n">tag_type</span> <span class="o">=</span> <span class="n">FIELD_TYPE_LIST_STRING</span>
@@ -315,20 +311,19 @@
                                         <span class="n">value_prepared</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value_single</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
                                     <span class="n">value</span> <span class="o">=</span> <span class="n">value_prepared</span>
-
-                        <span class="c1">#print(&#39;value: &#39;, value)</span>
-                        <span class="c1">#print(&#39;tag_type: &#39;, tag_type)</span>
+                        <span class="c1"># print(&#39;value: &#39;, value)</span>
+                        <span class="c1"># print(&#39;tag_type: &#39;, tag_type)</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATETIME</span> <span class="ow">or</span>
-                            <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span>
-                            <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">):</span>
-                            
+                                <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span> <span class="ow">or</span>
+                                <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">):</span>
+
                             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                                 <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
-                                
+
                                 <span class="k">if</span> <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_TIME</span><span class="p">:</span>
                                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                                    
+
                                 <span class="k">elif</span> <span class="n">tag_type</span> <span class="o">==</span> <span class="n">FIELD_TYPE_DATE</span><span class="p">:</span>
                                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
 
@@ -336,7 +331,7 @@
 
                         <span class="n">tag_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
                             <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">)</span>
-                        
+
                         <span class="k">if</span> <span class="p">(</span><span class="n">tag_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tag_name</span> <span class="ow">not</span> <span class="ow">in</span>
                                 <span class="n">tags_names_added</span><span class="p">):</span>
                             <span class="c1"># Adding the tag as it&#39;s not in the database yet</span>
@@ -352,7 +347,7 @@
 
                         <span class="c1"># The value is accepted if it&#39;s not empty or null</span>
                         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                            
+
                             <span class="k">if</span> <span class="n">document_not_existing</span><span class="p">:</span>
                                 <span class="n">values_added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                     <span class="p">[</span><span class="n">file_database_path</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
@@ -401,12 +396,12 @@
                                                      <span class="n">document</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span><span class="n">COLLECTION_INITIAL</span><span class="p">,</span>
                                                      <span class="n">document</span><span class="p">)</span>
- 
+
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add_document</span><span class="p">(</span><span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">documents</span><span class="p">[</span>
                 <span class="n">document</span><span class="p">],</span> <span class="n">flush</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add_document</span><span class="p">(</span><span class="n">COLLECTION_INITIAL</span><span class="p">,</span> <span class="n">documents</span><span class="p">[</span>
                 <span class="n">document</span><span class="p">],</span> <span class="n">flush</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            
+
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notifyProgress</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
@@ -443,6 +438,15 @@
         <span class="n">scans_added</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">scans_added</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">scans_added</span></div>
 
+
+<span class="c1"># def save_project(project):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Saves the modifications of the project</span>
+<span class="c1">#</span>
+<span class="c1">#     :param project: current project in the software</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     project.saveModifications()</span>
 
 <div class="viewcode-block" id="tags_from_file"><a class="viewcode-back" href="../../../populse_mia.data_manager.html#populse_mia.data_manager.data_loader.tags_from_file">[docs]</a><span class="k">def</span> <span class="nf">tags_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a list of [tag, value] contained in a Json file.</span>

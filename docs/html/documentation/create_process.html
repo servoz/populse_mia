@@ -82,7 +82,7 @@
 <span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>  <span class="c1"># used to read and save Nifti images</span>
 <span class="kn">from</span> <span class="nn">nipype.interfaces</span> <span class="k">import</span> <span class="n">spm</span>  <span class="c1"># used to use SPM&#39;s Smooth</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>  <span class="c1"># used to apply the smoothing on an array</span>
-<span class="kn">from</span> <span class="nn">populse_mia.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>  <span class="c1"># base class that the created process has to inherit from</span>
+<span class="kn">from</span> <span class="nn">populse_mia.user_interface.pipeline_manager.process_mia</span> <span class="k">import</span> <span class="n">ProcessMIA</span>  <span class="c1"># base class that the created process has to inherit from</span>
 
 
 <span class="k">class</span> <span class="nc">SmoothSpmScipy</span><span class="p">(</span><span class="n">ProcessMIA</span><span class="p">):</span>

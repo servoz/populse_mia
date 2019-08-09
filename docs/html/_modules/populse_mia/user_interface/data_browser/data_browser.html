@@ -716,6 +716,7 @@
 <span class="sd">           cells when edited by the user</span>
 <span class="sd">        - clear_cell: clear the selected cells</span>
 <span class="sd">        - context_menu_table: create the context menu of the table</span>
+<span class="sd">        - delete_from_brick: delete a document from its brick id</span>
 <span class="sd">        - display_unreset_values: display an error message when trying to</span>
 <span class="sd">           reset user tags</span>
 <span class="sd">        - fill_cells_update_table: initialize and fills the cells of the table</span>
@@ -1334,6 +1335,45 @@
         <span class="c1"># Signals reconnected</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">change_cell_color</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="TableDataBrowser.delete_from_brick"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.delete_from_brick">[docs]</a>    <span class="k">def</span> <span class="nf">delete_from_brick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete a document from its brick id.</span>
+
+<span class="sd">        This method is used to clean the database when the user initializes</span>
+<span class="sd">        a pipeline (multiple bricks) but doesn&#39;t run it before initializing</span>
+<span class="sd">        another one or closing the software.</span>
+
+<span class="sd">        :param name: string of the brick id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">doc_delete</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;Output(s)&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span>
+                    <span class="n">doc_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
+                        <span class="n">COLLECTION_CURRENT</span><span class="p">)</span>
+                    <span class="n">scan_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_document</span><span class="p">(</span>
+                        <span class="n">COLLECTION_CURRENT</span><span class="p">,</span> <span class="n">doc_delete</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">scan_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">scan_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scan_object</span><span class="p">,</span> <span class="n">TAG_FILENAME</span><span class="p">)</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scan_row</span><span class="p">(</span><span class="n">scan_name</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">doc_delete</span> <span class="ow">in</span> <span class="n">doc_list</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span>
+                            <span class="n">COLLECTION_CURRENT</span><span class="p">,</span><span class="n">doc_delete</span><span class="p">)</span>
+                    <span class="n">doc_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span>
+                        <span class="n">COLLECTION_INITIAL</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">doc_delete</span> <span class="ow">in</span> <span class="n">doc_list</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span>
+                            <span class="n">COLLECTION_INITIAL</span><span class="p">,</span><span class="n">doc_delete</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_documents_names</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove_document</span><span class="p">(</span><span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="TableDataBrowser.display_unreset_values"><a class="viewcode-back" href="../../../../populse_mia.user_interface.data_browser.html#populse_mia.user_interface.data_browser.data_browser.TableDataBrowser.display_unreset_values">[docs]</a>    <span class="k">def</span> <span class="nf">display_unreset_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Display an error message when trying to reset user tags.&quot;&quot;&quot;</span>
 
@@ -1408,14 +1448,14 @@
 
                                 <span class="n">brick_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
                                     <span class="n">COLLECTION_BRICK</span><span class="p">,</span> <span class="n">brick_uuid</span><span class="p">,</span> <span class="n">BRICK_NAME</span><span class="p">)</span>
-
-                                <span class="n">brick_name_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="n">brick_name</span><span class="p">)</span>
-                                <span class="n">brick_name_button</span><span class="o">.</span><span class="n">moveToThread</span><span class="p">(</span>
-                                    <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">())</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">bricks</span><span class="p">[</span><span class="n">brick_name_button</span><span class="p">]</span> <span class="o">=</span> <span class="n">brick_uuid</span>
-                                <span class="n">brick_name_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">show_brick_history</span><span class="p">)</span>
-                                <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">brick_name_button</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">brick_name</span><span class="p">:</span>
+                                    <span class="n">brick_name_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="n">brick_name</span><span class="p">)</span>
+                                    <span class="n">brick_name_button</span><span class="o">.</span><span class="n">moveToThread</span><span class="p">(</span>
+                                        <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">())</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">bricks</span><span class="p">[</span><span class="n">brick_name_button</span><span class="p">]</span> <span class="o">=</span> <span class="n">brick_uuid</span>
+                                    <span class="n">brick_name_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">show_brick_history</span><span class="p">)</span>
+                                    <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">brick_name_button</span><span class="p">)</span>
                             <span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">setCellWidget</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
 
@@ -2283,11 +2323,15 @@
         <span class="c1"># Scans that are not visible anymore are hidden</span>
         <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">old_scans</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">scan</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_to_visualize</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">setRowHidden</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_scan_row</span><span class="p">(</span><span class="n">scan</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scan_row</span><span class="p">(</span><span class="n">scan</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setRowHidden</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Scans that became visible must be visible</span>
         <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scans_to_visualize</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setRowHidden</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_scan_row</span><span class="p">(</span><span class="n">scan</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scan_row</span><span class="p">(</span><span class="n">scan</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setRowHidden</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span>  <span class="c1"># Columns resized</span>
 
