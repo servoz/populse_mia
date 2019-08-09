@@ -545,8 +545,8 @@ class PipelineManagerTab(QWidget):
             self.pipelineEditorTabs.get_current_editor()._reset_pipeline,
             'user_traits_changed', remove=True)
         for brick in self.brick_list:
-            self.main_window.data_browser.table_data.delete_from_brick(
-                brick)
+            # self.main_window.data_browser.table_data.delete_from_brick(
+            #     brick)
             self.key = {}
             self.ignore = {}
 
