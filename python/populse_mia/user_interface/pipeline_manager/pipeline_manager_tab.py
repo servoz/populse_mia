@@ -53,7 +53,7 @@ from populse_mia.data_manager.project import (
     COLLECTION_CURRENT, COLLECTION_INITIAL, COLLECTION_BRICK, BRICK_NAME,
     BRICK_OUTPUTS, BRICK_INPUTS, TAG_BRICKS, BRICK_INIT, BRICK_INIT_TIME,
     TAG_TYPE, TAG_EXP_TYPE, TAG_FILENAME, TAG_CHECKSUM, TYPE_NII, TYPE_MAT,
-    TYPE_TXT)
+    TYPE_TXT, TYPE_UNKNOWN)
 from populse_mia.user_interface.pipeline_manager.node_controller import (
     NodeController)
 from populse_mia.user_interface.pipeline_manager.pipeline_editor import (
@@ -296,6 +296,11 @@ class PipelineManagerTab(QWidget):
                     COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_TXT)
                 self.project.session.set_value(
                     COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_TXT)
+            else:
+                self.project.session.set_value(
+                    COLLECTION_CURRENT, p_value, TAG_TYPE, TYPE_UNKNOWN)
+                self.project.session.set_value(
+                    COLLECTION_INITIAL, p_value, TAG_TYPE, TYPE_UNKNOWN)
 
             inputs = self.inputs
             # iterate = self.iterationTable.check_box_iterate.isChecked()

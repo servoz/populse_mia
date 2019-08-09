@@ -75,7 +75,7 @@ from populse_mia.data_manager.project import (
     COLLECTION_BRICK, BRICK_NAME, BRICK_EXEC, BRICK_EXEC_TIME, BRICK_INIT,
     BRICK_INIT_TIME, BRICK_INPUTS, BRICK_OUTPUTS, COLLECTION_INITIAL,
     TAG_TYPE, TYPE_NII, TYPE_MAT, TAG_CHECKSUM, TAG_FILENAME,
-    COLLECTION_CURRENT)
+    COLLECTION_CURRENT, TYPE_UNKNOWN, TYPE_TXT)
 
 from populse_mia.software_properties import Config
 from populse_mia.user_interface.data_browser import data_browser
@@ -672,8 +672,10 @@ class PopUpAddPath(QDialog):
             self.type_line_edit.setText(TYPE_NII)
         elif file_extension == ".mat":
             self.type_line_edit.setText(TYPE_MAT)
+        elif file_extension == ".txt":
+            self.type_line_edit.setText(TYPE_TXT)
         else:
-            self.type_line_edit.setText("")
+            self.type_line_edit.setText(TYPE_UNKNOWN)
 
     def save_path(self):
         """Adds the path to the database and the data browser."""
