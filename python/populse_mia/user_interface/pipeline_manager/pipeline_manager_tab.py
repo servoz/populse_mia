@@ -83,6 +83,8 @@ class PipelineManagerTab(QWidget):
           clicked
         - init_pipeline: initialize the current pipeline of the pipeline
           editor
+        - initialize: clean previous initialization then initialize the current
+          pipeline
         - layout_view : initialize layout for the pipeline manager
         - loadParameters: load pipeline parameters to the current pipeline of
           the pipeline editor
@@ -120,6 +122,7 @@ class PipelineManagerTab(QWidget):
         ProcessMIA.project = project
         self.project = project
         self.inheritance_dict = None
+        self.init_clicked = False
         if len(scan_list) < 1:
             self.scan_list = self.project.session.get_documents_names(
                 COLLECTION_CURRENT)
@@ -193,7 +196,7 @@ class PipelineManagerTab(QWidget):
             self.saveParameters)
 
         self.init_pipeline_action = QAction("Initialize pipeline", self)
-        self.init_pipeline_action.triggered.connect(self.init_pipeline)
+        self.init_pipeline_action.triggered.connect(self.initialize)
 
         self.run_pipeline_action = QAction("Run pipeline", self)
         self.run_pipeline_action.triggered.connect(self.runPipeline)
@@ -544,11 +547,9 @@ class PipelineManagerTab(QWidget):
         pipeline.on_trait_change(
             self.pipelineEditorTabs.get_current_editor()._reset_pipeline,
             'user_traits_changed', remove=True)
-        for brick in self.brick_list:
-            # self.main_window.data_browser.table_data.delete_from_brick(
-            #     brick)
-            self.key = {}
-            self.ignore = {}
+
+        self.key = {}
+        self.ignore = {}
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
@@ -919,6 +920,17 @@ class PipelineManagerTab(QWidget):
         self.main_window.statusBar().showMessage(
             'Pipeline "{0}" has been initialized.'.format(name))
 
+    def initialize(self):
+        """Clean previous initialization then initialize the current
+        pipeline."""
+
+        if self.init_clicked == True:
+            for brick in self.brick_list:
+                self.main_window.data_browser.table_data.delete_from_brick(
+                    brick)
+        self.init_pipeline()
+        self.init_clicked = True
+
     def layout_view(self):
         """Initialize layout for the pipeline manager tab"""
         self.setWindowTitle("Diagram editor")
@@ -1098,10 +1110,8 @@ class PipelineManagerTab(QWidget):
             self.nodeController.update_parameters()
 
     def runPipeline(self):
-        """
-        Run the current pipeline of the pipeline editor
+        """Run the current pipeline of the pipeline editor."""
 
-        """
         name = os.path.basename(self.pipelineEditorTabs.get_current_filename())
         self.brick_list = []
         self.main_window.statusBar().showMessage(
@@ -1166,6 +1176,8 @@ class PipelineManagerTab(QWidget):
             else:
                 self.main_window.statusBar().showMessage(
                     'Pipeline "{0}" has been correctly run.'.format(name))
+
+        self.init_clicked = False
 
     def saveParameters(self):
         """
