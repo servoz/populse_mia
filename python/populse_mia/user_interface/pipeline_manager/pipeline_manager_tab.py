@@ -230,7 +230,7 @@ class PipelineManagerTab(QWidget):
         self.find_process(name_item)
 
     def add_plug_value_to_database(self, p_value, brick, node_name,
-                                   plug_name):
+                                   plug_name, full_name):
         """
         Add the plug value to the database.
 
@@ -243,7 +243,7 @@ class PipelineManagerTab(QWidget):
         if type(p_value) in [list, TraitListObject]:
             for elt in p_value:
                 self.add_plug_value_to_database(elt, brick, node_name, 
-                                                plug_name)
+                                                plug_name, full_name)
             return
 
         # This means that the value is not a filename
@@ -503,11 +503,11 @@ class PipelineManagerTab(QWidget):
                         Qt.KeepAspectRatio)
                     self.previewBlock.setAlignment(Qt.AlignCenter)
 
-    def init_pipeline(self, pipeline=None):
+    def init_pipeline(self, pipeline=None, pipeline_name=""):
         """
         Initialize the current pipeline of the pipeline editor
 
-        :param pipeline: not None if this method is called from a sub-pipeline
+        :param pipeline: not None if this method call a sub-pipeline
         """
 
         # Should we add a progress bar for the initialization?
@@ -637,7 +637,7 @@ class PipelineManagerTab(QWidget):
             node = pipeline.nodes[node_name]
             if isinstance(node, PipelineNode):
                 sub_pipeline = node.process
-                self.init_pipeline(sub_pipeline)
+                self.init_pipeline(sub_pipeline, node_name)
 
                 for plug_name in node.plugs.keys():
 
@@ -843,9 +843,14 @@ class PipelineManagerTab(QWidget):
                     if plug_name not in node.plugs.keys():
                         continue
                     if plug_value not in ["<undefined>", Undefined]:
+                        if pipeline_name != "":
+                            full_name = pipeline_name + "." + node_name
+                        else:
+                            full_name = node_name
                         self.add_plug_value_to_database(plug_value,
                                                         self.brick_id,
-                                                        node_name, plug_name)
+                                                        node_name,
+                                                        plug_name, full_name)
 
                     list_info_link = list(node.plugs[plug_name].links_to)
 

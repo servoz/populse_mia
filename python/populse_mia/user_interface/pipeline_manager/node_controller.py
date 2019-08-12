@@ -800,11 +800,10 @@ class PlugFilter(QWidget):
             if doc is not None:
                 for key in doc["Output(s)"]:
                     if isinstance(doc["Output(s)"][key], str):
-                        doc_delete = os.path.relpath(doc["Output(s)"][key],
+                        if doc["Output(s)"][key] != '':
+                            doc_delete = os.path.relpath(doc["Output(s)"][key],
                                                      self.project.folder)
-                        # doc_list = self.project.session.get_documents_names(
-                        #     COLLECTION_CURRENT)
-                        doc_list.append(doc_delete)
+                            doc_list.append(doc_delete)
 
         if scans_list:
             scans_list_copy = []
