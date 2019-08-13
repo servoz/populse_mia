@@ -337,7 +337,7 @@ class PipelineManagerTab(QWidget):
                             value = values[self.key[node_name]]
                             self.inheritance_dict[old_value] = value
                         else:
-                            pop_up = PopUpInheritanceDict(values, node_name,
+                            pop_up = PopUpInheritanceDict(values, full_name,
                                                           plug_name)
                             pop_up.exec()
                             self.ignore_node = pop_up.everything
@@ -508,6 +508,7 @@ class PipelineManagerTab(QWidget):
         Initialize the current pipeline of the pipeline editor
 
         :param pipeline: not None if this method call a sub-pipeline
+        :param pipeline_name: name of the parent pipeline
         """
 
         # Should we add a progress bar for the initialization?
@@ -558,7 +559,9 @@ class PipelineManagerTab(QWidget):
         # and whose values are a list of two elements: the first one being
         # the number of activated mandatory input plugs, the second one being
         # the total number of mandatory input plugs of the corresponding node
+
         nodes_inputs_ratio = {}
+        # nodes_inputs_ratio = OrderedDict()
 
         # nodes_inputs_ratio_list contains the ratio between the number of
         # activated mandatory input plugs and the total number of mandatory
@@ -862,7 +865,8 @@ class PipelineManagerTab(QWidget):
                             # Adding the destination node name and incrementing
                             # the input counter of the latter
                             nodes_to_check.append(dest_node_name)
-                            nodes_inputs_ratio[dest_node_name][0] += 1
+                            if dest_node_name in nodes_inputs_ratio:
+                                nodes_inputs_ratio[dest_node_name][0] += 1
 
                     try:
                         pipeline.nodes[node_name].set_plug_value(plug_name,
@@ -929,10 +933,11 @@ class PipelineManagerTab(QWidget):
         """Clean previous initialization then initialize the current
         pipeline."""
 
-        if self.init_clicked == True:
+        if self.init_clicked:
             for brick in self.brick_list:
                 self.main_window.data_browser.table_data.delete_from_brick(
                     brick)
+        self.ignore_node = False
         self.init_pipeline()
         self.init_clicked = True
 

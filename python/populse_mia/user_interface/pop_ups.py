@@ -1251,8 +1251,9 @@ class PopUpInheritanceDict(QDialog):
         self.all = False
         self.everything = False
 
-        label = "In the node '" + node_name + "', from which input " \
-                "the plug '" + plug_name + "' should inherit the tags:"
+        label = "In the node <b><i>" + node_name + "</i></b>, from which " \
+                "input plug, the output plug <b><i>" + plug_name + "</i></b>" \
+                " should inherit the tags:"
 
         v_box_values = QtWidgets.QVBoxLayout()
 
@@ -1276,26 +1277,39 @@ class PopUpInheritanceDict(QDialog):
         self.push_button_ok = QtWidgets.QPushButton(self)
         self.push_button_ok.setText("OK")
         self.push_button_ok.clicked.connect(self.ok_clicked)
+        self.push_button_ok.setToolTip("<i>" + plug_name + "</i> will inherit "
+                                       "tags from the selected input plug.")
         h_box_buttons.addWidget(self.push_button_ok)
 
         self.push_button_ignore = QtWidgets.QPushButton(self)
         self.push_button_ignore.setText("Ignore")
         self.push_button_ignore.clicked.connect(self.ignore_clicked)
+        self.push_button_ignore.setToolTip("<i>" + plug_name + "</i> will "
+                                           "not inherit any tags.")
         h_box_buttons.addWidget(self.push_button_ignore)
 
         self.push_button_okall = QtWidgets.QPushButton(self)
-        self.push_button_okall.setText("OK for all plugs")
+        self.push_button_okall.setText("OK for all output plugs")
         self.push_button_okall.clicked.connect(self.okall_clicked)
+        self.push_button_okall.setToolTip("All the output plugs from <i>" +
+                                          node_name + "</i> will inherit tags"
+                                          " from the selected input plug.")
         h_box_buttons.addWidget(self.push_button_okall)
 
         self.push_button_ignoreall = QtWidgets.QPushButton(self)
-        self.push_button_ignoreall.setText("Ignore for all plugs")
+        self.push_button_ignoreall.setText("Ignore for all output plugs")
         self.push_button_ignoreall.clicked.connect(self.ignoreall_clicked)
+        self.push_button_ignoreall.setToolTip("All the output plugs from <i>" +
+                                              node_name + "</i> will not "
+                                              "inherit any tags.")
         h_box_buttons.addWidget(self.push_button_ignoreall)
 
         self.push_button_ignore_node = QtWidgets.QPushButton(self)
-        self.push_button_ignore_node.setText("Ignore for all nodes")
+        self.push_button_ignore_node.setText("Ignore for all nodes in the "
+                                             "pipeline")
         self.push_button_ignore_node.clicked.connect(self.ignore_node_clicked)
+        self.push_button_ignore_node.setToolTip("No tags will be inherited "
+                                                "for the whole pipeline.")
         v_box_values.addLayout(h_box_buttons)
 
         v_box_values.addWidget(self.push_button_ignore_node)
