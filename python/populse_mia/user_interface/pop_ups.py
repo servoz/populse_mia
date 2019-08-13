@@ -682,7 +682,23 @@ class PopUpAddPath(QDialog):
 
         path = self.file_line_edit.text()
         path_type = self.type_line_edit.text()
-        if path != "" and os.path.exists(path) and path_type != "":
+        docInDb = [os.path.basename(i) for i in
+                   self.project.session.get_documents_names(COLLECTION_CURRENT)] 
+        
+        if os.path.basename(path) in docInDb:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Warning)
+            self.msg.setText(
+                "- {0} -".format(os.path.basename(path)))
+            self.msg.setInformativeText(
+                "The document '{0}' \n "
+                "already exists in the Data Browser!".format(path))
+            self.msg.setWindowTitle("Warning: existing data!")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+
+        elif path != "" and os.path.exists(path) and path_type != "":
 
             # For history
             history_maker = []
