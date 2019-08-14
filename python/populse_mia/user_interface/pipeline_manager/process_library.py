@@ -1494,7 +1494,8 @@ class PackageLibraryDialog(QDialog):
             self.paths.append(os.path.relpath(path))
 
         else:
-            # self.package_library.package_tree = self.load_config()['Packages']
+            # self.package_library.package_tree = self.load_config(
+            # )['Packages']
             old_status = self.status_label.text()
             self.status_label.setText(
                 "Adding {0}. Please wait.".format(self.line_edit.text()))
@@ -1528,7 +1529,8 @@ class PackageLibraryDialog(QDialog):
                                 break
 
                         except KeyError:
-                            errors = 'No package, module or class named ' + _2add + ' !'
+                            errors = 'No package, module or class named ' \
+                                     + _2add + ' !'
                             break
 
                     old_part = part

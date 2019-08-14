@@ -1251,18 +1251,20 @@ class PopUpInformation(QWidget):
 class PopUpInheritanceDict(QDialog):
     """Is called to select from which input the output will inherit the tags.
     """
-    def __init__(self, values, node_name, plug_name):
+    def __init__(self, values, node_name, plug_name, iterate):
         """Initialization
 
         :param values: A dictionary with input name as key and their paths
         as values
-        :param iterate: boolean, True if pipeline is iterated
+        :param node_name: name of the current node
+        :param plug_name: name of the current output plug
+        :param iterate: boolean, iteration or not
         """
         super().__init__()
 
         self.setModal(True)
         self.setObjectName("Dialog")
-        self.setWindowTitle("Plug inherited by " + node_name)
+        self.setWindowTitle("Plug inherited in " + node_name)
         self.ignore = False
         self.all = False
         self.everything = False
@@ -1294,7 +1296,7 @@ class PopUpInheritanceDict(QDialog):
         self.push_button_ok.setText("OK")
         self.push_button_ok.clicked.connect(self.ok_clicked)
         self.push_button_ok.setToolTip("<i>" + plug_name + "</i> will inherit "
-                                       "tags from the selected input plug.")
+                                       "tags from " + self.key)
         h_box_buttons.addWidget(self.push_button_ok)
 
         self.push_button_ignore = QtWidgets.QPushButton(self)
@@ -1309,7 +1311,7 @@ class PopUpInheritanceDict(QDialog):
         self.push_button_okall.clicked.connect(self.okall_clicked)
         self.push_button_okall.setToolTip("All the output plugs from <i>" +
                                           node_name + "</i> will inherit tags"
-                                          " from the selected input plug.")
+                                          " from " + self.key)
         h_box_buttons.addWidget(self.push_button_okall)
 
         self.push_button_ignoreall = QtWidgets.QPushButton(self)
@@ -1329,6 +1331,10 @@ class PopUpInheritanceDict(QDialog):
         v_box_values.addLayout(h_box_buttons)
 
         v_box_values.addWidget(self.push_button_ignore_node)
+
+        if iterate:
+            label = "<i>Theses choices will be valid for each iteration.</i>"
+            v_box_values.addWidget(QLabel(label))
 
         self.setLayout(v_box_values)
 

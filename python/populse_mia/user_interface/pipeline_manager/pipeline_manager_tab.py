@@ -311,7 +311,8 @@ class PipelineManagerTab(QWidget):
             if self.ignore_node:
                 pass
             elif (self.inheritance_dict is None or old_value not in
-                    self.inheritance_dict) and node_name not in self.ignore:
+                    self.inheritance_dict) and node_name not in self.ignore \
+                    and node_name + plug_name not in self.ignore:
                 values = {}
                 for key in inputs:
                     paths = []
@@ -336,19 +337,27 @@ class PipelineManagerTab(QWidget):
                         if node_name in self.key:
                             value = values[self.key[node_name]]
                             self.inheritance_dict[old_value] = value
+                        elif node_name + plug_name in self.key:
+                            value = values[self.key[node_name + plug_name]]
+                            self.inheritance_dict[old_value] = value
                         else:
-                            pop_up = PopUpInheritanceDict(values, full_name,
-                                                          plug_name)
+                            pop_up = PopUpInheritanceDict(
+                             values, full_name, plug_name,
+                             self.iterationTable.check_box_iterate.isChecked())
                             pop_up.exec()
                             self.ignore_node = pop_up.everything
                             if pop_up.ignore:
                                 self.inheritance_dict = None
                                 if pop_up.all is True:
                                     self.ignore[node_name] = True
+                                else:
+                                    self.ignore[node_name+plug_name] = True
                             else:
                                 value = pop_up.value
                                 if pop_up.all is True:
                                     self.key[node_name] = pop_up.key
+                                else:
+                                    self.key[node_name+plug_name] = pop_up.key
                                 self.inheritance_dict[old_value] = value
 
             # Adding inherited tags
@@ -548,9 +557,6 @@ class PipelineManagerTab(QWidget):
         pipeline.on_trait_change(
             self.pipelineEditorTabs.get_current_editor()._reset_pipeline,
             'user_traits_changed', remove=True)
-
-        self.key = {}
-        self.ignore = {}
 
         # nodes_to_check contains the node names that need to be update
         nodes_to_check = []
@@ -938,6 +944,8 @@ class PipelineManagerTab(QWidget):
                 self.main_window.data_browser.table_data.delete_from_brick(
                     brick)
         self.ignore_node = False
+        self.key = {}
+        self.ignore = {}
         self.init_pipeline()
         self.init_clicked = True
 
