@@ -39,6 +39,7 @@ import shutil
 from datetime import datetime
 import distutils.dir_util
 import traceback
+from functools import partial
 
 # PyQt5 import
 from PyQt5 import QtCore
@@ -46,8 +47,10 @@ from PyQt5.QtCore import QSortFilterProxyModel
 
 # PyQt / PySide import, via soma
 from soma.qt_gui import qt_backend
+from soma.qt_gui.qt_backend import QtGui
 from soma.qt_gui.qt_backend.QtCore import (Qt, Signal, QModelIndex,
     QAbstractItemModel, QByteArray, QMimeData)
+from soma.qt_gui.qt_backend.QtWidgets import QListWidget, QGroupBox
 from soma.qt_gui.qt_backend.Qt import (QWidget, QTreeWidget, QLabel,
     QPushButton, QDialog, QTreeWidgetItem, QHBoxLayout, QVBoxLayout,
     QLineEdit, QApplication, QSplitter, QTreeView, QFileDialog,
@@ -1293,13 +1296,41 @@ class PackageLibraryDialog(QDialog):
         push_button_browse.setText("Browse")
         push_button_browse.clicked.connect(self.browse_package)'''
 
+        push_button_add_pkg_file = QPushButton()
+        push_button_add_pkg_file.setText("Zipfile")
+        push_button_add_pkg_file.clicked.connect(
+            partial(self.install_processes_pop_up, False))
+
+        push_button_add_pkg_folder = QPushButton()
+        push_button_add_pkg_folder.setText("Folder")
+        push_button_add_pkg_folder.clicked.connect(
+            partial(self.install_processes_pop_up, True))
+
+        push_button_rmv_pkg = QPushButton()
+        push_button_rmv_pkg.setText("Delete package")
+
         push_button_add_pkg = QPushButton()
-        push_button_add_pkg.setText("Add package")
+        push_button_add_pkg.setText("Show package")
         push_button_add_pkg.clicked.connect(self.add_package_with_text)
 
         push_button_rm_pkg = QPushButton()
-        push_button_rm_pkg.setText("Remove package")
+        push_button_rm_pkg.setText("Hide package")
         push_button_rm_pkg.clicked.connect(self.remove_package_with_text)
+
+        self.add_dic = {}
+        self.remove_dic = {}
+
+        self.add_list = QListWidget()
+        self.remove_list = QListWidget()
+
+        self.add_list.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection)
+        self.remove_list.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection)
+
+        for i in range(1, 3):
+            self.remove_list.addItem(str("You're gonna go far kid"))
+            self.add_list.addItem(str("Shoot through the heart"))
 
         push_button_save = QPushButton()
         push_button_save.setText("Save changes")
@@ -1315,6 +1346,12 @@ class PackageLibraryDialog(QDialog):
         h_box_line_edit.addWidget(self.line_edit)
         # h_box_line_edit.addWidget(push_button_add_pkg)
         # h_box_browse.addWidget(push_button_browse)
+
+        h_box_install = QHBoxLayout()
+        h_box_install.addWidget(push_button_add_pkg_file)
+        h_box_install.addWidget(push_button_add_pkg_folder)
+        h_box_install.addStretch(1)
+        h_box_install.addWidget(push_button_rmv_pkg)
 
         h_box_label = QHBoxLayout()
         h_box_label.addStretch(1)
@@ -1333,11 +1370,32 @@ class PackageLibraryDialog(QDialog):
         h_box_buttons.addWidget(push_button_rm_pkg)
         h_box_buttons.addStretch(1)
 
+        group_import = QGroupBox("Imported packages")
+        group_remove = QGroupBox("Removed packages")
+        h_box_import = QHBoxLayout()
+        h_box_remove = QHBoxLayout()
+
+        h_box_import.addWidget(self.add_list)
+        h_box_remove.addWidget(self.remove_list)
+
+        h_box_import.addWidget(QPushButton("Cancel"))
+        h_box_remove.addWidget(QPushButton("Cancel"))
+
+        group_import.setLayout(h_box_import)
+        group_remove.setLayout(h_box_remove)
+
         v_box = QVBoxLayout()
+        v_box.addStretch(1)
+        v_box.addLayout(h_box_install)
         v_box.addStretch(1)
         v_box.addLayout(h_box_label)
         v_box.addLayout(h_box_line_edit)
+        v_box.addStretch(1)
         v_box.addLayout(h_box_buttons)
+        v_box.addStretch(1)
+        v_box.addWidget(group_import)
+        v_box.addStretch(1)
+        v_box.addWidget(group_remove)
         v_box.addStretch(1)
         v_box.addLayout(h_box_save)
 
@@ -1548,6 +1606,17 @@ class PackageLibraryDialog(QDialog):
                 self.status_label.setText(
                     "{0} added to the Package Library.".format(
                         self.line_edit.text()))
+                if self.line_edit.text() not in self.add_dic:
+                    self.add_list.addItem(self.line_edit.text())
+                    self.add_dic[
+                        self.line_edit.text()] = self.add_list.count(
+                    ) - 1
+                    if self.line_edit.text() in self.remove_dic:
+                        self.remove_list.takeItem(self.remove_dic[
+                                                    self.line_edit.text()])
+                        self.remove_dic.pop(self.line_edit.text())
+                # if self.line_edit.text() in self.remove_list:
+                #     self.remove_list.
 
             else:
                 self.status_label.setText(old_status)
@@ -1583,6 +1652,21 @@ class PackageLibraryDialog(QDialog):
             self.is_path = True
             self.line_edit.setText(file_name)
 
+    def delete_package(self):
+        print(self)
+
+    def install_processes_pop_up(self, folder=False):
+        """Open the install processes pop-up.
+
+        :param folder: boolean, True if installing from a folder
+        """
+        self.pop_up_install_processes = InstallProcesses(self, folder=folder)
+        self.pop_up_install_processes.show()
+        # self.pop_up_install_processes.process_installed.connect(
+        #     self.processLibrary.update_process_library)
+        # self.pop_up_install_processes.process_installed.connect(
+        #     self.package_library.update_config)
+
     @staticmethod
     def load_config():
         """Update the config and loads the corresponding packages.
@@ -1606,14 +1690,12 @@ class PackageLibraryDialog(QDialog):
 
     def load_packages(self):
         """Update the tree of the process library."""
-
         try:
             self.packages = self.process_config["Packages"]
         except KeyError:
             self.packages = {}
         except TypeError:
             self.packages = {}
-
         try:
             self.paths = self.process_config["Paths"]
         except KeyError:
@@ -1631,6 +1713,12 @@ class PackageLibraryDialog(QDialog):
         package_removed = self.remove_package(self.line_edit.text())
 
         if package_removed is True:
+            self.remove_list.addItem(self.line_edit.text())
+            self.remove_dic[self.line_edit.text()] = self.remove_list.count(
+            ) - 1
+            if self.line_edit.text() in self.add_dic:
+                self.add_list.takeItem(self.add_dic[self.line_edit.text()])
+                self.add_dic.pop(self.line_edit.text())
             self.status_label.setText(
                 "{0} removed from Package Library.".format(
                     self.line_edit.text()))

@@ -1377,7 +1377,6 @@ class PopUpInheritanceDict(QDialog):
         self.close()
 
 
-
 class PopUpMultipleSort(QDialog):
     """Is called to sort the data browser's table depending on multiple tags.
 
