@@ -31,8 +31,10 @@ the project.
 import distutils.dir_util
 import inspect
 import os
+import re
 import pkgutil
 import shutil
+import glob
 import sys
 import tempfile
 import traceback
@@ -1316,6 +1318,7 @@ class PackageLibraryDialog(QDialog):
 
         push_button_rmv_pkg = QPushButton()
         push_button_rmv_pkg.setText("Delete package")
+        push_button_rmv_pkg.clicked.connect(self.delete_package)
 
         self.add_dic = {}
         self.remove_dic = {}
@@ -1378,9 +1381,9 @@ class PackageLibraryDialog(QDialog):
         cancel_add = QPushButton("Reset")
         cancel_rem = QPushButton("Reset")
 
-        cancel_add.clicked.connect(partial(self.cancel_action,
+        cancel_add.clicked.connect(partial(self.reset_action,
                                            self.add_list, True))
-        cancel_rem.clicked.connect(partial(self.cancel_action,
+        cancel_rem.clicked.connect(partial(self.reset_action,
                                            self.remove_list, False))
 
         h_box_import.addWidget(cancel_add)
@@ -1660,15 +1663,61 @@ class PackageLibraryDialog(QDialog):
             self.is_path = True
             self.line_edit.setText(file_name)
 
-    def cancel_action(self, itemlist, add):
-        for i in itemlist.selectedItems():
-            if add is True:
-                self.remove_package_with_text(i.text(), False)
+    def delete_package(self, i=1):
+        """"""
+        config = Config()
+        to_delete = self.line_edit.text()
+        if i == 1:
+            self.remove_package_with_text(to_delete, False)
+        pkg_list = to_delete.split(".")
+        # for i in range(1, len(pkg_list)+1):
+        if i <= len(pkg_list):
+            path = os.path.abspath(
+                os.path.join(
+                    config.get_mia_path(), 'processes', *pkg_list[0:i]))
+            self.delete_package(i + 1)
+            if os.path.exists(path):
+                if len(glob.glob(os.path.join(path, "*"))) == 0:
+                    shutil.rmtree(path)
+                    if i > 1:
+                        self.remove_package_with_text(".".join(
+                            pkg_list[0:i - 1]), False)
             else:
-                self.add_package_with_text(i.text(), False)
+                init = os.path.abspath(
+                    os.path.join(
+                        config.get_mia_path(),
+                        'processes',
+                        *pkg_list[0:i-1],
+                        "__init__.py"))
+                if os.path.isfile(init):
+                    with open(init, 'r') as f:
+                        lines = f.readlines()
 
-    def delete_package(self):
-        print(self)
+                    with open(init, 'w') as f:
+                        for line in lines:
+                            print("been there")
+                            if re.search("import..?" + pkg_list[i-1] + ".?\n",
+                                         line):
+                                print("done that")
+                                if len(lines) == 1:
+                                    print("this too")
+                                    shutil.rmtree(os.path.abspath(os.path.join(
+                                        config.get_mia_path(),
+                                        'processes',
+                                        *pkg_list[0:i-1]
+                                        )))
+                                    self.remove_package_with_text(
+                                        ".".join(pkg_list[0:i-1]),
+                                        False)
+                            elif pkg_list[i-1] in line:
+                                print("where i am")
+                                new_imp = line.split(" ")
+                                for j in new_imp:
+                                    if pkg_list[i-1] in j:
+                                        new_imp.remove(j)
+                                f.write(" ".join(new_imp))
+                            else:
+                                f.write(line)
 
     def install_processes_pop_up(self, folder=False):
         """Open the install processes pop-up.
@@ -1798,6 +1847,13 @@ class PackageLibraryDialog(QDialog):
         self.package_library.package_tree = self.packages
         self.package_library.generate_tree()
         return True
+
+    def reset_action(self, itemlist, add):
+        for i in itemlist.selectedItems():
+            if add is True:
+                self.remove_package_with_text(i.text(), False, False)
+            else:
+                self.add_package_with_text(i.text(), False, False)
 
     def save(self):
         """Save the tree to the process_config.yml file."""
