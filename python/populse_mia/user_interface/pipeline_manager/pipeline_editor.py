@@ -27,6 +27,7 @@ import os
 import sys
 import six
 import yaml
+import json
 from traits.api import TraitError
 
 # PyQt5 imports
@@ -765,6 +766,99 @@ class PipelineEditor(PipelineDevelopperView):
 
             self.pipeline_saved.emit(filename)
             return filename
+
+    def save_pipeline_parameters(self):
+
+        class MultiDimensionalArrayEncoder(json.JSONEncoder):
+
+            def encode(self, obj):
+
+                def hint_tuples(item):
+
+                    if isinstance(item, tuple):
+                        return {'__tuple__': True,
+                                'items': [hint_tuples(e) for e in item]}
+
+                    if isinstance(item, list):
+                        return [hint_tuples(e) for e in item]
+
+                    if isinstance(item, dict):
+                        return dict((key, hint_tuples(value)) for key, value in
+                                    item.items())
+
+                    else:
+                        return item
+
+                return super(MultiDimensionalArrayEncoder, self).encode(
+                    hint_tuples(obj))
+
+        config = Config()
+        pipeline = self.scene.pipeline
+
+        filename = QtWidgets.QFileDialog.getSaveFileName(
+            None, 'Save the pipeline parameters', '',
+            'Compatible files (*.json)')[0]
+
+        if not filename:  # save widget was cancelled by the user
+            return ''
+
+        if os.path.splitext(filename)[1] == '':  # which means no extension
+            filename += '.json'
+
+        elif os.path.splitext(filename)[1] != '.json':
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            msg.setText('These parameters will be saved with a' +
+                        ' ".json" extension instead of {0}'.format(
+                            os.path.splitext(filename)[1]))
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            filename = os.path.splitext(filename)[0] + '.json'
+
+        if os.path.exists(filename) and config.get_clinical_mode():
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            msg.setText('This file already exists, you do not have the '
+                        'rights to overwrite it.')
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.buttonClicked.connect(msg.close)
+            msg.exec()
+            self.save_pipeline_parameters()
+            return ''
+
+        if filename:
+            from traits.api import Undefined
+            # Generating the dictionary
+            param_dic = {}
+
+            for trait_name, trait in pipeline.user_traits().items():
+
+                if trait_name in ["nodes_activation"]:
+                    continue
+
+                value = getattr(pipeline, trait_name)
+
+                if value is Undefined:
+                    value = ""
+
+                param_dic[trait_name] = value
+
+            # In the future, more information may be added to this dictionary
+            dic = {}
+            dic["pipeline_parameters"] = param_dic
+            jsonstring = MultiDimensionalArrayEncoder().encode(dic)
+
+            # Saving the dictionary in the Json file
+            if sys.version_info[0] >= 3:
+                with open(filename, 'w', encoding='utf8') as file:
+                    json.dump(jsonstring, file)
+            else:
+                with open(filename, 'w') as file:
+                    json.dump(jsonstring, file)
+
 
     def update_history(self, history_maker, from_undo, from_redo):
         """Update the history for undos and redos.
