@@ -736,6 +736,18 @@ class PipelineEditor(PipelineDevelopperView):
                 msg.exec()
                 filename = os.path.splitext(filename)[0] + '.py'
 
+            if os.path.exists(filename) and config.get_clinical_mode():
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setText('This file already exists, you do not have the '
+                            'rights to overwrite it.')
+                msg.setWindowTitle("Warning")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.buttonClicked.connect(msg.close)
+                msg.exec()
+                self.save_pipeline()
+                return ''
+
         if filename:
             posdict = dict([(key, (value.x(), value.y())) for key, value in
                             six.iteritems(self.scene.pos)])

@@ -1279,8 +1279,10 @@ class PackageLibraryDialog(QDialog):
 
         config = Config()
 
-        self.setWindowTitle("Package library manager")
-
+        if config.get_clinical_mode():
+            self.setWindowTitle("Package library manager [clinical mode]")
+        else:
+            self.setWindowTitle("Package library manager [developer mode]")
         # True if the path specified in the line edit is a path with '/'
         self.is_path = False
 
@@ -1684,7 +1686,8 @@ class PackageLibraryDialog(QDialog):
         to_delete = self.line_edit.text()
 
         if index == 1:
-            msgtext = "Do you really want to delete the package" + to_delete + " ?"
+            msgtext = "Do you really want to delete the package" + \
+                      to_delete + " ?"
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             title = "populse_mia - Warning: Delete package"
@@ -1695,7 +1698,6 @@ class PackageLibraryDialog(QDialog):
 
         if reply == QMessageBox.Yes:
             pkg_list = to_delete.split(".")
-            # for i in range(1, len(pkg_list)+1):
             if index <= len(pkg_list):
                 path = os.path.abspath(
                     os.path.join(
