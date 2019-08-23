@@ -1699,13 +1699,10 @@ class PackageLibraryDialog(QDialog):
                         config.get_mia_path(), 'processes',
                         *pkg_list[0:index]))
                 self.delete_package(index + 1)
-                print(index, path)
                 if os.path.exists(path):
-                    print(path, "exists")
                     if len(glob.glob(os.path.join(
                             path, "*"))) == 0 or index == len(pkg_list):
                         shutil.rmtree(path)
-                        print("delete", pkg_list[0:index])
                         if index > 0:
                             self.remove_package_with_text(".".join(
                                 pkg_list[0:index]), False)
