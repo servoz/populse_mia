@@ -267,10 +267,10 @@ class MainWindow(QMainWindow):
             self.saved_projects_actions.append(QAction(self, visible=False,
                                             triggered=self.open_recent_project)
                                                )
-        if Config().get_clinical_mode() == True:
-            self.action_package_library.setDisabled(True)
-        else:
-            self.action_package_library.setEnabled(True)
+        # if Config().get_clinical_mode() == True:
+        #     self.action_package_library.setDisabled(True)
+        # else:
+        #     self.action_package_library.setEnabled(True)
 
         self.action_exit.setShortcut('Ctrl+W')
 
@@ -882,8 +882,8 @@ class MainWindow(QMainWindow):
         # (verify if clinical mode)
         self.pop_up_preferences.signal_preferences_change.connect(
             self.pipeline_manager.update_clinical_mode)
-        self.pop_up_preferences.signal_preferences_change.connect(
-            self.update_package_library_action)
+        # self.pop_up_preferences.signal_preferences_change.connect(
+        #     self.update_package_library_action)
 
     def switch_project(self, file_path, name):
         """Check if it's possible to open the selected project
@@ -1104,14 +1104,14 @@ class MainWindow(QMainWindow):
             # In Pipeline Manager
             self.pipeline_manager.undo()
 
-    def update_package_library_action(self):
-        """Update the package library action depending on the mode."""
-        if Config().get_clinical_mode() == True:
-            self.action_package_library.setDisabled(True)
-            # self.action_install_processes.setDisabled(True)
-        else:
-            self.action_package_library.setEnabled(True)
-            # self.action_install_processes.setEnabled(True)
+    # def update_package_library_action(self):
+    #     """Update the package library action depending on the mode."""
+    #     if Config().get_clinical_mode() == True:
+    #         self.action_package_library.setDisabled(True)
+    #         # self.action_install_processes.setDisabled(True)
+    #     else:
+    #         self.action_package_library.setEnabled(True)
+    #         # self.action_install_processes.setEnabled(True)
 
     def update_project(self, file_path, call_update_table=True):
         """Update the project once the database has been updated.
