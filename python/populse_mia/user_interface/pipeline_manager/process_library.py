@@ -1630,10 +1630,10 @@ class PackageLibraryDialog(QDialog):
                         self.add_dic[
                             self.line_edit.text()] = self.add_list.count(
                         ) - 1
-                        if self.line_edit.text() in self.remove_dic:
-                            self.remove_list.takeItem(self.remove_dic[
-                                                        self.line_edit.text()])
-                            self.remove_dic.pop(self.line_edit.text())
+                if self.line_edit.text() in self.remove_dic:
+                    self.remove_list.takeItem(self.remove_dic[
+                                                self.line_edit.text()])
+                    self.remove_dic.pop(self.line_edit.text())
                 # if self.line_edit.text() in self.remove_list:
                 #     self.remove_list.
 
@@ -1680,15 +1680,18 @@ class PackageLibraryDialog(QDialog):
 
         :param index: recursive index to move between modules
         """
-
         config = Config()
         to_delete = self.line_edit.text()
-        msgtext = "Do you really want to delete the package" + to_delete + " ?"
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        title = "populse_mia - Warning: Delete package"
-        reply = msg.question(self, title, msgtext, QMessageBox.Yes,
-                             QMessageBox.No)
+
+        if index == 1:
+            msgtext = "Do you really want to delete the package" + to_delete + " ?"
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            title = "populse_mia - Warning: Delete package"
+            reply = msg.question(self, title, msgtext, QMessageBox.Yes,
+                                 QMessageBox.No)
+        else:
+            reply = QMessageBox.Yes
 
         if reply == QMessageBox.Yes:
             pkg_list = to_delete.split(".")
@@ -1812,9 +1815,9 @@ class PackageLibraryDialog(QDialog):
                 self.remove_list.addItem(_2rem)
                 self.remove_dic[
                     self.line_edit.text()] = self.remove_list.count() - 1
-                if self.line_edit.text() in self.add_dic:
-                    self.add_list.takeItem(self.add_dic[_2rem])
-                    self.add_dic.pop(_2rem)
+            if self.line_edit.text() in self.add_dic:
+                self.add_list.takeItem(self.add_dic[_2rem])
+                self.add_dic.pop(_2rem)
             self.status_label.setText(
                 "{0} removed from Package Library.".format(
                     _2rem))
@@ -1883,9 +1886,10 @@ class PackageLibraryDialog(QDialog):
         """
         for i in itemlist.selectedItems():
             if add is True:
-                self.remove_package_with_text(i.text(), False, False)
+                self.remove_package_with_text(i.text(), False)
+
             else:
-                self.add_package_with_text(i.text(), False, False)
+                self.add_package_with_text(i.text(), False)
 
     def save(self, close=True):
         """Save the tree to the process_config.yml file."""
