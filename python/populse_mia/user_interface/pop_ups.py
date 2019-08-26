@@ -1848,6 +1848,8 @@ class PopUpPreferences(QDialog):
         self.matlab_browse = QPushButton("Browse")
         self.matlab_browse.clicked.connect(self.browse_matlab)
 
+        self.use_matlab_standalone_label = QLabel("Use Matlab standalone")
+        self.use_matlab_standalone_checkbox = QCheckBox('', self)
         self.matlab_standalone_label = QLabel("Matlab standalone path:")
         self.matlab_standalone_choice = QLineEdit(
             config.get_matlab_standalone_path())
@@ -1873,11 +1875,17 @@ class PopUpPreferences(QDialog):
         v_box_matlab_path.addWidget(self.matlab_label)
         v_box_matlab_path.addLayout(h_box_matlab_path)
 
+        h_box_use_matlab_standalone = QtWidgets.QHBoxLayout()
+        h_box_use_matlab_standalone.addWidget(self.use_matlab_standalone_checkbox)
+        h_box_use_matlab_standalone.addWidget(self.use_matlab_standalone_label)
+        h_box_use_matlab_standalone.addStretch(1)
+
         h_box_matlab_standalone_path = QtWidgets.QHBoxLayout()
         h_box_matlab_standalone_path.addWidget(self.matlab_standalone_choice)
         h_box_matlab_standalone_path.addWidget(self.matlab_standalone_browse)
 
         v_box_matlab_standalone_path = QtWidgets.QVBoxLayout()
+        v_box_matlab_standalone_path.addLayout(h_box_use_matlab_standalone)
         v_box_matlab_standalone_path.addWidget(self.matlab_standalone_label)
         v_box_matlab_standalone_path.addLayout(h_box_matlab_standalone_path)
 
@@ -2005,9 +2013,13 @@ class PopUpPreferences(QDialog):
         # Disabling widgets
         self.use_spm_changed()
         self.use_matlab_changed()
+        self.use_matlab_changed()
+        self.use_spm_standalone_changed()
 
         # Signals
         self.use_matlab_checkbox.stateChanged.connect(self.use_matlab_changed)
+        self.use_matlab_standalone_checkbox.stateChanged.connect(
+            self.use_matlab_standalone_changed)
         self.use_spm_checkbox.stateChanged.connect(self.use_spm_changed)
         self.use_spm_standalone_checkbox.stateChanged.connect(
             self.use_spm_standalone_changed)
@@ -2152,21 +2164,19 @@ class PopUpPreferences(QDialog):
         config.set_max_projects(max_projects)
 
         # Use Matlab
-        if self.use_matlab_checkbox.isChecked():
-            config.set_use_matlab(True)
-        else:
+        if not self.use_matlab_checkbox.isChecked():
+            config.set_use_matlab(False)
+
+        # Use Matlab standalone
+        if not self.use_matlab_standalone_checkbox.isChecked():
             config.set_use_matlab(False)
 
         # Use SPM
-        if self.use_spm_checkbox.isChecked():
-            config.set_use_spm(True)
-        else:
+        if not self.use_spm_checkbox.isChecked():
             config.set_use_spm(False)
 
         # Use SPM standalone
-        if self.use_spm_standalone_checkbox.isChecked():
-            config.set_use_spm_standalone(True)
-        else:
+        if not self.use_spm_standalone_checkbox.isChecked():
             config.set_use_spm_standalone(False)
 
         # Clinical mode
@@ -2179,7 +2189,7 @@ class PopUpPreferences(QDialog):
         # Matlab
         if self.use_matlab_checkbox.isChecked():
             matlab_input = self.matlab_choice.text()
-            if os.path.exists(matlab_input) or matlab_input == "":
+            if os.path.exists(matlab_input):
                 config.set_matlab_path(matlab_input)
             else:
                 self.msg = QMessageBox()
@@ -2194,9 +2204,9 @@ class PopUpPreferences(QDialog):
                 self.msg.show()
                 return
 
+        if self.use_matlab_standalone_checkbox.isChecked():
             matlab_standalone_input = self.matlab_standalone_choice.text()
-            if os.path.exists(
-                    matlab_standalone_input) or matlab_standalone_input == "":
+            if os.path.exists(matlab_standalone_input):
                 config.set_matlab_standalone_path(matlab_standalone_input)
             else:
                 self.msg = QMessageBox()
@@ -2226,10 +2236,12 @@ class PopUpPreferences(QDialog):
                 self.msg.setStandardButtons(QMessageBox.Ok)
                 self.msg.buttonClicked.connect(self.msg.close)
                 self.msg.show()
+                return
 
         if self.use_spm_standalone_checkbox.isChecked():
             spm_input = self.spm_standalone_choice.text()
             if os.path.exists(spm_input) and "spm12" in spm_input:
+                config.set_use_spm_standalone(True)
                 config.set_spm_standalone_path(spm_input)
             else:
                 self.msg = QMessageBox()
@@ -2262,35 +2274,46 @@ class PopUpPreferences(QDialog):
 
         if not self.use_matlab_checkbox.isChecked():
             self.matlab_choice.setDisabled(True)
-            self.matlab_standalone_choice.setDisabled(True)
             self.spm_choice.setDisabled(True)
-            self.spm_standalone_choice.setDisabled(True)
             self.matlab_label.setDisabled(True)
-            self.matlab_standalone_label.setDisabled(True)
             self.spm_label.setDisabled(True)
-            self.spm_standalone_label.setDisabled(True)
             self.spm_browse.setDisabled(True)
-            self.spm_standalone_browse.setDisabled(True)
             self.matlab_browse.setDisabled(True)
-            self.matlab_standalone_browse.setDisabled(True)
             self.use_spm_checkbox.setChecked(False)
-            self.use_spm_standalone_checkbox.setChecked(False)
         else:
             self.matlab_choice.setDisabled(False)
-            self.matlab_standalone_choice.setDisabled(False)
             self.matlab_label.setDisabled(False)
-            self.matlab_standalone_label.setDisabled(False)
             self.matlab_browse.setDisabled(False)
+            self.use_matlab_standalone_checkbox.setChecked(False)
+
+    def use_matlab_standalone_changed(self):
+        """Called when the use_matlab standalone checkbox is changed."""
+
+        if not self.use_matlab_standalone_checkbox.isChecked():
+            self.matlab_standalone_choice.setDisabled(True)
+            self.spm_standalone_choice.setDisabled(True)
+            self.matlab_standalone_label.setDisabled(True)
+            self.spm_standalone_label.setDisabled(True)
+            self.spm_standalone_browse.setDisabled(True)
+            self.matlab_standalone_browse.setDisabled(True)
+            self.use_spm_standalone_checkbox.setChecked(False)
+        else:
+            self.matlab_standalone_choice.setDisabled(False)
+            self.matlab_standalone_label.setDisabled(False)
             self.matlab_standalone_browse.setDisabled(False)
+            self.use_matlab_checkbox.setChecked(False)
 
     def use_spm_changed(self):
         """Called when the use_spm checkbox is changed."""
 
         if not self.use_spm_checkbox.isChecked():
+            # self.use_matlab_checkbox.setChecked(False)
             self.spm_choice.setDisabled(True)
             self.spm_label.setDisabled(True)
             self.spm_browse.setDisabled(True)
+
         else:
+            self.use_matlab_checkbox.setChecked(True)
             self.spm_choice.setDisabled(False)
             self.spm_label.setDisabled(False)
             self.spm_browse.setDisabled(False)
@@ -2298,6 +2321,7 @@ class PopUpPreferences(QDialog):
             self.spm_standalone_label.setDisabled(True)
             self.spm_standalone_browse.setDisabled(True)
             self.use_spm_standalone_checkbox.setChecked(False)
+            self.use_matlab_standalone_checkbox.setChecked(False)
 
     def use_spm_standalone_changed(self):
         """Called when the use_spm_standalone checkbox is changed."""
@@ -2307,6 +2331,7 @@ class PopUpPreferences(QDialog):
             self.spm_standalone_label.setDisabled(True)
             self.spm_standalone_browse.setDisabled(True)
         else:
+            self.use_matlab_standalone_checkbox.setChecked(True)
             self.spm_standalone_choice.setDisabled(False)
             self.spm_standalone_label.setDisabled(False)
             self.spm_standalone_browse.setDisabled(False)
@@ -2314,6 +2339,7 @@ class PopUpPreferences(QDialog):
             self.spm_label.setDisabled(True)
             self.spm_browse.setDisabled(True)
             self.use_spm_checkbox.setChecked(False)
+            self.use_matlab_checkbox.setChecked(False)
 
 
 class PopUpProperties(QDialog):

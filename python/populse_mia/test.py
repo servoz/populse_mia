@@ -126,7 +126,6 @@ class TestMIAPipelineManager(unittest.TestCase):
             self.assertNotIn("mia_processes", pro_dic["Packages"])
             self.assertNotIn("brick_test", pro_dic["Packages"])
 
-
     def test_add_tab(self):
         """Adds tabs to the PipelineEditorTabs"""
 
