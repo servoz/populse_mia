@@ -2163,12 +2163,9 @@ class PopUpPreferences(QDialog):
         max_projects = min(max(self.max_projects_box.value(), 1), 20)
         config.set_max_projects(max_projects)
 
-        # Use Matlab
-        if not self.use_matlab_checkbox.isChecked():
-            config.set_use_matlab(False)
-
-        # Use Matlab standalone
-        if not self.use_matlab_standalone_checkbox.isChecked():
+        # Use Matlab or Matlab standalone
+        if not self.use_matlab_checkbox.isChecked(
+        ) and not self.use_matlab_standalone_checkbox.isChecked():
             config.set_use_matlab(False)
 
         # Use SPM
