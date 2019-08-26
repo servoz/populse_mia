@@ -1304,25 +1304,27 @@ class PackageLibraryDialog(QDialog):
         push_button_browse.setText("Browse")
         push_button_browse.clicked.connect(self.browse_package)'''
 
-        push_button_add_pkg_file = QPushButton()
+        push_button_add_pkg_file = QPushButton(default=False,
+                                               autoDefault=False)
         push_button_add_pkg_file.setText("Zipfile")
         push_button_add_pkg_file.clicked.connect(
             partial(self.install_processes_pop_up, False))
 
-        push_button_add_pkg_folder = QPushButton()
+        push_button_add_pkg_folder = QPushButton(default=False,
+                                                 autoDefault=False)
         push_button_add_pkg_folder.setText("Folder")
         push_button_add_pkg_folder.clicked.connect(
             partial(self.install_processes_pop_up, True))
 
-        push_button_add_pkg = QPushButton()
+        push_button_add_pkg = QPushButton(default=False, autoDefault=False)
         push_button_add_pkg.setText("Add package")
         push_button_add_pkg.clicked.connect(self.add_package_with_text)
 
-        push_button_rm_pkg = QPushButton()
+        push_button_rm_pkg = QPushButton(default=False, autoDefault=False)
         push_button_rm_pkg.setText("Remove package")
         push_button_rm_pkg.clicked.connect(self.remove_package_with_text)
 
-        push_button_del_pkg = QPushButton()
+        push_button_del_pkg = QPushButton(default=False, autoDefault=False)
         push_button_del_pkg.setText("Delete package")
         push_button_del_pkg.clicked.connect(self.delete_package)
 
@@ -1337,11 +1339,12 @@ class PackageLibraryDialog(QDialog):
         self.remove_list.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
 
-        push_button_save = QPushButton()
+        push_button_save = QPushButton(default=False, autoDefault=False)
         push_button_save.setText("Apply changes")
         push_button_save.clicked.connect(partial(self.save, True))
 
-        push_button_cancel = QPushButton("Cancel")
+        push_button_cancel = QPushButton("Cancel", default=False,
+                                         autoDefault=False)
         push_button_cancel.setObjectName("pushButton_cancel")
         push_button_cancel.clicked.connect(self.close)
 
@@ -1385,8 +1388,8 @@ class PackageLibraryDialog(QDialog):
         h_box_import.addWidget(self.add_list)
         h_box_remove.addWidget(self.remove_list)
 
-        cancel_add = QPushButton("Reset")
-        cancel_rem = QPushButton("Reset")
+        cancel_add = QPushButton("Reset", default=False, autoDefault=False)
+        cancel_rem = QPushButton("Reset", default=False, autoDefault=False)
 
         cancel_add.clicked.connect(partial(self.reset_action,
                                            self.add_list, True))
