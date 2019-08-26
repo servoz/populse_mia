@@ -2188,6 +2188,7 @@ class PopUpPreferences(QDialog):
             matlab_input = self.matlab_choice.text()
             if os.path.exists(matlab_input):
                 config.set_matlab_path(matlab_input)
+                config.set_use_matlab(True)
             else:
                 self.msg = QMessageBox()
                 self.msg.setIcon(QMessageBox.Critical)
@@ -2204,6 +2205,7 @@ class PopUpPreferences(QDialog):
         if self.use_matlab_standalone_checkbox.isChecked():
             matlab_standalone_input = self.matlab_standalone_choice.text()
             if os.path.exists(matlab_standalone_input):
+                config.set_use_matlab(True)
                 config.set_matlab_standalone_path(matlab_standalone_input)
             else:
                 self.msg = QMessageBox()
@@ -2222,6 +2224,7 @@ class PopUpPreferences(QDialog):
         if self.use_spm_checkbox.isChecked():
             spm_input = self.spm_choice.text()
             if os.path.exists(spm_input):
+                config.set_use_spm(True)
                 config.set_spm_path(spm_input)
             else:
                 self.msg = QMessageBox()

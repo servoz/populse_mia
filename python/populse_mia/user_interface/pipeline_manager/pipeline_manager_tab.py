@@ -539,7 +539,7 @@ class PipelineManagerTab(QWidget):
 
         config = Config()
         main_pipeline = False
-
+        conf_failure = False
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(
@@ -698,14 +698,14 @@ class PipelineManagerTab(QWidget):
 
             # TODO 'except' instead of 'if' to test matlab launch ?
             # Test for matlab launch
-            if config.get_use_spm_standalone() == True:
+            if config.get_use_spm_standalone():
                 pipeline.nodes[node_name].process.use_mcr = True
                 pipeline.nodes[node_name].process.paths = \
                     config.get_spm_standalone_path().split()
                 pipeline.nodes[node_name].process.matlab_cmd = \
                     config.get_matlab_command()
 
-            elif config.get_use_spm() == True:
+            elif config.get_use_spm():
                 pipeline.nodes[node_name].process.use_mcr = False
                 pipeline.nodes[node_name].process.paths = \
                     config.get_spm_path().split()
@@ -776,6 +776,9 @@ class PipelineManagerTab(QWidget):
                 # update launching parameters for IRMaGe_processes bricks
                 # Test for matlab launch
                 if 'NipypeProcess' in str(process.__class__):
+                    if not (config.get_use_matlab() and (config.set_use_spm()
+                                         or config.get_use_spm_standalone())):
+                        conf_failure = True
                     print('\nUpdating the launching parameters for nipype '
                           'process node: {0} ...'.format(node_name))
                     # plugs to be filled automatically
@@ -783,28 +786,29 @@ class PipelineManagerTab(QWidget):
                                      'matlab_cmd', 'output_directory']
                     # use_mcr parameter
                     if (key == keys2consider[0]) and (
-                            config.get_use_spm_standalone() == True):
+                            config.get_use_spm_standalone() is True):
                         inputs[key] = True
                     elif (key == keys2consider[0]) and (
-                            config.get_use_spm_standalone() == False):
+                            config.get_use_spm_standalone() is False):
                         inputs[key] = False
-                    # paths  parameter
+                    # paths parameter
                     if (key == keys2consider[1]) and (
-                            config.get_use_spm_standalone() == True):
+                            config.get_use_spm_standalone() is True):
                         inputs[
                             key] = config.get_spm_standalone_path().split()
                     elif (key == keys2consider[1]) and (
-                            config.get_use_spm() == True):
+                            config.get_use_spm() is True):
                         inputs[key] = config.get_spm_path().split()
                     # matlab_cmd parameter
                     if (key == keys2consider[2]) and (
-                            config.get_use_spm_standalone() == True):
-                        inputs[key] = (config.get_spm_standalone_path() +
-                                       '/run_spm12.sh ' +
+                            config.get_use_spm_standalone() is True):
+                        inputs[key] = (os.path.join(
+                            config.get_spm_standalone_path() +
+                            'run_spm12.sh ') +
                                        config.get_matlab_standalone_path() +
                                        ' script')
                     elif key == keys2consider[2] and \
-                            config.get_use_spm_standalone() == False:
+                            config.get_use_spm_standalone() is False:
                         inputs[key] = config.get_matlab_path()
 
                     # output_directory parameter
@@ -932,8 +936,27 @@ class PipelineManagerTab(QWidget):
                 self.nodeController.node_name,
                 pipeline.nodes[node_controller_node_name].process,
                 pipeline)
-        self.main_window.statusBar().showMessage(
-            'Pipeline "{0}" has been initialized.'.format(name))
+        if conf_failure:
+            self.main_window.statusBar().showMessage(
+                'Pipeline "{0}" was not initialized successfully.'.format(
+                    name))
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            if config.get_use_matlab() is False:
+                self.msg.setText("Matlab is required to use "
+                                 "Nipype")
+            else:
+                self.msg.setText("SPM is required to use "
+                                 "Nipype")
+            self.msg.setInformativeText(
+                "Matlab and SPM must be configured to use Nipype.")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+        else:
+            self.main_window.statusBar().showMessage(
+                'Pipeline "{0}" has been initialized.'.format(name))
 
     def initialize(self):
         """Clean previous initialization then initialize the current
