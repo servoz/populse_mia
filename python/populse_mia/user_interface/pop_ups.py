@@ -1857,10 +1857,14 @@ class PopUpPreferences(QDialog):
         self.matlab_standalone_browse.clicked.connect(
             self.browse_matlab_standalone)
 
-        if config.get_use_matlab() == True:
-            self.use_matlab_checkbox.setChecked(1)
+        if config.get_use_matlab():
+            if config.get_matlab_path() != "":
+                self.use_matlab_checkbox.setChecked(1)
+            else:
+                self.use_matlab_standalone_checkbox.setChecked(1)
         else:
             self.use_matlab_checkbox.setChecked(0)
+            self.use_matlab_standalone_checkbox.setChecked(0)
 
         h_box_use_matlab = QtWidgets.QHBoxLayout()
         h_box_use_matlab.addWidget(self.use_matlab_checkbox)

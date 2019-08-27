@@ -775,6 +775,7 @@ class PipelineManagerTab(QWidget):
 
                 # update launching parameters for IRMaGe_processes bricks
                 # Test for matlab launch
+                # print(self.check_imports(process))
                 if 'NipypeProcess' in str(process.__class__):
                     if not (config.get_use_matlab() and (config.set_use_spm()
                                          or config.get_use_spm_standalone())):
@@ -943,14 +944,12 @@ class PipelineManagerTab(QWidget):
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
             if config.get_use_matlab() is False:
-                self.msg.setText("Matlab is required to use "
-                                 "Nipype")
+                self.msg.setText("Matlab is required to use Nipype.")
             else:
-                self.msg.setText("SPM is required to use "
-                                 "Nipype")
+                self.msg.setText("SPM is required to use Nipype.")
             self.msg.setInformativeText(
                 "Matlab and SPM must be configured to use Nipype.")
-            self.msg.setWindowTitle("Error")
+            self.msg.setWindowTitle("Warning")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
             self.msg.show()
@@ -971,6 +970,34 @@ class PipelineManagerTab(QWidget):
         self.ignore = {}
         self.init_pipeline()
         self.init_clicked = True
+
+    def check_imports(self, process):
+        path = os.path.abspath(sys.modules[
+                                 process.__module__].__file__)
+
+        with open(path, 'r') as file:
+            lines = file.readlines()
+
+        use_spm = False
+        for line in lines:
+            if "nipype.interfaces.spm" in line:
+                use_spm = True
+
+        return use_spm
+        # import sys
+        # import importlib
+        # if "nipype.interfaces.spm.preprocess" in sys.modules:
+        # MODULE_PATH = os.path.join(os.path.split(path)[0], "__init__.py")
+        # MODULE_NAME = os.path.splitext(os.path.split(path)[1])[0]
+        # tmp = sys.modules
+        # spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
+        # module = importlib.util.module_from_spec(spec)
+        # sys.modules[spec.name] = module
+        # try:
+        #     spec.loader.exec_module(module)
+        # except Exception as e:
+        #     print(e)
+        # sys.modules = tmp
 
     def layout_view(self):
         """Initialize layout for the pipeline manager tab"""
