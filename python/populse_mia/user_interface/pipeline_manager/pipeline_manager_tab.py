@@ -61,6 +61,7 @@ from populse_mia.user_interface.pipeline_manager.pipeline_editor import (
 from populse_mia.user_interface.pipeline_manager.process_library import (
     ProcessLibraryWidget)
 from populse_mia.software_properties import Config
+from modulefinder import ModuleFinder
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -426,6 +427,29 @@ class PipelineManagerTab(QWidget):
 
         return node, node_name
 
+    def check_spm_dependencies(self, process):
+        """Check if a process needs spm or not.
+        :param process: the process to check
+        :return use_spm: boolean
+        """
+
+        path = os.path.abspath(sys.modules[
+                                 process.__module__].__file__)
+
+        finder = ModuleFinder()
+        # if jinja2 is above 2.8.1
+        # try:
+        #     finder.run_script(path)
+        # except Exception as e:
+        #     print(e)
+        finder.run_script(path)
+
+        if "nipype.interfaces.spm" in finder.modules:
+            use_spm = True
+        else:
+            use_spm = False
+        return use_spm
+
     def controller_value_changed(self, signal_list):
         """
         Update history when a pipeline node is changed
@@ -761,6 +785,12 @@ class PipelineManagerTab(QWidget):
             inputs = process.get_inputs()
             self.inputs = inputs
 
+            if self.check_spm_dependencies(process):
+                if not (config.get_use_matlab()
+                        and (config.get_use_spm() or
+                             config.get_use_spm_standalone())):
+                    conf_failure = True
+
             for key in inputs:
 
                 if inputs[key] is Undefined:
@@ -775,7 +805,6 @@ class PipelineManagerTab(QWidget):
 
                 # update launching parameters for IRMaGe_processes bricks
                 # Test for matlab launch
-                # print(self.check_imports(process))
                 if 'NipypeProcess' in str(process.__class__):
                     if not (config.get_use_matlab() and (config.set_use_spm()
                                          or config.get_use_spm_standalone())):
@@ -970,34 +999,6 @@ class PipelineManagerTab(QWidget):
         self.ignore = {}
         self.init_pipeline()
         self.init_clicked = True
-
-    def check_imports(self, process):
-        path = os.path.abspath(sys.modules[
-                                 process.__module__].__file__)
-
-        with open(path, 'r') as file:
-            lines = file.readlines()
-
-        use_spm = False
-        for line in lines:
-            if "nipype.interfaces.spm" in line:
-                use_spm = True
-
-        return use_spm
-        # import sys
-        # import importlib
-        # if "nipype.interfaces.spm.preprocess" in sys.modules:
-        # MODULE_PATH = os.path.join(os.path.split(path)[0], "__init__.py")
-        # MODULE_NAME = os.path.splitext(os.path.split(path)[1])[0]
-        # tmp = sys.modules
-        # spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
-        # module = importlib.util.module_from_spec(spec)
-        # sys.modules[spec.name] = module
-        # try:
-        #     spec.loader.exec_module(module)
-        # except Exception as e:
-        #     print(e)
-        # sys.modules = tmp
 
     def layout_view(self):
         """Initialize layout for the pipeline manager tab"""
