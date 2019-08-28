@@ -806,7 +806,7 @@ class PipelineManagerTab(QWidget):
                 # update launching parameters for IRMaGe_processes bricks
                 # Test for matlab launch
                 if 'NipypeProcess' in str(process.__class__):
-                    if not (config.get_use_matlab() and (config.set_use_spm()
+                    if not (config.get_use_matlab() and (config.get_use_spm()
                                          or config.get_use_spm_standalone())):
                         conf_failure = True
                     print('\nUpdating the launching parameters for nipype '
