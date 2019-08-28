@@ -721,8 +721,12 @@ class ProcessLibraryWidget(QWidget):
         # Process Config
         self.update_config()
 
+        # Package Library
+        self.pkg_library = PackageLibraryDialog(parent=self.main_window)
+        self.pkg_library.signal_save.connect(self.update_process_library)
+
         # Process Library
-        self.process_library = ProcessLibrary(self.packages)
+        self.process_library = ProcessLibrary(self.packages, self.pkg_library)
         self.process_library.setDragDropMode(self.process_library.DragOnly)
         self.process_library.setAcceptDrops(False)
         self.process_library.setDragEnabled(True)
@@ -749,8 +753,6 @@ class ProcessLibraryWidget(QWidget):
 
         self.setLayout(h_box)
 
-        self.pkg_library = PackageLibraryDialog(parent=self.main_window)
-        self.pkg_library.signal_save.connect(self.update_process_library)
 
     @staticmethod
     def load_config():
@@ -1676,7 +1678,7 @@ class PackageLibraryDialog(QDialog):
             self.is_path = True
             self.line_edit.setText(file_name)
 
-    def delete_package(self, index=1):
+    def delete_package(self, index=1, to_delete=None):
         """Delete a package, only available to developers.
 
         Remove the package from the package library tree, update the
@@ -1686,10 +1688,12 @@ class PackageLibraryDialog(QDialog):
         :param index: recursive index to move between modules
         """
         config = Config()
-        to_delete = self.line_edit.text()
+
+        if not to_delete:
+            to_delete = self.line_edit.text()
 
         if index == 1:
-            msgtext = "Do you really want to delete the package" + \
+            msgtext = "Do you really want to delete the package " + \
                       to_delete + " ?"
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
@@ -1706,7 +1710,7 @@ class PackageLibraryDialog(QDialog):
                     os.path.join(
                         config.get_mia_path(), 'processes',
                         *pkg_list[0:index]))
-                self.delete_package(index + 1)
+                self.delete_package(index + 1, to_delete)
                 if os.path.exists(path):
                     if len(glob.glob(os.path.join(
                             path, "*"))) == 0 or index == len(pkg_list):
@@ -1730,22 +1734,34 @@ class PackageLibraryDialog(QDialog):
                                 if re.search("import..?" +
                                              pkg_list[index-1] + ".?\n",
                                              line):
-                                    if len(lines) == 1:
-                                        shutil.rmtree(os.path.abspath(
+                                    filename = line.split(" ")[1] + ".py"
+                                    if os.path.isfile(
                                             os.path.join(
-                                            config.get_mia_path(),
-                                            'processes',
-                                            *pkg_list[0:index-1]
+                                            os.path.split(init)[0],
+                                                          filename[1:])):
+                                        os.remove(os.path.join(
+                                            os.path.split(
+                                                init)[0], filename[1:]))
+                                    if len(lines) == 1 and len(glob.glob(
+                                            os.path.join(path, "*"))) == 0:
+                                        shutil.rmtree(os.path.abspath(
+                                            os.path.join(config.get_mia_path(),
+                                            'processes', *pkg_list[0:index-1]
                                             )))
-                                        self.remove_package_with_text(
-                                            ".".join(pkg_list[0:index-1]),
-                                            False)
+                                    self.remove_package_with_text(
+                                        ".".join(pkg_list[0:index]),
+                                        False)
                                 elif pkg_list[index-1] in line:
                                     new_imp = line.split(" ")
                                     for j in new_imp:
                                         if pkg_list[index-1] in j:
                                             new_imp.remove(j)
-                                    f.write(" ".join(new_imp))
+                                    txt = re.sub(",\s*?\n?$", "\n", " ".join(
+                                        new_imp))
+                                    f.write(txt)
+                                    self.remove_package_with_text(
+                                        ".".join(pkg_list[0:index]),
+                                        False)
                                 else:
                                     f.write(line)
             self.save(False)
@@ -1977,13 +1993,26 @@ class ProcessLibrary(QTreeView):
     """
     item_library_clicked = QtCore.Signal(str)
 
-    def __init__(self, d):
+    def __init__(self, d, pkg_lib):
         """Initialization of the ProcessLibrary class.
 
         :param d: dictionary: dictionary corresponding to the tree
         """
         super(ProcessLibrary, self).__init__()
         self.load_dictionary(d)
+        self.pkg_library = pkg_lib
+
+    def keyPressEvent(self, event):
+        """Event when the delete key is pressed."""
+        if event.key() == QtCore.Qt.Key_Delete:
+            for idx in self.selectedIndexes():
+                if idx.isValid:
+                    model = idx.model()
+                    idx = idx.sibling(idx.row(), 0)
+                    node = idx.internalPointer()
+                    if node is not None:
+                        txt = node.data(idx.column())
+                        self.pkg_library.delete_package(to_delete=txt)
 
     def load_dictionary(self, d):
         """Load a dictionary to the tree.
@@ -1996,13 +2025,6 @@ class ProcessLibrary(QTreeView):
         self._model = DictionaryTreeModel(self._nodes)
         self.setModel(self._model)
         self.expandAll()
-
-    def to_dict(self):
-        """Return a dictionary from the current tree.
-
-        :return: the dictionary of the tree
-        """
-        return self._model.to_dict()
 
     def mousePressEvent(self, event):
         """Event when the mouse is pressed."""
@@ -2020,6 +2042,13 @@ class ProcessLibrary(QTreeView):
                 # self.item_library_clicked.emit(model.itemData(idx)[0])
 
         return QTreeView.mousePressEvent(self, event)
+
+    def to_dict(self):
+        """Return a dictionary from the current tree.
+
+        :return: the dictionary of the tree
+        """
+        return self._model.to_dict()
 
 
 def import_file(full_name, path):
