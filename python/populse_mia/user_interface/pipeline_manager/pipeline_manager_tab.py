@@ -363,6 +363,7 @@ class PipelineManagerTab(QWidget):
 
             # Adding inherited tags
             if self.inheritance_dict:
+                database_parent_file = None
                 parent_file = self.inheritance_dict[old_value]
                 for scan in self.project.session.get_documents_names(
                         COLLECTION_CURRENT):
@@ -372,7 +373,8 @@ class PipelineManagerTab(QWidget):
                                  TAG_CHECKSUM, TAG_FILENAME]
                 for tag in self.project.session.get_fields_names(
                         COLLECTION_CURRENT):
-                    if not tag in banished_tags:
+                    if tag not in banished_tags and database_parent_file is \
+                            not None:
                         parent_current_value = self.project.session.get_value(
                             COLLECTION_CURRENT, database_parent_file, tag)
                         self.project.session.set_value(
@@ -785,11 +787,12 @@ class PipelineManagerTab(QWidget):
             inputs = process.get_inputs()
             self.inputs = inputs
 
-            if self.check_spm_dependencies(process):
-                if not (config.get_use_matlab()
-                        and (config.get_use_spm() or
-                             config.get_use_spm_standalone())):
-                    conf_failure = True
+            if config.get_clinical_mode():
+                if self.check_spm_dependencies(process):
+                    if not (config.get_use_matlab()
+                            and (config.get_use_spm() or
+                                 config.get_use_spm_standalone())):
+                        conf_failure = True
 
             for key in inputs:
 
