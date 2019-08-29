@@ -59,7 +59,7 @@ from soma.qt_gui.qt_backend.Qt import (QWidget, QTreeWidget, QLabel,
 from soma.qt_gui.qt_backend.QtCore import (Qt, Signal, QModelIndex,
                                            QAbstractItemModel, QByteArray,
                                            QMimeData)
-from soma.qt_gui.qt_backend.QtWidgets import QListWidget, QGroupBox
+from soma.qt_gui.qt_backend.QtWidgets import QListWidget, QGroupBox, QMenu
 
 # Populse_MIA import
 from populse_mia.software_properties import Config
@@ -2030,16 +2030,27 @@ class ProcessLibrary(QTreeView):
         """Event when the mouse is pressed."""
         idx = self.indexAt(event.pos())
         # print('idx',dir(idx.model()))
+        config = Config()
         if idx.isValid:
             model = idx.model()
             idx = idx.sibling(idx.row(), 0)
             node = idx.internalPointer()
             if node is not None:
+                self.setCurrentIndex(idx)
                 txt = node.data(idx.column())
                 path = txt.encode()
-                # print('dictionary ',path.decode('utf8'))
                 self.item_library_clicked.emit(path.decode('utf8'))
+                if config.get_clinical_mode() is False and event.button() ==\
+                        Qt.RightButton:
+                    self.menu = QMenu(self)
+                    self.action_delete = self.menu.addAction(
+                        "Delete package")
+                    action = self.menu.exec_(self.mapToGlobal(event.pos()))
+                    if action == self.action_delete:
+                        self.pkg_library.delete_package(to_delete=txt)
+                # print('dictionary ',path.decode('utf8'))
                 # self.item_library_clicked.emit(model.itemData(idx)[0])
+
 
         return QTreeView.mousePressEvent(self, event)
 
