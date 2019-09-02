@@ -234,9 +234,10 @@ class MainWindow(QMainWindow):
             can_exit = self.pop_up_close.can_exit()
 
         if can_exit:
-            self.project.unsaveModifications()
-            for brick in self.pipeline_manager.brick_list:
-                self.data_browser.table_data.delete_from_brick(brick)
+            if self.pipeline_manager.init_clicked:
+                self.project.unsaveModifications()
+                for brick in self.pipeline_manager.brick_list:
+                    self.data_browser.table_data.delete_from_brick(brick)
 
             # Clean up
             config = Config()
