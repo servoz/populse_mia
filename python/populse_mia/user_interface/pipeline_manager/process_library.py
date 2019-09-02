@@ -114,7 +114,8 @@ class DictionaryTreeModel(QAbstractItemModel):
         if node.childCount() > 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | \
+                   Qt.ItemIsDragEnabled
 
     def getNode(self, index):
         """Return a Node() from given index."""
@@ -2043,9 +2044,14 @@ class ProcessLibrary(QTreeView):
                 if config.get_clinical_mode() is False and event.button() ==\
                         Qt.RightButton:
                     self.menu = QMenu(self)
+                    self.remove = self.menu.addAction(
+                        "Remove package")
                     self.action_delete = self.menu.addAction(
                         "Delete package")
                     action = self.menu.exec_(self.mapToGlobal(event.pos()))
+                    if action == self.remove:
+                        self.pkg_library.remove_package(txt)
+                        self.pkg_library.save()
                     if action == self.action_delete:
                         self.pkg_library.delete_package(to_delete=txt)
                 # print('dictionary ',path.decode('utf8'))
