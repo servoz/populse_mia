@@ -57,7 +57,7 @@ from PyQt5.QtWidgets import (
     QCheckBox, QComboBox, QLineEdit, QFileDialog, QTableWidget,
     QTableWidgetItem, QLabel, QPushButton, QTreeWidget, QTreeWidgetItem,
     QMessageBox, QHeaderView, QWidget, QHBoxLayout, QVBoxLayout,
-    QDialogButtonBox, QDialog, QApplication, QRadioButton)
+    QDialogButtonBox, QDialog, QApplication, QRadioButton, QScrollArea)
 
 # Populse_db imports
 from populse_db.database import (
@@ -2971,7 +2971,7 @@ class PopUpSelectIteration(QDialog):
         self.v_box = QVBoxLayout()
 
         # Label
-        self.label = QLabel("Select values to iterative over:")
+        self.label = QLabel("Select values to iterate over:")
         self.v_box.addWidget(self.label)
 
         self.check_boxes = []
@@ -2996,9 +2996,18 @@ class PopUpSelectIteration(QDialog):
         self.push_button_cancel.clicked.connect(self.close)
         self.h_box_bottom.addWidget(self.push_button_cancel)
 
+        self.scroll = QScrollArea()
+        self.widget = QWidget()
+        self.widget.setLayout(self.v_box)
+        self.scroll.setWidget(self.widget)
+
+        self.final = QVBoxLayout()
+        self.final.addWidget(self.scroll)
+
         self.final_layout = QVBoxLayout()
-        self.final_layout.addLayout(self.v_box)
+        self.final_layout.addLayout(self.final)
         self.final_layout.addLayout(self.h_box_bottom)
+
         self.setLayout(self.final_layout)
 
     def ok_clicked(self):
