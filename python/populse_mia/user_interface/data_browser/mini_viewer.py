@@ -412,7 +412,7 @@ class MiniViewer(QWidget):
                 im2D = resize(im2D, display_size, mode='constant')
 
             # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
-            # np.rot90 is multiple times faster than scipy.ndimage.rotate.
+            # np.rot90 is ~50 times faster than scipy.ndimage.rotate.
             im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
 
             # Scale intensities
