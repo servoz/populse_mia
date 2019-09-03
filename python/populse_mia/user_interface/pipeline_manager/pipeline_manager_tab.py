@@ -22,6 +22,7 @@ import datetime
 import os
 import sys
 import uuid
+import inspect
 
 from collections import OrderedDict
 
@@ -417,7 +418,6 @@ class PipelineManagerTab(QWidget):
             process = get_process_instance(
                 process_to_use)
         except Exception as e:
-            print(e)
             return
 
         pipeline.add_process(node_name, process)
@@ -517,7 +517,7 @@ class PipelineManagerTab(QWidget):
         __import__(package_name)
         pkg = sys.modules[package_name]
         for name, instance in sorted(list(pkg.__dict__.items())):
-            if name == process_name:
+            if name == process_name and inspect.isclass(instance):
                 try:
                     process = get_process_instance(instance)
                 except Exception as e:
