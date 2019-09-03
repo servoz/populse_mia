@@ -392,28 +392,36 @@ class MiniViewer(QWidget):
         :param im2D: image to modify
         """
 
+        display_size = (128, 128)
+
         im2d_provided = im2D is not None
         if not im2d_provided:
             im2D = self.im_2D[idx]
 
         # Handle Nans
-        if not np.all(np.isnan(im2D)):  # if we have only nans, there is nothing we can do
-            # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
-            im2D = np.rot90(im2D, 3)  # much faster (x 50). Not the same (maybe better?) for rectangular images
+        if not np.all(np.isnan(im2D)):
+            # Resize image first, for two reasons:
+            #  1 - it may slightly changes the intensity scale, so re-scaling should be done after this
+            #  2 - rescaling before rotation is slightly faster, specially for large images (> display_size).
 
-            # Resize image first, as this slightly changes the scale
             # anti_aliasing keyword is defined in skimage since version 0.14.0
             if verCmp(sk.__version__, '0.14.0', 'sup'):
-                im2D = resize(im2D, (128, 128), mode='constant',
+                im2D = resize(im2D, display_size, mode='constant',
                               anti_aliasing=False)
             else:
-                im2D = resize(im2D, (128, 128), mode='constant')
+                im2D = resize(im2D, display_size, mode='constant')
+
+            # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
+            # np.rot90 is ~50 times faster than scipy.ndimage.rotate.
+            im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
 
             # Scale intensities
             im2D -= np.nanmin(im2D)
             im_max = np.nanmax(im2D)
             if im_max > 0:  # avoid dividing by zero
                 im2D /= im_max
+        else:
+            im2D = np.zeros(display_size)  # if we have only nans, simply display zeros
 
         im2D = (im2D * 255.0).astype(np.uint8)
 
