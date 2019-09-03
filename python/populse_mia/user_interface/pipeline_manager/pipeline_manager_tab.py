@@ -656,7 +656,7 @@ class PipelineManagerTab(QWidget):
             nodes_to_check = list(
                 OrderedDict(
                     (x, True) for x in nodes_to_check[::-1]).keys())
-
+            # print(nodes_to_check)
             node_name = nodes_to_check.pop(0)
 
             nodes_to_check = nodes_to_check[::-1]
@@ -1228,6 +1228,7 @@ class PipelineManagerTab(QWidget):
                     self.progress.show()
                     self.progress.exec()
                     pipeline_progress['counter'] += 1
+                    self.init_clicked = False
                     # # self.init_pipeline(self.pipeline)
                     # idx = self.progress.value()
                     # idx += 1
@@ -1253,7 +1254,7 @@ class PipelineManagerTab(QWidget):
                 self.main_window.statusBar().showMessage(
                     'Pipeline "{0}" has been correctly run.'.format(name))
 
-        self.init_clicked = False
+            self.init_clicked = False
 
     def saveParameters(self):
         """
