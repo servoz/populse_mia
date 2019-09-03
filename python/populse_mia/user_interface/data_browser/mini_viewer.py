@@ -17,7 +17,7 @@ Contains:
 import os
 from functools import partial
 import nibabel as nib
-from scipy.ndimage import rotate  # to work with NumPy arrays
+# from scipy.ndimage import rotate  # to work with NumPy arrays
 import numpy as np  # a N-dimensional array object
 from skimage.transform import resize
 import skimage as sk
@@ -391,38 +391,36 @@ class MiniViewer(QWidget):
         :param idx: the selected index
         :param im2D: image to modify
         """
-        if im2D is not None:
-            im2D = rotate(im2D, -90, reshape=False)
-            im2D = np.uint8((im2D - im2D.min()) / im2D.ptp() * 255.0)
 
+        im2d_provided = im2D is not None
+        if not im2d_provided:
+            im2D = self.im_2D[idx]
+
+        # Handle Nans
+        if not np.all(np.isnan(im2D)):  # if we have only nans, there is nothing we can do
+            # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
+            im2D = np.rot90(im2D, 3)  # much faster (x 50). Not the same (maybe better?) for rectangular images
+
+            # Resize image first, as this slightly changes the scale
             # anti_aliasing keyword is defined in skimage since version 0.14.0
             if verCmp(sk.__version__, '0.14.0', 'sup'):
                 im2D = resize(im2D, (128, 128), mode='constant',
                               anti_aliasing=False)
-
             else:
                 im2D = resize(im2D, (128, 128), mode='constant')
 
-            im2D = (im2D * 255).astype(np.uint8)
+            # Scale intensities
+            im2D -= np.nanmin(im2D)
+            im_max = np.nanmax(im2D)
+            if im_max > 0:  # avoid dividing by zero
+                im2D /= im_max
+
+        im2D = (im2D * 255.0).astype(np.uint8)
+
+        if im2d_provided:
             return im2D
-
         else:
-            self.im_2D[idx] = rotate(self.im_2D[idx], -90, reshape=False)
-            self.im_2D[idx] = np.uint8(
-                (self.im_2D[idx] - self.im_2D[idx].min())
-                / self.im_2D[idx].ptp() * 255.0)
-
-            # anti_aliasing keyword is defined in skimage since version 0.14.0
-            if verCmp(sk.__version__, '0.14.0', 'sup'):
-                self.im_2D[idx] = resize(self.im_2D[idx], (128, 128),
-                                         mode='constant',
-                                         anti_aliasing=False)
-
-            else:
-                self.im_2D[idx] = resize(self.im_2D[idx], (128, 128),
-                                         mode='constant')
-
-            self.im_2D[idx] = (self.im_2D[idx] * 255).astype(np.uint8)
+            self.im_2D[idx] = im2D
 
     def indexImage(self, idx):
         """Update all slider values according to the size of the current image.
