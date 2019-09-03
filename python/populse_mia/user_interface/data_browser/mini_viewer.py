@@ -402,8 +402,7 @@ class MiniViewer(QWidget):
         if not np.all(np.isnan(im2D)):
             # Resize image first, for two reasons:
             #  1 - it may slightly changes the intensity scale, so re-scaling should be done after this
-            #  2 - rescaling before rotation speeds up display for large images (> display_size). Smaller images may be
-            #      slower, but should not have any performance problems anyway
+            #  2 - rescaling before rotation is slightly faster, specially for large images (> display_size).
 
             # anti_aliasing keyword is defined in skimage since version 0.14.0
             if verCmp(sk.__version__, '0.14.0', 'sup'):
@@ -413,7 +412,8 @@ class MiniViewer(QWidget):
                 im2D = resize(im2D, display_size, mode='constant')
 
             # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
-            im2D = np.rot90(im2D, 3)  # much faster (x 50). Not the same (maybe better?) for rectangular images
+            # np.rot90 is multiple times faster than scipy.ndimage.rotate.
+            im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
 
             # Scale intensities
             im2D -= np.nanmin(im2D)
