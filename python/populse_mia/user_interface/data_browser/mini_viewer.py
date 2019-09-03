@@ -393,37 +393,45 @@ class MiniViewer(QWidget):
         """
 
         display_size = (128, 128)
+        display_type = np.uint8  # this MUST be an integer data type
+        display_pctl = 0.5  # percentile of values to clip at the low and high end of intensities
+        display_max = np.iinfo(display_type).max
+        display_min = np.iinfo(display_type).min
 
         im2d_provided = im2D is not None
         if not im2d_provided:
             im2D = self.im_2D[idx]
 
-        # Handle Nans
-        if not np.all(np.isnan(im2D)):
-            # Resize image first, for two reasons:
-            #  1 - it may slightly changes the intensity scale, so re-scaling should be done after this
-            #  2 - rescaling before rotation is slightly faster, specially for large images (> display_size).
+        # Resize image first, for three reasons:
+        #  1 - it may slightly changes the intensity scale, so re-scaling should be done after this
+        #  2 - rescaling before rotation is slightly faster, specially for large images (> display_size).
+        #  3 - rescaling may alter the occurrence of nan or infinite values (e.g. an image may become all-nan)
 
-            # anti_aliasing keyword is defined in skimage since version 0.14.0
-            if verCmp(sk.__version__, '0.14.0', 'sup'):
-                im2D = resize(im2D, display_size, mode='constant',
-                              anti_aliasing=False)
-            else:
-                im2D = resize(im2D, display_size, mode='constant')
-
-            # im2D = rotate(im2D, -90, reshape=False)  # this is slow and propagates NaNs all over the image
-            # np.rot90 is ~50 times faster than scipy.ndimage.rotate.
-            im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
-
-            # Scale intensities
-            im2D -= np.nanmin(im2D)
-            im_max = np.nanmax(im2D)
-            if im_max > 0:  # avoid dividing by zero
-                im2D /= im_max
+        # anti_aliasing keyword is defined in skimage since version 0.14.0
+        if verCmp(sk.__version__, '0.14.0', 'sup'):
+            im2D = resize(im2D, display_size, mode='constant',
+                          anti_aliasing=False)
         else:
-            im2D = np.zeros(display_size)  # if we have only nans, simply display zeros
+            im2D = resize(im2D, display_size, mode='constant')
 
-        im2D = (im2D * 255.0).astype(np.uint8)
+        # Handle Nans and infinite values
+        im_mask = np.isfinite(im2D)
+        if np.any(im_mask):  # if we have any finite value to work with
+            # Scale intensities
+            # im2D -= np.min(im2D[im_mask])
+            # im_max = np.max(im2D[im_mask])
+            im2D -= np.percentile(im2D[im_mask], display_pctl)
+            im2D[im2D < 0.0] = 0.0
+            im_max = np.percentile(im2D[im_mask], 100.0 - display_pctl)
+            if im_max > 0:  # avoid dividing by zero
+                im2D[im2D > im_max] = im_max
+                im2D *= (display_max - display_min) / im_max
+            im2D += display_min
+            im2D = im2D.astype(display_type)
+
+            im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
+        else:
+            im2D = np.zeros(display_size, dtype=display_type)  # if we have only nans, simply display zeros
 
         if im2d_provided:
             return im2D
