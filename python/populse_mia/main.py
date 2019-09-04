@@ -187,7 +187,6 @@ def launch_mia():
 
                :Returns: the list of the deleted projects
 
-
     """
 
     def _my_excepthook(etype, evalue, tback):
@@ -257,10 +256,10 @@ def launch_mia():
 
 
 def check_python_version():
+    
     if sys.version_info[:2] < (3, 5):
         raise AssertionError("The populse_mia is ensured to work with Python "
                              ">= 3.5")
-
 
 def main():
     """Make basic configuration check then actual launch of mia.
