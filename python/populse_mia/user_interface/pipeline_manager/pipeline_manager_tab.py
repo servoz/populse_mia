@@ -804,7 +804,7 @@ class PipelineManagerTab(QWidget):
                              config.get_use_spm_standalone())):
                     if self.check_spm_dependencies(process):
                         conf_failure = True
-                    elif self.check_matlab_dependencies() and not \
+                    elif self.check_matlab_dependencies(process) and not \
                             config.get_use_matlab():
                         conf_failure = True
 
