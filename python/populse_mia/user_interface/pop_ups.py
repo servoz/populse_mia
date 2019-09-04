@@ -46,6 +46,8 @@ import ast
 import hashlib
 import os
 import shutil
+import subprocess
+import glob
 from datetime import datetime
 from functools import partial
 
@@ -2108,6 +2110,7 @@ class PopUpPreferences(QDialog):
         """
 
         config = Config()
+        QApplication.setOverrideCursor(Qt.WaitCursor)
 
         # Auto-save
         if self.save_checkbox.isChecked():
@@ -2130,6 +2133,7 @@ class PopUpPreferences(QDialog):
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
             self.msg.show()
+            QApplication.restoreOverrideCursor()
             return
 
         # MRIFileManager.jar path
@@ -2161,6 +2165,7 @@ class PopUpPreferences(QDialog):
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
             self.msg.show()
+            QApplication.restoreOverrideCursor()
             return
 
         # Max projects in "Saved projects"
@@ -2187,77 +2192,111 @@ class PopUpPreferences(QDialog):
         else:
             config.set_clinical_mode(False)
 
-        # Matlab
-        if self.use_matlab_checkbox.isChecked():
-            matlab_input = self.matlab_choice.text()
-            if os.path.exists(matlab_input):
-                config.set_matlab_path(matlab_input)
-                config.set_use_matlab(True)
-            else:
-                self.msg = QMessageBox()
-                self.msg.setIcon(QMessageBox.Critical)
-                self.msg.setText("Invalid Matlab path")
-                self.msg.setInformativeText(
-                    "The MCR path entered {0} is invalid.".format(
-                        matlab_input))
-                self.msg.setWindowTitle("Error")
-                self.msg.setStandardButtons(QMessageBox.Ok)
-                self.msg.buttonClicked.connect(self.msg.close)
-                self.msg.show()
-                return
-
-        if self.use_matlab_standalone_checkbox.isChecked():
-            matlab_standalone_input = self.matlab_standalone_choice.text()
-            if os.path.exists(matlab_standalone_input):
-                config.set_use_matlab(True)
-                config.set_matlab_standalone_path(matlab_standalone_input)
-            else:
-                self.msg = QMessageBox()
-                self.msg.setIcon(QMessageBox.Critical)
-                self.msg.setText("Invalid MCR path")
-                self.msg.setInformativeText(
-                    "The MCR path entered {0} is invalid.".format(
-                        matlab_standalone_input))
-                self.msg.setWindowTitle("Error")
-                self.msg.setStandardButtons(QMessageBox.Ok)
-                self.msg.buttonClicked.connect(self.msg.close)
-                self.msg.show()
-                return
-
-        # SPM
+        # SPM & Matlab
         if self.use_spm_checkbox.isChecked():
+            matlab_input = self.matlab_choice.text()
             spm_input = self.spm_choice.text()
-            if os.path.exists(spm_input):
-                config.set_use_spm(True)
-                config.set_spm_path(spm_input)
+            if not os.path.isfile(matlab_input):
+                self.wrong_path(matlab_input, "Matlab")
+                return
+            if matlab_input == config.get_matlab_path() and spm_input == \
+                    config.get_spm_path():
+                pass
+            elif os.path.isdir(spm_input):
+                matlab_cmd = 'addpath("' + spm_input + '"); [name, ~]=spm(' \
+                                                   '"Ver"); exit'
+                p = subprocess.Popen([matlab_input, '-nodisplay', '-nodesktop',
+                                      '-nosplash', '-singleCompThread',
+                                      '-r', matlab_cmd], stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+                output, err = p.communicate()
+                if err == b'':
+                    config.set_matlab_path(matlab_input)
+                    config.set_use_matlab(True)
+                    config.set_use_spm(True)
+                    config.set_spm_path(spm_input)
+                elif "spm" in str(err):
+                    self.wrong_path(spm_input, "SPM")
+                    return
+                else:
+                    self.wrong_path(matlab_input, "Matlab")
+                    return
             else:
-                self.msg = QMessageBox()
-                self.msg.setIcon(QMessageBox.Critical)
-                self.msg.setText("Invalid SPM standalone path")
-                self.msg.setInformativeText(
-                    "The SPM path entered {0} is invalid.".format(spm_input))
-                self.msg.setWindowTitle("Error")
-                self.msg.setStandardButtons(QMessageBox.Ok)
-                self.msg.buttonClicked.connect(self.msg.close)
-                self.msg.show()
+                self.wrong_path(spm_input, "SPM")
+                return
+        # Matlab
+        elif self.use_matlab_checkbox.isChecked():
+            matlab_input = self.matlab_choice.text()
+            if os.path.isfile(matlab_input):
+                matlab_cmd = 'ver; exit'
+                p = subprocess.Popen(
+                    [matlab_input, '-nodisplay', '-nodesktop',
+                     '-nosplash', '-singleCompThread',
+                     '-r', matlab_cmd], stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE)
+                output, err = p.communicate()
+                if err == b'':
+                    config.set_matlab_path(matlab_input)
+                    config.set_use_matlab(True)
+                else:
+                    self.wrong_path(matlab_input, "Matlab")
+                    return
+            else:
+                self.wrong_path(matlab_input, "Matlab")
                 return
 
         if self.use_spm_standalone_checkbox.isChecked():
             spm_input = self.spm_standalone_choice.text()
-            if os.path.exists(spm_input) and "spm12" in spm_input:
-                config.set_use_spm_standalone(True)
-                config.set_spm_standalone_path(spm_input)
+            matlab_input = self.matlab_standalone_choice.text()
+            if not os.path.isdir(matlab_input):
+                self.wrong_path(matlab_input, "Matlab standalone")
+                return
+            if matlab_input == config.get_matlab_standalone_path() and \
+                    spm_input == config.get_spm_standalone_path():
+                pass
+            elif os.path.isdir(spm_input):
+                mcr = glob.glob(os.path.join(spm_input, 'run_spm*.sh'))
+                if mcr:
+                    try:
+                        p = subprocess.Popen([mcr[0],
+                                              matlab_input,
+                                              '--version'],
+                                             stdin=subprocess.PIPE,
+                                             stdout=subprocess.PIPE,
+                                             stderr=subprocess.PIPE)
+                        output, err = p.communicate()
+                        if err == b'' and output != b'':
+                            config.set_use_spm_standalone(True)
+                            config.set_spm_standalone_path(spm_input)
+                        elif err != b'':
+                            if "shared libraries" in str(err):
+                                self.wrong_path(matlab_input,
+                                                "Matlab standalone")
+                                return
+                            else:
+                                self.wrong_path(spm_input, "SPM standalone")
+                                return
+                        else:
+                            self.wrong_path(spm_input, "SPM standalone")
+                            return
+                    except Exception as e:
+                        self.wrong_path(spm_input, "SPM standalone")
+                        return
+                else:
+                    self.wrong_path(spm_input, "SPM standalone")
+                    return
             else:
-                self.msg = QMessageBox()
-                self.msg.setIcon(QMessageBox.Critical)
-                self.msg.setText("Invalid SPM standalone path")
-                self.msg.setInformativeText(
-                    "The SPM standalone path entered {0} is invalid.".format(
-                        spm_input))
-                self.msg.setWindowTitle("Error")
-                self.msg.setStandardButtons(QMessageBox.Ok)
-                self.msg.buttonClicked.connect(self.msg.close)
-                self.msg.show()
+                self.wrong_path(spm_input, "SPM standalone")
+                return
+        elif self.use_matlab_standalone_checkbox.isChecked():
+            matlab_input = self.matlab_standalone_choice.text()
+            if os.path.isdir(matlab_input):
+                config.set_use_matlab(True)
+                config.set_matlab_standalone_path(matlab_input)
+            else:
+                self.wrong_path(matlab_input, "Matlab standalone")
                 return
 
         # Colors
@@ -2270,6 +2309,7 @@ class PopUpPreferences(QDialog):
             text_color + ";")
 
         self.signal_preferences_change.emit()
+        QApplication.restoreOverrideCursor()
         self.accept()
         self.close()
 
@@ -2345,6 +2385,17 @@ class PopUpPreferences(QDialog):
             self.use_spm_checkbox.setChecked(False)
             self.use_matlab_checkbox.setChecked(False)
 
+    def wrong_path(self, path, tool):
+        QApplication.restoreOverrideCursor()
+        self.msg = QMessageBox()
+        self.msg.setIcon(QMessageBox.Critical)
+        self.msg.setText("Invalid " + tool + " path")
+        self.msg.setInformativeText(
+            "The " + tool + " path entered {0} is invalid.".format(path))
+        self.msg.setWindowTitle("Error")
+        self.msg.setStandardButtons(QMessageBox.Ok)
+        self.msg.buttonClicked.connect(self.msg.close)
+        self.msg.show()
 
 class PopUpProperties(QDialog):
     """Is called when the user wants to change the current project's

@@ -23,6 +23,7 @@ import os
 import sys
 import uuid
 import inspect
+import re
 
 from collections import OrderedDict
 
@@ -79,6 +80,10 @@ class PipelineManagerTab(QWidget):
     Widget that handles the Pipeline Manager tab.
 
     .. Methods:
+        - add_plug_value_to_database: add the plug value to the database.
+        - add_process_to_preview: add a process to the pipeline
+        - check_matlab_dependencies: check if a process needs matlab or not
+        - check_spm_dependencies: check if a process needs spm or not
         - controller_value_changed: update history when a pipeline node is
           changed
         - displayNodeParameters: display the node controller when a node is
@@ -233,8 +238,7 @@ class PipelineManagerTab(QWidget):
 
     def add_plug_value_to_database(self, p_value, brick, node_name,
                                    plug_name, full_name):
-        """
-        Add the plug value to the database.
+        """Add the plug value to the database.
 
         :param p_value: plug value, a file name or a list of file names
         :param brick: brick id
@@ -390,8 +394,7 @@ class PipelineManagerTab(QWidget):
             self.project.saveModifications()
 
     def add_process_to_preview(self, class_process, node_name=None):
-        """
-        Add a process to the pipeline
+        """Add a process to the pipeline.
 
         :param class_process: process class's name (str)
         :param node_name: name of the corresponding node
@@ -429,28 +432,36 @@ class PipelineManagerTab(QWidget):
 
         return node, node_name
 
+    def check_matlab_dependencies(self, process):
+        """Check if a process needs matlab or not.
+        :param process: the process to check
+        :return: boolean
+        """
+        lines = process.__doc__.split("\n")
+        for line in lines:
+            if re.search("\*.Dependencies:", line):
+                use_matlab = re.sub(".*?Use_Matlab:","", line)
+                use_matlab = re.sub(";.*","", use_matlab)
+                use_matlab = use_matlab.replace(" ", "")
+                if use_matlab == "True":
+                    return True
+                else:
+                    return False
+
     def check_spm_dependencies(self, process):
         """Check if a process needs spm or not.
         :param process: the process to check
-        :return use_spm: boolean
+        :return: boolean
         """
-
-        path = os.path.abspath(sys.modules[
-                                 process.__module__].__file__)
-
-        finder = ModuleFinder()
-        # if jinja2 is above 2.8.1
-        # try:
-        #     finder.run_script(path)
-        # except Exception as e:
-        #     print(e)
-        finder.run_script(path)
-
-        if "nipype.interfaces.spm" in finder.modules:
-            use_spm = True
-        else:
-            use_spm = False
-        return use_spm
+        lines = process.__doc__.split("\n")
+        for line in lines:
+            if re.search("\*.Dependencies:", line):
+                use_spm = re.sub(".*?Use_SPM:", "", line)
+                use_spm = use_spm.replace(" ", "")
+                if use_spm == "True":
+                    return True
+                else:
+                    return False
 
     def controller_value_changed(self, signal_list):
         """
@@ -787,11 +798,14 @@ class PipelineManagerTab(QWidget):
             inputs = process.get_inputs()
             self.inputs = inputs
 
-            if config.get_clinical_mode():
-                if self.check_spm_dependencies(process):
-                    if not (config.get_use_matlab()
-                            and (config.get_use_spm() or
-                                 config.get_use_spm_standalone())):
+            if 'NipypeProcess' not in str(process.__class__):
+                if not (config.get_use_matlab()
+                        and (config.get_use_spm() or
+                             config.get_use_spm_standalone())):
+                    if self.check_spm_dependencies(process):
+                        conf_failure = True
+                    elif self.check_matlab_dependencies() and not \
+                            config.get_use_matlab():
                         conf_failure = True
 
             for key in inputs:
@@ -835,11 +849,7 @@ class PipelineManagerTab(QWidget):
                     # matlab_cmd parameter
                     if (key == keys2consider[2]) and (
                             config.get_use_spm_standalone() is True):
-                        inputs[key] = (os.path.join(
-                            config.get_spm_standalone_path() +
-                            'run_spm12.sh ') +
-                                       config.get_matlab_standalone_path() +
-                                       ' script')
+                        inputs[key] = config.get_matlab_command()
                     elif key == keys2consider[2] and \
                             config.get_use_spm_standalone() is False:
                         inputs[key] = config.get_matlab_path()
