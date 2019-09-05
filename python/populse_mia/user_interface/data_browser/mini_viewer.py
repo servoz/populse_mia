@@ -394,7 +394,7 @@ class MiniViewer(QWidget):
 
         display_size = (128, 128)
         display_type = np.uint8  # this MUST be an integer data type
-        display_pctl = 0.5  # percentile of values to clip at the low and high end of intensities
+        display_pctl = 0.5  # percentile (0.5%) of values to clip at the low and high end of intensities.
         display_max = np.iinfo(display_type).max
         display_min = np.iinfo(display_type).min
 
@@ -406,7 +406,6 @@ class MiniViewer(QWidget):
         #  1 - it may slightly changes the intensity scale, so re-scaling should be done after this
         #  2 - rescaling before rotation is slightly faster, specially for large images (> display_size).
         #  3 - rescaling may alter the occurrence of nan or infinite values (e.g. an image may become all-nan)
-
         # anti_aliasing keyword is defined in skimage since version 0.14.0
         if verCmp(sk.__version__, '0.14.0', 'sup'):
             im2D = resize(im2D, display_size, mode='constant',
@@ -414,24 +413,19 @@ class MiniViewer(QWidget):
         else:
             im2D = resize(im2D, display_size, mode='constant')
 
-        # Handle Nans and infinite values
+        # Rescale image while handling Nans and infinite values
         im_mask = np.isfinite(im2D)
         if np.any(im_mask):  # if we have any finite value to work with
-            # Scale intensities
-            # im2D -= np.min(im2D[im_mask])
-            # im_max = np.max(im2D[im_mask])
-            im2D -= np.percentile(im2D[im_mask], display_pctl)
-            im2D[im2D < 0.0] = 0.0
-            im_max = np.percentile(im2D[im_mask], 100.0 - display_pctl)
+            im2D -= np.percentile(im2D[im_mask], display_pctl)  # shift the lower percentile chosen to 0.0
+            im_max = np.percentile(im2D[im_mask], 100.0 - display_pctl)  # determine max from upper percentile
             if im_max > 0:  # avoid dividing by zero
-                im2D[im2D > im_max] = im_max
-                im2D *= (display_max - display_min) / im_max
-            im2D += display_min
-            im2D = im2D.astype(display_type)
+                im2D *= (display_max - display_min) / im_max  # re-scale to display range
+            im2D += display_min  # shift lowest value to lower limit of display range
 
-            im2D = np.rot90(im2D, 3).copy()  # Need to copy array to avoid negative strides (Qt doesn't handle that)
-        else:
-            im2D = np.zeros(display_size, dtype=display_type)  # if we have only nans, simply display zeros
+        np.clip(im2D, display_min, display_max, im2D)  # clip all values to display range, remove infinite values
+        im2D = im2D.astype(display_type)  # convert to integer display data type. NaNs get converted to 0.
+
+        im2D = np.rot90(im2D, 3).copy()  # Rotate. Copy array to avoid negative strides (Qt doesn't handle that)
 
         if im2d_provided:
             return im2D
