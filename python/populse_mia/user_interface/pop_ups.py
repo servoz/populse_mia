@@ -2203,23 +2203,27 @@ class PopUpPreferences(QDialog):
                     config.get_spm_path():
                 pass
             elif os.path.isdir(spm_input):
-                matlab_cmd = 'addpath("' + spm_input + '"); [name, ~]=spm(' \
-                                                   '"Ver"); exit'
-                p = subprocess.Popen([matlab_input, '-nodisplay', '-nodesktop',
-                                      '-nosplash', '-singleCompThread',
-                                      '-r', matlab_cmd], stdin=subprocess.PIPE,
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-                output, err = p.communicate()
-                if err == b'':
-                    config.set_matlab_path(matlab_input)
-                    config.set_use_matlab(True)
-                    config.set_use_spm(True)
-                    config.set_spm_path(spm_input)
-                elif "spm" in str(err):
-                    self.wrong_path(spm_input, "SPM")
-                    return
-                else:
+                try:
+                    matlab_cmd = 'addpath("' + spm_input + '"); [name, ~]=spm(' \
+                                                       '"Ver"); exit'
+                    p = subprocess.Popen([matlab_input, '-nodisplay', '-nodesktop',
+                                          '-nosplash', '-singleCompThread',
+                                          '-r', matlab_cmd], stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+                    output, err = p.communicate()
+                    if err == b'':
+                        config.set_matlab_path(matlab_input)
+                        config.set_use_matlab(True)
+                        config.set_use_spm(True)
+                        config.set_spm_path(spm_input)
+                    elif "spm" in str(err):
+                        self.wrong_path(spm_input, "SPM")
+                        return
+                    else:
+                        self.wrong_path(matlab_input, "Matlab")
+                        return
+                except:
                     self.wrong_path(matlab_input, "Matlab")
                     return
             else:
@@ -2229,18 +2233,22 @@ class PopUpPreferences(QDialog):
         elif self.use_matlab_checkbox.isChecked():
             matlab_input = self.matlab_choice.text()
             if os.path.isfile(matlab_input):
-                matlab_cmd = 'ver; exit'
-                p = subprocess.Popen(
-                    [matlab_input, '-nodisplay', '-nodesktop',
-                     '-nosplash', '-singleCompThread',
-                     '-r', matlab_cmd], stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE)
-                output, err = p.communicate()
-                if err == b'':
-                    config.set_matlab_path(matlab_input)
-                    config.set_use_matlab(True)
-                else:
+                try:
+                    matlab_cmd = 'ver; exit'
+                    p = subprocess.Popen(
+                        [matlab_input, '-nodisplay', '-nodesktop',
+                         '-nosplash', '-singleCompThread',
+                         '-r', matlab_cmd], stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE)
+                    output, err = p.communicate()
+                    if err == b'':
+                        config.set_matlab_path(matlab_input)
+                        config.set_use_matlab(True)
+                    else:
+                        self.wrong_path(matlab_input, "Matlab")
+                        return
+                except:
                     self.wrong_path(matlab_input, "Matlab")
                     return
             else:

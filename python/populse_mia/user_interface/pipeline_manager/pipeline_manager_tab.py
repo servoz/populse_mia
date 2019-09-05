@@ -990,7 +990,8 @@ class PipelineManagerTab(QWidget):
             else:
                 self.msg.setText("SPM is required to use Nipype.")
             self.msg.setInformativeText(
-                "Matlab and SPM must be configured to use Nipype.")
+                "Matlab and SPM must be configured to use Nipype.\n"
+                "(See File > MIA preferences to configure them) ...")
             self.msg.setWindowTitle("Warning")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
