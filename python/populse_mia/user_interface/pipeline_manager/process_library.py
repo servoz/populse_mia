@@ -1779,6 +1779,33 @@ class PackageLibraryDialog(QDialog):
         if not to_delete:
             to_delete = self.line_edit.text()
 
+        if to_delete == "":
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Package not found.")
+            self.msg.setInformativeText(
+                "Please write the python path to the package you want to "
+                "delete.")
+            self.msg.setWindowTitle("Warning")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
+        if to_delete.split(".")[0] in ["nipype", "mia_processes"]:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("This package can not be deleted.")
+            self.msg.setInformativeText(
+                "This package belongs to " + to_delete.split(".")[0] + " which"
+                " is required by populse mia.\n You can still hide it in the "
+                "package library manager.")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
         if index == 1:
             msgtext = "Do you really want to delete the package " + \
                       to_delete + " ?"
