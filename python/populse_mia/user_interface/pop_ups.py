@@ -2209,11 +2209,15 @@ class PopUpPreferences(QDialog):
                 pass
             elif os.path.isdir(spm_input):
                 try:
-                    matlab_cmd = 'addpath("' + spm_input + '"); [name, ~]=spm(' \
-                                                       '"Ver"); exit'
-                    p = subprocess.Popen([matlab_input, '-nodisplay', '-nodesktop',
-                                          '-nosplash', '-singleCompThread',
-                                          '-r', matlab_cmd], stdin=subprocess.PIPE,
+                    matlab_cmd = ('restoredefaultpath; '
+                                  ' addpath("' + spm_input + '"); '
+                                  ' [name, ~]=spm("Ver");'
+                                  ' exit')
+                    p = subprocess.Popen([matlab_input, '-nodisplay',
+                                          '-nodesktop', '-nosplash',
+                                          '-singleCompThread', '-r',
+                                          matlab_cmd],
+                                         stdin=subprocess.PIPE,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
                     output, err = p.communicate()
