@@ -1855,12 +1855,6 @@ class PackageLibraryDialog(QDialog):
                                         os.remove(os.path.join(
                                             os.path.split(
                                                 init)[0], filename[1:]))
-                                    if len(lines) == 1 and len(glob.glob(
-                                            os.path.join(path, "*"))) == 0:
-                                        shutil.rmtree(os.path.abspath(
-                                            os.path.join(config.get_mia_path(),
-                                            'processes', *pkg_list[0:index-1]
-                                            )))
                                     self.remove_package_with_text(
                                         ".".join(pkg_list[0:index]),
                                         False)
