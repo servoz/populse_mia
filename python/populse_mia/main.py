@@ -674,10 +674,11 @@ def verify_processes():
             except ImportError as e:
                 # try to update the sys.path for the processes/ directory
                 # currently used
-                if (not os.path.relpath(os.path.join(config.get_mia_path(),
+
+                if (not (os.path.relpath(os.path.join(config.get_mia_path(),
                                                      'processes')) in
-                        sys.path) and (not os.path.abspath(os.path.join(
-                        config.get_mia_path(), 'processes')) in sys.path):
+                        sys.path)) and (not (os.path.abspath(os.path.join(
+                        config.get_mia_path(), 'processes')) in sys.path)):
                     sys.path.append(os.path.abspath(os.path.join(
                         config.get_mia_path(), 'processes')))
 
@@ -722,7 +723,7 @@ def verify_processes():
                     # if an exception is raised, ask to the user to remove the
                     # package from the pipeline library or reload it
                     except ImportError as e:
-                        print('{0}'.format(e))
+                        print('\n{0}'.format(e))
                         app = QApplication(sys.argv)
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
@@ -735,7 +736,7 @@ def verify_processes():
                                      " > Install processes) the corresponding "
                                      "process library.").format(
                             e.msg.split()[-1], os.path.abspath(os.path.join(
-                                config.get_mia_path(), 'processes'))))
+                                config.get_mia_path(), 'processes', pckg))))
                         msg.setStandardButtons(QMessageBox.Ok)
                         msg.buttonClicked.connect(msg.close)
                         msg.exec()

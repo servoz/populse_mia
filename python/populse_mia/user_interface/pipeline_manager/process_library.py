@@ -1622,7 +1622,6 @@ class PackageLibraryDialog(QDialog):
 
                 self.package_library.package_tree = self.packages
                 self.package_library.generate_tree()
-                # self.save_config()
                 return err_msg
 
             except Exception as err:
@@ -1646,7 +1645,7 @@ class PackageLibraryDialog(QDialog):
         :param update_view: boolean to update the QListWidget
 
         """
-        
+
         if self.is_path:  # Currently the self.is_path = False
             # (Need to pass by the method browse_package to initialise to
             # True and the Browse button is commented.
@@ -1779,6 +1778,33 @@ class PackageLibraryDialog(QDialog):
         if not to_delete:
             to_delete = self.line_edit.text()
 
+        if to_delete == "":
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Package not found.")
+            self.msg.setInformativeText(
+                "Please write the python path to the package you want to "
+                "delete.")
+            self.msg.setWindowTitle("Warning")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
+        if to_delete.split(".")[0] in ["nipype", "mia_processes"]:
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("This package can not be deleted.")
+            self.msg.setInformativeText(
+                "This package belongs to " + to_delete.split(".")[0] + " which"
+                " is required by populse mia.\n You can still hide it in the "
+                "package library manager.")
+            self.msg.setWindowTitle("Error")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+            return
+
         if index == 1:
             msgtext = "Do you really want to delete the package " + \
                       to_delete + " ?"
@@ -1906,14 +1932,15 @@ class PackageLibraryDialog(QDialog):
         except TypeError:
             self.paths = []
 
-    def remove_package_with_text(self, _2rem=None, update_view=True, check_flag=True):
+    #def remove_package_with_text(self, _2rem=None, update_view=True, check_flag=True):
+    def remove_package_with_text(self, _2rem=None, update_view=True):
         """Remove the package in the line edit from the package tree.
 
         :param _2rem: name of package
         :param update_view: boolean to update the QListWidget
 
         """
-        
+
         old_status = self.status_label.text()
 
         if _2rem is False:
@@ -1922,7 +1949,8 @@ class PackageLibraryDialog(QDialog):
                 "Removing {0}. Please wait.".format(_2rem))
             QApplication.processEvents()
 
-        package_removed = self.remove_package(_2rem, check_flag)
+        #package_removed = self.remove_package(_2rem, check_flag)
+        package_removed = self.remove_package(_2rem)
 
         if package_removed is True:
             if update_view:
@@ -1938,7 +1966,8 @@ class PackageLibraryDialog(QDialog):
         else:
             self.status_label.setText(old_status)
 
-    def remove_package(self, package, check_flag=True):
+    #def remove_package(self, package, check_flag=True):
+    def remove_package(self, package):
         """Remove a package from the package tree.
 
         :param package: module's representation as a string
@@ -1947,8 +1976,7 @@ class PackageLibraryDialog(QDialog):
 
         """
 
-        #self.packages = self.package_library.package_tree
-        self.packages = self.load_config()['Packages']
+        self.packages = self.package_library.package_tree
         config = Config()
 
         if package:
@@ -1973,7 +2001,8 @@ class PackageLibraryDialog(QDialog):
                             '.'.join(path_list[:path_list.index(element)]),
                                      element))
 
-                elif check_flag is True:
+                #elif check_flag is True:
+                else:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
                     msg.setWindowTitle(
@@ -1983,7 +2012,6 @@ class PackageLibraryDialog(QDialog):
                     msg.buttonClicked.connect(msg.close)
                     msg.exec()
                     return None
-                    # break
 
         else:
             msg = QMessageBox()
@@ -1996,7 +2024,6 @@ class PackageLibraryDialog(QDialog):
             return False
 
         self.package_library.package_tree = self.packages
-
         self.package_library.generate_tree()
         return True
 
@@ -2010,7 +2037,8 @@ class PackageLibraryDialog(QDialog):
         
         for i in itemlist.selectedItems():
             if add is True:
-                self.remove_package_with_text(i.text(), False, False)
+                #self.remove_package_with_text(i.text(), False, False)
+                self.remove_package_with_text(i.text(), False)
 
             else:
                 self.add_package_with_text(i.text(), False)
@@ -2020,6 +2048,7 @@ class PackageLibraryDialog(QDialog):
         
         # Updating the packages and the paths according to the
         # package library tree
+
         self.packages = self.package_library.package_tree
         self.paths = self.package_library.paths
 
@@ -2043,9 +2072,10 @@ class PackageLibraryDialog(QDialog):
             yaml.dump(self.process_config, configfile,
                       default_flow_style=False, allow_unicode=True)
             self.signal_save.emit()
+    
         if close:
             self.close()
-
+            
     def save_config(self):
         """Save the current config to process_config.yml."""
 
@@ -2164,13 +2194,15 @@ class ProcessLibrary(QTreeView):
                         "Delete package")
                     action = self.menu.exec_(self.mapToGlobal(event.pos()))
                     if action == self.remove:
+                        self.pkg_library.package_library.package_tree = self.pkg_library.load_config()['Packages']
                         self.pkg_library.remove_package(txt)
                         self.pkg_library.save()
+                        
                     if action == self.action_delete:
+                        self.pkg_library.package_library.package_tree = self.pkg_library.load_config()['Packages']
                         self.pkg_library.delete_package(to_delete=txt)
                 # print('dictionary ',path.decode('utf8'))
                 # self.item_library_clicked.emit(model.itemData(idx)[0])
-
 
         return QTreeView.mousePressEvent(self, event)
 
