@@ -403,13 +403,6 @@ class InstallProcesses(QDialog):
                             module_name, v.__name__))
                             get_process_instance(
                                 '%s.%s' % (module_name, v.__name__))
-
-                        except Exception:
-                            print(traceback.format_exc())
-                            # TODO: WHICH TYPE OF EXCEPTION?
-                            # pass
-
-                        else:
                             # Updating the tree's dictionnary
                             path_list = module_name.split('.')
                             path_list.append(k)
@@ -428,6 +421,11 @@ class InstallProcesses(QDialog):
                                     else:
                                         pkg_iter[element] = {}
                                         pkg_iter = pkg_iter[element]
+
+                        except Exception:
+                            print(traceback.format_exc())
+                            # TODO: WHICH TYPE OF EXCEPTION?
+                            # pass
 
                 return proc_dic
 
