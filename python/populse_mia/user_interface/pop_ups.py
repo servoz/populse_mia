@@ -53,7 +53,7 @@ from functools import partial
 
 # PyQt5 imports
 from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QCoreApplication
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QCheckBox, QComboBox, QLineEdit, QFileDialog, QTableWidget,
@@ -1824,11 +1824,11 @@ class PopUpPreferences(QDialog):
         self.push_button_cancel.setObjectName("pushButton_cancel")
         self.push_button_cancel.clicked.connect(self.close)
 
-        self.running = QLabel("")
+        self.status_label = QLabel("")
 
         # Buttons layouts
         hbox_buttons = QHBoxLayout()
-        hbox_buttons.addWidget(self.running)
+        hbox_buttons.addWidget(self.status_label)
         hbox_buttons.addStretch(1)
         hbox_buttons.addWidget(self.push_button_ok)
         hbox_buttons.addWidget(self.push_button_cancel)
@@ -2114,9 +2114,10 @@ class PopUpPreferences(QDialog):
 
         config = Config()
         QApplication.setOverrideCursor(Qt.WaitCursor)
-
-        self.running.setText("Testing configuration ...")
-
+        print(0)
+        self.status_label.setText("Testing configuration ...")
+        QCoreApplication.processEvents()
+        print(1)
         # Auto-save
         if self.save_checkbox.isChecked():
             config.setAutoSave(True)
@@ -2191,11 +2192,17 @@ class PopUpPreferences(QDialog):
             config.set_use_spm_standalone(False)
 
         # Clinical mode
+        main_window.windowName = "MIA - Multiparametric Image Analysis"
         if self.clinical_mode_checkbox.isChecked():
             config.set_clinical_mode(True)
             self.use_clinical_mode_signal.emit()
         else:
             config.set_clinical_mode(False)
+            main_window.windowName += " (Developer mode)"
+
+        main_window.windowName += " - "
+        main_window.setWindowTitle(main_window.windowName +
+                                   main_window.projectName)
 
         # SPM & Matlab
         if self.use_spm_checkbox.isChecked():
@@ -2400,7 +2407,7 @@ class PopUpPreferences(QDialog):
 
     def wrong_path(self, path, tool):
         QApplication.restoreOverrideCursor()
-        self.running.setText("")
+        self.status_label.setText("")
         self.msg = QMessageBox()
         self.msg.setIcon(QMessageBox.Critical)
         self.msg.setText("Invalid " + tool + " path")
