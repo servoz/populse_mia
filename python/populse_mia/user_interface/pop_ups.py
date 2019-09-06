@@ -1824,8 +1824,11 @@ class PopUpPreferences(QDialog):
         self.push_button_cancel.setObjectName("pushButton_cancel")
         self.push_button_cancel.clicked.connect(self.close)
 
+        self.running = QLabel("")
+
         # Buttons layouts
         hbox_buttons = QHBoxLayout()
+        hbox_buttons.addWidget(self.running)
         hbox_buttons.addStretch(1)
         hbox_buttons.addWidget(self.push_button_ok)
         hbox_buttons.addWidget(self.push_button_cancel)
@@ -2112,6 +2115,8 @@ class PopUpPreferences(QDialog):
         config = Config()
         QApplication.setOverrideCursor(Qt.WaitCursor)
 
+        self.running.setText("Testing configuration ...")
+
         # Auto-save
         if self.save_checkbox.isChecked():
             config.setAutoSave(True)
@@ -2395,6 +2400,7 @@ class PopUpPreferences(QDialog):
 
     def wrong_path(self, path, tool):
         QApplication.restoreOverrideCursor()
+        self.running.setText("")
         self.msg = QMessageBox()
         self.msg.setIcon(QMessageBox.Critical)
         self.msg.setText("Invalid " + tool + " path")
