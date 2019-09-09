@@ -423,9 +423,10 @@ class InstallProcesses(QDialog):
                                         pkg_iter = pkg_iter[element]
 
                         except Exception:
-                            print(traceback.format_exc())
+                            # print(traceback.format_exc())
+                            pass
                             # TODO: WHICH TYPE OF EXCEPTION?
-                            # pass
+
 
                 return proc_dic
 
@@ -1410,22 +1411,27 @@ class PackageLibraryDialog(QDialog):
 
         push_button_del_pkg = QPushButton(default=False, autoDefault=False)
         push_button_del_pkg.setText("Delete package")
-        push_button_del_pkg.clicked.connect(self.delete_package)
+        # push_button_del_pkg.clicked.connect(self.delete_package)
+        push_button_del_pkg.clicked.connect(self.delete_package_with_text)
 
         self.add_dic = {}
         self.remove_dic = {}
+        self.delete_dic = {}
 
         self.add_list = QListWidget()
         self.remove_list = QListWidget()
+        self.del_list = QListWidget()
 
         self.add_list.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
         self.remove_list.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
+        self.del_list.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection)
 
         push_button_save = QPushButton(default=False, autoDefault=False)
         push_button_save.setText("Apply changes")
-        push_button_save.clicked.connect(partial(self.save, True))
+        push_button_save.clicked.connect(partial(self.ok_clicked))
 
         push_button_cancel = QPushButton("Cancel", default=False,
                                          autoDefault=False)
@@ -1456,35 +1462,40 @@ class PackageLibraryDialog(QDialog):
         h_box_save.addWidget(push_button_cancel)
 
         h_box_buttons = QHBoxLayout()
-        h_box_buttons.addStretch(1)
         h_box_buttons.addWidget(push_button_add_pkg)
-        h_box_buttons.addStretch(1)
         h_box_buttons.addWidget(push_button_rm_pkg)
         if config.get_clinical_mode() is False:
-            h_box_buttons.addStretch(1)
             h_box_buttons.addWidget(push_button_del_pkg)
 
         group_import = QGroupBox("Added packages")
         group_remove = QGroupBox("Removed packages")
+        group_delete = QGroupBox("Deleted packages")
         h_box_import = QHBoxLayout()
         h_box_remove = QHBoxLayout()
+        h_box_delete = QHBoxLayout()
 
         h_box_import.addWidget(self.add_list)
         h_box_remove.addWidget(self.remove_list)
+        h_box_delete.addWidget(self.del_list)
 
         cancel_add = QPushButton("Reset", default=False, autoDefault=False)
         cancel_rem = QPushButton("Reset", default=False, autoDefault=False)
+        cancel_del = QPushButton("Reset", default=False, autoDefault=False)
 
         cancel_add.clicked.connect(partial(self.reset_action,
                                            self.add_list, True))
         cancel_rem.clicked.connect(partial(self.reset_action,
                                            self.remove_list, False))
+        cancel_del.clicked.connect(partial(self.reset_action,
+                                           self.del_list, False))
 
         h_box_import.addWidget(cancel_add)
         h_box_remove.addWidget(cancel_rem)
+        h_box_delete.addWidget(cancel_del)
 
         group_import.setLayout(h_box_import)
         group_remove.setLayout(h_box_remove)
+        group_delete.setLayout(h_box_delete)
 
         v_box = QVBoxLayout()
         v_box.addStretch(1)
@@ -1498,6 +1509,8 @@ class PackageLibraryDialog(QDialog):
         v_box.addWidget(group_import)
         v_box.addStretch(1)
         v_box.addWidget(group_remove)
+        v_box.addStretch(1)
+        v_box.addWidget(group_delete)
         v_box.addStretch(1)
         v_box.addLayout(h_box_save)
 
@@ -1565,7 +1578,8 @@ class PackageLibraryDialog(QDialog):
                                 '%s.%s' % (module_name, v.__name__))
 
                         except Exception:
-                            print(traceback.format_exc())
+                            # print(traceback.format_exc())
+                            pass
                             # TODO: WHICH TYPE OF EXCEPTION?
                             # pass
 
@@ -1599,20 +1613,20 @@ class PackageLibraryDialog(QDialog):
                                         elif element in pkg_iter.keys():
                                             pkg_iter = pkg_iter[element]
 
-                                        else:
-                                            print(
-                                                '\nA not installed pipeline '
-                                                'was detected in the %s '
-                                                'library:' % (path_list[0]))
-                                            print('- %s.%s ...' % (
-                                                module_name, v.__name__))
-                                            print(
-                                                'This pipeline is now '
-                                                'installed but disabled '
-                                                '(see File > Package Library '
-                                                'Manager to enable it) ...')
-                                            pkg_iter[
-                                                element] = 'process_disabled'
+                                        # else:
+                                        #     print(
+                                        #         '\nA not installed pipeline '
+                                        #         'was detected in the %s '
+                                        #         'library:' % (path_list[0]))
+                                        #     print('- %s.%s ...' % (
+                                        #         module_name, v.__name__))
+                                        #     print(
+                                        #         'This pipeline is now '
+                                        #         'installed but disabled '
+                                        #         '(see File > Package Library '
+                                        #         'Manager to enable it) ...')
+                                        #     pkg_iter[
+                                        #         element] = 'process_disabled'
 
                                     else:
                                         pkg_iter[element] = {}
@@ -1723,6 +1737,10 @@ class PackageLibraryDialog(QDialog):
                     self.remove_list.takeItem(self.remove_dic[
                                                 self.line_edit.text()])
                     self.remove_dic.pop(self.line_edit.text())
+                if self.line_edit.text() in self.delete_dic:
+                    self.del_list.takeItem(self.delete_dic[
+                                                self.line_edit.text()])
+                    self.delete_dic.pop(self.line_edit.text())
                 # if self.line_edit.text() in self.remove_list:
                 #     self.remove_list.
 
@@ -1760,7 +1778,40 @@ class PackageLibraryDialog(QDialog):
             self.is_path = True
             self.line_edit.setText(file_name)
 
-    def delete_package(self, index=1, to_delete=None):
+    def delete_package_with_text(self, _2del=False, update_view=True):
+        """Delete a package from the line edit's text.
+        :param _2del: name of package
+        :param update_view: boolean to update the QListWidget
+
+        """
+        old_status = self.status_label.text()
+
+        if _2del is False:
+            _2del = self.line_edit.text()
+            self.status_label.setText(
+                "Deleting {0}. Please wait.".format(_2del))
+            QApplication.processEvents()
+
+        # package_removed = self.remove_package(_2rem, check_flag)
+        if True:
+            if update_view:
+                if self.line_edit.text() not in self.delete_dic:
+                    self.del_list.addItem(_2del)
+                    self.delete_dic[
+                        self.line_edit.text()] = self.del_list.count() - 1
+            if self.line_edit.text() in self.add_dic:
+                self.add_list.takeItem(self.add_dic[_2del])
+                self.add_dic.pop(_2del)
+            if self.line_edit.text() in self.remove_dic:
+                self.remove_list.takeItem(self.remove_dic[_2del])
+                self.remove_dic.pop(_2del)
+            self.status_label.setText(
+                "{0} deleted from Package Library.".format(
+                    _2del))
+        else:
+            self.status_label.setText(old_status)
+
+    def delete_package(self, index=1, to_delete=None, remove=True):
         """Delete a package, only available to developers.
 
         Remove the package from the package library tree, update the
@@ -1827,8 +1878,9 @@ class PackageLibraryDialog(QDialog):
                             path, "*"))) == 0 or index == len(pkg_list):
                         shutil.rmtree(path)
                         if index > 0:
-                            self.remove_package_with_text(".".join(
-                                pkg_list[0:index]), False)
+                            if remove:
+                                self.remove_package_with_text(".".join(
+                                    pkg_list[0:index]), False)
                 else:
                     init = os.path.abspath(
                         os.path.join(
@@ -1853,7 +1905,8 @@ class PackageLibraryDialog(QDialog):
                                         os.remove(os.path.join(
                                             os.path.split(
                                                 init)[0], filename[1:]))
-                                    self.remove_package_with_text(
+                                    if remove:
+                                        self.remove_package_with_text(
                                         ".".join(pkg_list[0:index]),
                                         False)
                                 elif pkg_list[index-1] in line:
@@ -1864,7 +1917,8 @@ class PackageLibraryDialog(QDialog):
                                     txt = re.sub(",\s*?\n?$", "\n", " ".join(
                                         new_imp))
                                     f.write(txt)
-                                    self.remove_package_with_text(
+                                    if remove:
+                                        self.remove_package_with_text(
                                         ".".join(pkg_list[0:index]),
                                         False)
                                 else:
@@ -1924,6 +1978,14 @@ class PackageLibraryDialog(QDialog):
         except TypeError:
             self.paths = []
 
+    def ok_clicked(self):
+        """Called when apply changes is clicked."""
+
+        pkg_to_delete = list(self.delete_dic.keys())
+        for i in pkg_to_delete:
+            self.delete_package(to_delete=i, remove=False)
+        self.save()
+
     #def remove_package_with_text(self, _2rem=None, update_view=True, check_flag=True):
     def remove_package_with_text(self, _2rem=None, update_view=True):
         """Remove the package in the line edit from the package tree.
@@ -1952,6 +2014,9 @@ class PackageLibraryDialog(QDialog):
             if self.line_edit.text() in self.add_dic:
                 self.add_list.takeItem(self.add_dic[_2rem])
                 self.add_dic.pop(_2rem)
+            if self.line_edit.text() in self.delete_dic:
+                self.del_list.takeItem(self.delete_dic[_2rem])
+                self.delete_dic.pop(_2rem)
             self.status_label.setText(
                 "{0} removed from Package Library.".format(
                     _2rem))
