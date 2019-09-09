@@ -1955,9 +1955,9 @@ class PopUpPreferences(QDialog):
         self.tab_pipeline_layout.addWidget(self.groupbox_spm)
         self.tab_pipeline_layout.addStretch(1)
         self.tab_pipeline.setLayout(self.tab_pipeline_layout)
-
-        print(config.get_use_spm_standalone())
-        print(config.get_use_spm())
+        
+        #print(config.get_use_spm_standalone())
+        #print(config.get_use_spm())
 
         if config.get_use_spm_standalone():
             self.use_matlab_standalone_checkbox.setChecked(True)
