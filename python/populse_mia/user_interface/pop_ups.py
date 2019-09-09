@@ -1862,15 +1862,6 @@ class PopUpPreferences(QDialog):
         self.matlab_standalone_browse.clicked.connect(
             self.browse_matlab_standalone)
 
-        if config.get_use_matlab():
-            if config.get_matlab_path() != "":
-                self.use_matlab_checkbox.setChecked(1)
-            else:
-                self.use_matlab_standalone_checkbox.setChecked(1)
-        else:
-            self.use_matlab_checkbox.setChecked(0)
-            self.use_matlab_standalone_checkbox.setChecked(0)
-
         h_box_use_matlab = QtWidgets.QHBoxLayout()
         h_box_use_matlab.addWidget(self.use_matlab_checkbox)
         h_box_use_matlab.addWidget(self.use_matlab_label)
@@ -1916,11 +1907,6 @@ class PopUpPreferences(QDialog):
         self.spm_browse = QPushButton("Browse")
         self.spm_browse.clicked.connect(self.browse_spm)
 
-        if config.get_use_spm() == True:
-            self.use_spm_checkbox.setChecked(1)
-        else:
-            self.use_spm_checkbox.setChecked(0)
-
         h_box_use_spm = QtWidgets.QHBoxLayout()
         h_box_use_spm.addWidget(self.use_spm_checkbox)
         h_box_use_spm.addWidget(self.use_spm_label)
@@ -1942,11 +1928,6 @@ class PopUpPreferences(QDialog):
             config.get_spm_standalone_path())
         self.spm_standalone_browse = QPushButton("Browse")
         self.spm_standalone_browse.clicked.connect(self.browse_spm_standalone)
-
-        if config.get_use_spm_standalone() == True:
-            self.use_spm_standalone_checkbox.setChecked(1)
-        else:
-            self.use_spm_standalone_checkbox.setChecked(0)
 
         h_box_use_spm_standalone = QtWidgets.QHBoxLayout()
         h_box_use_spm_standalone.addWidget(self.use_spm_standalone_checkbox)
@@ -1974,6 +1955,24 @@ class PopUpPreferences(QDialog):
         self.tab_pipeline_layout.addWidget(self.groupbox_spm)
         self.tab_pipeline_layout.addStretch(1)
         self.tab_pipeline.setLayout(self.tab_pipeline_layout)
+
+        print(config.get_use_spm_standalone())
+        print(config.get_use_spm())
+
+        if config.get_use_spm_standalone():
+            self.use_matlab_standalone_checkbox.setChecked(True)
+            self.use_spm_standalone_checkbox.setChecked(True)
+        elif config.get_use_spm():
+            self.use_matlab_checkbox.setChecked(True)
+            self.use_spm_checkbox.setChecked(True)
+        elif config.get_use_matlab():
+            if config.get_matlab_path() != "":
+                self.use_matlab_checkbox.setChecked(True)
+            else:
+                self.use_matlab_standalone_checkbox.setChecked(True)
+        else:
+            self.use_matlab_checkbox.setChecked(False)
+            self.use_matlab_standalone_checkbox.setChecked(False)
 
         # The 'Appearance' tab
         self.tab_appearance = QtWidgets.QWidget()
@@ -2114,10 +2113,8 @@ class PopUpPreferences(QDialog):
 
         config = Config()
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        print(0)
         self.status_label.setText("Testing configuration ...")
         QCoreApplication.processEvents()
-        print(1)
         # Auto-save
         if self.save_checkbox.isChecked():
             config.setAutoSave(True)
@@ -2213,7 +2210,8 @@ class PopUpPreferences(QDialog):
                 return
             if matlab_input == config.get_matlab_path() and spm_input == \
                     config.get_spm_path():
-                pass
+                config.set_use_spm(True)
+                config.set_use_matlab(True)
             elif os.path.isdir(spm_input):
                 try:
                     matlab_cmd = ('restoredefaultpath; '
@@ -2248,7 +2246,9 @@ class PopUpPreferences(QDialog):
         # Matlab
         elif self.use_matlab_checkbox.isChecked():
             matlab_input = self.matlab_choice.text()
-            if os.path.isfile(matlab_input):
+            if matlab_input == config.get_matlab_path():
+                config.set_use_matlab(True)
+            elif os.path.isfile(matlab_input):
                 try:
                     matlab_cmd = 'ver; exit'
                     p = subprocess.Popen(
@@ -2279,7 +2279,8 @@ class PopUpPreferences(QDialog):
                 return
             if matlab_input == config.get_matlab_standalone_path() and \
                     spm_input == config.get_spm_standalone_path():
-                pass
+                config.set_use_spm_standalone(True)
+                config.set_use_matlab(True)
             elif os.path.isdir(spm_input):
                 mcr = glob.glob(os.path.join(spm_input, 'run_spm*.sh'))
                 if mcr:
