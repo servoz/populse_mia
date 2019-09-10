@@ -2004,7 +2004,10 @@ class PackageLibraryDialog(QDialog):
             QApplication.processEvents()
 
         #package_removed = self.remove_package(_2rem, check_flag)
-        package_removed = self.remove_package(_2rem)
+        if self.line_edit.text() not in self.delete_dic:
+            package_removed = self.remove_package(_2rem)
+        else:
+            package_removed = True
 
         if package_removed is True:
             if update_view:
@@ -2202,8 +2205,9 @@ class ProcessLibrary(QTreeView):
 
     def keyPressEvent(self, event):
         """Event when the delete key is pressed."""
-        
-        if event.key() == QtCore.Qt.Key_Delete:
+        config = Config()
+        if event.key() == QtCore.Qt.Key_Delete and \
+                not config.get_clinical_mode():
             for idx in self.selectedIndexes():
                 if idx.isValid:
                     model = idx.model()
@@ -2242,19 +2246,21 @@ class ProcessLibrary(QTreeView):
                 txt = node.data(idx.column())
                 path = txt.encode()
                 self.item_library_clicked.emit(path.decode('utf8'))
-                if config.get_clinical_mode() is False and event.button() ==\
-                        Qt.RightButton:
+                if event.button() == Qt.RightButton:
                     self.menu = QMenu(self)
                     self.remove = self.menu.addAction(
                         "Remove package")
-                    self.action_delete = self.menu.addAction(
-                        "Delete package")
+                    if config.get_clinical_mode() is False :
+                        self.action_delete = self.menu.addAction(
+                            "Delete package")
+                    else:
+                        self.action_delete = False
                     action = self.menu.exec_(self.mapToGlobal(event.pos()))
                     if action == self.remove:
                         self.pkg_library.package_library.package_tree = self.pkg_library.load_config()['Packages']
                         self.pkg_library.remove_package(txt)
                         self.pkg_library.save()
-                        
+
                     if action == self.action_delete:
                         self.pkg_library.package_library.package_tree = self.pkg_library.load_config()['Packages']
                         self.pkg_library.delete_package(to_delete=txt)
