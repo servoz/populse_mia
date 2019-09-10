@@ -447,6 +447,19 @@ class PipelineManagerTab(QWidget):
                     return True
                 else:
                     return False
+            # else:
+            #     msg = QMessageBox()
+            #     msg.setIcon(QMessageBox.Warning)
+            #     msg.setWindowTitle(
+            #         "Warning: Dependencies not configured in the brick {0}"
+            #         "".format(str(process.__class__)))
+            #     msg.setText("Please define your dependencies in the "
+            #                 "documentation of your bricks with the following "
+            #                 "line:\n\n  * Dependencies: Use_Matlab: "
+            #                 "True/False; Use_SPM: True/False")
+            #     msg.setStandardButtons(QMessageBox.Ok)
+            #     msg.buttonClicked.connect(msg.close)
+            #     msg.exec()
 
     def check_spm_dependencies(self, process):
         """Check if a process needs spm or not.
@@ -804,9 +817,11 @@ class PipelineManagerTab(QWidget):
                              config.get_use_spm_standalone())):
                     if self.check_spm_dependencies(process):
                         conf_failure = True
+                        node_failure = node_name
                     elif self.check_matlab_dependencies(process) and not \
                             config.get_use_matlab():
                         conf_failure = True
+                        node_failure = node_name
 
             for key in inputs:
 
@@ -826,6 +841,7 @@ class PipelineManagerTab(QWidget):
                     if not (config.get_use_matlab() and (config.get_use_spm()
                                          or config.get_use_spm_standalone())):
                         conf_failure = True
+                        node_failure = node_name
                     print('\nUpdating the launching parameters for nipype '
                           'process node: {0} ...'.format(node_name))
                     # plugs to be filled automatically
@@ -986,12 +1002,15 @@ class PipelineManagerTab(QWidget):
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
             if config.get_use_matlab() is False:
-                self.msg.setText("Matlab is required to use Nipype.")
+                self.msg.setText("Matlab is required to use {0}.".format(
+                    node_failure))
             else:
-                self.msg.setText("SPM is required to use Nipype.")
+                self.msg.setText("SPM is required to use {0}.".format(
+                    node_failure))
             self.msg.setInformativeText(
-                "Matlab and SPM must be configured to use Nipype.\n"
-                "(See File > MIA preferences to configure them) ...")
+                "Matlab and SPM must be configured to use {0}.\n"
+                "(See File > MIA preferences to configure them) ...".format(
+                    node_failure))
             self.msg.setWindowTitle("Warning")
             self.msg.setStandardButtons(QMessageBox.Ok)
             self.msg.buttonClicked.connect(self.msg.close)
