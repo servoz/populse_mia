@@ -1792,8 +1792,12 @@ class PackageLibraryDialog(QDialog):
                 "Deleting {0}. Please wait.".format(_2del))
             QApplication.processEvents()
 
-        # package_removed = self.remove_package(_2rem, check_flag)
-        if True:
+        if self.line_edit.text() not in self.delete_dic:
+            package_removed = self.remove_package(_2del)
+        else:
+            package_removed = True
+
+        if package_removed is True:
             if update_view:
                 if self.line_edit.text() not in self.delete_dic:
                     self.del_list.addItem(_2del)
@@ -1821,7 +1825,7 @@ class PackageLibraryDialog(QDialog):
         :param index: recursive index to move between modules
 
         """
-        
+        self.packages = self.package_library.package_tree
         config = Config()
 
         if not to_delete:
@@ -1923,6 +1927,8 @@ class PackageLibraryDialog(QDialog):
                                         False)
                                 else:
                                     f.write(line)
+            self.package_library.package_tree = self.packages
+            self.package_library.generate_tree()
             self.save(False)
 
     def install_processes_pop_up(self, folder=False):
