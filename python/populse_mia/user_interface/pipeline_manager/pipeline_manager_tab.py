@@ -36,7 +36,8 @@ from traits.api import TraitListObject, Undefined
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import (QMenu, QVBoxLayout, QWidget, QSplitter,
                              QApplication, QToolBar, QAction, QHBoxLayout,
-                             QScrollArea, QMessageBox, QProgressDialog)
+                             QScrollArea, QMessageBox, QProgressDialog,
+                             QPushButton)
 
 # Capsul imports
 from capsul.api import (get_process_instance, StudyConfig, PipelineNode,
@@ -457,8 +458,10 @@ class PipelineManagerTab(QWidget):
                 use_matlab = use_matlab.replace(" ", "")
                 if use_matlab == "True":
                     return True
-                else:
+                elif use_matlab == "False":
                     return False
+                else:
+                    return None
 
     def check_spm_dependencies(self, process):
         """Check if a process needs spm or not.
@@ -472,8 +475,10 @@ class PipelineManagerTab(QWidget):
                 use_spm = use_spm.replace(" ", "")
                 if use_spm == "True":
                     return True
-                else:
+                elif use_spm == "False":
                     return False
+                else:
+                    return None
 
     def controller_value_changed(self, signal_list):
         """
@@ -818,15 +823,19 @@ class PipelineManagerTab(QWidget):
                         and (config.get_use_spm() or
                              config.get_use_spm_standalone())):
                     if self.check_dependencies(process):
-                        if self.check_spm_dependencies(process):
+                        check_spm = self.check_spm_dependencies(process)
+                        if check_spm:
                             conf_failure = True
                             node_failure = node_name
                             spm_enabled = False
-                        if self.check_matlab_dependencies(process) and not \
-                                config.get_use_matlab():
+                        check_matlab = self.check_matlab_dependencies(process)
+                        if check_matlab and not config.get_use_matlab():
                             conf_failure = True
                             node_failure = node_name
                             matlab_enabled = False
+                        if check_spm is None or check_matlab is None:
+                            dependencies_missing = True
+                            node_failure = node_name
                     else:
                         dependencies_missing = True
                         node_failure = node_name
@@ -1005,19 +1014,34 @@ class PipelineManagerTab(QWidget):
                 pipeline)
         if dependencies_missing:
             self.main_window.statusBar().showMessage(
-                'Pipeline "{0}" was not initialized successfully.'.format(
+                'Pipeline "{0}" has been initialized.'.format(
                     name))
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("Please define your dependencies in the "
-                            "documentation of {0} with the following "
-                            "format:\n\n  * Dependencies: Use_Matlab: "
-                            "True; Use_SPM: False".format(
-                node_failure))
+            if config.get_use_matlab() is False:
+                self.msg.setText(
+                    "Matlab and SPM dependencies were not correctly defined "
+                    "in the process {0}.\nYour current MIA configuration use "
+                    "Matlab but not SPM. Please update your configuration in "
+                    "MIA preferences if necessary.".format(
+                        node_failure))
+            else:
+                self.msg.setText(
+                    "Matlab and SPM dependencies were not correctly defined "
+                    "in the process {0}.\nYour current MIA configuration "
+                    "use neither Matlab or SPM. Please update your "
+                    "configuration in MIA preferences if necessary.".format(
+                        node_failure))
             self.msg.setWindowTitle("Warning")
-            self.msg.setStandardButtons(QMessageBox.Ok)
-            self.msg.buttonClicked.connect(self.msg.close)
-            self.msg.show()
+            ok_button = self.msg.addButton(QMessageBox.Ok)
+            yes_button = self.msg.addButton("Open MIA preferences",
+                                            QMessageBox.YesRole)
+            self.msg.exec()
+            if self.msg.clickedButton() == yes_button:
+                self.main_window.software_preferences_pop_up()
+                self.msg.close()
+            else:
+                self.msg.close()
         elif conf_failure:
             self.main_window.statusBar().showMessage(
                 'Pipeline "{0}" was not initialized successfully.'.format(
