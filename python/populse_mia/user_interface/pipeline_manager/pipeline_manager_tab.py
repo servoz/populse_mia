@@ -82,6 +82,7 @@ class PipelineManagerTab(QWidget):
     .. Methods:
         - add_plug_value_to_database: add the plug value to the database.
         - add_process_to_preview: add a process to the pipeline
+        - check_dependencies: check if a process has its dependencies defined
         - check_matlab_dependencies: check if a process needs matlab or not
         - check_spm_dependencies: check if a process needs spm or not
         - controller_value_changed: update history when a pipeline node is
@@ -432,6 +433,17 @@ class PipelineManagerTab(QWidget):
 
         return node, node_name
 
+    def check_dependencies(self, process):
+        """Check if a process has its dependencies defined.
+        :param process: the process to check
+        :return: boolean
+        """
+        lines = process.__doc__.split("\n")
+        for line in lines:
+            if re.search("\*.Dependencies:", line):
+                return True
+        return False
+
     def check_matlab_dependencies(self, process):
         """Check if a process needs matlab or not.
         :param process: the process to check
@@ -447,19 +459,6 @@ class PipelineManagerTab(QWidget):
                     return True
                 else:
                     return False
-            # else:
-            #     msg = QMessageBox()
-            #     msg.setIcon(QMessageBox.Warning)
-            #     msg.setWindowTitle(
-            #         "Warning: Dependencies not configured in the brick {0}"
-            #         "".format(str(process.__class__)))
-            #     msg.setText("Please define your dependencies in the "
-            #                 "documentation of your bricks with the following "
-            #                 "line:\n\n  * Dependencies: Use_Matlab: "
-            #                 "True/False; Use_SPM: True/False")
-            #     msg.setStandardButtons(QMessageBox.Ok)
-            #     msg.buttonClicked.connect(msg.close)
-            #     msg.exec()
 
     def check_spm_dependencies(self, process):
         """Check if a process needs spm or not.
@@ -590,6 +589,7 @@ class PipelineManagerTab(QWidget):
         config = Config()
         main_pipeline = False
         conf_failure = False
+        dependencies_missing = False
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(
@@ -815,12 +815,16 @@ class PipelineManagerTab(QWidget):
                 if not (config.get_use_matlab()
                         and (config.get_use_spm() or
                              config.get_use_spm_standalone())):
-                    if self.check_spm_dependencies(process):
-                        conf_failure = True
-                        node_failure = node_name
-                    elif self.check_matlab_dependencies(process) and not \
-                            config.get_use_matlab():
-                        conf_failure = True
+                    if self.check_dependencies(process):
+                        if self.check_spm_dependencies(process):
+                            conf_failure = True
+                            node_failure = node_name
+                        elif self.check_matlab_dependencies(process) and not \
+                                config.get_use_matlab():
+                            conf_failure = True
+                            node_failure = node_name
+                    else:
+                        dependencies_missing = True
                         node_failure = node_name
 
             for key in inputs:
@@ -995,7 +999,22 @@ class PipelineManagerTab(QWidget):
                 self.nodeController.node_name,
                 pipeline.nodes[node_controller_node_name].process,
                 pipeline)
-        if conf_failure:
+        if dependencies_missing:
+            self.main_window.statusBar().showMessage(
+                'Pipeline "{0}" was not initialized successfully.'.format(
+                    name))
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setText("Please define your dependencies in the "
+                            "documentation of {0} with the following "
+                            "format:\n\n  * Dependencies: Use_Matlab: "
+                            "True; Use_SPM: False".format(
+                node_failure))
+            self.msg.setWindowTitle("Warning")
+            self.msg.setStandardButtons(QMessageBox.Ok)
+            self.msg.buttonClicked.connect(self.msg.close)
+            self.msg.show()
+        elif conf_failure:
             self.main_window.statusBar().showMessage(
                 'Pipeline "{0}" was not initialized successfully.'.format(
                     name))
