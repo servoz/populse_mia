@@ -590,6 +590,8 @@ class PipelineManagerTab(QWidget):
         main_pipeline = False
         conf_failure = False
         dependencies_missing = False
+        matlab_enabled = True
+        spm_enabled = True
         # If the initialisation is launch for the main pipeline
         if not pipeline:
             pipeline = get_process_instance(
@@ -819,10 +821,12 @@ class PipelineManagerTab(QWidget):
                         if self.check_spm_dependencies(process):
                             conf_failure = True
                             node_failure = node_name
-                        elif self.check_matlab_dependencies(process) and not \
+                            spm_enabled = False
+                        if self.check_matlab_dependencies(process) and not \
                                 config.get_use_matlab():
                             conf_failure = True
                             node_failure = node_name
+                            matlab_enabled = False
                     else:
                         dependencies_missing = True
                         node_failure = node_name
@@ -1020,15 +1024,22 @@ class PipelineManagerTab(QWidget):
                     name))
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
-            if config.get_use_matlab() is False:
+            if matlab_enabled is False and spm_enabled is False:
+                self.msg.setText("Matlab and SPM are required to use {"
+                                 "0}.".format(
+                    node_failure))
+                start = "Matlab and SPM "
+            elif matlab_enabled is False:
                 self.msg.setText("Matlab is required to use {0}.".format(
                     node_failure))
+                start = "Matlab "
             else:
                 self.msg.setText("SPM is required to use {0}.".format(
                     node_failure))
+                start = "SPM "
             self.msg.setInformativeText(
-                "Matlab and SPM must be configured to use {0}.\n"
-                "(See File > MIA preferences to configure them) ...".format(
+                start + "must be configured to use {0}.\n"
+                "(See File > MIA preferences to configure) ...".format(
                     node_failure))
             self.msg.setWindowTitle("Warning")
             self.msg.setStandardButtons(QMessageBox.Ok)
