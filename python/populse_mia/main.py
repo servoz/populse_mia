@@ -32,6 +32,8 @@ import yaml
 import copy
 from functools import partial
 
+from capsul.api import get_process_instance
+
 # PyQt5 imports
 from PyQt5.QtCore import QDir, QLockFile, Qt
 from PyQt5.QtWidgets import (QApplication, QDialog, QPushButton, QLabel,
@@ -121,25 +123,30 @@ subpackages/modules, to construct the mia's pipeline library.
 
                     # checking each class in the package
                     if inspect.isclass(v):
+                        try:
+                            get_process_instance(
+                                '%s.%s' % (module_name, v.__name__))
 
-                        # updating the tree's dictionary
-                        path_list = module_name.split('.')
-                        path_list.append(k)
-                        pkg_iter = self.packages
+                            # updating the tree's dictionary
+                            path_list = module_name.split('.')
+                            path_list.append(k)
+                            pkg_iter = self.packages
 
-                        for element in path_list:
+                            for element in path_list:
 
-                            if element in pkg_iter.keys():
-                                pkg_iter = pkg_iter[element]
-
-                            else:
-
-                                if element is path_list[-1]:
-                                    pkg_iter[element] = 'process_enabled'
+                                if element in pkg_iter.keys():
+                                    pkg_iter = pkg_iter[element]
 
                                 else:
-                                    pkg_iter[element] = {}
-                                    pkg_iter = pkg_iter[element]
+
+                                    if element is path_list[-1]:
+                                        pkg_iter[element] = 'process_enabled'
+
+                                    else:
+                                        pkg_iter[element] = {}
+                                        pkg_iter = pkg_iter[element]
+                        except Exception:
+                            pass
 
             except ImportError as e:
                 print('\nWhen attempting to add a package and its modules to '
