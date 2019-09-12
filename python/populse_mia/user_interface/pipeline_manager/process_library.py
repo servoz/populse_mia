@@ -1815,7 +1815,7 @@ class PackageLibraryDialog(QDialog):
         else:
             self.status_label.setText(old_status)
 
-    def delete_package(self, index=1, to_delete=None, remove=True):
+    def delete_package(self, index=1, to_delete=None, remove=True, loop=False):
         """Delete a package, only available to developers.
 
         Remove the package from the package library tree, update the
@@ -1858,78 +1858,78 @@ class PackageLibraryDialog(QDialog):
             self.msg.show()
             return
 
-        # if index == 1:
-        #     msgtext = "Do you really want to delete the package " + \
-        #               to_delete + " ?"
-        #     msg = QMessageBox()
-        #     msg.setIcon(QMessageBox.Warning)
-        #     title = "populse_mia - Warning: Delete package"
-        #     reply = msg.question(self, title, msgtext, QMessageBox.Yes,
-        #                          QMessageBox.No)
-        # else:
-        #     reply = QMessageBox.Yes
-        #
-        # if reply == QMessageBox.Yes:
-        pkg_list = to_delete.split(".")
-        if index <= len(pkg_list):
-            path = os.path.abspath(
-                os.path.join(
-                    config.get_mia_path(), 'processes',
-                    *pkg_list[0:index]))
-            self.delete_package(index + 1, to_delete)
-            if os.path.exists(path):
-                if len(glob.glob(os.path.join(
-                        path, "*"))) == 0 or index == len(pkg_list):
-                    shutil.rmtree(path)
-                    if index > 0:
-                        if remove:
-                            self.remove_package_with_text(".".join(
-                                pkg_list[0:index]), False)
-            else:
-                init = os.path.abspath(
-                    os.path.join(
-                        config.get_mia_path(),
-                        'processes',
-                        *pkg_list[0:index-1],
-                        "__init__.py"))
-                if os.path.isfile(init):
-                    with open(init, 'r') as f:
-                        lines = f.readlines()
+        if index == 1 and loop is False:
+            msgtext = "Do you really want to delete the package " + \
+                      to_delete + " ?"
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            title = "populse_mia - Warning: Delete package"
+            reply = msg.question(self, title, msgtext, QMessageBox.Yes,
+                                 QMessageBox.No)
+        else:
+            reply = QMessageBox.Yes
 
-                    with open(init, 'w') as f:
-                        for line in lines:
-                            if re.search("import..?" +
-                                         pkg_list[index-1] + ".?\n",
-                                         line):
-                                filename = line.split(" ")[1] + ".py"
-                                if os.path.isfile(
-                                        os.path.join(
-                                        os.path.split(init)[0],
-                                                      filename[1:])):
-                                    os.remove(os.path.join(
-                                        os.path.split(
-                                            init)[0], filename[1:]))
-                                if remove:
-                                    self.remove_package_with_text(
-                                    ".".join(pkg_list[0:index]),
-                                    False)
-                            elif pkg_list[index-1] in line:
-                                new_imp = line.split(" ")
-                                for j in new_imp:
-                                    if pkg_list[index-1] in j:
-                                        new_imp.remove(j)
-                                txt = re.sub(",\s*?\n?$", "\n", " ".join(
-                                    new_imp))
-                                f.write(txt)
-                                if remove:
-                                    self.remove_package_with_text(
-                                    ".".join(pkg_list[0:index]),
-                                    False)
-                            else:
-                                f.write(line)
-        self.package_library.package_tree = self.packages
-        self.package_library.generate_tree()
-        self.save(False)
+        if reply == QMessageBox.Yes:
+            pkg_list = to_delete.split(".")
+            if index <= len(pkg_list):
+                path = os.path.abspath(
+                    os.path.join(
+                        config.get_mia_path(), 'processes',
+                        *pkg_list[0:index]))
+                self.delete_package(index + 1, to_delete)
+                if os.path.exists(path):
+                    if len(glob.glob(os.path.join(
+                            path, "*"))) == 0 or index == len(pkg_list):
+                        shutil.rmtree(path)
+                        if index > 0:
+                            if remove:
+                                self.remove_package_with_text(".".join(
+                                    pkg_list[0:index]), False)
+                else:
+                    init = os.path.abspath(
+                        os.path.join(
+                            config.get_mia_path(),
+                            'processes',
+                            *pkg_list[0:index-1],
+                            "__init__.py"))
+                    if os.path.isfile(init):
+                        with open(init, 'r') as f:
+                            lines = f.readlines()
+
+                        with open(init, 'w') as f:
+                            for line in lines:
+                                if re.search("import..?" +
+                                             pkg_list[index-1] + ".?\n",
+                                             line):
+                                    filename = line.split(" ")[1] + ".py"
+                                    if os.path.isfile(
+                                            os.path.join(
+                                            os.path.split(init)[0],
+                                                          filename[1:])):
+                                        os.remove(os.path.join(
+                                            os.path.split(
+                                                init)[0], filename[1:]))
+                                    if remove:
+                                        self.remove_package_with_text(
+                                        ".".join(pkg_list[0:index]),
+                                        False)
+                                elif pkg_list[index-1] in line:
+                                    new_imp = line.split(" ")
+                                    for j in new_imp:
+                                        if pkg_list[index-1] in j:
+                                            new_imp.remove(j)
+                                    txt = re.sub(",\s*?\n?$", "\n", " ".join(
+                                        new_imp))
+                                    f.write(txt)
+                                    if remove:
+                                        self.remove_package_with_text(
+                                        ".".join(pkg_list[0:index]),
+                                        False)
+                                else:
+                                    f.write(line)
+            self.package_library.package_tree = self.packages
+            self.package_library.generate_tree()
+            self.save(False)
 
     def install_processes_pop_up(self, folder=False):
         """Open the install processes pop-up.
@@ -2000,7 +2000,7 @@ class PackageLibraryDialog(QDialog):
                                      QMessageBox.No|QMessageBox.YesToAll|
                                      QMessageBox.NoToAll)
             if reply == QMessageBox.YesToAll or reply == QMessageBox.Yes:
-                self.delete_package(to_delete=i, remove=False)
+                self.delete_package(to_delete=i, remove=False, loop=True)
             if reply == QMessageBox.No or reply == QMessageBox.Yes:
                 reply = None
         self.save()
@@ -2234,6 +2234,8 @@ class ProcessLibrary(QTreeView):
                     node = idx.internalPointer()
                     if node is not None:
                         txt = node.data(idx.column())
+                        self.pkg_library.package_library.package_tree = \
+                        self.pkg_library.load_config()['Packages']
                         self.pkg_library.delete_package(to_delete=txt)
 
     def load_dictionary(self, d):
