@@ -1018,7 +1018,7 @@ class PipelineManagerTab(QWidget):
                     name))
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
-            if config.get_use_matlab() is False:
+            if config.get_use_matlab() is True:
                 self.msg.setText(
                     "Matlab and SPM dependencies were not correctly defined "
                     "in the process {0}.\nYour current MIA configuration use "
