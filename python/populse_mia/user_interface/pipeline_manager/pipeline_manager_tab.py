@@ -598,6 +598,7 @@ class PipelineManagerTab(QWidget):
         matlab_enabled = True
         spm_enabled = True
         # If the initialisation is launch for the main pipeline
+
         if not pipeline:
             pipeline = get_process_instance(
                 self.pipelineEditorTabs.get_current_pipeline())
@@ -1084,7 +1085,52 @@ class PipelineManagerTab(QWidget):
         self.ignore_node = False
         self.key = {}
         self.ignore = {}
-        self.init_pipeline()
+        self.init_pipeline() # When clicking on the Pipeline > Initialize
+                             # pipeline in the Pipeline Manager tab,
+                             # this is the first method launched.
+
+        # ** pathway from the self.init_pipeline() command (ex. for the
+        #    User_processes Smooth brick):
+        #      info1: self is a populse_mia.user_interface.pipeline_manager
+        #             .pipeline_manager_tab.PipelineManagerTab object
+        #
+        # ** populse_mia/user_interface/pipeline_manager/pipeline_manager_tab.py
+        #    class PipelineManagerTab(QWidget):
+        #    method init_pipeline(self, pipeline=None, pipeline_name=""):
+        #      use: (process_outputs,
+        #            self.inheritance_dict) = process.list_outputs(plugs=
+        #                                       pipeline.nodes[node_name].plugs)
+        #      info1: process is the brick (node, process, etc.)
+        #             <User_processes.preprocess.spm.spatial_preprocessing
+        #             .Smooth object at ...> object
+        
+        # ** User_processes/preprocess/spm/spatial_preprocessing.py
+        #    class Smooth(Process_Mia)
+        #    list_outputs method:
+        #      info1: here we are in the place where we deal with plugs.
+        #
+        #** Some characteristics for the pipeline object
+        #   (for User_processes Smooth brick):
+        #       pipeline is a capsul.pipeline.pipeline.Pipeline object
+        #       pipeline.nodes is a dictionary
+        #       pipeline.nodes["smooth1"] is a capsul.pipeline.pipeline_nodes
+        #         .ProcessNode object
+        #       pipeline.nodes["smooth1"].plugs is a dictionary. Each key is a
+        #         plug displayed in the Pipeline manager tab
+        #       pipeline.nodes["smooth1"].plugs["fwhm"] is a capsul.pipeline
+        #         .pipeline_nodes.Plug object
+        #       If the plus is not connected,  pipeline.nodes["smooth1"]
+        #         .plugs["fwhm"].links_to (in case of output link) : set()
+        #       If the plus is connected,  pipeline.nodes["smooth1"]
+        #         .plugs["fwhm"].links_to (in case of output link):
+        #         {('', 'fwhm', <capsul.pipeline.pipeline_nodes.PipelineNode
+        #         object at 0x7f4688109c50>, <capsul.pipeline.pipeline_nodes
+        #         .Plug object at 0x7f46691e4888>, False)}
+        #       So, it is possble to check if the plug is connected with:
+        #         if pipeline.nodes["smooth1"].plugs["fwhm"].links_to: etc ...
+        #         or a  if pipeline.nodes["smooth1"].plugs["fwhm"].links_from:
+        #         etc ...
+
         self.init_clicked = True
 
     def layout_view(self):
@@ -1687,8 +1733,8 @@ class RunWorker(QThread):
 
         _check_nipype_processes(self.diagramView.get_current_pipeline())
 
-        pipeline = get_process_instance(
-            self.diagramView.get_current_pipeline())
+        pipeline = get_process_instance(  
+             self.diagramView.get_current_pipeline())
 
         # Reading config
         config = Config()
@@ -1727,8 +1773,82 @@ class RunWorker(QThread):
 
         study_config.reset_process_counter()
 
+        
+
         try:
             study_config.run(pipeline, verbose=1)
+
+            #** pathway from the study_config.run(pipeline, verbose=1) command:
+            #   (ex. for the User_processes Smooth brick):
+            #     info1: study_config = StudyConfig(...) defined before
+            #     info2: from capsul.api import (..., StudyConfig, ...) defined
+            #            before
+            
+            #** capsul/study_config/study_config.py
+            #   class StudyConfig(Controller)
+            #    run method:
+            #     use: result = self._run(process_node.process,
+            #                             output_directory,
+            #                             verbose) ou
+            #          result = self._run(process_node,
+            #                             output_directory,
+            #                             verbose)
+            #     info1: _run() is a private method of the
+            #            StudyConfig(Controller) class in the
+            #            capsul/study_config/study_config.py module
+            #
+            #** capsul/study_config/study_config.py
+            #   class StudyConfig(Controller)
+            #   run method:
+            #     use: returncode, log_file = run_process(output_directory,
+            #                                             process_instance,
+            #                                             cachedir=cachedir,
+            #                            generate_logging=self.generate_logging,
+            #                            verbose=verbose, **kwargs)
+            #     info1: from capsul.study_config.run import run_process defined
+            #            in the capsul/study_config/study_config.py module
+            
+            #** capsul/study_config/run.py; run_process function:
+            #     use: returncode = process_instance._run_process()
+            #     info1: process_instance is the brick (node, process, etc.)
+            #            object (ex.  <User_processes.preprocess.spm
+            #            .spatial_preprocessing.Smooth object at ...>)
+            #     info2: homemade bricks do not have a mandatory _run_process
+            #            method but they inherit the Process_Mia class (module
+            #            mia_processes/process_mia.py) that has the
+            #            _run_process method
+            
+            #** mia_processes/process_mia.py
+            #   class Process_Mia(ProcessMIA)
+            #   _run_process method
+            #     use: self.run_process_mia()
+            #     info1: self is the brick (node, process, etc.) object
+            #            <User_processes.preprocess.spm.spatial_preprocessing
+            #            .Smooth object at ...>
+            
+            #** User_processes/preprocess/spm/spatial_preprocessing.py
+            #   class Smooth(Process_Mia)
+            #   run_process_mia method:
+            #     info1: this is the method where we do what we want when
+            #            launching a brick (node, process, etc.).
+            #     use1: super(Smooth, self).run_process_mia()
+            #     info2: it calls the run_process_mia method of the Process_Mia
+            #            class inherited by the Smooth class. run_process_mia
+            #            method of the Process_Mia class manages the hidden
+            #            matlab parameters (use_mcr, matlab_cmd, etc)
+            #     use2: self.process.run()
+            #     info3: self.process is a <nipype.interfaces.spm.preprocess
+            #            .Smooth> object. This object inherits from the nipype
+            #            SPMCommand class, which itself inherits from the nipype
+            #            BaseInterface class. The BaseInterface class
+            #            (nipype/interfaces/base.core.py module) have the run()
+            #            method)
+            #     info4: from this method run(), we are outside of mia ...
+            #
+            #** pipeline object introspection: see initialize method in the
+            #                                  PipelineManagerTab class, this
+            #                                  module
+           
         except OSError as e:
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Critical)
