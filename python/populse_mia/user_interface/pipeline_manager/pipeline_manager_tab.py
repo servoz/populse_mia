@@ -787,7 +787,8 @@ class PipelineManagerTab(QWidget):
             try:
                 self.inheritance_dict = None
                 (process_outputs,
-                 self.inheritance_dict) = process.list_outputs()
+                 self.inheritance_dict) = process.list_outputs(plugs=
+                                                pipeline.nodes[node_name].plugs)        
             except TraitError as error:
                 print("TRAIT ERROR for node {0}".format(node_name))
                 print(error)
